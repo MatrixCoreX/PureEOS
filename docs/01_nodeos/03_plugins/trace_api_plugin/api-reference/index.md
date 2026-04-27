@@ -1,1 +1,1 @@
-[Trace API Reference](https://docs.eosnetwork.com/spring-plugins/latest/trace.api/)
+[Trace API Reference](https://docs.eosnetwork.com/helios-plugins/latest/trace.api/)

@@ -28,17 +28,17 @@ RUN apt-get update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-g
                                                                                               zstd \
                                                                                               ;
 
-ARG _SPRING_CLANG_VERSION=20.1.3
-ARG _SPRING_LLVM_VERSION=11.1.0
-ARG _SPRING_CMAKE_VERSION=3.27.6
+ARG _HELIOS_CLANG_VERSION=20.1.3
+ARG _HELIOS_LLVM_VERSION=11.1.0
+ARG _HELIOS_CMAKE_VERSION=3.27.6
 
-ADD https://github.com/llvm/llvm-project/releases/download/llvmorg-${_SPRING_CLANG_VERSION}/llvm-project-${_SPRING_CLANG_VERSION}.src.tar.xz     \
-    https://github.com/llvm/llvm-project/releases/download/llvmorg-${_SPRING_CLANG_VERSION}/llvm-project-${_SPRING_CLANG_VERSION}.src.tar.xz.sig \
-    https://github.com/llvm/llvm-project/releases/download/llvmorg-${_SPRING_LLVM_VERSION}/llvm-project-${_SPRING_LLVM_VERSION}.src.tar.xz       \
-    https://github.com/llvm/llvm-project/releases/download/llvmorg-${_SPRING_LLVM_VERSION}/llvm-project-${_SPRING_LLVM_VERSION}.src.tar.xz.sig   \
-    https://github.com/Kitware/CMake/releases/download/v${_SPRING_CMAKE_VERSION}/cmake-${_SPRING_CMAKE_VERSION}.tar.gz                           \
-    https://github.com/Kitware/CMake/releases/download/v${_SPRING_CMAKE_VERSION}/cmake-${_SPRING_CMAKE_VERSION}-SHA-256.txt                      \
-    https://github.com/Kitware/CMake/releases/download/v${_SPRING_CMAKE_VERSION}/cmake-${_SPRING_CMAKE_VERSION}-SHA-256.txt.asc                  \
+ADD https://github.com/llvm/llvm-project/releases/download/llvmorg-${_HELIOS_CLANG_VERSION}/llvm-project-${_HELIOS_CLANG_VERSION}.src.tar.xz     \
+    https://github.com/llvm/llvm-project/releases/download/llvmorg-${_HELIOS_CLANG_VERSION}/llvm-project-${_HELIOS_CLANG_VERSION}.src.tar.xz.sig \
+    https://github.com/llvm/llvm-project/releases/download/llvmorg-${_HELIOS_LLVM_VERSION}/llvm-project-${_HELIOS_LLVM_VERSION}.src.tar.xz       \
+    https://github.com/llvm/llvm-project/releases/download/llvmorg-${_HELIOS_LLVM_VERSION}/llvm-project-${_HELIOS_LLVM_VERSION}.src.tar.xz.sig   \
+    https://github.com/Kitware/CMake/releases/download/v${_HELIOS_CMAKE_VERSION}/cmake-${_HELIOS_CMAKE_VERSION}.tar.gz                           \
+    https://github.com/Kitware/CMake/releases/download/v${_HELIOS_CMAKE_VERSION}/cmake-${_HELIOS_CMAKE_VERSION}-SHA-256.txt                      \
+    https://github.com/Kitware/CMake/releases/download/v${_HELIOS_CMAKE_VERSION}/cmake-${_HELIOS_CMAKE_VERSION}-SHA-256.txt.asc                  \
     /
 
 # CBA23971357C2E6590D9EFD3EC8FEF3A7BFB4EDA - Brad King <brad.king@kitware.com> (cmake)
@@ -54,13 +54,13 @@ RUN ls *.sig *.asc | xargs -n 1 gpg --verify && \
 
 RUN tar xf cmake-*.tar.gz && \
     cd cmake*[0-9] && \
-    echo 'set(CMAKE_USE_OPENSSL OFF CACHE BOOL "" FORCE)' > spring-init.cmake && \
-    ./bootstrap --parallel=$(nproc) --init=spring-init.cmake --generator=Ninja && \
+    echo 'set(CMAKE_USE_OPENSSL OFF CACHE BOOL "" FORCE)' > helios-init.cmake && \
+    ./bootstrap --parallel=$(nproc) --init=helios-init.cmake --generator=Ninja && \
     ninja install && \
     rm -rf cmake*
 
-RUN tar xf llvm-project-${_SPRING_CLANG_VERSION}.src.tar.xz && \
-    cmake -S llvm-project-${_SPRING_CLANG_VERSION}.src/llvm -B build-toolchain -GNinja -DLLVM_INCLUDE_DOCS=Off -DLLVM_TARGETS_TO_BUILD=host -DCMAKE_BUILD_TYPE=Release \
+RUN tar xf llvm-project-${_HELIOS_CLANG_VERSION}.src.tar.xz && \
+    cmake -S llvm-project-${_HELIOS_CLANG_VERSION}.src/llvm -B build-toolchain -GNinja -DLLVM_INCLUDE_DOCS=Off -DLLVM_TARGETS_TO_BUILD=host -DCMAKE_BUILD_TYPE=Release \
                                                                                      -DCMAKE_INSTALL_PREFIX=/pinnedtoolchain \
                                                                                      -DCOMPILER_RT_BUILD_SANITIZERS=Off \
                                                                                      -DLIBCXX_HARDENING_MODE=fast \
@@ -88,8 +88,8 @@ COPY <<-"EOF" /pinnedtoolchain/pinnedtoolchain.cmake
 EOF
 ENV CMAKE_TOOLCHAIN_FILE=/pinnedtoolchain/pinnedtoolchain.cmake
 
-RUN tar xf llvm-project-${_SPRING_LLVM_VERSION}.src.tar.xz && \
-    cmake -S llvm-project-${_SPRING_LLVM_VERSION}.src/llvm -B build-pinllvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=host -DLLVM_BUILD_TOOLS=Off \
+RUN tar xf llvm-project-${_HELIOS_LLVM_VERSION}.src.tar.xz && \
+    cmake -S llvm-project-${_HELIOS_LLVM_VERSION}.src/llvm -B build-pinllvm -GNinja -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=host -DLLVM_BUILD_TOOLS=Off \
                                                                                   -DLLVM_ENABLE_RTTI=On -DLLVM_ENABLE_TERMINFO=Off -DLLVM_ENABLE_PIC=Off \
                                                                                   -DCMAKE_INSTALL_PREFIX=/pinnedtoolchain/pinllvm && \
     cmake --build build-pinllvm -t install && \
@@ -97,14 +97,14 @@ RUN tar xf llvm-project-${_SPRING_LLVM_VERSION}.src.tar.xz && \
 
 FROM builder AS build
 
-ARG SPRING_BUILD_JOBS
+ARG HELIOS_BUILD_JOBS
 
-# Yuck: This places the source at the same location as spring's CI (build.yaml, build_base.yaml). Unfortunately this location only matches
-#       when build.yaml etc are being run from a repository named spring.
-COPY / /__w/spring/spring
-RUN cmake -S /__w/spring/spring -B build -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -GNinja && \
-    cmake --build build -t package -- ${SPRING_BUILD_JOBS:+-j$SPRING_BUILD_JOBS} && \
-    /__w/spring/spring/tools/tweak-deb.sh build/pureeos-spring_*.deb
+# Yuck: This places the source at the same location as helios's CI (build.yaml, build_base.yaml). Unfortunately this location only matches
+#       when build.yaml etc are being run from a repository named helios.
+COPY / /__w/helios/helios
+RUN cmake -S /__w/helios/helios -B build -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -GNinja && \
+    cmake --build build -t package -- ${HELIOS_BUILD_JOBS:+-j$HELIOS_BUILD_JOBS} && \
+    /__w/helios/helios/tools/tweak-deb.sh build/pureeos-helios_*.deb
 
 FROM scratch AS exporter
 COPY --from=build /build/*.deb /build/*.tar.* /

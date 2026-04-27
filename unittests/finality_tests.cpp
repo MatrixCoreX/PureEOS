@@ -692,7 +692,7 @@ BOOST_FIXTURE_TEST_CASE(second_set_finalizers, finality_test_cluster<4>) { try {
 
 } FC_LOG_AND_RETHROW() }
 
-// verify issue https://github.com/PureEOSIO/spring/issues/130 is fixed
+// verify issue https://github.com/PureEOSIO/helios/issues/130 is fixed
 // ---------------------------------------------------------------------
 BOOST_FIXTURE_TEST_CASE(finality_skip, finality_test_cluster<4>) { try {
    produce_and_push_block();

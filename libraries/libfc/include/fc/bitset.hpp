@@ -11,7 +11,7 @@
 namespace fc {
 
 // -------------------------------------------------------------------------------
-//      see https://github.com/PureEOSIO/spring/wiki/ABI-1.3:-bitset-type
+//      see https://github.com/PureEOSIO/helios/wiki/ABI-1.3:-bitset-type
 // -------------------------------------------------------------------------------
 
 

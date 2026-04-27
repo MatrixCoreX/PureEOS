@@ -19,8 +19,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/block_log_retain_blocks_test.py ${CMA
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bridge_for_fork_test_shape.json ${CMAKE_CURRENT_BINARY_DIR}/bridge_for_fork_test_shape.json COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cluster_launcher.py ${CMAKE_CURRENT_BINARY_DIR}/cluster_launcher.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/distributed-transactions-test.py ${CMAKE_CURRENT_BINARY_DIR}/distributed-transactions-test.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/spring_util_bls_test.py ${CMAKE_CURRENT_BINARY_DIR}/spring_util_bls_test.py COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/spring_util_snapshot_info_test.py ${CMAKE_CURRENT_BINARY_DIR}/spring_util_snapshot_info_test.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/helios_util_bls_test.py ${CMAKE_CURRENT_BINARY_DIR}/helios_util_bls_test.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/helios_util_snapshot_info_test.py ${CMAKE_CURRENT_BINARY_DIR}/helios_util_snapshot_info_test.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sample-cluster-map.json ${CMAKE_CURRENT_BINARY_DIR}/sample-cluster-map.json COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/restart-scenarios-test.py ${CMAKE_CURRENT_BINARY_DIR}/restart-scenarios-test.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/terminate-scenarios-test.py ${CMAKE_CURRENT_BINARY_DIR}/terminate-scenarios-test.py COPYONLY)
@@ -115,8 +115,8 @@ else()
   set(UNSHARE "")
 endif()
 
-option(SPRING_ENABLE_RELEASE_BUILD_TEST "Enables a test that verifies nodeos was compiled with compiler options typical for a release build" On)
-if(SPRING_ENABLE_RELEASE_BUILD_TEST)
+option(HELIOS_ENABLE_RELEASE_BUILD_TEST "Enables a test that verifies nodeos was compiled with compiler options typical for a release build" On)
+if(HELIOS_ENABLE_RELEASE_BUILD_TEST)
   add_p_test(NAME release-build-test COMMAND tests/release-build.sh)
 endif()
 
@@ -284,8 +284,8 @@ add_np_test(NAME cli_test COMMAND tests/cli_test.py)
 add_np_test(NAME lib_advance_test COMMAND tests/lib_advance_test.py -v ${UNSHARE})
 add_np_test(NAME lib_advance_if_test COMMAND tests/lib_advance_test.py --activate-if -v ${UNSHARE})
 
-add_p_test(NAME spring_util_bls_test COMMAND tests/spring_util_bls_test.py)
-add_p_test(NAME spring_util_snapshot_info_test COMMAND tests/spring_util_snapshot_info_test.py)
+add_p_test(NAME helios_util_bls_test COMMAND tests/helios_util_bls_test.py)
+add_p_test(NAME helios_util_snapshot_info_test COMMAND tests/helios_util_snapshot_info_test.py)
 
 add_np_test(NAME http_plugin_test COMMAND tests/http_plugin_test.py ${UNSHARE} TIMEOUT 100)
 

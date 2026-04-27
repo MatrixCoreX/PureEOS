@@ -6,13 +6,13 @@
 namespace eosio { namespace chain {
 
    /**
-    * @brief limits for a kv database: NOT IN USE for spring
+    * @brief limits for a kv database: NOT IN USE for helios
     *
     * Each database (ram or disk, currently) has its own limits for these parameters.
     * The key and value limits apply when adding or modifying elements.  They may be reduced
     * below existing database entries.
     * 
-    * Current uses of kv_database_config were removed in Spring 1.0.
+    * Current uses of kv_database_config were removed in Helios 1.0.
     * Do not use it in the future.
     *
     * The file is kept for backward compatibilities as kv_database_config was used

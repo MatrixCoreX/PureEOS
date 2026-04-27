@@ -16,10 +16,9 @@
 int main(int argc, char** argv) {
    fc::logger::get(DEFAULT_LOGGER).set_log_level(fc::log_level::debug);
 
-   CLI::App app{"Spring Command Line Utility"};
+   CLI::App app{"Helios Command Line Utility"};
 
-   // custom leap formatter
-   auto fmt = std::make_shared<CLI::SpringFormatter>();
+   auto fmt = std::make_shared<CLI::Formatter>();
    app.formatter(fmt);
 
    app.set_help_all_flag("--help-all", "Show all help");

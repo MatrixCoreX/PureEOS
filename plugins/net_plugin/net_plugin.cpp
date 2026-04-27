@@ -4451,7 +4451,7 @@ namespace eosio {
            "   myprod,myhostname.com:9876,198.51.100.1\n"
            "   myprod,myhostname2.com:9876,[2001:0db8:85a3:0000:0000:8a2e:0370:7334]"
            )
-         ( "agent-name", bpo::value<string>()->default_value("Spring {version}"),
+         ( "agent-name", bpo::value<string>()->default_value("Helios {version}"),
            "The name supplied to identify this node amongst the peers. Placeholder {version} can be specified to automatically insert the node's version.")
          ( "allowed-connection", bpo::value<vector<string>>()->multitoken()->default_value({"any"}, "any"), "Can be 'any' or 'producers' or 'specified' or 'none'. If 'specified', peer-key must be specified at least once. If only 'producers', peer-key is not required. 'producers' and 'specified' may be combined.")
          ( "peer-key", bpo::value<vector<string>>()->composing()->multitoken(), "Optional public key of peer allowed to connect.  May be used multiple times.")
@@ -4886,7 +4886,7 @@ namespace eosio {
          // it was syncing and had processed blocks into the fork database but not yet applied them.
          // If the node was shutdown via terminate-at-block, the current expectation is that the node can be restarted
          // to examine the state at which it was shutdown. For now, we will only process these blocks if there are
-         // peers configured. This is a bit of a hack for Spring 1.0.0 until we can add a proper
+         // peers configured. This is a bit of a hack for Helios 1.0.0 until we can add a proper
          // pause-at-block (issue #570) which could be used to explicitly request a node to not process beyond
          // a specified block.
          my_impl->producer_plug->process_blocks();

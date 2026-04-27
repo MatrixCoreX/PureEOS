@@ -91,7 +91,7 @@ struct block_header_state : fc::reflect_init {
    proposer_policy_ptr                 active_proposer_policy;  // producer authority schedule, supports `digest()`
 
    /*
-    Tracking proposer policy transition is based on https://github.com/PureEOSIO/spring/issues/454
+    Tracking proposer policy transition is based on https://github.com/PureEOSIO/helios/issues/454
 
     1. If latest_proposed_proposer_policy is not nullopt and its proposal_time
        indicates that it was proposed in a round before the prior round,

@@ -295,7 +295,7 @@ private:
          return;
 
       const uint32_t prune_to_num = _end_block - prune_config->prune_blocks;
-      ///TODO: we should cap this to the lowest position there are any active entries reading from, see https://github.com/PureEOSIO/spring/pull/237
+      ///TODO: we should cap this to the lowest position there are any active entries reading from, see https://github.com/PureEOSIO/helios/pull/237
       uint64_t prune_to_pos = get_pos(prune_to_num);
       log.punch_hole(fc::raw::pack_size(log_header()), prune_to_pos);
 

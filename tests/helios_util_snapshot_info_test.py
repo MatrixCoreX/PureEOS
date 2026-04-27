@@ -88,10 +88,10 @@ def test_success():
         with gzip.open(test['file'], 'rb') as compressed_snap_file:
             with tempfile.NamedTemporaryFile('wb') as uncompressed_snap_file:
                 shutil.copyfileobj(compressed_snap_file, uncompressed_snap_file)
-                assert(test['result'] == json.loads(Utils.processSpringUtilCmd(f"snapshot info {uncompressed_snap_file.name}", "do snap info", silentErrors=False, exitOnError=True)))
+                assert(test['result'] == json.loads(Utils.processHeliosUtilCmd(f"snapshot info {uncompressed_snap_file.name}", "do snap info", silentErrors=False, exitOnError=True)))
 
 def test_failure():
-    assert(None == Utils.processSpringUtilCmd("snapshot info nonexistentfile.bin", "do snap info"))
+    assert(None == Utils.processHeliosUtilCmd("snapshot info nonexistentfile.bin", "do snap info"))
 
 try:
     test_success()

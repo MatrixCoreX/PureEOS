@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE( generated_code_size_limit ) { try {
    // Generated code size can vary based on the version of LLVM in use. Since this test
    // isn't intended to detect minute differences or regressions, give the range a wide
    // berth to work on. As a single data point, LLVM11 used in reproducible builds during
-   // Spring 1.0 timeframe was 36856
+   // Helios 1.0 timeframe was 36856
    eosvmoc_config.non_whitelisted_limits.generated_code_size_limit = 20*1024;
    limit_violated_test(eosvmoc_config, "test", true);
    limit_violated_test(eosvmoc_config, "eosio.token", false); // whitelisted account, no exception

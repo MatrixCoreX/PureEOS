@@ -35,7 +35,7 @@ struct report_time {
 
    void report() {
       const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - _start).count() / 1000;
-      ilog("spring-util - ${desc} took ${t} msec", ("desc", _desc)("t", duration));
+      ilog("helios-util - ${desc} took ${t} msec", ("desc", _desc)("t", duration));
    }
 
    const std::chrono::high_resolution_clock::time_point _start;

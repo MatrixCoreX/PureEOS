@@ -45,8 +45,8 @@ BOOST_FIXTURE_TEST_CASE(snapshot_startup_with_fork_db, savanna_cluster::cluster_
 
 
 // -----------------------------------------------------------------------------------------------------
-// Test case demonstrating the weak masking issue (see https://github.com/PureEOSIO/spring/issues/534)
-// Because the issue is fixed in spring https://github.com/PureEOSIO/spring/pull/537, test must pass
+// Test case demonstrating the weak masking issue (see https://github.com/PureEOSIO/helios/issues/534)
+// Because the issue is fixed in helios https://github.com/PureEOSIO/helios/pull/537, test must pass
 // on all versions past that commit.
 // -----------------------------------------------------------------------------------------------------
 /*
@@ -153,16 +153,16 @@ BOOST_FIXTURE_TEST_CASE(weak_masking_issue, savanna_cluster::cluster_t) try {
 
 
 // -----------------------------------------------------------------------------------------------------
-// see https://github.com/PureEOSIO/spring/issues/621 explaining the issue that this test demonstrates.
+// see https://github.com/PureEOSIO/helios/issues/621 explaining the issue that this test demonstrates.
 //
-// The fix in https://github.com/PureEOSIO/spring/issues/534 for the weak masking issue respected a more
+// The fix in https://github.com/PureEOSIO/helios/issues/534 for the weak masking issue respected a more
 // conservative version of rule 2. This solved the safety concerns due to the weak masking issue, but it
 // was unnecessarily restrictive with respect to liveness.
 //
 // As a consequence if this liveness issue, finalizers may be stuck voting weak if the QC is not formed
 // quickly enough.
 //
-// This testcase fails prior to https://github.com/PureEOSIO/spring/issues/621 being fixed.
+// This testcase fails prior to https://github.com/PureEOSIO/helios/issues/621 being fixed.
 // -----------------------------------------------------------------------------------------------------
 /* -----------------------------------------------------------------------------------------------------
                                  testcase
@@ -534,7 +534,7 @@ BOOST_FIXTURE_TEST_CASE(validate_qc_requiring_finalizer_policies, savanna_cluste
    BOOST_REQUIRE_EQUAL(active->generation, p2);         // b6 has active finalizer policy p2
    BOOST_REQUIRE(!A.head_pending_finalizer_policy());   // and no pending finalizer policy.
 
-   // At this point, in the Spring 1.0.0 implementation (which has the bug described in issue #694),
+   // At this point, in the Helios 1.0.0 implementation (which has the bug described in issue #694),
    // policy P2 is lost from the block_header_state of B6, which is the source of the problem
 
    auto b6_snapshot = A.snapshot();
@@ -694,8 +694,8 @@ static void sync_replayed_blockchain(const std::filesystem::path& ref_blockchain
 
 // ----------------------------------------------------------------------------------------------------
 // For issue #694, we need to change the finality core of the `block_header_state`, but we want to
-// ensure that this doesn't create a consensus incompatibility with Spring 1.0.0, so the blocks created
-// with newer versions remain compatible (and linkable) with blocks by Spring 1.0.0.
+// ensure that this doesn't create a consensus incompatibility with Helios 1.0.0, so the blocks created
+// with newer versions remain compatible (and linkable) with blocks by Helios 1.0.0.
 //
 // This test adds a utility that saves reference blockchain data and checks for
 // regression in compatibility of syncing and replaying the reference blockchain data.
@@ -962,7 +962,7 @@ produce a block that utilizes the delayed vote is the time slot (t + d) where ..
 ¹ ... d = 1.
 ‡ ... d is infinite meaning the vote may never be received by producer p.
 
-steps mentioned in comments below refer to issue https://github.com/PureEOSIO/spring/issues/751
+steps mentioned in comments below refer to issue https://github.com/PureEOSIO/helios/issues/751
 
 Diagram below shows the timeline for nodes A, B, C and D receiving blocks b1 through b9.
 (x) marks the producer of the block.

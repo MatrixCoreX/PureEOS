@@ -99,7 +99,7 @@ static int eos_vm_oc_use_fsgsbase() {
    const int argc = *(int*)(_dl_argv - 1);
    char** my_environ = _dl_argv + argc + 1;
    while(*my_environ != NULL) {
-      const char disable_str[] = "SPRING_DISABLE_FSGSBASE";
+      const char disable_str[] = "HELIOS_DISABLE_FSGSBASE";
       if(strncmp(*my_environ++, disable_str, strlen(disable_str)) == 0)
          return 0;
    }

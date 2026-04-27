@@ -8,7 +8,7 @@ content_title: Nodeos
 
 ## Installation
 
-`nodeos` is distributed as part of the [PureEOS software suite](https://github.com/PureEOSIO/spring). To install `nodeos`, visit the [PureEOS Software Installation](../00_install/index.md) section.
+`nodeos` is distributed as part of the [PureEOS software suite](https://github.com/PureEOSIO/helios). To install `nodeos`, visit the [PureEOS Software Installation](../00_install/index.md) section.
 
 ## Explore
 

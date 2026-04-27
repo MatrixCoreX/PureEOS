@@ -12,7 +12,7 @@ The `bios-boot-tutorial.py` script simulates the bios boot sequence.
 
 ## Steps
 
-1. Install the latest [Spring binaries](https://github.com/PureEOSIO/spring/releases) by following the steps provided in the README.
+1. Install the latest [Helios binaries](https://github.com/PureEOSIO/helios/releases) by following the steps provided in the README.
 
 2. Install the latest [CDT binaries](https://github.com/PureEOSIO/cdt/releases) by following the steps provided in the README.
 
@@ -39,7 +39,7 @@ The last command in the previous step printed the contracts directory. Make note
 ```bash
 $ pip install numpy
 $ cd ~
-$ git clone -b release/*latest* https://github.com/PureEOSIO/spring
-$ cd ./spring/tutorials/bios-boot-tutorial/
+$ git clone -b release/*latest* https://github.com/PureEOSIO/helios
+$ cd ./helios/tutorials/bios-boot-tutorial/
 $ python3 bios-boot-tutorial.py --cleos=cleos --nodeos=nodeos --keosd=keosd --core-contracts-dir="${CORE_CONTRACTS_DIRECTORY}" --symbol="EOS" -w -a
 ```

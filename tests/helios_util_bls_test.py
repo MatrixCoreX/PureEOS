@@ -7,9 +7,9 @@ import tempfile
 from TestHarness import Utils
 
 ###############################################################
-# spring_util_bls_test
+# helios_util_bls_test
 #
-#  Test spring-util's BLS commands.
+#  Test helios-util's BLS commands.
 #  - Create a key pair
 #  - Create a POP (Proof of Possession)
 #  - Error handlings
@@ -20,12 +20,12 @@ Print=Utils.Print
 testSuccessful=False
 
 def test_create_key_to_console():
-    rslts = Utils.processSpringUtilCmd("bls create key --to-console", "create key to console", silentErrors=False)
+    rslts = Utils.processHeliosUtilCmd("bls create key --to-console", "create key to console", silentErrors=False)
     check_create_key_results(rslts)
 
 def test_create_key_to_file():
     with tempfile.NamedTemporaryFile(mode="w+") as tmp_file:
-        Utils.processSpringUtilCmd("bls create key --file {}".format(tmp_file.name), "create key to file", silentErrors=False)
+        Utils.processHeliosUtilCmd("bls create key --file {}".format(tmp_file.name), "create key to file", silentErrors=False)
 
         tmp_file.seek(0)
         rslts = tmp_file.read()
@@ -33,7 +33,7 @@ def test_create_key_to_file():
 
 def test_create_pop_from_command_line():
     # Create a pair of keys
-    rslts = Utils.processSpringUtilCmd("bls create key --to-console", "create key to console", silentErrors=False)
+    rslts = Utils.processHeliosUtilCmd("bls create key --to-console", "create key to console", silentErrors=False)
     results = get_results(rslts)
 
     # save results
@@ -42,7 +42,7 @@ def test_create_pop_from_command_line():
     pop = results["Proof of Possession"]
 
     # use the private key to create POP
-    rslts = Utils.processSpringUtilCmd("bls create pop --private-key {}".format(private_key), "create pop from command line", silentErrors=False)
+    rslts = Utils.processHeliosUtilCmd("bls create pop --private-key {}".format(private_key), "create pop from command line", silentErrors=False)
     results = get_results(rslts)
 
     # check pop and public key are the same as those generated before
@@ -51,7 +51,7 @@ def test_create_pop_from_command_line():
 
 def test_create_pop_from_file():
     # Create a pair of keys
-    rslts = Utils.processSpringUtilCmd("bls create key --to-console", "create key to console", silentErrors=False)
+    rslts = Utils.processHeliosUtilCmd("bls create key --to-console", "create key to console", silentErrors=False)
     results = get_results(rslts)
 
     # save results
@@ -65,7 +65,7 @@ def test_create_pop_from_file():
         private_key_file.flush()
 
         # use the private key file to create POP
-        rslts = Utils.processSpringUtilCmd("bls create pop --file {}".format(private_key_file.name), "create pop from command line", silentErrors=False)
+        rslts = Utils.processHeliosUtilCmd("bls create pop --file {}".format(private_key_file.name), "create pop from command line", silentErrors=False)
         results = get_results(rslts)
 
     # check pop and public key are the same as those generated before
@@ -73,22 +73,22 @@ def test_create_pop_from_file():
     assert results["Proof of Possession"] == pop
 
 def test_create_key_error_handling():
-    # should fail with missing arguments (processSpringUtilCmd returning None)
-    assert Utils.processSpringUtilCmd("bls create key", "missing arguments") == None
+    # should fail with missing arguments (processHeliosUtilCmd returning None)
+    assert Utils.processHeliosUtilCmd("bls create key", "missing arguments") == None
 
     # should fail when both arguments are present
-    assert Utils.processSpringUtilCmd("bls create key --file out_file --to-console", "conflicting arguments") == None
+    assert Utils.processHeliosUtilCmd("bls create key --file out_file --to-console", "conflicting arguments") == None
 
 def test_create_pop_error_handling():
-    # should fail with missing arguments (processSpringUtilCmd returning None)
-    assert Utils.processSpringUtilCmd("bls create pop", "missing arguments") == None
+    # should fail with missing arguments (processHeliosUtilCmd returning None)
+    assert Utils.processHeliosUtilCmd("bls create pop", "missing arguments") == None
 
     # should fail when both arguments are present
-    assert Utils.processSpringUtilCmd("bls create pop --file private_key_file --private-key", "conflicting arguments") == None
+    assert Utils.processHeliosUtilCmd("bls create pop --file private_key_file --private-key", "conflicting arguments") == None
 
     # should fail when private key file does not exist
     with tempfile.NamedTemporaryFile(mode="w+") as temp_file:
-        assert Utils.processSpringUtilCmd("bls create pop --file {}".format(temp_file.name), "private file not existing") == None
+        assert Utils.processHeliosUtilCmd("bls create pop --file {}".format(temp_file.name), "private file not existing") == None
 
 def check_create_key_results(rslts): 
     results = get_results(rslts)

@@ -7,7 +7,7 @@ namespace eosio::chain {
 // -------------------------------------------------------------------------------------------
 // prior to writing magic and version numbers, we simply serialized the class (*this) to
 // file. Let's call this the implicit version 0, which is not supported anymore in
-// Spring 1.0.1 and above.
+// Helios 1.0.1 and above.
 // However, we need to make sure that `chain_head_magic` can't match the tag of a std::variant
 // -------------------------------------------------------------------------------------------
 constexpr uint64_t chain_head_magic   = 0xf1f2f3f4f4f3f2f1;
@@ -45,7 +45,7 @@ bool block_handle::read(const std::filesystem::path& state_file) {
       fc::raw::unpack(f, version);
 
       EOS_ASSERT(magic == chain_head_magic && version == chain_head_version, chain_exception,
-                 "Error reading `chain_head.dat` file. It is likely a Spring 1.0.0 version which is not supported by Spring 1.0.1 and above. "
+                 "Error reading `chain_head.dat` file. It is likely a Helios 1.0.0 version which is not supported by Helios 1.0.1 and above. "
                  "The best course of action might be to restart from a snapshot" );
 
       fc::raw::unpack(f, *this);

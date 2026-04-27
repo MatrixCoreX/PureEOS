@@ -8,7 +8,7 @@ content_title: Cleos
 
 ## Installation
 
-`cleos` is distributed as part of the [PureEOS software suite](https://github.com/PureEOSIO/spring). To install `cleos` just visit the [PureEOS Software Installation](../00_install/index.md) section.
+`cleos` is distributed as part of the [PureEOS software suite](https://github.com/PureEOSIO/helios). To install `cleos` just visit the [PureEOS Software Installation](../00_install/index.md) section.
 
 ## Using Cleos
 

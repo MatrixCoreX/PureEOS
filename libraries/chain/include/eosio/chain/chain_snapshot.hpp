@@ -23,14 +23,14 @@ struct chain_snapshot_header {
     *   5: Updated for v3.0.0 eos features:
     *         - chain_config update
     *   6: Updated for v3.1.0 release
-    *   7: Updated for Spring v1.0.0 release:
+    *   7: Updated for Helios v1.0.0 release:
     *         - Savanna consensus support
     *         - Each chainbase contract table placed in individual snapshot section instead of commingled "contract_tables" section
-    *   8: Updated for Spring v1.0.1 release:
+    *   8: Updated for Helios v1.0.1 release:
     *         - new member `latest_qc_claim_block_active_finalizer_policy` in `block_header_state`
     *         - 2 new members (`pending` and `active` policy generations in every `block_ref` of the `finality_core`)
-    *         - Spring v1.0.1 is incompatible with v7 format, but can read previous formats
-    *   9: Updated for Spring v2.0.0 release:
+    *         - Helios v1.0.1 is incompatible with v7 format, but can read previous formats
+    *   9: Updated for Helios v2.0.0 release:
     *         - chain_config_v2 update for new members `max_sync_call_depth` and `max_sync_call_data_size`
     */
 

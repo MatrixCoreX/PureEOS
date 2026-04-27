@@ -112,7 +112,7 @@ try:
     shipNode.kill(signal.SIGTERM) # shut down ship node for next test
 
     '''
-    Test failure 1: index file was not regenerated. Reenable this after https://github.com/PureEOSIO/spring/issues/990 is fixed.
+    Test failure 1: index file was not regenerated. Reenable this after https://github.com/PureEOSIO/helios/issues/990 is fixed.
 
     #-------- Index file last entry is corrupted. It should be regenerated at restart.
     with open(stateHistoryIndex, 'rb+') as stateHistoryIndexFile: # opened as binary file
@@ -189,7 +189,7 @@ try:
     corruptedHeaderTest(8, b'\x00\x01\x02\x03\x04\x05\x06\x07', shipNode) # 8 is block_id's position
 
     '''
-    # Test failure 2: Reenable this after https://github.com/PureEOSIO/spring/issues/989 is fixed.
+    # Test failure 2: Reenable this after https://github.com/PureEOSIO/helios/issues/989 is fixed.
     #-------- Corrupt last entry's position . It should be repaired.
     # After producer node restarts, head on SHiP node should advance.
     Print("last entry postion corruption test")
@@ -215,7 +215,7 @@ try:
     '''
 
     '''
-    # Test failure 3: Reenable this after https://github.com/PureEOSIO/spring/issues/989 is fixed.
+    # Test failure 3: Reenable this after https://github.com/PureEOSIO/helios/issues/989 is fixed.
     #-------- Corrupt last entry's header. It should be repaired.
     # After producer node restarts, head on SHiP node should advance.
     Print("last entry header corruption test")
@@ -264,7 +264,7 @@ try:
     shipNode.kill(signal.SIGTERM) # shut down it for next test
 
     '''
-    # Test failure 4: Reenable this after issue https://github.com/PureEOSIO/spring/issues/989 fixed.
+    # Test failure 4: Reenable this after issue https://github.com/PureEOSIO/helios/issues/989 fixed.
     #-------- Corrupt last entry of log file. It should be repaired
     # and head should advance
     with open(stateHistoryLog, 'rb+') as stateHistoryLogFile: # opened as binary file

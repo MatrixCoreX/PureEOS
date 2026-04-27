@@ -238,7 +238,7 @@ try:
                     errorExit(f"Requested range exceeds sync-fetch-span {sync_fetch_span}: {line}")
                 if irreversible:
                     # for now just use a larger tolerance, later when the logs include calculated lib this can be more precise
-                    # See https://github.com/PureEOSIO/spring/issues/806
+                    # See https://github.com/PureEOSIO/helios/issues/806
                     if activateIF:
                         if endBlockNum > fhead and fhead > libNum and endBlockNum - fhead > (sync_fetch_span*10):
                             errorExit(f"Requested range too far head of fork head {fhead} in irreversible mode, sync-fetch-span {sync_fetch_span}: {line}")
@@ -250,7 +250,7 @@ try:
                     if endBlockNum > fhead and fhead > libNum and endBlockNum - fhead > (sync_fetch_span*2-1):
                         errorExit(f"Requested range too far head of fork head {fhead} sync-fetch-span {sync_fetch_span}: {line}")
 
-        # See https://github.com/PureEOSIO/spring/issues/81 for fix to reduce the number of expected unlinkable blocks
+        # See https://github.com/PureEOSIO/helios/issues/81 for fix to reduce the number of expected unlinkable blocks
         # Test verifies LIB is advancing, check to see that not too many unlinkable block exceptions are generated
         # while syncing up to head.
         if not catchupNode.verifyUnlinkableBlocksExpected(sync_fetch_span):

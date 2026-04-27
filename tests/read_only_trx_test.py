@@ -108,7 +108,7 @@ def startCluster():
     specificExtraNodeosArgs[pnodes]+=" --read-only-write-window-time-us "
     specificExtraNodeosArgs[pnodes]+=" 10000 "
     specificExtraNodeosArgs[pnodes]+=" --read-only-read-window-time-us "
-    specificExtraNodeosArgs[pnodes]+=" 510000 " # larger than block time to test Spring Issue #1286
+    specificExtraNodeosArgs[pnodes]+=" 510000 " # larger than block time to test Helios Issue #1286
     specificExtraNodeosArgs[pnodes]+=" --eos-vm-oc-cache-size-mb "
     specificExtraNodeosArgs[pnodes]+=" 1 " # set small so there is churn
     specificExtraNodeosArgs[pnodes]+=" --read-only-threads "
@@ -167,7 +167,7 @@ def verifyOcVirtualMemory():
             GB               = 1024 * 1024 * 1024
             maxSyncCallDepth = 16
 
-            memoryByWasmAllocators = totalThreads * maxSyncCallDepth * 8 * GB # use 16 for now. change to use actual configured max_sync_call_depth in PR https://github.com/PureEOSIO/spring/pull/1257
+            memoryByWasmAllocators = totalThreads * maxSyncCallDepth * 8 * GB # use 16 for now. change to use actual configured max_sync_call_depth in PR https://github.com/PureEOSIO/helios/pull/1257
 
             memoryPerSlice         = 8 * GB
             actionMainThreadSlices = 529

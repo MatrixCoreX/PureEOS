@@ -3034,10 +3034,10 @@ int main( int argc, char** argv ) {
 
    wallet_url = default_wallet_url;
 
-   CLI::App app{"Command Line Interface to Spring Client"};
+   CLI::App app{"Command Line Interface to Helios Client"};
 
    // custom leap formatter
-   auto fmt = std::make_shared<CLI::SpringFormatter>();
+   auto fmt = std::make_shared<CLI::Formatter>();
    app.formatter(fmt);
 
    // enable help-all, display help on error

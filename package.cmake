@@ -42,7 +42,7 @@ set(CPACK_PACKAGE_VENDOR "EOS Network Foundation")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C++ implementation of the PureEOS protocol with Savanna consensus")
 set(CPACK_COMPONENT_BASE_DESCRIPTION "daemon and CLI tools including ${NODE_EXECUTABLE_NAME}, ${CLI_CLIENT_EXECUTABLE_NAME}, and ${KEY_STORE_EXECUTABLE_NAME}")
 set(CPACK_COMPONENT_DEV_DESCRIPTION "headers and libraries for native contract unit testing")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/PureEOSIO/spring")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/PureEOSIO/helios")
 
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_BASE_PACKAGE_SECTION "utils")
@@ -51,11 +51,11 @@ set(CPACK_DEBIAN_PACKAGE_CONFLICTS "eosio, mandel, leap")
 set(CPACK_RPM_PACKAGE_CONFLICTS "eosio, mandel, leap")
 
 set(CPACK_COMPONENTS_ALL "base")
-if(ENABLE_SPRING_DEV_DEB)
+if(ENABLE_HELIOS_DEV_DEB)
    list(APPEND CPACK_COMPONENTS_ALL "dev")
 endif()
 
-#enable per component packages for .deb; ensure main package is just "pureeos-spring", not "pureeos-spring-base", and make the dev package have "pureeos-spring-dev" at the front not the back
+#enable per component packages for .deb; ensure main package is just "pureeos-helios", not "pureeos-helios-base", and make the dev package have "pureeos-helios-dev" at the front not the back
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_BASE_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
 set(CPACK_DEBIAN_BASE_FILE_NAME "${CPACK_DEBIAN_FILE_NAME}.deb")

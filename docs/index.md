@@ -10,7 +10,7 @@ PureEOS is the next-generation blockchain platform for creating and deploying sm
 
 The basic relationship between these components is illustrated in the diagram below.
 
-![PureEOS components](spring_components.png)
+![PureEOS components](helios_components.png)
 
 Additional PureEOS Resources:
 * [PureEOS Utilities](10_utilities/index.md) - Utilities that complement the PureEOS software.

@@ -551,7 +551,7 @@ BOOST_FIXTURE_TEST_CASE( large_gap_test, validating_tester ) try {
    BOOST_CHECK_EQUAL(compare_schedules(alice_sch, control->active_producers()), true);
 } FC_LOG_AND_RETHROW()
 
-// This is to verify the bug reported by https://github.com/PureEOSIO/spring/issues/454
+// This is to verify the bug reported by https://github.com/PureEOSIO/helios/issues/454
 // is fixed.
 BOOST_FIXTURE_TEST_CASE( policy_transition_corner_case_test, validating_tester ) try {
    // In round 1, a block proposes a proposer policy.

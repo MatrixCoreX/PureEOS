@@ -63,7 +63,7 @@ class Utils:
     EosClientPath=str(testBinPath / "cleos")
     MiscEosClientArgs="--no-auto-keosd"
 
-    SpringClientPath=str(testBinPath / "spring-util")
+    HeliosClientPath=str(testBinPath / "helios-util")
 
     EosWalletName="keosd"
     EosWalletPath=str(testBinPath / EosWalletName)
@@ -325,8 +325,8 @@ class Utils:
         return Utils.runCmdArrReturnJson(cmdArr, trace=trace, silentErrors=silentErrors)
 
     @staticmethod
-    def processSpringUtilCmd(cmd, cmdDesc, silentErrors=True, exitOnError=False, exitMsg=None):
-        cmd="%s %s" % (Utils.SpringClientPath, cmd)
+    def processHeliosUtilCmd(cmd, cmdDesc, silentErrors=True, exitOnError=False, exitMsg=None):
+        cmd="%s %s" % (Utils.HeliosClientPath, cmd)
         if Utils.Debug: Utils.Print("cmd: %s" % (cmd))
         if exitMsg is not None:
             exitMsg="Context: " + exitMsg
@@ -428,7 +428,7 @@ class Utils:
         else:
             unhandledEnumType(blockLogAction)
 
-        cmd="%s block-log %s --blocks-dir %s  %s%s%s" % (Utils.SpringClientPath, blockLogActionStr, blockLogLocation, outputFileStr, firstStr, lastStr)
+        cmd="%s block-log %s --blocks-dir %s  %s%s%s" % (Utils.HeliosClientPath, blockLogActionStr, blockLogLocation, outputFileStr, firstStr, lastStr)
         if Utils.Debug: Utils.Print("cmd: %s" % (cmd))
         rtn=None
         try:

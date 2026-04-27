@@ -11,7 +11,7 @@ from TestHarness import Account, Cluster, TestHelper, Utils, WalletMgr
 #
 # We had a bug that resources required by sync calls (in particular for OC) were
 # not allocated on restart if sync_call protocol feature had already been activated
-# https://github.com/PureEOSIO/spring/issues/1847
+# https://github.com/PureEOSIO/helios/issues/1847
 #
 # This test activates sync_call protocol feature, does a snapshot, kills the node,
 # restarts the node, pushes a transaction containing 2-levels of nested sync calls,

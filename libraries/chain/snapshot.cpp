@@ -603,7 +603,7 @@ fc::variant snapshot_info(snapshot_reader& snapshot) {
       section.read_row(header);
    });
    if(header.version < chain_snapshot_header::minimum_compatible_version || header.version > chain_snapshot_header::current_version)
-      wlog("Snapshot version ${v} is not supported by this version of spring-util, trying to parse anyways...");
+      wlog("Snapshot version ${v} is not supported by this version of helios-util, trying to parse anyways...");
 
    chain_id_type chain_id = chain_id_type::empty_chain_id();
    if(header.version <= 2) {

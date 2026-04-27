@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(pending_promoted_proposed_not_promoted_test) try {
 // finalizer_policies_change_edge_case_strong_qc_test and
 // finalizer_policies_change_edge_case_weak_qc_test are for demonstrating
 // the finalizer policy change edge cases have been resolved
-// (https://github.com/PureEOSIO/spring/issues/292).
+// (https://github.com/PureEOSIO/helios/issues/292).
 //
 // Denote active finalizer policy as A, and two proposed finalizer policies as B and C.
 // In the previous implementation:

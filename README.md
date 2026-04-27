@@ -1,4 +1,4 @@
-# Spring
+# Helios
 
 1. [Branches](#branches)
 2. [Supported Operating Systems](#supported-operating-systems)
@@ -6,10 +6,10 @@
 4. [Build and Install from Source](#build-and-install-from-source)
 5. [Bash Autocomplete](#bash-autocomplete)
 
-Spring is a C++ implementation of the [PureEOS](https://github.com/PureEOSIO) protocol with support for Savanna consensus. It contains blockchain node software and supporting tools for developers and node operators.
+Helios is a C++ implementation of the [PureEOS](https://github.com/PureEOSIO) protocol with support for Savanna consensus. It contains blockchain node software and supporting tools for developers and node operators.
 
 ## Branches
-The `main` branch is the development branch; do not use it for production. Refer to the [release page](https://github.com/PureEOSIO/spring/releases) for current information on releases, pre-releases, and obsolete releases, as well as the corresponding tags for those releases.
+The `main` branch is the development branch; do not use it for production. Refer to the [release page](https://github.com/PureEOSIO/helios/releases) for current information on releases, pre-releases, and obsolete releases, as well as the corresponding tags for those releases.
 
 ## Supported Operating Systems
 We currently support the following operating systems.
@@ -24,16 +24,16 @@ cat /etc/upstream-release/lsb-release
 Your best bet is to follow the instructions for your Ubuntu base, but we make no guarantees.
 
 ## Binary Installation
-This is the fastest way to get started. From the [latest release](https://github.com/PureEOSIO/spring/releases/latest) page, download a binary for one of our [supported operating systems](#supported-operating-systems), or visit the [release tags](https://github.com/PureEOSIO/spring/releases) page to download a binary for a specific version of Spring.
+This is the fastest way to get started. From the [latest release](https://github.com/PureEOSIO/helios/releases/latest) page, download a binary for one of our [supported operating systems](#supported-operating-systems), or visit the [release tags](https://github.com/PureEOSIO/helios/releases) page to download a binary for a specific version of Helios.
 
 Once you have a `*.deb` file downloaded for your version of Ubuntu, you can install it as follows:
 ```bash
 sudo apt-get update
-sudo apt-get install -y ~/Downloads/spring*.deb
+sudo apt-get install -y ~/Downloads/helios*.deb
 ```
 Your download path may vary. If you are in an Ubuntu docker container, omit `sudo` because you run as `root` by default.
 
-Finally, verify Spring was installed correctly:
+Finally, verify Helios was installed correctly:
 ```bash
 nodeos --full-version
 ```
@@ -43,7 +43,7 @@ v1.0.1-9026a03c09c9b4f93edca696b5eef259f0ab96b3
 ```
 
 ## Build and Install from Source
-You can also build and install Spring from source.
+You can also build and install Helios from source.
 
 ### Prerequisites
 You will need to build on a [supported operating system](#supported-operating-systems).
@@ -61,29 +61,29 @@ Requirements to build:
 - zlib
 
 ### Step 1 - Clone
-If you don't have the Spring repo cloned to your computer yet, [open a terminal](https://itsfoss.com/open-terminal-ubuntu) and navigate to the folder where you want to clone the Spring repository:
+If you don't have the Helios repo cloned to your computer yet, [open a terminal](https://itsfoss.com/open-terminal-ubuntu) and navigate to the folder where you want to clone the Helios repository:
 ```bash
 cd ~/Downloads
 ```
-Clone Spring using either HTTPS...
+Clone Helios using either HTTPS...
 ```bash
-git clone --recursive https://github.com/PureEOSIO/spring.git
+git clone --recursive https://github.com/PureEOSIO/helios.git
 ```
 ...or SSH:
 ```bash
-git clone --recursive git@github.com:PureEOSIO/spring.git
+git clone --recursive git@github.com:PureEOSIO/helios.git
 ```
 
 > ℹ️ **HTTPS vs. SSH Clone** ℹ️  
-Both an HTTPS or SSH git clone will yield the same result - a folder named `spring` containing our source code. It doesn't matter which type you use.
+Both an HTTPS or SSH git clone will yield the same result - a folder named `helios` containing our source code. It doesn't matter which type you use.
 
 Navigate into that folder:
 ```bash
-cd spring
+cd helios
 ```
 
 ### Step 2 - Checkout Release Tag or Branch
-Choose which [release](https://github.com/PureEOSIO/spring/releases) or [branch](#branches) you would like to build, then check it out. If you are not sure, use the [latest release](https://github.com/PureEOSIO/spring/releases/latest). For example, if you want to build release 1.0.1 then you would check it out using its tag, `v1.0.1`. In the example below, replace `v0.0.0` with your selected release tag accordingly:
+Choose which [release](https://github.com/PureEOSIO/helios/releases) or [branch](#branches) you would like to build, then check it out. If you are not sure, use the [latest release](https://github.com/PureEOSIO/helios/releases/latest). For example, if you want to build release 1.0.1 then you would check it out using its tag, `v1.0.1`. In the example below, replace `v0.0.0` with your selected release tag accordingly:
 ```bash
 git fetch --all --tags
 git checkout v0.0.0
@@ -99,22 +99,22 @@ git submodule update --init --recursive
 Select build instructions below for a [pinned build](#pinned-build) (preferred) or an [unpinned build](#unpinned-build).
 
 > ℹ️ **Pinned vs. Unpinned Build** ℹ️  
-We have two types of builds for Spring: "pinned" and "unpinned." A pinned build is a reproducible build with the build environment and dependency versions fixed by the development team. In contrast, unpinned builds use the dependency versions provided by the build platform. Unpinned builds tend to be quicker because the pinned build environment must be built from scratch. Pinned builds, in addition to being reproducible, ensure the compiler remains the same between builds of different Spring major versions. Spring requires the compiler version to remain the same, otherwise its state might need to be recovered from a portable snapshot or the chain needs to be replayed.
+We have two types of builds for Helios: "pinned" and "unpinned." A pinned build is a reproducible build with the build environment and dependency versions fixed by the development team. In contrast, unpinned builds use the dependency versions provided by the build platform. Unpinned builds tend to be quicker because the pinned build environment must be built from scratch. Pinned builds, in addition to being reproducible, ensure the compiler remains the same between builds of different Helios major versions. Helios requires the compiler version to remain the same, otherwise its state might need to be recovered from a portable snapshot or the chain needs to be replayed.
 
 > ⚠️ **A Warning On Parallel Compilation Jobs (`-j` flag)** ⚠️  
-When building C/C++ software, often the build is performed in parallel via a command such as `make -j "$(nproc)"` which uses all available CPU threads. However, be aware that some compilation units (`*.cpp` files) in Spring will consume nearly 4GB of memory. Failures due to memory exhaustion will typically, but not always, manifest as compiler crashes. Using all available CPU threads may also prevent you from doing other things on your computer during compilation. For these reasons, consider reducing this value.
+When building C/C++ software, often the build is performed in parallel via a command such as `make -j "$(nproc)"` which uses all available CPU threads. However, be aware that some compilation units (`*.cpp` files) in Helios will consume nearly 4GB of memory. Failures due to memory exhaustion will typically, but not always, manifest as compiler crashes. Using all available CPU threads may also prevent you from doing other things on your computer during compilation. For these reasons, consider reducing this value.
 
 > 🐋 **Docker and `sudo`** 🐋  
 If you are in an Ubuntu docker container, omit `sudo` from all commands because you run as `root` by default. Most other docker containers also exclude `sudo`, especially Debian-family containers. If your shell prompt is a hash tag (`#`), omit `sudo`.
 
 #### Pinned Reproducible Build
-The pinned reproducible build requires Docker. Make sure you are in the root of the `spring` repo and then run
+The pinned reproducible build requires Docker. Make sure you are in the root of the `helios` repo and then run
 ```bash
 DOCKER_BUILDKIT=1 docker build -f tools/reproducible.Dockerfile -o . .
 ```
 This command will take a substantial amount of time because a toolchain is built from scratch. Upon completion, the current directory will contain a built `.deb` and `.tar.gz` (you can change the `-o .` argument to place the output in a different directory). If needing to reduce the number of parallel jobs as warned above, run the command as,
 ```bash
-DOCKER_BUILDKIT=1 docker build --build-arg SPRING_BUILD_JOBS=4 -f tools/reproducible.Dockerfile -o . .
+DOCKER_BUILDKIT=1 docker build --build-arg HELIOS_BUILD_JOBS=4 -f tools/reproducible.Dockerfile -o . .
 ```
 
 #### Unpinned Build
@@ -135,7 +135,7 @@ sudo apt-get install -y \
         zlib1g-dev
 ```
 
-To build, make sure you are in the root of the `spring` repo, then run the following command:
+To build, make sure you are in the root of the `helios` repo, then run the following command:
 ```bash
 mkdir -p build
 cd build
@@ -148,7 +148,7 @@ make -j "$(nproc)" package
 Now you can optionally [test](#step-4---test) your build, or [install](#step-5---install) the `*.deb` binary packages, which will be in the root of your build directory.
 
 ### Step 4 - Test
-Spring supports the following test suites:
+Helios supports the following test suites:
 
 Test Suite | Test Type | [Test Size](https://testing.googleblog.com/2010/12/test-sizes.html) | Notes
 ---|:---:|:---:|---
@@ -162,7 +162,7 @@ When building from source, we recommended running at least the [parallelizable t
 #### Parallelizable Tests
 This test suite consists of any test that does not require shared resources, such as file descriptors, specific folders, or ports, and can therefore be run concurrently in different threads without side effects (hence, easily parallelized). These are mostly unit tests and [small tests](https://testing.googleblog.com/2010/12/test-sizes.html) which complete in a short amount of time.
 
-You can invoke them by running `ctest` from a terminal in your Spring build directory and specifying the following arguments:
+You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
 ```bash
 ctest -j "$(nproc)" -LE _tests
 ```
@@ -170,7 +170,7 @@ ctest -j "$(nproc)" -LE _tests
 #### WASM Spec Tests
 The WASM spec tests verify that our WASM execution engine is compliant with the web assembly standard. These are very [small](https://testing.googleblog.com/2010/12/test-sizes.html), very fast unit tests. However, there are over a thousand of them so the suite can take a little time to run. These tests are extremely CPU-intensive.
 
-You can invoke them by running `ctest` from a terminal in your Spring build directory and specifying the following arguments:
+You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
 ```bash
 ctest -j "$(nproc)" -L wasm_spec_tests
 ```
@@ -179,7 +179,7 @@ We have observed severe performance issues when multiple virtual machines are ru
 #### Serial Tests
 The serial test suite consists of [medium](https://testing.googleblog.com/2010/12/test-sizes.html) component or integration tests that use specific paths, ports, rely on process names, or similar, and cannot be run concurrently with other tests. Serial tests can be sensitive to other software running on the same host and they may `SIGKILL` other `nodeos` processes. These tests take a moderate amount of time to complete, but we recommend running them.
 
-You can invoke them by running `ctest` from a terminal in your Spring build directory and specifying the following arguments:
+You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
 ```bash
 ctest -L "nonparallelizable_tests"
 ```
@@ -187,18 +187,18 @@ ctest -L "nonparallelizable_tests"
 #### Long-Running Tests
 The long-running tests are [medium-to-large](https://testing.googleblog.com/2010/12/test-sizes.html) integration tests that rely on shared resources and take a very long time to run.
 
-You can invoke them by running `ctest` from a terminal in your Spring build directory and specifying the following arguments:
+You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
 ```bash
 ctest -L "long_running_tests"
 ```
 
 ### Step 5 - Install
-Once you have [built](#step-3---build-the-source-code) Spring and [tested](#step-4---test) your build, you can install Spring on your system. Don't forget to omit `sudo` if you are running in a docker container.
+Once you have [built](#step-3---build-the-source-code) Helios and [tested](#step-4---test) your build, you can install Helios on your system. Don't forget to omit `sudo` if you are running in a docker container.
 
-We recommend installing the binary package you just built. Navigate to your Spring build directory in a terminal and run this command:
+We recommend installing the binary package you just built. Navigate to your Helios build directory in a terminal and run this command:
 ```bash
 sudo apt-get update
-sudo apt-get install -y ./spring_*.deb
+sudo apt-get install -y ./helios_*.deb
 ```
 
 It is also possible to install using `make` instead:
@@ -207,8 +207,8 @@ sudo make install
 ```
 
 ## Bash Autocomplete
-`cleos` and `spring-util` offer a substantial amount of functionality. Consider using bash's autocompletion support which makes it easier to discover all their various options.
+`cleos` and `helios-util` offer a substantial amount of functionality. Consider using bash's autocompletion support which makes it easier to discover all their various options.
 
 For our provided `.deb` packages simply install Ubuntu's `bash-completion` package: `apt-get install bash-completion` (you may need to log out/in after installing).
 
-If building from source install the `build/programs/cleos/bash-completion/completions/cleos` and `build/programs/spring-util/bash-completion/completions/spring-util` files to your bash-completion directory. Refer to [bash-completion's documentation](https://github.com/scop/bash-completion#faq) on the possible install locations.
+If building from source install the `build/programs/cleos/bash-completion/completions/cleos` and `build/programs/helios-util/bash-completion/completions/helios-util` files to your bash-completion directory. Refer to [bash-completion's documentation](https://github.com/scop/bash-completion#faq) on the possible install locations.

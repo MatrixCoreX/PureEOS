@@ -8,7 +8,7 @@ content_title: Keosd
 
 ## Installation
 
-`keosd` is distributed as part of the [PureEOS software suite](https://github.com/PureEOSIO/spring). To install `keosd` just visit the [PureEOS Software Installation](../00_install/index.md) section.
+`keosd` is distributed as part of the [PureEOS software suite](https://github.com/PureEOSIO/helios). To install `keosd` just visit the [PureEOS Software Installation](../00_install/index.md) section.
 
 ## Operation
 

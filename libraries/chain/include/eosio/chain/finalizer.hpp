@@ -19,7 +19,7 @@
 //       are an essential part of the Savanna consensus algorithm.
 //     - every time a finalizer votes, it may update its own safety info in memory
 //     - finalizer safety info is appropriately initialized (iff not already present
-//       in the persistent file) at Spring startup.
+//       in the persistent file) at Helios startup.
 //
 //  my_finalizers_t:
 //  ---------------
@@ -77,9 +77,9 @@ namespace eosio::chain {
    struct my_finalizers_t {
    public:
       ///
-      /// Version 0: Spring 1.0.0 RC2 - File has fixed packed sizes with inactive safety info written to the end
+      /// Version 0: Helios 1.0.0 RC2 - File has fixed packed sizes with inactive safety info written to the end
       ///                               of the file. Consists of [finalizer public_key, FSI]..
-      /// Version 1: Spring 1.0.0 RC3 - File has inactive FSIs written at the beginning of the file. Uses crc32
+      /// Version 1: Helios 1.0.0 RC3 - File has inactive FSIs written at the beginning of the file. Uses crc32
       ///                               checksum to verify data on read. Removes FSI
       ///                               votes_forked_since_latest_strong_vote from the version 0 FSI and replaces it
       ///                               with other_branch_latest_time.
@@ -103,7 +103,7 @@ namespace eosio::chain {
       mutable persist_file_t            persist_file{cfile_ds};// we want to calculate checksum
       finalizer_map_t                   finalizers;            // the active finalizers for this node, loaded at startup, not mutated afterwards
       fsi_map                           inactive_safety_info;  // loaded at startup, not mutated afterwards
-      fsi_t                             default_fsi = fsi_t::unset_fsi(); // default provided at spring startup
+      fsi_t                             default_fsi = fsi_t::unset_fsi(); // default provided at helios startup
       mutable long                      inactive_safety_info_written_pos{0};
       mutable boost::crc_32_type        inactive_crc32; // cached value
 

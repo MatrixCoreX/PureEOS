@@ -3,4 +3,4 @@
 # Cleanup symbolic links created during postinst
 Python_SITELIB=$(python3 -c "from sysconfig import get_path; print(get_path('platlib', 'deb_system'))")
 rm -f $Python_SITELIB/TestHarness
-rm -f @CMAKE_INSTALL_FULL_DATAROOTDIR@/spring_testing/bin
+rm -f @CMAKE_INSTALL_FULL_DATAROOTDIR@/helios_testing/bin

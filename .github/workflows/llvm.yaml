@@ -39,9 +39,9 @@ jobs:
         with:
           submodules: recursive
           path: src
-      - name: Build spring
+      - name: Build helios
         run: |
             cmake -S src -B build -DCMAKE_BUILD_TYPE=Release -GNinja
             cmake --build build
-      - name: Test spring
+      - name: Test helios
         run: ctest --test-dir build -j $(nproc) --output-on-failure --extra-verbose -LE "(nonparallelizable_tests|long_running_tests)" --timeout 480

@@ -1178,7 +1178,7 @@ BOOST_AUTO_TEST_SUITE(slice_tests)
       BOOST_REQUIRE_EQUAL(*block_num, block_num2);
    }
 
-// This test verifies the bug reported by https://github.com/PureEOSIO/spring/issues/942
+// This test verifies the bug reported by https://github.com/PureEOSIO/helios/issues/942
 // is fixed. The bug was if the block containing a transaction forked out,
 // get_trx_block_number() always returned the latest block whose block number was
 // the same as the initial block's, but this latest block might not include the
