@@ -33,7 +33,17 @@ class ScannerTests(unittest.TestCase):
         allowlist = tests.split("const std::set<std::string_view> supported{", 1)[1].split("};", 1)[0]
         expected = set(re.findall(r'"(\w+)"', allowlist))
         self.assertEqual(supported, expected)
-        self.assertEqual(len(supported), 15)
+        self.assertEqual(len(supported), 23)
+        fallback = set(re.findall(r'^\s+ISOLATED_FALLBACK\((\w+)\);$', implementation, re.MULTILINE))
+        fallback_list = tests.split("const std::set<std::string_view> fallback_only{", 1)[1].split("};", 1)[0]
+        self.assertEqual(fallback, set(re.findall(r'"(\w+)"', fallback_list)))
+        self.assertEqual(len(fallback), 10)
+        self.assertFalse(supported & fallback)
+        self.assertTrue((supported | fallback) <= production)
+        # Every link-only host also has a correctly typed executable fixture;
+        # simply excluding its name from the denied-import loop is not enough.
+        stub_cases = tests.split("const std::array fallback_imports{", 1)[1].split("\n};", 1)[0]
+        self.assertEqual(fallback, set(re.findall(r'fallback_import\{"(\w+)"', stub_cases)))
 
     def test_comments_strings_and_raw_strings_are_not_accesses(self):
         source = '''// db.modify(fake);

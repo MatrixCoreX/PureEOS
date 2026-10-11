@@ -60,7 +60,8 @@ fc::sha256 isolated_execution_fingerprint(const fc::sha256& code_hash, const iso
 // Modules remain unshared, including parsing/initialization and mutable VM
 // state. Local interpreter timeouts use cooperative opcode polling. This type
 // is neither copyable nor movable and is thread-affine.
-// Unknown imports fail linking; all errors require WHOLE-transaction fallback,
+// Unknown imports fail linking. Explicit link-only imports always throw when
+// called (they are NOT implemented hosts). All errors require WHOLE-transaction fallback,
 // never a consensus rejection based on these local capability/timeout limits.
 class isolated_wasm_module {
 public:

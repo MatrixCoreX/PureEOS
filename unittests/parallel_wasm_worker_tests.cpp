@@ -24,9 +24,9 @@ std::vector<char> wasm(const std::string& text) {
 }
 
 // All imports are real chain intrinsics. No test-only host/barrier is imported.
-std::vector<char> increment_wasm() {
+std::vector<char> increment_wasm(const std::string& extra_imports = {}, const std::string& tail = {}) {
    return wasm(R"(
-      (module
+      (module )" + extra_imports + R"(
          (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
          (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
          (import "env" "db_get_i64" (func $get (param i32 i32 i32) (result i32)))
@@ -52,6 +52,7 @@ std::vector<char> increment_wasm() {
                (br_if $done (i32.eqz (get_local $count)))
                (set_local $count (i32.sub (get_local $count) (i32.const 1)))
                (br $work)))
+            )" + tail + R"(
             (call $return (i32.const 64) (i32.const 8))))
    )");
 }
@@ -77,6 +78,85 @@ uint64_t number(const std::vector<char>& bytes) {
    uint64_t result;
    std::memcpy(&result, bytes.data(), 8);
    return result;
+}
+
+struct fallback_import { const char* name; const char* signature; const char* invocation; };
+const std::array fallback_imports{
+   fallback_import{"is_account", "(param i64) (result i32)", "(drop (call $stub (i64.const 0)))"},
+   fallback_import{"require_recipient", "(param i64)", "(call $stub (i64.const 0))"},
+   fallback_import{"prints_l", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
+   fallback_import{"db_store_i64", "(param i64 i64 i64 i64 i32 i32) (result i32)",
+      "(drop (call $stub (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0) (i32.const 0) (i32.const 0)))"},
+   fallback_import{"db_remove_i64", "(param i32)", "(call $stub (i32.const 0))"},
+   fallback_import{"set_blockchain_parameters_packed", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
+   fallback_import{"get_blockchain_parameters_packed", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
+   fallback_import{"set_proposed_producers", "(param i32 i32) (result i64)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
+   fallback_import{"current_time", "(result i64)", "(drop (call $stub))"},
+   fallback_import{"get_active_producers", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"}
+};
+
+// Compare actual chain host conversion + implementation with the isolated
+// path. Each result contains the return offset/sign AND modified memory bytes.
+struct host_case { const char* label; const char* body; bool success; };
+const std::array primitive_cases{
+   host_case{"memcpy_unaligned", "(i32.store (i32.const 128) (call $copy (i32.const 161) (i32.const 257) (i32.const 3)))", true},
+   host_case{"memcpy_zero_end_source", "(i32.store (i32.const 128) (call $copy (i32.const 160) (i32.const 65536) (i32.const 0)))", true},
+   host_case{"memcpy_overlap", "(drop (call $copy (i32.const 257) (i32.const 256) (i32.const 3)))", false},
+   host_case{"memcpy_self", "(drop (call $copy (i32.const 256) (i32.const 256) (i32.const 1)))", false},
+   host_case{"memcpy_oob", "(drop (call $copy (i32.const 65535) (i32.const 256) (i32.const 2)))", false},
+   host_case{"memcpy_zero_end_destination", "(drop (call $copy (i32.const 65536) (i32.const 256) (i32.const 0)))", false},
+   host_case{"memmove_overlap_right", "(drop (call $move (i32.const 257) (i32.const 256) (i32.const 3))) (drop (call $copy (i32.const 160) (i32.const 256) (i32.const 4)))", true},
+   host_case{"memmove_overlap_left", "(drop (call $move (i32.const 256) (i32.const 257) (i32.const 3))) (drop (call $copy (i32.const 160) (i32.const 256) (i32.const 4)))", true},
+   host_case{"memmove_self", "(i32.store (i32.const 128) (call $move (i32.const 160) (i32.const 160) (i32.const 4)))", true},
+   host_case{"memmove_zero_end_destination", "(drop (call $move (i32.const 65536) (i32.const 256) (i32.const 0)))", false},
+   host_case{"memcmp_unsigned_positive", "(i32.store (i32.const 128) (call $compare (i32.const 256) (i32.const 258) (i32.const 1)))", true},
+   host_case{"memcmp_unsigned_negative", "(i32.store (i32.const 128) (call $compare (i32.const 258) (i32.const 256) (i32.const 1)))", true},
+   host_case{"memcmp_equal", "(i32.store (i32.const 128) (call $compare (i32.const 256) (i32.const 256) (i32.const 4)))", true},
+   host_case{"memcmp_zero_end", "(i32.store (i32.const 128) (call $compare (i32.const 65536) (i32.const 65536) (i32.const 0)))", true},
+   host_case{"memcmp_overflow", "(drop (call $compare (i32.const 256) (i32.const 257) (i32.const -1)))", false},
+   host_case{"memset_low_byte", "(i32.store (i32.const 128) (call $fill (i32.const 161) (i32.const 511) (i32.const 4)))", true},
+   host_case{"memset_negative_byte", "(i32.store (i32.const 128) (call $fill (i32.const 161) (i32.const -1) (i32.const 4)))", true},
+   host_case{"memset_zero_null", "(i32.store (i32.const 128) (call $fill (i32.const 0) (i32.const 1) (i32.const 0)))", true},
+   host_case{"memset_zero_end", "(drop (call $fill (i32.const 65536) (i32.const 1) (i32.const 0)))", false},
+   host_case{"memset_overflow", "(drop (call $fill (i32.const -1) (i32.const 1) (i32.const 4)))", false},
+   host_case{"assert_noncanonical_true", "(call $assert (i32.const -1) (i32.const 256))", true},
+   host_case{"assert_false", "(call $assert (i32.const 0) (i32.const 256))", false},
+   host_case{"assert_true_bad_pointer", "(call $assert (i32.const 1) (i32.const 65536))", false},
+   host_case{"assert_true_unterminated", "(i32.store8 (i32.const 65535) (i32.const 65)) (call $assert (i32.const 1) (i32.const 65535))", false},
+   host_case{"assert_message_noncanonical_true", "(call $message (i32.const 2) (i32.const 256) (i32.const 4))", true},
+   host_case{"assert_message_false", "(call $message (i32.const 0) (i32.const 256) (i32.const 4))", false},
+   host_case{"assert_message_true_oob", "(call $message (i32.const 1) (i32.const 65535) (i32.const 2))", false},
+   host_case{"assert_message_zero_end", "(call $message (i32.const 1) (i32.const 65536) (i32.const 0))", true},
+   host_case{"assert_code_true_reserved", "(call $code (i32.const 256) (i64.const -1))", true},
+   host_case{"assert_code_false_user", "(call $code (i32.const 0) (i64.const 42))", false},
+   host_case{"assert_code_false_reserved", "(call $code (i32.const 0) (i64.const -1))", false},
+   host_case{"abort", "(call $abort)", false}
+};
+
+std::vector<char> primitive_wasm(const host_case& item) {
+   return wasm(R"((module
+      (import "env" "memcpy" (func $copy (param i32 i32 i32) (result i32)))
+      (import "env" "memmove" (func $move (param i32 i32 i32) (result i32)))
+      (import "env" "memcmp" (func $compare (param i32 i32 i32) (result i32)))
+      (import "env" "memset" (func $fill (param i32 i32 i32) (result i32)))
+      (import "env" "eosio_assert" (func $assert (param i32 i32)))
+      (import "env" "eosio_assert_message" (func $message (param i32 i32 i32)))
+      (import "env" "eosio_assert_code" (func $code (param i32 i64)))
+      (import "env" "abort" (func $abort))
+      (import "env" "set_action_return_value" (func $return (param i32 i32)))
+      (memory 1) (data (i32.const 256) "\ff\7f\01\00")
+      (func (export "apply") (param i64 i64 i64) )" + std::string(item.body) + R"(
+         (call $return (i32.const 128) (i32.const 64)))))");
+}
+
+std::vector<char> growth_wasm(const std::string& declaration, uint32_t growth, bool at_start = false) {
+   const std::string body = "(i32.store (i32.const 0) (grow_memory (i32.const " + std::to_string(growth) +
+      "))) (i32.store (i32.const 4) (current_memory))";
+   return wasm(R"((module
+      (import "env" "set_action_return_value" (func $return (param i32 i32)))
+      )" + declaration + (at_start ? " (func $start " + body + ") (start $start)" : "") + R"(
+      (func (export "apply") (param i64 i64 i64) )" + (at_start ? "" : body) + R"(
+         (call $return (i32.const 0) (i32.const 8)))))");
 }
 
 std::unique_ptr<isolated_wasm_module> prepare_for_gate(const std::vector<char>& code,
@@ -283,7 +363,13 @@ BOOST_FIXTURE_TEST_CASE(one_two_four_workers_execute_wasm_on_independent_modules
       std::vector<std::future<report>> futures;
       for (unsigned i = 0; i < workers; ++i) {
          futures.push_back(std::async(std::launch::async, [&, i] {
-            auto local = prepare_for_gate(code, gate);
+            // This is an overlap/correctness test, not a 500ms performance
+            // gate. ASan+UBSan considerably slows the interpreted work loop.
+            // Use the already-supported maximum LOCAL test budget; production
+            // defaults and the dedicated short-deadline tests stay unchanged.
+            isolated_wasm_limits limits;
+            limits.max_attempt_time = std::chrono::seconds(1);
+            auto local = prepare_for_gate(code, gate, limits);
             gate.arrive_and_wait();
             auto start = std::chrono::steady_clock::now();
             auto result = local->execute(base, input(i + 1, 7, 150000));
@@ -295,6 +381,8 @@ BOOST_FIXTURE_TEST_CASE(one_two_four_workers_execute_wasm_on_independent_modules
       for (auto& future : futures) reports.push_back(future.get());
       auto last_start = reports.front().start, first_end = reports.front().end;
       for (unsigned i = 0; i < workers; ++i) {
+         BOOST_TEST_MESSAGE("overlap workers=" << workers << " worker=" << i << " elapsed_us=" <<
+            std::chrono::duration_cast<std::chrono::microseconds>(reports[i].end - reports[i].start).count());
          BOOST_CHECK_EQUAL(number(reports[i].result.return_value), (i + 1) * 10 + 7);
          BOOST_REQUIRE_EQUAL(reports[i].result.state.writes().size(), 1u);
          BOOST_CHECK_EQUAL(number(reports[i].result.state.writes()[0].value), (i + 1) * 10 + 7);
@@ -340,25 +428,33 @@ BOOST_FIXTURE_TEST_CASE(timeout_of_one_module_does_not_disable_other_modules, wa
    BOOST_CHECK_EQUAL(canonical(2), 20u);
 }
 
-BOOST_AUTO_TEST_CASE(unknown_import_and_observable_local_memory_limit_are_not_supported) {
+BOOST_FIXTURE_TEST_CASE(unknown_imports_fail_but_unbounded_memory_can_execute_within_local_cap, wasm_fixture) {
    const auto unknown = wasm(R"((module
-      (import "env" "db_remove_i64" (func (param i32)))
+      (import "env" "send_inline" (func (param i32 i32)))
       (func (export "apply") (param i64 i64 i64))))");
    BOOST_CHECK_THROW(isolated_wasm_module{unknown}, eosio::vm::wasm_link_exception);
    for (auto memory : {"(memory 1)", "(memory 1 17)"}) {
       const auto code = wasm(std::string("(module ") + memory + " (func (export \"apply\") (param i64 i64 i64)))");
-      BOOST_CHECK_THROW(isolated_wasm_module{code}, primary_state_unsupported);
+      isolated_wasm_module machine(code);
+      BOOST_CHECK(machine.execute(base, input()).state.writes().empty());
    }
+   const auto too_large = wasm(R"((module (memory 17) (func (export "apply") (param i64 i64 i64))))");
+   BOOST_CHECK_THROW(isolated_wasm_module{too_large}, eosio::vm::wasm_parse_exception);
 }
 
 BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_execution) {
    const std::set<std::string_view> supported{
       "current_receiver", "action_data_size", "read_action_data", "has_auth", "require_auth", "require_auth2",
       "db_find_i64", "db_lowerbound_i64", "db_upperbound_i64", "db_end_i64", "db_get_i64", "db_update_i64",
-      "db_next_i64", "db_previous_i64", "set_action_return_value"};
+      "db_next_i64", "db_previous_i64", "set_action_return_value",
+      "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "abort"};
+   const std::set<std::string_view> fallback_only{
+      "is_account", "require_recipient", "prints_l", "db_store_i64", "db_remove_i64",
+      "set_blockchain_parameters_packed", "get_blockchain_parameters_packed", "set_proposed_producers",
+      "current_time", "get_active_producers"};
    size_t rejected = 0;
    for (auto name : audited_production_intrinsics) {
-      if (supported.contains(name)) continue;
+      if (supported.contains(name) || fallback_only.contains(name)) continue;
       BOOST_TEST_CONTEXT("denied production import=" << name) {
          // Even an UNUSED import must fail, so no unsupported call can reach
          // canonical state after earlier private writes or control flow.
@@ -368,7 +464,79 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
          ++rejected;
       }
    }
-   BOOST_CHECK_EQUAL(rejected, 247u);
+   BOOST_CHECK_EQUAL(rejected, 229u);
+}
+
+BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fixture) {
+   for (const auto& item : fallback_imports) {
+      BOOST_TEST_CONTEXT("fallback-only host=" << item.name) {
+         const std::string declaration = "(import \"env\" \"" + std::string(item.name) + "\" (func $stub " + item.signature + "))";
+         isolated_wasm_module unused(increment_wasm(declaration));
+         BOOST_CHECK_EQUAL(number(unused.execute(base, input()).return_value), 17u);
+         isolated_wasm_module called(increment_wasm(declaration, item.invocation));
+         for (unsigned repeat = 0; repeat < 3; ++repeat) {
+            BOOST_CHECK_THROW(called.execute(base, input()), primary_state_unsupported);
+            BOOST_CHECK_EQUAL(canonical(), 10u);
+         }
+         const auto start_code = wasm("(module " + declaration + " (func $start " + item.invocation +
+            ") (start $start) (func (export \"apply\") (param i64 i64 i64)))");
+         isolated_wasm_module start(start_code);
+         BOOST_CHECK_THROW(start.execute(base, input()), primary_state_unsupported);
+         const auto wrong_signature = wasm("(module (import \"env\" \"" + std::string(item.name) +
+            "\" (func (param f64))) (func (export \"apply\") (param i64 i64 i64)))");
+         BOOST_CHECK_THROW(isolated_wasm_module{wrong_signature}, eosio::vm::wasm_link_exception);
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(memory_and_assertion_hosts_obey_bounded_local_semantics, wasm_fixture) {
+   for (const auto& item : primitive_cases) {
+      BOOST_TEST_CONTEXT(item.label) {
+         isolated_wasm_module machine(primitive_wasm(item));
+         for (unsigned repeat = 0; repeat < 3; ++repeat) {
+            if (item.success) {
+               const auto result = machine.execute(base, input());
+               BOOST_CHECK_EQUAL(result.return_value.size(), 64u);
+               BOOST_CHECK(result.state.writes().empty());
+               if (std::string_view(item.label).starts_with("memcmp_")) {
+                  int32_t observed;
+                  std::memcpy(&observed, result.return_value.data(), sizeof(observed));
+                  const int32_t expected = std::string_view(item.label).ends_with("positive") ? 1 :
+                     std::string_view(item.label).ends_with("negative") ? -1 : 0;
+                  BOOST_CHECK_EQUAL(observed, expected);
+               }
+            } else BOOST_CHECK_THROW(machine.execute(base, input()), primary_state_unsupported);
+            BOOST_CHECK_EQUAL(canonical(), 10u);
+         }
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(growth_is_guarded_in_start_and_apply_and_resets_between_attempts, wasm_fixture) {
+   for (bool at_start : {false, true}) {
+      for (const auto declaration : {"(memory 1)", "(memory 1 17)", "(memory 1 2)"}) {
+         for (uint32_t growth : {0u, 1u, 15u, 16u, 0x7fffffffu, 0x80000000u, 0xffffffffu}) {
+            BOOST_TEST_CONTEXT(declaration << " growth=" << growth << " start=" << at_start) {
+               isolated_wasm_module machine(growth_wasm(declaration, growth, at_start));
+               for (unsigned repeat = 0; repeat < 3; ++repeat) {
+                  if (growth <= 15) {
+                     const auto result = machine.execute(base, input());
+                     const bool module_full = std::string_view(declaration) == "(memory 1 2)" && growth > 1;
+                     const uint64_t expected = (uint64_t(module_full ? 1 : 1 + growth) << 32) |
+                        uint32_t(module_full ? -1 : 1);
+                     BOOST_CHECK_EQUAL(number(result.return_value), expected);
+                  } else BOOST_CHECK_THROW(machine.execute(base, input()), primary_state_unsupported);
+               }
+            }
+         }
+      }
+   }
+   isolated_wasm_limits small; small.max_pages = 2;
+   isolated_wasm_module capped(growth_wasm("(memory 1)", 2), small);
+   BOOST_CHECK_THROW(capped.execute(base, input()), primary_state_unsupported);
+   isolated_wasm_module written(increment_wasm({}, "(drop (grow_memory (i32.const 16)))"));
+   BOOST_CHECK_THROW(written.execute(base, input()), primary_state_unsupported);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
 }
 
 BOOST_FIXTURE_TEST_CASE(wasm_memory_globals_and_start_function_are_attempt_local, wasm_fixture) {
@@ -480,7 +648,104 @@ BOOST_FIXTURE_TEST_CASE(real_wasm_memory_fault_discards_attempt_and_preserves_ot
 BOOST_AUTO_TEST_SUITE_END()
 
 // Persistent workers are tested across batches, not just one-shot async tasks.
+BOOST_AUTO_TEST_SUITE(parallel_cdt_host_oracle_tests)
+
+BOOST_FIXTURE_TEST_CASE(memory_and_assertion_results_match_original_host_converters, wasm_fixture) {
+   eosio::testing::tester original;
+   original.create_accounts({rows.code, "alice"_n});
+   uint32_t nonce = 0;
+   for (const auto& item : primitive_cases) {
+      BOOST_TEST_CONTEXT(item.label) {
+         const auto code = primitive_wasm(item);
+         original.set_code(rows.code, std::vector<uint8_t>(code.begin(), code.end()));
+         original.produce_block();
+         isolated_wasm_module isolated(code);
+         auto arguments = input(1, 7, ++nonce);
+         const auto before = original.control->calculate_integrity_hash();
+         if (item.success) {
+            const auto attempt = isolated.execute(base, arguments);
+            const auto trace = push_raw(original, arguments);
+            BOOST_REQUIRE(trace && !trace->except);
+            BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 1u);
+            BOOST_CHECK(attempt.return_value == trace->action_traces.front().return_value);
+            BOOST_CHECK(trace->action_traces.front().account_ram_deltas.empty());
+         } else {
+            BOOST_CHECK_THROW(isolated.execute(base, arguments), primary_state_unsupported);
+            BOOST_CHECK_THROW(push_raw(original, arguments), fc::exception);
+            BOOST_CHECK(original.control->calculate_integrity_hash() == before);
+         }
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(unbounded_memory_growth_matches_original_or_requires_fallback, wasm_fixture) {
+   eosio::testing::tester original;
+   original.create_accounts({rows.code, "alice"_n});
+   uint32_t nonce = 0;
+   for (bool at_start : {false, true}) {
+      for (const auto declaration : {"(memory 1)", "(memory 1 17)", "(memory 1 2)"}) {
+         for (uint32_t growth : {0u, 1u, 15u, 16u}) {
+            BOOST_TEST_CONTEXT(declaration << " growth=" << growth << " start=" << at_start) {
+               const auto code = growth_wasm(declaration, growth, at_start);
+               original.set_code(rows.code, std::vector<uint8_t>(code.begin(), code.end()));
+               original.produce_block();
+               isolated_wasm_module isolated(code);
+               const auto arguments = input(1, 7, ++nonce);
+               const auto trace = push_raw(original, arguments);
+               BOOST_REQUIRE(trace && !trace->except);
+               BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 1u);
+               if (growth <= 15) {
+                  const auto result = isolated.execute(base, arguments);
+                  BOOST_CHECK(result.return_value == trace->action_traces.front().return_value);
+               } else {
+                  BOOST_CHECK_THROW(isolated.execute(base, arguments), primary_state_unsupported);
+                  const bool module_full = std::string_view(declaration) == "(memory 1 2)";
+                  BOOST_CHECK_EQUAL(number(trace->action_traces.front().return_value),
+                     (uint64_t(module_full ? 1 : 17) << 32) | uint32_t(module_full ? -1 : 1));
+               }
+            }
+         }
+      }
+   }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE(parallel_worker_pool_tests)
+
+BOOST_FIXTURE_TEST_CASE(cdt_primitive_hosts_and_growth_are_isolated_across_four_workers, wasm_fixture) {
+   isolated_worker_pool pool(4);
+   const auto success = primitive_wasm(primitive_cases[0]);
+   const auto grow = growth_wasm("(memory 1)", 15);
+   const auto capped = growth_wasm("(memory 1)", 16);
+   const auto failure = primitive_wasm(primitive_cases.back());
+   const std::array codes{success, grow, capped, failure};
+   for (unsigned round = 0; round < 4; ++round) {
+      std::vector<ordered_attempt_batch::request> requests;
+      for (unsigned i = 0; i < 16; ++i) {
+         const auto& code = codes[i % codes.size()];
+         const auto hash = fc::sha256::hash(code.data(), code.size());
+         requests.push_back({fc::sha256::hash(std::to_string(i)), isolated_execution_fingerprint(hash, {}, input())});
+      }
+      ordered_attempt_batch batch(base, requests);
+      std::vector<isolated_worker_job> jobs;
+      for (unsigned i = 0; i < requests.size(); ++i)
+         jobs.push_back({batch.get_ticket(i), codes[i % codes.size()], input(), {}});
+      const auto outputs = pool.run(std::move(jobs));
+      BOOST_REQUIRE_EQUAL(outputs.size(), requests.size());
+      for (unsigned i = 0; i < outputs.size(); ++i) {
+         const auto& output = outputs[i];
+         BOOST_CHECK(!output.request);
+         if (i % codes.size() < 2) {
+            BOOST_REQUIRE(output.result);
+            BOOST_CHECK(output.result->state.writes().empty());
+            if (i % codes.size() == 1) BOOST_CHECK_EQUAL(number(output.result->return_value), (uint64_t{16} << 32) | 1);
+            else BOOST_CHECK_EQUAL(output.result->return_value.size(), 64u);
+         } else BOOST_CHECK(!output.result);
+      }
+   }
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
 
 BOOST_FIXTURE_TEST_CASE(persistent_one_two_four_threads_run_multiple_bounded_batches, wasm_fixture) {
    const auto code = increment_wasm();

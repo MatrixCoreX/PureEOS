@@ -10,6 +10,8 @@
 
 ## 代码复查得到的实际阻碍
 
+以下记录本计划启动时（`0068f79`）的情况，已解决项以各阶段进度和验收记录为准，不代表后续源码仍保留这些旧限制。
+
 1. `primary_state_overlay::depend_on` 与 `ordered_attempt_batch::can_use` 只记整表依赖；同表不同主键会误冲突，canonical adopter 还会逐行复查整表。
 2. `controller::prepare_isolated_attempts` 当前枚举 receiver 名下所有表再冻结，超过 64 表/4096 行/4MiB 回退。真实 token 的多账户 scope 不适合这种全量捕获。
 3. `isolated_host` 仅 15 个接口，普通 CDT 产物的内存、断言、账户检查、通知、创建行等导入不能链接；不能仅把 eosio.token 哈希加入名单就宣称已支持转账。
@@ -44,6 +46,7 @@
 - [x] 保存 PX6 起点，复查数据库/host/调用链边界，建立本滚动计划。
 - [x] G1 实现及测试。
 - [x] G2 按需捕获：已直接实现查询级稀疏副本，而非整表复制。
+- [x] G3a CDT 基础兼容：内存增长保护、内存/断言接口、仅回退导入桩及真实 CDT 夹具；链级验证/生产、ASan/UBSan/LSan、TSan 及新旧进程复测通过，见 [验收记录](PX7_G3A_RESULTS.md)。
 - [ ] G3 真实资产转账采用。
 - [ ] G4 生命周期与 RAM。
 - [ ] G5 调用树。
@@ -60,7 +63,7 @@
 
 因此 G3 拆为以下独立验收项，不能仅打开哈希名单：
 
-1. 内存增长：当前要求显式最大页数是为了避免局部内存上限把原本成功的 `memory.grow` 改为返回 `-1`，使合约走另一条“成功”分支。支持未声明上限的 CDT 模块，必须在可能触及局部而非协议上限时使整次尝试回退，或完整模拟协议上限；不可直接删除检查。
+1. 内存增长：G3a 之前要求显式最大页数，是为了避免局部内存上限把原本成功的 `memory.grow` 改为返回 `-1`，使合约走另一条“成功”分支。支持未声明上限的 CDT 模块，必须在可能触及局部而非协议上限时使整次尝试回退，或完整模拟协议上限；不可直接删除检查。
 2. 未执行的危险导入：可研究“可链接但调用立即整笔回退”的显式桩，但它不是实现该 host，更不能把它登记为已支持。任何默认空实现都是禁止的。
 3. 通知：`require_recipient` 产生后续执行，不能吞掉。先审查原 `apply_context` 调度次序、接收者存在性、失败撤销和资源结算，再决定由完整私有调用树执行，还是由 owner 按原序调度子动作。任何只看余额的验收不足以证明通知正确。
 4. 首个真实转账验收只覆盖既存双方余额行；新建余额行、最后余额行删除、payer/RAM 变化必须等 G4，不可假称所有 transfer 已并行。
@@ -85,3 +88,21 @@ G2 初拟“按需整表捕获”，但源码推演发现它仍会因单张大�
 - 实际 `eosio.token.cpp:sub_balance` 使用 `modify(from, owner, ...)`。如果余额行最初由别人付 RAM，即使双方已有余额行，首次付款也可能改变 payer，必须等 G4 或整笔回退。`add_balance` 对既有收款行使用 `same_payer`；余额变为零不会在 transfer 中自动删除，删除由 `close` 执行。
 - G3 要修改的入口包含 `parallel_wasm_worker.hpp/.cpp`、状态读取接口/副本/依赖、`parallel_canonical_adoption.cpp`；逐 host 测试与 `parallel_audited_intrinsics.hpp` 对应的拒绝/受支持/仅回退桩分类须同步。旧 15 host 边界不会因为写下本计划而自动扩大。
 - G5 不能直接把新 worker 接到原 sync-call allocator pool：`sync_call_resource_pool.hpp:acquire` 依赖预先按线程数/深度扩容，Release 下并未处理 `stack.pop` 失败的返回值；本轮 GCC 也发出 `res may be used uninitialized` 警告。当前私有执行器不调用该池。本轮不改它，但调用树扩展必须明确独占 allocator 和耗尽处理，不能把池容量假设带进新并发路径。
+
+### G3a 本轮实施切分
+
+先完成可单独核验的运行时兼容层，再接入账户依赖与通知。改动集中在 `parallel_wasm_worker.cpp`：所有 `memory.grow`（含 start）先检查本地上限；超限整次丢弃，不能让本地 `-1` 改变合约分支。模块未声明内存上限不再直接拒绝，初始页数、代码和执行预算仍有界。负数/极大增长保守回退，不改 EOS VM 子模块。
+
+新增 `memcpy/memmove/memcmp/memset`、三个断言入口和 `abort`；失败由原串行路径产生正式异常。另有 10 个明确“可链接、调用必回退”的入口，只为允许 CDT 模块中未调用的库导入；不把账户读取、通知、控制台、store/remove 或特权操作登记为已实现。其余 229 个生产接口继续拒绝链接。原生产 host 的 262 项审计分类不自动批准。
+
+新增 `unittests/test-contracts/parallel_cdt/` 的源码、ABI 和固定 WASM，使用真正的 CDT dispatcher、`multi_index`、动态分配与已有行修改，验证端/生产端分别检查真实采用、热点、失败断言、超限后回退及原串行 receipt/RAM/状态。它不是 token，G3a 完成也不能勾选“真实资产转账完成”。`is_account` 的有界副本、通知日志和接收者代码检查仍为接下来的 G3b。
+
+### G3b 下一步实施规格（尚未开发）
+
+1. 账户存在性由 owner 在 `account_object/by_name` 读取，按需复制存在/不存在证明；worker 的未知账户只能提出带类型的数据请求。扩展 `transaction_state_view`、frozen/overlay、工作池结果和 controller 探测集合，分别限制账户数及请求数。不能把未捕获账户当不存在，不能借用 token 余额表作证明。
+2. `is_account` 的实际读取进入结果依赖，正式采用前重新检查。不要把每笔通知都会变化的 `recv_sequence/auth_sequence` 混进账户存在性版本，造成无关交易误冲突；账户对象身份或存在性与接收者执行能力需分别审查。
+3. root 的 `require_recipient` 仅记录有界、去重、保留首次出现顺序的通知列表，自身已在通知集合。先完成 root WASM，再由 owner 通过原 `require_recipient` 和 `exec_one` 生成各通知的 action trace/receipt/序列及计费；无代码通知也不能省略。
+4. G3b 初版仅准入没有 WASM、没有对应原生 handler 的通知接收者；代码、原生能力和账户状态在任何正式写入前复核。通知接收者有代码、inline、sync-call 或未覆盖的输出路径整笔回退，不能执行子合约后仍沿用“只有 root 写集”的依赖证明。
+5. 保持首个串行回退丢弃批次尾部。用未修改的真实 token WASM 验证 owner-paid 既存双方余额行，以及同余额冲突、先入后出、余额不足、缺失目标、带代码通知、通知拒绝/去重、payer 改变和新建余额行的原路径回退。正式 receipt、通知顺序、RAM、全状态及旧程序重放都要核对。
+
+以上规格来自本轮对 `host_context::is_account`、`apply_context::exec/exec_one/require_recipient` 的源码复查，不表示已实现或已测试。

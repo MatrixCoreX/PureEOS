@@ -218,10 +218,10 @@ if(PUREEOS_PARALLEL_SANITIZERS)
   endif()
   if(PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
     # This target instruments the private execution path, NOT the existing
-    # controller used by the two serial-oracle cases. Keep that limitation in
+    # controller used by the serial-oracle cases. Keep that limitation in
     # the test name and output; do not suppress mixed-build race diagnostics.
     add_test(NAME pureeos_parallel_wasm_private_tsan COMMAND parallel_wasm_sanitizer_test
-      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution"
+      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests"
       --report_level=detailed --color_output=no)
     set_tests_properties(pureeos_parallel_wasm_private_tsan PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer;private-only")
   else()

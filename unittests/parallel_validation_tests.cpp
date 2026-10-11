@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
 #include <sstream>
 
 using namespace eosio::chain;
@@ -21,6 +22,17 @@ using namespace eosio::testing;
 
 namespace {
 std::vector<uint8_t> compile(const std::string& wat) { return wast_to_wasm(wat); }
+
+std::vector<uint8_t> cdt_fixture_code() {
+   const auto fixture = std::filesystem::path(__FILE__).parent_path() / "test-contracts/parallel_cdt/parallel_cdt.wasm";
+   std::ifstream stream(fixture, std::ios::binary);
+   BOOST_REQUIRE_MESSAGE(stream.good(), "missing versioned CDT fixture: " << fixture);
+   const std::vector<uint8_t> code{std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()};
+   BOOST_REQUIRE(!code.empty());
+   BOOST_REQUIRE(fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size()) ==
+      fc::sha256{"0365f466b059f6985baa7a1aa1415e59139e58bdb10344a9c457b59909fe8de8"});
+   return code;
+}
 
 std::vector<uint8_t> initialize_code(bool keyed = false) {
    return compile(R"((module
@@ -59,9 +71,9 @@ std::vector<uint8_t> update_code(bool extra = false, bool keyed = false) {
          (call $return (i32.const 64) (i32.const 8)))))");
 }
 void push(tester& chain, name scope, uint64_t delta, uint64_t nonce, uint64_t work = 0,
-          std::optional<uint64_t> primary = std::nullopt) {
+          std::optional<uint64_t> primary = std::nullopt, name action_name = "run"_n) {
    signed_transaction trx;
-   action act; act.account = "test"_n; act.name = "run"_n; act.authorization = {{"alice"_n, "active"_n}};
+   action act; act.account = "test"_n; act.name = action_name; act.authorization = {{"alice"_n, "active"_n}};
    const std::array<uint64_t, 4> data{scope.to_uint64_t(), delta, work, nonce};
    act.data.assign(reinterpret_cast<const char*>(data.data()), reinterpret_cast<const char*>(data.data()) + sizeof(data));
    if (primary) {
@@ -653,17 +665,96 @@ BOOST_FIXTURE_TEST_CASE(reviewed_but_unsupported_creation_imports_fall_back_befo
       fc::temp_directory directory;
       auto config = configuration(directory, workers);
       // Being on the local code-hash list is NOT permission to use unsupported
-      // state operations. Four real stores attempt linking, then the original
+      // state operations. Four real stores hit a link-only fallback, then the original
       // transaction path creates tables/rows/payer RAM in canonical order.
       config.parallel_code_allowlist.insert(initializer_hash);
       tester chain(config, genesis);
       prefix(chain, corpus.size());
       BOOST_CHECK(chain.control->calculate_integrity_hash() == expected);
       const auto stats = chain.control->get_parallel_execution_stats();
-      BOOST_CHECK_EQUAL(stats.attempts, 42u); // 19 supported inputs run discovery + execution; 4 imports fail once
+      BOOST_CHECK_EQUAL(stats.attempts, 42u); // 19 supported inputs run discovery + execution; 4 stores fail once
       BOOST_CHECK_EQUAL(stats.succeeded, 18u);
       BOOST_CHECK_EQUAL(stats.adopted, 11u);
       BOOST_CHECK_EQUAL(stats.serial_fallbacks, 12u);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(real_cdt_dispatcher_multi_index_and_allocator_adopt_or_fall_back_without_semantic_changes) {
+   const auto code = cdt_fixture_code();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   auto genesis = base_tester::default_genesis();
+   auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+   genesis.initial_savanna.emplace();
+   genesis.initial_savanna->finalizer_key = public_key;
+   genesis.initial_savanna->proof_of_possession = proof;
+   struct checkpoint { std::vector<char> block; uint64_t adopted; uint64_t fallbacks; };
+   std::vector<checkpoint> blocks;
+   {
+      fc::temp_directory directory;
+      auto config = base_tester::default_config(directory).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      tester source(config, genesis);
+      source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      auto seal = [&](uint64_t adopted = 0, uint64_t fallbacks = 0) {
+         blocks.push_back({fc::raw::pack(*source.produce_block()), adopted, fallbacks});
+      };
+      source.create_accounts({"test"_n, "alice"_n, "bob"_n, "carol"_n}); seal();
+      source.set_code("test"_n, code); seal();
+      uint64_t nonce = 100;
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n})
+         push(source, scope, 10, nonce++, 0, std::nullopt, "init"_n);
+      seal(0, 3); // link-only store: must use original RAM/table creation
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n}) push(source, scope, 7, nonce++, 4096);
+      seal(3, 0); // actual CDT multi_index + allocation, not hand-written WAT
+      push(source, "alice"_n, 3, nonce++, 64); push(source, "alice"_n, 5, nonce++, 64); seal(1, 1);
+      push(source, "alice"_n, 10, nonce++, 64);
+      push(source, "alice"_n, uint64_t{0} - 30, nonce++, 64); seal(1, 1); // private assertion fails, serial succeeds
+      push(source, "alice"_n, 2, nonce++, 2 * 1024 * 1024);
+      push(source, "bob"_n, 3, nonce++, 64); push(source, "carol"_n, 4, nonce++, 64);
+      seal(0, 3); // local memory exhaustion AFTER private write; discard whole batch tail
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n}) push(source, scope, 1, nonce++, 4096);
+      seal(3, 0); // cached machines reset even after allocation failure
+      for (unsigned i = 0; i < 5; ++i) seal();
+   }
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      BOOST_TEST_CONTEXT("CDT workers=" << workers) {
+         fc::temp_directory reference_dir, observed_dir;
+         auto reference_config = base_tester::default_config(reference_dir).first;
+         reference_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+         auto config = base_tester::default_config(observed_dir).first;
+         config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+         config.parallel_validation_threads = workers;
+         config.parallel_code_allowlist = {hash};
+         tester reference(reference_config, genesis), observed(config, genesis);
+         std::vector<std::vector<char>> expected_traces, actual_traces;
+         auto first = reference.control->applied_transaction().connect([&](const auto& event) {
+            expected_traces.push_back(consensus_trace(std::get<0>(event)));
+         });
+         auto second = observed.control->applied_transaction().connect([&](const auto& event) {
+            actual_traces.push_back(consensus_trace(std::get<0>(event)));
+         });
+         for (const auto& item : blocks) {
+            expected_traces.clear(); actual_traces.clear();
+            const auto before = observed.control->get_parallel_execution_stats();
+            reference.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(item.block)));
+            observed.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(item.block)));
+            reference.control->abort_block(); observed.control->abort_block();
+            BOOST_CHECK(reference.head().id() == observed.head().id());
+            BOOST_CHECK_EQUAL(reference.last_irreversible_block_num(), observed.last_irreversible_block_num());
+            BOOST_CHECK(reference.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+            BOOST_CHECK(expected_traces == actual_traces);
+            const auto after = observed.control->get_parallel_execution_stats();
+            BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? item.adopted : 0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? item.fallbacks : 0u);
+         }
+         for (const auto& [scope, expected] : std::array<std::pair<name, int64_t>, 3>{{
+               {"alice"_n, 8}, {"bob"_n, 21}, {"carol"_n, 22}}}) {
+            const auto value = observed.get_row_by_account("test"_n, scope, "rows"_n, name{1});
+            BOOST_REQUIRE_EQUAL(value.size(), 16u);
+            int64_t actual; std::memcpy(&actual, value.data() + 8, sizeof(actual));
+            BOOST_CHECK_EQUAL(actual, expected);
+         }
+      }
    }
 }
 
@@ -747,6 +838,77 @@ BOOST_FIXTURE_TEST_CASE(nonexplicit_production_preserves_order_receipts_and_seri
       BOOST_CHECK(produced_traces == verified_traces);
       BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
       for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) check_row(producer, scope, 17);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(real_cdt_production_charges_cpu_and_serial_validator_replays_results_and_fallbacks, validation_corpus) {
+   const auto cdt_code = cdt_fixture_code();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(cdt_code.data()), cdt_code.size());
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      BOOST_TEST_CONTEXT("CDT producer workers=" << workers) {
+         fc::temp_directory producer_dir, validator_dir;
+         auto config = configuration(producer_dir, workers);
+         config.parallel_production_enabled = workers != 0;
+         config.parallel_code_allowlist = {hash};
+         production_chain producer(config, genesis);
+         tester validator(configuration(validator_dir, 0), genesis);
+         prefix(producer, 1); prefix(validator, 1);
+         producer.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+         producer.set_code("test"_n, cdt_code);
+         uint64_t nonce = 50000;
+         for (auto scope : {"alice"_n, "bob"_n, "carol"_n})
+            push(producer, scope, 10, nonce++, 0, std::nullopt, "init"_n);
+         auto setup = producer.produce_block();
+         validator.push_block(setup); validator.control->abort_block(); producer.control->abort_block();
+         for (unsigned round = 0; round < 3; ++round) {
+            producer.start();
+            std::vector<transaction_metadata_ptr> transactions;
+            for (auto scope : {"alice"_n, "bob"_n, "carol"_n}) {
+               const auto allocation = round == 1 && scope == "alice"_n ? 2 * 1024 * 1024 : 4096;
+               transactions.push_back(metadata(producer, make_transaction(producer, scope, 1, nonce++, allocation)));
+            }
+            std::vector<std::vector<char>> produced_traces, verified_traces;
+            // This subscription is per round; a plain connection does NOT
+            // disconnect on destruction and would retain dead local refs.
+            boost::signals2::scoped_connection connection = validator.control->applied_transaction().connect([&](const auto& event) {
+               if (std::any_of(transactions.begin(), transactions.end(), [&](const auto& trx) {
+                     return trx->id() == std::get<0>(event)->id;
+                  })) verified_traces.push_back(consensus_trace(std::get<0>(event)));
+            });
+            const auto before = producer.control->get_parallel_production_stats();
+            size_t callbacks = 0;
+            BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(transactions,
+               fc::time_point::maximum(), [&](const auto& trx) {
+                  BOOST_CHECK(trx == transactions.at(callbacks++));
+                  auto trace = production_push(producer, trx);
+                  BOOST_REQUIRE_MESSAGE(!trace->except, (trace->except ? trace->except->to_detail_string() : ""));
+                  BOOST_REQUIRE(trace->receipt);
+                  BOOST_CHECK_GE(trace->receipt->cpu_usage_us,
+                     producer.control->get_global_properties().configuration.min_transaction_cpu_usage);
+                  BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 1u);
+                  BOOST_CHECK(trace->action_traces.front().account_ram_deltas.empty());
+                  produced_traces.push_back(consensus_trace(trace));
+                  return true;
+               }), 3u);
+            BOOST_CHECK_EQUAL(callbacks, 3u);
+            const auto after = producer.control->get_parallel_production_stats();
+            BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers && round != 1 ? 3u : 0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers && round == 1 ? 3u : 0u);
+            auto block = producer.finish_block();
+            BOOST_REQUIRE_EQUAL(block->transactions.size(), 3u);
+            validator.push_block(block); validator.control->abort_block();
+            BOOST_CHECK_EQUAL(produced_traces.size(), 3u);
+            BOOST_CHECK_EQUAL(verified_traces.size(), 3u);
+            BOOST_CHECK(produced_traces == verified_traces);
+            BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
+            for (auto scope : {"alice"_n, "bob"_n, "carol"_n}) {
+               const auto value = producer.get_row_by_account("test"_n, scope, "rows"_n, name{1});
+               BOOST_REQUIRE_EQUAL(value.size(), 16u);
+               int64_t actual; std::memcpy(&actual, value.data() + 8, sizeof(actual));
+               BOOST_CHECK_EQUAL(actual, 11 + round);
+            }
+         }
+      }
    }
 }
 

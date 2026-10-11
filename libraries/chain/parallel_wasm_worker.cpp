@@ -31,10 +31,24 @@ private:
 template<typename Context> struct interruptible_visitor {
    eosio::vm::interpret_visitor<Context> original;
    const attempt_deadline& deadline;
+   uint32_t max_pages;
    uint32_t remaining = 1024;
    template<typename Op> void operator()(const Op& op) {
       if (--remaining == 0) { deadline.check(); remaining = 1024; }
       original(op);
+   }
+   void operator()(const eosio::vm::grow_memory_t& op) {
+      deadline.check();
+      auto& context = original.get_context();
+      const auto growth = context.peek_operand().to_ui32();
+      const auto current = context.current_linear_memory();
+      // Never expose a LOCAL cap as a successful contract-visible -1. That
+      // could choose a different branch than the original execution. This
+      // guard also runs in start functions. Conservatively reject the VM's
+      // signed/negative growth extension rather than emulate it here.
+      if (current < 0 || uint32_t(current) > max_pages || growth > max_pages - uint32_t(current))
+         throw primary_state_unsupported();
+      original(op); // retains module maximum, result, allocation and zeroing
    }
 };
 
@@ -85,6 +99,65 @@ struct isolated_host {
             return item.first.to_uint64_t() == actor && item.second.to_uint64_t() == permission;
          })) throw primary_state_unsupported();
    }
+   uint32_t memcpy(uint32_t destination, uint32_t source, uint32_t size) {
+      auto dst = memory(destination, size);
+      const auto src = memory(source, size);
+      memory(destination, 1); // original converter checks this even for size=0
+      const uint64_t distance = destination > source ? uint64_t(destination) - source : uint64_t(source) - destination;
+      if (distance < size) throw primary_state_unsupported();
+      std::memcpy(dst.data(), src.data(), size);
+      return destination;
+   }
+   uint32_t memmove(uint32_t destination, uint32_t source, uint32_t size) {
+      auto dst = memory(destination, size);
+      const auto src = memory(source, size);
+      memory(destination, 1);
+      std::memmove(dst.data(), src.data(), size);
+      return destination;
+   }
+   int32_t memcmp(uint32_t left, uint32_t right, uint32_t size) {
+      const auto lhs = memory(left, size);
+      const auto rhs = memory(right, size);
+      const auto result = std::memcmp(lhs.data(), rhs.data(), size);
+      return result < 0 ? -1 : result > 0 ? 1 : 0;
+   }
+   uint32_t memset(uint32_t destination, int32_t value, uint32_t size) {
+      auto dst = memory(destination, size);
+      memory(destination, 1);
+      std::memset(dst.data(), value, size);
+      return destination;
+   }
+   void eosio_assert(uint32_t condition, uint32_t message) {
+      memory(message, 1);
+      const auto bytes = linear_memory().subspan(message);
+      // The original converter validates the entire NUL-terminated pointer
+      // BEFORE calling the host, including when the condition is true.
+      if (std::find(bytes.begin(), bytes.end(), '\0') == bytes.end() || !condition)
+         throw primary_state_unsupported();
+   }
+   void eosio_assert_message(uint32_t condition, uint32_t message, uint32_t size) {
+      memory(message, size);
+      if (!condition) throw primary_state_unsupported();
+   }
+   void eosio_assert_code(uint32_t condition, uint64_t) {
+      check();
+      if (!condition) throw primary_state_unsupported();
+   }
+   [[noreturn]] void abort() { throw primary_state_unsupported(); }
+
+   // Explicit link-only imports used by ordinary CDT modules. NONE is an
+   // implementation: reaching any of these discards the WHOLE attempt, even
+   // after private writes. No default result, output or canonical effect.
+   [[noreturn]] int32_t is_account(uint64_t) { throw primary_state_unsupported(); }
+   [[noreturn]] void require_recipient(uint64_t) { throw primary_state_unsupported(); }
+   [[noreturn]] void prints_l(uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] int32_t db_store_i64(uint64_t, uint64_t, uint64_t, uint64_t, uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] void db_remove_i64(int32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] void set_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] uint32_t get_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] int64_t set_proposed_producers(uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] uint64_t current_time() { throw primary_state_unsupported(); }
+   [[noreturn]] int32_t get_active_producers(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    void set_action_return_value(uint32_t offset, uint32_t size) {
       if (size > input.max_return_bytes) throw primary_state_unsupported();
       const auto source = memory(offset, size);
@@ -133,6 +206,14 @@ void register_isolated_functions() {
       ISOLATED_HOST(has_auth);
       ISOLATED_HOST(require_auth);
       ISOLATED_HOST(require_auth2);
+      ISOLATED_HOST(memcpy);
+      ISOLATED_HOST(memmove);
+      ISOLATED_HOST(memcmp);
+      ISOLATED_HOST(memset);
+      ISOLATED_HOST(eosio_assert);
+      ISOLATED_HOST(eosio_assert_message);
+      ISOLATED_HOST(eosio_assert_code);
+      ISOLATED_HOST(abort);
       ISOLATED_HOST(set_action_return_value);
       ISOLATED_HOST(db_find_i64);
       ISOLATED_HOST(db_lowerbound_i64);
@@ -143,6 +224,18 @@ void register_isolated_functions() {
       ISOLATED_HOST(db_next_i64);
       ISOLATED_HOST(db_previous_i64);
 #undef ISOLATED_HOST
+#define ISOLATED_FALLBACK(method) functions::add<&isolated_host::method>("env", #method)
+      ISOLATED_FALLBACK(is_account);
+      ISOLATED_FALLBACK(require_recipient);
+      ISOLATED_FALLBACK(prints_l);
+      ISOLATED_FALLBACK(db_store_i64);
+      ISOLATED_FALLBACK(db_remove_i64);
+      ISOLATED_FALLBACK(set_blockchain_parameters_packed);
+      ISOLATED_FALLBACK(get_blockchain_parameters_packed);
+      ISOLATED_FALLBACK(set_proposed_producers);
+      ISOLATED_FALLBACK(current_time);
+      ISOLATED_FALLBACK(get_active_producers);
+#undef ISOLATED_FALLBACK
    });
 }
 } // namespace
@@ -179,13 +272,9 @@ struct isolated_wasm_module::impl {
          machine = std::make_unique<backend>(pointer, code.size(), nullptr, options, false);
       }
       const auto& memories = machine->get_module().memories;
-      // A local memory cap must not turn a successful canonical memory.grow
-      // into -1 and let the contract take a different successful branch.
-      // Require an explicit module maximum inside our local cap. The later
-      // adopter must also check that this maximum fits the protocol limit.
-      if (memories.size() > 1 || (memories.size() &&
-          (!memories[0].limits.flags || memories[0].limits.maximum > limits.max_pages)))
-         throw primary_state_unsupported();
+      // Initial memory is bounded by the parser. An absent/larger module
+      // maximum is safe only because EVERY memory.grow is guarded above.
+      if (memories.size() > 1) throw primary_state_unsupported();
       machine->set_wasm_allocator(&allocator);
    }
 };
@@ -238,7 +327,7 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
    context.set_max_call_depth(impl_->options.max_call_depth);
    context.set_max_pages(impl_->options.max_pages);
    context.reset();
-   interruptible_visitor<std::remove_reference_t<decltype(context)>> visitor{{context}, deadline};
+   interruptible_visitor<std::remove_reference_t<decltype(context)>> visitor{{context}, deadline, impl_->limits.max_pages};
    deadline.check();
    context.execute_start(&host, visitor);
    context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
