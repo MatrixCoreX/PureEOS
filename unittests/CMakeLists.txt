@@ -74,6 +74,21 @@ file(GLOB UNIT_TESTS "*.cpp") # find all unit test suites
 add_executable( unit_test ${UNIT_TESTS} protocol_feature_digest_tests.cpp) # build unit tests as one executable
 
 target_link_libraries( unit_test eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS} )
+target_link_libraries(unit_test pureeos_state_view_experimental)
+
+# Small real-Chainbase test target; no controller, sockets or deployed chain.
+add_executable(parallel_state_view_test ../tests/main.cpp parallel_state_view_tests.cpp)
+target_link_libraries(parallel_state_view_test PRIVATE pureeos_state_view_experimental Boost::included_unit_test_framework)
+add_test(NAME pureeos_parallel_state_view COMMAND parallel_state_view_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_state_view PROPERTIES TIMEOUT 60 LABELS "parallel-px1")
+
+add_executable(parallel_serial_reference_test main.cpp parallel_serial_reference_tests.cpp)
+target_link_libraries(parallel_serial_reference_test PRIVATE eosio_chain_wrap eosio_testing
+  state_history fc custom_appbase pureeos_state_view_experimental ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(parallel_serial_reference_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+target_include_directories(parallel_serial_reference_test PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
+add_test(NAME pureeos_parallel_serial_reference COMMAND parallel_serial_reference_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_serial_reference PROPERTIES TIMEOUT 180 LABELS "parallel-px1")
 
 target_compile_options(unit_test PUBLIC -DDISABLE_EOSLIB_SERIALIZE)
 

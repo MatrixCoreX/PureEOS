@@ -1,0 +1,98 @@
+#pragma once
+
+#include <eosio/chain/name.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <stdexcept>
+#include <thread>
+#include <vector>
+
+namespace chainbase { class database; }
+
+namespace eosio::chain::experimental {
+
+// PX1 prototype, NOT wired into controller/host_context. These owned values are
+// a read boundary, not an MVCC snapshot, read-set, iterator or write capability.
+struct table_key {
+   name code;
+   name scope;
+   name table;
+   bool operator==(const table_key&) const = default;
+};
+
+struct table_read {
+   table_key key;
+   int64_t object_id = 0;
+   name payer;
+   uint32_t count = 0;
+   bool operator==(const table_read&) const = default;
+};
+
+struct primary_row_read {
+   int64_t object_id = 0;
+   int64_t table_object_id = 0;
+   uint64_t primary_key = 0;
+   name payer;
+   std::vector<char> value; // never shared_blob or a pointer into Chainbase
+   bool operator==(const primary_row_read&) const = default;
+};
+
+enum class primary_query_kind : uint8_t { find, lower_bound, upper_bound, last };
+
+struct primary_query {
+   table_key table;
+   primary_query_kind kind = primary_query_kind::find;
+   uint64_t primary_key = 0; // ignored for last (no arithmetic on UINT64_MAX)
+};
+
+struct primary_read_result {
+   // Missing table and existing table with no matching row are different reads.
+   std::optional<table_read> table;
+   std::optional<primary_row_read> row;
+   bool operator==(const primary_read_result&) const = default;
+};
+
+// Local experimental limits/misuse, NOT consensus transaction exceptions.
+// A future speculative caller must fall back rather than reject a block on a
+// local read budget failure. There is intentionally no worker caller yet.
+struct state_view_read_limit_exceeded : std::runtime_error {
+   state_view_read_limit_exceeded() : std::runtime_error("state view row exceeds local copy budget") {}
+};
+struct state_view_wrong_thread : std::logic_error {
+   state_view_wrong_thread() : std::logic_error("serial state view used from a different thread") {}
+};
+struct state_view_unsupported_query : std::logic_error {
+   state_view_unsupported_query() : std::logic_error("unsupported primary state query") {}
+};
+
+class transaction_state_view {
+public:
+   virtual ~transaction_state_view() = default;
+   virtual std::optional<table_read> read_table(const table_key&) const = 0;
+   virtual primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const = 0;
+};
+
+// Live, serial adapter. The database must outlive the view, have the table and
+// primary indices registered, and MUST NOT be concurrently mutated. Thread
+// affinity rejects accidental dispatch to workers; it does not lock the DB or
+// stop other owners mutating it. A future frozen-base adapter needs its own
+// lifetime/epoch proof. Each call sees current state, including undo changes.
+class chainbase_transaction_state_view final : public transaction_state_view {
+public:
+   explicit chainbase_transaction_state_view(const chainbase::database&);
+   chainbase_transaction_state_view(const chainbase_transaction_state_view&) = delete;
+   chainbase_transaction_state_view& operator=(const chainbase_transaction_state_view&) = delete;
+   chainbase_transaction_state_view(chainbase_transaction_state_view&&) = delete;
+   chainbase_transaction_state_view& operator=(chainbase_transaction_state_view&&) = delete;
+
+   std::optional<table_read> read_table(const table_key&) const override;
+   primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
+
+private:
+   void require_owner_thread() const;
+   const chainbase::database& db_;
+   const std::thread::id owner_;
+};
+
+} // namespace eosio::chain::experimental

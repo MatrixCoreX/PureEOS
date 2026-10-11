@@ -74,6 +74,14 @@ set(CHAIN_WEBASSEMBLY_SOURCES
 add_library(eosio_rapidjson INTERFACE)
 target_include_directories(eosio_rapidjson INTERFACE ../rapidjson/include)
 
+# PX1 read-boundary prototype: test-only dependency, not linked into nodeos.
+# Do not add this adapter to the production execution path before the isolation
+# and independent reference gates in docs/parallel-execution are satisfied.
+add_library(pureeos_state_view_experimental STATIC EXCLUDE_FROM_ALL transaction_state_view.cpp)
+target_link_libraries(pureeos_state_view_experimental PUBLIC chainbase fc softfloat)
+target_include_directories(pureeos_state_view_experimental PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
+
 ## SORT .cpp by most likely to change / break compile
 add_library( eosio_chain
              name.cpp
