@@ -79,23 +79,66 @@ BOOST_FIXTURE_TEST_CASE(conflict_disables_remaining_speculation_before_serial_ca
    BOOST_CHECK(batch.complete());
 }
 
-BOOST_FIXTURE_TEST_CASE(restored_value_still_invalidates_missing_point_and_range_reads, batch_fixture) {
-   for (const auto kind : {primary_query_kind::find, primary_query_kind::lower_bound,
-                          primary_query_kind::upper_bound, primary_query_kind::previous}) {
+BOOST_FIXTURE_TEST_CASE(restored_value_still_invalidates_queries_selecting_the_written_row, batch_fixture) {
+   for (const auto query : std::array{
+         primary_query{a, primary_query_kind::find, 1},
+         primary_query{a, primary_query_kind::lower_bound, 0},
+         primary_query{a, primary_query_kind::upper_bound, 0},
+         primary_query{a, primary_query_kind::last, 0},
+         primary_query{a, primary_query_kind::previous, 99}}) {
       ordered_attempt_batch batch(base, std::span(requests).first(2));
       primary_state_overlay first(base);
       first.update_existing(a, 1, name{}, std::span<const char>("y", 1));
       first.update_existing(a, 1, name{}, std::span<const char>("x", 1)); // ABA
       isolated_action_result first_result{first.seal(), {}, requests[0].execution_fingerprint};
       primary_state_overlay second(base);
-      (void)second.locate_primary({a, kind, 99});
+      (void)second.locate_primary(query);
       isolated_action_result second_result{second.seal(), {}, requests[1].execution_fingerprint};
       batch.run_next(batch.get_ticket(0), requests[0].transaction_id, first_result, [](const auto&) {}, [] {});
       bool serial = false;
       batch.run_next(batch.get_ticket(1), requests[1].transaction_id, second_result,
-         [](const auto&) { BOOST_FAIL("table dependency was lost"); }, [&] { serial = true; });
+         [](const auto&) { BOOST_FAIL("selected-row dependency was lost"); }, [&] { serial = true; });
       BOOST_CHECK(serial);
    }
+}
+
+BOOST_FIXTURE_TEST_CASE(absent_queries_and_end_metadata_ignore_unrelated_value_updates, batch_fixture) {
+   for (const auto query : std::array{
+         primary_query{a, primary_query_kind::find, 99},
+         primary_query{a, primary_query_kind::lower_bound, 99},
+         primary_query{a, primary_query_kind::upper_bound, 1},
+         primary_query{a, primary_query_kind::previous, 1}}) {
+      ordered_attempt_batch batch(base, std::span(requests).first(2));
+      primary_state_overlay second(base);
+      BOOST_CHECK(!second.locate_primary(query).row);
+      (void)second.read_table(a);
+      isolated_action_result result{second.seal(), {}, requests[1].execution_fingerprint};
+      batch.run_next(batch.get_ticket(0), requests[0].transaction_id, output(0, a), [](const auto&) {}, [] {});
+      bool adopted = false;
+      batch.run_next(batch.get_ticket(1), requests[1].transaction_id, result,
+         [&](const auto&) { adopted = true; }, [] { BOOST_FAIL("unrelated value update is not a phantom"); });
+      BOOST_CHECK(adopted);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(distinct_rows_in_one_table_adopt_without_losing_same_row_conflicts, batch_fixture) {
+   const auto& table = db.get<table_id_object, by_code_scope_table>(boost::make_tuple(a.code, a.scope, a.table));
+   db.create<key_value_object>([&](auto& row) {
+      row.t_id = table.id; row.primary_key = 2; row.payer = "alice"_n; row.value.assign("x", 1);
+   });
+   db.modify(table, [](auto& row) { ++row.count; });
+   const std::array keys{a};
+   base = frozen_primary_state::capture(view, keys);
+   ordered_attempt_batch batch(base, requests);
+   size_t adopted = 0, serial = 0;
+   for (size_t i = 0; i < 3; ++i) {
+      primary_state_overlay overlay(base);
+      overlay.update_existing(a, i == 0 ? 1 : 2, name{}, std::span<const char>("y", 1));
+      isolated_action_result result{overlay.seal(), {}, requests[i].execution_fingerprint};
+      batch.run_next(batch.get_ticket(i), requests[i].transaction_id, result,
+         [&](const auto&) { ++adopted; }, [&] { ++serial; });
+   }
+   BOOST_CHECK_EQUAL(adopted, 2u); BOOST_CHECK_EQUAL(serial, 1u);
 }
 
 BOOST_FIXTURE_TEST_CASE(no_attempt_is_a_whole_batch_serial_barrier, batch_fixture) {

@@ -3212,47 +3212,67 @@ struct controller_impl {
       if (wasmif.is_eos_vm_oc_enabled()) return {};
 #endif
       try {
-         const auto capture_started = performance::mark();
          std::vector<prepared_isolated_action> actions;
          std::vector<ordered_attempt_batch::request> requests;
-         std::set<table_key, table_key_less> keys;
          for (const auto* packed : packed_inputs) {
             if (!packed || actions.size() >= conf.parallel_validation_batch_size) break;
             auto action = prepare_isolated_action(self, *packed);
             if (!action || !conf.parallel_code_allowlist.contains(action->code_hash)) break;
-            const auto& tables = db.get_index<table_id_multi_index, by_code_scope_table>();
-            for (auto it = tables.lower_bound(boost::make_tuple(action->input.receiver));
-                 it != tables.end() && it->code == action->input.receiver; ++it) {
-               keys.insert({it->code, it->scope, it->table});
-               if (keys.size() > 64) return {};
-            }
             requests.push_back({packed->id(), isolated_execution_fingerprint(action->code_hash, action->limits, action->input)});
             actions.push_back(std::move(*action));
          }
          if (actions.empty()) return {};
          chainbase_transaction_state_view view(db);
-         const std::vector<table_key> tables(keys.begin(), keys.end());
-         auto base = frozen_primary_state::capture(view, tables);
-         auto attempts = std::make_unique<validation_attempts>();
-         attempts->cancel = cancel;
-         attempts->order = std::make_unique<ordered_attempt_batch>(base, requests);
-         std::vector<isolated_worker_job> jobs;
-         for (size_t i = 0; i < actions.size(); ++i) {
-            attempts->limits.push_back(actions[i].limits);
-            jobs.push_back({attempts->order->get_ticket(i), std::move(actions[i].code), std::move(actions[i].input), actions[i].limits, cancel});
-         }
          if (!parallel_workers) parallel_workers = std::make_unique<isolated_worker_pool>(conf.parallel_validation_threads);
-         performance::since(performance::stage::parallel_capture, capture_started);
-         {
-            performance::scope wait_timer(performance::stage::parallel_batch_wait);
-            attempts->outcomes = parallel_workers->run(std::move(jobs));
-         }
-         EOS_ASSERT(!cancel.stop_requested(), interrupt_exception, "parallel validation interrupted");
          auto& stats = production ? parallel_production_stats : parallel_stats;
-         ++stats.batches;
-         stats.attempts += attempts->outcomes.size();
-         for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.result);
-         return attempts;
+         std::set<table_key, table_key_less> keys;
+         std::set<primary_query, primary_query_less> queries;
+         auto private_cancel = cancel;
+         private_cancel.deadline = std::min(cancel.deadline,
+            std::chrono::steady_clock::now() + std::chrono::milliseconds(500));
+         auto checkpoint = [&] {
+            EOS_ASSERT(!cancel.stop_requested(), interrupt_exception, "parallel validation interrupted");
+            if (private_cancel.stop_requested()) throw primary_state_budget_exceeded();
+         };
+         // Every discovery round is fully joined BEFORE the owner reads more
+         // canonical state. Fresh identity/base; no old partial result survives.
+         // A sparse base only answers captured queries, never guesses absence or
+         // adjacency from its incomplete set of copied rows.
+         for (unsigned round = 0; round < 8; ++round) {
+            checkpoint();
+            const auto capture_started = performance::mark();
+            const std::vector<table_key> tables(keys.begin(), keys.end());
+            const std::vector<primary_query> reads(queries.begin(), queries.end());
+            auto base = frozen_primary_state::capture_queries(view, tables, reads, {}, checkpoint);
+            auto attempts = std::make_unique<validation_attempts>();
+            attempts->cancel = cancel;
+            attempts->order = std::make_unique<ordered_attempt_batch>(base, requests);
+            std::vector<isolated_worker_job> jobs;
+            for (size_t i = 0; i < actions.size(); ++i) {
+               attempts->limits.push_back(actions[i].limits);
+               jobs.push_back({attempts->order->get_ticket(i), actions[i].code, actions[i].input, actions[i].limits, private_cancel});
+            }
+            performance::since(performance::stage::parallel_capture, capture_started);
+            if (round == 0) ++stats.batches;
+            {
+               performance::scope wait_timer(performance::stage::parallel_batch_wait);
+               attempts->outcomes = parallel_workers->run(std::move(jobs));
+            }
+            // Count ALL actual attempts, including discarded discovery passes.
+            stats.attempts += attempts->outcomes.size();
+            for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.result);
+            checkpoint();
+            bool requested = false, extended = false;
+            for (const auto& result : attempts->outcomes) {
+               if (!result.request) continue;
+               requested = true;
+               extended |= keys.insert(result.request->table).second;
+               if (result.request->query) extended |= queries.insert(*result.request->query).second;
+            }
+            if (!requested) return attempts;
+            if (!extended) throw primary_state_invalid_attempt();
+         }
+         return {}; // bounded discovery exhaustion is serial, NOT rejection
       } catch (const interrupt_exception&) { throw; }
       catch (const std::exception&) {
          // Only local pre-execution work was done. Preserve canonical acceptance

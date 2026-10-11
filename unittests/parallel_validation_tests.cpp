@@ -22,17 +22,18 @@ using namespace eosio::testing;
 namespace {
 std::vector<uint8_t> compile(const std::string& wat) { return wast_to_wasm(wat); }
 
-std::vector<uint8_t> initialize_code() {
+std::vector<uint8_t> initialize_code(bool keyed = false) {
    return compile(R"((module
       (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
       (import "env" "db_store_i64" (func $store (param i64 i64 i64 i64 i32 i32) (result i32)))
       (memory 1 1)
       (func (export "apply") (param i64 i64 i64)
-         (drop (call $read (i32.const 0) (i32.const 32)))
+         (drop (call $read (i32.const 0) (i32.const )" + std::to_string(keyed ? 40 : 32) + R"()))
          (drop (call $store (i64.load (i32.const 0)) (i64.const )" + std::to_string("rows"_n.to_uint64_t()) + R"()
-            (i64.const )" + std::to_string("alice"_n.to_uint64_t()) + R"() (i64.const 1) (i32.const 8) (i32.const 8))))))");
+            (i64.const )" + std::to_string("alice"_n.to_uint64_t()) + ") " +
+            (keyed ? "(i64.load (i32.const 32))" : "(i64.const 1)") + R"( (i32.const 8) (i32.const 8))))))");
 }
-std::vector<uint8_t> update_code(bool extra = false) {
+std::vector<uint8_t> update_code(bool extra = false, bool keyed = false) {
    return compile(R"((module
       (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
       (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
@@ -42,9 +43,10 @@ std::vector<uint8_t> update_code(bool extra = false) {
       (memory 1 1)
       (func (export "apply") (param $receiver i64) (param i64 i64)
          (local $it i32) (local $work i32)
-         (drop (call $read (i32.const 0) (i32.const 32)))
+         (drop (call $read (i32.const 0) (i32.const )" + std::to_string(keyed ? 40 : 32) + R"()))
          (set_local $it (call $find (get_local $receiver) (i64.load (i32.const 0))
-            (i64.const )" + std::to_string("rows"_n.to_uint64_t()) + R"() (i64.const 1)))
+            (i64.const )" + std::to_string("rows"_n.to_uint64_t()) + ") " +
+            (keyed ? "(i64.load (i32.const 32))" : "(i64.const 1)") + R"())
          (drop (call $get (get_local $it) (i32.const 64) (i32.const 8)))
          (i64.store (i32.const 64) (i64.add (i64.load (i32.const 64)) (i64.load (i32.const 8))))
          )" + (extra ? "(i64.store (i32.const 64) (i64.add (i64.load (i32.const 64)) (i64.const 1)))" : "") + R"(
@@ -56,11 +58,16 @@ std::vector<uint8_t> update_code(bool extra = false) {
          (call $update (get_local $it) (i64.const 0) (i32.const 64) (i32.const 8))
          (call $return (i32.const 64) (i32.const 8)))))");
 }
-void push(tester& chain, name scope, uint64_t delta, uint64_t nonce, uint64_t work = 0) {
+void push(tester& chain, name scope, uint64_t delta, uint64_t nonce, uint64_t work = 0,
+          std::optional<uint64_t> primary = std::nullopt) {
    signed_transaction trx;
    action act; act.account = "test"_n; act.name = "run"_n; act.authorization = {{"alice"_n, "active"_n}};
    const std::array<uint64_t, 4> data{scope.to_uint64_t(), delta, work, nonce};
    act.data.assign(reinterpret_cast<const char*>(data.data()), reinterpret_cast<const char*>(data.data()) + sizeof(data));
+   if (primary) {
+      const auto* bytes = reinterpret_cast<const char*>(&*primary);
+      act.data.insert(act.data.end(), bytes, bytes + sizeof(*primary));
+   }
    trx.actions.push_back(std::move(act)); chain.set_transaction_headers(trx);
    trx.sign(chain.get_private_key("alice"_n, "active"), chain.control->get_chain_id());
    BOOST_REQUIRE(!chain.push_transaction(trx)->except);
@@ -246,7 +253,7 @@ BOOST_FIXTURE_TEST_CASE(native_savanna_parallel_adoption_matches_original_at_eve
 }
 
 BOOST_FIXTURE_TEST_CASE(invalid_receipts_authorization_duplicate_and_wasm_failure_undo_adopted_prefix, validation_corpus) {
-   for (uint16_t workers : {1, 2, 4}) for (unsigned mutation = 0; mutation < 6; ++mutation) {
+   for (uint16_t workers : {1, 2, 4}) for (unsigned mutation = 0; mutation < 7; ++mutation) {
       BOOST_TEST_CONTEXT("workers=" << workers << " mutation=" << mutation) {
          fc::temp_directory reference_dir, observed_dir;
          tester reference(configuration(reference_dir, 0), genesis);
@@ -277,6 +284,21 @@ BOOST_FIXTURE_TEST_CASE(invalid_receipts_authorization_duplicate_and_wasm_failur
                break;
             }
             case 5: bad->transactions[1] = transaction_receipt(bad->transactions.front()); break;
+            case 6: {
+               // Both private withdrawals see balance 10 and independently
+               // succeed (10-7). In canonical order the SECOND must fail; do
+               // not adopt its stale result and spend the same balance twice.
+               for (unsigned i = 0; i < 2; ++i) {
+                  auto trx = std::get<packed_transaction>(bad->transactions[i].trx).get_signed_transaction();
+                  const uint64_t scope = "alice"_n.to_uint64_t(), negative = uint64_t{0} - 7;
+                  std::memcpy(trx.actions[0].data.data(), &scope, sizeof(scope));
+                  std::memcpy(trx.actions[0].data.data() + 8, &negative, sizeof(negative));
+                  trx.signatures.clear();
+                  trx.sign(reference.get_private_key("alice"_n, "active"), genesis.compute_chain_id());
+                  bad->transactions[i].trx = packed_transaction(trx, packed_transaction::compression_type::none);
+               }
+               break;
+            }
          }
          std::vector<digest_type> digests;
          for (const auto& receipt : bad->transactions) digests.push_back(receipt.digest());
@@ -299,6 +321,7 @@ BOOST_FIXTURE_TEST_CASE(invalid_receipts_authorization_duplicate_and_wasm_failur
          BOOST_CHECK(observed.control->calculate_integrity_hash() == before);
          BOOST_CHECK(reference.control->calculate_integrity_hash() == before);
          BOOST_CHECK_GT(observed.control->get_parallel_execution_stats().adopted, 0u);
+         if (mutation == 6) BOOST_CHECK_EQUAL(observed.control->get_parallel_execution_stats().succeeded, 4u);
          // A rejected batch must not leave IDs, writes, receipts or tickets
          // behind. The original valid block still works at this exact prefix.
          apply(reference, 4); apply(observed, 4);
@@ -470,6 +493,155 @@ BOOST_FIXTURE_TEST_CASE(parallel_diagnostics_do_not_change_consensus_and_count_r
    BOOST_CHECK_GT(performance::metrics().snapshot(performance::stage::parallel_conflict).count, conflicts_before);
 }
 
+BOOST_AUTO_TEST_CASE(same_table_disjoint_rows_adopt_and_shared_balances_fall_back_in_real_savanna_blocks) {
+   auto genesis = base_tester::default_genesis();
+   auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+   genesis.initial_savanna.emplace();
+   genesis.initial_savanna->finalizer_key = public_key;
+   genesis.initial_savanna->proof_of_possession = proof;
+   const auto code = update_code(false, true);
+   const auto code_hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   std::vector<std::vector<char>> blocks;
+   {
+      fc::temp_directory directory;
+      auto config = base_tester::default_config(directory).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      tester source(config, genesis);
+      source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      auto seal = [&] { blocks.push_back(fc::raw::pack(*source.produce_block())); };
+      source.create_accounts({"test"_n, "alice"_n}); seal();
+      source.set_code("test"_n, initialize_code(true)); seal();
+      uint64_t nonce = 1;
+      for (uint64_t key : {1, 2, 3}) push(source, "alice"_n, 10, nonce++, 0, key);
+      seal(); source.set_code("test"_n, code); seal();
+      for (uint64_t key : {1, 2, 3}) push(source, "alice"_n, 7, nonce++, 20000, key);
+      seal();
+      push(source, "alice"_n, 3, nonce++, 0, 1);
+      push(source, "alice"_n, 5, nonce++, 0, 1);
+      push(source, "alice"_n, 9, nonce++, 0, 3); seal();
+      // Old private balance 25 cannot pay 30. Canonical preceding credit makes
+      // it possible; a worker failure MUST NOT be a final rejection.
+      push(source, "alice"_n, 10, nonce++, 0, 1);
+      push(source, "alice"_n, uint64_t{0} - 30, nonce++, 0, 1); seal();
+      for (unsigned i = 0; i < 5; ++i) seal();
+   }
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory reference_dir, observed_dir;
+      auto reference_config = base_tester::default_config(reference_dir).first;
+      reference_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      auto observed_config = base_tester::default_config(observed_dir).first;
+      observed_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      observed_config.parallel_validation_threads = workers;
+      observed_config.parallel_code_allowlist = {code_hash};
+      tester reference(reference_config, genesis), observed(observed_config, genesis);
+      std::vector<std::vector<char>> expected_traces, actual_traces;
+      auto expected_connection = reference.control->applied_transaction().connect([&](const auto& event) {
+         expected_traces.push_back(consensus_trace(std::get<0>(event)));
+      });
+      auto actual_connection = observed.control->applied_transaction().connect([&](const auto& event) {
+         actual_traces.push_back(consensus_trace(std::get<0>(event)));
+      });
+      for (size_t index = 0; index < blocks.size(); ++index) {
+         expected_traces.clear(); actual_traces.clear();
+         reference.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(blocks[index])));
+         observed.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(blocks[index])));
+         reference.control->abort_block(); observed.control->abort_block();
+         BOOST_CHECK(reference.head().id() == observed.head().id());
+         BOOST_CHECK_EQUAL(reference.last_irreversible_block_num(), observed.last_irreversible_block_num());
+         BOOST_CHECK(reference.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+         BOOST_CHECK(expected_traces == actual_traces);
+         if (index == 4 && workers) {
+            const auto stats = observed.control->get_parallel_execution_stats();
+            BOOST_CHECK_EQUAL(stats.adopted, 3u);
+            BOOST_CHECK_EQUAL(stats.serial_fallbacks, 0u);
+         }
+      }
+      const auto stats = observed.control->get_parallel_execution_stats();
+      BOOST_CHECK_EQUAL(stats.attempts, workers ? 16u : 0u); // discovery + complete execution
+      BOOST_CHECK_EQUAL(stats.adopted, workers ? 5u : 0u);
+      BOOST_CHECK_EQUAL(stats.serial_fallbacks, workers ? 3u : 0u);
+      for (const auto& [key, expected] : std::array<std::pair<uint64_t, uint64_t>, 3>{{{1, 5}, {2, 17}, {3, 26}}}) {
+         const auto value = observed.get_row_by_account("test"_n, "alice"_n, "rows"_n, name{key});
+         BOOST_REQUIRE_EQUAL(value.size(), 8u);
+         uint64_t actual; std::memcpy(&actual, value.data(), sizeof(actual));
+         BOOST_CHECK_EQUAL(actual, expected);
+      }
+   }
+}
+
+BOOST_AUTO_TEST_CASE(sparse_discovery_ignores_unrelated_scopes_and_exhaustion_preserves_serial_acceptance) {
+   auto genesis = base_tester::default_genesis();
+   auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+   genesis.initial_savanna.emplace();
+   genesis.initial_savanna->finalizer_key = public_key;
+   genesis.initial_savanna->proof_of_possession = proof;
+   const auto code = update_code(false, true);
+   const auto probe = compile(R"((module
+      (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
+      (func (export "apply") (param $receiver i64) (param i64 i64) (local $key i64)
+         (set_local $key (i64.const 1))
+         (loop $next
+            (drop (call $find (get_local $receiver) (i64.const )" + std::to_string("alice"_n.to_uint64_t()) +
+            R"() (i64.const )" + std::to_string("rows"_n.to_uint64_t()) + R"() (get_local $key)))
+            (set_local $key (i64.add (get_local $key) (i64.const 1)))
+            (br_if $next (i64.le_u (get_local $key) (i64.const 9)))))))");
+   const auto code_hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   const auto probe_hash = fc::sha256::hash(reinterpret_cast<const char*>(probe.data()), probe.size());
+   std::vector<std::vector<char>> blocks;
+   {
+      fc::temp_directory directory;
+      auto config = base_tester::default_config(directory).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      tester source(config, genesis);
+      source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      auto seal = [&] { blocks.push_back(fc::raw::pack(*source.produce_block())); };
+      source.create_accounts({"test"_n, "alice"_n}); seal();
+      source.set_code("test"_n, initialize_code(true)); seal();
+      uint64_t nonce = 1;
+      for (uint64_t scope = 200; scope < 280; ++scope) {
+         push(source, name{scope}, 10, nonce++, 0, 1);
+         if (scope % 10 == 9) seal();
+      }
+      for (uint64_t key : {1, 2, 3}) push(source, "alice"_n, 10, nonce++, 0, key);
+      seal(); source.set_code("test"_n, code); seal();
+      for (uint64_t key : {1, 2, 3}) push(source, "alice"_n, 7, nonce++, 0, key);
+      seal(); source.set_code("test"_n, probe); seal();
+      push(source, "alice"_n, 0, nonce++); seal();
+      for (unsigned i = 0; i < 5; ++i) seal();
+   }
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory reference_dir, observed_dir;
+      auto reference_config = base_tester::default_config(reference_dir).first;
+      reference_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      auto config = base_tester::default_config(observed_dir).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      config.parallel_validation_threads = workers;
+      config.parallel_code_allowlist = {code_hash, probe_hash};
+      tester reference(reference_config, genesis), observed(config, genesis);
+      std::vector<std::vector<char>> expected_traces, actual_traces;
+      auto first = reference.control->applied_transaction().connect([&](const auto& event) {
+         expected_traces.push_back(consensus_trace(std::get<0>(event)));
+      });
+      auto second = observed.control->applied_transaction().connect([&](const auto& event) {
+         actual_traces.push_back(consensus_trace(std::get<0>(event)));
+      });
+      for (const auto& block : blocks) {
+         expected_traces.clear(); actual_traces.clear();
+         reference.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(block)));
+         observed.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(block)));
+         reference.control->abort_block(); observed.control->abort_block();
+         BOOST_CHECK(reference.head().id() == observed.head().id());
+         BOOST_CHECK_EQUAL(reference.last_irreversible_block_num(), observed.last_irreversible_block_num());
+         BOOST_CHECK(reference.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+         BOOST_CHECK(expected_traces == actual_traces);
+      }
+      const auto stats = observed.control->get_parallel_execution_stats();
+      BOOST_CHECK_EQUAL(stats.adopted, workers ? 3u : 0u);
+      BOOST_CHECK_EQUAL(stats.succeeded, workers ? 3u : 0u);
+      BOOST_CHECK_EQUAL(stats.attempts, workers ? 14u : 0u); // 3*(discovery+execution) + 8 bounded probe passes
+   }
+}
+
 BOOST_FIXTURE_TEST_CASE(reviewed_but_unsupported_creation_imports_fall_back_before_any_canonical_change, validation_corpus) {
    const auto initializer = initialize_code();
    const auto initializer_hash = fc::sha256::hash(reinterpret_cast<const char*>(initializer.data()), initializer.size());
@@ -488,7 +660,7 @@ BOOST_FIXTURE_TEST_CASE(reviewed_but_unsupported_creation_imports_fall_back_befo
       prefix(chain, corpus.size());
       BOOST_CHECK(chain.control->calculate_integrity_hash() == expected);
       const auto stats = chain.control->get_parallel_execution_stats();
-      BOOST_CHECK_EQUAL(stats.attempts, 23u);
+      BOOST_CHECK_EQUAL(stats.attempts, 42u); // 19 supported inputs run discovery + execution; 4 imports fail once
       BOOST_CHECK_EQUAL(stats.succeeded, 18u);
       BOOST_CHECK_EQUAL(stats.adopted, 11u);
       BOOST_CHECK_EQUAL(stats.serial_fallbacks, 12u);

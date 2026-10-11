@@ -55,6 +55,8 @@ python3 -B tests/parallel_producer_process_test.py \
 
 `performance-metrics = true` 加原 Prometheus 插件可以观察固定标签的 capture、batch_wait、compile、execute、adopt、fallback、conflict。诊断默认关闭，标签有界。阶段计时有嵌套和线程重叠，不能相加推算 TPS；退出日志分别列出验证和生产的批次、试算、成功、采用、回退总数。检查实际采用量而非只看线程数。
 
+PX7 G2 起，`attempts/succeeded` 计入按需取数的发现/重跑轮次，可能多于唯一交易数；成功试算也可能因本轮其他任务需要补数据而丢弃。`serial_fallbacks` 只统计已进入顺序协调器的回退，不代表全链所有串行执行。不能把这些计数直接相除当作链的整体并行率或 TPS。
+
 首版不提供热切换。正常停机、等待 worker 退出并备份配置后，在新程序配置中删除生产开关（或设为 false），把验证线程数设为 0，再重启。没有并行持久状态需要迁移，也不需要重新创世或迁移资产。
 
 回退旧二进制时使用原配置副本，删除所有 `experimental-parallel-*` 选项，旧版本不认识它们。先在独立恢复目录用可信快照/完整区块日志进行完整重放，核对链 ID、最终确认高度与状态。不要让两个进程同时打开同一个 data-dir，不要复制正在写入的 mmap 状态冒充一致备份。

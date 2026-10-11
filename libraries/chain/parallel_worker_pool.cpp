@@ -64,6 +64,11 @@ struct isolated_worker_pool::impl {
                   outcome.result = module->execute(job.ticket.base(), job.input, job.ticket.stop_token(), {}, job.cancel);
                }
             }
+         } catch (const primary_state_missing& missing) {
+            // Owned request only. The joined owner may capture it and restart
+            // with a NEW batch/base; no worker ever follows a live DB pointer.
+            outcome.result.reset();
+            outcome.request = missing.request;
          } catch (...) {
             // Local capability/compile/timeout/allocation failure is NOT a
             // consensus rejection. Re-enter original execution on the owner.

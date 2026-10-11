@@ -582,6 +582,42 @@ BOOST_FIXTURE_TEST_CASE(pool_bounds_and_thread_affinity, wasm_fixture) {
    BOOST_CHECK(worker.get());
 }
 
+BOOST_FIXTURE_TEST_CASE(pool_reports_owned_missing_queries_then_restarts_on_fresh_sparse_base, wasm_fixture) {
+   const auto code = increment_wasm();
+   const auto hash = fc::sha256::hash(code.data(), code.size());
+   const std::array<ordered_attempt_batch::request, 2> requests{{
+      {fc::sha256::hash("first"), isolated_execution_fingerprint(hash, {}, input(1))},
+      {fc::sha256::hash("second"), isolated_execution_fingerprint(hash, {}, input(2))}}};
+   isolated_worker_pool pool(2);
+   auto empty = frozen_primary_state::capture_queries(view, {}, {});
+   ordered_attempt_batch discovery(empty, requests);
+   const auto missing = pool.run({{discovery.get_ticket(0), code, input(1), {}},
+                                  {discovery.get_ticket(1), code, input(2), {}}});
+   std::vector<primary_query> queries;
+   for (size_t i = 0; i < missing.size(); ++i) {
+      BOOST_CHECK(!missing[i].result);
+      BOOST_REQUIRE(missing[i].request);
+      BOOST_CHECK(missing[i].request->table == rows);
+      BOOST_REQUIRE(missing[i].request->query);
+      BOOST_CHECK_EQUAL(missing[i].request->query->primary_key, i + 1);
+      queries.push_back(*missing[i].request->query);
+   }
+   discovery.close();
+   auto sparse = frozen_primary_state::capture_queries(view, {}, queries);
+   BOOST_CHECK_EQUAL(sparse->row_count(), 2u);
+   ordered_attempt_batch ready(sparse, requests);
+   auto results = pool.run({{ready.get_ticket(0), code, input(1), {}},
+                            {ready.get_ticket(1), code, input(2), {}}});
+   for (size_t i = 0; i < results.size(); ++i) {
+      BOOST_REQUIRE(results[i].result);
+      BOOST_CHECK(!results[i].request);
+      ready.run_next(ready.get_ticket(i), requests[i].transaction_id, results[i].result,
+         [&](const auto& output) { BOOST_CHECK_EQUAL(number(output.return_value), (i + 1) * 10 + 7); },
+         [] { BOOST_FAIL("sparse independent rows must be usable"); });
+   }
+   BOOST_CHECK_EQUAL(canonical(), 10u); // discovery and private updates never changed DB
+}
+
 BOOST_FIXTURE_TEST_CASE(external_interrupt_cancels_running_and_queued_attempts_without_controller_refs, wasm_fixture) {
    isolated_worker_pool pool(1);
    auto generation = std::make_shared<std::atomic<uint64_t>>(0);

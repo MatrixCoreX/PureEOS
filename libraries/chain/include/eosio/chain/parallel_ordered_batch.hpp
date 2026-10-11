@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include <eosio/chain/parallel_wasm_worker.hpp>
 #include <fc/crypto/sha256.hpp>
 #include <functional>
@@ -61,7 +63,7 @@ public:
          if (use_private) {
             // Finish potentially allocating dependency bookkeeping BEFORE the
             // canonical callback. Even A->B->A or a later undo stays dirty.
-            for (const auto& write : attempt->state.writes()) dirty_.insert(write.table);
+            for (const auto& write : attempt->state.writes()) dirty_[write.table].insert(write.primary_key);
          } else {
             disable_speculation();
          }
@@ -96,7 +98,9 @@ private:
    void disable_speculation();
    const std::thread::id owner_ = std::this_thread::get_id();
    std::shared_ptr<identity> identity_;
-   std::set<table_key, table_key_less> dirty_;
+   // Existing-row, same-payer/same-length VALUE updates only. Any future
+   // structural mutation must add key-range / table-lifecycle invalidation.
+   std::map<table_key, std::set<uint64_t>, table_key_less> dirty_;
    size_t next_ = 0;
    bool closed_ = false;
    bool in_callback_ = false;

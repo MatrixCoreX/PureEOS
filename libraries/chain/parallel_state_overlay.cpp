@@ -52,14 +52,70 @@ std::shared_ptr<const frozen_primary_state> frozen_primary_state::capture(
 
 const frozen_primary_state::table_snapshot& frozen_primary_state::get_table(const table_key& key) const {
    const auto it = tables_.find(key);
-   if (it == tables_.end()) throw primary_state_unsupported();
+   if (it == tables_.end()) throw primary_state_missing(key);
    return it->second;
+}
+
+std::shared_ptr<const frozen_primary_state> frozen_primary_state::capture_queries(
+      const chainbase_transaction_state_view& source, std::span<const table_key> keys,
+      std::span<const primary_query> queries, primary_snapshot_limits limits, const std::function<void()>& checkpoint) {
+   if (keys.size() > limits.max_tables || queries.size() > limits.max_queries) throw primary_state_budget_exceeded();
+   auto result = std::shared_ptr<frozen_primary_state>(new frozen_primary_state);
+   auto capture_table = [&](const table_key& key) -> table_snapshot& {
+      if (checkpoint) checkpoint();
+      if (auto it = result->tables_.find(key); it != result->tables_.end()) return it->second;
+      if (result->tables_.size() == limits.max_tables) throw primary_state_budget_exceeded();
+      auto& table = result->tables_[key];
+      table.complete = false;
+      table.metadata = source.read_table(key);
+      return table;
+   };
+   for (const auto& key : keys) capture_table(key);
+   for (auto query : queries) {
+      require_query(query.kind);
+      if (query.kind == primary_query_kind::last) query.primary_key = 0;
+      auto& table = capture_table(query.table);
+      if (table.queries.contains(query)) continue;
+      const auto found = source.locate_primary(query);
+      if (found.table != table.metadata) throw primary_state_invalid_attempt();
+      std::optional<uint64_t> selected;
+      if (found.row) {
+         selected = found.row->primary_key;
+         if (auto existing = table.rows.find(*selected); existing != table.rows.end()) {
+            if (metadata(existing->second) != *found.row) throw primary_state_invalid_attempt();
+         } else {
+            if (result->row_count_ == limits.max_rows ||
+                found.row->value_size > limits.max_value_bytes - result->value_bytes_)
+               throw primary_state_budget_exceeded();
+            auto read = source.read_primary(query, limits.max_value_bytes - result->value_bytes_);
+            if (!read.row || read.table != found.table || metadata(*read.row) != *found.row)
+               throw primary_state_invalid_attempt();
+            result->value_bytes_ += read.row->value.size();
+            ++result->row_count_;
+            table.rows.emplace(*selected, std::move(*read.row));
+         }
+      }
+      table.queries.emplace(query, selected);
+   }
+   return result;
 }
 
 std::pair<const frozen_primary_state::table_snapshot*, const primary_row_read*>
 frozen_primary_state::locate(const primary_query& query) const {
    require_query(query.kind);
-   const auto& table = get_table(query.table);
+   const auto captured = tables_.find(query.table);
+   if (captured == tables_.end()) throw primary_state_missing(query);
+   const auto& table = captured->second;
+   if (!table.complete) {
+      // An absent TABLE proves all its primary queries absent. Otherwise the
+      // exact query must have been captured; sparse rows cannot prove ranges.
+      if (!table.metadata) return {&table, nullptr};
+      auto normalized = query;
+      if (normalized.kind == primary_query_kind::last) normalized.primary_key = 0;
+      const auto answer = table.queries.find(normalized);
+      if (answer == table.queries.end()) throw primary_state_missing(normalized);
+      return {&table, answer->second ? &table.rows.at(*answer->second) : nullptr};
+   }
    const auto& rows = table.rows;
    auto it = rows.end();
    switch (query.kind) {
@@ -118,11 +174,20 @@ void primary_state_overlay::check_owner_and_valid() const {
 }
 
 void primary_state_overlay::depend_on(const table_key& key) const {
-   // Conservatively track the entire captured table, including absent tables,
-   // absent rows and empty/bounded range results. Never erase earlier reads.
+   // Table existence/identity/payer/count remain dependencies even when the
+   // transaction only asks for an end iterator. Values are tracked by queries.
    if (!reads_.contains(key)) {
       if (reads_.size() == limits_.max_read_tables) throw primary_state_budget_exceeded();
       reads_.insert(key);
+   }
+}
+
+void primary_state_overlay::depend_on_query(primary_query query) const {
+   depend_on(query.table);
+   if (query.kind == primary_query_kind::last) query.primary_key = 0; // ignored by the API
+   if (!queries_.contains(query)) {
+      if (queries_.size() == limits_.max_read_queries) throw primary_state_budget_exceeded();
+      queries_.insert(query);
    }
 }
 
@@ -144,7 +209,7 @@ std::optional<table_read> primary_state_overlay::read_table(const table_key& key
 primary_metadata_result primary_state_overlay::locate_primary(const primary_query& query) const {
    check_owner_and_valid();
    try {
-      depend_on(query.table);
+      depend_on_query(query);
       // Supported updates never change row identity, size, payer or ordering.
       return base_->locate_primary(query);
    } catch (...) { valid_ = false; throw; }
@@ -196,7 +261,28 @@ void primary_state_overlay::update_existing(const table_key& table, uint64_t key
 primary_overlay_result primary_state_overlay::seal() {
    check_owner_and_valid();
    valid_ = false;
-   return {base_, std::move(reads_), std::move(writes_)};
+   return {base_, std::move(reads_), std::move(queries_), std::move(writes_)};
+}
+
+bool primary_overlay_result::matches_base_reads(const transaction_state_view& live,
+                                               const std::function<void()>& checkpoint) const {
+   std::set<int64_t> checked_values;
+   for (const auto& table : reads_) {
+      checkpoint();
+      if (live.read_table(table) != base_->read_table(table)) return false;
+   }
+   for (const auto& query : queries_) {
+      checkpoint();
+      const auto expected = base_->locate_primary(query);
+      if (live.locate_primary(query) != expected) return false;
+      // Distinct range/point queries can select the same large row. Selection
+      // is checked for each query, but compare its payload once per object ID
+      // while the serial owner holds this unchanged canonical state.
+      if (expected.row && checked_values.insert(expected.row->object_id).second &&
+          live.read_primary(query, expected.row->value_size) !=
+                          base_->read_primary(query, expected.row->value_size)) return false;
+   }
+   return true;
 }
 
 const primary_overlay_cursor::row_handle& primary_overlay_cursor::get_handle(int iterator) const {

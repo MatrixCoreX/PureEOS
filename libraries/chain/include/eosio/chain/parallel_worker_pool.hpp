@@ -15,6 +15,7 @@ struct isolated_worker_outcome {
    std::optional<isolated_action_result> result; // empty always means original serial execution
    std::chrono::steady_clock::time_point began, ended; // local diagnostics only
    std::chrono::microseconds elapsed{}; // execution only; excludes compilation and queueing
+   std::optional<primary_capture_request> request; // discovery only; no partial result is adoptable
 };
 
 // Bounded synchronous batches on a persistent pool. The serial owner waits for

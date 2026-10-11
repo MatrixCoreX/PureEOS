@@ -74,24 +74,15 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
 
    chainbase_transaction_state_view live(context.db);
    performance::scope adoption_timer(performance::stage::parallel_adopt);
-   // Defense in depth in addition to the ordered coordinator. Compare complete
-   // bounded logical tables, including absent keys/ranges and object identities.
+   // Defense in depth: preserve table metadata plus the exact selection and
+   // complete original row value for EVERY observed query (including absence
+   // and ranges). Unread rows no longer cause false value conflicts. Structural
+   // changes still invalidate metadata/selection; writes remain update-only.
    // No state pointers from this check survive into the mutation loop.
-   for (const auto& table : result.state.read_tables()) {
-      context.trx_context.checktime();
-      if (live.read_table(table) != result.state.base()->read_table(table)) return false;
-      primary_query query{table, primary_query_kind::lower_bound, 0};
-      while (true) {
-         const auto expected = result.state.base()->locate_primary(query);
-         if (live.locate_primary(query) != expected) return false;
-         if (!expected.row) break;
-         if (live.read_primary(query, expected.row->value_size) != result.state.base()->read_primary(query, expected.row->value_size)) return false;
-         context.trx_context.checktime();
-         query.kind = primary_query_kind::upper_bound; query.primary_key = expected.row->primary_key;
-      }
-   }
+   if (!result.state.matches_base_reads(live, [&] { context.trx_context.checktime(); })) return false;
    for (const auto& write : result.state.writes()) {
-      if (write.table.code != context.get_receiver() || !result.state.read_tables().contains(write.table)) return false;
+      if (write.table.code != context.get_receiver() || !result.state.read_tables().contains(write.table) ||
+          !result.state.read_queries().contains({write.table, primary_query_kind::find, write.primary_key})) return false;
       const auto row = live.locate_primary({write.table, primary_query_kind::find, write.primary_key}).row;
       if (!row || row->payer != write.payer || row->value_size != write.value.size()) return false;
    }

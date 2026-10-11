@@ -56,7 +56,15 @@ bool ordered_attempt_batch::can_use(const isolated_action_result& result) const 
    if (result.state.base() != identity_->base ||
        result.execution_fingerprint != identity_->transactions[next_].execution_fingerprint)
       throw primary_state_invalid_attempt();
-   for (const auto& read : result.state.read_tables()) if (dirty_.contains(read)) {
+   for (const auto& query : result.state.read_queries()) {
+      const auto dirty = dirty_.find(query.table);
+      if (dirty == dirty_.end()) continue;
+      const auto selected = result.state.base()->locate_primary(query);
+      // Private writes cannot insert, erase, resize or change payer. Thus a
+      // prior value update does not change absent results or range selection;
+      // only a selected row may be stale. Canonical adoption rechecks both
+      // query selection and table/row identities against the actual database.
+      if (!selected.row || !dirty->second.contains(selected.row->primary_key)) continue;
       // Exact dependency-conflict events only; the already-disabled serial
       // tail is not counted repeatedly. A zero-duration sample is a counter.
       if (performance::metrics().enabled.load(std::memory_order_relaxed))
