@@ -74,7 +74,7 @@ file(GLOB UNIT_TESTS "*.cpp") # find all unit test suites
 add_executable( unit_test ${UNIT_TESTS} protocol_feature_digest_tests.cpp) # build unit tests as one executable
 
 target_link_libraries( unit_test eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS} )
-target_link_libraries(unit_test pureeos_state_view_experimental)
+target_link_libraries(unit_test pureeos_state_view_experimental pureeos_wasm_worker_experimental)
 
 # Small real-Chainbase test target; no controller, sockets or deployed chain.
 add_executable(parallel_state_view_test ../tests/main.cpp parallel_state_view_tests.cpp)
@@ -96,6 +96,13 @@ target_compile_definitions(parallel_softfloat_test PRIVATE SOFTFLOAT_FAST_INT64)
 target_compile_definitions(unit_test PRIVATE SOFTFLOAT_FAST_INT64)
 add_test(NAME pureeos_parallel_softfloat COMMAND parallel_softfloat_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_softfloat PROPERTIES TIMEOUT 60 LABELS "parallel-px0")
+
+add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp)
+target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_testing
+  state_history fc custom_appbase pureeos_wasm_worker_experimental ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+add_test(NAME pureeos_parallel_wasm_worker COMMAND parallel_wasm_worker_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
 
 # Opt-in native isolation checks, without pretending that non-instrumented
 # Chainbase/FC or the complete nodeos/JIT have been covered by sanitizers.

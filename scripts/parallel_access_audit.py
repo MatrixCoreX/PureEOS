@@ -22,6 +22,7 @@ SOURCE_ROOTS = (
     "libraries/chain",
     "libraries/chaindb",
     "libraries/softfloat/source",
+    "libraries/eos-vm/include/eosio/vm",
     "plugins/chain_plugin",
     "plugins/producer_plugin",
     "plugins/state_history_plugin",
@@ -31,6 +32,7 @@ EXPLICIT_FILES = (
     "libraries/CMakeLists.txt",
     "libraries/chain/CMakeLists.txt",
     "libraries/softfloat/CMakeLists.txt",
+    "libraries/eos-vm/CMakeLists.txt",
     # This is an active source header, not generated build output.
     "libraries/softfloat/build/Linux-x86_64-GCC/platform.h",
 )
@@ -169,6 +171,8 @@ def review_area(path):
         return "floating_point_tls_and_build_contract"
     if path.endswith("CMakeLists.txt"):
         return "build_definitions_and_dependency_contract"
+    if path.startswith("libraries/eos-vm/"):
+        return "vm_module_memory_timeout_and_host_dispatch"
     if path.startswith("plugins/"):
         return "queues_signals_and_external_output"
     filename = Path(path).name

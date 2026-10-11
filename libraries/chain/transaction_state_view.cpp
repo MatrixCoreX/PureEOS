@@ -29,6 +29,7 @@ void require_supported_query(primary_query_kind kind) {
       case primary_query_kind::lower_bound:
       case primary_query_kind::upper_bound:
       case primary_query_kind::last:
+      case primary_query_kind::previous:
          return;
    }
    throw state_view_unsupported_query();
@@ -64,6 +65,15 @@ locate(const chainbase::database& db, const primary_query& query) {
             --it;
             if (it->t_id == table->id)
                row = &*it;
+         }
+         break;
+      }
+      case primary_query_kind::previous: {
+         const auto& index = db.get_index<key_value_index, by_scope_primary>();
+         auto it = index.lower_bound(boost::make_tuple(table->id, query.primary_key));
+         if (it != index.begin()) {
+            --it;
+            if (it->t_id == table->id) row = &*it;
          }
          break;
       }

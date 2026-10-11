@@ -170,6 +170,17 @@ class InventoryTests(unittest.TestCase):
         self.write(source, "THREAD_LOCAL uint_fast8_t flags = 0;\n")
         self.assertEqual(audit.compare_inventory(before, self.inventory())["changed"], [source])
 
+    def test_vm_timeout_and_allocator_changes_require_review_even_without_db_access(self):
+        source = "libraries/eos-vm/include/eosio/vm/backend.hpp"
+        self.write(source, "module.disable_code();\n")
+        before = self.inventory()
+        self.write(source, "shared_module.disable_code();\n")
+        after = self.inventory()
+        self.assertEqual(audit.compare_inventory(before, after)["changed"], [source])
+        item = next(item for item in after["files"] if item["path"] == source)
+        self.assertEqual(item["review_area"], "vm_module_memory_timeout_and_host_dispatch")
+        self.assertEqual(item["state_access_candidates"], [])
+
     def test_build_definitions_and_active_platform_header_are_fingerprinted(self):
         for source in audit.EXPLICIT_FILES:
             with self.subTest(source=source):

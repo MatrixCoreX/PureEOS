@@ -48,7 +48,7 @@ struct primary_row_metadata {
    bool operator==(const primary_row_metadata&) const = default;
 };
 
-enum class primary_query_kind : uint8_t { find, lower_bound, upper_bound, last };
+enum class primary_query_kind : uint8_t { find, lower_bound, upper_bound, last, previous };
 
 struct primary_query {
    table_key table;

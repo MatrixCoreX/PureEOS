@@ -83,6 +83,11 @@ target_link_libraries(pureeos_state_view_experimental PUBLIC chainbase fc softfl
 target_include_directories(pureeos_state_view_experimental PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 
+# Restricted independent WASM host; no controller integration and no production
+# enable switch until ordered adoption and differential gates are complete.
+add_library(pureeos_wasm_worker_experimental STATIC EXCLUDE_FROM_ALL parallel_wasm_worker.cpp)
+target_link_libraries(pureeos_wasm_worker_experimental PUBLIC pureeos_state_view_experimental eos-vm)
+
 ## SORT .cpp by most likely to change / break compile
 add_library( eosio_chain
              name.cpp

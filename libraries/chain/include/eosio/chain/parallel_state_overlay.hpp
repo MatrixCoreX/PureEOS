@@ -113,6 +113,7 @@ public:
    primary_overlay_result seal();
 
 private:
+   friend class primary_overlay_cursor;
    void check_owner_and_valid() const;
    void depend_on(const table_key&) const;
    const std::vector<char>* written_value(const table_key&, uint64_t primary_key) const;
@@ -124,6 +125,47 @@ private:
    std::vector<primary_update> writes_;
    std::map<table_key, std::map<uint64_t, size_t>, table_key_less> latest_writes_;
    size_t written_bytes_ = 0;
+};
+
+// Action-local iterator handles for the restricted existing-row capability.
+// There is deliberately no create/delete/sync-call API. Handles may not cross
+// actions, attempts or batches; adding lifecycle-changing operations requires
+// explicit invalidation, not a logical-key lookup that revives deleted rows.
+class primary_overlay_cursor {
+public:
+   primary_overlay_cursor(primary_state_overlay& state, name receiver,
+                          size_t max_iterators = 4096, size_t max_end_iterators = 64)
+      : state_(state), receiver_(receiver), max_iterators_(max_iterators), max_ends_(max_end_iterators) {}
+   primary_overlay_cursor(const primary_overlay_cursor&) = delete;
+   primary_overlay_cursor& operator=(const primary_overlay_cursor&) = delete;
+
+   int find(const table_key&, uint64_t primary_key);
+   int lower_bound(const table_key&, uint64_t primary_key);
+   int upper_bound(const table_key&, uint64_t primary_key);
+   int end(const table_key&);
+   int next(int iterator, uint64_t& primary_key);
+   int previous(int iterator, uint64_t& primary_key);
+   int get(int iterator, std::span<char> output);
+   void update(int iterator, name payer, std::span<const char> value);
+
+private:
+   template<typename F> decltype(auto) checked(F&& fn) {
+      state_.check_owner_and_valid(); // wrong-thread calls never mutate even the failure flag
+      try { return std::forward<F>(fn)(); }
+      catch (...) { state_.valid_ = false; throw; }
+   }
+   struct row_handle { table_key table; primary_row_metadata row; };
+   const row_handle& get_handle(int iterator) const;
+   int cache_table(const table_read&);
+   int cache_row(const table_key&, const primary_row_metadata&);
+   int seek(const primary_query&);
+   primary_state_overlay& state_;
+   name receiver_;
+   size_t max_iterators_, max_ends_;
+   std::vector<row_handle> rows_;
+   std::vector<table_read> tables_;
+   std::map<int64_t, int> row_handles_;
+   std::map<int64_t, int> table_handles_;
 };
 
 } // namespace eosio::chain::experimental

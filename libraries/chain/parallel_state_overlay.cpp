@@ -1,5 +1,7 @@
 #include <eosio/chain/parallel_state_overlay.hpp>
+#include <eosio/chain/exceptions.hpp>
 #include <algorithm>
+#include <limits>
 
 namespace eosio::chain::experimental {
 namespace {
@@ -11,7 +13,8 @@ void require_query(primary_query_kind kind) {
       case primary_query_kind::find:
       case primary_query_kind::lower_bound:
       case primary_query_kind::upper_bound:
-      case primary_query_kind::last: return;
+      case primary_query_kind::last:
+      case primary_query_kind::previous: return;
    }
    throw state_view_unsupported_query();
 }
@@ -64,6 +67,10 @@ frozen_primary_state::locate(const primary_query& query) const {
       case primary_query_kind::lower_bound: it = rows.lower_bound(query.primary_key); break;
       case primary_query_kind::upper_bound: it = rows.upper_bound(query.primary_key); break;
       case primary_query_kind::last: if (!rows.empty()) it = std::prev(rows.end()); break;
+      case primary_query_kind::previous:
+         it = rows.lower_bound(query.primary_key);
+         it = it == rows.begin() ? rows.end() : std::prev(it);
+         break;
    }
    return {&table, it == rows.end() ? nullptr : &it->second};
 }
@@ -190,6 +197,111 @@ primary_overlay_result primary_state_overlay::seal() {
    check_owner_and_valid();
    valid_ = false;
    return {base_, std::move(reads_), std::move(writes_)};
+}
+
+const primary_overlay_cursor::row_handle& primary_overlay_cursor::get_handle(int iterator) const {
+   EOS_ASSERT(iterator != -1, invalid_table_iterator, "invalid iterator");
+   EOS_ASSERT(iterator >= 0, table_operation_not_permitted, "dereference of end iterator");
+   EOS_ASSERT(static_cast<size_t>(iterator) < rows_.size(), invalid_table_iterator, "iterator out of range");
+   return rows_[iterator];
+}
+
+int primary_overlay_cursor::cache_table(const table_read& table) {
+   const auto found = table_handles_.find(table.object_id);
+   if (found != table_handles_.end()) return found->second;
+   if (tables_.size() >= max_ends_ || tables_.size() > static_cast<size_t>(std::numeric_limits<int>::max() - 2))
+      throw primary_state_budget_exceeded();
+   const int result = -2 - static_cast<int>(tables_.size());
+   tables_.push_back(table);
+   table_handles_.emplace(table.object_id, result);
+   return result;
+}
+
+int primary_overlay_cursor::cache_row(const table_key& table, const primary_row_metadata& row) {
+   const auto found = row_handles_.find(row.object_id);
+   if (found != row_handles_.end()) return found->second;
+   if (rows_.size() >= max_iterators_ || rows_.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
+      throw primary_state_budget_exceeded();
+   const int result = static_cast<int>(rows_.size());
+   rows_.push_back({table, row});
+   row_handles_.emplace(row.object_id, result);
+   return result;
+}
+
+int primary_overlay_cursor::seek(const primary_query& query) {
+   const auto found = state_.locate_primary(query);
+   if (!found.table) return -1;
+   const auto end_iterator = cache_table(*found.table);
+   return found.row ? cache_row(query.table, *found.row) : end_iterator;
+}
+
+int primary_overlay_cursor::find(const table_key& table, uint64_t key) {
+   return checked([&] { return seek({table, primary_query_kind::find, key}); });
+}
+
+int primary_overlay_cursor::lower_bound(const table_key& table, uint64_t key) {
+   return checked([&] { return seek({table, primary_query_kind::lower_bound, key}); });
+}
+
+int primary_overlay_cursor::upper_bound(const table_key& table, uint64_t key) {
+   return checked([&] { return seek({table, primary_query_kind::upper_bound, key}); });
+}
+
+int primary_overlay_cursor::end(const table_key& table) {
+   return checked([&] {
+      const auto found = state_.read_table(table);
+      return found ? cache_table(*found) : -1;
+   });
+}
+
+int primary_overlay_cursor::next(int iterator, uint64_t& primary_key) {
+   return checked([&] {
+      if (iterator < -1) return -1; // preserve original host behaviour even for an unknown negative handle
+      const auto row = get_handle(iterator);
+      const auto found = state_.locate_primary({row.table, primary_query_kind::upper_bound, row.row.primary_key});
+      if (!found.row) return table_handles_.at(row.row.table_object_id);
+      primary_key = found.row->primary_key;
+      return cache_row(row.table, *found.row);
+   });
+}
+
+int primary_overlay_cursor::previous(int iterator, uint64_t& primary_key) {
+   return checked([&] {
+      primary_query query;
+      if (iterator < -1) {
+         // Wider arithmetic also safely rejects INT_MIN; never negate it as int.
+         const auto index = static_cast<uint64_t>(-static_cast<int64_t>(iterator) - 2);
+         EOS_ASSERT(index < tables_.size(), invalid_table_iterator, "not a valid end iterator");
+         query = {tables_[index].key, primary_query_kind::last, 0};
+      } else {
+         const auto& row = get_handle(iterator);
+         query = {row.table, primary_query_kind::previous, row.row.primary_key};
+      }
+      const auto found = state_.locate_primary(query);
+      if (!found.row) return -1;
+      primary_key = found.row->primary_key;
+      return cache_row(query.table, *found.row);
+   });
+}
+
+int primary_overlay_cursor::get(int iterator, std::span<char> output) {
+   return checked([&] {
+      const auto row = get_handle(iterator);
+      if (row.row.value_size > static_cast<size_t>(std::numeric_limits<int>::max()))
+         throw primary_state_unsupported();
+      if (output.empty()) return static_cast<int>(row.row.value_size);
+      const auto read = state_.read_primary_prefix({row.table, primary_query_kind::find, row.row.primary_key}, output.size());
+      std::copy(read.value.begin(), read.value.end(), output.begin());
+      return static_cast<int>(read.value.size());
+   });
+}
+
+void primary_overlay_cursor::update(int iterator, name payer, std::span<const char> value) {
+   checked([&] {
+      const auto row = get_handle(iterator);
+      EOS_ASSERT(row.table.code == receiver_, table_access_violation, "db access violation");
+      state_.update_existing(row.table, row.row.primary_key, payer, value);
+   });
 }
 
 } // namespace eosio::chain::experimental

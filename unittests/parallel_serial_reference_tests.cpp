@@ -1,10 +1,14 @@
 #include <eosio/chain/transaction_state_view.hpp>
+#include <eosio/chain/parallel_state_overlay.hpp>
+#include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/testing/tester.hpp>
 #include <eosio/testing/bls_utils.hpp>
 #include <test_contracts.hpp>
 #include <boost/test/unit_test.hpp>
 #include <array>
+#include <limits>
+#include <random>
 
 using namespace eosio::chain;
 using namespace eosio::chain::experimental;
@@ -34,6 +38,112 @@ trace_summary summarize(const transaction_trace_ptr& trace) {
 } // namespace
 
 BOOST_AUTO_TEST_SUITE(parallel_serial_reference_tests)
+
+// Exercise the original host implementation, not a second implementation of
+// its expected values. No WASM execution or parallel adoption is claimed here.
+BOOST_AUTO_TEST_CASE(primary_cursor_matches_original_host_read_and_update) {
+   tester chain;
+   chain.create_accounts({"token"_n, "alice"_n});
+   const auto original_hash = chain.control->calculate_integrity_hash();
+   signed_transaction signed_trx;
+   action act;
+   act.account = "token"_n; act.name = "probe"_n;
+   act.authorization = {{"alice"_n, config::active_name}};
+   signed_trx.actions.push_back(act);
+   packed_transaction packed(signed_trx, packed_transaction::compression_type::none);
+   platform_timer timer;
+   transaction_context transaction(*chain.control, packed, packed.id(), transaction_checktime_timer(timer),
+      action_digests_t::store_which_t::both, fc::time_point::now(), transaction_metadata::trx_type::input);
+   // A host-only fixture, not an accepted transaction: populate its public trace
+   // directly without relaxing private controller/transaction APIs for tests.
+   transaction.trace->action_traces.emplace_back(*transaction.trace, act, "token"_n, false, 1, 0, 0);
+   apply_context original(*chain.control, transaction, 1);
+   auto& db = original.db;
+   const std::array keys{
+      table_key{"token"_n, "alice"_n, "accounts"_n},
+      table_key{"token"_n, "bob"_n, "accounts"_n},
+      table_key{"token"_n, "empty"_n, "accounts"_n},
+      table_key{"token"_n, "missing"_n, "accounts"_n}};
+   const std::array primary_keys{uint64_t{0}, uint64_t{7}, uint64_t{19}, std::numeric_limits<uint64_t>::max()};
+   for (size_t t = 0; t < 3; ++t) {
+      const auto& table = db.create<table_id_object>([&](auto& row) {
+         row.code = keys[t].code; row.scope = keys[t].scope; row.table = keys[t].table;
+         row.payer = "alice"_n;
+      });
+      if (t == 2) continue;
+      for (auto primary : primary_keys) {
+         db.create<key_value_object>([&](auto& row) {
+            row.t_id = table.id; row.primary_key = primary; row.payer = "alice"_n;
+            const std::array<char, 4> bytes{char(t), '\0', char(primary), '\x7f'};
+            row.value.assign(bytes.data(), bytes.size());
+         });
+         db.modify(table, [](auto& row) { ++row.count; });
+      }
+   }
+   chainbase_transaction_state_view live(db);
+   primary_state_overlay isolated(frozen_primary_state::capture(live, keys));
+   primary_overlay_cursor cursor(isolated, "token"_n);
+   for (const auto& key : keys) {
+      BOOST_CHECK_EQUAL(cursor.end(key), original.db_end_i64(key.code, key.scope, key.table));
+      for (auto primary : primary_keys) {
+         BOOST_CHECK_EQUAL(cursor.find(key, primary), original.db_find_i64(key.code, key.scope, key.table, primary));
+         BOOST_CHECK_EQUAL(cursor.lower_bound(key, primary), original.db_lowerbound_i64(key.code, key.scope, key.table, primary));
+         BOOST_CHECK_EQUAL(cursor.upper_bound(key, primary), original.db_upperbound_i64(key.code, key.scope, key.table, primary));
+      }
+      uint64_t a = 1234, b = 1234;
+      const auto end = cursor.end(key);
+      if (end < -1) {
+         BOOST_CHECK_EQUAL(cursor.previous(end, a), original.db_previous_i64(end, b));
+         BOOST_CHECK_EQUAL(a, b);
+      }
+   }
+   std::mt19937_64 rng(0x5058325f484f5354ULL);
+   for (unsigned i = 0; i < 500; ++i) {
+      const auto& key = keys[rng() % 2];
+      const auto primary = primary_keys[rng() % primary_keys.size()];
+      const auto iterator = cursor.find(key, primary);
+      BOOST_REQUIRE_EQUAL(iterator, original.db_find_i64(key.code, key.scope, key.table, primary));
+      uint64_t a = 1234, b = 1234;
+      BOOST_CHECK_EQUAL(cursor.next(iterator, a), original.db_next_i64(iterator, b));
+      BOOST_CHECK_EQUAL(a, b);
+      BOOST_CHECK_EQUAL(cursor.previous(iterator, a), original.db_previous_i64(iterator, b));
+      BOOST_CHECK_EQUAL(a, b);
+      std::array<char, 8> first, second;
+      first.fill('z'); second.fill('z');
+      const size_t size = rng() % 9;
+      BOOST_CHECK_EQUAL(cursor.get(iterator, std::span(first).first(size)), original.db_get_i64(iterator, second.data(), size));
+      BOOST_CHECK(first == second);
+      const std::array<char, 4> bytes{char(rng()), char(rng()), '\0', char(rng())};
+      const name payer = i % 2 ? "alice"_n : name{};
+      cursor.update(iterator, payer, bytes);
+      original.db_update_i64(iterator, payer, bytes.data(), bytes.size());
+      BOOST_CHECK_EQUAL(cursor.get(iterator, first), original.db_get_i64(iterator, second.data(), second.size()));
+      BOOST_CHECK(first == second);
+   }
+   for (const auto& key : keys) {
+      for (auto primary : primary_keys) {
+         const primary_query query{key, primary_query_kind::find, primary};
+         BOOST_CHECK(isolated.read_primary(query, 4) == live.read_primary(query, 4));
+      }
+   }
+   const auto result = isolated.seal();
+   BOOST_CHECK_EQUAL(result.writes().size(), 500u);
+   // Invalid handles keep original exception classes; each private attempt is
+   // discarded on failure. INT_MIN is tested only in the new adapter because
+   // the legacy end-handle conversion negates int and has an overflow hazard.
+   for (int bad : {-1, -2, -99, 999}) {
+      primary_state_overlay invalid(result.base());
+      primary_overlay_cursor invalid_cursor(invalid, "token"_n);
+      int64_t original_code = 0, isolated_code = 0;
+      try { original.db_get_i64(bad, nullptr, 0); } catch (const fc::exception& e) { original_code = e.code(); }
+      try { invalid_cursor.get(bad, {}); } catch (const fc::exception& e) { isolated_code = e.code(); }
+      BOOST_CHECK_NE(original_code, 0);
+      BOOST_CHECK_EQUAL(isolated_code, original_code);
+      BOOST_CHECK_THROW(invalid.seal(), primary_state_invalid_attempt);
+   }
+   transaction.undo();
+   BOOST_CHECK(chain.control->calculate_integrity_hash() == original_hash);
+}
 
 // Both controllers remain serial. The observer calls the experimental read
 // adapter; the reference uses the existing tester/database APIs. Blocks are
