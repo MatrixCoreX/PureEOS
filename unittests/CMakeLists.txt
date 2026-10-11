@@ -90,6 +90,54 @@ target_include_directories(parallel_serial_reference_test PRIVATE ${CMAKE_CURREN
 add_test(NAME pureeos_parallel_serial_reference COMMAND parallel_serial_reference_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_serial_reference PROPERTIES TIMEOUT 180 LABELS "parallel-px1")
 
+add_executable(parallel_softfloat_test ../tests/main.cpp parallel_softfloat_tests.cpp)
+target_link_libraries(parallel_softfloat_test PRIVATE pureeos_state_view_experimental Boost::included_unit_test_framework)
+target_compile_definitions(parallel_softfloat_test PRIVATE SOFTFLOAT_FAST_INT64)
+target_compile_definitions(unit_test PRIVATE SOFTFLOAT_FAST_INT64)
+add_test(NAME pureeos_parallel_softfloat COMMAND parallel_softfloat_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_softfloat PROPERTIES TIMEOUT 60 LABELS "parallel-px0")
+
+# Opt-in native isolation checks, without pretending that non-instrumented
+# Chainbase/FC or the complete nodeos/JIT have been covered by sanitizers.
+set(PUREEOS_PARALLEL_SANITIZERS "" CACHE STRING "Native prototype checks: address,undefined or thread; empty disables")
+if(PUREEOS_PARALLEL_SANITIZERS)
+  if(NOT PUREEOS_PARALLEL_SANITIZERS STREQUAL "address,undefined" AND
+     NOT PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
+    message(FATAL_ERROR "PUREEOS_PARALLEL_SANITIZERS must be address,undefined or thread")
+  endif()
+  # Instrument the actual dependency implementation too, not merely its callers.
+  get_target_property(PUREEOS_SOFTFLOAT_SOURCES softfloat SOURCES)
+  get_target_property(PUREEOS_SOFTFLOAT_SOURCE_DIR softfloat SOURCE_DIR)
+  get_target_property(PUREEOS_SOFTFLOAT_INCLUDES softfloat INCLUDE_DIRECTORIES)
+  set(PUREEOS_SOFTFLOAT_ABSOLUTE_SOURCES)
+  foreach(PUREEOS_SOFTFLOAT_SOURCE IN LISTS PUREEOS_SOFTFLOAT_SOURCES)
+    if(IS_ABSOLUTE "${PUREEOS_SOFTFLOAT_SOURCE}")
+      list(APPEND PUREEOS_SOFTFLOAT_ABSOLUTE_SOURCES "${PUREEOS_SOFTFLOAT_SOURCE}")
+    else()
+      list(APPEND PUREEOS_SOFTFLOAT_ABSOLUTE_SOURCES "${PUREEOS_SOFTFLOAT_SOURCE_DIR}/${PUREEOS_SOFTFLOAT_SOURCE}")
+    endif()
+  endforeach()
+  add_library(pureeos_softfloat_sanitized STATIC EXCLUDE_FROM_ALL ${PUREEOS_SOFTFLOAT_ABSOLUTE_SOURCES})
+  target_include_directories(pureeos_softfloat_sanitized PUBLIC ${PUREEOS_SOFTFLOAT_INCLUDES})
+  target_compile_definitions(pureeos_softfloat_sanitized PUBLIC THREAD_LOCAL=__thread
+    PRIVATE SOFTFLOAT_FAST_INT64 SOFTFLOAT_ROUND_EVEN INLINE_LEVEL=5 SOFTFLOAT_FAST_DIV32TO16 SOFTFLOAT_FAST_DIV64TO32)
+  target_compile_options(pureeos_softfloat_sanitized PRIVATE -O1 -g1 -fno-omit-frame-pointer
+    "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  add_executable(parallel_native_sanitizer_test EXCLUDE_FROM_ALL ../tests/main.cpp
+    parallel_state_view_tests.cpp parallel_softfloat_tests.cpp
+    ../libraries/chain/transaction_state_view.cpp ../libraries/chain/parallel_state_overlay.cpp)
+  target_link_libraries(parallel_native_sanitizer_test PRIVATE chainbase fc pureeos_softfloat_sanitized
+    Boost::included_unit_test_framework)
+  target_include_directories(parallel_native_sanitizer_test PRIVATE
+    ${CMAKE_SOURCE_DIR}/libraries/chain/include ${CMAKE_BINARY_DIR}/libraries/chain/include)
+  target_compile_definitions(parallel_native_sanitizer_test PRIVATE SOFTFLOAT_FAST_INT64)
+  target_compile_options(parallel_native_sanitizer_test PRIVATE -O1 -g1 -fno-omit-frame-pointer
+    "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  target_link_options(parallel_native_sanitizer_test PRIVATE "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  add_test(NAME pureeos_parallel_native_sanitizer COMMAND parallel_native_sanitizer_test --report_level=detailed --color_output=no)
+  set_tests_properties(pureeos_parallel_native_sanitizer PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer")
+endif()
+
 target_compile_options(unit_test PUBLIC -DDISABLE_EOSLIB_SERIALIZE)
 
 # Focused consensus/genesis regression target; reuse the real controller/tester,

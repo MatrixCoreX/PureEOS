@@ -12,6 +12,11 @@ add_subdirectory( boost EXCLUDE_FROM_ALL )
 add_subdirectory( libfc )
 add_subdirectory( builtins )
 add_subdirectory( softfloat )
+# The upstream C build otherwise leaves THREAD_LOCAL empty in softfloat.h,
+# despite softfloat.hpp using __thread. Flags and rounding state must be TLS
+# in both the C definitions and every consumer declaration. Keep the vendored
+# submodule unchanged; __thread is supported by this project's GCC/Clang toolchains.
+target_compile_definitions(softfloat PUBLIC THREAD_LOCAL=__thread)
 add_subdirectory( wasm-jit )
 add_subdirectory( chaindb )
 set(APPBASE_ENABLE_AUTO_VERSION OFF CACHE BOOL "enable automatic discovery of version via 'git describe'")

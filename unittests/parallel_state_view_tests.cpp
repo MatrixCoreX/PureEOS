@@ -1,9 +1,11 @@
 #include <eosio/chain/transaction_state_view.hpp>
+#include <eosio/chain/parallel_state_overlay.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <fc/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 #include <algorithm>
 #include <array>
+#include <barrier>
 #include <future>
 #include <limits>
 #include <random>
@@ -330,6 +332,307 @@ BOOST_FIXTURE_TEST_CASE(deterministic_random_queries_match_independent_by_id_ora
          }
       }
    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_primary_isolation_tests)
+
+BOOST_FIXTURE_TEST_CASE(metadata_and_prefix_do_not_require_full_value_copy, view_fixture) {
+   const std::string large(1024 * 1024, 'x');
+   put(1, large);
+   const primary_query query{accounts, primary_query_kind::find, 1};
+   const auto found = view.locate_primary(query);
+   BOOST_REQUIRE(found.row);
+   BOOST_CHECK_EQUAL(found.row->value_size, large.size());
+   const auto zero = view.read_primary_prefix(query, 0);
+   BOOST_CHECK(zero.metadata == found);
+   BOOST_CHECK(zero.value.empty());
+   const auto prefix = view.read_primary_prefix(query, 7);
+   BOOST_CHECK(prefix.metadata == found);
+   BOOST_CHECK(prefix.value == std::vector<char>(7, 'x'));
+   BOOST_CHECK_THROW(view.read_primary(query, 7), state_view_read_limit_exceeded);
+   const auto full = view.read_primary_prefix(query, std::numeric_limits<size_t>::max());
+   BOOST_CHECK_EQUAL(full.value.size(), large.size());
+}
+
+BOOST_FIXTURE_TEST_CASE(prefix_distinguishes_absent_and_empty_and_owns_bytes, view_fixture) {
+   const primary_query query{accounts, primary_query_kind::find, 0};
+   BOOST_CHECK(!view.read_primary_prefix(query, 10).metadata.table);
+   put(0, "");
+   const auto empty = view.read_primary_prefix(query, 10);
+   BOOST_REQUIRE(empty.metadata.row);
+   BOOST_CHECK_EQUAL(empty.metadata.row->value_size, 0u);
+   put(0, std::string("a\0b", 3));
+   const auto prefix = view.read_primary_prefix(query, 2);
+   erase(0);
+   BOOST_CHECK(prefix.value == std::vector<char>({'a', '\0'}));
+   BOOST_CHECK_EQUAL(prefix.metadata.row->value_size, 3u);
+   const auto absent = view.read_primary_prefix(query, 10);
+   BOOST_CHECK(absent.metadata.table && !absent.metadata.row && absent.value.empty());
+}
+
+BOOST_FIXTURE_TEST_CASE(metadata_and_prefix_preserve_thread_and_query_guards, view_fixture) {
+   primary_query query{accounts, static_cast<primary_query_kind>(255), 0};
+   BOOST_CHECK_THROW(view.locate_primary(query), state_view_unsupported_query);
+   BOOST_CHECK_THROW(view.read_primary_prefix(query, 0), state_view_unsupported_query);
+   query.kind = primary_query_kind::find;
+   auto worker = std::async(std::launch::async, [&] {
+      unsigned rejected = 0;
+      try { (void)view.locate_primary(query); } catch (const state_view_wrong_thread&) { ++rejected; }
+      try { (void)view.read_primary_prefix(query, 0); } catch (const state_view_wrong_thread&) { ++rejected; }
+      return rejected;
+   });
+   BOOST_CHECK_EQUAL(worker.get(), 2u);
+}
+
+BOOST_FIXTURE_TEST_CASE(frozen_queries_match_live_and_independent_reference, view_fixture) {
+   const table_key absent{"token"_n, "missing"_n, "accounts"_n};
+   const table_key empty{"token"_n, "empty"_n, "accounts"_n};
+   put(0, ""); put(17, "abc"); put(max_key, std::string("z\0z", 3)); table(empty);
+   const std::array keys{accounts, absent, empty};
+   auto frozen = frozen_primary_state::capture(view, keys);
+   BOOST_CHECK_EQUAL(frozen->table_count(), 3u);
+   BOOST_CHECK_EQUAL(frozen->row_count(), 3u);
+   BOOST_CHECK_EQUAL(frozen->value_bytes(), 6u);
+   for (auto key : keys) {
+      BOOST_CHECK(frozen->read_table(key) == view.read_table(key));
+      for (uint64_t primary : {uint64_t{0}, uint64_t{1}, uint64_t{17}, uint64_t{18}, max_key}) {
+         for (auto kind : {primary_query_kind::find, primary_query_kind::lower_bound,
+                           primary_query_kind::upper_bound, primary_query_kind::last}) {
+            const primary_query query{key, kind, primary};
+            BOOST_CHECK(frozen->read_primary(query, 100) == reference_read(db, query));
+            BOOST_CHECK(frozen->locate_primary(query) == view.locate_primary(query));
+            for (size_t size : {size_t{0}, size_t{1}, size_t{3}, size_t{100}})
+               BOOST_CHECK(frozen->read_primary_prefix(query, size) == view.read_primary_prefix(query, size));
+         }
+      }
+   }
+   BOOST_CHECK_THROW(frozen->read_primary({accounts, primary_query_kind::find, 17}, 2), state_view_read_limit_exceeded);
+}
+
+BOOST_FIXTURE_TEST_CASE(unknown_is_not_absent_and_capture_deduplicates, view_fixture) {
+   const std::array keys{accounts, accounts};
+   auto frozen = frozen_primary_state::capture(view, keys);
+   BOOST_CHECK_EQUAL(frozen->table_count(), 1u);
+   BOOST_CHECK(!frozen->read_table(accounts));
+   const table_key other{"token"_n, "bob"_n, "accounts"_n};
+   BOOST_CHECK_THROW(frozen->read_table(other), primary_state_unsupported);
+   BOOST_CHECK_THROW(frozen->locate_primary({other}), primary_state_unsupported);
+   BOOST_CHECK_THROW(frozen->read_primary_prefix({other}, 0), primary_state_unsupported);
+   BOOST_CHECK_THROW(frozen->read_primary({other}, 0), primary_state_unsupported);
+   BOOST_CHECK_THROW(frozen->locate_primary({accounts, static_cast<primary_query_kind>(255)}), state_view_unsupported_query);
+}
+
+BOOST_FIXTURE_TEST_CASE(capture_limits_are_checked_and_fail_without_state_changes, view_fixture) {
+   const std::array keys{accounts};
+   put(1, "abc"); put(2, "def");
+   const auto before = read(primary_query_kind::find, 1);
+   const auto free = db.get_free_memory();
+   const auto revision = db.revision();
+   BOOST_CHECK_THROW(frozen_primary_state::capture(view, keys, {0, 2, 6}), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(frozen_primary_state::capture(view, keys, {1, 1, 6}), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(frozen_primary_state::capture(view, keys, {1, 2, 5}), primary_state_budget_exceeded);
+   auto exact = frozen_primary_state::capture(view, keys, {1, 2, 6});
+   BOOST_CHECK_EQUAL(exact->value_bytes(), 6u);
+   BOOST_CHECK(read(primary_query_kind::find, 1) == before);
+   BOOST_CHECK_EQUAL(db.get_free_memory(), free);
+   BOOST_CHECK_EQUAL(db.revision(), revision);
+   const std::array<table_key, 0> none{};
+   BOOST_CHECK_EQUAL(frozen_primary_state::capture(view, none, {0, 0, 0})->table_count(), 0u);
+}
+
+BOOST_AUTO_TEST_CASE(frozen_state_survives_database_destruction_and_absence_stays_absent) {
+   std::shared_ptr<const frozen_primary_state> frozen;
+   const table_key absent{"token"_n, "missing"_n, "accounts"_n};
+   {
+      view_fixture fixture;
+      fixture.put(7, "old");
+      const std::array keys{accounts, absent};
+      frozen = frozen_primary_state::capture(fixture.view, keys);
+      fixture.put(7, "new");
+      fixture.put(1, "created later", absent);
+      fixture.erase(7);
+      fixture.db.remove(fixture.table());
+   }
+   BOOST_CHECK(!frozen->read_table(absent));
+   const auto read = frozen->read_primary({accounts, primary_query_kind::find, 7}, 3);
+   BOOST_REQUIRE(read.row);
+   BOOST_CHECK(read.row->value == std::vector<char>({'o', 'l', 'd'}));
+}
+
+BOOST_FIXTURE_TEST_CASE(overlay_reads_own_writes_retains_order_and_does_not_write_base, view_fixture) {
+   put(1, "aaa"); put(2, "bbb");
+   const std::array keys{accounts};
+   const auto base = frozen_primary_state::capture(view, keys);
+   primary_state_overlay overlay(base);
+   overlay.update_existing(accounts, 1, name{}, std::string("ccc"));
+   overlay.update_existing(accounts, 2, "bob"_n, std::string("ddd"));
+   overlay.update_existing(accounts, 1, "bob"_n, std::string("eee"));
+   for (auto kind : {primary_query_kind::find, primary_query_kind::lower_bound, primary_query_kind::upper_bound}) {
+      const primary_query query{accounts, kind, kind == primary_query_kind::upper_bound ? 0u : 1u};
+      BOOST_CHECK(overlay.read_primary(query, 3).row->value == std::vector<char>(3, 'e'));
+      BOOST_CHECK(overlay.read_primary_prefix(query, 2).value == std::vector<char>(2, 'e'));
+      BOOST_CHECK(overlay.locate_primary(query) == base->locate_primary(query));
+   }
+   BOOST_CHECK(overlay.read_primary({accounts, primary_query_kind::last}, 3).row->value == std::vector<char>(3, 'd'));
+   BOOST_CHECK(read(primary_query_kind::find, 1).row->value == std::vector<char>(3, 'a'));
+   BOOST_CHECK(base->read_primary({accounts, primary_query_kind::find, 2}, 3).row->value == std::vector<char>(3, 'b'));
+   const auto result = overlay.seal();
+   BOOST_CHECK(result.base() == base);
+   BOOST_CHECK_EQUAL(result.read_tables().size(), 1u);
+   BOOST_REQUIRE_EQUAL(result.writes().size(), 3u);
+   BOOST_CHECK_EQUAL(result.writes()[0].primary_key, 1u);
+   BOOST_CHECK_EQUAL(result.writes()[1].primary_key, 2u);
+   BOOST_CHECK_EQUAL(result.writes()[2].primary_key, 1u);
+   BOOST_CHECK(result.writes()[0].value == std::vector<char>(3, 'c'));
+   BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
+   BOOST_CHECK_THROW(overlay.read_table(accounts), primary_state_invalid_attempt);
+   BOOST_CHECK_THROW(overlay.update_existing(accounts, 1, name{}, std::string("fff")), primary_state_invalid_attempt);
+}
+
+BOOST_FIXTURE_TEST_CASE(overlay_tracks_absent_points_tables_and_empty_ranges, view_fixture) {
+   put(1, "aaa");
+   const table_key absent{"token"_n, "missing"_n, "accounts"_n};
+   const std::array keys{accounts, absent};
+   auto base = frozen_primary_state::capture(view, keys);
+   primary_state_overlay overlay(base);
+   BOOST_CHECK(!overlay.read_table(absent));
+   BOOST_CHECK(!overlay.locate_primary({accounts, primary_query_kind::find, 9}).row);
+   BOOST_CHECK(!overlay.read_primary({accounts, primary_query_kind::upper_bound, max_key}, 0).row);
+   BOOST_CHECK(!overlay.read_primary_prefix({absent, primary_query_kind::last}, 0).metadata.row);
+   const auto result = overlay.seal();
+   BOOST_CHECK_EQUAL(result.read_tables().size(), 2u);
+   BOOST_CHECK(result.read_tables().contains(accounts));
+   BOOST_CHECK(result.read_tables().contains(absent));
+   BOOST_CHECK(result.writes().empty());
+}
+
+BOOST_FIXTURE_TEST_CASE(unsupported_update_discards_whole_attempt_not_just_last_write, view_fixture) {
+   put(1, "abc");
+   const std::array keys{accounts};
+   auto base = frozen_primary_state::capture(view, keys);
+   for (unsigned mode = 0; mode < 4; ++mode) {
+      primary_state_overlay overlay(base);
+      overlay.update_existing(accounts, 1, name{}, std::string("def"));
+      const table_key key = mode == 3 ? table_key{"other"_n, "alice"_n, "accounts"_n} : accounts;
+      BOOST_CHECK_THROW(overlay.update_existing(key, mode == 0 ? 9 : 1,
+                        mode == 1 ? "carol"_n : name{}, mode == 2 ? std::string("long") : std::string("xyz")),
+                        primary_state_unsupported);
+      BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
+      BOOST_CHECK_THROW(overlay.read_table(accounts), primary_state_invalid_attempt);
+   }
+   BOOST_CHECK(read(primary_query_kind::find, 1).row->value == std::vector<char>({'a', 'b', 'c'}));
+}
+
+BOOST_FIXTURE_TEST_CASE(overlay_budget_failure_cannot_be_sealed, view_fixture) {
+   put(1, "abc");
+   const std::array keys{accounts};
+   auto base = frozen_primary_state::capture(view, keys);
+   primary_state_overlay no_reads(base, {0, 1, 3});
+   BOOST_CHECK_THROW(no_reads.read_table(accounts), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(no_reads.seal(), primary_state_invalid_attempt);
+   primary_state_overlay no_writes(base, {1, 0, 3});
+   BOOST_CHECK_THROW(no_writes.update_existing(accounts, 1, name{}, std::string("abc")), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(no_writes.seal(), primary_state_invalid_attempt);
+   primary_state_overlay small(base, {1, 2, 5});
+   small.update_existing(accounts, 1, name{}, std::string("def"));
+   BOOST_CHECK_THROW(small.update_existing(accounts, 1, name{}, std::string("ghi")), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(small.seal(), primary_state_invalid_attempt);
+   primary_state_overlay read_limit(base);
+   BOOST_CHECK_THROW(read_limit.read_primary({accounts, primary_query_kind::find, 1}, 2), state_view_read_limit_exceeded);
+   BOOST_CHECK_THROW(read_limit.seal(), primary_state_invalid_attempt);
+}
+
+BOOST_FIXTURE_TEST_CASE(overlay_zero_length_rows_still_count_as_write_operations, view_fixture) {
+   put(1, "");
+   const std::array keys{accounts};
+   auto base = frozen_primary_state::capture(view, keys, {1, 1, 0});
+   primary_state_overlay overlay(base, {1, 1, 0});
+   overlay.update_existing(accounts, 1, name{}, {});
+   BOOST_CHECK(overlay.read_primary({accounts, primary_query_kind::find, 1}, 0).row->value.empty());
+   BOOST_CHECK_THROW(overlay.update_existing(accounts, 1, name{}, {}), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
+}
+
+BOOST_FIXTURE_TEST_CASE(overlay_misuse_and_unknown_reads_are_rejected, view_fixture) {
+   BOOST_CHECK_THROW(primary_state_overlay(nullptr), primary_state_invalid_attempt);
+   const std::array keys{accounts};
+   auto base = frozen_primary_state::capture(view, keys);
+   primary_state_overlay overlay(base);
+   auto worker = std::async(std::launch::async, [&] {
+      try { (void)overlay.seal(); } catch (const state_view_wrong_thread&) { return true; }
+      return false;
+   });
+   BOOST_CHECK(worker.get());
+   BOOST_CHECK(!overlay.read_table(accounts));
+   const table_key unknown{"other"_n, "alice"_n, "accounts"_n};
+   BOOST_CHECK_THROW(overlay.read_table(unknown), primary_state_unsupported);
+   BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
+   primary_state_overlay invalid_query(base);
+   BOOST_CHECK_THROW(invalid_query.locate_primary({accounts, static_cast<primary_query_kind>(255)}), state_view_unsupported_query);
+   BOOST_CHECK_THROW(invalid_query.seal(), primary_state_invalid_attempt);
+}
+
+BOOST_FIXTURE_TEST_CASE(four_workers_use_private_overlays_while_source_changes, view_fixture) {
+   put(1, "original");
+   const std::array keys{accounts};
+   auto base = frozen_primary_state::capture(view, keys);
+   std::barrier start(5);
+   std::vector<std::future<primary_overlay_result>> workers;
+   for (unsigned i = 0; i < 4; ++i) {
+      workers.push_back(std::async(std::launch::async, [&, base, i] {
+         start.arrive_and_wait();
+         primary_state_overlay overlay(base);
+         for (unsigned pass = 0; pass < 100; ++pass) {
+            overlay.update_existing(accounts, 1, name{}, std::string(8, char('a' + i)));
+            if (overlay.read_primary({accounts, primary_query_kind::find, 1}, 8).row->value != std::vector<char>(8, char('a' + i)))
+               throw std::runtime_error("private overlay leaked across workers");
+         }
+         return overlay.seal();
+      }));
+   }
+   start.arrive_and_wait();
+   // No worker retains even a const reference into this database.
+   erase(1); db.remove(table()); put(1, "replacement");
+   for (unsigned i = 0; i < workers.size(); ++i) {
+      const auto result = workers[i].get();
+      BOOST_REQUIRE_EQUAL(result.writes().size(), 100u);
+      BOOST_CHECK(result.writes().back().value == std::vector<char>(8, char('a' + i)));
+      BOOST_CHECK_EQUAL(result.read_tables().size(), 1u);
+   }
+   BOOST_CHECK_EQUAL(base->locate_primary({accounts, primary_query_kind::find, 1}).row->value_size, 8u);
+   BOOST_CHECK_EQUAL(read(primary_query_kind::find, 1).row->value.size(), 11u);
+}
+
+BOOST_FIXTURE_TEST_CASE(random_private_updates_match_independent_serial_database, view_fixture) {
+   const std::array keys{accounts, table_key{"token"_n, "bob"_n, "accounts"_n},
+                        table_key{"token"_n, "missing"_n, "accounts"_n}};
+   for (unsigned table = 0; table < 2; ++table)
+      for (unsigned primary = 0; primary < 20; ++primary) put(primary, "old", keys[table]);
+   auto base = frozen_primary_state::capture(view, keys);
+   primary_state_overlay overlay(base);
+   std::mt19937_64 random(0x5058325f57524954ull);
+   for (unsigned step = 0; step < 800; ++step) {
+      const auto& key = keys[random() % 2];
+      const auto primary = random() % 20;
+      const std::string value{char(random() & 255), char(random() & 255), char(random() & 255)};
+      overlay.update_existing(key, primary, step % 2 ? "bob"_n : name{}, value);
+      put(primary, value, key); // original serial database is the independent oracle
+      const auto query_key = step % 41 == 0 ? max_key : random() % 25;
+      for (auto table : keys) {
+         for (auto kind : {primary_query_kind::find, primary_query_kind::lower_bound,
+                           primary_query_kind::upper_bound, primary_query_kind::last}) {
+            const primary_query query{table, kind, query_key};
+            BOOST_CHECK(overlay.read_primary(query, 3) == reference_read(db, query));
+            BOOST_CHECK(overlay.locate_primary(query) == view.locate_primary(query));
+            BOOST_CHECK(overlay.read_primary_prefix(query, step % 5) == view.read_primary_prefix(query, step % 5));
+         }
+      }
+   }
+   const auto result = overlay.seal();
+   BOOST_CHECK_EQUAL(result.writes().size(), 800u);
+   BOOST_CHECK_EQUAL(result.read_tables().size(), 3u);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

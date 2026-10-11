@@ -38,6 +38,16 @@ struct primary_row_read {
    bool operator==(const primary_row_read&) const = default;
 };
 
+// Locating a row or querying its size must not allocate/copy its payload.
+struct primary_row_metadata {
+   int64_t object_id = 0;
+   int64_t table_object_id = 0;
+   uint64_t primary_key = 0;
+   name payer;
+   size_t value_size = 0;
+   bool operator==(const primary_row_metadata&) const = default;
+};
+
 enum class primary_query_kind : uint8_t { find, lower_bound, upper_bound, last };
 
 struct primary_query {
@@ -51,6 +61,18 @@ struct primary_read_result {
    std::optional<table_read> table;
    std::optional<primary_row_read> row;
    bool operator==(const primary_read_result&) const = default;
+};
+
+struct primary_metadata_result {
+   std::optional<table_read> table;
+   std::optional<primary_row_metadata> row;
+   bool operator==(const primary_metadata_result&) const = default;
+};
+
+struct primary_prefix_result {
+   primary_metadata_result metadata;
+   std::vector<char> value; // at most the requested prefix; metadata retains full size
+   bool operator==(const primary_prefix_result&) const = default;
 };
 
 // Local experimental limits/misuse, NOT consensus transaction exceptions.
@@ -70,6 +92,8 @@ class transaction_state_view {
 public:
    virtual ~transaction_state_view() = default;
    virtual std::optional<table_read> read_table(const table_key&) const = 0;
+   virtual primary_metadata_result locate_primary(const primary_query&) const = 0;
+   virtual primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const = 0;
    virtual primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const = 0;
 };
 
@@ -87,6 +111,8 @@ public:
    chainbase_transaction_state_view& operator=(chainbase_transaction_state_view&&) = delete;
 
    std::optional<table_read> read_table(const table_key&) const override;
+   primary_metadata_result locate_primary(const primary_query&) const override;
+   primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
 
 private:

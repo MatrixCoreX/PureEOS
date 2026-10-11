@@ -55,6 +55,17 @@ REGISTER_CF_HOST_FUNCTION(
         self.assertEqual([r["name"] for r in registrations], ["db_store_i64", "unknown_new_intrinsic"])
         self.assertEqual(registrations[0]["preconditions"], ["read_only_check"])
         self.assertTrue(all(r["speculation_review"] == "pending" for r in registrations))
+        self.assertEqual(registrations[1]["access_class"], "unclassified")
+        self.assertTrue(all(r["initial_route"] == "serial_only" for r in registrations))
+
+    def test_host_classes_are_explicit_unique_and_not_runtime_approval(self):
+        categories = audit.host_classifications()
+        self.assertEqual(len(categories), 262)
+        self.assertEqual(categories["recover_key"], "tracked_state_read")
+        self.assertEqual(categories["db_update_i64"], "private_state_write_with_ram_and_lifecycle")
+        self.assertNotIn("db_idx64_new_operation", categories)
+        _, hosts = audit.scan_source("REGISTER_HOST_FUNCTION(db_idx64_new_operation);")
+        self.assertEqual(hosts[0]["access_class"], "unclassified")
 
     def test_mask_preserves_offsets_and_digit_separators(self):
         source = 'auto n=1\'000; /* hi\nthere */ db.find<T>(); auto s="escape\\\"quote";'
@@ -146,11 +157,40 @@ class InventoryTests(unittest.TestCase):
     def test_invalid_schema_and_duplicate_entries_rejected(self):
         actual = self.inventory()
         for malformed in [[], {}, {"schema_version": 999},
-                          {"schema_version": 1, "files": "bad"},
-                          {"schema_version": 1, "files": [None]},
-                          {"schema_version": 1, "files": [{"path": "a"}, {"path": "a"}]}]:
+                          {"schema_version": audit.SCHEMA_VERSION, "files": "bad"},
+                          {"schema_version": audit.SCHEMA_VERSION, "files": [None]},
+                          {"schema_version": audit.SCHEMA_VERSION, "files": [{"path": "a"}, {"path": "a"}]}]:
             with self.subTest(manifest=malformed), self.assertRaises(ValueError):
                 audit.compare_inventory(malformed, actual)
+
+    def test_c_dependency_state_changes_require_review(self):
+        source = "libraries/softfloat/source/softfloat_state.c"
+        self.write(source, "uint_fast8_t flags = 0;\n")
+        before = self.inventory()
+        self.write(source, "THREAD_LOCAL uint_fast8_t flags = 0;\n")
+        self.assertEqual(audit.compare_inventory(before, self.inventory())["changed"], [source])
+
+    def test_build_definitions_and_active_platform_header_are_fingerprinted(self):
+        for source in audit.EXPLICIT_FILES:
+            with self.subTest(source=source):
+                before = self.inventory()
+                self.write(source, "// changed dependency configuration\n")
+                self.assertEqual(audit.compare_inventory(before, self.inventory())["changed"], [source])
+
+    def test_explicit_dependency_symlink_cannot_escape(self):
+        source = self.root / audit.EXPLICIT_FILES[0]
+        source.unlink()
+        with tempfile.TemporaryDirectory(prefix="pureeos-px0-dep-") as outside:
+            target = Path(outside) / "CMakeLists.txt"
+            target.write_text("do_not_read();", encoding="utf-8")
+            source.symlink_to(target)
+            with self.assertRaisesRegex(ValueError, "leaves repository"):
+                self.inventory()
+
+    def test_missing_explicit_dependency_is_not_silently_ignored(self):
+        (self.root / audit.EXPLICIT_FILES[-1]).unlink()
+        with self.assertRaisesRegex(ValueError, "missing required source"):
+            self.inventory()
 
     def test_cli_summary_json_and_read_only_check(self):
         snapshot = self.write("snapshot.json", json.dumps(self.inventory()))
@@ -169,6 +209,13 @@ class InventoryTests(unittest.TestCase):
         with redirect_stderr(io.StringIO()):
             self.assertEqual(audit.main(["--root", str(self.root), "--check", str(snapshot)]), 2)
             self.assertEqual(audit.main(["--root", str(self.root / "missing")]), 2)
+
+    def test_matching_snapshot_does_not_approve_unclassified_host(self):
+        self.write("libraries/chain/webassembly/runtimes/eos-vm.cpp", "REGISTER_HOST_FUNCTION(new_host);\n")
+        snapshot = self.write("snapshot.json", json.dumps(self.inventory()))
+        with redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(audit.main(["--root", str(self.root), "--check", str(snapshot)]), 1)
+            self.assertTrue(json.loads(output.getvalue())["matches"])
 
 
 if __name__ == "__main__":
