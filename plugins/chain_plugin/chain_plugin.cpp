@@ -300,6 +300,12 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Percentage of actual signature recovery cpu to bill. Whole number percentages, e.g. 50 for 50%")
          ("chain-threads", bpo::value<uint16_t>()->default_value(config::default_controller_thread_pool_size),
           "Number of worker threads in controller thread pool")
+         ("experimental-parallel-validation-threads", bpo::value<uint16_t>()->default_value(0),
+          "Restricted parallel block validation workers (0 disables, maximum 16). Requires eos-vm, full validation and an explicit code-hash list. Does not enable parallel block production.")
+         ("experimental-parallel-validation-batch-size", bpo::value<uint16_t>()->default_value(8),
+          "Maximum transactions per restricted validation batch (1-64). Unsupported work executes serially.")
+         ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
+          "Reviewed WASM SHA-256 eligible for the local restricted parallel experiment. Repeat for additional hashes. No chain-level contract allowlist is introduced.")
          ("performance-metrics", bpo::bool_switch()->default_value(false),
           "Opt-in process-local stage timing histograms; disabled by default; never changes validation or persistence")
          ("vote-threads", bpo::value<uint16_t>(),
@@ -983,6 +989,34 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       chain_config->integrity_hash_on_start = options.at("integrity-hash-on-start").as<bool>();
       chain_config->integrity_hash_on_stop = options.at("integrity-hash-on-stop").as<bool>();
 
+      chain_config->parallel_validation_threads = options.at("experimental-parallel-validation-threads").as<uint16_t>();
+      chain_config->parallel_validation_batch_size = options.at("experimental-parallel-validation-batch-size").as<uint16_t>();
+      EOS_ASSERT(chain_config->parallel_validation_threads <= 16 && chain_config->parallel_validation_batch_size > 0 &&
+                 chain_config->parallel_validation_batch_size <= 64, plugin_config_exception,
+                 "experimental parallel validation requires threads 0-16 and batch size 1-64");
+      if (options.count("experimental-parallel-code-hash")) {
+         for (const auto& value : options.at("experimental-parallel-code-hash").as<vector<string>>()) {
+            EOS_ASSERT(value.size() == 64 && std::all_of(value.begin(), value.end(), [](unsigned char c) {
+               return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+            }), plugin_config_exception, "experimental-parallel-code-hash must contain exactly 64 hexadecimal characters");
+            chain_config->parallel_code_allowlist.insert(fc::variant(value).as<digest_type>());
+         }
+      }
+      if (chain_config->parallel_validation_threads) {
+         EOS_ASSERT(chain_config->wasm_runtime == wasm_interface::vm_type::eos_vm &&
+                    chain_config->block_validation_mode == validation_mode::FULL && chain_config->trusted_producers.empty() &&
+                    chain_config->profile_accounts.empty() && !options.at("deep-mind").as<bool>() &&
+                    !chain_config->parallel_code_allowlist.empty(), plugin_config_exception,
+                    "experimental parallel validation requires eos-vm, full validation, a reviewed code hash, and no trusted-producer, profiling or deep-mind mode");
+#ifdef EOSIO_EOS_VM_OC_RUNTIME_ENABLED
+         EOS_ASSERT(chain_config->eosvmoc_tierup == wasm_interface::vm_oc_enable::oc_none, plugin_config_exception,
+                    "experimental parallel validation requires eos-vm-oc-enable=none");
+#endif
+         ilog("Experimental parallel validation enabled: workers=${w}, batch=${b}, reviewed code hashes=${h}; production remains serial",
+              ("w", chain_config->parallel_validation_threads)("b", chain_config->parallel_validation_batch_size)
+              ("h", chain_config->parallel_code_allowlist.size()));
+      }
+
       chain.emplace( *chain_config, std::move(pfs), *chain_id );
 
       if( options.count( "transaction-retry-max-storage-size-gb" )) {
@@ -1199,6 +1233,12 @@ void chain_plugin::plugin_startup() {
 
 void chain_plugin::plugin_shutdown() {
    dlog("shutdown");
+   if (my->chain) {
+      const auto stats = my->chain->get_parallel_execution_stats();
+      if (stats.batches)
+         ilog("Experimental parallel validation totals: batches=${b}, attempts=${a}, succeeded=${s}, adopted=${d}, serial_fallbacks=${f}; counts include later-rolled-back blocks",
+              ("b", stats.batches)("a", stats.attempts)("s", stats.succeeded)("d", stats.adopted)("f", stats.serial_fallbacks));
+   }
 }
 
 void chain_plugin::handle_sighup() {
@@ -2208,7 +2248,11 @@ fc::variant read_only::get_block_header_state(const get_block_header_state_param
 
 void read_write::push_block(read_write::push_block_params&& params, next_function<read_write::push_block_results> next) {
    try {
-      auto b = std::make_shared<signed_block>( std::move(params) );
+      // JSON deserialization fills reflected fields, not signed_block's binary
+      // cache. Persistence and P2P consume that cache: an unpacked shared block
+      // executed correctly but appended only its position to blocks.log in a
+      // release build, corrupting restart/replay. Pack before publishing it.
+      auto b = signed_block::create_signed_block(std::make_unique<signed_block>(std::move(params)));
       block_id_type id = b->calculate_id();
       auto [best_head, obh] = db.accept_block( id, b );
       EOS_ASSERT(obh, unlinkable_block_exception, "block did not link ${b}", ("b", id));

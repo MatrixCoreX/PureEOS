@@ -5,8 +5,11 @@
 #include <eosio/testing/tester.hpp>
 #include <eosio/testing/bls_utils.hpp>
 #include <boost/test/unit_test.hpp>
+#include <fc/io/json.hpp>
 #include <array>
+#include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <sstream>
 
 using namespace eosio::chain;
@@ -140,6 +143,18 @@ struct validation_corpus {
 };
 
 BOOST_FIXTURE_TEST_CASE(native_savanna_parallel_adoption_matches_original_at_every_block_prefix, validation_corpus) {
+   // Explicit opt-in export for a DIFFERENT, pre-change nodeos binary. Never
+   // overwrite a caller's directory or export signing credentials / databases.
+   std::optional<std::filesystem::path> export_directory;
+   fc::variants checkpoints;
+   if (const char* destination = std::getenv("PUREEOS_PARALLEL_EXPORT_DIR")) {
+      export_directory = std::filesystem::path(destination);
+      BOOST_REQUIRE(std::filesystem::create_directory(*export_directory));
+      BOOST_REQUIRE(fc::json::save_to_file(genesis, *export_directory / "genesis.json"));
+      std::filesystem::create_directory(*export_directory / "blocks");
+      for (const char* file : {"blocks.log", "blocks.index"})
+         std::filesystem::copy_file(source_config.blocks_dir / file, *export_directory / "blocks" / file);
+   }
    for (uint16_t workers : {0, 1, 2, 4}) {
       fc::temp_directory reference_dir, observed_dir;
       auto reference_config = base_tester::default_config(reference_dir).first;
@@ -166,6 +181,15 @@ BOOST_FIXTURE_TEST_CASE(native_savanna_parallel_adoption_matches_original_at_eve
          BOOST_CHECK_EQUAL(reference.last_irreversible_block_num(), observed.last_irreversible_block_num());
          BOOST_CHECK(reference.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
          BOOST_CHECK(expected_traces == actual_traces);
+         if (export_directory && workers == 0) {
+            const auto number = reference.control->head().block_num();
+            const auto file = "block-" + std::to_string(number) + ".json";
+            BOOST_REQUIRE(fc::json::save_to_file(fc::raw::unpack<signed_block>(block), *export_directory / file));
+            checkpoints.emplace_back(fc::mutable_variant_object()
+               ("block_num", number)("block_id", reference.control->head().id())
+               ("lib", reference.last_irreversible_block_num())
+               ("integrity_hash", reference.control->calculate_integrity_hash())("file", file));
+         }
       }
       const auto stats = observed.control->get_parallel_execution_stats();
       if (workers) {
@@ -183,6 +207,37 @@ BOOST_FIXTURE_TEST_CASE(native_savanna_parallel_adoption_matches_original_at_eve
          BOOST_REQUIRE_EQUAL(data.size(), 8u);
          uint64_t value; std::memcpy(&value, data.data(), sizeof(value)); BOOST_CHECK_EQUAL(value, expected);
       }
+   }
+   if (export_directory) {
+      // Also archive a reversible competing branch, with hashes calculated by
+      // original serial execution. A process test can now test REAL fork undo
+      // against the old executable rather than generating a different fork.
+      fc::temp_directory first_dir, second_dir, reference_dir;
+      tester first(configuration(first_dir, 0), genesis), second(configuration(second_dir, 0), genesis);
+      tester reference(configuration(reference_dir, 0), genesis);
+      prefix(first, 9); prefix(second, 9); prefix(reference, 9);
+      fc::variants forks;
+      auto export_fork = [&](const signed_block_ptr& block) {
+         reference.push_block(block); reference.control->abort_block();
+         BOOST_REQUIRE(reference.head().id() == block->calculate_id());
+         const auto file = "fork-" + std::to_string(forks.size()) + ".json";
+         BOOST_REQUIRE(fc::json::save_to_file(*block, *export_directory / file));
+         forks.emplace_back(fc::mutable_variant_object()
+            ("block_num", reference.head().block_num())("block_id", reference.head().id())
+            ("lib", reference.last_irreversible_block_num())
+            ("integrity_hash", reference.control->calculate_integrity_hash())("file", file));
+      };
+      push(first, "alice"_n, 100, 10001); push(first, "carol"_n, 100, 10002);
+      export_fork(first.produce_block());
+      push(second, "alice"_n, 200, 20001); push(second, "bob"_n, 2, 20002);
+      export_fork(second.produce_block(fc::milliseconds(1000)));
+      push(second, "carol"_n, 3, 20003); export_fork(second.produce_block());
+      const fc::variant manifest = fc::mutable_variant_object()
+         ("format", 1)("chain_id", genesis.compute_chain_id())
+         ("code_hashes", std::vector<fc::sha256>{code_hash, replacement_hash})
+         ("checkpoints", checkpoints)("fork_prefix_blocks", 9)("forks", forks);
+      BOOST_REQUIRE(fc::json::save_to_file(manifest, *export_directory / "manifest.json"));
+      BOOST_TEST_MESSAGE("Exported immutable business corpus to " << export_directory->string());
    }
 }
 
@@ -365,6 +420,30 @@ BOOST_FIXTURE_TEST_CASE(local_allowlist_light_validation_and_batch_bounds_never_
       if (mode < 3) BOOST_CHECK_EQUAL(stats.attempts, 0u);
       else BOOST_CHECK_GT(stats.adopted, 0u);
    }
+}
+
+BOOST_FIXTURE_TEST_CASE(json_blocks_finalized_before_publication_remain_restartable, validation_corpus) {
+   fc::temp_directory reference_dir, observed_dir;
+   tester reference(configuration(reference_dir, 0), genesis);
+   tester observed(configuration(observed_dir, 2), genesis);
+   for (const auto& bytes : corpus) {
+      const auto original = fc::raw::unpack<signed_block>(bytes);
+      // Same representation arriving at chain_api push_block. Reflection does
+      // not initialize the private serialized cache; the factory MUST do it.
+      auto json_block = fc::json::from_string(fc::json::to_string(original, fc::time_point::maximum())).as<signed_block>();
+      auto published = signed_block::create_signed_block(std::make_unique<signed_block>(std::move(json_block)));
+      BOOST_CHECK(published->packed_signed_block() == bytes);
+      reference.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(bytes)));
+      observed.push_block(published);
+      reference.control->abort_block(); observed.control->abort_block();
+      BOOST_CHECK(reference.head().id() == observed.head().id());
+      BOOST_CHECK(reference.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+   }
+   const auto id = observed.head().id(), hash = observed.control->calculate_integrity_hash();
+   BOOST_CHECK_GT(observed.control->get_parallel_execution_stats().adopted, 0u);
+   observed.close(); observed.open(); observed.control->abort_block();
+   BOOST_CHECK(observed.head().id() == id);
+   BOOST_CHECK(observed.control->calculate_integrity_hash() == hash);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

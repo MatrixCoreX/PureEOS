@@ -29,6 +29,9 @@ SOURCE_ROOTS = (
     "plugins/trace_api_plugin",
 )
 EXPLICIT_FILES = (
+    # Experimental executable naming must not overwrite the saved baseline.
+    "CMakeLists.txt",
+    "programs/nodeos/CMakeLists.txt",
     "libraries/CMakeLists.txt",
     "libraries/chain/CMakeLists.txt",
     "libraries/softfloat/CMakeLists.txt",

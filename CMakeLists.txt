@@ -31,7 +31,10 @@ option(ENABLE_WEXTRA "Enable `-Wextra` compilation flag." Off)
 
 
 set( CLI_CLIENT_EXECUTABLE_NAME cleos )
-set( NODE_EXECUTABLE_NAME nodeos )
+set( NODE_EXECUTABLE_NAME nodeos CACHE STRING "Node executable basename; use a distinct name for isolated experimental builds" )
+if(NOT NODE_EXECUTABLE_NAME MATCHES "^[A-Za-z][A-Za-z0-9_-]*$")
+    message(FATAL_ERROR "NODE_EXECUTABLE_NAME must be a simple executable basename")
+endif()
 set( KEY_STORE_EXECUTABLE_NAME keosd )
 set( HELIOS_UTIL_EXECUTABLE_NAME helios-util )
 
