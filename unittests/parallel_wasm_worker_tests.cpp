@@ -176,6 +176,68 @@ transaction_trace_ptr push_raw(eosio::testing::tester& chain, const isolated_act
    return chain.push_transaction(trx);
 }
 
+// create/remove/read/update, with a fresh action-local iterator and a no-code
+// notification. Inputs share increment_wasm's fixed layout; no test-only hosts.
+std::vector<char> lifecycle_steps_wasm() {
+   return wasm(R"((module
+      (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
+      (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
+      (import "env" "db_store_i64" (func $store (param i64 i64 i64 i64 i32 i32) (result i32)))
+      (import "env" "db_remove_i64" (func $remove (param i32)))
+      (import "env" "db_update_i64" (func $update (param i32 i64 i32 i32)))
+      (import "env" "db_get_i64" (func $get (param i32 i32 i32) (result i32)))
+      (import "env" "db_end_i64" (func $end (param i64 i64 i64) (result i32)))
+      (import "env" "require_recipient" (func $notify (param i64)))
+      (import "env" "set_action_return_value" (func $return (param i32 i32)))
+      (memory 1 1)
+      (func (export "apply") (param $receiver i64) (param i64) (param i64)
+         (local $iterator i32) (local $mode i32)
+         (drop (call $read (i32.const 0) (i32.const 40)))
+         (set_local $mode (i32.load (i32.const 28)))
+         (call $notify (i64.const )" + std::to_string("bob"_n.to_uint64_t()) + R"())
+         (if (i32.eqz (get_local $mode))
+            (then (set_local $iterator (call $store (i64.load (i32.const 0)) (i64.load (i32.const 32))
+               (i64.const )" + std::to_string("alice"_n.to_uint64_t()) + R"()
+               (i64.load (i32.const 8)) (i32.const 16) (i32.const 8))))
+            (else
+               (set_local $iterator (call $find (get_local $receiver) (i64.load (i32.const 0))
+                  (i64.load (i32.const 32)) (i64.load (i32.const 8))))
+               (if (i32.eq (get_local $mode) (i32.const 1))
+                  (then (call $remove (get_local $iterator))))
+               (if (i32.eq (get_local $mode) (i32.const 3))
+                  (then (call $update (get_local $iterator) (i64.const 0) (i32.const 16) (i32.const 8))))))
+         (i32.store (i32.const 64) (get_local $iterator))
+         (i32.store (i32.const 68) (call $end (get_local $receiver) (i64.load (i32.const 0)) (i64.load (i32.const 32))))
+         (if (i32.ne (get_local $mode) (i32.const 1))
+            (then (drop (call $get (get_local $iterator) (i32.const 72) (i32.const 8)))))
+         (call $return (i32.const 64) (i32.const 16)))))");
+}
+
+isolated_action_input scoped_input(name scope, uint64_t primary, uint64_t value, uint32_t mode) {
+   auto result = input(primary, value, 0, mode);
+   const auto raw = scope.to_uint64_t();
+   std::memcpy(result.data.data(), &raw, 8);
+   return result;
+}
+
+transaction_trace_ptr push_raw_actions(eosio::testing::tester& chain,
+      std::span<const isolated_action_invocation> calls) {
+   signed_transaction trx;
+   std::set<std::pair<name, name>> permissions;
+   for (const auto& call : calls) {
+      action act;
+      act.account = call.input.account; act.name = call.input.action; act.data = call.input.data;
+      for (const auto& auth : call.input.authorizations) {
+         act.authorization.push_back({auth.first, auth.second}); permissions.insert(auth);
+      }
+      trx.actions.push_back(std::move(act));
+   }
+   chain.set_transaction_headers(trx);
+   for (const auto& [actor, permission] : permissions)
+      trx.sign(chain.get_private_key(actor, permission.to_string()), chain.control->get_chain_id());
+   return chain.push_transaction(trx);
+}
+
 struct wasm_fixture {
    fc::temp_directory directory;
    chainbase::database db{directory.path(), chainbase::database::read_write, 8 * 1024 * 1024};
@@ -714,7 +776,358 @@ BOOST_FIXTURE_TEST_CASE(real_wasm_memory_fault_discards_attempt_and_preserves_ot
 
 BOOST_AUTO_TEST_SUITE_END()
 
-// Persistent workers are tested across batches, not just one-shot async tasks.
+BOOST_AUTO_TEST_SUITE(parallel_transaction_executor_tests)
+
+BOOST_FIXTURE_TEST_CASE(actions_share_private_state_but_reset_memory_and_iterators, wasm_fixture) {
+   const auto code = increment_wasm({}, {}, R"(
+      (if (i32.ne (get_local $iterator) (i32.const 0)) (then unreachable))
+      (if (i64.ne (i64.load (i32.const 128)) (i64.const 0)) (then unreachable))
+      (i64.store (i32.const 128) (i64.const 99)))");
+   const std::array calls{isolated_action_invocation{code, input(1, 7), {}},
+                          isolated_action_invocation{code, input(1, 9), {}},
+                          isolated_action_invocation{code, input(2, 1), {}}};
+   isolated_transaction_executor executor;
+   for (unsigned repeat = 0; repeat < 3; ++repeat) {
+      const auto result = executor.execute(base, calls);
+      BOOST_REQUIRE_EQUAL(result.actions.size(), 3u);
+      BOOST_REQUIRE_EQUAL(result.state.writes().size(), 3u);
+      for (size_t i = 0; i < calls.size(); ++i) {
+         BOOST_CHECK_EQUAL(result.actions[i].writes_begin, i);
+         BOOST_CHECK_EQUAL(result.actions[i].writes_end, i + 1);
+         BOOST_CHECK_EQUAL(number(result.actions[i].return_value), (std::array{17u, 26u, 21u})[i]);
+         BOOST_CHECK(result.actions[i].elapsed.count() >= 0);
+      }
+      BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+      BOOST_CHECK_EQUAL(canonical(2), 20u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(lifecycle_and_module_switches_share_one_transaction_journal, wasm_fixture) {
+   const table_key created{rows.code, "fresh"_n, rows.table};
+   const std::array tables{rows, created};
+   const auto captured = frozen_primary_state::capture(view, tables);
+   const auto code = lifecycle_steps_wasm();
+   const std::array calls{
+      isolated_action_invocation{code, scoped_input(created.scope, 7, 40, 0), {}},
+      isolated_action_invocation{increment_wasm(), scoped_input(created.scope, 7, 2, 0), {}},
+      isolated_action_invocation{code, scoped_input(created.scope, 7, 0, 1), {}},
+      isolated_action_invocation{code, scoped_input(created.scope, 7, 99, 0), {}},
+      isolated_action_invocation{code, scoped_input(created.scope, 7, 0, 2), {}}};
+   isolated_transaction_executor executor;
+   for (unsigned repeat = 0; repeat < 3; ++repeat) {
+      const auto result = executor.execute(captured, calls);
+      BOOST_REQUIRE_EQUAL(result.actions.size(), 5u);
+      BOOST_REQUIRE_EQUAL(result.state.writes().size(), 4u);
+      BOOST_CHECK(result.state.writes()[0].operation == primary_operation::store);
+      BOOST_CHECK(result.state.writes()[1].operation == primary_operation::update);
+      BOOST_CHECK(result.state.writes()[2].operation == primary_operation::remove);
+      BOOST_CHECK(result.state.writes()[3].operation == primary_operation::store);
+      BOOST_CHECK(result.state.writes()[0].object_id != result.state.writes()[3].object_id);
+      BOOST_CHECK(result.state.writes()[0].table_object_id != result.state.writes()[3].table_object_id);
+      BOOST_CHECK_EQUAL(number(result.actions[1].return_value), 42u);
+      BOOST_CHECK(result.actions[3].return_value == result.actions[4].return_value);
+      for (size_t i : {0u, 3u, 4u}) {
+         BOOST_REQUIRE_EQUAL(result.actions[i].return_value.size(), 16u);
+         int32_t iterator, end;
+         std::memcpy(&iterator, result.actions[i].return_value.data(), 4);
+         std::memcpy(&end, result.actions[i].return_value.data() + 4, 4);
+         BOOST_CHECK_EQUAL(iterator, 0); BOOST_CHECK_EQUAL(end, -2);
+      }
+      BOOST_REQUIRE_EQUAL(result.actions[4].recipients.size(), 1u);
+      BOOST_CHECK_EQUAL(result.actions[4].recipients[0].after_writes, 4u);
+      BOOST_CHECK_EQUAL(result.actions[4].writes_begin, 4u);
+      BOOST_CHECK_EQUAL(result.actions[4].writes_end, 4u);
+      BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+      BOOST_CHECK(!view.read_table(created));
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(notification_deduplication_and_authorization_are_action_local, wasm_fixture) {
+   const auto notify_bob = "(call $notify (i64.const " + std::to_string("bob"_n.to_uint64_t()) + "))";
+   const auto notify_alice = "(call $notify (i64.const " + std::to_string("alice"_n.to_uint64_t()) + "))";
+   const auto code = increment_wasm(R"(
+      (import "env" "require_recipient" (func $notify (param i64)))
+      (import "env" "require_auth" (func $auth (param i64))))",
+      notify_bob + notify_alice,
+      "(call $auth (i64.const " + std::to_string("alice"_n.to_uint64_t()) + "))" + notify_bob);
+   std::array calls{isolated_action_invocation{code, input(1, 1), {}},
+                    isolated_action_invocation{code, input(1, 2), {}}};
+   isolated_transaction_executor executor;
+   const auto result = executor.execute(base, calls);
+   for (size_t i = 0; i < calls.size(); ++i) {
+      BOOST_REQUIRE_EQUAL(result.actions[i].recipients.size(), 2u);
+      BOOST_CHECK((result.actions[i].recipients[0] == isolated_notification{"bob"_n, i}));
+      BOOST_CHECK((result.actions[i].recipients[1] == isolated_notification{"alice"_n, i + 1}));
+   }
+   calls[1].input.authorizations = {{"bob"_n, "active"_n}};
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_unsupported);
+   calls[1].input.authorizations = calls[0].input.authorizations;
+   calls[1].input.max_return_bytes = 7;
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_unsupported);
+   calls[1].input.max_return_bytes = 256;
+   BOOST_CHECK_EQUAL(number(executor.execute(base, calls).actions[1].return_value), 13u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(failed_later_action_never_returns_successful_prefix_or_poisoned_cache, wasm_fixture) {
+   const auto code = increment_wasm();
+   isolated_transaction_executor executor;
+   const auto stub = increment_wasm(R"((import "env" "prints_l" (func $print (param i32 i32))))",
+                                    "(call $print (i32.const 0) (i32.const 0))");
+   const std::array failures{code, increment_wasm({}, "unreachable"), stub};
+   for (size_t i = 0; i < failures.size(); ++i) {
+      std::array calls{isolated_action_invocation{code, input(1, 1), {}},
+                       isolated_action_invocation{failures[i], input(1, 2, 0, i == 0 ? 3 : 0), {}}};
+      BOOST_CHECK_THROW(executor.execute(base, calls), std::exception);
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+      calls[1] = {code, input(1, 2), {}};
+      BOOST_CHECK_EQUAL(number(executor.execute(base, calls).actions[1].return_value), 13u);
+   }
+   isolated_wasm_limits short_time; short_time.max_attempt_time = std::chrono::milliseconds(10);
+   const std::array timed{isolated_action_invocation{code, input(), {}},
+                          isolated_action_invocation{code, input(1, 1, 0, 1), short_time}};
+   BOOST_CHECK_THROW(executor.execute(base, timed), eosio::vm::timeout_exception);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(whole_transaction_budgets_are_not_reset_between_actions, wasm_fixture) {
+   const auto code = increment_wasm();
+   std::vector<isolated_action_invocation> calls(3, {code, input(), {}});
+   isolated_transaction_executor executor;
+   primary_overlay_limits limits; limits.max_write_operations = 2;
+   BOOST_CHECK_THROW(executor.execute(base, calls, {}, limits), primary_state_budget_exceeded);
+   limits = {}; limits.max_write_value_bytes = 16;
+   BOOST_CHECK_THROW(executor.execute(base, calls, {}, limits), primary_state_budget_exceeded);
+   limits = {}; limits.max_read_queries = 1; calls[1].input = input(2);
+   BOOST_CHECK_THROW(executor.execute(base, calls, {}, limits), primary_state_budget_exceeded);
+   calls.assign(17, {code, input(), {}});
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_budget_exceeded);
+   calls.clear(); BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_budget_exceeded);
+   calls.assign(16, {code, input(1, 1), {}});
+   BOOST_CHECK_EQUAL(number(executor.execute(base, calls).actions.back().return_value), 26u);
+   calls.assign(5, {code, input(), {}});
+   for (auto& call : calls) call.input.data.resize(64 * 1024);
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_budget_exceeded);
+   calls.assign(5, {std::vector<char>(64 * 1024), input(), {}});
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_budget_exceeded);
+   calls.assign(1, {code, input(), {}}); calls[0].input.authorizations.resize(65);
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_budget_exceeded);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(missing_state_after_private_prefix_requires_fresh_whole_transaction, wasm_fixture) {
+   const std::array tables{rows};
+   const std::array first_query{primary_query{rows, primary_query_kind::find, 1}};
+   const auto sparse = frozen_primary_state::capture_queries(view, tables, first_query);
+   const auto code = increment_wasm();
+   const std::array calls{isolated_action_invocation{code, input(1, 1), {}},
+                          isolated_action_invocation{code, input(2, 2), {}}};
+   isolated_transaction_executor executor;
+   bool requested = false;
+   try { (void)executor.execute(sparse, calls); }
+   catch (const primary_state_missing& missing) {
+      const auto* request = std::get_if<primary_capture_request>(&missing.request);
+      BOOST_REQUIRE(request && request->query);
+      BOOST_CHECK(request->query->table == rows);
+      BOOST_CHECK_EQUAL(request->query->primary_key, 2u); requested = true;
+   }
+   BOOST_CHECK(requested);
+   const auto result = executor.execute(base, calls);
+   BOOST_REQUIRE_EQUAL(result.state.writes().size(), 2u);
+   BOOST_CHECK_EQUAL(number(result.actions[0].return_value), 11u);
+   BOOST_CHECK_EQUAL(number(result.actions[1].return_value), 22u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(fingerprint_binds_action_count_order_and_each_input, wasm_fixture) {
+   const auto code = increment_wasm();
+   std::array calls{isolated_action_invocation{code, input(1, 1), {}},
+                    isolated_action_invocation{code, input(1, 2), {}}};
+   isolated_transaction_executor executor;
+   const auto result = executor.execute(base, calls);
+   const std::array fingerprints{result.actions[0].execution_fingerprint, result.actions[1].execution_fingerprint};
+   BOOST_CHECK(result.execution_fingerprint == isolated_transaction_fingerprint(fingerprints));
+   BOOST_CHECK(result.execution_fingerprint != isolated_transaction_fingerprint(std::span(fingerprints).first(1)));
+   std::swap(calls[0], calls[1]);
+   const auto reversed = executor.execute(base, calls);
+   BOOST_CHECK(reversed.execution_fingerprint != result.execution_fingerprint);
+   BOOST_CHECK_EQUAL(number(reversed.actions.back().return_value), 13u);
+   calls[0].input.action = "other"_n;
+   BOOST_CHECK(executor.execute(base, calls).execution_fingerprint != reversed.execution_fingerprint);
+   BOOST_CHECK_THROW(isolated_transaction_fingerprint({}), primary_state_budget_exceeded);
+}
+
+BOOST_FIXTURE_TEST_CASE(affinity_and_transaction_cancellation_preserve_owned_state, wasm_fixture) {
+   isolated_transaction_executor executor;
+   const std::array calls{isolated_action_invocation{increment_wasm(), input(), {}}};
+   auto foreign = std::async(std::launch::async, [&] {
+      try { (void)executor.execute(base, calls); }
+      catch (const state_view_wrong_thread&) { return true; }
+      return false;
+   });
+   BOOST_CHECK(foreign.get());
+   std::stop_source stop; stop.request_stop();
+   BOOST_CHECK_THROW(executor.execute(base, calls, stop.get_token()), primary_state_invalid_attempt);
+   isolated_cancel expired; expired.deadline = std::chrono::steady_clock::now();
+   BOOST_CHECK_THROW(executor.execute(base, calls, {}, {}, expired), primary_state_invalid_attempt);
+   auto generation = std::make_shared<std::atomic<uint64_t>>(2);
+   BOOST_CHECK_THROW(executor.execute(base, calls, {}, {}, {generation, 1}), primary_state_invalid_attempt);
+   BOOST_CHECK_EQUAL(number(executor.execute(base, calls).actions[0].return_value), 17u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(independent_transaction_executors_do_not_share_overlay_or_vm, wasm_fixture) {
+   const auto code = increment_wasm();
+   for (size_t count : {1u, 2u, 4u}) {
+      std::barrier gate(static_cast<std::ptrdiff_t>(count));
+      std::vector<std::future<std::vector<uint64_t>>> workers;
+      for (size_t worker = 0; worker < count; ++worker) workers.push_back(std::async(std::launch::async, [&, worker] {
+         std::unique_ptr<isolated_transaction_executor> executor;
+         try { executor = std::make_unique<isolated_transaction_executor>(); }
+         catch (...) { gate.arrive_and_drop(); throw; }
+         gate.arrive_and_wait();
+         std::vector<uint64_t> values;
+         for (unsigned repeat = 0; repeat < 5; ++repeat) {
+            const std::array calls{isolated_action_invocation{code, input(1, worker + 1, 10000), {}},
+                                   isolated_action_invocation{code, input(1, repeat + 1, 10000), {}}};
+            const auto result = executor->execute(base, calls);
+            values.push_back(number(result.actions[0].return_value));
+            values.push_back(number(result.actions[1].return_value));
+         }
+         return values;
+      }));
+      for (size_t worker = 0; worker < count; ++worker) {
+         const auto values = workers[worker].get();
+         BOOST_REQUIRE_EQUAL(values.size(), 10u);
+         for (size_t repeat = 0; repeat < 5; ++repeat) {
+            BOOST_CHECK_EQUAL(values[repeat * 2], 11 + worker);
+            BOOST_CHECK_EQUAL(values[repeat * 2 + 1], 12 + worker + repeat);
+         }
+      }
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(cross_contract_reads_see_prefix_but_cannot_write_foreign_rows, wasm_fixture) {
+   const auto reader_code = [&](bool write) {
+      return wasm(R"((module
+         (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
+         (import "env" "db_get_i64" (func $get (param i32 i32 i32) (result i32)))
+         (import "env" "db_update_i64" (func $update (param i32 i64 i32 i32)))
+         (import "env" "set_action_return_value" (func $return (param i32 i32)))
+         (memory 1 1)
+         (func (export "apply") (param i64 i64 i64) (local $it i32)
+            (set_local $it (call $find (i64.const )" + std::to_string(rows.code.to_uint64_t()) +
+            ") (i64.const " + std::to_string(rows.scope.to_uint64_t()) + ") (i64.const " +
+            std::to_string(rows.table.to_uint64_t()) + R"() (i64.const 1)))
+            (drop (call $get (get_local $it) (i32.const 0) (i32.const 8)))
+            )" + (write ? "(call $update (get_local $it) (i64.const 0) (i32.const 0) (i32.const 8))" : "") +
+            "(call $return (i32.const 0) (i32.const 8))))");
+   };
+   auto reader_input = input(); reader_input.receiver = reader_input.account = "reader"_n;
+   std::array calls{isolated_action_invocation{increment_wasm(), input(), {}},
+                    isolated_action_invocation{reader_code(false), reader_input, {}}};
+   isolated_transaction_executor executor;
+   const auto result = executor.execute(base, calls);
+   BOOST_CHECK_EQUAL(number(result.actions[1].return_value), 17u);
+   BOOST_CHECK_EQUAL(result.actions[1].writes_begin, 1u);
+   BOOST_CHECK_EQUAL(result.actions[1].writes_end, 1u);
+   BOOST_REQUIRE_EQUAL(result.state.writes().size(), 1u);
+   BOOST_CHECK(result.state.read_queries().contains({rows, primary_query_kind::find, 1}));
+   calls[1].code = reader_code(true);
+   BOOST_CHECK_THROW(executor.execute(base, calls), table_access_violation);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(transaction_deadline_and_inflight_cancel_cover_later_actions, wasm_fixture) {
+   const auto code = increment_wasm();
+   isolated_wasm_limits long_step; long_step.max_attempt_time = std::chrono::seconds(1);
+   const std::array calls{isolated_action_invocation{code, input(), long_step},
+                          isolated_action_invocation{code, input(1, 1, 0, 1), long_step}};
+   isolated_transaction_executor executor;
+   (void)executor.execute(base, std::span(calls).first(1)); // warm module, not private state
+   isolated_cancel short_deadline;
+   short_deadline.deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(10);
+   BOOST_CHECK_THROW(executor.execute(base, calls, {}, {}, short_deadline), primary_state_invalid_attempt);
+   // Each step allows one second, but the shared half-second cap wins.
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_invalid_attempt);
+   std::stop_source stop;
+   std::promise<void> warmed;
+   auto ready = warmed.get_future();
+   auto worker = std::async(std::launch::async, [&] {
+      std::unique_ptr<isolated_transaction_executor> local;
+      try {
+         local = std::make_unique<isolated_transaction_executor>();
+         (void)local->execute(base, std::span(calls).first(1));
+      }
+      catch (...) { warmed.set_exception(std::current_exception()); throw; }
+      warmed.set_value();
+      try { (void)local->execute(base, calls, stop.get_token()); }
+      catch (const primary_state_invalid_attempt&) { return true; }
+      return false;
+   });
+   ready.get(); std::this_thread::sleep_for(std::chrono::milliseconds(5)); stop.request_stop();
+   BOOST_CHECK(worker.wait_for(std::chrono::seconds(3)) == std::future_status::ready);
+   BOOST_CHECK(worker.get());
+   BOOST_CHECK_EQUAL(number(executor.execute(base, std::span(calls).first(1)).actions[0].return_value), 17u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_transaction_oracle_tests)
+
+BOOST_AUTO_TEST_CASE(lifecycle_actions_match_original_transaction_and_failed_tail_undo) {
+   eosio::testing::tester original;
+   original.create_accounts({rows.code, "alice"_n, "bob"_n});
+   const auto code = lifecycle_steps_wasm();
+   original.set_code(rows.code, std::vector<uint8_t>(code.begin(), code.end()));
+   original.produce_block();
+   chainbase_transaction_state_view live(original.control->db());
+   const std::array tables{rows};
+   auto base = frozen_primary_state::capture(live, tables);
+   std::vector<isolated_action_invocation> calls;
+   for (const auto [mode, value] : {std::pair{0u, 40u}, {3u, 42u}, {2u, 0u}, {1u, 0u}, {0u, 99u}, {2u, 0u}})
+      calls.push_back({code, scoped_input(rows.scope, 7, value, mode), {}});
+   isolated_transaction_executor executor;
+   const auto before = original.control->calculate_integrity_hash();
+   const auto result = executor.execute(base, calls);
+   BOOST_CHECK(original.control->calculate_integrity_hash() == before);
+   const auto trace = push_raw_actions(original, calls);
+   BOOST_REQUIRE(trace && !trace->except);
+   BOOST_REQUIRE_EQUAL(trace->action_traces.size(), calls.size() * 2);
+   for (size_t i = 0; i < calls.size(); ++i) {
+      const auto& actual = trace->action_traces[i];
+      BOOST_CHECK_EQUAL(actual.action_ordinal.value, i + 1);
+      BOOST_CHECK_EQUAL(actual.creator_action_ordinal.value, 0u);
+      BOOST_CHECK(actual.receiver == rows.code);
+      BOOST_CHECK(actual.return_value == result.actions[i].return_value);
+      BOOST_REQUIRE_EQUAL(result.actions[i].recipients.size(), 1u);
+      const auto& notification = trace->action_traces[calls.size() + i];
+      BOOST_CHECK(notification.receiver == "bob"_n);
+      BOOST_CHECK_EQUAL(notification.creator_action_ordinal.value, i + 1);
+   }
+   const auto final = live.read_primary({rows, primary_query_kind::find, 7}, 8);
+   BOOST_REQUIRE(final.row && final.table);
+   BOOST_CHECK_EQUAL(final.table->count, 1u);
+   BOOST_CHECK(final.row->value == result.state.writes().back().value);
+   BOOST_CHECK_EQUAL(number(final.row->value), 99u);
+   BOOST_CHECK(final.row->object_id >= 0 && result.state.writes().back().object_id < 0);
+   original.produce_block();
+   base = frozen_primary_state::capture(live, tables);
+   calls = {{code, scoped_input(rows.scope, 7, 0, 1), {}},
+            {code, scoped_input(rows.scope, 7, 123, 0), {}},
+            {code, scoped_input(rows.scope, 7, 456, 0), {}}}; // duplicate create AFTER a valid prefix
+   const auto before_failure = original.control->calculate_integrity_hash();
+   BOOST_CHECK_THROW(executor.execute(base, calls), primary_state_unsupported);
+   BOOST_CHECK_THROW(push_raw_actions(original, calls), fc::exception);
+   BOOST_CHECK(original.control->calculate_integrity_hash() == before_failure);
+   BOOST_CHECK_EQUAL(number(live.read_primary({rows, primary_query_kind::find, 7}, 8).row->value), 99u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE(parallel_cdt_host_oracle_tests)
 
 BOOST_FIXTURE_TEST_CASE(memory_and_assertion_results_match_original_host_converters, wasm_fixture) {

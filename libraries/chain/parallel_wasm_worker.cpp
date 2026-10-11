@@ -317,12 +317,21 @@ fc::sha256 isolated_execution_fingerprint(const fc::sha256& code_hash, const iso
 isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const frozen_primary_state> base,
       const isolated_action_input& input, std::stop_token stop, primary_overlay_limits overlay_limits, isolated_cancel external) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
+   primary_state_overlay state(std::move(base), overlay_limits);
+   auto effects = execute_step(state, input, stop, std::move(external));
+   return {state.seal(), std::move(effects.return_value), effects.execution_fingerprint, std::move(effects.recipients)};
+}
+
+isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay& state,
+      const isolated_action_input& input, std::stop_token stop, isolated_cancel external) {
+   if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
+   const auto began = std::chrono::steady_clock::now();
    if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
    if (input.receiver != input.account || input.data.size() > impl_->limits.max_action_bytes ||
        input.authorizations.size() > impl_->limits.max_authorizations || input.max_return_bytes > impl_->limits.max_return_bytes)
       throw primary_state_unsupported();
    const auto fingerprint = isolated_execution_fingerprint(impl_->code_hash, impl_->limits, input);
-   primary_state_overlay state(std::move(base), overlay_limits);
+   const auto writes_begin = state.write_count();
    primary_overlay_cursor cursor(state, input.receiver);
    auto& machine = *impl_->machine;
    isolated_host host{cursor, state, input, stop, external, [&]() -> std::span<char> {
@@ -346,7 +355,69 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
    context.execute_start(&host, visitor);
    context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
    deadline.check();
-   return {state.seal(), std::move(host.return_value), fingerprint, std::move(host.recipients)};
+   return {std::move(host.return_value), fingerprint, std::move(host.recipients), writes_begin, state.write_count(),
+           std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - began)};
+}
+
+fc::sha256 isolated_transaction_fingerprint(std::span<const fc::sha256> action_fingerprints) {
+   if (action_fingerprints.empty() || action_fingerprints.size() > isolated_transaction_executor::max_actions)
+      throw primary_state_budget_exceeded();
+   fc::sha256::encoder encoder;
+   constexpr char domain[] = "pureeos/isolated-transaction/v1";
+   encoder.write(domain, sizeof(domain));
+   fc::raw::pack(encoder, static_cast<uint32_t>(action_fingerprints.size()));
+   for (const auto& fingerprint : action_fingerprints) fc::raw::pack(encoder, fingerprint);
+   return encoder.result();
+}
+
+struct isolated_transaction_executor::impl {
+   const std::thread::id owner = std::this_thread::get_id();
+   std::unique_ptr<isolated_wasm_module> module;
+   std::vector<char> cached_code;
+   isolated_wasm_limits cached_limits;
+};
+
+isolated_transaction_executor::isolated_transaction_executor() : impl_(std::make_unique<impl>()) {}
+isolated_transaction_executor::~isolated_transaction_executor() = default;
+
+isolated_transaction_result isolated_transaction_executor::execute(std::shared_ptr<const frozen_primary_state> base,
+      std::span<const isolated_action_invocation> actions, std::stop_token stop,
+      primary_overlay_limits overlay_limits, isolated_cancel external) {
+   if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
+   external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() + max_attempt_time);
+   auto checkpoint = [&] {
+      if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+   };
+   checkpoint();
+   if (actions.empty() || actions.size() > max_actions) throw primary_state_budget_exceeded();
+   size_t code_bytes = 0, data_bytes = 0;
+   for (const auto& action : actions) {
+      if (action.code.size() > 64 * 1024 || action.code.size() > max_total_code_bytes - code_bytes ||
+          action.input.data.size() > 64 * 1024 || action.input.data.size() > max_total_action_bytes - data_bytes ||
+          action.input.authorizations.size() > 64) throw primary_state_budget_exceeded();
+      code_bytes += action.code.size(); data_bytes += action.input.data.size();
+   }
+   primary_state_overlay state(std::move(base), overlay_limits);
+   std::vector<isolated_action_effects> results;
+   std::vector<fc::sha256> fingerprints;
+   results.reserve(actions.size()); fingerprints.reserve(actions.size());
+   for (const auto& action : actions) {
+      checkpoint();
+      if (!impl_->module || impl_->cached_code != action.code || impl_->cached_limits != action.limits) {
+         // Never hold two compiled modules, including when construction fails.
+         impl_->module.reset(); impl_->cached_code.clear();
+         impl_->module = std::make_unique<isolated_wasm_module>(action.code, action.limits);
+         impl_->cached_code = action.code; impl_->cached_limits = action.limits;
+      }
+      checkpoint();
+      results.push_back(impl_->module->execute_step(state, action.input, stop, external));
+      fingerprints.push_back(results.back().execution_fingerprint);
+   }
+   checkpoint();
+   const auto fingerprint = isolated_transaction_fingerprint(fingerprints);
+   // State/VM/cursor exceptions propagate to the caller. The local state and
+   // ALL step outputs die together; no earlier step can escape as a success.
+   return {state.seal(), std::move(results), fingerprint};
 }
 
 } // namespace eosio::chain::experimental

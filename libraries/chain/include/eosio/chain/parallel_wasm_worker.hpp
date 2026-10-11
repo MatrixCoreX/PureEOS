@@ -63,10 +63,36 @@ struct isolated_action_result {
    std::vector<isolated_notification> recipients;
 };
 
+// One action's owned effects within a TRANSACTION-wide journal. Notifications
+// use absolute write positions, including writes by earlier actions. Iterator
+// caches, VM memory/start, recipient deduplication and return bytes are local
+// to this action; the state and its resource budgets are shared by all steps.
+struct isolated_action_effects {
+   std::vector<char> return_value;
+   fc::sha256 execution_fingerprint;
+   std::vector<isolated_notification> recipients;
+   size_t writes_begin = 0;
+   size_t writes_end = 0;
+   std::chrono::microseconds elapsed{}; // private execution only, not compilation
+};
+
+struct isolated_action_invocation {
+   std::vector<char> code;
+   isolated_action_input input;
+   isolated_wasm_limits limits;
+};
+
+struct isolated_transaction_result {
+   primary_overlay_result state;
+   std::vector<isolated_action_effects> actions;
+   fc::sha256 execution_fingerprint;
+};
+
 // Binds successful output to the actual code, fixed action inputs and observable
 // runtime limits. This is NOT authorization or canonical state validation.
 fc::sha256 isolated_execution_fingerprint(const fc::sha256& code_hash, const isolated_wasm_limits&,
                                           const isolated_action_input&);
+fc::sha256 isolated_transaction_fingerprint(std::span<const fc::sha256> action_fingerprints);
 
 // Each worker OWNS its compiled module, linear memory and execution context.
 // Modules remain unshared, including parsing/initialization and mutable VM
@@ -83,6 +109,32 @@ public:
    isolated_wasm_module& operator=(const isolated_wasm_module&) = delete;
    isolated_action_result execute(std::shared_ptr<const frozen_primary_state>, const isolated_action_input&,
                                   std::stop_token = {}, primary_overlay_limits = {}, isolated_cancel = {});
+private:
+   friend class isolated_transaction_executor;
+   // Only the two owning execution entry points may call this. An exception
+   // destroys their entire local overlay; no caller can seal a partial prefix.
+   isolated_action_effects execute_step(primary_state_overlay&, const isolated_action_input&,
+                                       std::stop_token, isolated_cancel);
+   struct impl;
+   std::unique_ptr<impl> impl_;
+};
+
+// Private-only G5a foundation. It does not authorize canonical adoption and is
+// not yet wired to controller or the production worker pool. One bounded module
+// cache per thread; one owned overlay per call, sealed only after ALL actions
+// finish. No partial result is returned on missing state, cancellation or error.
+class isolated_transaction_executor {
+public:
+   static constexpr size_t max_actions = 16;
+   static constexpr size_t max_total_code_bytes = 256 * 1024;
+   static constexpr size_t max_total_action_bytes = 256 * 1024;
+   static constexpr std::chrono::milliseconds max_attempt_time{500};
+   isolated_transaction_executor();
+   ~isolated_transaction_executor();
+   isolated_transaction_executor(const isolated_transaction_executor&) = delete;
+   isolated_transaction_executor& operator=(const isolated_transaction_executor&) = delete;
+   isolated_transaction_result execute(std::shared_ptr<const frozen_primary_state>,
+      std::span<const isolated_action_invocation>, std::stop_token = {}, primary_overlay_limits = {}, isolated_cancel = {});
 private:
    struct impl;
    std::unique_ptr<impl> impl_;
