@@ -1,5 +1,14 @@
 include_directories( "${CMAKE_SOURCE_DIR}/plugins/wallet_plugin/include" )
 
+# PX0 tooling only: does not build or enable a parallel transaction executor.
+add_test(NAME pureeos_parallel_access_audit_unit
+  COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/parallel_access_audit_test.py -v)
+add_test(NAME pureeos_parallel_access_audit_snapshot
+  COMMAND python3 -B ${CMAKE_SOURCE_DIR}/scripts/parallel_access_audit.py
+    --check ${CMAKE_SOURCE_DIR}/docs/parallel-execution/access-inventory.json)
+set_tests_properties(pureeos_parallel_access_audit_unit pureeos_parallel_access_audit_snapshot
+  PROPERTIES TIMEOUT 30 LABELS "parallel-px0")
+
 add_test(NAME pureeos_finality_tps_accounting
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/PerformanceHarness/test_finality_tps.py)
 set_tests_properties(pureeos_finality_tps_accounting PROPERTIES TIMEOUT 30)
