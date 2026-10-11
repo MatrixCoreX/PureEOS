@@ -1,4 +1,5 @@
 #include <eosio/chain/parallel_wasm_worker.hpp>
+#include <eosio/chain/parallel_action_tree.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/vm/backend.hpp>
 #include <eosio/vm/host_function.hpp>
@@ -9,6 +10,16 @@
 #include <mutex>
 
 namespace eosio::chain::experimental {
+
+// Only the tree executor can supply this synchronous stack-local capability.
+// Legacy module/transaction/notification APIs never receive it. No reference
+// to it, the VM memory, or the caller's inputs survives execute_step.
+struct isolated_tree_capture {
+   std::function<void(const isolated_cursor_event&)> record;
+   std::function<void(std::span<const char>)> send;
+   name sender;
+};
+
 namespace {
 
 // Interpreter-only cooperative interruption: every opcode still goes through
@@ -76,10 +87,12 @@ struct isolated_host {
    std::set<name>* group_recipients = nullptr;
    std::vector<isolated_cursor_event>* cursor_events = nullptr;
    size_t max_cursor_events = 0;
+   isolated_tree_capture* tree_capture = nullptr;
 
    void record(isolated_cursor_event event) {
       if (!cursor_events) return; // unchanged root-only mode never allocates a transcript
       if (cursor_events->size() >= max_cursor_events) throw primary_state_budget_exceeded();
+      if (tree_capture) tree_capture->record(event);
       cursor_events->push_back(std::move(event));
    }
 
@@ -178,7 +191,15 @@ struct isolated_host {
    // implementation: reaching any of these discards the WHOLE attempt, even
    // after private writes. No default result, output or canonical effect.
    [[noreturn]] void prints_l(uint32_t, uint32_t) { throw primary_state_unsupported(); }
-   [[noreturn]] void send_inline(uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   void send_inline(uint32_t offset, uint32_t size) {
+      if (!tree_capture) throw primary_state_unsupported();
+      tree_capture->send(memory(offset, size));
+   }
+   uint64_t get_sender() {
+      check();
+      if (!tree_capture) throw primary_state_unsupported();
+      return tree_capture->sender.to_uint64_t();
+   }
    [[noreturn]] void set_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] uint32_t get_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] int64_t set_proposed_producers(uint32_t, uint32_t) { throw primary_state_unsupported(); }
@@ -283,8 +304,9 @@ void register_isolated_functions() {
       ISOLATED_HOST(db_previous_i64);
       // Retain registration order; the two lifecycle entries are now real hosts.
 #define ISOLATED_FALLBACK(method) functions::add<&isolated_host::method>("env", #method)
+#define ISOLATED_TREE_HOST(method) functions::add<&isolated_host::method>("env", #method)
       ISOLATED_FALLBACK(prints_l);
-      ISOLATED_FALLBACK(send_inline);
+      ISOLATED_TREE_HOST(send_inline); // private tree only; existing adopters still fallback
       ISOLATED_HOST(db_store_i64);
       ISOLATED_HOST(db_remove_i64);
       ISOLATED_FALLBACK(set_blockchain_parameters_packed);
@@ -292,7 +314,9 @@ void register_isolated_functions() {
       ISOLATED_FALLBACK(set_proposed_producers);
       ISOLATED_FALLBACK(current_time);
       ISOLATED_FALLBACK(get_active_producers);
+      ISOLATED_TREE_HOST(get_sender); // bound to creator receiver, never inferred from root account
 #undef ISOLATED_FALLBACK
+#undef ISOLATED_TREE_HOST
 #undef ISOLATED_HOST
    });
 }
@@ -369,12 +393,14 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
 isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay& state,
       const isolated_action_input& input, std::stop_token stop, isolated_cancel external,
       primary_overlay_cursor* group_cursor, std::set<name>* group_recipients,
-      std::vector<isolated_cursor_event>* cursor_events, size_t max_cursor_events) {
+      std::vector<isolated_cursor_event>* cursor_events, size_t max_cursor_events,
+      isolated_tree_capture* tree_capture) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    const auto began = std::chrono::steady_clock::now();
    if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
    if (bool(group_cursor) != bool(group_recipients) ||
        bool(group_cursor) != bool(cursor_events) || (cursor_events && !cursor_events->empty()) ||
+       (tree_capture && !group_cursor) ||
        max_cursor_events > isolated_notification_executor::max_cursor_events ||
        (group_recipients && !group_recipients->contains(input.receiver)) ||
        (!group_cursor && input.receiver != input.account) || input.data.size() > impl_->limits.max_action_bytes ||
@@ -394,7 +420,7 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       // back too; non-memory hosts remain usable without linear memory.
       if (pages <= 0) throw primary_state_unsupported();
       return {context.linear_memory(), static_cast<size_t>(pages) * 65536u};
-   }, {}, {}, group_recipients, cursor_events, max_cursor_events};
+   }, {}, {}, group_recipients, cursor_events, max_cursor_events, tree_capture};
    const attempt_deadline deadline(impl_->limits.max_attempt_time, stop, external);
    auto& context = machine.get_context();
    // Same reset/start sequence as backend::initialize, with a bounded visitor
@@ -582,6 +608,200 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
    // The owned result still requires whole-tree canonical code/state preflight;
    // the input catalog is not that proof, and no successful prefix may escape.
    return {state.seal(), std::move(results), isolated_transaction_fingerprint(root_fingerprints)};
+}
+
+fc::sha256 isolated_action_tree_fingerprint(std::span<const fc::sha256> roots,
+                                           const isolated_action_tree_context& context) {
+   fc::sha256::encoder encoder;
+   constexpr char domain[] = "pureeos/isolated-action-tree/v1";
+   encoder.write(domain, sizeof(domain));
+   fc::raw::pack(encoder, isolated_transaction_fingerprint(roots));
+   fc::raw::pack(encoder, context.max_inline_action_size);
+   fc::raw::pack(encoder, context.max_inline_action_depth);
+   return encoder.result();
+}
+
+fc::sha256 isolated_action_tree_step_fingerprint(const fc::sha256& action_fingerprint,
+      const isolated_action_tree_context& context, const isolated_action_tree_group& group,
+      const isolated_action_tree_step& step) {
+   fc::sha256::encoder encoder;
+   constexpr char domain[] = "pureeos/isolated-action-tree-step/v1";
+   encoder.write(domain, sizeof(domain));
+   fc::raw::pack(encoder, action_fingerprint);
+   fc::raw::pack(encoder, context.max_inline_action_size);
+   fc::raw::pack(encoder, context.max_inline_action_depth);
+   fc::raw::pack(encoder, uint32_t(group.root_index));
+   fc::raw::pack(encoder, group.action_ordinal);
+   fc::raw::pack(encoder, group.creator_action_ordinal);
+   fc::raw::pack(encoder, group.closest_unnotified_ancestor);
+   fc::raw::pack(encoder, group.depth);
+   fc::raw::pack(encoder, group.sender);
+   fc::raw::pack(encoder, uint32_t(step.group_index));
+   fc::raw::pack(encoder, step.action_ordinal);
+   fc::raw::pack(encoder, step.creator_action_ordinal);
+   fc::raw::pack(encoder, step.closest_unnotified_ancestor);
+   fc::raw::pack(encoder, step.sender);
+   return encoder.result();
+}
+
+struct isolated_action_tree_executor::impl {
+   const std::thread::id owner = std::this_thread::get_id();
+   std::unique_ptr<isolated_wasm_module> module;
+   std::vector<char> cached_code;
+   isolated_wasm_limits cached_limits;
+};
+
+isolated_action_tree_executor::isolated_action_tree_executor() : impl_(std::make_unique<impl>()) {}
+isolated_action_tree_executor::~isolated_action_tree_executor() = default;
+
+isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_ptr<const frozen_primary_state> base,
+      std::span<const isolated_action_input> roots, std::span<const isolated_receiver_program> programs,
+      isolated_action_tree_context tree_context, std::stop_token stop,
+      primary_overlay_limits overlay_limits, isolated_cancel external) {
+   if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
+   external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() +
+                                                isolated_transaction_executor::max_attempt_time);
+   const auto checkpoint = [&] {
+      if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+   };
+   checkpoint();
+   if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
+       programs.empty() || programs.size() > max_programs) throw primary_state_budget_exceeded();
+   struct entry { const isolated_receiver_program* program; fc::sha256 hash; };
+   std::map<name, entry> catalog;
+   size_t code_bytes = 0, data_bytes = 0;
+   for (const auto& program : programs) {
+      checkpoint();
+      if (program.code.size() > 64 * 1024 ||
+          program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
+         throw primary_state_budget_exceeded();
+      code_bytes += program.code.size();
+      if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
+            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+         throw primary_state_unsupported();
+   }
+   const auto lookup = [&](name receiver) -> const entry& {
+      const auto it = catalog.find(receiver);
+      if (it == catalog.end()) throw isolated_receiver_missing(receiver);
+      if (it->second.program->serial_only) throw primary_state_unsupported();
+      return it->second;
+   };
+   std::vector<isolated_action_tree_group> groups;
+   std::vector<isolated_action_tree_step> results;
+   std::vector<fc::sha256> fingerprints;
+   // Stable group storage throughout recursive scheduling. Every append below
+   // checks max_steps BEFORE insertion; no reference survives a reallocation.
+   groups.reserve(max_steps); results.reserve(max_steps); fingerprints.reserve(roots.size());
+   for (size_t i = 0; i < roots.size(); ++i) {
+      checkpoint();
+      const auto& root = roots[i];
+      if (root.data.size() > 64 * 1024 ||
+          root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes ||
+          root.authorizations.size() > 64 || root.max_return_bytes > 4096) throw primary_state_budget_exceeded();
+      data_bytes += root.data.size();
+      if (root.receiver != root.account) throw primary_state_unsupported();
+      const auto& program = lookup(root.receiver);
+      if (program.program->code.empty()) throw primary_state_unsupported();
+      fingerprints.push_back(isolated_execution_fingerprint(program.hash, program.program->limits, root));
+      groups.push_back({i, uint32_t(i + 1), 0, 0, 0, {}, root});
+   }
+   const auto fingerprint = isolated_action_tree_fingerprint(fingerprints, tree_context);
+   primary_state_overlay state(std::move(base), overlay_limits);
+   uint32_t next_ordinal = roots.size() + 1;
+   size_t event_count = 0, inline_count = 0, inline_bytes = 0;
+   struct pending_receiver { name receiver; uint32_t ordinal, creator, ancestor; name sender; };
+   std::function<void(size_t)> execute_group = [&](size_t group_index) {
+      checkpoint();
+      const auto& group = groups[group_index];
+      primary_overlay_cursor cursor(state, group.input.receiver);
+      std::set<name> notified{group.input.receiver};
+      std::vector<pending_receiver> pending{{group.input.receiver, group.action_ordinal,
+         group.creator_action_ordinal, group.closest_unnotified_ancestor, group.sender}};
+      std::vector<size_t> children;
+      for (size_t i = 0; i < pending.size(); ++i) {
+         checkpoint();
+         const auto current = pending[i];
+         const auto& entry = lookup(current.receiver);
+         const auto& program = *entry.program;
+         auto arguments = group.input;
+         arguments.receiver = current.receiver;
+         isolated_action_tree_step step;
+         step.group_index = group_index; step.action_ordinal = current.ordinal;
+         step.creator_action_ordinal = current.creator; step.closest_unnotified_ancestor = current.ancestor;
+         step.receiver = current.receiver; step.sender = current.sender;
+         step.code_hash = entry.hash; step.has_code = !program.code.empty();
+         if (step.has_code) {
+            if (!impl_->module || impl_->cached_code != program.code || impl_->cached_limits != program.limits) {
+               performance::scope compile_timer(performance::stage::parallel_compile);
+               impl_->module.reset(); impl_->cached_code.clear();
+               impl_->module = std::make_unique<isolated_wasm_module>(program.code, program.limits);
+               impl_->cached_code = program.code; impl_->cached_limits = program.limits;
+            }
+            checkpoint();
+            isolated_tree_capture capture{
+               [&](const isolated_cursor_event& event) {
+                  if (event_count >= max_events) throw primary_state_budget_exceeded();
+                  ++event_count;
+                  step.events.emplace_back(event);
+               },
+               [&](std::span<const char> bytes) {
+                  checkpoint();
+                  if (event_count >= max_events || inline_count >= max_steps ||
+                      bytes.size() > max_total_inline_bytes - inline_bytes ||
+                      bytes.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
+                     throw primary_state_budget_exceeded();
+                  auto sent = decode_isolated_inline_action(bytes, tree_context.max_inline_action_size);
+                  if (!sent) throw primary_state_unsupported();
+                  inline_bytes += bytes.size(); data_bytes += bytes.size(); ++inline_count; ++event_count;
+                  step.events.emplace_back(isolated_tree_inline_event{std::move(*sent), state.write_count(), 0});
+               }, step.sender};
+            std::vector<isolated_cursor_event> cursor_events;
+            performance::scope execute_timer(performance::stage::parallel_execute);
+            step.effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified,
+               &cursor_events, max_events - event_count, &capture);
+         } else {
+            step.effects.writes_begin = step.effects.writes_end = state.write_count();
+            step.effects.execution_fingerprint = isolated_execution_fingerprint(entry.hash, program.limits, arguments);
+         }
+         step.effects.execution_fingerprint = isolated_action_tree_step_fingerprint(
+            step.effects.execution_fingerprint, tree_context, group, step);
+         // Assign ordinals in the host stream's exact interleaving. Scheduling
+         // an inline does NOT execute it and does NOT join notification dedup.
+         for (auto& event : step.events) {
+            if (const auto* cursor_event = std::get_if<isolated_cursor_event>(&event)) {
+               if (const auto* notification = std::get_if<isolated_cursor_notify>(cursor_event)) {
+                  if (next_ordinal > max_steps) throw primary_state_budget_exceeded();
+                  const auto recipient = step.effects.recipients.at(notification->notification_index).recipient;
+                  pending.push_back({recipient, next_ordinal++, current.ordinal, group.action_ordinal, current.receiver});
+               }
+            } else {
+               auto& send = std::get<isolated_tree_inline_event>(event);
+               if (next_ordinal > max_steps || groups.size() >= max_steps) throw primary_state_budget_exceeded();
+               send.action_ordinal = next_ordinal++;
+               const auto& act = send.sent.decoded;
+               isolated_action_input child;
+               child.receiver = child.account = act.account; child.action = act.name;
+               child.data = act.data; child.max_return_bytes = group.input.max_return_bytes;
+               for (const auto& permission : act.authorization)
+                  child.authorizations.emplace_back(permission.actor, permission.permission);
+               children.push_back(groups.size());
+               groups.push_back({group.root_index, send.action_ordinal, current.ordinal, group.action_ordinal,
+                  group.depth + 1, current.receiver, std::move(child)});
+            }
+         }
+         if (results.size() >= max_steps) throw primary_state_budget_exceeded();
+         results.push_back(std::move(step));
+      }
+      // Original exec(): finish the WHOLE notification group, then run ordinary
+      // inline groups depth-first, in send order. Each child gets fresh cursors
+      // and recipient dedup, but shares transaction state and absolute budgets.
+      if (!children.empty() && (group.depth >= tree_context.max_inline_action_depth || group.depth >= max_depth))
+         throw primary_state_unsupported();
+      for (const auto child : children) execute_group(child);
+   };
+   for (size_t i = 0; i < roots.size(); ++i) execute_group(i);
+   checkpoint();
+   return {state.seal(), std::move(groups), std::move(results), fingerprint};
 }
 
 bool validate_isolated_notification_journal(const isolated_notification_result& result,

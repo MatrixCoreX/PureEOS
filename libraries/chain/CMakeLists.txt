@@ -83,7 +83,8 @@ target_include_directories(pureeos_state_view_experimental PUBLIC
 
 # Restricted independent WASM host; local settings default to disabled.
 add_library(pureeos_wasm_worker_experimental STATIC EXCLUDE_FROM_ALL
-  parallel_wasm_worker.cpp parallel_ordered_batch.cpp parallel_worker_pool.cpp)
+  parallel_wasm_worker.cpp parallel_ordered_batch.cpp parallel_worker_pool.cpp parallel_inline_action.cpp
+  parallel_action_tree.cpp)
 target_link_libraries(pureeos_wasm_worker_experimental PUBLIC pureeos_state_view_experimental eos-vm)
 
 ## SORT .cpp by most likely to change / break compile

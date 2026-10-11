@@ -37,13 +37,18 @@ class ScannerTests(unittest.TestCase):
         fallback = set(re.findall(r'^\s+ISOLATED_FALLBACK\((\w+)\);$', implementation, re.MULTILINE))
         fallback_list = tests.split("const std::set<std::string_view> fallback_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(fallback, set(re.findall(r'"(\w+)"', fallback_list)))
-        self.assertEqual(len(fallback), 7)
+        self.assertEqual(len(fallback), 6)
+        tree = set(re.findall(r'^\s+ISOLATED_TREE_HOST\((\w+)\);', implementation, re.MULTILINE))
+        tree_list = tests.split("const std::set<std::string_view> tree_only{", 1)[1].split("};", 1)[0]
+        self.assertEqual(tree, set(re.findall(r'"(\w+)"', tree_list)))
+        self.assertEqual(tree, {"send_inline", "get_sender"})
         self.assertFalse(supported & fallback)
-        self.assertTrue((supported | fallback) <= production)
+        self.assertFalse(tree & (supported | fallback))
+        self.assertTrue((supported | fallback | tree) <= production)
         # Every link-only host also has a correctly typed executable fixture;
         # simply excluding its name from the denied-import loop is not enough.
         stub_cases = tests.split("const std::array fallback_imports{", 1)[1].split("\n};", 1)[0]
-        self.assertEqual(fallback, set(re.findall(r'fallback_import\{"(\w+)"', stub_cases)))
+        self.assertEqual(fallback | tree, set(re.findall(r'fallback_import\{"(\w+)"', stub_cases)))
 
     def test_comments_strings_and_raw_strings_are_not_accesses(self):
         source = '''// db.modify(fake);

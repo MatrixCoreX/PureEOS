@@ -93,6 +93,7 @@ struct fallback_import { const char* name; const char* signature; const char* in
 const std::array fallback_imports{
    fallback_import{"prints_l", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"send_inline", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
+   fallback_import{"get_sender", "(result i64)", "(drop (call $stub))"},
    fallback_import{"set_blockchain_parameters_packed", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"get_blockchain_parameters_packed", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
    fallback_import{"set_proposed_producers", "(param i32 i32) (result i64)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
@@ -705,12 +706,13 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
       "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "abort",
       "is_account", "require_recipient", "db_store_i64", "db_remove_i64"};
    const std::set<std::string_view> fallback_only{
-      "prints_l", "send_inline",
+      "prints_l",
       "set_blockchain_parameters_packed", "get_blockchain_parameters_packed", "set_proposed_producers",
       "current_time", "get_active_producers"};
+   const std::set<std::string_view> tree_only{"send_inline", "get_sender"};
    size_t rejected = 0;
    for (auto name : audited_production_intrinsics) {
-      if (supported.contains(name) || fallback_only.contains(name)) continue;
+      if (supported.contains(name) || fallback_only.contains(name) || tree_only.contains(name)) continue;
       BOOST_TEST_CONTEXT("denied production import=" << name) {
          // Even an UNUSED import must fail, so no unsupported call can reach
          // canonical state after earlier private writes or control flow.
@@ -720,7 +722,7 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
          ++rejected;
       }
    }
-   BOOST_CHECK_EQUAL(rejected, 228u);
+   BOOST_CHECK_EQUAL(rejected, 227u);
 }
 
 BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fixture) {

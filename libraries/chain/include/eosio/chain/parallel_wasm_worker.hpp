@@ -10,6 +10,8 @@
 
 namespace eosio::chain::experimental {
 
+struct isolated_tree_capture; // private definition; no standalone host capability
+
 // An owned atomic generation bridges the existing controller interrupt route
 // without sending signals to workers or retaining any controller/DB pointer.
 struct isolated_cancel {
@@ -141,6 +143,7 @@ public:
 private:
    friend class isolated_transaction_executor;
    friend class isolated_notification_executor;
+   friend class isolated_action_tree_executor;
    // Only the owning execution entry points may call this. An exception
    // destroys their entire local overlay; no caller can seal a partial prefix.
    isolated_action_effects execute_step(primary_state_overlay&, const isolated_action_input&,
@@ -148,7 +151,8 @@ private:
                                        primary_overlay_cursor* group_cursor = nullptr,
                                        std::set<name>* group_recipients = nullptr,
                                        std::vector<isolated_cursor_event>* cursor_events = nullptr,
-                                       size_t max_cursor_events = 0);
+                                       size_t max_cursor_events = 0,
+                                       isolated_tree_capture* tree_capture = nullptr);
    struct impl;
    std::unique_ptr<impl> impl_;
 };

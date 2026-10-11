@@ -97,7 +97,8 @@ target_compile_definitions(unit_test PRIVATE SOFTFLOAT_FAST_INT64)
 add_test(NAME pureeos_parallel_softfloat COMMAND parallel_softfloat_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_softfloat PROPERTIES TIMEOUT 60 LABELS "parallel-px0")
 
-add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp)
+add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
+  parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp)
 target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_testing
   state_history fc custom_appbase pureeos_wasm_worker_experimental ${PLATFORM_SPECIFIC_LIBS})
 target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
@@ -191,6 +192,8 @@ if(PUREEOS_PARALLEL_SANITIZERS)
   # is not a whole-node sanitizer build. Whole-archive selects every instrumented
   # SoftFloat definition before the normal chain dependency archive is searched.
   add_executable(parallel_wasm_sanitizer_test EXCLUDE_FROM_ALL main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
+    parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp
+    ../libraries/chain/parallel_inline_action.cpp ../libraries/chain/parallel_action_tree.cpp
     ../libraries/chain/transaction_state_view.cpp ../libraries/chain/parallel_state_overlay.cpp
     ../libraries/chain/parallel_wasm_worker.cpp ../libraries/chain/parallel_ordered_batch.cpp ../libraries/chain/parallel_worker_pool.cpp
     ../libraries/chain/platform_timer_accuracy.cpp)
@@ -221,7 +224,7 @@ if(PUREEOS_PARALLEL_SANITIZERS)
     # controller used by the serial-oracle cases. Keep that limitation in
     # the test name and output; do not suppress mixed-build race diagnostics.
     add_test(NAME pureeos_parallel_wasm_private_tsan COMMAND parallel_wasm_sanitizer_test
-      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests"
+      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests"
       --report_level=detailed --color_output=no)
     set_tests_properties(pureeos_parallel_wasm_private_tsan PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer;private-only")
   else()

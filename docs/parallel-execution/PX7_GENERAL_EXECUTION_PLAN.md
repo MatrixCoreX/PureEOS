@@ -173,6 +173,21 @@ G5c2b 正式接入已按受限范围验收：工作池增加互斥的通知模�
 
 ### G5c3 源码复核后的调度与授权约束
 
+G5c3a 从 `9ef30aa` 开始，拆为可独立验收的小步，继续沿用原分支而不开放默认开关。a0–a2 已完成本阶段验收，精确测试、失败修复、边界和归档见 [G5c3a 记录](PX7_G5C3A_RESULTS.md)；下列过程中的“初验/正在实现”描述保留为实施历史，a3 正式接入继续推进：
+
+1. **a0 原始 action 解包（初验通过）**：新增 `parallel_inline_action.hpp/.cpp`，逐字段检查长度后再分配，保留完整原始字节与实际解码长度；严格沿用原 host 的 `< max_inline_action_size`。非标准 varuint、损坏输入或本地预算超限只选择整笔回退，不引入新共识拒绝规则。新增 7 项测试、1,932 条断言在普通/ASan+UBSan 初验通过，完整回归留给调用树阶段。
+2. **a1 私有普通 inline 树（正在实现/测试）**：新增 `parallel_action_tree.hpp` 的独立结果类型，不交给现有通知 adopter。host 只有拿到栈内私有树能力才记录 `send_inline`；现有单步、多根和通知入口仍回退。通知与 inline 发送事件交错分配 ordinal，整组通知先完成，再按发送顺序深度优先执行子组；每个 inline 重建游标/去重集，交易私有状态不重建。单独记录 creator、ancestor、组和深度，保留精确发送字节。原始根数据与所有 inline 字节合计最多 256 KiB，最多 256 步、4,096 个事件、私有深度最多 16；协议深度限制同时生效，全交易 500 ms 不刷新。
+3. **a2 整树重建预检**：在首次正式变更前，从自持冻结副本重放所有查询/写入/通知/发送；逐一绑定原始 action 字节、子组输入、代码及调用关系；重放读依赖必须由原结果覆盖。不能将 a1 的返回值当作授权或可采用证明。
+4. **a3 正式 owner 与原 host 接入**：捕获动态子动作 `(receiver, account, action)` 的代码/原生处理器能力，不能仅凭顶层 action 的 receiver 目录证明 inline 安全。重放原 `send_inline` 包装及发送当时的 `execute_inline` 授权检查；接入原 CPU、防重复消费和 undo，再做原 trace、权限失败、RAM/深层失败、多线程生产/恢复测试。
+
+a1 的 receiver 字节码目录只供独立私有计算，不是动态 inline 原生/特权能力证明；不宣称权限检查已并行化、inline 已能正式采用、二级索引或同步调用已完成。原始进程、个人链和配置均不改动。新增阶段证据目录为 `build/local-tests/parallel-inline-action-20261012-1paBn0/`。
+
+a1/a2 初次调用树测试因新 WAT 夹具拼接多了右括号，在进入执行器之前失败；保留 `tree-first.log`，修正夹具后 `tree-second.log` 的 11 项/582 条通过，其中原串行 trace 对照 275 条。随后继续补 `get_sender`，仅在私有树入口返回实际 creator receiver，并将其与组、ancestor、ordinal、深度及协议配置一起纳入步骤指纹；老三类入口仍不能调用。新增原权限拒绝/缺失 permission、显式 `eosio.code` 授权成功、孙动作 trap 撤销测试，尚待完整回归与插桩，不将上述中间初验当作最终验收。
+
+a3 接入前的进一步代码复核：`ordered_attempt_batch::run_next` 目前只接受旧三种结果，工作池、controller 的 production slot、交易上下文指针和 CPU 防重复检查仍是通知类型，必须连同 reset 一起显式适配，不能只在 host 注册表放开 inline。原 `apply_context` 的 `recurse_depth` 和 `first_receiver_action_ordinal` 是私有字段，新增 adopter 需只读校验实际组和深度；`get_sender()` 已有原接口可对照。receiver 字节码可以先按名称由 owner 有界捕获，但正式首次写入前必须另外逐执行步检查真实 `(receiver, group.input.account, group.input.action)` 的原生处理器/特权能力，顶层 root 的组合检查不是 inline 的证明。
+
+重放发送时应调用原 `webassembly::interface::send_inline`，保留严格长度、原 FC 解包和 `execute_inline` 的当场授权及调度；不要复制一套看似相同的权限逻辑。`schedule_action` 可能重分配 action trace 向量，因此跨发送不能继续使用旧 trace/act 引用；原 apply_context 会刷新自己的 action 指针，新 adopter 也不能缓存后继续解引用。所有调度、写入、CPU 检查异常走原 undo，不允许在已有正式写入后整笔重跑。
+
 `apply_context::execute_inline` 在发送发生的位置立即检查目标账户、授权账户/permission、黑白名单及 `authorization_manager::check_authorization`，随后分配 trace ordinal 并排队；并非子动作开始时才授权。`exec()` 先跑完本组所有通知，再执行 context-free inline 队列，最后执行普通 inline 队列；通知产生的 inline 也在这同一组队列中。每个 inline 执行创建新的 apply_context/游标，但仍处于原交易共享状态和 undo 中。不能把 inline 混入通知的接收者去重集合，也不能按 ordinal 递增顺序执行整个调用树。
 
 实现普通 inline 时，事件日志应保留完整拥有所有权的 action（目标、名称、授权和参数）、发送位置及分配的 ordinal；原 adopter 必须在同一事件位置调用原 `execute_inline`，原授权失败直接撤销整笔，禁止先执行子动作再补权限。私有树预检则绑定发送事件与子组输入、creator/ancestor/深度及全交易预算，子组合约代码也由 owner 按需捕获并检查名单。原 `get_sender()` 返回 creator 的 receiver，通知和 inline 都不能一律返回顶层 account；如开放此 host，必须把真实创建者关系纳入指纹和差分测试。初步只开放普通 inline，context-free 与同步调用分别验收，未支持的整笔回退。
