@@ -9,7 +9,7 @@ namespace eosio::benchmark {
 
 namespace eosio::chain {
 
-   namespace experimental { struct isolated_transaction_result; struct isolated_wasm_limits; }
+   namespace experimental { struct isolated_transaction_result; struct isolated_notification_result; struct isolated_wasm_limits; }
 
    struct transaction_checktime_timer {
       public:
@@ -184,6 +184,9 @@ namespace eosio::chain {
          // before each action's first canonical write. Ordinals must be charged
          // exactly once in top-level order; the default preserves single use.
          void charge_isolated_cpu(fc::microseconds elapsed, uint32_t action_ordinal = 1);
+         // A notification's ordinal is NOT execution order. Bind each charge
+         // to the controller-owned receiver step and consume that step once.
+         void charge_isolated_notification_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
 
          std::tuple<int64_t, int64_t, bool, bool> max_bandwidth_billed_accounts_can_pay( bool force_elastic_limits = false )const;
@@ -209,12 +212,15 @@ namespace eosio::chain {
          // Non-owning, ordered capability supplied only by the serial
          // controller during this synchronous push. Never survives undo/retry.
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
+         const experimental::isolated_notification_result* parallel_notification_result = nullptr;
          const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
          std::optional<fc::microseconds> parallel_transaction_elapsed;
          size_t parallel_next_action = 0;
+         size_t parallel_next_receiver = 0;
          bool parallel_transaction_adopted = false;
 
          void add_ram_usage( account_name account, int64_t ram_delta );
+         void apply_isolated_cpu_charge(fc::microseconds elapsed); // validated by the two charge entry points
 
          action_trace& get_action_trace( uint32_t action_ordinal );
          const action_trace& get_action_trace( uint32_t action_ordinal )const;
@@ -314,6 +320,7 @@ namespace eosio::chain {
          tx_cpu_usage_exceeded_reason  isolated_cpu_reason = tx_cpu_usage_exceeded_reason::account_cpu_limit;
          fc::microseconds              isolated_cpu_charge;
          uint32_t                      isolated_cpu_last_action_ordinal = 0;
+         size_t                        isolated_cpu_notification_steps = 0;
    };
 
 } // namespace eosio::chain

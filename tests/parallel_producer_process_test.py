@@ -52,6 +52,34 @@ def check_multi_action_response(entry, response, first):
     return ram
 
 
+def check_coded_notification_response(entry, response):
+    # push_transaction exposes the legacy tree (notifications also appear in
+    # inline_traces), while internal controller traces are a flat ordinal list.
+    # Bound traversal to this exact fixture so malformed trees cannot loop.
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 8:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending, "Coded notification trace tree exceeds fixture bounds")
+    require(entry["actions"] == 2 and len(traces) == 8, "Coded notification fixture lost a receiver or root")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 9)), "Coded notification ordinals are missing or repeated")
+    receivers = ["test", "test", "alice", "bob", "carol", "alice", "bob", "carol"]
+    creators = [0, 0, 1, 1, 3, 2, 2, 6]
+    ancestors = [0, 0, 1, 1, 1, 2, 2, 2]
+    for ordinal, receiver, creator, ancestor in zip(range(1, 9), receivers, creators, ancestors):
+        trace = by_ordinal[ordinal]
+        require(trace["receipt"]["receiver"] == receiver, "Coded notification receiver changed")
+        require(trace["creator_action_ordinal"] == creator and
+                trace["closest_unnotified_ancestor_action_ordinal"] == ancestor, "Coded notification ancestry changed")
+        require(trace["act"] == by_ordinal[ancestor or ordinal]["act"], "Notification did not preserve the original action")
+        require(trace["act"]["account"] == "test" and trace["act"]["name"] == "run", "Unexpected notification action")
+    sequences = [int(by_ordinal[ordinal]["receipt"]["global_sequence"]) for ordinal in (1, 3, 4, 5, 2, 6, 7, 8)]
+    require(all(a < b for a, b in zip(sequences, sequences[1:])), "Notification receipt execution order changed")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--old-nodeos", type=Path, required=True)
@@ -63,6 +91,7 @@ def main():
     parser.add_argument("--ram-fixture", action="store_true", help="With --token-fixture, first transfer changes the sender row RAM payer")
     parser.add_argument("--lifecycle-fixture", action="store_true", help="With --token-fixture, first transfer creates the recipient balance and table")
     parser.add_argument("--multi-action-fixture", action="store_true", help="With --token-fixture, execute dependent transfers and close in one transaction")
+    parser.add_argument("--coded-notification-fixture", action="store_true", help="Two roots with shared-cursor coded notifications and child-owned writes")
     args = parser.parse_args()
     if args.ram_fixture and not args.token_fixture:
         parser.error("--ram-fixture requires --token-fixture")
@@ -70,6 +99,8 @@ def main():
         parser.error("--lifecycle-fixture requires --token-fixture and cannot be combined with --ram-fixture")
     if args.multi_action_fixture and (not args.token_fixture or args.ram_fixture or args.lifecycle_fixture):
         parser.error("--multi-action-fixture requires --token-fixture and cannot be combined with RAM/lifecycle flags")
+    if args.coded_notification_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture):
+        parser.error("--coded-notification-fixture cannot be combined with token/RAM/lifecycle/multi-action flags")
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
     require(sha256(old) == args.old_sha256, "Original binary hash changed")
@@ -77,7 +108,8 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
-              "fixture_kind": "real-token-multiple-actions" if args.multi_action_fixture else
+              "fixture_kind": "coded-notification-multiple-actions" if args.coded_notification_fixture else
+                              "real-token-multiple-actions" if args.multi_action_fixture else
                               "real-token-first-balance" if args.lifecycle_fixture else
                               "real-token-payer-change" if args.ram_fixture else "real-token" if args.token_fixture else "existing-row-wat",
               "old_sha256": sha256(old), "new_sha256": sha256(new), "exporter_sha256": sha256(exporter), "phases": []}
@@ -86,6 +118,7 @@ def main():
     print("Evidence: " + str(root), flush=True)
     try:
         for workers in (0, 1, 2, 4, None):
+            require(sha256(exporter) == report["exporter_sha256"], "Fixture exporter changed during test")
             label = "old-producer" if workers is None else f"new-producer-{workers}"
             group = root / label
             group.mkdir()
@@ -107,6 +140,10 @@ def main():
                 env["PUREEOS_PARALLEL_PRODUCER_MULTI_ACTION"] = "1"
             else:
                 env.pop("PUREEOS_PARALLEL_PRODUCER_MULTI_ACTION", None)
+            if args.coded_notification_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_CODED_NOTIFICATIONS"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_CODED_NOTIFICATIONS", None)
             with (group / "export.log").open("x") as log:
                 result = subprocess.run([str(exporter), "--run_test=parallel_production_tests/export_fresh_live_producer_fixture",
                     "--report_level=detailed", "--color_output=no"], env=env, cwd=group,
@@ -144,6 +181,9 @@ def main():
             if args.multi_action_fixture:
                 require([entry["actions"] for entry in entries] == [3] + [2] * 15,
                         "Multi-action fixture must contain 33 root actions in 16 transactions")
+            if args.coded_notification_fixture:
+                require(len(entries) == 16 and all(entry["actions"] == 2 for entry in entries),
+                        "Coded notification fixture must contain 32 root actions in 16 transactions")
             metrics_before = scrape_stages(producer)
             (group / "metrics-before.txt").write_text(metrics_before)
             journal = Journal(group / "finality-evidence.jsonl")
@@ -161,6 +201,8 @@ def main():
                 response = producer.rpc("push_transaction", entry["packed"])
                 require(response["transaction_id"] == entry["id"], "Submission ID changed")
                 require(response["processed"]["receipt"]["status"] == "executed", "Speculative submission failed")
+                if args.coded_notification_fixture:
+                    check_coded_notification_response(entry, response)
                 if args.multi_action_fixture:
                     ram = check_multi_action_response(entry, response, not responses)
                     if not responses:
@@ -241,6 +283,8 @@ def main():
                 require(len(totals) == 1 and int(totals[0][3]) > 0, "Live producer never adopted a private result")
                 if args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture:
                     require(int(totals[0][3]) == 6, "Expected six independent transactions to be adopted in the fixed two-batch corpus")
+                if args.coded_notification_fixture:
+                    require(int(totals[0][3]) == 4, "Expected four coded-notification transactions adopted in the fixed two-batch corpus")
             else:
                 require(not totals, "Serial mode unexpectedly ran a production batch")
             histories = [node.history_digests() for node in (producer, feeder, observer)]
@@ -263,7 +307,8 @@ def main():
             item["process_usage"] = usage
             report["phases"].append(item)
             print(json.dumps({key: value for key, value in item.items() if key != "stages"}), flush=True)
-        require(sha256(old) == args.old_sha256 and sha256(new) == report["new_sha256"], "Binary changed during test")
+        require(sha256(old) == args.old_sha256 and sha256(new) == report["new_sha256"] and
+                sha256(exporter) == report["exporter_sha256"], "Binary or fixture exporter changed during test")
         report["status"] = "passed"
     except BaseException as error:
         report["status"] = "failed"

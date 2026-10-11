@@ -87,7 +87,8 @@ class HarnessTest(unittest.TestCase):
                                (["--token-fixture", "--ram-fixture", "--lifecycle-fixture"], "cannot be combined"),
                                (["--multi-action-fixture"], "requires --token-fixture"),
                                (["--token-fixture", "--ram-fixture", "--multi-action-fixture"], "cannot be combined"),
-                               (["--token-fixture", "--lifecycle-fixture", "--multi-action-fixture"], "cannot be combined")]:
+                               (["--token-fixture", "--lifecycle-fixture", "--multi-action-fixture"], "cannot be combined"),
+                               (["--token-fixture", "--coded-notification-fixture"], "cannot be combined")]:
             with self.subTest(flags=flags):
                 result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
                                         capture_output=True, text=True, timeout=15)
@@ -136,6 +137,54 @@ class HarnessTest(unittest.TestCase):
         with patch("parallel_execution_test.time.sleep") as sleep:
             self.assertEqual(node.check(point)["lib"], 4)
             sleep.assert_called_once_with(0.1)
+
+    def test_coded_notification_trace_checks_bind_receivers_ancestry_and_execution_order(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_coded_notification_response
+        receivers = ["test", "test", "alice", "bob", "carol", "alice", "bob", "carol"]
+        creators = [0, 0, 1, 1, 3, 2, 2, 6]
+        ancestors = [0, 0, 1, 1, 1, 2, 2, 2]
+        order = {ordinal: i + 10 for i, ordinal in enumerate((1, 3, 4, 5, 2, 6, 7, 8))}
+        traces = [{"action_ordinal": ordinal, "creator_action_ordinal": creator,
+                   "closest_unnotified_ancestor_action_ordinal": ancestor,
+                   "receipt": {"receiver": receiver, "global_sequence": order[ordinal]},
+                   "act": {"account": "test", "name": "run", "data": ancestor or ordinal}}
+                  for ordinal, receiver, creator, ancestor in zip(range(1, 9), receivers, creators, ancestors)]
+        response = {"processed": {"action_traces": traces}}
+        check_coded_notification_response({"actions": 2}, response)
+        nested = deepcopy(traces)
+        for index in (0, 1):
+            start = 2 + 3 * index
+            nested[index]["inline_traces"] = nested[start:start + 2]
+            nested[start]["inline_traces"] = [nested[start + 2]]
+        tree_response = {"processed": {"action_traces": nested[:2]}}
+        check_coded_notification_response({"actions": 2}, tree_response)
+        missing_child = deepcopy(tree_response)
+        missing_child["processed"]["action_traces"][0]["inline_traces"][0]["inline_traces"].clear()
+        with self.assertRaisesRegex(RuntimeError, "lost"):
+            check_coded_notification_response({"actions": 2}, missing_child)
+        cycle = deepcopy(tree_response)
+        cycle["processed"]["action_traces"][0]["inline_traces"].append(cycle["processed"]["action_traces"][0])
+        with self.assertRaisesRegex(RuntimeError, "bounds"):
+            check_coded_notification_response({"actions": 2}, cycle)
+        for mutation, message in [(0, "lost"), (1, "ordinals"), (2, "receiver"), (3, "ancestry"),
+                                  (4, "original action"), (5, "execution order")]:
+            changed = deepcopy(response)
+            entries = changed["processed"]["action_traces"]
+            if mutation == 0:
+                entries.pop()
+            elif mutation == 1:
+                entries[2]["action_ordinal"] = 1
+            elif mutation == 2:
+                entries[2]["receipt"]["receiver"] = "bob"
+            elif mutation == 3:
+                entries[4]["creator_action_ordinal"] = 1
+            elif mutation == 4:
+                entries[4]["act"]["data"] = 99
+            else:
+                entries[1]["receipt"]["global_sequence"] = entries[0]["receipt"]["global_sequence"]
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(RuntimeError, message):
+                check_coded_notification_response({"actions": 2}, changed)
 
     def test_checkpoint_wrong_finality_still_fails_at_deadline(self):
         node, point, info, _ = self.checkpoint_node()

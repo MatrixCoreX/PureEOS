@@ -1009,7 +1009,7 @@ struct controller_impl {
    bool parallel_production_scope = false;
    struct production_adoption_slot {
       transaction_metadata_ptr expected;
-      const experimental::isolated_transaction_result& result;
+      const experimental::isolated_notification_result& result;
       const experimental::isolated_wasm_limits& limits;
       fc::microseconds elapsed;
       experimental::ordered_attempt_batch& order;
@@ -3212,23 +3212,34 @@ struct controller_impl {
       if (wasmif.is_eos_vm_oc_enabled()) return {};
 #endif
       try {
-         std::vector<std::vector<prepared_isolated_action>> actions;
+         std::vector<isolated_notification_job> invocations;
          std::vector<ordered_attempt_batch::request> requests;
          size_t max_action_count = 1;
          for (const auto* packed : packed_inputs) {
-            if (!packed || actions.size() >= conf.parallel_validation_batch_size) break;
+            if (!packed || invocations.size() >= conf.parallel_validation_batch_size) break;
             auto transaction = prepare_isolated_transaction(self, *packed);
             if (!transaction || std::any_of(transaction->begin(), transaction->end(), [&](const auto& action) {
                   return !conf.parallel_code_allowlist.contains(action.code_hash);
                })) break;
             std::vector<fc::sha256> fingerprints;
-            for (const auto& action : *transaction)
+            isolated_notification_job invocation;
+            for (const auto& action : *transaction) {
                fingerprints.push_back(isolated_execution_fingerprint(action.code_hash, action.limits, action.input));
+               invocation.roots.push_back(action.input);
+            }
+            std::set<name> seeded;
+            bool eligible = true;
+            for (const auto& root : invocation.roots) if (seeded.insert(root.receiver).second) {
+               auto program = prepare_isolated_receiver_program(self, root.receiver, invocation.roots);
+               if (!program) { eligible = false; break; }
+               invocation.programs.push_back(std::move(*program));
+            }
+            if (!eligible) break;
             requests.push_back({packed->id(), isolated_transaction_fingerprint(fingerprints)});
             max_action_count = std::max(max_action_count, transaction->size());
-            actions.push_back(std::move(*transaction));
+            invocations.push_back(std::move(invocation));
          }
-         if (actions.empty()) return {};
+         if (invocations.empty()) return {};
          chainbase_transaction_state_view view(db);
          if (!parallel_workers) parallel_workers = std::make_unique<isolated_worker_pool>(conf.parallel_validation_threads);
          auto& stats = production ? parallel_production_stats : parallel_stats;
@@ -3246,11 +3257,11 @@ struct controller_impl {
          // canonical state. Fresh identity/base; no old partial result survives.
          // A sparse base only answers captured queries, never guesses absence or
          // adjacency from its incomplete set of copied rows.
-         // Later actions cannot request their first missing read until their
-         // prefix finishes. Keep the original single-action bound; larger
-         // transactions get a bounded allowance, never a fresh wall budget.
-         const auto discovery_rounds = std::min<size_t>(64, 8 * max_action_count);
-         for (size_t round = 0; round < discovery_rounds; ++round) {
+         // New receivers may only become known after their prefix executes.
+         // Each discovered program can extend the old 8-per-root allowance,
+         // but NEVER the 64-round cap or the absolute batch/production deadline.
+         size_t discovery_units = max_action_count;
+         for (size_t round = 0; round < std::min<size_t>(64, 8 * discovery_units); ++round) {
             checkpoint();
             const auto capture_started = performance::mark();
             const std::vector<table_key> tables(keys.begin(), keys.end());
@@ -3261,12 +3272,10 @@ struct controller_impl {
             attempts->cancel = cancel;
             attempts->order = std::make_unique<ordered_attempt_batch>(base, requests);
             std::vector<isolated_worker_job> jobs;
-            for (size_t i = 0; i < actions.size(); ++i) {
-               attempts->limits.push_back(actions[i].front().limits);
-               std::vector<isolated_action_invocation> invocations;
-               invocations.reserve(actions[i].size());
-               for (const auto& action : actions[i]) invocations.push_back({action.code, action.input, action.limits});
-               jobs.emplace_back(attempts->order->get_ticket(i), std::move(invocations), private_cancel);
+            for (size_t i = 0; i < invocations.size(); ++i) {
+               const auto& input = invocations[i];
+               attempts->limits.push_back(input.programs.front().limits);
+               jobs.emplace_back(attempts->order->get_ticket(i), input.roots, input.programs, private_cancel);
             }
             performance::since(performance::stage::parallel_capture, capture_started);
             if (round == 0) ++stats.batches;
@@ -3276,18 +3285,39 @@ struct controller_impl {
             }
             // Count ALL actual attempts, including discarded discovery passes.
             stats.attempts += attempts->outcomes.size();
-            for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.result);
+            for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.notification_result);
             checkpoint();
             bool requested = false, extended = false;
-            for (const auto& result : attempts->outcomes) {
-               if (!result.request) continue;
-               requested = true;
-               if (const auto* account = std::get_if<account_capture_request>(&*result.request)) {
-                  extended |= accounts.insert(account->account).second;
-               } else {
-                  const auto& primary = std::get<primary_capture_request>(*result.request);
-                  extended |= keys.insert(primary.table).second;
-                  if (primary.query) extended |= queries.insert(*primary.query).second;
+            for (size_t i = 0; i < attempts->outcomes.size(); ++i) {
+               const auto& result = attempts->outcomes[i];
+               if (result.request) {
+                  requested = true;
+                  if (const auto* account = std::get_if<account_capture_request>(&*result.request)) {
+                     extended |= accounts.insert(account->account).second;
+                  } else {
+                     const auto& primary = std::get<primary_capture_request>(*result.request);
+                     extended |= keys.insert(primary.table).second;
+                     if (primary.query) extended |= queries.insert(*primary.query).second;
+                  }
+               }
+               if (result.receiver_request) {
+                  requested = true;
+                  auto& input = invocations[i];
+                  const auto receiver = *result.receiver_request;
+                  if (std::none_of(input.programs.begin(), input.programs.end(), [&](const auto& p) { return p.receiver == receiver; })) {
+                     checkpoint();
+                     if (input.programs.size() >= isolated_notification_executor::max_programs) throw primary_state_budget_exceeded();
+                     auto program = prepare_isolated_receiver_program(self, receiver, input.roots);
+                     if (!program) program = isolated_receiver_program{receiver, {}, input.programs.front().limits, true};
+                     if (!program->code.empty() && !conf.parallel_code_allowlist.contains(
+                           fc::sha256::hash(program->code.data(), program->code.size()))) {
+                        program->serial_only = true;
+                        program->code.clear();
+                     }
+                     input.programs.push_back(std::move(*program));
+                     discovery_units = std::max(discovery_units, input.programs.size());
+                     extended = true;
+                  }
                }
             }
             if (!requested) return attempts;
@@ -3364,8 +3394,8 @@ struct controller_impl {
          bool proceed;
          if (attempts && i < attempts->outcomes.size()) {
             auto& order = *attempts->order;
-            proceed = order.run_next(order.get_ticket(i), transactions[i]->id(), attempts->outcomes[i].result,
-               [&](const experimental::isolated_transaction_result& result) {
+            proceed = order.run_next(order.get_ticket(i), transactions[i]->id(), attempts->outcomes[i].notification_result,
+               [&](const experimental::isolated_notification_result& result) {
                   production_adoption_slot slot{transactions[i], result, attempts->limits[i],
                      fc::microseconds(attempts->outcomes[i].elapsed.count()), order, cancel, generation};
                   production_slot = &slot;
@@ -3417,7 +3447,7 @@ struct controller_impl {
                                            uint32_t billed_cpu_time_us,
                                            bool explicit_billed_cpu_time,
                                            int64_t subjective_cpu_bill_us,
-                                           const experimental::isolated_transaction_result* parallel_result = nullptr,
+                                           const experimental::isolated_notification_result* parallel_result = nullptr,
                                            const experimental::isolated_wasm_limits* parallel_limits = nullptr,
                                            bool* parallel_adopted = nullptr,
                                            std::optional<fc::microseconds> parallel_elapsed = {} )
@@ -3457,7 +3487,7 @@ struct controller_impl {
          trx_context.billed_cpu_time_us = billed_cpu_time_us;
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
-         trx_context.parallel_transaction_result = parallel_result;
+         trx_context.parallel_notification_result = parallel_result;
          trx_context.parallel_action_limits = parallel_limits;
          trx_context.parallel_transaction_elapsed = parallel_elapsed;
 
@@ -4267,8 +4297,8 @@ struct controller_impl {
                   if (parallel_batch) {
                      auto& order = *parallel_batch->order;
                      const size_t index = order.next_index();
-                     trace = order.run_next(order.get_ticket(index), trx_meta->id(), parallel_batch->outcomes[index].result,
-                        [&](const experimental::isolated_transaction_result& result) {
+                     trace = order.run_next(order.get_ticket(index), trx_meta->id(), parallel_batch->outcomes[index].notification_result,
+                        [&](const experimental::isolated_notification_result& result) {
                            bool adopted = false;
                            auto trace = push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(),
                               receipt.cpu_usage_us, true, 0, &result, &parallel_batch->limits[index], &adopted);

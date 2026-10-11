@@ -579,9 +579,174 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
       }
    }
    checkpoint();
-   // Distinct private-only result: a caller cannot pass this catalog off as a
-   // revalidated canonical code dependency proof or adopt a successful prefix.
+   // The owned result still requires whole-tree canonical code/state preflight;
+   // the input catalog is not that proof, and no successful prefix may escape.
    return {state.seal(), std::move(results), isolated_transaction_fingerprint(root_fingerprints)};
+}
+
+bool validate_isolated_notification_journal(const isolated_notification_result& result,
+      std::span<const isolated_action_input> roots, std::span<const isolated_receiver_program> programs,
+      const std::function<void()>& checkpoint) {
+   const auto check = [&] { if (checkpoint) checkpoint(); };
+   check();
+   const primary_overlay_limits bounds;
+   if (!result.state.base() || roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
+       programs.empty() || programs.size() > isolated_notification_executor::max_programs ||
+       result.steps.size() < roots.size() || result.steps.size() > isolated_notification_executor::max_steps ||
+       result.state.writes().size() > bounds.max_write_operations ||
+       result.state.read_tables().size() > bounds.max_read_tables ||
+       result.state.read_queries().size() > bounds.max_read_queries ||
+       result.state.read_accounts().size() > bounds.max_read_accounts) return false;
+
+   struct entry { const isolated_receiver_program* program; fc::sha256 hash; };
+   std::map<name, entry> catalog;
+   size_t code_bytes = 0, data_bytes = 0, write_bytes = 0;
+   for (const auto& program : programs) {
+      check();
+      if (program.code.size() > 64 * 1024 ||
+          program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
+      code_bytes += program.code.size();
+      if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
+            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+         return false;
+   }
+   std::vector<fc::sha256> fingerprints;
+   for (const auto& root : roots) {
+      check();
+      if (root.receiver != root.account || root.data.size() > 64 * 1024 ||
+          root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes ||
+          root.authorizations.size() > 64 || root.max_return_bytes > 4096) return false;
+      data_bytes += root.data.size();
+      const auto it = catalog.find(root.receiver);
+      if (it == catalog.end() || it->second.program->serial_only || it->second.program->code.empty()) return false;
+      fingerprints.push_back(isolated_execution_fingerprint(it->second.hash, it->second.program->limits, root));
+   }
+   if (isolated_transaction_fingerprint(fingerprints) != result.root_fingerprint) return false;
+   for (const auto& write : result.state.writes()) {
+      check();
+      if (write.value.size() > bounds.max_write_value_bytes - write_bytes) return false;
+      write_bytes += write.value.size();
+   }
+
+   primary_state_overlay replay(result.state.base());
+   size_t next_step = 0, next_write = 0, event_count = 0;
+   uint32_t next_ordinal = roots.size() + 1;
+   std::chrono::microseconds elapsed{};
+   for (size_t root_index = 0; root_index < roots.size(); ++root_index) {
+      const auto& root = roots[root_index];
+      primary_overlay_cursor cursor(replay, root.receiver);
+      struct pending_receiver { name receiver; uint32_t ordinal, creator; };
+      std::vector<pending_receiver> pending{{root.receiver, uint32_t(root_index + 1), 0}};
+      std::set<name> notified{root.receiver};
+      for (size_t index = 0; index < pending.size(); ++index) {
+         check();
+         if (next_step == result.steps.size()) return false;
+         const auto expected = pending[index];
+         const auto& step = result.steps[next_step++];
+         const auto& effects = step.effects;
+         if (step.root_index != root_index || step.receiver != expected.receiver ||
+             step.action_ordinal != expected.ordinal || step.creator_action_ordinal != expected.creator ||
+             effects.writes_begin != next_write || effects.writes_end < next_write ||
+             effects.writes_end > result.state.writes().size() ||
+             effects.recipients.size() > isolated_action_result::max_recipients ||
+             effects.return_value.size() > root.max_return_bytes || effects.elapsed.count() < 0 ||
+             effects.elapsed > isolated_transaction_executor::max_attempt_time - elapsed ||
+             step.cursor_events.size() > isolated_notification_executor::max_cursor_events - event_count) return false;
+         elapsed += effects.elapsed;
+         event_count += step.cursor_events.size();
+         const auto found = catalog.find(step.receiver);
+         if (found == catalog.end()) return false;
+         const auto& program = *found->second.program;
+         if (program.serial_only || step.code_hash != found->second.hash || step.has_code != !program.code.empty()) return false;
+         auto arguments = root;
+         arguments.receiver = step.receiver;
+         if (effects.execution_fingerprint != isolated_execution_fingerprint(found->second.hash, program.limits, arguments))
+            return false;
+         if (!step.has_code && (!step.cursor_events.empty() || !effects.recipients.empty() ||
+               !effects.return_value.empty() || effects.writes_end != next_write || effects.elapsed.count() != 0)) return false;
+         cursor.set_receiver_for_notification(step.receiver);
+         size_t next_notification = 0;
+         for (const auto& event : step.cursor_events) {
+            // Never catch a deadline/interrupt from the original owner. Only
+            // errors from the PRIVATE reconstruction below select fallback.
+            check();
+            try {
+               if (const auto* query = std::get_if<isolated_cursor_query>(&event)) {
+                  using kind = isolated_cursor_query_kind;
+                  int32_t actual;
+                  if (query->kind == kind::next || query->kind == kind::previous) {
+                     if (query->table != table_key{} || query->key != 0) return false;
+                     auto primary = query->primary_before;
+                     actual = query->kind == kind::next ? cursor.next(query->iterator, primary) :
+                                                         cursor.previous(query->iterator, primary);
+                     if (primary != query->primary_after) return false;
+                  } else {
+                     if (query->iterator != -1 || query->primary_before != 0 || query->primary_after != 0) return false;
+                     switch (query->kind) {
+                        case kind::find: actual = cursor.find(query->table, query->key); break;
+                        case kind::lower_bound: actual = cursor.lower_bound(query->table, query->key); break;
+                        case kind::upper_bound: actual = cursor.upper_bound(query->table, query->key); break;
+                        case kind::end:
+                           if (query->key != 0) return false;
+                           actual = cursor.end(query->table); break;
+                        default: return false;
+                     }
+                  }
+                  if (actual != query->result) return false;
+               } else if (const auto* write_event = std::get_if<isolated_cursor_write>(&event)) {
+                  if (write_event->write_index != next_write || next_write >= effects.writes_end) return false;
+                  const auto& write = result.state.writes()[next_write++];
+                  if (write.table.code != step.receiver) return false;
+                  switch (write.operation) {
+                     case primary_operation::store:
+                        if (cursor.store(write.table, write.primary_key, write.payer, write.value) != write_event->iterator)
+                           return false;
+                        break;
+                     case primary_operation::update: cursor.update(write_event->iterator, write.payer, write.value); break;
+                     case primary_operation::remove: cursor.remove(write_event->iterator); break;
+                     default: return false;
+                  }
+               } else if (const auto* notification = std::get_if<isolated_cursor_notify>(&event)) {
+                  if (notification->notification_index != next_notification || next_notification >= effects.recipients.size())
+                     return false;
+                  const auto& recipient = effects.recipients[next_notification++];
+                  if (recipient.after_writes != next_write || !recipient.recipient ||
+                      notified.size() >= isolated_action_result::max_recipients + 1 ||
+                      !notified.insert(recipient.recipient).second || next_ordinal > isolated_notification_executor::max_steps)
+                     return false;
+                  pending.push_back({recipient.recipient, next_ordinal++, step.action_ordinal});
+               } else return false;
+            } catch (const std::exception&) {
+               // Invalid/retired handles, absent capture, foreign writes and
+               // local reconstruction budgets never mutate the original state.
+               return false;
+            }
+         }
+         if (next_write != effects.writes_end || next_notification != effects.recipients.size()) return false;
+      }
+   }
+   if (next_step != result.steps.size() || next_write != result.state.writes().size()) return false;
+   const auto reconstructed = replay.seal();
+   if (reconstructed.writes().size() != result.state.writes().size()) return false;
+   for (size_t i = 0; i < reconstructed.writes().size(); ++i) {
+      check();
+      const auto& actual = reconstructed.writes()[i];
+      const auto& expected = result.state.writes()[i];
+      if (actual.table != expected.table || actual.primary_key != expected.primary_key ||
+          actual.payer != expected.payer || actual.value != expected.value || actual.operation != expected.operation ||
+          actual.object_id != expected.object_id || actual.table_object_id != expected.table_object_id) return false;
+   }
+   // db_get/is_account need not create cursor events, so the original proof
+   // may be larger. It may NEVER be smaller: otherwise a forged event could
+   // read a batch-captured row which was not revalidated against current state.
+   for (const auto& table : reconstructed.read_tables()) {
+      check(); if (!result.state.read_tables().contains(table)) return false;
+   }
+   for (const auto& query : reconstructed.read_queries()) {
+      check(); if (!result.state.read_queries().contains(query)) return false;
+   }
+   check();
+   return true;
 }
 
 } // namespace eosio::chain::experimental

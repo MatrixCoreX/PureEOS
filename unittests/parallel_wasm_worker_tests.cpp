@@ -1245,6 +1245,220 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(parallel_notification_executor_tests)
 
+BOOST_FIXTURE_TEST_CASE(journal_preflight_accepts_complete_groups_and_preserves_the_base, wasm_fixture) {
+   const std::array roots{input(1, 7), input(1, 3)};
+   isolated_notification_executor executor;
+   for (bool empty_carol : {false, true}) {
+      const auto programs = notification_graph(empty_carol);
+      const auto result = executor.execute(base, roots, programs);
+      for (unsigned repeat = 0; repeat < 3; ++repeat) {
+         size_t checkpoints = 0;
+         BOOST_CHECK(validate_isolated_notification_journal(result, roots, programs, [&] { ++checkpoints; }));
+         BOOST_CHECK_GT(checkpoints, 30u);
+         BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+         BOOST_REQUIRE_EQUAL(result.steps.back().effects.return_value.size(), 32u);
+         uint64_t last_value;
+         std::memcpy(&last_value, result.steps.back().effects.return_value.data() + 8, sizeof(last_value));
+         BOOST_CHECK_EQUAL(last_value, 20u);
+         BOOST_CHECK_EQUAL(canonical(), 10u);
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(journal_preflight_rejects_tampered_handles_and_interleaving, wasm_fixture) {
+   const table_key absent{rows.code, "fresh"_n, rows.table};
+   const std::array tables{rows, absent};
+   const auto captured = frozen_primary_state::capture(view, tables);
+   const std::array roots{input()};
+   const std::array programs{isolated_receiver_program{rows.code, cursor_operations_wasm(), {}},
+      isolated_receiver_program{"bob"_n, notification_reader(2), {}},
+      isolated_receiver_program{"carol"_n, notification_reader(4), {}}};
+   isolated_notification_executor executor;
+   const auto good = executor.execute(captured, roots, programs);
+   BOOST_REQUIRE(validate_isolated_notification_journal(good, roots, programs));
+   using result_type = isolated_notification_result;
+   const std::vector<std::function<void(result_type&)>> corruptions{
+      [](auto& r) { ++std::get<isolated_cursor_query>(r.steps[0].cursor_events[0]).result; },
+      [](auto& r) { std::get<isolated_cursor_query>(r.steps[0].cursor_events[0]).key = 2; },
+      [](auto& r) { std::get<isolated_cursor_query>(r.steps[0].cursor_events[0]).kind = static_cast<isolated_cursor_query_kind>(255); },
+      [](auto& r) { std::get<isolated_cursor_query>(r.steps[0].cursor_events[0]).iterator = 0; },
+      [](auto& r) { ++std::get<isolated_cursor_query>(r.steps[0].cursor_events[5]).primary_after; },
+      [](auto& r) { std::get<isolated_cursor_query>(r.steps[0].cursor_events[4]).table = rows; },
+      [](auto& r) { std::get<isolated_cursor_query>(r.steps[0].cursor_events[3]).key = 1; },
+      [](auto& r) { std::get<isolated_cursor_write>(r.steps[0].cursor_events[9]).iterator = 0; },
+      [](auto& r) { std::get<isolated_cursor_write>(r.steps[0].cursor_events[10]).iterator = 1; },
+      [](auto& r) { std::get<isolated_cursor_write>(r.steps[0].cursor_events[11]).iterator = 99; },
+      [](auto& r) { ++std::get<isolated_cursor_write>(r.steps[0].cursor_events[9]).write_index; },
+      [](auto& r) { ++std::get<isolated_cursor_notify>(r.steps[0].cursor_events[8]).notification_index; },
+      [](auto& r) { r.steps[0].cursor_events.erase(r.steps[0].cursor_events.begin()); },
+      [](auto& r) { r.steps[0].cursor_events.erase(r.steps[0].cursor_events.begin() + 9); },
+      [](auto& r) {
+         auto& e = r.steps[0].cursor_events;
+         const auto notification = e[8]; e.erase(e.begin() + 8); e.push_back(notification);
+      },
+      [](auto& r) { r.steps[0].effects.recipients[0].after_writes = 1; },
+      [](auto& r) { r.steps[0].effects.writes_begin = 1; },
+      [](auto& r) { ++r.steps[0].effects.writes_end; },
+      [](auto& r) { r.steps[0].cursor_events.resize(4097, r.steps[0].cursor_events.front()); },
+      [](auto& r) { r.steps[1].cursor_events.clear(); r.steps[1].has_code = false; },
+   };
+   for (size_t i = 0; i < corruptions.size(); ++i) {
+      BOOST_TEST_CONTEXT("cursor corruption " << i) {
+         auto invalid = good;
+         corruptions[i](invalid);
+         BOOST_CHECK(!validate_isolated_notification_journal(invalid, roots, programs));
+         BOOST_CHECK_EQUAL(canonical(2), 20u);
+         BOOST_CHECK_EQUAL(canonical(3), 30u);
+      }
+   }
+   BOOST_CHECK(validate_isolated_notification_journal(good, roots, programs));
+}
+
+BOOST_FIXTURE_TEST_CASE(journal_preflight_binds_the_whole_queue_catalog_and_limits, wasm_fixture) {
+   const std::array roots{input(1, 7), input(1, 3)};
+   auto programs = notification_graph(true);
+   isolated_notification_executor executor;
+   const auto good = executor.execute(base, roots, programs);
+   using result_type = isolated_notification_result;
+   const std::vector<std::function<void(result_type&)>> corruptions{
+      [](auto& r) { r.steps.pop_back(); },
+      [](auto& r) { r.steps.push_back(r.steps.back()); },
+      [](auto& r) { std::swap(r.steps[1], r.steps[2]); },
+      [](auto& r) { ++r.steps[1].root_index; },
+      [](auto& r) { ++r.steps[1].creator_action_ordinal; },
+      [](auto& r) { ++r.steps[4].action_ordinal; },
+      [](auto& r) { r.steps[1].receiver = "wrong"_n; },
+      [](auto& r) { r.steps[1].code_hash = {}; },
+      [](auto& r) { r.steps[1].effects.execution_fingerprint = {}; },
+      [](auto& r) { r.root_fingerprint = {}; },
+      [](auto& r) { r.steps[0].effects.recipients[1].recipient = "bob"_n; },
+      [](auto& r) { r.steps[0].effects.recipients[0].recipient = rows.code; },
+      [](auto& r) { r.steps[2].effects.return_value.push_back('x'); },
+      [](auto& r) { r.steps[2].effects.elapsed = std::chrono::microseconds(1); },
+      [](auto& r) { r.steps[2].cursor_events.emplace_back(isolated_cursor_query{}); },
+      [](auto& r) { r.steps[0].effects.elapsed = std::chrono::microseconds(-1); },
+      [](auto& r) { r.steps[0].effects.elapsed = std::chrono::seconds(1); },
+      [](auto& r) { r.steps[0].effects.return_value.resize(4097); },
+   };
+   BOOST_REQUIRE(validate_isolated_notification_journal(good, roots, programs));
+   for (size_t i = 0; i < corruptions.size(); ++i) {
+      BOOST_TEST_CONTEXT("tree corruption " << i) {
+         auto invalid = good; corruptions[i](invalid);
+         BOOST_CHECK(!validate_isolated_notification_journal(invalid, roots, programs));
+      }
+   }
+   for (size_t i = 0; i < programs.size(); ++i) {
+      auto changed = programs; changed[i].serial_only = true;
+      BOOST_CHECK(!validate_isolated_notification_journal(good, roots, changed));
+      changed = programs; changed[i].limits.max_pages -= 1;
+      BOOST_CHECK(!validate_isolated_notification_journal(good, roots, changed));
+      changed = programs; changed.erase(changed.begin() + i);
+      BOOST_CHECK(!validate_isolated_notification_journal(good, roots, changed));
+   }
+   programs.push_back(programs.front());
+   BOOST_CHECK(!validate_isolated_notification_journal(good, roots, programs));
+   programs.pop_back();
+   auto changed_roots = roots; changed_roots[1].data[16] += 1;
+   BOOST_CHECK(!validate_isolated_notification_journal(good, changed_roots, programs));
+   changed_roots = roots; changed_roots[1].data.resize(65537);
+   BOOST_CHECK(!validate_isolated_notification_journal(good, changed_roots, programs));
+   BOOST_CHECK(!validate_isolated_notification_journal(good, {}, programs));
+   BOOST_CHECK(!validate_isolated_notification_journal(good, roots, {}));
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(journal_preflight_binds_write_identity_and_read_dependency_coverage, wasm_fixture) {
+   const std::array roots{input()};
+   const std::array programs{isolated_receiver_program{rows.code, increment_wasm(), {}}};
+   isolated_notification_executor executor;
+   const auto good = executor.execute(base, roots, programs);
+   BOOST_REQUIRE(validate_isolated_notification_journal(good, roots, programs));
+   // The handle in the actual stream still selects row 1. A different journal
+   // for row 2 must NOT validate merely because both have one update operation.
+   auto wrong_row = good;
+   primary_state_overlay other(base);
+   (void)other.locate_primary({rows, primary_query_kind::find, 1});
+   other.update_existing(rows, 2, good.state.writes()[0].payer, good.state.writes()[0].value);
+   wrong_row.state = other.seal();
+   BOOST_CHECK(!validate_isolated_notification_journal(wrong_row, roots, programs));
+
+   // Every row is in this shared capture, but row 4 was NOT read by the attempt.
+   // Adding a valid query to that row must fail dependency subset validation.
+   auto unproved_read = good;
+   unproved_read.steps[0].cursor_events.emplace_back(
+      isolated_cursor_query{isolated_cursor_query_kind::find, rows, 4, -1, 1});
+   BOOST_CHECK(!validate_isolated_notification_journal(unproved_read, roots, programs));
+   // An extra covered query does not allocate a new handle and is structurally
+   // consistent. The verifier is not a second execution of contract semantics.
+   auto repeated_read = good;
+   repeated_read.steps[0].cursor_events.emplace_back(
+      isolated_cursor_query{isolated_cursor_query_kind::find, rows, 1, -1, 0});
+   BOOST_CHECK(validate_isolated_notification_journal(repeated_read, roots, programs));
+
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+   BOOST_CHECK_EQUAL(canonical(2), 20u);
+   const auto* table = db.find<table_id_object, by_code_scope_table>(boost::make_tuple(rows.code, rows.scope, rows.table));
+   BOOST_REQUIRE(table);
+   const auto* row = db.find<key_value_object, by_scope_primary>(boost::make_tuple(table->id, uint64_t(1)));
+   BOOST_REQUIRE(row);
+   db.modify(*row, [](auto& value) { const uint64_t changed = 99; value.value.assign(reinterpret_cast<const char*>(&changed), 8); });
+   // Owned reconstruction alone cannot approve stale canonical data. The
+   // future owner MUST also perform the separate original dependency check.
+   BOOST_CHECK(validate_isolated_notification_journal(good, roots, programs));
+   BOOST_CHECK(!good.state.matches_base_reads(view, [] {}));
+   BOOST_CHECK_EQUAL(canonical(), 99u);
+}
+
+BOOST_FIXTURE_TEST_CASE(journal_preflight_propagates_checkpoints_without_publishing_a_prefix, wasm_fixture) {
+   const std::array roots{input(), input()};
+   const auto programs = notification_graph();
+   isolated_notification_executor executor;
+   const auto result = executor.execute(base, roots, programs);
+   struct interrupted {};
+   for (size_t stop_at : {1u, 15u, 25u, 40u}) {
+      size_t calls = 0;
+      BOOST_CHECK_THROW(validate_isolated_notification_journal(result, roots, programs, [&] {
+         if (++calls == stop_at) throw interrupted{};
+      }), interrupted);
+      BOOST_CHECK_EQUAL(calls, stop_at);
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+      BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+   }
+   // A std::exception from checktime is not mistaken for a local replay error.
+   size_t calls = 0;
+   BOOST_CHECK_THROW(validate_isolated_notification_journal(result, roots, programs, [&] {
+      if (++calls == 25) throw primary_state_invalid_attempt();
+   }), primary_state_invalid_attempt);
+   BOOST_CHECK(validate_isolated_notification_journal(result, roots, programs));
+}
+
+BOOST_FIXTURE_TEST_CASE(journal_preflight_reconstructs_table_recreation_and_child_owned_rows, wasm_fixture) {
+   const table_key created{rows.code, "fresh"_n, rows.table};
+   const table_key child_rows{"bob"_n, rows.scope, rows.table};
+   const std::array tables{rows, created, child_rows};
+   const auto captured = frozen_primary_state::capture(view, tables);
+   const std::array roots{scoped_input(created.scope, 7, 40, 0), scoped_input(created.scope, 7, 42, 3),
+      scoped_input(created.scope, 7, 0, 1), scoped_input(created.scope, 7, 99, 0), scoped_input(created.scope, 7, 0, 2)};
+   const std::array programs{isolated_receiver_program{rows.code, lifecycle_steps_wasm(), {}},
+      isolated_receiver_program{"bob"_n, {}, {}}};
+   isolated_notification_executor executor;
+   const auto result = executor.execute(captured, roots, programs);
+   BOOST_REQUIRE_EQUAL(result.state.writes().size(), 4u);
+   BOOST_CHECK(result.state.writes()[0].object_id != result.state.writes()[3].object_id);
+   BOOST_CHECK(result.state.writes()[0].table_object_id != result.state.writes()[3].table_object_id);
+   BOOST_CHECK(validate_isolated_notification_journal(result, roots, programs));
+   BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+   BOOST_CHECK(!view.read_table(created));
+   auto child_programs = notification_graph(); child_programs[1].code = lifecycle_steps_wasm();
+   const std::array child_roots{input()};
+   const auto child = executor.execute(captured, child_roots, child_programs);
+   BOOST_REQUIRE_EQUAL(child.state.writes().size(), 2u);
+   BOOST_CHECK(child.state.writes()[1].table == child_rows);
+   BOOST_CHECK(validate_isolated_notification_journal(child, child_roots, child_programs));
+   BOOST_CHECK(!view.read_table(child_rows));
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
 BOOST_FIXTURE_TEST_CASE(cursor_events_preserve_query_write_and_notification_interleaving, wasm_fixture) {
    const table_key absent{rows.code, "fresh"_n, rows.table};
    const std::array tables{rows, absent};
@@ -1819,6 +2033,164 @@ BOOST_FIXTURE_TEST_CASE(unbounded_memory_growth_matches_original_or_requires_fal
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(parallel_worker_pool_tests)
+
+BOOST_FIXTURE_TEST_CASE(notification_jobs_switch_modes_on_one_two_four_threads, wasm_fixture) {
+   const std::vector roots{input(1, 7), input(1, 3)};
+   const auto legacy_code = increment_wasm();
+   const auto legacy_input = input(2, 5);
+   isolated_notification_executor reference;
+   for (size_t threads : {1u, 2u, 4u}) {
+      isolated_worker_pool pool(threads);
+      for (unsigned round = 0; round < 3; ++round) {
+         auto programs = notification_graph(round % 2 == 0);
+         programs.back().code.clear(); // LAST step is empty; it has no VM timestamps
+         const auto expected = reference.execute(base, roots, programs);
+         std::vector<ordered_attempt_batch::request> requests;
+         for (size_t i = 0; i < 6; ++i) requests.push_back({fc::sha256::hash(std::to_string(i)),
+            i % 2 ? expected.root_fingerprint : single_transaction_fingerprint(
+               fc::sha256::hash(legacy_code.data(), legacy_code.size()), {}, legacy_input)});
+         ordered_attempt_batch batch(base, requests);
+         std::vector<isolated_worker_job> jobs;
+         for (size_t i = 0; i < requests.size(); ++i) {
+            if (i % 2) jobs.emplace_back(batch.get_ticket(i), roots, programs);
+            else jobs.emplace_back(batch.get_ticket(i), legacy_code, legacy_input, isolated_wasm_limits{});
+         }
+         const auto outcomes = pool.run(std::move(jobs));
+         BOOST_REQUIRE_EQUAL(outcomes.size(), requests.size());
+         for (size_t i = 0; i < outcomes.size(); ++i) {
+            const auto& outcome = outcomes[i];
+            BOOST_CHECK(!outcome.request); BOOST_CHECK(!outcome.receiver_request);
+            BOOST_CHECK(outcome.ended >= outcome.began);
+            if (i % 2) {
+               BOOST_CHECK(!outcome.result); BOOST_REQUIRE(outcome.notification_result);
+               const auto& result = *outcome.notification_result;
+               BOOST_REQUIRE_EQUAL(result.steps.size(), 8u);
+               BOOST_CHECK(result.root_fingerprint == requests[i].execution_fingerprint);
+               BOOST_CHECK(validate_isolated_notification_journal(result, roots, programs));
+               BOOST_CHECK_EQUAL(number(result.steps[4].effects.return_value), 20u);
+               BOOST_CHECK(outcome.began == result.steps.front().effects.began);
+               std::chrono::microseconds elapsed{};
+               std::chrono::steady_clock::time_point last;
+               for (const auto& step : result.steps) if (step.has_code) { elapsed += step.effects.elapsed; last = step.effects.ended; }
+               BOOST_CHECK(outcome.ended == last); BOOST_CHECK(outcome.elapsed == elapsed);
+               BOOST_CHECK(!result.steps.back().has_code);
+            } else {
+               BOOST_REQUIRE(outcome.result); BOOST_CHECK(!outcome.notification_result);
+               BOOST_CHECK_EQUAL(number(outcome.result->actions[0].return_value), 25u);
+            }
+         }
+         BOOST_CHECK_EQUAL(canonical(), 10u); BOOST_CHECK_EQUAL(canonical(2), 20u);
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(notification_discovery_and_deep_failures_publish_only_owned_requests, wasm_fixture) {
+   isolated_worker_pool pool(2);
+   const std::vector roots{input()};
+   const auto programs = notification_graph();
+   const std::array<ordered_attempt_batch::request, 1> requests{{{fc::sha256::hash("notify"), fc::sha256::hash("notify")}}};
+   ordered_attempt_batch batch(base, requests);
+   const isolated_worker_job good{batch.get_ticket(0), roots, programs};
+   auto missing = good;
+   missing.notifications->programs.erase(missing.notifications->programs.begin() + 1);
+   const auto result = pool.run({missing});
+   BOOST_REQUIRE_EQUAL(result.size(), 1u);
+   BOOST_CHECK(!result[0].result); BOOST_CHECK(!result[0].notification_result); BOOST_CHECK(!result[0].request);
+   BOOST_REQUIRE(result[0].receiver_request); BOOST_CHECK(*result[0].receiver_request == "bob"_n);
+   BOOST_CHECK_EQUAL(result[0].elapsed.count(), 0);
+   const auto sparse = frozen_primary_state::capture_queries(view, {}, {});
+   ordered_attempt_batch sparse_batch(sparse, requests);
+   const auto state_missing = pool.run({{sparse_batch.get_ticket(0), roots, programs}});
+   BOOST_CHECK(!state_missing[0].result); BOOST_CHECK(!state_missing[0].notification_result);
+   BOOST_CHECK(!state_missing[0].receiver_request); BOOST_REQUIRE(state_missing[0].request);
+   BOOST_REQUIRE(std::holds_alternative<primary_capture_request>(*state_missing[0].request));
+   BOOST_CHECK(std::get<primary_capture_request>(*state_missing[0].request).table == rows);
+   for (unsigned failure = 0; failure < 3; ++failure) {
+      auto invalid = good;
+      auto& last = invalid.notifications->programs.back();
+      if (failure == 0) last.serial_only = true;
+      else if (failure == 1) last.code = notification_reader(1, "unreachable");
+      else last.code = {'b', 'a', 'd'};
+      const auto outputs = pool.run({invalid, good});
+      BOOST_CHECK(!outputs[0].result); BOOST_CHECK(!outputs[0].notification_result);
+      BOOST_CHECK(!outputs[0].request); BOOST_CHECK(!outputs[0].receiver_request);
+      BOOST_CHECK_EQUAL(outputs[0].elapsed.count(), 0);
+      BOOST_REQUIRE(outputs[1].notification_result);
+      BOOST_CHECK(validate_isolated_notification_journal(*outputs[1].notification_result, roots, programs));
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(notification_jobs_overlap_actual_wasm_steps_without_shared_state, wasm_fixture) {
+   const std::vector roots{input(1, 7, 50000), input(1, 3, 50000)};
+   const auto programs = notification_graph();
+   const auto code_hash = fc::sha256::hash(programs.front().code.data(), programs.front().code.size());
+   std::vector<fc::sha256> fingerprints;
+   for (const auto& root : roots) fingerprints.push_back(isolated_execution_fingerprint(code_hash, {}, root));
+   const auto fingerprint = isolated_transaction_fingerprint(fingerprints);
+   for (size_t threads : {1u, 2u, 4u}) {
+      isolated_worker_pool pool(threads);
+      std::vector<ordered_attempt_batch::request> requests;
+      for (size_t i = 0; i < 4; ++i) requests.push_back({fc::sha256::hash(std::to_string(i)), fingerprint});
+      ordered_attempt_batch batch(base, requests);
+      std::vector<isolated_worker_job> jobs;
+      for (size_t i = 0; i < requests.size(); ++i) jobs.emplace_back(batch.get_ticket(i), roots, programs);
+      const auto outcomes = pool.run(std::move(jobs));
+      bool overlap = false;
+      for (size_t i = 0; i < outcomes.size(); ++i) {
+         BOOST_REQUIRE(outcomes[i].notification_result);
+         BOOST_CHECK(!outcomes[i].result);
+         const auto& result = *outcomes[i].notification_result;
+         BOOST_CHECK(validate_isolated_notification_journal(result, roots, programs));
+         BOOST_CHECK_EQUAL(number(result.steps[4].effects.return_value), 20u);
+         BOOST_CHECK(outcomes[i].elapsed <= outcomes[i].ended - outcomes[i].began);
+         for (size_t j = 0; j < i; ++j) for (const auto& a : result.steps)
+            for (const auto& b : outcomes[j].notification_result->steps)
+               if (a.has_code && b.has_code && std::max(a.effects.began, b.effects.began) < std::min(a.effects.ended, b.effects.ended))
+                  overlap = true;
+      }
+      BOOST_CHECK_EQUAL(overlap, threads > 1); // execution intervals, not parsing/queue gaps
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(notification_job_owner_limits_and_cancellation_preserve_pool_reuse, wasm_fixture) {
+   isolated_worker_pool pool(2);
+   const std::vector roots{input()};
+   const auto programs = notification_graph();
+   const std::array<ordered_attempt_batch::request, 1> requests{{{fc::sha256::hash("bounds"), fc::sha256::hash("bounds")}}};
+   ordered_attempt_batch batch(base, requests);
+   const isolated_worker_job good{batch.get_ticket(0), roots, programs};
+   for (unsigned failure = 0; failure < 8; ++failure) {
+      auto invalid = good;
+      auto& data = *invalid.notifications;
+      switch (failure) {
+         case 0: invalid.actions.push_back({increment_wasm(), input(), {}}); break;
+         case 1: data.roots.clear(); break;
+         case 2: data.roots.resize(17, roots[0]); break;
+         case 3: data.programs.clear(); break;
+         case 4: data.programs.resize(257, programs[0]); break;
+         case 5: data.programs[0].code.resize(65537); break;
+         case 6: data.roots[0].data.resize(65537); break;
+         case 7: data.roots[0].authorizations.resize(65); break;
+      }
+      BOOST_CHECK_THROW(pool.run({invalid}), primary_state_budget_exceeded);
+   }
+   auto cancelled = good;
+   cancelled.cancel.deadline = std::chrono::steady_clock::now();
+   const auto expired = pool.run({cancelled});
+   BOOST_CHECK(!expired[0].result); BOOST_CHECK(!expired[0].notification_result);
+   BOOST_CHECK(!expired[0].request); BOOST_CHECK(!expired[0].receiver_request);
+   BOOST_CHECK_EQUAL(expired[0].elapsed.count(), 0);
+   const auto fresh = pool.run({good});
+   BOOST_REQUIRE(fresh[0].notification_result);
+   BOOST_CHECK(validate_isolated_notification_journal(*fresh[0].notification_result, roots, programs));
+   batch.close();
+   const auto closed = pool.run({good});
+   BOOST_CHECK(!closed[0].result); BOOST_CHECK(!closed[0].notification_result);
+   BOOST_CHECK(!closed[0].request); BOOST_CHECK(!closed[0].receiver_request);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
 
 BOOST_FIXTURE_TEST_CASE(cdt_primitive_hosts_and_growth_are_isolated_across_four_workers, wasm_fixture) {
    isolated_worker_pool pool(4);

@@ -43,4 +43,6 @@ TSan 两个实际程序、配置及注册日志归档 `g5c2a-tsan-artifacts.tar.
 
 ## 下一步
 
+G5c2b 后续临时整理：再次核对本批进程归档哈希、全目录比较成功、两份报告均通过且节点全部退出后，只删除其中 58 个生成态 `data/state/shared_memory.bin`，释放 256,126,976 字节。清单及比较日志在 `parallel-notification-preflight-20261012-1IgvVV/g5c2a-archived-state-files.txt`、`g5c2a-archive-compare-before-cleanup.log`；这些状态可从上述完整归档恢复。区块、快照、配置和日志未删。
+
 正式接入前仍要检查事件和变更日志对应同一表/主键/对象代际，核验全树代码与状态依赖，再接工作池、按步骤计费和原通知分派；不能只验证索引连续就使用任意句柄写入。相关约束已更新到 [滚动计划](PX7_GENERAL_EXECUTION_PLAN.md)。当前仍未支持 inline、同步调用或一般二级索引。

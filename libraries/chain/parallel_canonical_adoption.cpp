@@ -188,4 +188,119 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
    return true;
 }
 
+std::optional<isolated_receiver_program> prepare_isolated_receiver_program(const controller& control, name receiver,
+      std::span<const isolated_action_input> roots) {
+   if (!receiver || roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
+       receiver == config::system_account_name || receiver == "eosio.msig"_n || receiver == "eosio.wrap"_n ||
+       !control.db().find<account_object, by_name>(receiver)) return {};
+   const auto* metadata = control.db().find<account_metadata_object, by_name>(receiver);
+   if (!metadata || metadata->is_privileged() || metadata->vm_type != 0 || metadata->vm_version != 0) return {};
+   for (const auto& root : roots)
+      if (control.find_apply_handler(receiver, root.account, root.action)) return {};
+   isolated_receiver_program result{receiver, {}, current_limits(control)};
+   if (metadata->code_hash != fc::sha256{}) {
+      const auto* code = control.db().find<code_object, by_code_hash>(boost::make_tuple(metadata->code_hash, 0, 0));
+      if (!code || code->code.size() > result.limits.max_code_bytes || code->code.size() == 0) return {};
+      result.code.assign(code->code.data(), code->code.data() + code->code.size());
+      if (fc::sha256::hash(result.code.data(), result.code.size()) != metadata->code_hash) return {};
+   }
+   return result;
+}
+
+bool try_adopt_notification_result(apply_context& context, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
+      const isolated_wasm_limits& limits, const isolated_notification_result& result, size_t step_index,
+      std::optional<fc::microseconds> production_elapsed) {
+   const auto& trx = context.trx_context.packed_trx.get_transaction();
+   if ((!context.trx_context.explicit_billed_cpu_time && !production_elapsed) ||
+       (production_elapsed && (production_elapsed->count() < 0 || *production_elapsed > fc::milliseconds(500))) ||
+       context.trx_context.is_transient() || context.trx_context.is_implicit() || context.trx_context.is_scheduled() ||
+       context.is_context_free() || context.is_privileged() || vm_type != 0 || vm_version != 0 ||
+       !eligible_transaction(trx) || step_index >= result.steps.size() ||
+       result.steps.size() > isolated_notification_executor::max_steps) return false;
+   const auto& step = result.steps[step_index];
+   const auto& trace = context.get_current_action_trace();
+   if (step.root_index >= trx.actions.size() || step.receiver != context.get_receiver() || step.code_hash != code_hash ||
+       step.has_code != (code_hash != fc::sha256{}) || trace.action_ordinal.value != step.action_ordinal ||
+       trace.creator_action_ordinal.value != step.creator_action_ordinal ||
+       trace.closest_unnotified_ancestor_action_ordinal.value != (step.creator_action_ordinal ? step.root_index + 1 : 0) ||
+       context.control.find_apply_handler(context.get_receiver(), context.get_action().account, context.get_action().name)) return false;
+   const auto now_limits = current_limits(context.control);
+   if (limits.max_pages != now_limits.max_pages || limits.max_call_depth != now_limits.max_call_depth) return false;
+   performance::scope adoption_timer(performance::stage::parallel_adopt);
+   std::vector<char> return_value;
+   try {
+      auto arguments = current_input(context.control, context.get_action());
+      arguments.receiver = context.get_receiver();
+      if (isolated_execution_fingerprint(code_hash, limits, arguments) != step.effects.execution_fingerprint ||
+          step.effects.return_value.size() > arguments.max_return_bytes) return false;
+      if (step_index == 0) {
+         const auto checkpoint = [&] { context.trx_context.checktime(); };
+         std::vector<isolated_action_input> roots;
+         for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act));
+         std::vector<isolated_receiver_program> programs;
+         std::set<name> captured;
+         size_t code_bytes = 0;
+         fc::microseconds elapsed{};
+         for (const auto& receiver : result.steps) {
+            checkpoint();
+            if (receiver.effects.elapsed.count() < 0 ||
+                receiver.effects.elapsed.count() > (fc::milliseconds(500) - elapsed).count()) return false;
+            elapsed += fc::microseconds(receiver.effects.elapsed.count());
+            if (!captured.insert(receiver.receiver).second) continue;
+            auto program = prepare_isolated_receiver_program(context.control, receiver.receiver, roots);
+            if (!program || program->code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
+            code_bytes += program->code.size();
+            programs.push_back(std::move(*program));
+         }
+         if (production_elapsed && *production_elapsed != elapsed) return false;
+         if (!validate_isolated_notification_journal(result, roots, programs, checkpoint)) return false;
+         chainbase_transaction_state_view live(context.db);
+         if (!result.state.matches_base_reads(live, checkpoint)) return false;
+      }
+      return_value = step.effects.return_value; // allocate return storage before THIS receiver's first event
+   } catch (const fc::exception&) {
+      throw; // original checktime/interrupt exceptions must retain their meaning
+   } catch (const std::exception&) {
+      return false; // local preparation/allocation failed; NO canonical event has run
+   }
+   if (!context.trx_context.explicit_billed_cpu_time)
+      context.trx_context.charge_isolated_notification_cpu(fc::microseconds(step.effects.elapsed.count()), step_index, step.action_ordinal);
+   for (const auto& event : step.cursor_events) {
+      context.trx_context.checktime();
+      if (const auto* query = std::get_if<isolated_cursor_query>(&event)) {
+         using kind = isolated_cursor_query_kind;
+         int32_t actual = -1;
+         auto primary = query->primary_before;
+         switch (query->kind) {
+            case kind::find: actual = context.db_find_i64(query->table.code, query->table.scope, query->table.table, query->key); break;
+            case kind::lower_bound: actual = context.db_lowerbound_i64(query->table.code, query->table.scope, query->table.table, query->key); break;
+            case kind::upper_bound: actual = context.db_upperbound_i64(query->table.code, query->table.scope, query->table.table, query->key); break;
+            case kind::end: actual = context.db_end_i64(query->table.code, query->table.scope, query->table.table); break;
+            case kind::next: actual = context.db_next_i64(query->iterator, primary); break;
+            case kind::previous: actual = context.db_previous_i64(query->iterator, primary); break;
+         }
+         // Whole-tree preflight proves these values before ANY write. This is
+         // an internal invariant, never a local-capacity or eligibility test.
+         EOS_ASSERT(actual == query->result &&
+            ((query->kind != kind::next && query->kind != kind::previous) || primary == query->primary_after),
+            transaction_exception, "prevalidated notification cursor mismatch");
+      } else if (const auto* mutation = std::get_if<isolated_cursor_write>(&event)) {
+         const auto& write = result.state.writes()[mutation->write_index];
+         if (write.operation == primary_operation::store) {
+            const auto actual = context.db_store_i64(write.table.scope, write.table.table, write.payer, write.primary_key,
+                                                     write.value.data(), write.value.size());
+            EOS_ASSERT(actual == mutation->iterator, transaction_exception, "prevalidated notification store cursor mismatch");
+         } else if (write.operation == primary_operation::update) {
+            context.db_update_i64(mutation->iterator, write.payer, write.value.data(), write.value.size());
+         } else {
+            context.db_remove_i64(mutation->iterator);
+         }
+      } else {
+         context.require_recipient(step.effects.recipients[std::get<isolated_cursor_notify>(event).notification_index].recipient);
+      }
+   }
+   context.action_return_value = std::move(return_value);
+   return true;
+}
+
 } // namespace eosio::chain::experimental

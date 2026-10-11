@@ -37,6 +37,7 @@ struct isolated_worker_pool::impl {
       // Construct lazily inside the guarded job, so allocation failure cannot
       // escape this thread and terminate the process before returning fallback.
       std::unique_ptr<isolated_transaction_executor> executor;
+      std::unique_ptr<isolated_notification_executor> notification_executor;
       while (true) {
          std::shared_ptr<batch> current;
          size_t index;
@@ -50,23 +51,47 @@ struct isolated_worker_pool::impl {
          auto& outcome = current->outcomes[index];
          try {
             if (!job.ticket.stop_token().stop_requested() && !job.cancel.stop_requested()) {
-               if (!executor) executor = std::make_unique<isolated_transaction_executor>();
-               outcome.result = executor->execute(job.ticket.base(), job.actions, job.ticket.stop_token(), {}, job.cancel);
-               outcome.began = outcome.result->actions.front().began;
-               outcome.ended = outcome.result->actions.back().ended;
-               for (const auto& action : outcome.result->actions) outcome.elapsed += action.elapsed;
+               if (job.notifications) {
+                  executor.reset();
+                  if (!notification_executor) notification_executor = std::make_unique<isolated_notification_executor>();
+                  const auto& input = *job.notifications;
+                  outcome.notification_result = notification_executor->execute(job.ticket.base(), input.roots, input.programs,
+                                                                                job.ticket.stop_token(), {}, job.cancel);
+                  bool first = true;
+                  for (const auto& step : outcome.notification_result->steps) if (step.has_code) {
+                     if (first) { outcome.began = step.effects.began; first = false; }
+                     outcome.ended = step.effects.ended;
+                     outcome.elapsed += step.effects.elapsed;
+                  }
+               } else {
+                  notification_executor.reset();
+                  if (!executor) executor = std::make_unique<isolated_transaction_executor>();
+                  outcome.result = executor->execute(job.ticket.base(), job.actions, job.ticket.stop_token(), {}, job.cancel);
+                  outcome.began = outcome.result->actions.front().began;
+                  outcome.ended = outcome.result->actions.back().ended;
+                  for (const auto& action : outcome.result->actions) outcome.elapsed += action.elapsed;
+               }
             }
          } catch (const primary_state_missing& missing) {
             // Owned request only. The joined owner may capture it and restart
             // with a NEW batch/base; no worker ever follows a live DB pointer.
             outcome.result.reset();
+            outcome.notification_result.reset();
             outcome.request = missing.request;
+         } catch (const isolated_receiver_missing& missing) {
+            outcome.result.reset();
+            outcome.notification_result.reset();
+            outcome.receiver_request = missing.receiver;
          } catch (...) {
             // Local capability/compile/timeout/allocation failure is NOT a
             // consensus rejection. Re-enter original execution on the owner.
             outcome.result.reset();
+            outcome.notification_result.reset();
          }
-         if (!outcome.result) outcome.ended = std::chrono::steady_clock::now();
+         if (!outcome.result && !outcome.notification_result) {
+            outcome.elapsed = {};
+            outcome.ended = std::chrono::steady_clock::now();
+         }
          {
             std::lock_guard lock(mutex);
             if (--current->remaining == 0) done.notify_one();
@@ -83,6 +108,26 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
    if (jobs.empty() || jobs.size() > 64) throw primary_state_budget_exceeded();
    // Bound all copied inputs too, including jobs that later fail linking.
    for (const auto& job : jobs) {
+      if (job.notifications) {
+         const auto& input = *job.notifications;
+         if (!job.actions.empty() || input.roots.empty() || input.roots.size() > isolated_transaction_executor::max_actions ||
+             input.programs.empty() || input.programs.size() > isolated_notification_executor::max_programs)
+            throw primary_state_budget_exceeded();
+         size_t code_bytes = 0, data_bytes = 0;
+         for (const auto& program : input.programs) {
+            if (program.code.size() > 64 * 1024 ||
+                program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
+               throw primary_state_budget_exceeded();
+            code_bytes += program.code.size();
+         }
+         for (const auto& root : input.roots) {
+            if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
+                root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
+               throw primary_state_budget_exceeded();
+            data_bytes += root.data.size();
+         }
+         continue;
+      }
       if (job.actions.empty() || job.actions.size() > isolated_transaction_executor::max_actions)
          throw primary_state_budget_exceeded();
       size_t code_bytes = 0, data_bytes = 0;

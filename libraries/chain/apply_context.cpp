@@ -107,6 +107,30 @@ void apply_context::exec_one()
                (*native)( *this );
             }
 
+            auto adopt_notification = [&] {
+               const auto* attempt = trx_context.parallel_notification_result;
+               if (!attempt) return false;
+               const bool adopted = trx_context.parallel_action_limits &&
+                  experimental::try_adopt_notification_result(*this, receiver_account->code_hash,
+                     receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits,
+                     *attempt, trx_context.parallel_next_receiver, trx_context.parallel_transaction_elapsed);
+               if (adopted) {
+                  if (++trx_context.parallel_next_receiver == attempt->steps.size()) {
+                     trx_context.parallel_transaction_adopted = true;
+                     trx_context.parallel_notification_result = nullptr;
+                     trx_context.parallel_transaction_elapsed.reset();
+                  }
+               } else {
+                  // The prefix's original cursor events are already present in
+                  // THIS apply_context. Continue the original current/tail VM;
+                  // never re-execute a prefix or catch a partially replayed step.
+                  trx_context.parallel_notification_result = nullptr;
+                  trx_context.parallel_transaction_elapsed.reset();
+                  trx_context.parallel_transaction_adopted = false;
+               }
+               return adopted;
+            };
+
             if( ( receiver_account->code_hash != digest_type() ) &&
                   (  !( act->account == config::system_account_name
                         && act->name == "setcode"_n
@@ -119,12 +143,12 @@ void apply_context::exec_one()
                   control.check_action_list( act->account, act->name );
                }
                try {
-                  bool adopted = false;
+                  bool adopted = adopt_notification();
                   // Empty-code notifications must not consume the next root's
                   // capability. Top-level ordinals were allocated before any
                   // notifications; they are not the trace execution order.
                   if (const auto* attempt = trx_context.parallel_transaction_result;
-                      attempt && receiver == act->account && get_current_action_trace().creator_action_ordinal.value == 0) {
+                      !adopted && attempt && receiver == act->account && get_current_action_trace().creator_action_ordinal.value == 0) {
                      adopted = experimental::try_adopt_primary_result(*this, receiver_account->code_hash,
                         receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits, *attempt,
                         trx_context.parallel_next_action, trx_context.parallel_transaction_elapsed);
@@ -146,6 +170,10 @@ void apply_context::exec_one()
                   if (!adopted)
                      control.get_wasm_interface().execute( receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, *this );
                } catch( const wasm_exit& ) {}
+            } else if (receiver_account->code_hash == digest_type()) {
+               // Empty receivers still consume a proved execution step and
+               // create their ORIGINAL receipt, but have zero private VM CPU.
+               (void)adopt_notification();
             }
 
             if (receiver == "eosio"_n && act->account == "eosio"_n && act->name == "govinit"_n && find_upgrade_governance(db)) {

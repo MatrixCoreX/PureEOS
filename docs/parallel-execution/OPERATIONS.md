@@ -1,6 +1,6 @@
 # 受限并行执行：实验、关闭与回退
 
-本功能默认关闭，只适用于独立测试节点；不是主网上线建议。15 个 host 是 PX0–PX6 首版边界，详见 [历史访问边界](PX0_RESTRICTED_BOUNDARY_REVIEW.md)。PX7 G4b 当前有 27 个受限入口、7 个只允许链接且调用必整笔回退的入口、228 个拒绝链接的生产导入；未声明内存最大值的模块也必须通过逐次增长保护。支持主键创建/修改/删除及表生命周期、长度/RAM payer 变化，全部操作由原 host 按序分配正式 ID、重放并进行原资源/授权检查。账户存在性读取受跟踪，无代码/无原生处理器通知与写入按原调用顺序调度，不省略回执或失败记录。多 action、带代码通知、系统合约、二级索引、inline、sync-call 仍串行；不能只加代码哈希就宣称所有转账或其他操作都已并行。进度和本版验收以 [PX7 计划](PX7_GENERAL_EXECUTION_PLAN.md) 为准。
+本功能默认关闭，只适用于独立测试节点；不是主网上线建议。15 个 host 是 PX0–PX6 首版边界，详见 [历史访问边界](PX0_RESTRICTED_BOUNDARY_REVIEW.md)。PX7 G5c2 当前有 27 个受限入口、7 个只允许链接且调用必整笔回退的入口、228 个拒绝链接的生产导入；未声明内存最大值的模块也必须通过逐次增长保护。支持主键创建/修改/删除及表生命周期、长度/RAM payer 变化；多根动作和受审查的有代码通知共享本笔私有状态，跨交易可并行试算。正式采用按原顺序重放影响共享游标的查询、变更和通知，原资源/授权/回执及失败撤销保留。系统/原生特权处理、一般二级索引、inline、sync-call 仍走串行；不能只加代码哈希就宣称所有操作都已并行。进度和本版验收以 [PX7 计划](PX7_GENERAL_EXECUTION_PLAN.md) 及 [通知接入记录](PX7_G5C2B_RESULTS.md) 为准。
 
 ## 参数与模式
 
@@ -21,6 +21,8 @@ experimental-parallel-production = true
 ```
 
 不改变原链 CPU/NET/RAM、交易格式、出块间隔、21 人轮岗、finalizer、治理或奖励。哈希是本地准入门槛，不是链上许可，也不免除原签名/权限/资源检查。代码升级后新哈希默认串行。
+
+带代码通知需要把**所有实际执行的已审查接收者代码哈希**分别加入本地名单，而不只是顶层 token/业务合约。任意子代码缺失、换成未审查代码、特权/原生能力、未支持 host 或局部预算不足，都只影响试算采用率，必须回到原执行；不要因此扩大未审查代码名单。当前最多 16 个顶层动作、整笔 256 个接收者步骤和 4,096 个游标/通知事件；通知之间共用原组游标，不是多个线程同时写一笔交易。局部限制不取代原协议限制。
 
 线程数允许 0–16（默认 0），批次 1–64（默认 8）。不得与轻验证、trusted-producer 跳过验证、OC、JIT、Deep Mind 或原 profiling 混用；不满足入口条件时拒绝启动或保守串行，不降级共识验证。需要验证接管时使用完整检查而非跳过 undo 的快速重放。
 
@@ -52,6 +54,8 @@ python3 -B tests/parallel_producer_process_test.py \
 真实 token 生产互验：给上面的 `parallel_producer_process_test.py` 加 `--token-fixture`，默认使用仓库固定原版 token。测试本机当前 PureEOS token 时，再设置 `PUREEOS_PARALLEL_TOKEN_WASM=/home/guagua/AntelopeIO/reference-contracts/build/pureeos-resource-split/eosio.token/eosio.token.wasm`。导出器严格核对该已审查产物的固定哈希，不接受任意外部合约；五种模式均重新创世，报告保存实际代码哈希和负载类型，仍不代表饱和 TPS 测量。
 
 在 token 模式另加 `--lifecycle-fixture` 检查首笔首次收款创建余额行/表及 RAM 费用；另加 `--ram-fixture` 检查既有余额行换付款人的正负 RAM 转移，两者不能同时使用。固定 16 笔语料要求各启用模式确实采用目标操作，不能仅以回退后余额正确冒充通过。G4b 证据中的部分已结束测试数据库已压缩归档，恢复位置与精确清单见 [验收记录](PX7_G4B_RESULTS.md)。
+
+token 模式加 `--multi-action-fixture` 检查一笔内创建、花费并关闭余额行，共 16 笔/33 个根动作，不能与 RAM/lifecycle 模式合用。单独加 `--coded-notification-fixture`（不能同时指定 token 等夹具开关）检查两个根动作和带代码通知：16 笔/32 个根动作，每笔 8 个接收者步骤。脚本检查 RPC 的嵌套通知树、原回执顺序、三节点历史摘要和旧程序强校验重放，并核对每阶段与结束时导出器二进制没有变化；测试运行时不要重链接导出器或节点程序。
 
 固定语料性能工具是 `tests/PerformanceHarness/parallel_replay_benchmark.py`，参数为上述 old/new/hash/output-parent，以及 `--corpora build/local-tests/parallel-overlay-20261011-q42k0b/px6-corpora-v1 --repetitions 3`。它测完整重放，不测生产容量。每份报告保留二进制/语料/脚本哈希、完整性、全部样本和主机负载。
 

@@ -173,7 +173,7 @@ private:
    std::unique_ptr<impl> impl_;
 };
 
-// PRIVATE notification foundation only. This catalog is not a canonical code
+// Owned notification execution input. This catalog is not a canonical code
 // dependency proof: its caller must own every byte for the synchronous call.
 // Empty code explicitly represents an existing no-code receiver. Missing names
 // request an owned capture; serial_only marks native/privileged/unsupported code.
@@ -206,7 +206,20 @@ struct isolated_notification_result {
    fc::sha256 root_fingerprint;
 };
 
-// Not wired to the worker pool, controller or canonical adopter. One root and
+// Read-only PRECONDITION for a future canonical adopter, not an authorization.
+// Binds the complete receiver queue to the supplied owned inputs/programs and
+// replays cursor events on a NEW private overlay of result.state.base(). Every
+// mutation must reproduce the reported table/key/object generation/payer/value;
+// every replay read must already belong to the original dependency proof.
+// False means whole-attempt fallback BEFORE any canonical mutation. Checkpoint
+// exceptions propagate (including interrupts); local replay errors return false.
+// The owner must ALSO revalidate current code/capabilities and matches_base_reads,
+// and retain original transaction authorization/resources/receipts/undo checks.
+bool validate_isolated_notification_journal(const isolated_notification_result&,
+   std::span<const isolated_action_input> roots, std::span<const isolated_receiver_program> programs,
+   const std::function<void()>& checkpoint = {});
+
+// A result is not itself permission to mutate canonical state. One root and
 // its notification queue share iterator handles and deduplication. The next
 // root starts a fresh group, while retaining the transaction-wide private state.
 class isolated_notification_executor {
