@@ -4,7 +4,7 @@
 
 本页固定记录 PX0–PX6 首版（`0068f79`）。后续扩展与新代码证据见 [PX7 滚动计划](PX7_GENERAL_EXECUTION_PLAN.md) 和 [G1/G2 验收](PX7_G1_G2_RESULTS.md)，不要将下述历史计数当作后续版本的重测。
 
-G3b 覆盖真实 EOS/PureEOS token 的既存余额、无代码通知；最新 G4a 又放开既存行长度及 RAM payer 变化，并验证原 RAM/权限检查、交错通知和失败撤销，见 [G4a 独立验收](PX7_G4A_RESULTS.md)。本文历史表中的限制不得替代该最新记录；创建/删除行、带代码子调用及二级索引仍未并行。
+G3b 覆盖真实 EOS/PureEOS token 的既存余额、无代码通知；G4a 放开既存行长度及 RAM payer，G4b 新增主键创建/删除、表生命周期、正式 ID 分配与恢复差分，见 [G4a](PX7_G4A_RESULTS.md)、[最新 G4b 验收](PX7_G4B_RESULTS.md)。本文历史表中的限制不得替代最新记录；多 action、带代码子调用及二级索引仍未并行。
 
 | 原计划项目 | 首版实现和实际检查 |
 |---|---|

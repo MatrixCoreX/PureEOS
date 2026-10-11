@@ -76,8 +76,8 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
    performance::scope adoption_timer(performance::stage::parallel_adopt);
    // Defense in depth: preserve table metadata plus the exact selection and
    // complete original row value for EVERY observed query (including absence
-   // and ranges). Unread rows no longer cause false value conflicts. Structural
-   // changes still invalidate metadata/selection; writes remain update-only.
+   // and ranges). Structural changes invalidate metadata/selection, including
+   // absence and skipped-neighbor proofs from private lifecycle operations.
    // No state pointers from this check survive into the mutation loop.
    if (!result.state.matches_base_reads(live, [&] { context.trx_context.checktime(); })) return false;
    // A root-only write set cannot justify executing an untracked child WASM or
@@ -101,8 +101,12 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
    for (const auto& write : result.state.writes()) {
       if (write.table.code != context.get_receiver() || !result.state.read_tables().contains(write.table) ||
           !result.state.read_queries().contains({write.table, primary_query_kind::find, write.primary_key})) return false;
-      const auto row = live.locate_primary({write.table, primary_query_kind::find, write.primary_key}).row;
-      if (!row) return false;
+      switch (write.operation) {
+         case primary_operation::store: if (write.payer == name{}) return false; break;
+         case primary_operation::update:
+         case primary_operation::remove: break;
+         default: return false;
+      }
    }
    auto return_value = result.return_value; // allocate before first canonical mutation
    if (!context.trx_context.explicit_billed_cpu_time)
@@ -122,8 +126,16 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
       // Replay EVERY update with the original host. It owns payer authorization,
       // positive/negative RAM deltas and resource checks inside transaction undo;
       // no worker-calculated resource state or coalesced final write is trusted.
-      const auto iterator = context.db_find_i64(write.table.code, write.table.scope, write.table.table, write.primary_key);
-      context.db_update_i64(iterator, write.payer, write.value.data(), write.value.size());
+      if (write.operation == primary_operation::store) {
+         // Temporary worker IDs are never written into Chainbase. Original
+         // hosts allocate table/row IDs and bill both fees in canonical order.
+         context.db_store_i64(write.table.scope, write.table.table, write.payer, write.primary_key,
+                              write.value.data(), write.value.size());
+      } else {
+         const auto iterator = context.db_find_i64(write.table.code, write.table.scope, write.table.table, write.primary_key);
+         if (write.operation == primary_operation::remove) context.db_remove_i64(iterator);
+         else context.db_update_i64(iterator, write.payer, write.value.data(), write.value.size());
+      }
    }
    context.action_return_value = std::move(return_value);
    return true;

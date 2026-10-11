@@ -87,9 +87,6 @@ struct fallback_import { const char* name; const char* signature; const char* in
 const std::array fallback_imports{
    fallback_import{"prints_l", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"send_inline", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
-   fallback_import{"db_store_i64", "(param i64 i64 i64 i64 i32 i32) (result i32)",
-      "(drop (call $stub (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0) (i32.const 0) (i32.const 0)))"},
-   fallback_import{"db_remove_i64", "(param i32)", "(call $stub (i32.const 0))"},
    fallback_import{"set_blockchain_parameters_packed", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"get_blockchain_parameters_packed", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
    fallback_import{"set_proposed_producers", "(param i32 i32) (result i64)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
@@ -477,9 +474,9 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
       "db_find_i64", "db_lowerbound_i64", "db_upperbound_i64", "db_end_i64", "db_get_i64", "db_update_i64",
       "db_next_i64", "db_previous_i64", "set_action_return_value",
       "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "abort",
-      "is_account", "require_recipient"};
+      "is_account", "require_recipient", "db_store_i64", "db_remove_i64"};
    const std::set<std::string_view> fallback_only{
-      "prints_l", "send_inline", "db_store_i64", "db_remove_i64",
+      "prints_l", "send_inline",
       "set_blockchain_parameters_packed", "get_blockchain_parameters_packed", "set_proposed_producers",
       "current_time", "get_active_producers"};
    size_t rejected = 0;
@@ -516,6 +513,46 @@ BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fi
             "\" (func (param f64))) (func (export \"apply\") (param i64 i64 i64)))");
          BOOST_CHECK_THROW(isolated_wasm_module{wrong_signature}, eosio::vm::wasm_link_exception);
       }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(primary_lifecycle_hosts_keep_iterator_generations_and_interleaved_notifications, wasm_fixture) {
+   const std::string imports = R"(
+      (import "env" "db_store_i64" (func $store (param i64 i64 i64 i64 i32 i32) (result i32)))
+      (import "env" "db_remove_i64" (func $erase (param i32)))
+      (import "env" "require_recipient" (func $notify (param i64)))
+   )";
+   auto notify = [](name who) { return "(call $notify (i64.const " + std::to_string(who.to_uint64_t()) + "))"; };
+   const auto store = "(call $store (i64.load (i32.const 0)) (i64.load (i32.const 32)) (i64.const " +
+      std::to_string("alice"_n.to_uint64_t()) + ") (i64.load (i32.const 8)) (i32.const 64) (i32.const 8))";
+   const auto code = increment_wasm(imports, notify("alice"_n) +
+      "(i32.store (i32.const 128) (get_local $iterator)) (call $erase (get_local $iterator))" + notify("carol"_n) +
+      "(set_local $iterator " + store + ") (i32.store (i32.const 132) (get_local $iterator))" + notify("dave"_n) +
+      "(i64.store (i32.const 64) (i64.load (i32.const 128)))", notify("bob"_n));
+   isolated_wasm_module module(code);
+   for (unsigned repeat = 0; repeat < 3; ++repeat) {
+      BOOST_CHECK_THROW(module.execute(base, input(1, 7, 0, 3)), primary_state_unsupported);
+      const auto result = module.execute(base, input());
+      BOOST_REQUIRE_EQUAL(result.state.writes().size(), 3u);
+      BOOST_CHECK(result.state.writes()[0].operation == primary_operation::update);
+      BOOST_CHECK(result.state.writes()[1].operation == primary_operation::remove);
+      BOOST_CHECK(result.state.writes()[2].operation == primary_operation::store);
+      BOOST_CHECK_LT(result.state.writes()[2].object_id, 0);
+      BOOST_CHECK_EQUAL(number(result.state.writes()[2].value), 17u);
+      BOOST_CHECK_EQUAL(number(result.return_value), uint64_t{1} << 32); // old handle 0, recreated row handle 1
+      BOOST_CHECK((result.recipients == std::vector<isolated_notification>{
+         {"bob"_n, 0}, {"alice"_n, 1}, {"carol"_n, 2}, {"dave"_n, 3}}));
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   }
+   isolated_wasm_module duplicate(increment_wasm(imports, "(drop " + store + ")"));
+   BOOST_CHECK_THROW(duplicate.execute(base, input()), primary_state_unsupported);
+   isolated_wasm_module stale(increment_wasm(imports,
+      "(call $erase (get_local $iterator)) (drop " + store + ") (drop (call $get (get_local $iterator) (i32.const 0) (i32.const 0)))"));
+   BOOST_CHECK_THROW(stale.execute(base, input()), primary_state_unsupported);
+   for (auto host : {"db_store_i64", "db_remove_i64"}) {
+      const auto bad = wasm(std::string("(module (import \"env\" \"") + host +
+         "\" (func (param f64))) (func (export \"apply\") (param i64 i64 i64)))");
+      BOOST_CHECK_THROW(isolated_wasm_module{bad}, eosio::vm::wasm_link_exception);
    }
 }
 

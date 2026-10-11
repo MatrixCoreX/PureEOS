@@ -56,20 +56,25 @@ bool ordered_attempt_batch::can_use(const isolated_action_result& result) const 
    if (result.state.base() != identity_->base ||
        result.execution_fingerprint != identity_->transactions[next_].execution_fingerprint)
       throw primary_state_invalid_attempt();
+   auto conflict = [] {
+      if (performance::metrics().enabled.load(std::memory_order_relaxed))
+         performance::metrics().record(performance::stage::parallel_conflict, 0);
+      return false;
+   };
+   for (const auto& table : result.state.read_tables())
+      if (structural_dirty_.contains(table)) return conflict();
    for (const auto& query : result.state.read_queries()) {
       const auto dirty = dirty_.find(query.table);
       if (dirty == dirty_.end()) continue;
       const auto selected = result.state.base()->locate_primary(query);
-      // Private writes cannot insert or erase. Size/payer/value updates do not
-      // change absent results or range selection;
+      // Structural changes were already ruled out above. Remaining
+      // size/payer/value updates do not change absence or range selection;
       // only a selected row may be stale. Canonical adoption rechecks both
       // query selection and table/row identities against the actual database.
       if (!selected.row || !dirty->second.contains(selected.row->primary_key)) continue;
       // Exact dependency-conflict events only; the already-disabled serial
       // tail is not counted repeatedly. A zero-duration sample is a counter.
-      if (performance::metrics().enabled.load(std::memory_order_relaxed))
-         performance::metrics().record(performance::stage::parallel_conflict, 0);
-      return false;
+      return conflict();
    }
    return true;
 }

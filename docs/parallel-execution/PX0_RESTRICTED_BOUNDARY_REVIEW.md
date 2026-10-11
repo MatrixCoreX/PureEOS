@@ -8,6 +8,8 @@ G3b 补充：新增账户身份/存在性按需副本和有序通知日志。账
 
 G4a 补充：已支持既存行 resize/payer，按当前私有元数据读取长度与内容、按原序保存全部中间更新；资源/权限仍由 owner 的原 host 判定，失败整笔撤销。通知增加相对写入位置，避免 RAM 更新失败时遗漏先前已调度的 trace。分类仍为 25／9／228；store/remove 仍不是已支持接口。验收见 [G4a](PX7_G4A_RESULTS.md)，下文同 payer/长度仅为首版历史限制。
 
+G4b 补充：store/remove 已接入私有生命周期及原 host 正式重放，分类变为 27／7／228。临时 ID 不进入正式 DB；结构变化使整表后续旧尝试失效，稀疏查询不猜相邻行。旧行句柄不能在重建后复活，退役表旧结束句柄明确回退。验收见 [G4b](PX7_G4B_RESULTS.md)；多 action/带代码调用树/二级索引仍未开放，owner 独占正式数据库的原则不变。
+
 ## 1. 两条路径不能混为一谈
 
 正式 controller、权限/资源管理器、原生 action、插件回调仍只在原 owner 上执行。工作线程不调用原 `webassembly::interface`，不拥有 controller、Chainbase、pending block、资源管理器或插件引用。

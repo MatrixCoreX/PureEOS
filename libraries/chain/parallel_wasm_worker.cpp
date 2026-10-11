@@ -161,8 +161,6 @@ struct isolated_host {
    // after private writes. No default result, output or canonical effect.
    [[noreturn]] void prints_l(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] void send_inline(uint32_t, uint32_t) { throw primary_state_unsupported(); }
-   [[noreturn]] int32_t db_store_i64(uint64_t, uint64_t, uint64_t, uint64_t, uint32_t, uint32_t) { throw primary_state_unsupported(); }
-   [[noreturn]] void db_remove_i64(int32_t) { throw primary_state_unsupported(); }
    [[noreturn]] void set_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] uint32_t get_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] int64_t set_proposed_producers(uint32_t, uint32_t) { throw primary_state_unsupported(); }
@@ -176,6 +174,10 @@ struct isolated_host {
    int32_t db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
       check(); return cursor.find({name(code), name(scope), name(table)}, primary);
    }
+   int32_t db_store_i64(uint64_t scope, uint64_t table, uint64_t payer, uint64_t primary, uint32_t offset, uint32_t size) {
+      return cursor.store({input.receiver, name(scope), name(table)}, primary, name(payer), memory(offset, size));
+   }
+   void db_remove_i64(int32_t iterator) { check(); cursor.remove(iterator); }
    int32_t db_lowerbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
       check(); return cursor.lower_bound({name(code), name(scope), name(table)}, primary);
    }
@@ -235,18 +237,19 @@ void register_isolated_functions() {
       ISOLATED_HOST(db_update_i64);
       ISOLATED_HOST(db_next_i64);
       ISOLATED_HOST(db_previous_i64);
-#undef ISOLATED_HOST
+      // Retain registration order; the two lifecycle entries are now real hosts.
 #define ISOLATED_FALLBACK(method) functions::add<&isolated_host::method>("env", #method)
       ISOLATED_FALLBACK(prints_l);
       ISOLATED_FALLBACK(send_inline);
-      ISOLATED_FALLBACK(db_store_i64);
-      ISOLATED_FALLBACK(db_remove_i64);
+      ISOLATED_HOST(db_store_i64);
+      ISOLATED_HOST(db_remove_i64);
       ISOLATED_FALLBACK(set_blockchain_parameters_packed);
       ISOLATED_FALLBACK(get_blockchain_parameters_packed);
       ISOLATED_FALLBACK(set_proposed_producers);
       ISOLATED_FALLBACK(current_time);
       ISOLATED_FALLBACK(get_active_producers);
 #undef ISOLATED_FALLBACK
+#undef ISOLATED_HOST
    });
 }
 } // namespace

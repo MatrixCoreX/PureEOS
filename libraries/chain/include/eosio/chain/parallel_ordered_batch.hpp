@@ -63,7 +63,10 @@ public:
          if (use_private) {
             // Finish potentially allocating dependency bookkeeping BEFORE the
             // canonical callback. Even A->B->A or a later undo stays dirty.
-            for (const auto& write : attempt->state.writes()) dirty_[write.table].insert(write.primary_key);
+            for (const auto& write : attempt->state.writes()) {
+               dirty_[write.table].insert(write.primary_key);
+               if (write.operation != primary_operation::update) structural_dirty_.insert(write.table);
+            }
          } else {
             disable_speculation();
          }
@@ -98,9 +101,10 @@ private:
    void disable_speculation();
    const std::thread::id owner_ = std::this_thread::get_id();
    std::shared_ptr<identity> identity_;
-   // Existing-row value/size/payer updates only. Any future
-   // structural mutation must add key-range / table-lifecycle invalidation.
+   // Existing-row updates invalidate selected keys; lifecycle changes
+   // conservatively invalidate ALL readers of that table, even net-zero ABA.
    std::map<table_key, std::set<uint64_t>, table_key_less> dirty_;
+   std::set<table_key, table_key_less> structural_dirty_;
    size_t next_ = 0;
    bool closed_ = false;
    bool in_callback_ = false;

@@ -33,11 +33,11 @@ class ScannerTests(unittest.TestCase):
         allowlist = tests.split("const std::set<std::string_view> supported{", 1)[1].split("};", 1)[0]
         expected = set(re.findall(r'"(\w+)"', allowlist))
         self.assertEqual(supported, expected)
-        self.assertEqual(len(supported), 25)
+        self.assertEqual(len(supported), 27)
         fallback = set(re.findall(r'^\s+ISOLATED_FALLBACK\((\w+)\);$', implementation, re.MULTILINE))
         fallback_list = tests.split("const std::set<std::string_view> fallback_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(fallback, set(re.findall(r'"(\w+)"', fallback_list)))
-        self.assertEqual(len(fallback), 9)
+        self.assertEqual(len(fallback), 7)
         self.assertFalse(supported & fallback)
         self.assertTrue((supported | fallback) <= production)
         # Every link-only host also has a correctly typed executable fixture;

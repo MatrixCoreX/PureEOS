@@ -108,11 +108,16 @@ private:
    size_t value_bytes_ = 0;
 };
 
-struct primary_update {
+enum class primary_operation : uint8_t { update, store, remove };
+
+struct primary_mutation {
    table_key table;
    uint64_t primary_key = 0;
    name payer;
    std::vector<char> value;
+   primary_operation operation = primary_operation::update;
+   int64_t object_id = 0;
+   int64_t table_object_id = 0;
 };
 
 class primary_state_overlay;
@@ -132,20 +137,20 @@ private:
    friend class primary_state_overlay;
    primary_overlay_result(std::shared_ptr<const frozen_primary_state> base,
                           std::set<table_key, table_key_less> reads,
-                          std::set<primary_query, primary_query_less> queries, std::vector<primary_update> writes,
+                          std::set<primary_query, primary_query_less> queries, std::vector<primary_mutation> writes,
                           std::set<name> accounts)
       : base_(std::move(base)), reads_(std::move(reads)), queries_(std::move(queries)), writes_(std::move(writes)),
         accounts_(std::move(accounts)) {}
    std::shared_ptr<const frozen_primary_state> base_;
    std::set<table_key, table_key_less> reads_;
    std::set<primary_query, primary_query_less> queries_;
-   std::vector<primary_update> writes_;
+   std::vector<primary_mutation> writes_;
    std::set<name> accounts_;
 };
 
-// One thread owns each attempt. Existing-row updates can change size/payer;
-// every operation is retained for the owner's original RAM/auth/undo replay.
-// No create/delete, resource manager or IDs are simulated on workers.
+// One thread owns each attempt. All mutations are retained in order. Created
+// identities are attempt-local negative IDs, NEVER canonical object IDs. Only
+// the owner's original hosts allocate canonical IDs and settle RAM/auth/undo.
 class primary_state_overlay final : public transaction_state_view {
 public:
    explicit primary_state_overlay(std::shared_ptr<const frozen_primary_state>, primary_overlay_limits = {});
@@ -157,6 +162,8 @@ public:
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
    void update_existing(const table_key&, uint64_t primary_key, name payer, std::span<const char> value);
+   void store(const table_key&, uint64_t primary_key, name payer, std::span<const char> value);
+   void remove(const table_key&, uint64_t primary_key);
    size_t write_count() const;
    primary_overlay_result seal();
 
@@ -165,7 +172,10 @@ private:
    void check_owner_and_valid() const;
    void depend_on(const table_key&) const;
    void depend_on_query(primary_query) const;
-   const primary_update* latest_write(const table_key&, uint64_t primary_key) const;
+   const primary_mutation* latest_write(const table_key&, uint64_t primary_key) const;
+   void check_write_budget(size_t) const;
+   void append(primary_mutation);
+   int64_t temporary_id();
    std::shared_ptr<const frozen_primary_state> base_;
    primary_overlay_limits limits_;
    const std::thread::id owner_;
@@ -173,15 +183,16 @@ private:
    mutable std::set<table_key, table_key_less> reads_;
    mutable std::set<primary_query, primary_query_less> queries_;
    mutable std::set<name> accounts_;
-   std::vector<primary_update> writes_;
+   std::vector<primary_mutation> writes_;
    std::map<table_key, std::map<uint64_t, size_t>, table_key_less> latest_writes_;
+   std::map<table_key, std::optional<table_read>, table_key_less> changed_tables_;
    size_t written_bytes_ = 0;
+   int64_t next_temporary_id_ = -1;
 };
 
-// Action-local iterator handles for the restricted existing-row capability.
-// There is deliberately no create/delete/sync-call API. Handles may not cross
-// actions, attempts or batches; adding lifecycle-changing operations requires
-// explicit invalidation, not a logical-key lookup that revives deleted rows.
+// Action-local handles retain object identity, not just a logical key. Removed
+// rows cannot be revived by recreate. Retired-table end handles force fallback;
+// do not invent canonical behavior for the original cache's stale pointers.
 class primary_overlay_cursor {
 public:
    primary_overlay_cursor(primary_state_overlay& state, name receiver,
@@ -198,6 +209,8 @@ public:
    int previous(int iterator, uint64_t& primary_key);
    int get(int iterator, std::span<char> output);
    void update(int iterator, name payer, std::span<const char> value);
+   int store(const table_key&, uint64_t primary_key, name payer, std::span<const char> value);
+   void remove(int iterator);
 
 private:
    template<typename F> decltype(auto) checked(F&& fn) {

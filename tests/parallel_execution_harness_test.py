@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 import tempfile
+import subprocess
+import sys
 import unittest
 from unittest.mock import Mock, patch
 from parallel_execution_test import Node, checked_manifest, require, sha256
@@ -73,6 +75,22 @@ class HarnessTest(unittest.TestCase):
     def test_checks_cannot_be_optimized_away(self):
         with self.assertRaisesRegex(RuntimeError, "must fail"):
             require(False, "must fail")
+
+    def test_producer_fixture_flags_reject_invalid_combinations_before_creating_a_chain(self):
+        script = Path(__file__).with_name("parallel_producer_process_test.py")
+        required = ["--old-nodeos", str(self.root / "absent-old"), "--new-nodeos", str(self.root / "absent-new"),
+                    "--fixture-exporter", str(self.root / "absent-exporter"), "--old-sha256", "0" * 64,
+                    "--output-parent", str(self.root)]
+        before = sorted(path.name for path in self.root.iterdir())
+        for flags, message in [(["--ram-fixture"], "requires --token-fixture"),
+                               (["--lifecycle-fixture"], "requires --token-fixture"),
+                               (["--token-fixture", "--ram-fixture", "--lifecycle-fixture"], "cannot be combined")]:
+            with self.subTest(flags=flags):
+                result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
+                                        capture_output=True, text=True, timeout=15)
+                self.assertEqual(result.returncode, 2)
+                self.assertIn(message, result.stderr)
+                self.assertEqual(sorted(path.name for path in self.root.iterdir()), before)
 
     def checkpoint_node(self):
         node = object.__new__(Node)

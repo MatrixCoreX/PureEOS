@@ -121,6 +121,29 @@ BOOST_FIXTURE_TEST_CASE(absent_queries_and_end_metadata_ignore_unrelated_value_u
    }
 }
 
+BOOST_FIXTURE_TEST_CASE(structural_writes_invalidate_absence_ranges_end_and_aba_but_not_other_tables, batch_fixture) {
+   for (unsigned operation = 0; operation < 3; ++operation) for (unsigned query = 0; query < 6; ++query) {
+      ordered_attempt_batch batch(base, std::span(requests).first(2));
+      primary_state_overlay first(base), second(base);
+      if (operation == 0) first.store(a, 2, "alice"_n, std::string("new"));
+      else {
+         first.remove(a, 1);
+         if (operation == 2) first.store(a, 1, "alice"_n, std::string("x"));
+      }
+      const auto key = query == 5 ? b : a;
+      if (query == 0 || query == 5) (void)second.read_table(key); // end-only read also depends on structure
+      else (void)second.locate_primary({key,
+         query == 1 ? primary_query_kind::find : query == 2 ? primary_query_kind::lower_bound :
+         query == 3 ? primary_query_kind::upper_bound : primary_query_kind::last, 99});
+      isolated_action_result first_result{first.seal(), {}, requests[0].execution_fingerprint};
+      isolated_action_result second_result{second.seal(), {}, requests[1].execution_fingerprint};
+      batch.run_next(batch.get_ticket(0), requests[0].transaction_id, first_result, [](const auto&) {}, [] { BOOST_FAIL("first"); });
+      const auto used = batch.run_next(batch.get_ticket(1), requests[1].transaction_id, second_result,
+         [](const auto&) { return true; }, [] { return false; });
+      BOOST_CHECK_EQUAL(used, query == 5);
+   }
+}
+
 BOOST_FIXTURE_TEST_CASE(distinct_rows_in_one_table_adopt_without_losing_same_row_conflicts, batch_fixture) {
    const auto& table = db.get<table_id_object, by_code_scope_table>(boost::make_tuple(a.code, a.scope, a.table));
    db.create<key_value_object>([&](auto& row) {
