@@ -1,6 +1,6 @@
 # 受限并行执行：实验、关闭与回退
 
-本功能默认关闭，只适用于独立测试节点；不是主网上线建议。15 个 host 是 PX0–PX6 首版边界，详见 [历史访问边界](PX0_RESTRICTED_BOUNDARY_REVIEW.md)。PX7 G3a 新增内存/断言基础接口：当前 23 个受限入口，另有 10 个只允许链接、调用必整笔回退的入口，其余 229 个生产导入拒绝链接；未声明内存最大值的模块也必须通过逐次增长保护。状态写入仍仅限同 payer/同长度的既存主键行。普通 EOS token 转账、系统合约、二级索引、通知、inline、sync-call 仍串行，不能只把代码哈希填入配置就宣称这些操作已并行化。进度和本版验收以 [PX7 计划](PX7_GENERAL_EXECUTION_PLAN.md) 为准。
+本功能默认关闭，只适用于独立测试节点；不是主网上线建议。15 个 host 是 PX0–PX6 首版边界，详见 [历史访问边界](PX0_RESTRICTED_BOUNDARY_REVIEW.md)。PX7 G3b 当前有 25 个受限入口、9 个只允许链接且调用必整笔回退的入口、228 个拒绝链接的生产导入；未声明内存最大值的模块也必须通过逐次增长保护。状态写入仍仅限同 payer/同长度的既存主键行。账户存在性读取受跟踪，无代码/无原生处理器通知通过原调度器和回执路径完成，使满足这些条件的真实 token 转账可以采用。新余额行、payer/长度变化、带代码通知、系统合约、二级索引、inline、sync-call 仍串行；不能只加代码哈希就宣称所有转账或其他操作都已并行。进度和本版验收以 [PX7 计划](PX7_GENERAL_EXECUTION_PLAN.md) 为准。
 
 ## 参数与模式
 
@@ -48,6 +48,8 @@ python3 -B tests/parallel_producer_process_test.py \
 ```
 
 换成 `tests/parallel_producer_soak_test.py` 并加 `--workers 4 --rounds 180` 可复测长驻进程反复出块。仅供测试的确定性签名凭据留在该次私有目录，不得移作真实链密钥。
+
+真实 token 生产互验：给上面的 `parallel_producer_process_test.py` 加 `--token-fixture`，默认使用仓库固定原版 token。测试本机当前 PureEOS token 时，再设置 `PUREEOS_PARALLEL_TOKEN_WASM=/home/guagua/AntelopeIO/reference-contracts/build/pureeos-resource-split/eosio.token/eosio.token.wasm`。导出器严格核对该已审查产物的固定哈希，不接受任意外部合约；五种模式均重新创世，报告保存实际代码哈希和负载类型，仍不代表饱和 TPS 测量。
 
 固定语料性能工具是 `tests/PerformanceHarness/parallel_replay_benchmark.py`，参数为上述 old/new/hash/output-parent，以及 `--corpora build/local-tests/parallel-overlay-20261011-q42k0b/px6-corpora-v1 --repetitions 3`。它测完整重放，不测生产容量。每份报告保留二进制/语料/脚本哈希、完整性、全部样本和主机负载。
 

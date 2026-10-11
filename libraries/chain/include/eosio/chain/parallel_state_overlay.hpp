@@ -7,6 +7,7 @@
 #include <set>
 #include <span>
 #include <tuple>
+#include <variant>
 
 namespace eosio::chain::experimental {
 
@@ -28,6 +29,7 @@ struct primary_snapshot_limits {
    size_t max_rows = 4096;
    size_t max_value_bytes = 4 * 1024 * 1024;
    size_t max_queries = 4096;
+   size_t max_accounts = 256;
 };
 
 struct primary_overlay_limits {
@@ -35,6 +37,7 @@ struct primary_overlay_limits {
    size_t max_write_operations = 4096;
    size_t max_write_value_bytes = 4 * 1024 * 1024;
    size_t max_read_queries = 4096;
+   size_t max_read_accounts = 256;
 };
 
 struct primary_state_unsupported : std::runtime_error {
@@ -44,12 +47,16 @@ struct primary_capture_request {
    table_key table;
    std::optional<primary_query> query;
 };
+struct account_capture_request { name account; };
+using state_capture_request = std::variant<primary_capture_request, account_capture_request>;
 struct primary_state_missing : primary_state_unsupported {
-   explicit primary_state_missing(table_key table) : request{table, std::nullopt} {}
-   explicit primary_state_missing(primary_query query) : request{query.table, query} {
-      if (request.query->kind == primary_query_kind::last) request.query->primary_key = 0;
+   explicit primary_state_missing(table_key table) : request(primary_capture_request{table, std::nullopt}) {}
+   explicit primary_state_missing(primary_query query) : request(primary_capture_request{query.table, query}) {
+      auto& normalized = std::get<primary_capture_request>(request).query;
+      if (normalized->kind == primary_query_kind::last) normalized->primary_key = 0;
    }
-   primary_capture_request request;
+   explicit primary_state_missing(name account) : request(account_capture_request{account}) {}
+   state_capture_request request;
 };
 struct primary_state_budget_exceeded : std::runtime_error {
    primary_state_budget_exceeded() : std::runtime_error("primary state local budget exceeded") {}
@@ -70,10 +77,11 @@ public:
    // they must NEVER be interpreted as absent rows or empty ranges.
    static std::shared_ptr<const frozen_primary_state> capture_queries(
       const chainbase_transaction_state_view&, std::span<const table_key>, std::span<const primary_query>,
-      primary_snapshot_limits = {}, const std::function<void()>& checkpoint = {});
+      primary_snapshot_limits = {}, const std::function<void()>& checkpoint = {}, std::span<const name> accounts = {});
    frozen_primary_state(const frozen_primary_state&) = delete;
    frozen_primary_state& operator=(const frozen_primary_state&) = delete;
 
+   std::optional<account_read> read_account(name) const override;
    std::optional<table_read> read_table(const table_key&) const override;
    primary_metadata_result locate_primary(const primary_query&) const override;
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
@@ -82,6 +90,7 @@ public:
    size_t table_count() const { return tables_.size(); }
    size_t row_count() const { return row_count_; }
    size_t value_bytes() const { return value_bytes_; }
+   size_t account_count() const { return accounts_.size(); }
 
 private:
    frozen_primary_state() = default;
@@ -94,6 +103,7 @@ private:
    const table_snapshot& get_table(const table_key&) const;
    std::pair<const table_snapshot*, const primary_row_read*> locate(const primary_query&) const;
    std::map<table_key, table_snapshot, table_key_less> tables_;
+   std::map<name, std::optional<account_read>> accounts_;
    size_t row_count_ = 0;
    size_t value_bytes_ = 0;
 };
@@ -115,18 +125,22 @@ public:
    const auto& base() const { return base_; }
    const auto& read_tables() const { return reads_; }
    const auto& read_queries() const { return queries_; }
+   const auto& read_accounts() const { return accounts_; }
    const auto& writes() const { return writes_; }
    bool matches_base_reads(const transaction_state_view& live, const std::function<void()>& checkpoint) const;
 private:
    friend class primary_state_overlay;
    primary_overlay_result(std::shared_ptr<const frozen_primary_state> base,
                           std::set<table_key, table_key_less> reads,
-                          std::set<primary_query, primary_query_less> queries, std::vector<primary_update> writes)
-      : base_(std::move(base)), reads_(std::move(reads)), queries_(std::move(queries)), writes_(std::move(writes)) {}
+                          std::set<primary_query, primary_query_less> queries, std::vector<primary_update> writes,
+                          std::set<name> accounts)
+      : base_(std::move(base)), reads_(std::move(reads)), queries_(std::move(queries)), writes_(std::move(writes)),
+        accounts_(std::move(accounts)) {}
    std::shared_ptr<const frozen_primary_state> base_;
    std::set<table_key, table_key_less> reads_;
    std::set<primary_query, primary_query_less> queries_;
    std::vector<primary_update> writes_;
+   std::set<name> accounts_;
 };
 
 // One thread owns each attempt. First capability: existing-row updates only,
@@ -137,6 +151,7 @@ public:
    explicit primary_state_overlay(std::shared_ptr<const frozen_primary_state>, primary_overlay_limits = {});
    primary_state_overlay(const primary_state_overlay&) = delete;
    primary_state_overlay& operator=(const primary_state_overlay&) = delete;
+   std::optional<account_read> read_account(name) const override;
    std::optional<table_read> read_table(const table_key&) const override;
    primary_metadata_result locate_primary(const primary_query&) const override;
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
@@ -156,6 +171,7 @@ private:
    mutable bool valid_ = true;
    mutable std::set<table_key, table_key_less> reads_;
    mutable std::set<primary_query, primary_query_less> queries_;
+   mutable std::set<name> accounts_;
    std::vector<primary_update> writes_;
    std::map<table_key, std::map<uint64_t, size_t>, table_key_less> latest_writes_;
    size_t written_bytes_ = 0;

@@ -40,6 +40,7 @@ def main():
     parser.add_argument("--fixture-exporter", type=Path, required=True)
     parser.add_argument("--old-sha256", required=True)
     parser.add_argument("--output-parent", type=Path, required=True)
+    parser.add_argument("--token-fixture", action="store_true", help="Exercise unchanged real token transfers and notification receipts")
     args = parser.parse_args()
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
@@ -48,6 +49,7 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
+              "fixture_kind": "real-token" if args.token_fixture else "existing-row-wat",
               "old_sha256": sha256(old), "new_sha256": sha256(new), "exporter_sha256": sha256(exporter), "phases": []}
     nodes = []
     journals = []
@@ -59,12 +61,17 @@ def main():
             group.mkdir()
             corpus = group / "corpus"
             env = {**os.environ, "PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR": str(corpus)}
+            if args.token_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_TOKEN"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_TOKEN", None)
             with (group / "export.log").open("x") as log:
                 result = subprocess.run([str(exporter), "--run_test=parallel_production_tests/export_fresh_live_producer_fixture",
                     "--report_level=detailed", "--color_output=no"], env=env, cwd=group,
                     stdout=log, stderr=subprocess.STDOUT, timeout=120)
             require(result.returncode == 0, "Fresh fixture export failed: " + str(group))
             manifest = checked_manifest(corpus)
+            require(manifest.get("fixture_kind") == report["fixture_kind"], "Exporter returned wrong fixture kind")
             # A new serial observer feeds bootstrap blocks to an OLD producer
             # over P2P, bypassing the documented pre-existing HTTP cache bug.
             feeder = Node(new, group / "new-observer", corpus, manifest, 2, peer="listen", history=True)
@@ -183,6 +190,7 @@ def main():
             observer.stop()
             require(observer.history_digests() == histories[2], "Old checked replay changed finalized history output")
             item = {"phase": label, "head": target, "lib": info["last_irreversible_block_num"],
+                    "code_hashes": manifest["code_hashes"],
                     "state": state["integrity_hash"], "transactions": len(receipts), "slot_gaps_seconds": gaps,
                     "production_totals": totals, "history_sha256": histories[0], "old_checked_replay": True}
             item["bounded_load_finality"] = finalized

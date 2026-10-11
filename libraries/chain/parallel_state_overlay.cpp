@@ -58,9 +58,15 @@ const frozen_primary_state::table_snapshot& frozen_primary_state::get_table(cons
 
 std::shared_ptr<const frozen_primary_state> frozen_primary_state::capture_queries(
       const chainbase_transaction_state_view& source, std::span<const table_key> keys,
-      std::span<const primary_query> queries, primary_snapshot_limits limits, const std::function<void()>& checkpoint) {
-   if (keys.size() > limits.max_tables || queries.size() > limits.max_queries) throw primary_state_budget_exceeded();
+      std::span<const primary_query> queries, primary_snapshot_limits limits, const std::function<void()>& checkpoint,
+      std::span<const name> accounts) {
+   if (keys.size() > limits.max_tables || queries.size() > limits.max_queries || accounts.size() > limits.max_accounts)
+      throw primary_state_budget_exceeded();
    auto result = std::shared_ptr<frozen_primary_state>(new frozen_primary_state);
+   for (const auto account : accounts) {
+      if (checkpoint) checkpoint();
+      if (!result->accounts_.contains(account)) result->accounts_.emplace(account, source.read_account(account));
+   }
    auto capture_table = [&](const table_key& key) -> table_snapshot& {
       if (checkpoint) checkpoint();
       if (auto it = result->tables_.find(key); it != result->tables_.end()) return it->second;
@@ -135,6 +141,12 @@ std::optional<table_read> frozen_primary_state::read_table(const table_key& key)
    return get_table(key).metadata;
 }
 
+std::optional<account_read> frozen_primary_state::read_account(name account) const {
+   const auto found = accounts_.find(account);
+   if (found == accounts_.end()) throw primary_state_missing(account);
+   return found->second;
+}
+
 primary_metadata_result frozen_primary_state::locate_primary(const primary_query& query) const {
    const auto [table, row] = locate(query);
    primary_metadata_result result{table->metadata, std::nullopt};
@@ -206,6 +218,17 @@ std::optional<table_read> primary_state_overlay::read_table(const table_key& key
    } catch (...) { valid_ = false; throw; }
 }
 
+std::optional<account_read> primary_state_overlay::read_account(name account) const {
+   check_owner_and_valid();
+   try {
+      if (!accounts_.contains(account)) {
+         if (accounts_.size() == limits_.max_read_accounts) throw primary_state_budget_exceeded();
+         accounts_.insert(account);
+      }
+      return base_->read_account(account);
+   } catch (...) { valid_ = false; throw; }
+}
+
 primary_metadata_result primary_state_overlay::locate_primary(const primary_query& query) const {
    check_owner_and_valid();
    try {
@@ -261,12 +284,16 @@ void primary_state_overlay::update_existing(const table_key& table, uint64_t key
 primary_overlay_result primary_state_overlay::seal() {
    check_owner_and_valid();
    valid_ = false;
-   return {base_, std::move(reads_), std::move(queries_), std::move(writes_)};
+   return {base_, std::move(reads_), std::move(queries_), std::move(writes_), std::move(accounts_)};
 }
 
 bool primary_overlay_result::matches_base_reads(const transaction_state_view& live,
                                                const std::function<void()>& checkpoint) const {
    std::set<int64_t> checked_values;
+   for (const auto account : accounts_) {
+      checkpoint();
+      if (live.read_account(account) != base_->read_account(account)) return false;
+   }
    for (const auto& table : reads_) {
       checkpoint();
       if (live.read_table(table) != base_->read_table(table)) return false;

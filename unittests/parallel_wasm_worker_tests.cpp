@@ -1,6 +1,7 @@
 #include <eosio/chain/parallel_wasm_worker.hpp>
 #include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
+#include <eosio/chain/account_object.hpp>
 #include <eosio/chain/wast_to_wasm.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <eosio/testing/tester.hpp>
@@ -82,9 +83,8 @@ uint64_t number(const std::vector<char>& bytes) {
 
 struct fallback_import { const char* name; const char* signature; const char* invocation; };
 const std::array fallback_imports{
-   fallback_import{"is_account", "(param i64) (result i32)", "(drop (call $stub (i64.const 0)))"},
-   fallback_import{"require_recipient", "(param i64)", "(call $stub (i64.const 0))"},
    fallback_import{"prints_l", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
+   fallback_import{"send_inline", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"db_store_i64", "(param i64 i64 i64 i64 i32 i32) (result i32)",
       "(drop (call $stub (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0) (i32.const 0) (i32.const 0)))"},
    fallback_import{"db_remove_i64", "(param i32)", "(call $stub (i32.const 0))"},
@@ -184,6 +184,7 @@ struct wasm_fixture {
    std::shared_ptr<const frozen_primary_state> base;
    wasm_fixture() {
       db.add_index<table_id_multi_index>(); db.add_index<key_value_index>();
+      db.add_index<account_index>();
       const auto& table = db.create<table_id_object>([](auto& row) {
          row.code = rows.code; row.scope = rows.scope; row.table = rows.table;
          row.payer = "alice"_n; row.count = 4;
@@ -430,7 +431,7 @@ BOOST_FIXTURE_TEST_CASE(timeout_of_one_module_does_not_disable_other_modules, wa
 
 BOOST_FIXTURE_TEST_CASE(unknown_imports_fail_but_unbounded_memory_can_execute_within_local_cap, wasm_fixture) {
    const auto unknown = wasm(R"((module
-      (import "env" "send_inline" (func (param i32 i32)))
+      (import "env" "send_deferred" (func (param i32 i64 i32 i32 i32)))
       (func (export "apply") (param i64 i64 i64))))");
    BOOST_CHECK_THROW(isolated_wasm_module{unknown}, eosio::vm::wasm_link_exception);
    for (auto memory : {"(memory 1)", "(memory 1 17)"}) {
@@ -447,9 +448,10 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
       "current_receiver", "action_data_size", "read_action_data", "has_auth", "require_auth", "require_auth2",
       "db_find_i64", "db_lowerbound_i64", "db_upperbound_i64", "db_end_i64", "db_get_i64", "db_update_i64",
       "db_next_i64", "db_previous_i64", "set_action_return_value",
-      "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "abort"};
+      "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "abort",
+      "is_account", "require_recipient"};
    const std::set<std::string_view> fallback_only{
-      "is_account", "require_recipient", "prints_l", "db_store_i64", "db_remove_i64",
+      "prints_l", "send_inline", "db_store_i64", "db_remove_i64",
       "set_blockchain_parameters_packed", "get_blockchain_parameters_packed", "set_proposed_producers",
       "current_time", "get_active_producers"};
    size_t rejected = 0;
@@ -464,7 +466,7 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
          ++rejected;
       }
    }
-   BOOST_CHECK_EQUAL(rejected, 229u);
+   BOOST_CHECK_EQUAL(rejected, 228u);
 }
 
 BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fixture) {
@@ -847,6 +849,66 @@ BOOST_FIXTURE_TEST_CASE(pool_bounds_and_thread_affinity, wasm_fixture) {
    BOOST_CHECK(worker.get());
 }
 
+BOOST_FIXTURE_TEST_CASE(account_host_requests_owned_evidence_and_tracks_negative_reads, wasm_fixture) {
+   db.create<account_object>([](auto& obj) { obj.name = "alice"_n; });
+   const auto code = increment_wasm(
+      R"((import "env" "is_account" (func $account (param i64) (result i32))))",
+      "(i32.store (i32.const 64) (call $account (i64.const " + std::to_string("alice"_n.to_uint64_t()) + ")))" +
+      "(i32.store (i32.const 68) (call $account (i64.const " + std::to_string("bob"_n.to_uint64_t()) + ")))");
+   isolated_wasm_module module(code);
+   BOOST_CHECK_THROW(module.execute(base, input()), primary_state_missing); // after private write
+   const auto hash = fc::sha256::hash(code.data(), code.size());
+   const std::array<ordered_attempt_batch::request, 1> requests{{
+      {fc::sha256::hash("account"), isolated_execution_fingerprint(hash, {}, input())}}};
+   ordered_attempt_batch batch(base, requests);
+   isolated_worker_pool pool(2);
+   const auto discovery = pool.run({{batch.get_ticket(0), code, input(), {}}});
+   BOOST_REQUIRE(discovery[0].request);
+   BOOST_CHECK(!discovery[0].result);
+   BOOST_REQUIRE(std::holds_alternative<account_capture_request>(*discovery[0].request));
+   BOOST_CHECK(std::get<account_capture_request>(*discovery[0].request).account == "alice"_n);
+   const std::array names{"alice"_n, "bob"_n};
+   const std::array queries{primary_query{rows, primary_query_kind::find, 1}};
+   auto captured = frozen_primary_state::capture_queries(view, {}, queries, {}, {}, names);
+   const auto result = module.execute(captured, input());
+   BOOST_CHECK_EQUAL(number(result.return_value), 1u);
+   BOOST_CHECK_EQUAL(result.state.read_accounts().size(), 2u);
+   BOOST_CHECK_EQUAL(result.state.writes().size(), 1u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(notification_journal_is_ordered_deduplicated_bounded_and_reset_after_failure, wasm_fixture) {
+   const std::string imported = R"((import "env" "require_recipient" (func $notify (param i64))))";
+   auto notify = [](name account) { return "(call $notify (i64.const " + std::to_string(account.to_uint64_t()) + "))"; };
+   const auto code = increment_wasm(imported, notify("test"_n) + notify("bob"_n) + notify("alice"_n) + notify("bob"_n));
+   isolated_wasm_module module(code);
+   for (unsigned repeat = 0; repeat < 3; ++repeat) {
+      BOOST_CHECK_THROW(module.execute(base, input(1, 7, 0, 3)), primary_state_unsupported);
+      const auto result = module.execute(base, input());
+      BOOST_CHECK((result.recipients == std::vector<name>{"bob"_n, "alice"_n}));
+      BOOST_CHECK_EQUAL(result.state.writes().size(), 1u);
+   }
+   std::string tail;
+   for (uint64_t i = 1; i <= isolated_action_result::max_recipients; ++i) tail += notify(name{i});
+   isolated_wasm_module limit(increment_wasm(imported, tail));
+   BOOST_CHECK_EQUAL(limit.execute(base, input()).recipients.size(), isolated_action_result::max_recipients);
+   isolated_wasm_module excessive(increment_wasm(imported, tail + notify(name{1000})));
+   BOOST_CHECK_THROW(excessive.execute(base, input()), primary_state_budget_exceeded);
+   isolated_wasm_module late_failure(increment_wasm(imported, notify("alice"_n) + "(unreachable)"));
+   BOOST_CHECK_THROW(late_failure.execute(base, input()), eosio::vm::exception);
+   const auto start_code = wasm("(module " + imported +
+      "(func $start " + notify("bob"_n) + ") (start $start)" +
+      "(func (export \"apply\") (param i64 i64 i64) " + notify("alice"_n) + notify("bob"_n) + "))");
+   isolated_wasm_module start_module(start_code);
+   BOOST_CHECK((start_module.execute(base, input()).recipients == std::vector<name>{"bob"_n, "alice"_n}));
+   for (auto host : {"is_account", "require_recipient"}) {
+      const auto wrong_signature = wasm(std::string("(module (import \"env\" \"") + host +
+         "\" (func (param i32))) (func (export \"apply\") (param i64 i64 i64)))");
+      BOOST_CHECK_THROW(isolated_wasm_module{wrong_signature}, eosio::vm::wasm_link_exception);
+   }
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
 BOOST_FIXTURE_TEST_CASE(pool_reports_owned_missing_queries_then_restarts_on_fresh_sparse_base, wasm_fixture) {
    const auto code = increment_wasm();
    const auto hash = fc::sha256::hash(code.data(), code.size());
@@ -862,10 +924,12 @@ BOOST_FIXTURE_TEST_CASE(pool_reports_owned_missing_queries_then_restarts_on_fres
    for (size_t i = 0; i < missing.size(); ++i) {
       BOOST_CHECK(!missing[i].result);
       BOOST_REQUIRE(missing[i].request);
-      BOOST_CHECK(missing[i].request->table == rows);
-      BOOST_REQUIRE(missing[i].request->query);
-      BOOST_CHECK_EQUAL(missing[i].request->query->primary_key, i + 1);
-      queries.push_back(*missing[i].request->query);
+      BOOST_REQUIRE(std::holds_alternative<primary_capture_request>(*missing[i].request));
+      const auto& request = std::get<primary_capture_request>(*missing[i].request);
+      BOOST_CHECK(request.table == rows);
+      BOOST_REQUIRE(request.query);
+      BOOST_CHECK_EQUAL(request.query->primary_key, i + 1);
+      queries.push_back(*request.query);
    }
    discovery.close();
    auto sparse = frozen_primary_state::capture_queries(view, {}, queries);

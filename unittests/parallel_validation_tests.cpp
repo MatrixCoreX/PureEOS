@@ -34,6 +34,62 @@ std::vector<uint8_t> cdt_fixture_code() {
    return code;
 }
 
+std::vector<uint8_t> token_fixture_code() {
+   // Default: the repository's unchanged EOS token. An explicit second run can
+   // exercise the unchanged PureEOS reference-contracts artifact too. Pin BOTH
+   // hashes; do not silently accept a simplified or substituted token fixture.
+   const char* external = std::getenv("PUREEOS_PARALLEL_TOKEN_WASM");
+   const auto path = external ? std::filesystem::path(external) :
+      std::filesystem::path(__FILE__).parent_path() / "contracts/eosio.token/eosio.token.wasm";
+   std::ifstream stream(path, std::ios::binary);
+   BOOST_REQUIRE_MESSAGE(stream.good(), "missing token artifact: " << path);
+   const std::vector<uint8_t> code{std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()};
+   const auto expected = external ? "ea1bd149e28f21420450b6c7b2c5be600ef9922e44c383fa4489b025aac0eb46" :
+      "4c76fdcd411cafbf3af1c0987bbb093bac2bfd2e8a669f12feae785ffd43a7c3";
+   BOOST_REQUIRE(fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size()) == fc::sha256{expected});
+   return code;
+}
+
+signed_transaction token_transaction(tester& chain, name from, name to, int64_t amount, uint64_t nonce) {
+   signed_transaction trx;
+   trx.actions.push_back(chain.get_action("test"_n, "transfer"_n, {{from, "active"_n}},
+      fc::mutable_variant_object()("from", from)("to", to)
+         ("quantity", asset{amount, symbol::from_string("4,TKN")}.to_string())("memo", std::to_string(nonce))));
+   chain.set_transaction_headers(trx);
+   trx.sign(chain.get_private_key(from, "active"), chain.control->get_chain_id());
+   return trx;
+}
+
+void setup_token(tester& chain, const std::vector<uint8_t>& code) {
+   chain.create_accounts({"test"_n, "alice"_n, "bob"_n, "carol"_n, "dave"_n, "erin"_n, "frank"_n,
+                          "grace"_n, "sponsor"_n, "blank"_n});
+   chain.set_code("test"_n, code);
+   std::ifstream abi(std::filesystem::path(__FILE__).parent_path() / "contracts/eosio.token/eosio.token.abi");
+   BOOST_REQUIRE(abi.good());
+   chain.set_abi("test"_n, std::string{std::istreambuf_iterator<char>(abi), std::istreambuf_iterator<char>()});
+   BOOST_REQUIRE(!chain.push_action("test"_n, "create"_n, "test"_n, fc::mutable_variant_object()
+      ("issuer", "alice")("maximum_supply", "1000000.0000 TKN"))->except);
+   BOOST_REQUIRE(!chain.push_action("test"_n, "issue"_n, "alice"_n, fc::mutable_variant_object()
+      ("to", "alice")("quantity", "10000.0000 TKN")("memo", "setup"))->except);
+   for (const auto owner : {"bob"_n, "carol"_n, "dave"_n, "erin"_n, "frank"_n, "grace"_n, "sponsor"_n}) {
+      const auto payer = owner == "sponsor"_n ? "alice"_n : owner;
+      BOOST_REQUIRE(!chain.push_action("test"_n, "open"_n, payer, fc::mutable_variant_object()
+         ("owner", owner)("symbol", "4,TKN")("ram_payer", payer))->except);
+      if (owner != "grace"_n) {
+         auto trx = token_transaction(chain, "alice"_n, owner, 1000000, owner.to_uint64_t());
+         BOOST_REQUIRE(!chain.push_transaction(trx)->except);
+      }
+   }
+}
+
+int64_t token_balance(tester& chain, name owner) {
+   const auto row = chain.get_row_by_account("test"_n, owner, "accounts"_n,
+      name{symbol::from_string("4,TKN").to_symbol_code().value});
+   BOOST_REQUIRE_EQUAL(row.size(), 16u);
+   int64_t result; std::memcpy(&result, row.data(), sizeof(result));
+   return result;
+}
+
 std::vector<uint8_t> initialize_code(bool keyed = false) {
    return compile(R"((module
       (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
@@ -90,6 +146,12 @@ std::vector<char> consensus_trace(const transaction_trace_ptr& trace) {
    if (trace->receipt) fields.push_back(fc::raw::pack(*trace->receipt));
    fields.push_back(fc::raw::pack(trace->net_usage));
    for (const auto& action : trace->action_traces) {
+      fields.push_back(fc::raw::pack(action.action_ordinal));
+      fields.push_back(fc::raw::pack(action.creator_action_ordinal));
+      fields.push_back(fc::raw::pack(action.closest_unnotified_ancestor_action_ordinal));
+      fields.push_back(fc::raw::pack(action.receiver));
+      fields.push_back(fc::raw::pack(action.act));
+      fields.push_back(fc::raw::pack(action.context_free));
       if (action.receipt) fields.push_back(fc::raw::pack(*action.receipt));
       fields.push_back(action.return_value);
       fields.push_back(fc::raw::pack(action.account_ram_deltas));
@@ -758,6 +820,139 @@ BOOST_AUTO_TEST_CASE(real_cdt_dispatcher_multi_index_and_allocator_adopt_or_fall
    }
 }
 
+BOOST_AUTO_TEST_CASE(empty_code_notifications_keep_original_order_dedup_and_receipt_sequences) {
+   const auto code = compile(std::string(R"((module
+      (import "env" "require_recipient" (func $notify (param i64)))
+      (import "env" "is_account" (func $account (param i64) (result i32)))
+      (func (export "apply") (param $receiver i64) (param i64 i64)
+         (drop (call $account (i64.const )") + std::to_string("bob"_n.to_uint64_t()) + R"()))
+         (call $notify (get_local $receiver))
+         (call $notify (i64.const )" + std::to_string("bob"_n.to_uint64_t()) + R"())
+         (call $notify (i64.const )" + std::to_string("alice"_n.to_uint64_t()) + R"())
+         (call $notify (i64.const )" + std::to_string("bob"_n.to_uint64_t()) + R"()))))");
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   const auto genesis = base_tester::default_genesis();
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory original_dir, parallel_dir;
+      auto original_config = base_tester::default_config(original_dir).first;
+      original_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      auto config = base_tester::default_config(parallel_dir).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      config.parallel_validation_threads = workers; config.parallel_code_allowlist = {hash};
+      tester original(original_config, genesis), observed(config, genesis);
+      original.create_accounts({"test"_n, "alice"_n, "bob"_n});
+      original.set_code("test"_n, code);
+      observed.push_block(original.produce_block());
+      observed.control->abort_block();
+      std::vector<std::vector<char>> expected, actual;
+      boost::signals2::scoped_connection a = original.control->applied_transaction().connect([&](const auto& event) {
+         if (std::get<0>(event)->action_traces.front().act.account == "test"_n)
+            expected.push_back(consensus_trace(std::get<0>(event)));
+      });
+      boost::signals2::scoped_connection b = observed.control->applied_transaction().connect([&](const auto& event) {
+         const auto& trace = std::get<0>(event);
+         if (trace->action_traces.front().act.account != "test"_n) return;
+         BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 3u);
+         const std::array receivers{"test"_n, "bob"_n, "alice"_n};
+         for (unsigned i = 0; i < receivers.size(); ++i) {
+            const auto& act = trace->action_traces[i];
+            BOOST_REQUIRE(act.receipt);
+            BOOST_CHECK(act.receiver == receivers[i]);
+            BOOST_CHECK_EQUAL(act.action_ordinal.value, i + 1);
+            BOOST_CHECK_EQUAL(act.creator_action_ordinal.value, i ? 1u : 0u);
+            BOOST_CHECK(act.account_ram_deltas.empty());
+         }
+         actual.push_back(consensus_trace(trace));
+      });
+      push(original, "alice"_n, 1, 1); push(original, "alice"_n, 1, 2);
+      const auto block = original.produce_block();
+      observed.push_block(block); original.control->abort_block(); observed.control->abort_block();
+      BOOST_REQUIRE_EQUAL(expected.size(), 2u);
+      BOOST_CHECK(expected == actual);
+      BOOST_CHECK(original.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+      BOOST_CHECK_EQUAL(observed.control->get_parallel_execution_stats().adopted, workers ? 2u : 0u);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(real_token_transfers_preserve_notifications_conflicts_and_lifecycle_fallbacks) {
+   const auto code = token_fixture_code();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   auto genesis = base_tester::default_genesis();
+   auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+   genesis.initial_savanna.emplace();
+   genesis.initial_savanna->finalizer_key = public_key; genesis.initial_savanna->proof_of_possession = proof;
+   struct checkpoint { std::vector<char> block; int adopted; int fallbacks; };
+   std::vector<checkpoint> blocks;
+   {
+      fc::temp_directory directory;
+      auto config = base_tester::default_config(directory).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      tester source(config, genesis);
+      source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      auto seal = [&](int adopted = -1, int fallbacks = -1) {
+         blocks.push_back({fc::raw::pack(*source.produce_block()), adopted, fallbacks});
+      };
+      setup_token(source, code); seal();
+      uint64_t nonce = 1;
+      auto transfer = [&](name from, name to, int64_t amount = 10000) {
+         auto trx = token_transaction(source, from, to, amount, nonce++);
+         const auto trace = source.push_transaction(trx);
+         BOOST_REQUIRE(!trace->except);
+         BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 3u);
+         BOOST_CHECK(trace->action_traces[0].receiver == "test"_n);
+         BOOST_CHECK(trace->action_traces[1].receiver == from);
+         BOOST_CHECK(trace->action_traces[2].receiver == to);
+      };
+      transfer("alice"_n, "bob"_n); transfer("carol"_n, "dave"_n); transfer("erin"_n, "frank"_n); seal(3, 0);
+      transfer("alice"_n, "bob"_n); transfer("alice"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(1, 2);
+      transfer("bob"_n, "grace"_n); transfer("grace"_n, "bob"_n); seal(1, 1); // old grace balance is zero
+      transfer("alice"_n, "blank"_n); transfer("carol"_n, "dave"_n); seal(0, 2); // new row
+      transfer("sponsor"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(0, 2); // payer change
+      transfer("sponsor"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(2, 0); // now owner-paid
+      source.set_code("frank"_n, compile("(module (func (export \"apply\") (param i64 i64 i64)))")); seal();
+      transfer("erin"_n, "frank"_n); transfer("carol"_n, "dave"_n); seal(0, 2); // child code, even no-op
+      source.set_code("frank"_n, std::vector<uint8_t>{}); seal();
+      transfer("erin"_n, "frank"_n); transfer("carol"_n, "dave"_n); seal(2, 0);
+      for (unsigned i = 0; i < 5; ++i) seal(0, 0);
+   }
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory reference_dir, observed_dir;
+      auto config = base_tester::default_config(observed_dir).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      config.parallel_validation_threads = workers; config.parallel_code_allowlist = {hash};
+      auto original_config = base_tester::default_config(reference_dir).first;
+      original_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      tester original(original_config, genesis), observed(config, genesis);
+      std::vector<std::vector<char>> expected, actual;
+      boost::signals2::scoped_connection a = original.control->applied_transaction().connect([&](const auto& event) {
+         expected.push_back(consensus_trace(std::get<0>(event)));
+      });
+      boost::signals2::scoped_connection b = observed.control->applied_transaction().connect([&](const auto& event) {
+         actual.push_back(consensus_trace(std::get<0>(event)));
+      });
+      for (size_t index = 0; index < blocks.size(); ++index) {
+         BOOST_TEST_CONTEXT("token workers=" << workers << " checkpoint=" << index) {
+            expected.clear(); actual.clear();
+            const auto before = observed.control->get_parallel_execution_stats();
+            original.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(blocks[index].block)));
+            observed.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(blocks[index].block)));
+            original.control->abort_block(); observed.control->abort_block();
+            BOOST_CHECK(expected == actual);
+            BOOST_CHECK(original.head().id() == observed.head().id());
+            BOOST_CHECK_EQUAL(original.last_irreversible_block_num(), observed.last_irreversible_block_num());
+            BOOST_CHECK(original.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+            const auto after = observed.control->get_parallel_execution_stats();
+            if (blocks[index].adopted >= 0) {
+               BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? blocks[index].adopted : 0);
+               BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? blocks[index].fallbacks : 0);
+            }
+         }
+      }
+      for (const auto owner : {"alice"_n, "bob"_n, "carol"_n, "dave"_n, "erin"_n, "frank"_n, "grace"_n, "sponsor"_n, "blank"_n})
+         BOOST_CHECK_EQUAL(token_balance(original, owner), token_balance(observed, owner));
+   }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 
@@ -838,6 +1033,101 @@ BOOST_FIXTURE_TEST_CASE(nonexplicit_production_preserves_order_receipts_and_seri
       BOOST_CHECK(produced_traces == verified_traces);
       BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
       for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) check_row(producer, scope, 17);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(real_token_production_notifications_and_rejections_preserve_atomicity) {
+   const auto code = token_fixture_code();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   auto genesis = base_tester::default_genesis();
+   auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+   genesis.initial_savanna.emplace();
+   genesis.initial_savanna->finalizer_key = public_key; genesis.initial_savanna->proof_of_possession = proof;
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory producer_dir, validator_dir;
+      auto config = base_tester::default_config(producer_dir).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      config.parallel_validation_threads = workers; config.parallel_production_enabled = workers != 0;
+      config.parallel_code_allowlist = {hash};
+      auto serial_config = base_tester::default_config(validator_dir).first;
+      serial_config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      production_chain producer(config, genesis), validator(serial_config, genesis);
+      producer.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      setup_token(producer, code);
+      validator.push_block(producer.produce_block());
+      validator.control->abort_block(); producer.control->abort_block();
+      uint64_t nonce = 100000;
+      for (unsigned mode = 0; mode < 6; ++mode) {
+         BOOST_TEST_CONTEXT("token producer workers=" << workers << " mode=" << mode) {
+            if (mode == 4) {
+               producer.set_code("bob"_n, compile("(module (func (export \"apply\") (param i64 i64 i64) (unreachable)))"));
+               validator.push_block(producer.produce_block());
+               validator.control->abort_block(); producer.control->abort_block();
+            }
+            if (mode == 5) {
+               producer.set_code("bob"_n, std::vector<uint8_t>{});
+               validator.push_block(producer.produce_block());
+               validator.control->abort_block(); producer.control->abort_block();
+            }
+            producer.start();
+            std::vector<transaction_metadata_ptr> transactions;
+            const bool fails = mode >= 2 && mode <= 4;
+            auto first = token_transaction(producer, "alice"_n, mode == 3 ? "missing"_n : "bob"_n,
+               mode == 2 ? 10000000000ll : 10000, nonce++);
+            transactions.push_back(metadata(producer, first));
+            transactions.push_back(metadata(producer, token_transaction(producer,
+               mode == 1 ? "alice"_n : "carol"_n, mode == 1 ? "bob"_n : "dave"_n, 10000, nonce++)));
+            transaction_trace_ptr expected_failure;
+            if (fails) {
+               validator.start();
+               expected_failure = production_push(validator, metadata(validator, first));
+               BOOST_REQUIRE(expected_failure->except);
+               validator.control->abort_block();
+            }
+            std::vector<std::vector<char>> produced, verified;
+            boost::signals2::scoped_connection connection = validator.control->applied_transaction().connect([&](const auto& event) {
+               if (std::any_of(transactions.begin(), transactions.end(), [&](const auto& trx) {
+                     return trx->id() == std::get<0>(event)->id;
+                  })) verified.push_back(consensus_trace(std::get<0>(event)));
+            });
+            const auto before = producer.control->get_parallel_production_stats();
+            size_t callbacks = 0;
+            BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(transactions,
+               fc::time_point::maximum(), [&](const auto& trx) {
+                  const auto before_state = producer.control->calculate_integrity_hash();
+                  const auto index = callbacks++;
+                  BOOST_CHECK(trx == transactions[index]);
+                  const auto trace = production_push(producer, trx);
+                  if (fails && index == 0) {
+                     BOOST_REQUIRE(trace->except);
+                     BOOST_REQUIRE(!trace->receipt);
+                     BOOST_CHECK_EQUAL(trace->except->code(), expected_failure->except->code());
+                     BOOST_CHECK(consensus_trace(trace) == consensus_trace(expected_failure));
+                     BOOST_CHECK(producer.control->calculate_integrity_hash() == before_state);
+                     BOOST_CHECK(!producer.control->is_known_unexpired_transaction(trx->id()));
+                  } else {
+                     BOOST_REQUIRE_MESSAGE(!trace->except, (trace->except ? trace->except->to_detail_string() : ""));
+                     BOOST_REQUIRE(trace->receipt);
+                     BOOST_CHECK_GE(trace->receipt->cpu_usage_us,
+                        producer.control->get_global_properties().configuration.min_transaction_cpu_usage);
+                     BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 3u);
+                     for (const auto& act : trace->action_traces) BOOST_CHECK(act.account_ram_deltas.empty());
+                     produced.push_back(consensus_trace(trace));
+                  }
+                  return true;
+               }), 2u);
+            BOOST_CHECK_EQUAL(callbacks, 2u);
+            const auto after = producer.control->get_parallel_production_stats();
+            const auto adopted = fails ? 0u : mode == 1 ? 1u : 2u;
+            BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? adopted : 0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? 2 - adopted : 0u);
+            const auto block = producer.finish_block();
+            BOOST_REQUIRE_EQUAL(block->transactions.size(), fails ? 1u : 2u);
+            validator.push_block(block); validator.control->abort_block();
+            BOOST_CHECK(produced == verified);
+            BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
+         }
+      }
    }
 }
 
@@ -1125,6 +1415,7 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
    const char* destination = std::getenv("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR");
    if (!destination) { BOOST_TEST_MESSAGE("Live process fixture export not requested"); return; }
    const auto directory = std::filesystem::path(destination);
+   const bool token_fixture = std::getenv("PUREEOS_PARALLEL_PRODUCER_TOKEN") != nullptr;
    BOOST_REQUIRE(std::filesystem::create_directory(directory));
    std::filesystem::permissions(directory, std::filesystem::perms::owner_all);
    auto genesis = base_tester::default_genesis();
@@ -1151,12 +1442,16 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
          ("block_num", block->block_num())("block_id", source.head().id())("lib", source.last_irreversible_block_num())
          ("integrity_hash", source.control->calculate_integrity_hash())("file", file));
    };
-   source.create_accounts({"test"_n, "alice"_n, "bob"_n, "carol"_n, "dave"_n}); seal();
-   source.set_code("test"_n, initialize_code()); seal();
-   unsigned nonce = 1;
-   for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) push(source, scope, 10, nonce++);
-   seal();
-   auto code = update_code(); source.set_code("test"_n, code); seal();
+   auto code = token_fixture ? token_fixture_code() : update_code();
+   if (token_fixture) {
+      setup_token(source, code); seal();
+   } else {
+      source.create_accounts({"test"_n, "alice"_n, "bob"_n, "carol"_n, "dave"_n}); seal();
+      source.set_code("test"_n, initialize_code()); seal();
+      unsigned nonce = 1;
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) push(source, scope, 10, nonce++);
+      seal(); source.set_code("test"_n, code); seal();
+   }
    const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
    source.start();
    fc::variants transactions;
@@ -1169,9 +1464,13 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
    }
    for (unsigned i = 0; i < transaction_count; ++i) {
       const std::array scopes{"alice"_n, "bob"_n, "carol"_n, "dave"_n};
-      auto trx = make_transaction(source, scopes[i % 4], 1, 10000 + i, 20000);
+      const std::array senders{"alice"_n, "carol"_n, "erin"_n};
+      const std::array recipients{"bob"_n, "dave"_n, "frank"_n};
+      auto trx = token_fixture ? token_transaction(source, senders[i % 3], recipients[i % 3], 1, 10000 + i) :
+         make_transaction(source, scopes[i % 4], 1, 10000 + i, 20000);
       trx.expiration = fc::time_point_sec(fc::time_point::now() + fc::seconds(1800));
-      trx.signatures.clear(); trx.sign(source.get_private_key("alice"_n, "active"), source.control->get_chain_id());
+      trx.signatures.clear();
+      trx.sign(source.get_private_key(token_fixture ? senders[i % 3] : "alice"_n, "active"), source.control->get_chain_id());
       packed_transaction packed(trx, packed_transaction::compression_type::none);
       transactions.emplace_back(fc::mutable_variant_object()("id", packed.id())("packed", packed));
    }
@@ -1185,6 +1484,7 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
       public_key.to_string() + "=KEY:" + private_key.to_string()};
    BOOST_REQUIRE(fc::json::save_to_file(providers, directory / "TEST-ONLY-keys.json"));
    BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format", 1)
+      ("fixture_kind", token_fixture ? "real-token" : "existing-row-wat")
       ("chain_id", source.control->get_chain_id())("code_hashes", std::vector{hash})("checkpoints", checkpoints), directory / "manifest.json"));
 }
 

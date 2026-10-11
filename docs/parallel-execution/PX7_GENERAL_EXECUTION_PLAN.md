@@ -47,7 +47,7 @@
 - [x] G1 实现及测试。
 - [x] G2 按需捕获：已直接实现查询级稀疏副本，而非整表复制。
 - [x] G3a CDT 基础兼容：内存增长保护、内存/断言接口、仅回退导入桩及真实 CDT 夹具；链级验证/生产、ASan/UBSan/LSan、TSan 及新旧进程复测通过，见 [验收记录](PX7_G3A_RESULTS.md)。
-- [ ] G3 真实资产转账采用。
+- [x] G3 真实资产转账采用（G3b）：已有余额行、同 payer/长度、无代码通知；原版 EOS 与当前 PureEOS token 已验收，见 [本批证据](PX7_G3B_RESULTS.md)。更广泛能力仍归 G4–G7。
 - [ ] G4 生命周期与 RAM。
 - [ ] G5 调用树。
 - [ ] G6 二级索引及一般接口。
@@ -97,7 +97,7 @@ G2 初拟“按需整表捕获”，但源码推演发现它仍会因单张大�
 
 新增 `unittests/test-contracts/parallel_cdt/` 的源码、ABI 和固定 WASM，使用真正的 CDT dispatcher、`multi_index`、动态分配与已有行修改，验证端/生产端分别检查真实采用、热点、失败断言、超限后回退及原串行 receipt/RAM/状态。它不是 token，G3a 完成也不能勾选“真实资产转账完成”。`is_account` 的有界副本、通知日志和接收者代码检查仍为接下来的 G3b。
 
-### G3b 下一步实施规格（尚未开发）
+### G3b 实施规格（已按本节边界验收）
 
 1. 账户存在性由 owner 在 `account_object/by_name` 读取，按需复制存在/不存在证明；worker 的未知账户只能提出带类型的数据请求。扩展 `transaction_state_view`、frozen/overlay、工作池结果和 controller 探测集合，分别限制账户数及请求数。不能把未捕获账户当不存在，不能借用 token 余额表作证明。
 2. `is_account` 的实际读取进入结果依赖，正式采用前重新检查。不要把每笔通知都会变化的 `recv_sequence/auth_sequence` 混进账户存在性版本，造成无关交易误冲突；账户对象身份或存在性与接收者执行能力需分别审查。
@@ -105,4 +105,16 @@ G2 初拟“按需整表捕获”，但源码推演发现它仍会因单张大�
 4. G3b 初版仅准入没有 WASM、没有对应原生 handler 的通知接收者；代码、原生能力和账户状态在任何正式写入前复核。通知接收者有代码、inline、sync-call 或未覆盖的输出路径整笔回退，不能执行子合约后仍沿用“只有 root 写集”的依赖证明。
 5. 保持首个串行回退丢弃批次尾部。用未修改的真实 token WASM 验证 owner-paid 既存双方余额行，以及同余额冲突、先入后出、余额不足、缺失目标、带代码通知、通知拒绝/去重、payer 改变和新建余额行的原路径回退。正式 receipt、通知顺序、RAM、全状态及旧程序重放都要核对。
 
-以上规格来自本轮对 `host_context::is_account`、`apply_context::exec/exec_one/require_recipient` 的源码复查，不表示已实现或已测试。
+2026-10-11 后续推进：已接入带类型账户请求、拥有所有权的正/负存在性副本、读取依赖及正式采用前复核；新增有界通知日志，owner 在任何写入前检查全部接收者无代码/无原生 handler，再使用原通知调度器生成输出。现为 25 个受限接口、9 个仅调用回退桩、228 个拒绝链接接口。原版 EOS token 含未用于 transfer 的 `send_inline` 导入，因此新增其正确签名的仅回退桩，实际调用仍整笔回退，不代表 G5 已实现。
+
+已验证两个不修改业务语义的 WASM：仓库原版 EOS token 固定哈希 `4c76fdcd…`，以及外部只读 PureEOS reference-contracts token 固定哈希 `ea1bd149…`。基础测试默认使用前者，后者通过显式环境变量选取并核对固定哈希。差分 trace 新增 action/creator/ancestor ordinal、receiver、原 action 和 context-free 标志；真实生产进程夹具新增 token 模式，不能以原 WAT 负载冒充 token 验收。2026-10-12 完成本批核心/工作池/两类 sanitizer 三轮、真实 token 生产互验、恢复三轮和 21 组兼容检查，具体范围与产物见 [G3b 验收](PX7_G3B_RESULTS.md)。
+
+### G4 后续拆分：先既存行 RAM，再结构变化（尚未实现）
+
+本轮继续检查 `host_context.cpp:db_update_i64/db_store_i64/db_remove_i64`、`apply_context.cpp:update_db_usage` 和私有游标后，确定不能只删除 `same payer/same length` 的判断：
+
+1. G4a：既存行 resize/payer。私有查询元数据必须反映最新长度/payer；`primary_overlay_cursor::get` 目前用缓存旧长度回答零长度查询，放开 resize 后必须修正。每次更新按原序记录，不能只提交最终值；payer A→B→A 也可能中间触及授权/RAM 限制。owner 通过原 `db_update_i64` 重放正负 RAM 账，保留 action 结束处及事务完成处的原检查和撤销；不在 worker 调正式资源管理器。对相同主键的所有变化仍冲突，表 count/键集合未变时不污染不相关范围。
+2. G4b：store/remove 与表生命周期。新增有类型的创建/删除日志和不可与正式 ID 混用的临时身份；正式 ID 只能 owner 原序分配。删除最后一行会删除表并退还表 payer，删除后重建必须使旧行/结束迭代器失效，不能仅按逻辑键重新找到对象而“复活”旧句柄。缺失查询、前后邻居与 table count 的结构依赖要同时扩展。
+3. 验收分别覆盖多次改长短后 `db_get_i64(...,0)`、同账户/不同账户 payer 切换、无授权/不存在 payer、RAM 临界、通知与 root 账本回滚；再覆盖真实 token 的首次收款、`open/close`、删后重建、范围幻读、主键极值、对象 ID/快照/分叉一致性。
+
+这是 G4 的源码约束及切分，不将 G3b 的“正确回退”计作 G4 已实现。

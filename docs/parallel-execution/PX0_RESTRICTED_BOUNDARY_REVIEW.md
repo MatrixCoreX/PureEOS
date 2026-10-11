@@ -4,6 +4,8 @@
 
 PX7 补充：下文固定保留 PX0–PX6 历史边界。G1/G2 已改为精确查询依赖和按查询捕获；G3a 又扩展内存/断言入口及显式仅回退导入桩，设计、重新审查及测试见 [PX7](PX7_GENERAL_EXECUTION_PLAN.md)。因此下文“15 个 host、其他全部拒绝链接、要求显式内存最大值”不再是当前版本的完整边界。主键生命周期限制、原序提交和 owner 独占正式数据库仍不变。
 
+G3b 补充：新增账户身份/存在性按需副本和有序通知日志。账户实际读取进入依赖，不包含无关 receipt/auth sequence；任何未知账户需要 owner 复制，不能猜不存在。采用前逐一检查通知接收者账户、代码和原生处理器；仅无代码、无对应原生 handler 的通知可按原 `require_recipient/exec_one` 重放，不省略回执。不支持的子调用整笔回退；`send_inline` 仅获得可链接且调用必回退的桩。当前分类为 25 支持／9 仅回退／228 拒绝链接，262 项原注册没有自动全部批准。
+
 ## 1. 两条路径不能混为一谈
 
 正式 controller、权限/资源管理器、原生 action、插件回调仍只在原 owner 上执行。工作线程不调用原 `webassembly::interface`，不拥有 controller、Chainbase、pending block、资源管理器或插件引用。

@@ -65,11 +65,13 @@ struct isolated_vm_options : eosio::vm::eosio_options {
 
 struct isolated_host {
    primary_overlay_cursor& cursor;
+   primary_state_overlay& state;
    const isolated_action_input& input;
    std::stop_token stop;
    isolated_cancel external;
    std::function<std::span<char>()> linear_memory;
    std::vector<char> return_value;
+   std::vector<name> recipients;
 
    void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
    std::span<char> memory(uint32_t offset, uint32_t size) {
@@ -145,12 +147,19 @@ struct isolated_host {
    }
    [[noreturn]] void abort() { throw primary_state_unsupported(); }
 
+   int32_t is_account(uint64_t account) { check(); return bool(state.read_account(name{account})); }
+   void require_recipient(uint64_t account) {
+      check();
+      const name recipient{account};
+      if (recipient == input.receiver || std::find(recipients.begin(), recipients.end(), recipient) != recipients.end()) return;
+      if (recipients.size() == isolated_action_result::max_recipients) throw primary_state_budget_exceeded();
+      recipients.push_back(recipient);
+   }
    // Explicit link-only imports used by ordinary CDT modules. NONE is an
    // implementation: reaching any of these discards the WHOLE attempt, even
    // after private writes. No default result, output or canonical effect.
-   [[noreturn]] int32_t is_account(uint64_t) { throw primary_state_unsupported(); }
-   [[noreturn]] void require_recipient(uint64_t) { throw primary_state_unsupported(); }
    [[noreturn]] void prints_l(uint32_t, uint32_t) { throw primary_state_unsupported(); }
+   [[noreturn]] void send_inline(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] int32_t db_store_i64(uint64_t, uint64_t, uint64_t, uint64_t, uint32_t, uint32_t) { throw primary_state_unsupported(); }
    [[noreturn]] void db_remove_i64(int32_t) { throw primary_state_unsupported(); }
    [[noreturn]] void set_blockchain_parameters_packed(uint32_t, uint32_t) { throw primary_state_unsupported(); }
@@ -214,6 +223,8 @@ void register_isolated_functions() {
       ISOLATED_HOST(eosio_assert_message);
       ISOLATED_HOST(eosio_assert_code);
       ISOLATED_HOST(abort);
+      ISOLATED_HOST(is_account);
+      ISOLATED_HOST(require_recipient);
       ISOLATED_HOST(set_action_return_value);
       ISOLATED_HOST(db_find_i64);
       ISOLATED_HOST(db_lowerbound_i64);
@@ -225,9 +236,8 @@ void register_isolated_functions() {
       ISOLATED_HOST(db_previous_i64);
 #undef ISOLATED_HOST
 #define ISOLATED_FALLBACK(method) functions::add<&isolated_host::method>("env", #method)
-      ISOLATED_FALLBACK(is_account);
-      ISOLATED_FALLBACK(require_recipient);
       ISOLATED_FALLBACK(prints_l);
+      ISOLATED_FALLBACK(send_inline);
       ISOLATED_FALLBACK(db_store_i64);
       ISOLATED_FALLBACK(db_remove_i64);
       ISOLATED_FALLBACK(set_blockchain_parameters_packed);
@@ -311,7 +321,7 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
    primary_state_overlay state(std::move(base), overlay_limits);
    primary_overlay_cursor cursor(state, input.receiver);
    auto& machine = *impl_->machine;
-   isolated_host host{cursor, input, stop, external, [&]() -> std::span<char> {
+   isolated_host host{cursor, state, input, stop, external, [&]() -> std::span<char> {
       auto& context = machine.get_context();
       const int32_t pages = context.current_linear_memory();
       // EOS VM uses -1 for modules with NO memory. Never convert that sentinel
@@ -319,7 +329,7 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
       // back too; non-memory hosts remain usable without linear memory.
       if (pages <= 0) throw primary_state_unsupported();
       return {context.linear_memory(), static_cast<size_t>(pages) * 65536u};
-   }, {}};
+   }, {}, {}};
    const attempt_deadline deadline(impl_->limits.max_attempt_time, stop, external);
    auto& context = machine.get_context();
    // Same reset/start sequence as backend::initialize, with a bounded visitor
@@ -332,7 +342,7 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
    context.execute_start(&host, visitor);
    context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
    deadline.check();
-   return {state.seal(), std::move(host.return_value), fingerprint};
+   return {state.seal(), std::move(host.return_value), fingerprint, std::move(host.recipients)};
 }
 
 } // namespace eosio::chain::experimental

@@ -3227,6 +3227,7 @@ struct controller_impl {
          auto& stats = production ? parallel_production_stats : parallel_stats;
          std::set<table_key, table_key_less> keys;
          std::set<primary_query, primary_query_less> queries;
+         std::set<name> accounts;
          auto private_cancel = cancel;
          private_cancel.deadline = std::min(cancel.deadline,
             std::chrono::steady_clock::now() + std::chrono::milliseconds(500));
@@ -3243,7 +3244,8 @@ struct controller_impl {
             const auto capture_started = performance::mark();
             const std::vector<table_key> tables(keys.begin(), keys.end());
             const std::vector<primary_query> reads(queries.begin(), queries.end());
-            auto base = frozen_primary_state::capture_queries(view, tables, reads, {}, checkpoint);
+            const std::vector<name> account_reads(accounts.begin(), accounts.end());
+            auto base = frozen_primary_state::capture_queries(view, tables, reads, {}, checkpoint, account_reads);
             auto attempts = std::make_unique<validation_attempts>();
             attempts->cancel = cancel;
             attempts->order = std::make_unique<ordered_attempt_batch>(base, requests);
@@ -3266,8 +3268,13 @@ struct controller_impl {
             for (const auto& result : attempts->outcomes) {
                if (!result.request) continue;
                requested = true;
-               extended |= keys.insert(result.request->table).second;
-               if (result.request->query) extended |= queries.insert(*result.request->query).second;
+               if (const auto* account = std::get_if<account_capture_request>(&*result.request)) {
+                  extended |= accounts.insert(account->account).second;
+               } else {
+                  const auto& primary = std::get<primary_capture_request>(*result.request);
+                  extended |= keys.insert(primary.table).second;
+                  if (primary.query) extended |= queries.insert(*primary.query).second;
+               }
             }
             if (!requested) return attempts;
             if (!extended) throw primary_state_invalid_attempt();

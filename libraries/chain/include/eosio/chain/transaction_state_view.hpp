@@ -29,6 +29,15 @@ struct table_read {
    bool operator==(const table_read&) const = default;
 };
 
+// Account identity only. Receipt/auth sequences, ABI and executable capability
+// are NOT dependencies of is_account; notification capability is checked by
+// the canonical owner separately, before any mutation.
+struct account_read {
+   name account;
+   int64_t object_id = 0;
+   bool operator==(const account_read&) const = default;
+};
+
 struct primary_row_read {
    int64_t object_id = 0;
    int64_t table_object_id = 0;
@@ -91,6 +100,7 @@ struct state_view_unsupported_query : std::logic_error {
 class transaction_state_view {
 public:
    virtual ~transaction_state_view() = default;
+   virtual std::optional<account_read> read_account(name) const = 0;
    virtual std::optional<table_read> read_table(const table_key&) const = 0;
    virtual primary_metadata_result locate_primary(const primary_query&) const = 0;
    virtual primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const = 0;
@@ -110,6 +120,7 @@ public:
    chainbase_transaction_state_view(chainbase_transaction_state_view&&) = delete;
    chainbase_transaction_state_view& operator=(chainbase_transaction_state_view&&) = delete;
 
+   std::optional<account_read> read_account(name) const override;
    std::optional<table_read> read_table(const table_key&) const override;
    primary_metadata_result locate_primary(const primary_query&) const override;
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;

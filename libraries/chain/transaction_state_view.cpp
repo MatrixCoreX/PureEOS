@@ -1,5 +1,6 @@
 #include <eosio/chain/transaction_state_view.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
+#include <eosio/chain/account_object.hpp>
 #include <algorithm>
 
 namespace eosio::chain::experimental {
@@ -85,6 +86,13 @@ locate(const chainbase::database& db, const primary_query& query) {
 
 chainbase_transaction_state_view::chainbase_transaction_state_view(const chainbase::database& db)
    : db_(db), owner_(std::this_thread::get_id()) {}
+
+std::optional<account_read> chainbase_transaction_state_view::read_account(name account) const {
+   require_owner_thread();
+   const auto* found = db_.find<account_object, by_name>(account);
+   if (!found) return {};
+   return account_read{account, found->id._id};
+}
 
 void chainbase_transaction_state_view::require_owner_thread() const {
    if (std::this_thread::get_id() != owner_)

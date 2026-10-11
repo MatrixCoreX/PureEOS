@@ -80,6 +80,20 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
    // changes still invalidate metadata/selection; writes remain update-only.
    // No state pointers from this check survive into the mutation loop.
    if (!result.state.matches_base_reads(live, [&] { context.trx_context.checktime(); })) return false;
+   // A root-only write set cannot justify executing an untracked child WASM or
+   // native handler. Recheck ALL recipients on the owner before changing any
+   // canonical row or scheduling a trace. Empty-code notifications still run
+   // exec_one and produce the original receipts, sequences and resource checks.
+   if (result.recipients.size() > isolated_action_result::max_recipients) return false;
+   std::set<name> notified{context.get_receiver()};
+   for (const auto recipient : result.recipients) {
+      context.trx_context.checktime();
+      if (!notified.insert(recipient).second || !live.read_account(recipient) ||
+          recipient == "eosio.msig"_n || recipient == "eosio.wrap"_n) return false;
+      const auto* metadata = context.db.find<account_metadata_object, by_name>(recipient);
+      if (!metadata || metadata->code_hash != fc::sha256{} ||
+          context.control.find_apply_handler(recipient, context.get_action().account, context.get_action().name)) return false;
+   }
    for (const auto& write : result.state.writes()) {
       if (write.table.code != context.get_receiver() || !result.state.read_tables().contains(write.table) ||
           !result.state.read_queries().contains({write.table, primary_query_kind::find, write.primary_key})) return false;
@@ -94,6 +108,7 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
       const auto iterator = context.db_find_i64(write.table.code, write.table.scope, write.table.table, write.primary_key);
       context.db_update_i64(iterator, write.payer, write.value.data(), write.value.size());
    }
+   for (const auto recipient : result.recipients) context.require_recipient(recipient);
    context.action_return_value = std::move(return_value);
    return true;
 }

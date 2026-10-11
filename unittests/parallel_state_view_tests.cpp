@@ -2,6 +2,7 @@
 #include <eosio/chain/parallel_state_overlay.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
+#include <eosio/chain/account_object.hpp>
 #include <fc/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 #include <algorithm>
@@ -28,6 +29,8 @@ struct view_fixture {
       db.add_index<table_id_multi_index>();
       db.add_index<key_value_index>();
       db.add_index<index64_index>();
+      db.add_index<account_index>();
+      db.add_index<account_metadata_index>();
    }
 
    const table_id_object& table(const table_key& key = accounts) {
@@ -769,6 +772,7 @@ BOOST_FIXTURE_TEST_CASE(guard_rechecks_every_selection_but_copies_shared_payload
       const transaction_state_view& source;
       mutable unsigned selections = 0, payloads = 0;
       explicit counted_view(const transaction_state_view& source) : source(source) {}
+      std::optional<account_read> read_account(name account) const override { return source.read_account(account); }
       std::optional<table_read> read_table(const table_key& key) const override { return source.read_table(key); }
       primary_metadata_result locate_primary(const primary_query& query) const override {
          ++selections; return source.locate_primary(query);
@@ -838,6 +842,72 @@ BOOST_FIXTURE_TEST_CASE(query_budget_deduplicates_and_poisoning_cannot_be_sealed
    BOOST_CHECK(zero.read_table(accounts));
    BOOST_CHECK_THROW(zero.locate_primary({accounts, primary_query_kind::find, 1}), primary_state_budget_exceeded);
    BOOST_CHECK_THROW(zero.seal(), primary_state_invalid_attempt);
+}
+
+BOOST_FIXTURE_TEST_CASE(account_existence_is_owned_tracked_and_not_inferred_from_tables, view_fixture) {
+   put(1); // alice has a scope, but no account object
+   const auto& bob = db.create<account_object>([](auto& obj) { obj.name = "bob"_n; });
+   const auto& metadata = db.create<account_metadata_object>([](auto& obj) { obj.name = "bob"_n; });
+   const std::array names{"alice"_n, "bob"_n};
+   auto base = frozen_primary_state::capture_queries(view, {}, {}, {}, {}, names);
+   BOOST_CHECK_EQUAL(base->account_count(), 2u);
+   BOOST_CHECK(!base->read_account("alice"_n));
+   BOOST_REQUIRE(base->read_account("bob"_n));
+   BOOST_CHECK_EQUAL(base->read_account("bob"_n)->object_id, bob.id._id);
+   BOOST_CHECK_THROW(base->read_account("carol"_n), primary_state_missing);
+   primary_state_overlay overlay(base);
+   BOOST_CHECK(!overlay.read_account("alice"_n));
+   BOOST_CHECK(overlay.read_account("bob"_n));
+   BOOST_CHECK(overlay.read_account("bob"_n));
+   const auto result = overlay.seal();
+   BOOST_CHECK_EQUAL(result.read_accounts().size(), 2u);
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   db.modify(metadata, [](auto& obj) { ++obj.recv_sequence; ++obj.auth_sequence; ++obj.abi_sequence; });
+   db.modify(bob, [](auto& obj) { obj.abi.assign("changed", 7); });
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   auto undo = db.start_undo_session(true);
+   db.create<account_object>([](auto& obj) { obj.name = "alice"_n; });
+   BOOST_CHECK(!result.matches_base_reads(view, [] {}));
+   BOOST_CHECK(!base->read_account("alice"_n));
+   undo.undo();
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   // Canonical accounts cannot be deleted. Exercise the identity guard anyway.
+   db.remove(bob);
+   db.create<account_object>([](auto& obj) { obj.name = "bob"_n; });
+   BOOST_CHECK(!result.matches_base_reads(view, [] {}));
+}
+
+BOOST_FIXTURE_TEST_CASE(account_budgets_unknown_requests_and_thread_affinity_are_fail_closed, view_fixture) {
+   const std::array names{"alice"_n, "bob"_n};
+   primary_snapshot_limits snapshot_limits; snapshot_limits.max_accounts = 1;
+   BOOST_CHECK_THROW(frozen_primary_state::capture_queries(view, {}, {}, snapshot_limits, {}, names), primary_state_budget_exceeded);
+   unsigned checkpoints = 0;
+   auto base = frozen_primary_state::capture_queries(view, {}, {}, {}, [&] { ++checkpoints; }, names);
+   BOOST_CHECK_EQUAL(checkpoints, 2u);
+   primary_overlay_limits limits; limits.max_read_accounts = 1;
+   primary_state_overlay overlay(base, limits);
+   BOOST_CHECK(!overlay.read_account("alice"_n));
+   BOOST_CHECK(!overlay.read_account("alice"_n));
+   BOOST_CHECK_THROW(overlay.read_account("bob"_n), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
+   primary_state_overlay unknown(base);
+   try { unknown.read_account("carol"_n); BOOST_FAIL("unknown account was treated as absent"); }
+   catch (const primary_state_missing& missing) {
+      BOOST_REQUIRE(std::holds_alternative<account_capture_request>(missing.request));
+      BOOST_CHECK(std::get<account_capture_request>(missing.request).account == "carol"_n);
+   }
+   BOOST_CHECK_THROW(unknown.seal(), primary_state_invalid_attempt);
+   BOOST_CHECK(std::async(std::launch::async, [&] {
+      try { view.read_account("alice"_n); return false; }
+      catch (const state_view_wrong_thread&) { return true; }
+   }).get());
+   primary_state_overlay owned(base);
+   BOOST_CHECK(std::async(std::launch::async, [&] {
+      try { owned.read_account("alice"_n); return false; }
+      catch (const state_view_wrong_thread&) { return true; }
+   }).get());
+   BOOST_CHECK(!owned.read_account("alice"_n)); // wrong-thread read did not poison owner
+   BOOST_CHECK(!std::async(std::launch::async, [base] { return base->read_account("alice"_n).has_value(); }).get());
 }
 
 BOOST_FIXTURE_TEST_CASE(sparse_capture_only_copies_requested_rows_from_a_large_table, view_fixture) {

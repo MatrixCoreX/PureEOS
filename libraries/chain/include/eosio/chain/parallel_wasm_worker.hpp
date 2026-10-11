@@ -49,6 +49,10 @@ struct isolated_action_result {
    primary_overlay_result state;
    std::vector<char> return_value;
    fc::sha256 execution_fingerprint;
+   // Root notification order; root itself is implicitly already notified.
+   // The owner must preflight every recipient and replay the original scheduler.
+   static constexpr size_t max_recipients = 64;
+   std::vector<name> recipients;
 };
 
 // Binds successful output to the actual code, fixed action inputs and observable
