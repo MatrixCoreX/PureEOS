@@ -1,6 +1,7 @@
 #include "Types.h"
 
 #include <map>
+#include <memory>
 
 namespace IR
 {
@@ -15,23 +16,25 @@ namespace IR
 			friend bool operator!=(const Key& left,const Key& right) { return left.ret != right.ret || left.parameters != right.parameters; }
 			friend bool operator<(const Key& left,const Key& right) { return left.ret < right.ret || (left.ret == right.ret && left.parameters < right.parameters); }
 		};
-		static std::map<Key,FunctionType*>& get()
+		static std::map<Key,std::unique_ptr<FunctionType>>& get()
 		{
-			static std::map<Key,FunctionType*> map;
+			// Interned addresses remain stable for the cache lifetime. Own the
+			// objects so normal shutdown (and failed insertion) cannot leak them.
+			static std::map<Key,std::unique_ptr<FunctionType>> map;
 			return map;
 		}
 	};
 
 	template<typename Key,typename Value,typename CreateValueThunk>
-	Value findExistingOrCreateNew(std::map<Key,Value>& map,Key&& key,CreateValueThunk createValueThunk)
+	Value* findExistingOrCreateNew(std::map<Key,std::unique_ptr<Value>>& map,Key&& key,CreateValueThunk createValueThunk)
 	{
 		auto mapIt = map.find(key);
-		if(mapIt != map.end()) { return mapIt->second; }
+		if(mapIt != map.end()) { return mapIt->second.get(); }
 		else
 		{
-			Value value = createValueThunk();
-			map.insert({std::move(key),value});
-			return value;
+			auto value = std::unique_ptr<Value>(createValueThunk());
+			auto inserted = map.emplace(std::move(key),std::move(value));
+			return inserted.first->second.get();
 		}
 	}
 
