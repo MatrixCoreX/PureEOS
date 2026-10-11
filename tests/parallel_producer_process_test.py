@@ -41,7 +41,10 @@ def main():
     parser.add_argument("--old-sha256", required=True)
     parser.add_argument("--output-parent", type=Path, required=True)
     parser.add_argument("--token-fixture", action="store_true", help="Exercise unchanged real token transfers and notification receipts")
+    parser.add_argument("--ram-fixture", action="store_true", help="With --token-fixture, first transfer changes the sender row RAM payer")
     args = parser.parse_args()
+    if args.ram_fixture and not args.token_fixture:
+        parser.error("--ram-fixture requires --token-fixture")
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
     require(sha256(old) == args.old_sha256, "Original binary hash changed")
@@ -49,7 +52,7 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
-              "fixture_kind": "real-token" if args.token_fixture else "existing-row-wat",
+              "fixture_kind": "real-token-payer-change" if args.ram_fixture else "real-token" if args.token_fixture else "existing-row-wat",
               "old_sha256": sha256(old), "new_sha256": sha256(new), "exporter_sha256": sha256(exporter), "phases": []}
     nodes = []
     journals = []
@@ -65,6 +68,10 @@ def main():
                 env["PUREEOS_PARALLEL_PRODUCER_TOKEN"] = "1"
             else:
                 env.pop("PUREEOS_PARALLEL_PRODUCER_TOKEN", None)
+            if args.ram_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_RAM"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_RAM", None)
             with (group / "export.log").open("x") as log:
                 result = subprocess.run([str(exporter), "--run_test=parallel_production_tests/export_fresh_live_producer_fixture",
                     "--report_level=detailed", "--color_output=no"], env=env, cwd=group,
@@ -97,6 +104,8 @@ def main():
                 producer.check(point)
                 observer.check(point)
             entries = json.loads((corpus / "transactions.json").read_text())
+            if args.ram_fixture:
+                require(len(entries) == 16, "RAM payer fixture requires the fixed 16-transaction corpus")
             metrics_before = scrape_stages(producer)
             (group / "metrics-before.txt").write_text(metrics_before)
             journal = Journal(group / "finality-evidence.jsonl")
@@ -108,11 +117,17 @@ def main():
             journal.emit("window", version=1, clock="monotonic_ns", start_ns=started, end_ns=ended,
                          scope="Finite queued 16-transaction compatibility load; NOT saturation or capacity")
             responses = []
+            payer_change = {}
             for entry in entries:
                 journal.emit("sent", id=entry["id"], actions=1)
                 response = producer.rpc("push_transaction", entry["packed"])
                 require(response["transaction_id"] == entry["id"], "Submission ID changed")
                 require(response["processed"]["receipt"]["status"] == "executed", "Speculative submission failed")
+                if args.ram_fixture and not responses:
+                    payer_change = {item["account"]: item["delta"] for item in
+                                    response["processed"]["action_traces"][0]["account_ram_deltas"]}
+                    require(payer_change.get("alice", 0) < 0 and payer_change.get("sponsor", 0) > 0 and
+                            sum(payer_change.values()) == 0, "First token transfer did not move the sender RAM payer")
                 responses.append(response["transaction_id"])
                 journal.emit("ack", id=entry["id"], accepted=True)
             before = producer.rpc("get_info")
@@ -178,6 +193,8 @@ def main():
                                 r"succeeded=(\d+), adopted=(\d+), serial_fallbacks=(\d+)", text)
             if workers:
                 require(len(totals) == 1 and int(totals[0][3]) > 0, "Live producer never adopted a private result")
+                if args.ram_fixture:
+                    require(int(totals[0][3]) == 6, "RAM payer transfer was not adopted in the fixed two-batch corpus")
             else:
                 require(not totals, "Serial mode unexpectedly ran a production batch")
             histories = [node.history_digests() for node in (producer, feeder, observer)]
@@ -191,6 +208,7 @@ def main():
             require(observer.history_digests() == histories[2], "Old checked replay changed finalized history output")
             item = {"phase": label, "head": target, "lib": info["last_irreversible_block_num"],
                     "code_hashes": manifest["code_hashes"],
+                    "first_transfer_ram_deltas": payer_change,
                     "state": state["integrity_hash"], "transactions": len(receipts), "slot_gaps_seconds": gaps,
                     "production_totals": totals, "history_sha256": histories[0], "old_checked_replay": True}
             item["bounded_load_finality"] = finalized

@@ -203,11 +203,11 @@ void primary_state_overlay::depend_on_query(primary_query query) const {
    }
 }
 
-const std::vector<char>* primary_state_overlay::written_value(const table_key& table, uint64_t key) const {
+const primary_update* primary_state_overlay::latest_write(const table_key& table, uint64_t key) const {
    const auto t = latest_writes_.find(table);
    if (t == latest_writes_.end()) return nullptr;
    const auto row = t->second.find(key);
-   return row == t->second.end() ? nullptr : &writes_[row->second].value;
+   return row == t->second.end() ? nullptr : &writes_[row->second];
 }
 
 std::optional<table_read> primary_state_overlay::read_table(const table_key& key) const {
@@ -233,8 +233,14 @@ primary_metadata_result primary_state_overlay::locate_primary(const primary_quer
    check_owner_and_valid();
    try {
       depend_on_query(query);
-      // Supported updates never change row identity, size, payer or ordering.
-      return base_->locate_primary(query);
+      // Keys and identities remain fixed, but the attempt observes its latest
+      // payload size/payer, including through an iterator cached before update.
+      auto found = base_->locate_primary(query);
+      if (found.row) if (const auto* write = latest_write(query.table, found.row->primary_key)) {
+         found.row->payer = write->payer;
+         found.row->value_size = write->value.size();
+      }
+      return found;
    } catch (...) { valid_ = false; throw; }
 }
 
@@ -243,9 +249,9 @@ primary_prefix_result primary_state_overlay::read_primary_prefix(const primary_q
    try {
       auto found = locate_primary(query);
       if (found.row) {
-         if (const auto* value = written_value(query.table, found.row->primary_key)) {
+         if (const auto* write = latest_write(query.table, found.row->primary_key)) {
             primary_prefix_result result{std::move(found), {}};
-            result.value.assign(value->begin(), value->begin() + std::min(max_bytes, value->size()));
+            result.value.assign(write->value.begin(), write->value.begin() + std::min(max_bytes, write->value.size()));
             return result;
          }
       }
@@ -259,9 +265,9 @@ primary_read_result primary_state_overlay::read_primary(const primary_query& que
       auto found = locate_primary(query);
       if (!found.row) return {found.table, std::nullopt};
       if (found.row->value_size > max_value_bytes) throw state_view_read_limit_exceeded();
-      if (const auto* value = written_value(query.table, found.row->primary_key)) {
+      if (const auto* write = latest_write(query.table, found.row->primary_key)) {
          const auto& row = *found.row;
-         return {found.table, primary_row_read{row.object_id, row.table_object_id, row.primary_key, row.payer, *value}};
+         return {found.table, primary_row_read{row.object_id, row.table_object_id, row.primary_key, row.payer, write->value}};
       }
       return base_->read_primary(query, max_value_bytes);
    } catch (...) { valid_ = false; throw; }
@@ -271,14 +277,22 @@ void primary_state_overlay::update_existing(const table_key& table, uint64_t key
    check_owner_and_valid();
    try {
       const auto found = locate_primary({table, primary_query_kind::find, key});
-      if (!found.row || (payer != name{} && payer != found.row->payer) || value.size() != found.row->value_size)
-         throw primary_state_unsupported();
+      if (!found.row) throw primary_state_unsupported();
       if (writes_.size() == limits_.max_write_operations || value.size() > limits_.max_write_value_bytes - written_bytes_)
          throw primary_state_budget_exceeded();
-      writes_.push_back({table, key, found.row->payer, std::vector<char>(value.begin(), value.end())});
+      // Resolve same_payer against the latest PRIVATE row, not the base. Keep
+      // all intermediate writes: collapsing A->B->A loses original RAM/auth
+      // effects and can turn a canonically failing action into a success.
+      writes_.push_back({table, key, payer == name{} ? found.row->payer : payer,
+                         std::vector<char>(value.begin(), value.end())});
       latest_writes_[table][key] = writes_.size() - 1;
       written_bytes_ += value.size();
    } catch (...) { valid_ = false; throw; }
+}
+
+size_t primary_state_overlay::write_count() const {
+   check_owner_and_valid();
+   return writes_.size();
 }
 
 primary_overlay_result primary_state_overlay::seal() {
@@ -400,10 +414,13 @@ int primary_overlay_cursor::previous(int iterator, uint64_t& primary_key) {
 int primary_overlay_cursor::get(int iterator, std::span<char> output) {
    return checked([&] {
       const auto row = get_handle(iterator);
-      if (row.row.value_size > static_cast<size_t>(std::numeric_limits<int>::max()))
-         throw primary_state_unsupported();
-      if (output.empty()) return static_cast<int>(row.row.value_size);
       const auto read = state_.read_primary_prefix({row.table, primary_query_kind::find, row.row.primary_key}, output.size());
+      if (!read.metadata.row || read.metadata.row->object_id != row.row.object_id ||
+          read.metadata.row->table_object_id != row.row.table_object_id)
+         throw primary_state_invalid_attempt();
+      if (read.metadata.row->value_size > static_cast<size_t>(std::numeric_limits<int>::max()))
+         throw primary_state_unsupported();
+      if (output.empty()) return static_cast<int>(read.metadata.row->value_size);
       std::copy(read.value.begin(), read.value.end(), output.begin());
       return static_cast<int>(read.value.size());
    });

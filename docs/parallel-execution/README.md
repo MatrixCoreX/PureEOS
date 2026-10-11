@@ -10,7 +10,9 @@ G1/G2 已完成本批验收：同表不同记录真实采用、按查询复制�
 
 G3a 已完成：补齐内存/断言基础接口与逐次内存增长保护，真实 CDT dispatcher/`multi_index`/动态分配合约的既存行更新在 1/2/4 worker 下被正式采用。核心、普通 worker、ASan/UBSan/LSan、TSan 和新旧验证/生产进程均复测 3 次；保留测试中发现的夹具问题与修正，详见 [G3a 验收](PX7_G3A_RESULTS.md)。
 
-G3b 已验收：账户存在性依赖及原序无代码通知接入后，原版 EOS token 与当前 PureEOS token 的既存余额转账已在 1/2/4 worker 下实际采用；通知回执、RAM、失败撤销与原串行核对。核心/工作池/两类 sanitizer 三轮、真实 token 生产互验、恢复和兼容检查的计数及产物见 [G3b 验收](PX7_G3B_RESULTS.md)。带代码通知、创建/删除行、payer/长度变化、inline/sync-call 仍整笔回退。**这不是全面合约并行完成，也不是默认开启或上线许可。**
+G3b 已验收：账户存在性依赖及原序无代码通知接入后，原版 EOS token 与当前 PureEOS token 的既存余额转账已在 1/2/4 worker 下实际采用；通知回执、RAM、失败撤销与原串行核对。核心/工作池/两类 sanitizer 三轮、真实 token 生产互验、恢复和兼容检查的计数及产物见 [G3b 验收](PX7_G3B_RESULTS.md)。该阶段尚未覆盖带代码通知、创建/删除行、payer/长度变化、inline/sync-call。
+
+G4a 已验收：既存行现在可改变长度及 RAM payer；所有中间更新与通知按原调用顺序重放，修复了 RAM 失败时通知 trace 不一致的问题。核心/工作池/两类 sanitizer 三轮、真实 EOS/PureEOS token RAM 转移、新旧重放及兼容回归见 [G4a 验收](PX7_G4A_RESULTS.md)。创建/删除行、调用树和二级索引仍未支持，继续推进 G4b–G7。**这不是全面合约并行完成，也不是默认开启或上线许可。**
 
 PX6 收尾版本（`0068f79`）的核心验证 8 用例/851 断言、生产端 6 个功能用例/542 断言、21 组兼容矩阵均独立重复三次通过。该版真实验证进程每次 55 阶段、生产者旧/新 0/1/2/4 五模式也各三次通过，包含旧程序完整重放新产块。14 组原业务与基础回归通过；180 轮/2,880 笔长驻进程测试通过。普通 worker、ASan/UBSan/LSan 与私有模块 TSan 均三次通过。**并非所有 EOS 合约都支持并行，没有生产容量或云服务器 TPS 提升承诺。**
 
@@ -55,6 +57,8 @@ PX6 收尾版本（`0068f79`）的核心验证 8 用例/851 断言、生产端 6
 - [PX0–PX6、T01–T26 的首版覆盖与限制](ACCEPTANCE_SCOPE.md)
 - [PX7 通用合约并行扩展滚动计划](PX7_GENERAL_EXECUTION_PLAN.md)
 - [PX7 G3a：真实 CDT 基础兼容与检测记录](PX7_G3A_RESULTS.md)
+- [PX7 G3b：真实 token 转账与无代码通知](PX7_G3B_RESULTS.md)
+- [PX7 G4a：既存行长度、RAM payer 与失败顺序](PX7_G4A_RESULTS.md)
 - [独立实验、关闭与回退操作](OPERATIONS.md)
 - [源码指纹和候选访问清单](access-inventory.json)
 - 审计工具：`scripts/parallel_access_audit.py`

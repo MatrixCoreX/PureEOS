@@ -98,7 +98,7 @@ private:
    void disable_speculation();
    const std::thread::id owner_ = std::this_thread::get_id();
    std::shared_ptr<identity> identity_;
-   // Existing-row, same-payer/same-length VALUE updates only. Any future
+   // Existing-row value/size/payer updates only. Any future
    // structural mutation must add key-range / table-lifecycle invalidation.
    std::map<table_key, std::set<uint64_t>, table_key_less> dirty_;
    size_t next_ = 0;

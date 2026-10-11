@@ -71,7 +71,7 @@ struct isolated_host {
    isolated_cancel external;
    std::function<std::span<char>()> linear_memory;
    std::vector<char> return_value;
-   std::vector<name> recipients;
+   std::vector<isolated_notification> recipients;
 
    void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
    std::span<char> memory(uint32_t offset, uint32_t size) {
@@ -151,9 +151,10 @@ struct isolated_host {
    void require_recipient(uint64_t account) {
       check();
       const name recipient{account};
-      if (recipient == input.receiver || std::find(recipients.begin(), recipients.end(), recipient) != recipients.end()) return;
+      if (recipient == input.receiver || std::any_of(recipients.begin(), recipients.end(),
+            [&](const auto& notification) { return notification.recipient == recipient; })) return;
       if (recipients.size() == isolated_action_result::max_recipients) throw primary_state_budget_exceeded();
-      recipients.push_back(recipient);
+      recipients.push_back({recipient, state.write_count()});
    }
    // Explicit link-only imports used by ordinary CDT modules. NONE is an
    // implementation: reaching any of these discards the WHOLE attempt, even

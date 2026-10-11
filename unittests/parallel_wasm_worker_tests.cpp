@@ -25,7 +25,8 @@ std::vector<char> wasm(const std::string& text) {
 }
 
 // All imports are real chain intrinsics. No test-only host/barrier is imported.
-std::vector<char> increment_wasm(const std::string& extra_imports = {}, const std::string& tail = {}) {
+std::vector<char> increment_wasm(const std::string& extra_imports = {}, const std::string& tail = {},
+                                 const std::string& before_update = {}) {
    return wasm(R"(
       (module )" + extra_imports + R"(
          (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
@@ -41,6 +42,7 @@ std::vector<char> increment_wasm(const std::string& extra_imports = {}, const st
                (i64.load (i32.const 32)) (i64.load (i32.const 8))))
             (drop (call $get (get_local $iterator) (i32.const 64) (i32.const 8)))
             (i64.store (i32.const 64) (i64.add (i64.load (i32.const 64)) (i64.load (i32.const 16))))
+            )" + before_update + R"(
             (call $update (get_local $iterator) (i64.const 0) (i32.const 64) (i32.const 8))
             (if (i32.eq (i32.load (i32.const 28)) (i32.const 1))
                (then (loop $forever (br $forever))))
@@ -299,9 +301,13 @@ BOOST_FIXTURE_TEST_CASE(real_wasm_updates_only_private_state_and_returns_origina
    }
 }
 
-BOOST_FIXTURE_TEST_CASE(unsupported_write_and_pointer_failure_discard_prior_write, wasm_fixture) {
+BOOST_FIXTURE_TEST_CASE(resize_is_logged_but_pointer_failure_discards_prior_write, wasm_fixture) {
    isolated_wasm_module machine(increment_wasm());
-   for (uint32_t mode : {2u, 3u}) {
+   const auto resized = machine.execute(base, input(1, 7, 0, 2));
+   BOOST_REQUIRE_EQUAL(resized.state.writes().size(), 2u);
+   BOOST_CHECK_EQUAL(resized.state.writes().back().value.size(), 7u);
+   BOOST_CHECK_EQUAL(number(resized.return_value), 17u);
+   for (uint32_t mode : {3u}) {
       BOOST_CHECK_THROW(machine.execute(base, input(1, 7, 0, mode)), primary_state_unsupported);
       BOOST_CHECK_EQUAL(canonical(), 10u);
       BOOST_CHECK_EQUAL(number(machine.execute(base, input()).return_value), 17u);
@@ -311,6 +317,28 @@ BOOST_FIXTURE_TEST_CASE(unsupported_write_and_pointer_failure_discard_prior_writ
    std::memcpy(unknown.data.data(), &scope, sizeof(scope));
    BOOST_CHECK_THROW(machine.execute(base, unknown), primary_state_unsupported);
    BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(wasm_resize_reads_current_size_and_same_payer_tracks_private_switch, wasm_fixture) {
+   const auto code = increment_wasm({},
+      "(call $update (get_local $iterator) (i64.const " + std::to_string("bob"_n.to_uint64_t()) + ") (i32.const 64) (i32.const 12))"
+      "(i32.store (i32.const 128) (call $get (get_local $iterator) (i32.const 0) (i32.const 0)))"
+      "(call $update (get_local $iterator) (i64.const 0) (i32.const 64) (i32.const 0))"
+      "(i32.store (i32.const 132) (call $get (get_local $iterator) (i32.const 0) (i32.const 0)))"
+      "(i64.store (i32.const 64) (i64.load (i32.const 128)))");
+   isolated_wasm_module machine(code);
+   for (unsigned i = 0; i < 3; ++i) {
+      const auto result = machine.execute(base, input());
+      BOOST_CHECK_EQUAL(number(result.return_value), 12u);
+      BOOST_REQUIRE_EQUAL(result.state.writes().size(), 3u);
+      BOOST_CHECK_EQUAL(result.state.writes()[0].value.size(), 8u);
+      BOOST_CHECK_EQUAL(result.state.writes()[1].value.size(), 12u);
+      BOOST_CHECK(result.state.writes()[2].value.empty());
+      BOOST_CHECK(result.state.writes()[1].payer == "bob"_n);
+      BOOST_CHECK(result.state.writes()[2].payer == "bob"_n);
+      BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   }
 }
 
 BOOST_FIXTURE_TEST_CASE(timeout_interrupts_infinite_wasm_and_module_can_be_reused, wasm_fixture) {
@@ -885,7 +913,7 @@ BOOST_FIXTURE_TEST_CASE(notification_journal_is_ordered_deduplicated_bounded_and
    for (unsigned repeat = 0; repeat < 3; ++repeat) {
       BOOST_CHECK_THROW(module.execute(base, input(1, 7, 0, 3)), primary_state_unsupported);
       const auto result = module.execute(base, input());
-      BOOST_CHECK((result.recipients == std::vector<name>{"bob"_n, "alice"_n}));
+      BOOST_CHECK((result.recipients == std::vector<isolated_notification>{{"bob"_n, 1}, {"alice"_n, 1}}));
       BOOST_CHECK_EQUAL(result.state.writes().size(), 1u);
    }
    std::string tail;
@@ -900,7 +928,16 @@ BOOST_FIXTURE_TEST_CASE(notification_journal_is_ordered_deduplicated_bounded_and
       "(func $start " + notify("bob"_n) + ") (start $start)" +
       "(func (export \"apply\") (param i64 i64 i64) " + notify("alice"_n) + notify("bob"_n) + "))");
    isolated_wasm_module start_module(start_code);
-   BOOST_CHECK((start_module.execute(base, input()).recipients == std::vector<name>{"bob"_n, "alice"_n}));
+   BOOST_CHECK((start_module.execute(base, input()).recipients ==
+      std::vector<isolated_notification>{{"bob"_n, 0}, {"alice"_n, 0}}));
+   const auto interleaved = increment_wasm(imported,
+      notify("alice"_n) + "(call $update (get_local $iterator) (i64.const 0) (i32.const 64) (i32.const 3))" +
+      notify("carol"_n) + notify("bob"_n) + notify("alice"_n), notify("bob"_n));
+   isolated_wasm_module ordered_module(interleaved);
+   const auto ordered = ordered_module.execute(base, input());
+   BOOST_CHECK_EQUAL(ordered.state.writes().size(), 2u);
+   BOOST_CHECK((ordered.recipients ==
+      std::vector<isolated_notification>{{"bob"_n, 0}, {"alice"_n, 1}, {"carol"_n, 2}}));
    for (auto host : {"is_account", "require_recipient"}) {
       const auto wrong_signature = wasm(std::string("(module (import \"env\" \"") + host +
          "\" (func (param i32))) (func (export \"apply\") (param i64 i64 i64)))");

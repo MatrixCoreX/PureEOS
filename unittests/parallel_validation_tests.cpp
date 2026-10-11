@@ -90,6 +90,52 @@ int64_t token_balance(tester& chain, name owner) {
    return result;
 }
 
+struct resize_step { uint64_t bytes; name payer; };
+using resize_steps = std::array<resize_step, 3>;
+
+std::vector<uint8_t> resize_code() {
+   std::string text = R"((module
+      (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
+      (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
+      (import "env" "db_get_i64" (func $get (param i32 i32 i32) (result i32)))
+      (import "env" "db_update_i64" (func $update (param i32 i64 i32 i32)))
+      (import "env" "set_action_return_value" (func $return (param i32 i32)))
+      (import "env" "require_recipient" (func $notify (param i64)))
+      (memory 1 1)
+      (data (i32.const 128) "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!!??")
+      (func (export "apply") (param $receiver i64) (param i64 i64) (local $it i32)
+         (drop (call $read (i32.const 0) (i32.const 64)))
+         (set_local $it (call $find (get_local $receiver) (i64.load (i32.const 0))
+            (i64.const )" + std::to_string("rows"_n.to_uint64_t()) + R"() (i64.const 1)))
+         (i32.store (i32.const 256) (call $get (get_local $it) (i32.const 0) (i32.const 0)))
+   )";
+   text += "(call $notify (i64.const " + std::to_string("bob"_n.to_uint64_t()) + "))";
+   for (unsigned i = 0; i < 3; ++i) {
+      text += "(call $update (get_local $it) (i64.load (i32.const " + std::to_string(16 + i * 16) +
+         ")) (i32.const 128) (i32.load (i32.const " + std::to_string(8 + i * 16) + ")))";
+      text += "(i32.store (i32.const " + std::to_string(260 + i * 4) +
+         ") (call $get (get_local $it) (i32.const 0) (i32.const 0)))";
+      if (i == 0) text += "(call $notify (i64.const " + std::to_string("alice"_n.to_uint64_t()) + "))";
+   }
+   text += "(call $notify (i64.const " + std::to_string("bob"_n.to_uint64_t()) + "))"
+      "(call $return (i32.const 256) (i32.const 16))))";
+   return compile(text);
+}
+
+signed_transaction resize_transaction(tester& chain, name scope, const resize_steps& steps, uint64_t nonce,
+                                      bool bob_authorizes = false) {
+   signed_transaction trx;
+   action act; act.account = "test"_n; act.name = "resize"_n; act.authorization = {{"alice"_n, "active"_n}};
+   if (bob_authorizes) act.authorization.push_back({"bob"_n, "active"_n});
+   const std::array<uint64_t, 8> data{scope.to_uint64_t(), steps[0].bytes, steps[0].payer.to_uint64_t(),
+      steps[1].bytes, steps[1].payer.to_uint64_t(), steps[2].bytes, steps[2].payer.to_uint64_t(), nonce};
+   act.data.assign(reinterpret_cast<const char*>(data.data()), reinterpret_cast<const char*>(data.data()) + sizeof(data));
+   trx.actions.push_back(std::move(act)); chain.set_transaction_headers(trx);
+   trx.sign(chain.get_private_key("alice"_n, "active"), chain.control->get_chain_id());
+   if (bob_authorizes) trx.sign(chain.get_private_key("bob"_n, "active"), chain.control->get_chain_id());
+   return trx;
+}
+
 std::vector<uint8_t> initialize_code(bool keyed = false) {
    return compile(R"((module
       (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
@@ -145,6 +191,7 @@ std::vector<char> consensus_trace(const transaction_trace_ptr& trace) {
    fields.push_back(fc::raw::pack(trace->id));
    if (trace->receipt) fields.push_back(fc::raw::pack(*trace->receipt));
    fields.push_back(fc::raw::pack(trace->net_usage));
+   fields.push_back(fc::raw::pack(trace->except ? trace->except->code() : int64_t{0}));
    for (const auto& action : trace->action_traces) {
       fields.push_back(fc::raw::pack(action.action_ordinal));
       fields.push_back(fc::raw::pack(action.creator_action_ordinal));
@@ -155,6 +202,8 @@ std::vector<char> consensus_trace(const transaction_trace_ptr& trace) {
       if (action.receipt) fields.push_back(fc::raw::pack(*action.receipt));
       fields.push_back(action.return_value);
       fields.push_back(fc::raw::pack(action.account_ram_deltas));
+      fields.push_back(fc::raw::pack(action.error_code));
+      fields.push_back(fc::raw::pack(action.except ? action.except->code() : int64_t{0}));
       fields.emplace_back(action.console.begin(), action.console.end());
    }
    return fc::raw::pack(fields);
@@ -820,6 +869,75 @@ BOOST_AUTO_TEST_CASE(real_cdt_dispatcher_multi_index_and_allocator_adopt_or_fall
    }
 }
 
+BOOST_FIXTURE_TEST_CASE(existing_row_resize_and_payer_journals_match_serial_ram_and_notifications, validation_corpus) {
+   const auto resize = resize_code();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(resize.data()), resize.size());
+   struct checkpoint { std::vector<char> block; unsigned adopted, fallbacks; };
+   std::vector<checkpoint> blocks;
+   {
+      fc::temp_directory directory;
+      tester source(configuration(directory, 0), genesis); prefix(source, 4);
+      source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      auto seal = [&](unsigned adopted, unsigned fallback) {
+         blocks.push_back({fc::raw::pack(*source.produce_block()), adopted, fallback});
+      };
+      source.set_code("test"_n, resize); seal(0, 0);
+      uint64_t nonce = 70000;
+      auto update = [&](name scope, const resize_steps& steps, bool bob = false) {
+         auto trx = resize_transaction(source, scope, steps, nonce++, bob);
+         const auto trace = source.push_transaction(trx);
+         BOOST_REQUIRE(!trace->except);
+         BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 3u);
+         BOOST_REQUIRE_EQUAL(trace->action_traces.front().return_value.size(), 16u);
+      };
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n})
+         update(scope, {{{16, {}}, {3, {}}, {8, {}}}});
+      seal(3, 0);
+      for (auto scope : {"alice"_n, "carol"_n})
+         update(scope, {{{0, {}}, {32, "bob"_n}, {16, {}}}}, true);
+      seal(2, 0);
+      for (auto scope : {"alice"_n, "bob"_n})
+         update(scope, {{{1, "alice"_n}, {8, {}}, {0, {}}}});
+      seal(2, 0);
+      update("alice"_n, {{{1, {}}, {2, {}}, {3, {}}}});
+      update("alice"_n, {{{1, {}}, {2, {}}, {8, {}}}});
+      seal(1, 1);
+      for (unsigned i = 0; i < 5; ++i) seal(0, 0);
+   }
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory reference_dir, observed_dir;
+      auto config = configuration(observed_dir, workers); config.parallel_code_allowlist = {hash};
+      tester reference(configuration(reference_dir, 0), genesis), observed(config, genesis);
+      prefix(reference, 4); prefix(observed, 4);
+      std::vector<std::vector<char>> expected, actual;
+      boost::signals2::scoped_connection a = reference.control->applied_transaction().connect([&](const auto& event) {
+         expected.push_back(consensus_trace(std::get<0>(event)));
+      });
+      boost::signals2::scoped_connection b = observed.control->applied_transaction().connect([&](const auto& event) {
+         actual.push_back(consensus_trace(std::get<0>(event)));
+      });
+      for (size_t index = 0; index < blocks.size(); ++index) {
+         BOOST_TEST_CONTEXT("RAM validator workers=" << workers << " checkpoint=" << index) {
+            expected.clear(); actual.clear();
+            const auto before = observed.control->get_parallel_execution_stats();
+            reference.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(blocks[index].block)));
+            observed.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(blocks[index].block)));
+            reference.control->abort_block(); observed.control->abort_block();
+            BOOST_CHECK(expected == actual);
+            BOOST_CHECK(reference.head().id() == observed.head().id());
+            BOOST_CHECK(reference.control->calculate_integrity_hash() == observed.control->calculate_integrity_hash());
+            BOOST_CHECK_EQUAL(reference.last_irreversible_block_num(), observed.last_irreversible_block_num());
+            const auto after = observed.control->get_parallel_execution_stats();
+            BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? blocks[index].adopted : 0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? blocks[index].fallbacks : 0u);
+            for (auto owner : {"alice"_n, "bob"_n})
+               BOOST_CHECK_EQUAL(reference.control->get_resource_limits_manager().get_account_ram_usage(owner),
+                  observed.control->get_resource_limits_manager().get_account_ram_usage(owner));
+         }
+      }
+   }
+}
+
 BOOST_AUTO_TEST_CASE(empty_code_notifications_keep_original_order_dedup_and_receipt_sequences) {
    const auto code = compile(std::string(R"((module
       (import "env" "require_recipient" (func $notify (param i64)))
@@ -907,7 +1025,7 @@ BOOST_AUTO_TEST_CASE(real_token_transfers_preserve_notifications_conflicts_and_l
       transfer("alice"_n, "bob"_n); transfer("alice"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(1, 2);
       transfer("bob"_n, "grace"_n); transfer("grace"_n, "bob"_n); seal(1, 1); // old grace balance is zero
       transfer("alice"_n, "blank"_n); transfer("carol"_n, "dave"_n); seal(0, 2); // new row
-      transfer("sponsor"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(0, 2); // payer change
+      transfer("sponsor"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(2, 0); // G4a: original RAM payer replay
       transfer("sponsor"_n, "bob"_n); transfer("carol"_n, "dave"_n); seal(2, 0); // now owner-paid
       source.set_code("frank"_n, compile("(module (func (export \"apply\") (param i64 i64 i64)))")); seal();
       transfer("erin"_n, "frank"_n); transfer("carol"_n, "dave"_n); seal(0, 2); // child code, even no-op
@@ -1033,6 +1151,106 @@ BOOST_FIXTURE_TEST_CASE(nonexplicit_production_preserves_order_receipts_and_seri
       BOOST_CHECK(produced_traces == verified_traces);
       BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
       for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) check_row(producer, scope, 17);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(ram_replay_preserves_payers_limits_intermediate_failures_and_transaction_undo, validation_corpus) {
+   const auto code = resize_code();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   for (uint16_t workers : {0, 1, 2, 4}) for (unsigned mode = 0; mode < 9; ++mode) {
+      BOOST_TEST_CONTEXT("RAM producer workers=" << workers << " mode=" << mode) {
+         fc::temp_directory producer_dir, validator_dir;
+         auto config = configuration(producer_dir, workers);
+         config.parallel_production_enabled = workers != 0; config.parallel_code_allowlist = {hash};
+         production_chain producer(config, genesis), validator(configuration(validator_dir, 0), genesis);
+         prefix(producer, 4); prefix(validator, 4);
+         producer.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+         producer.set_code("test"_n, code);
+         if (mode == 5 || mode == 6) {
+            // Explicit-genesis testers only have the native ABI. Install the
+            // real BIOS so limits are changed on-chain and replayed by validator.
+            producer.set_bios_contract();
+            const auto account = mode == 5 ? "alice"_n : "bob"_n;
+            const auto usage = producer.control->get_resource_limits_manager().get_account_ram_usage(account);
+            BOOST_REQUIRE(!producer.push_action("eosio"_n, "setalimits"_n, "eosio"_n, fc::mutable_variant_object()
+               ("account", account)("ram_bytes", usage + (mode == 5 ? 8 : 0))
+               ("net_weight", -1)("cpu_weight", -1))->except);
+         }
+         validator.push_block(producer.produce_block());
+         producer.control->abort_block(); validator.control->abort_block();
+         producer.start();
+         const resize_steps ordinary{{{16, {}}, {3, {}}, {8, {}}}};
+         auto steps = ordinary;
+         if (mode == 1 || mode == 3) steps = {{{0, {}}, {32, "bob"_n}, {16, {}}}};
+         if (mode == 2) steps[2].bytes = 0;
+         if (mode == 4) steps = {{{16, "missing"_n}, {3, "alice"_n}, {8, {}}}};
+         if (mode == 5) steps = {{{16, {}}, {32, {}}, {64, {}}}};
+         if (mode == 6) steps = {{{16, "bob"_n}, {3, "alice"_n}, {8, {}}}};
+         // Fail after one/two canonical mutations as well as before any. Both
+         // earlier notifications and partial RAM/value changes need original undo.
+         if (mode == 7) steps[1].payer = "missing"_n;
+         if (mode == 8) steps[2].payer = "missing"_n;
+         auto first = resize_transaction(producer, "alice"_n, steps, 81000 + mode * 2, mode == 1 || mode == 6);
+         const bool fails = (mode >= 3 && mode <= 5) || mode >= 7;
+         transaction_trace_ptr expected_failure;
+         if (fails) {
+            validator.start();
+            expected_failure = production_push(validator, metadata(validator, first));
+            BOOST_REQUIRE(expected_failure->except);
+            if (mode == 5) BOOST_CHECK_EQUAL(expected_failure->except->code(), ram_usage_exceeded::code_value);
+            validator.control->abort_block();
+         }
+         std::vector<transaction_metadata_ptr> batch{
+            metadata(producer, first), metadata(producer, resize_transaction(producer, "bob"_n, ordinary, 81001 + mode * 2))};
+         std::vector<std::vector<char>> produced, verified;
+         boost::signals2::scoped_connection connection = validator.control->applied_transaction().connect([&](const auto& event) {
+            if (std::any_of(batch.begin(), batch.end(), [&](const auto& trx) {
+                  return trx->id() == std::get<0>(event)->id;
+               })) verified.push_back(consensus_trace(std::get<0>(event)));
+         });
+         const auto before = producer.control->get_parallel_production_stats();
+         size_t callbacks = 0;
+         BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(batch, fc::time_point::maximum(), [&](const auto& trx) {
+            const auto index = callbacks++;
+            const auto state_before = producer.control->calculate_integrity_hash();
+            const auto trace = production_push(producer, trx);
+            if (index == 0 && fails) {
+               BOOST_REQUIRE(trace->except);
+               BOOST_CHECK_EQUAL(trace->except->code(), expected_failure->except->code());
+               BOOST_CHECK(consensus_trace(trace) == consensus_trace(expected_failure));
+               BOOST_CHECK(producer.control->calculate_integrity_hash() == state_before);
+               BOOST_CHECK(!producer.control->is_known_unexpired_transaction(trx->id()));
+               BOOST_CHECK(!trace->receipt);
+            } else {
+               BOOST_REQUIRE_MESSAGE(!trace->except, (trace->except ? trace->except->to_detail_string() : ""));
+               BOOST_REQUIRE(trace->receipt);
+               BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 3u);
+               BOOST_REQUIRE_EQUAL(trace->action_traces.front().return_value.size(), 16u);
+               std::array<uint32_t, 4> sizes;
+               std::memcpy(sizes.data(), trace->action_traces.front().return_value.data(), sizeof(sizes));
+               const auto& applied_steps = index == 0 ? steps : ordinary;
+               BOOST_CHECK_EQUAL(sizes[0], 8u);
+               for (unsigned i = 0; i < 3; ++i) BOOST_CHECK_EQUAL(sizes[i + 1], applied_steps[i].bytes);
+               produced.push_back(consensus_trace(trace));
+            }
+            return true;
+         }), 2u);
+         BOOST_CHECK_EQUAL(callbacks, 2u);
+         const auto after = producer.control->get_parallel_production_stats();
+         // In mode 5 the root WASM was adopted, but ORIGINAL transaction-final
+         // RAM checks reject it afterwards. "adopted" is not an acceptance count.
+         const unsigned adopted = fails ? (mode == 5 ? 1u : 0u) : 2u;
+         BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? adopted : 0u);
+         BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? 2 - adopted : 0u);
+         const auto block = producer.finish_block();
+         BOOST_REQUIRE_EQUAL(block->transactions.size(), fails ? 1u : 2u);
+         validator.push_block(block); validator.control->abort_block();
+         BOOST_CHECK(produced == verified);
+         BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
+         for (auto owner : {"alice"_n, "bob"_n})
+            BOOST_CHECK_EQUAL(producer.control->get_resource_limits_manager().get_account_ram_usage(owner),
+               validator.control->get_resource_limits_manager().get_account_ram_usage(owner));
+      }
    }
 }
 
@@ -1416,6 +1634,8 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
    if (!destination) { BOOST_TEST_MESSAGE("Live process fixture export not requested"); return; }
    const auto directory = std::filesystem::path(destination);
    const bool token_fixture = std::getenv("PUREEOS_PARALLEL_PRODUCER_TOKEN") != nullptr;
+   const bool ram_fixture = std::getenv("PUREEOS_PARALLEL_PRODUCER_RAM") != nullptr;
+   BOOST_REQUIRE(!ram_fixture || token_fixture);
    BOOST_REQUIRE(std::filesystem::create_directory(directory));
    std::filesystem::permissions(directory, std::filesystem::perms::owner_all);
    auto genesis = base_tester::default_genesis();
@@ -1466,11 +1686,14 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
       const std::array scopes{"alice"_n, "bob"_n, "carol"_n, "dave"_n};
       const std::array senders{"alice"_n, "carol"_n, "erin"_n};
       const std::array recipients{"bob"_n, "dave"_n, "frank"_n};
-      auto trx = token_fixture ? token_transaction(source, senders[i % 3], recipients[i % 3], 1, 10000 + i) :
+      // sponsor's existing row was funded by alice. The first payment must
+      // transfer its RAM bill to sponsor through the unchanged token contract.
+      const auto sender = token_fixture ? (ram_fixture && i == 0 ? "sponsor"_n : senders[i % 3]) : "alice"_n;
+      auto trx = token_fixture ? token_transaction(source, sender, recipients[i % 3], 1, 10000 + i) :
          make_transaction(source, scopes[i % 4], 1, 10000 + i, 20000);
       trx.expiration = fc::time_point_sec(fc::time_point::now() + fc::seconds(1800));
       trx.signatures.clear();
-      trx.sign(source.get_private_key(token_fixture ? senders[i % 3] : "alice"_n, "active"), source.control->get_chain_id());
+      trx.sign(source.get_private_key(sender, "active"), source.control->get_chain_id());
       packed_transaction packed(trx, packed_transaction::compression_type::none);
       transactions.emplace_back(fc::mutable_variant_object()("id", packed.id())("packed", packed));
    }
@@ -1484,7 +1707,7 @@ BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
       public_key.to_string() + "=KEY:" + private_key.to_string()};
    BOOST_REQUIRE(fc::json::save_to_file(providers, directory / "TEST-ONLY-keys.json"));
    BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format", 1)
-      ("fixture_kind", token_fixture ? "real-token" : "existing-row-wat")
+      ("fixture_kind", ram_fixture ? "real-token-payer-change" : token_fixture ? "real-token" : "existing-row-wat")
       ("chain_id", source.control->get_chain_id())("code_hashes", std::vector{hash})("checkpoints", checkpoints), directory / "manifest.json"));
 }
 

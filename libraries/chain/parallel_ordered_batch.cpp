@@ -60,8 +60,8 @@ bool ordered_attempt_batch::can_use(const isolated_action_result& result) const 
       const auto dirty = dirty_.find(query.table);
       if (dirty == dirty_.end()) continue;
       const auto selected = result.state.base()->locate_primary(query);
-      // Private writes cannot insert, erase, resize or change payer. Thus a
-      // prior value update does not change absent results or range selection;
+      // Private writes cannot insert or erase. Size/payer/value updates do not
+      // change absent results or range selection;
       // only a selected row may be stale. Canonical adoption rechecks both
       // query selection and table/row identities against the actual database.
       if (!selected.row || !dirty->second.contains(selected.row->primary_key)) continue;

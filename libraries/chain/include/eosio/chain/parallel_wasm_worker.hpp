@@ -45,6 +45,14 @@ struct isolated_wasm_limits {
    bool operator==(const isolated_wasm_limits&) const = default;
 };
 
+struct isolated_notification {
+   name recipient;
+   // Schedule at the same point relative to canonical writes. A later RAM
+   // failure must preserve the original already-scheduled notification traces.
+   size_t after_writes = 0;
+   bool operator==(const isolated_notification&) const = default;
+};
+
 struct isolated_action_result {
    primary_overlay_result state;
    std::vector<char> return_value;
@@ -52,7 +60,7 @@ struct isolated_action_result {
    // Root notification order; root itself is implicitly already notified.
    // The owner must preflight every recipient and replay the original scheduler.
    static constexpr size_t max_recipients = 64;
-   std::vector<name> recipients;
+   std::vector<isolated_notification> recipients;
 };
 
 // Binds successful output to the actual code, fixed action inputs and observable

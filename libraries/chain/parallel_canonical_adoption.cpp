@@ -86,8 +86,12 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
    // exec_one and produce the original receipts, sequences and resource checks.
    if (result.recipients.size() > isolated_action_result::max_recipients) return false;
    std::set<name> notified{context.get_receiver()};
-   for (const auto recipient : result.recipients) {
+   size_t previous_write_count = 0;
+   for (const auto& notification : result.recipients) {
       context.trx_context.checktime();
+      if (notification.after_writes < previous_write_count || notification.after_writes > result.state.writes().size()) return false;
+      previous_write_count = notification.after_writes;
+      const auto recipient = notification.recipient;
       if (!notified.insert(recipient).second || !live.read_account(recipient) ||
           recipient == "eosio.msig"_n || recipient == "eosio.wrap"_n) return false;
       const auto* metadata = context.db.find<account_metadata_object, by_name>(recipient);
@@ -98,17 +102,29 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
       if (write.table.code != context.get_receiver() || !result.state.read_tables().contains(write.table) ||
           !result.state.read_queries().contains({write.table, primary_query_kind::find, write.primary_key})) return false;
       const auto row = live.locate_primary({write.table, primary_query_kind::find, write.primary_key}).row;
-      if (!row || row->payer != write.payer || row->value_size != write.value.size()) return false;
+      if (!row) return false;
    }
    auto return_value = result.return_value; // allocate before first canonical mutation
    if (!context.trx_context.explicit_billed_cpu_time)
       context.trx_context.charge_isolated_cpu(*production_elapsed);
-   for (const auto& write : result.state.writes()) {
+   auto notification = result.recipients.begin();
+   for (size_t written = 0; ; ++written) {
+      // Preserve scheduling before/between/after updates, including when the
+      // NEXT original host throws. Scheduling everything at the end changes
+      // failed traces even though transaction undo restores the ledger.
+      while (notification != result.recipients.end() && notification->after_writes == written) {
+         context.require_recipient(notification->recipient);
+         ++notification;
+      }
+      if (written == result.state.writes().size()) break;
+      const auto& write = result.state.writes()[written];
       context.trx_context.checktime();
+      // Replay EVERY update with the original host. It owns payer authorization,
+      // positive/negative RAM deltas and resource checks inside transaction undo;
+      // no worker-calculated resource state or coalesced final write is trusted.
       const auto iterator = context.db_find_i64(write.table.code, write.table.scope, write.table.table, write.primary_key);
       context.db_update_i64(iterator, write.payer, write.value.data(), write.value.size());
    }
-   for (const auto recipient : result.recipients) context.require_recipient(recipient);
    context.action_return_value = std::move(return_value);
    return true;
 }

@@ -6,6 +6,8 @@ PX7 补充：下文固定保留 PX0–PX6 历史边界。G1/G2 已改为精确�
 
 G3b 补充：新增账户身份/存在性按需副本和有序通知日志。账户实际读取进入依赖，不包含无关 receipt/auth sequence；任何未知账户需要 owner 复制，不能猜不存在。采用前逐一检查通知接收者账户、代码和原生处理器；仅无代码、无对应原生 handler 的通知可按原 `require_recipient/exec_one` 重放，不省略回执。不支持的子调用整笔回退；`send_inline` 仅获得可链接且调用必回退的桩。当前分类为 25 支持／9 仅回退／228 拒绝链接，262 项原注册没有自动全部批准。
 
+G4a 补充：已支持既存行 resize/payer，按当前私有元数据读取长度与内容、按原序保存全部中间更新；资源/权限仍由 owner 的原 host 判定，失败整笔撤销。通知增加相对写入位置，避免 RAM 更新失败时遗漏先前已调度的 trace。分类仍为 25／9／228；store/remove 仍不是已支持接口。验收见 [G4a](PX7_G4A_RESULTS.md)，下文同 payer/长度仅为首版历史限制。
+
 ## 1. 两条路径不能混为一谈
 
 正式 controller、权限/资源管理器、原生 action、插件回调仍只在原 owner 上执行。工作线程不调用原 `webassembly::interface`，不拥有 controller、Chainbase、pending block、资源管理器或插件引用。

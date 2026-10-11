@@ -413,6 +413,7 @@ BOOST_FIXTURE_TEST_CASE(get_size_partial_full_and_update_preserve_iterator, view
    primary_state_overlay state(frozen_primary_state::capture(view, keys));
    primary_overlay_cursor cursor(state, "token"_n);
    const auto iterator = cursor.find(accounts, 1);
+   BOOST_CHECK_EQUAL(state.write_count(), 0u);
    BOOST_CHECK_EQUAL(cursor.get(iterator, {}), 4);
    std::array<char, 8> output; output.fill('z');
    BOOST_CHECK_EQUAL(cursor.get(iterator, std::span(output).first(2)), 2);
@@ -425,7 +426,13 @@ BOOST_FIXTURE_TEST_CASE(get_size_partial_full_and_update_preserve_iterator, view
    BOOST_CHECK_EQUAL(cursor.get(iterator, output), 4);
    BOOST_CHECK_EQUAL(output[0], 'e'); BOOST_CHECK_EQUAL(output[3], 'h'); BOOST_CHECK_EQUAL(output[4], 'z');
    BOOST_CHECK_EQUAL(read(primary_query_kind::find, 1).row->value[0], 'a');
+   BOOST_CHECK_EQUAL(state.write_count(), 1u);
+   BOOST_CHECK(std::async(std::launch::async, [&] {
+      try { (void)state.write_count(); } catch (const state_view_wrong_thread&) { return true; }
+      return false;
+   }).get());
    BOOST_CHECK_EQUAL(state.seal().writes().size(), 1u);
+   BOOST_CHECK_THROW(state.write_count(), primary_state_invalid_attempt);
 }
 
 BOOST_FIXTURE_TEST_CASE(zero_length_get_leaves_destination_untouched, view_fixture) {
@@ -479,19 +486,43 @@ BOOST_FIXTURE_TEST_CASE(foreign_code_may_be_read_but_cannot_be_updated, view_fix
    BOOST_CHECK_THROW(state.seal(), primary_state_invalid_attempt);
 }
 
-BOOST_FIXTURE_TEST_CASE(unsupported_payer_or_size_update_is_not_partially_kept, view_fixture) {
+BOOST_FIXTURE_TEST_CASE(existing_row_resize_and_payer_changes_refresh_old_iterators_and_retain_every_write, view_fixture) {
    put(1, "abc");
    const std::array keys{accounts};
    auto base = frozen_primary_state::capture(view, keys);
-   for (unsigned mode = 0; mode < 2; ++mode) {
-      primary_state_overlay state(base);
-      primary_overlay_cursor cursor(state, "token"_n);
-      const auto iterator = cursor.find(accounts, 1);
-      cursor.update(iterator, name{}, std::string("def"));
-      BOOST_CHECK_THROW(cursor.update(iterator, mode ? "carol"_n : name{}, mode ? std::string("ghi") : std::string("longer")),
-                        primary_state_unsupported);
-      BOOST_CHECK_THROW(state.seal(), primary_state_invalid_attempt);
+   primary_state_overlay state(base);
+   primary_overlay_cursor cursor(state, "token"_n), other(state, "token"_n);
+   const auto iterator = cursor.find(accounts, 1), other_iterator = other.find(accounts, 1);
+   const std::array values{std::string("longer"), std::string(), std::string("z"), std::string("0123456789"), std::string("abc")};
+   const std::array payers{"carol"_n, name{}, name{}, "bob"_n, name{}};
+   name expected_payer = "bob"_n;
+   for (unsigned step = 0; step < values.size(); ++step) {
+      if (payers[step] != name{}) expected_payer = payers[step];
+      cursor.update(iterator, payers[step], values[step]);
+      BOOST_CHECK_EQUAL(cursor.get(iterator, {}), values[step].size());
+      BOOST_CHECK_EQUAL(other.get(other_iterator, {}), values[step].size());
+      std::array<char, 4> buffer{'!', '!', '!', '!'};
+      const auto copied = std::min(buffer.size(), values[step].size());
+      BOOST_CHECK_EQUAL(other.get(other_iterator, buffer), copied);
+      BOOST_CHECK(std::equal(buffer.begin(), buffer.begin() + copied, values[step].begin()));
+      for (size_t i = copied; i < buffer.size(); ++i) BOOST_CHECK_EQUAL(buffer[i], '!');
+      for (const auto kind : {primary_query_kind::find, primary_query_kind::lower_bound, primary_query_kind::last}) {
+         const primary_query query{accounts, kind, 1};
+         const auto read = state.read_primary(query, values[step].size());
+         BOOST_REQUIRE(read.row);
+         BOOST_CHECK(read.row->payer == expected_payer);
+         BOOST_CHECK(read.row->value == std::vector<char>(values[step].begin(), values[step].end()));
+         BOOST_CHECK_EQUAL(state.locate_primary(query).row->value_size, values[step].size());
+         BOOST_CHECK(state.read_primary_prefix(query, 0).metadata == state.locate_primary(query));
+      }
    }
+   const auto result = state.seal();
+   BOOST_REQUIRE_EQUAL(result.writes().size(), values.size());
+   BOOST_CHECK(result.writes()[1].payer == "carol"_n); // same_payer follows the private switch
+   BOOST_CHECK(result.writes()[4].payer == "bob"_n);
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   BOOST_CHECK_EQUAL(view.locate_primary({accounts, primary_query_kind::find, 1}).row->value_size, 3u);
+   BOOST_CHECK(view.locate_primary({accounts, primary_query_kind::find, 1}).row->payer == "bob"_n);
 }
 
 BOOST_FIXTURE_TEST_CASE(iterator_budgets_and_thread_ownership_are_enforced, view_fixture) {
@@ -714,12 +745,12 @@ BOOST_FIXTURE_TEST_CASE(unsupported_update_discards_whole_attempt_not_just_last_
    put(1, "abc");
    const std::array keys{accounts};
    auto base = frozen_primary_state::capture(view, keys);
-   for (unsigned mode = 0; mode < 4; ++mode) {
+   for (unsigned mode = 0; mode < 2; ++mode) {
       primary_state_overlay overlay(base);
       overlay.update_existing(accounts, 1, name{}, std::string("def"));
-      const table_key key = mode == 3 ? table_key{"other"_n, "alice"_n, "accounts"_n} : accounts;
+      const table_key key = mode == 1 ? table_key{"other"_n, "alice"_n, "accounts"_n} : accounts;
       BOOST_CHECK_THROW(overlay.update_existing(key, mode == 0 ? 9 : 1,
-                        mode == 1 ? "carol"_n : name{}, mode == 2 ? std::string("long") : std::string("xyz")),
+                        name{}, std::string("xyz")),
                         primary_state_unsupported);
       BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
       BOOST_CHECK_THROW(overlay.read_table(accounts), primary_state_invalid_attempt);

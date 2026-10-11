@@ -143,9 +143,9 @@ private:
    std::set<name> accounts_;
 };
 
-// One thread owns each attempt. First capability: existing-row updates only,
-// unchanged payer and payload size. No create/delete, RAM accounting or IDs are
-// simulated. Unsupported operations poison the WHOLE attempt for fallback.
+// One thread owns each attempt. Existing-row updates can change size/payer;
+// every operation is retained for the owner's original RAM/auth/undo replay.
+// No create/delete, resource manager or IDs are simulated on workers.
 class primary_state_overlay final : public transaction_state_view {
 public:
    explicit primary_state_overlay(std::shared_ptr<const frozen_primary_state>, primary_overlay_limits = {});
@@ -157,6 +157,7 @@ public:
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
    void update_existing(const table_key&, uint64_t primary_key, name payer, std::span<const char> value);
+   size_t write_count() const;
    primary_overlay_result seal();
 
 private:
@@ -164,7 +165,7 @@ private:
    void check_owner_and_valid() const;
    void depend_on(const table_key&) const;
    void depend_on_query(primary_query) const;
-   const std::vector<char>* written_value(const table_key&, uint64_t primary_key) const;
+   const primary_update* latest_write(const table_key&, uint64_t primary_key) const;
    std::shared_ptr<const frozen_primary_state> base_;
    primary_overlay_limits limits_;
    const std::thread::id owner_;
