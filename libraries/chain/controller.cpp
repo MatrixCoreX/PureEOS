@@ -1004,6 +1004,19 @@ struct controller_impl {
    controller::config              conf;
    std::unique_ptr<experimental::isolated_worker_pool> parallel_workers;
    controller::parallel_execution_stats parallel_stats;
+   controller::parallel_execution_stats parallel_production_stats;
+   uint64_t parallel_pending_generation = 0;
+   bool parallel_production_scope = false;
+   struct production_adoption_slot {
+      transaction_metadata_ptr expected;
+      const experimental::isolated_action_result& result;
+      const experimental::isolated_wasm_limits& limits;
+      fc::microseconds elapsed;
+      experimental::ordered_attempt_batch& order;
+      experimental::isolated_cancel cancel;
+      uint64_t pending_generation;
+   };
+   production_adoption_slot* production_slot = nullptr; // stack-owned, synchronous callback only
    const std::shared_ptr<std::atomic<uint64_t>> parallel_interrupts = std::make_shared<std::atomic<uint64_t>>(0);
    // persist chain_head after vote_processor shutdown, avoids concurrent access, after chain_head & conf since this uses them
    fc::scoped_exit<std::function<void()>> write_chain_head = [&]() { chain_head.write(conf.state_dir / config::chain_head_filename); };
@@ -1363,6 +1376,8 @@ struct controller_impl {
    {
       EOS_ASSERT(cfg.parallel_validation_threads <= 16 && cfg.parallel_validation_batch_size > 0 &&
                  cfg.parallel_validation_batch_size <= 64, plugin_config_exception, "invalid parallel validation bounds");
+      EOS_ASSERT(!cfg.parallel_production_enabled || cfg.parallel_validation_threads > 0, plugin_config_exception,
+                 "parallel production requires an enabled restricted worker pool");
       assert(cfg.chain_thread_pool_size > 0);
       thread_pool.start( cfg.chain_thread_pool_size, [this]( const fc::exception& e ) {
          elog( "Exception in chain thread pool, exiting: ${e}", ("e", e.to_detail_string()) );
@@ -3187,7 +3202,8 @@ struct controller_impl {
       experimental::isolated_cancel cancel;
    };
 
-   std::unique_ptr<validation_attempts> prepare_validation_attempts(const signed_block& block, size_t begin) {
+   std::unique_ptr<validation_attempts> prepare_isolated_attempts(std::span<const packed_transaction* const> packed_inputs,
+                                                                experimental::isolated_cancel cancel, bool production = false) {
       using namespace experimental;
       if (!conf.parallel_validation_threads || conf.parallel_code_allowlist.empty() ||
           conf.wasm_runtime != wasm_interface::vm_type::eos_vm || !conf.profile_accounts.empty() ||
@@ -3196,13 +3212,12 @@ struct controller_impl {
       if (wasmif.is_eos_vm_oc_enabled()) return {};
 #endif
       try {
-         const isolated_cancel cancel{parallel_interrupts, parallel_interrupts->load(std::memory_order_relaxed)};
+         const auto capture_started = performance::mark();
          std::vector<prepared_isolated_action> actions;
          std::vector<ordered_attempt_batch::request> requests;
          std::set<table_key, table_key_less> keys;
-         for (size_t i = begin; i < block.transactions.size() && actions.size() < conf.parallel_validation_batch_size; ++i) {
-            const auto* packed = std::get_if<packed_transaction>(&block.transactions[i].trx);
-            if (!packed) break;
+         for (const auto* packed : packed_inputs) {
+            if (!packed || actions.size() >= conf.parallel_validation_batch_size) break;
             auto action = prepare_isolated_action(self, *packed);
             if (!action || !conf.parallel_code_allowlist.contains(action->code_hash)) break;
             const auto& tables = db.get_index<table_id_multi_index, by_code_scope_table>();
@@ -3227,11 +3242,16 @@ struct controller_impl {
             jobs.push_back({attempts->order->get_ticket(i), std::move(actions[i].code), std::move(actions[i].input), actions[i].limits, cancel});
          }
          if (!parallel_workers) parallel_workers = std::make_unique<isolated_worker_pool>(conf.parallel_validation_threads);
-         attempts->outcomes = parallel_workers->run(std::move(jobs));
+         performance::since(performance::stage::parallel_capture, capture_started);
+         {
+            performance::scope wait_timer(performance::stage::parallel_batch_wait);
+            attempts->outcomes = parallel_workers->run(std::move(jobs));
+         }
          EOS_ASSERT(!cancel.stop_requested(), interrupt_exception, "parallel validation interrupted");
-         ++parallel_stats.batches;
-         parallel_stats.attempts += attempts->outcomes.size();
-         for (const auto& result : attempts->outcomes) parallel_stats.succeeded += bool(result.result);
+         auto& stats = production ? parallel_production_stats : parallel_stats;
+         ++stats.batches;
+         stats.attempts += attempts->outcomes.size();
+         for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.result);
          return attempts;
       } catch (const interrupt_exception&) { throw; }
       catch (const std::exception&) {
@@ -3239,6 +3259,89 @@ struct controller_impl {
          // by routing unsupported capabilities/budgets/allocation to serial.
          return {};
       }
+   }
+
+   std::unique_ptr<validation_attempts> prepare_validation_attempts(const signed_block& block, size_t begin) {
+      if (!conf.parallel_validation_threads) return {};
+      std::vector<const packed_transaction*> inputs;
+      for (size_t i = begin; i < block.transactions.size() && inputs.size() < conf.parallel_validation_batch_size; ++i) {
+         const auto* packed = std::get_if<packed_transaction>(&block.transactions[i].trx);
+         if (!packed) break;
+         inputs.push_back(packed);
+      }
+      return prepare_isolated_attempts(inputs, {parallel_interrupts, parallel_interrupts->load(std::memory_order_relaxed)});
+   }
+
+   size_t for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
+         fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback) {
+      EOS_ASSERT(!parallel_production_scope && transactions.size() <= 64, transaction_exception,
+                 "invalid or reentrant parallel production batch");
+      parallel_production_scope = true;
+      auto cleanup = fc::make_scoped_exit([&] { production_slot = nullptr; parallel_production_scope = false; });
+      const auto generation = parallel_pending_generation;
+      experimental::isolated_cancel cancel{parallel_interrupts, parallel_interrupts->load(std::memory_order_relaxed)};
+      std::unique_ptr<validation_attempts> attempts;
+      const bool enabled = conf.parallel_production_enabled && pending &&
+         pending->_block_status == controller::block_status::incomplete && self.is_write_window();
+      if (enabled) {
+         const auto remaining = block_deadline - fc::time_point::now();
+         if (remaining.count() <= 0) return 0;
+         const auto original_cpu_budget = std::min<uint64_t>(
+            self.get_global_properties().configuration.max_transaction_cpu_usage, resource_limits.get_block_cpu_limit());
+         // If the window is already short, do not reduce the time available to
+         // the original CPU-limit rejection path at all (including its setup).
+         const auto reserved_wall_us = static_cast<int64_t>(original_cpu_budget) + 5'000;
+         if (remaining.count() > reserved_wall_us) {
+            // Reserve at least 3/4 of the real wall window for original serial
+            // authorization/failure handling. Spending the entire window on an
+            // infinite/private-slow queue head would retry it every block without
+            // ever applying the ordinary transaction CPU limit or removing it.
+            // This is one absolute cap for the whole batch, including queued jobs.
+            cancel.deadline = std::chrono::steady_clock::now() +
+               std::chrono::microseconds(std::min({remaining.count() / 4, int64_t{50'000}, remaining.count() - reserved_wall_us}));
+            std::vector<const packed_transaction*> inputs;
+            for (const auto& trx : transactions) {
+               if (!trx || trx->is_transient() || trx->implicit() || trx->scheduled()) break;
+               inputs.push_back(trx->packed_trx().get());
+            }
+            try { attempts = prepare_isolated_attempts(inputs, cancel, true); }
+            catch (const interrupt_exception&) {
+               if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
+                   fc::time_point::now() >= block_deadline) return 0; // queue entries were not consumed
+               // A local private-phase cap is NOT a transaction rejection. If the
+               // real block still has time, consume the original serial path.
+            }
+         }
+      }
+      size_t called = 0;
+      for (size_t i = 0; i < transactions.size(); ++i) {
+         if (enabled && (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
+                         parallel_pending_generation != generation ||
+                         !pending || pending->_block_status != controller::block_status::incomplete ||
+                         fc::time_point::now() >= block_deadline)) break;
+         auto serial = [&] { return callback(transactions[i]); };
+         bool proceed;
+         if (attempts && i < attempts->outcomes.size()) {
+            auto& order = *attempts->order;
+            proceed = order.run_next(order.get_ticket(i), transactions[i]->id(), attempts->outcomes[i].result,
+               [&](const experimental::isolated_action_result& result) {
+                  production_adoption_slot slot{transactions[i], result, attempts->limits[i],
+                     fc::microseconds(attempts->outcomes[i].elapsed.count()), order, cancel, generation};
+                  production_slot = &slot;
+                  auto clear = fc::make_scoped_exit([&] {
+                     if (production_slot) { order.discard_remaining(); ++parallel_production_stats.serial_fallbacks; }
+                     production_slot = nullptr;
+                  });
+                  return serial();
+               }, [&] {
+                  performance::scope fallback_timer(performance::stage::parallel_fallback);
+                  ++parallel_production_stats.serial_fallbacks; return serial();
+               });
+         } else proceed = serial();
+         ++called;
+         if (!proceed) break;
+      }
+      return called;
    }
 
    /**
@@ -3275,7 +3378,8 @@ struct controller_impl {
                                            int64_t subjective_cpu_bill_us,
                                            const experimental::isolated_action_result* parallel_result = nullptr,
                                            const experimental::isolated_wasm_limits* parallel_limits = nullptr,
-                                           bool* parallel_adopted = nullptr )
+                                           bool* parallel_adopted = nullptr,
+                                           std::optional<fc::microseconds> parallel_elapsed = {} )
    {
       EOS_ASSERT(block_deadline != fc::time_point(), transaction_exception, "deadline cannot be uninitialized");
       performance::scope execution_timer(performance::stage::transaction_execute, !trx->implicit());
@@ -3314,13 +3418,14 @@ struct controller_impl {
          trace = trx_context.trace;
          trx_context.parallel_action_result = parallel_result;
          trx_context.parallel_action_limits = parallel_limits;
+         trx_context.parallel_action_elapsed = parallel_elapsed;
 
          auto handle_exception =[&](const auto& e)
          {
             trace->error_code = controller::convert_exception_to_error_code( e );
             trace->except = e;
             trace->except_ptr = std::current_exception();
-            trace->elapsed = fc::time_point::now() - trx_context.start;
+            trace->elapsed = fc::time_point::now() - trx_context.start + trx_context.isolated_cpu_charged();
          };
 
          try {
@@ -3445,6 +3550,7 @@ struct controller_impl {
                                       const fc::time_point& deadline )
    {
       EOS_ASSERT( !pending, block_validate_exception, "pending block already exists" );
+      ++parallel_pending_generation;
 
       emit( block_start, chain_head.block_num() + 1, __FILE__, __LINE__ );
 
@@ -4113,6 +4219,7 @@ struct controller_impl {
                                                                ? std::get<0>(trx_metas.at(packed_idx))
                                                                : std::get<1>(trx_metas.at(packed_idx)).get()));
                   auto serial = [&] {
+                     performance::scope fallback_timer(performance::stage::parallel_fallback, bool(parallel_batch));
                      if (parallel_batch) ++parallel_stats.serial_fallbacks;
                      return push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(), receipt.cpu_usage_us, true, 0);
                   };
@@ -4906,6 +5013,7 @@ struct controller_impl {
             }
          } else {
             if (interrupt == controller::interrupt_t::all_trx || interrupt == controller::interrupt_t::speculative_block_trx) {
+               parallel_interrupts->fetch_add(1, std::memory_order_relaxed);
                dlog("Interrupting speculative block trx...");
                main_thread_timer.interrupt_timer();
             }
@@ -5737,6 +5845,26 @@ transaction_trace_ptr controller::push_transaction( const transaction_metadata_p
                                                     int64_t subjective_cpu_bill_us ) {
    validate_db_available_size();
    EOS_ASSERT( trx && !trx->implicit() && !trx->scheduled(), transaction_type_exception, "Implicit/Scheduled transaction not allowed" );
+   if (auto* slot = std::exchange(my->production_slot, nullptr)) {
+      if (!explicit_billed_cpu_time && !trx->is_transient() && slot->expected == trx &&
+          !slot->cancel.stop_requested() && my->parallel_pending_generation == slot->pending_generation &&
+          my->pending && my->pending->_block_status == block_status::incomplete && is_write_window()) {
+         bool adopted = false;
+         bool returned = false;
+         auto failed = fc::make_scoped_exit([&] {
+            if (!returned) { ++my->parallel_production_stats.serial_fallbacks; slot->order.discard_remaining(); }
+         });
+         auto trace = my->push_transaction(trx, block_deadline, max_transaction_time, billed_cpu_time_us,
+            false, subjective_cpu_bill_us, &slot->result, &slot->limits, &adopted, slot->elapsed);
+         returned = true;
+         if (adopted) ++my->parallel_production_stats.adopted;
+         else { ++my->parallel_production_stats.serial_fallbacks; slot->order.discard_remaining(); }
+         if (trace->except) slot->order.discard_remaining();
+         return trace;
+      }
+      ++my->parallel_production_stats.serial_fallbacks;
+      slot->order.discard_remaining();
+   }
    return my->push_transaction(trx, block_deadline, max_transaction_time, billed_cpu_time_us, explicit_billed_cpu_time, subjective_cpu_bill_us );
 }
 
@@ -5749,6 +5877,19 @@ transaction_trace_ptr controller::push_scheduled_transaction( const transaction_
 
 controller::parallel_execution_stats controller::get_parallel_execution_stats() const {
    return my->parallel_stats;
+}
+
+controller::parallel_execution_stats controller::get_parallel_production_stats() const {
+   return my->parallel_production_stats;
+}
+
+uint16_t controller::get_parallel_production_batch_size() const {
+   return my->conf.parallel_production_enabled ? my->conf.parallel_validation_batch_size : 0;
+}
+
+size_t controller::for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
+      fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback) {
+   return my->for_each_parallel_production_transaction(transactions, block_deadline, callback);
 }
 
 const flat_set<account_name>& controller::get_actor_whitelist() const {

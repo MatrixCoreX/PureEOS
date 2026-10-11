@@ -136,11 +136,15 @@ class Node:
 
     def check(self, point, lib_floor=0):
         deadline = time.monotonic() + 30
+        expected_lib = max(point["lib"], lib_floor)
         while True:
             info = self.rpc("get_info")
             # Competing forks can have the SAME height; waiting on height alone
             # would race receipt of the replacement block over P2P.
-            if info["head_block_id"] == point["block_id"] or time.monotonic() >= deadline:
+            # get_info's head and finality cache updates are asynchronous. A
+            # matching head alone is not evidence that the LIB update arrived.
+            if (info["head_block_id"] == point["block_id"] and
+                    info["last_irreversible_block_num"] == expected_lib) or time.monotonic() >= deadline:
                 break
             time.sleep(0.1)
         require(info["chain_id"] == self.manifest["chain_id"], "Chain ID mismatch")
@@ -148,8 +152,9 @@ class Node:
                 f"{self.root.name}: block {point['block_num']} ID mismatch ({info['head_block_num']})")
         # A trusted snapshot / irreversible log establishes a finalized floor;
         # it must never move backwards to an older QC in the first tail block.
-        expected_lib = max(point["lib"], lib_floor)
-        require(info["last_irreversible_block_num"] == expected_lib, "LIB mismatch")
+        require(info["last_irreversible_block_num"] == expected_lib,
+                f"{self.root.name}: LIB mismatch at {point['block_num']}: "
+                f"actual={info['last_irreversible_block_num']}, expected={expected_lib}")
         state = self.rpc("get_integrity_hash", namespace="producer")
         require(state["head_block_id"] == point["block_id"], "Integrity checkpoint moved")
         require(state["integrity_hash"] == point["integrity_hash"],
@@ -219,6 +224,8 @@ def main():
             ("jit-runtime", ["--wasm-runtime", "eos-vm-jit"], manifest),
             ("trusted-producer", ["--trusted-producer", "eosio"], manifest),
             ("deep-mind", ["--deep-mind"], manifest),
+            ("production-without-workers", ["--experimental-parallel-validation-threads", "0",
+                                             "--experimental-parallel-production"], manifest),
         ]
         for label, options, configuration in rejection_cases:
             node = Node(new, root / ("reject-" + label), corpus, configuration, 2)

@@ -1188,7 +1188,10 @@ public:
       // it is possible that we are only speculating because of this policy which we have now changed
       // re-evaluate that now
       //
-      if (in_speculating_mode()) {
+      // pause_at_block can stop start_block BEFORE it updates the previous
+      // producing mode. In that state no pending block/timer remains to wake
+      // queued transactions, so resume must schedule the loop explicitly too.
+      if (in_speculating_mode() || !chain.is_building_block()) {
          abort_block();
          fc_ilog(_log, "Producer resumed. Scheduling production.");
          schedule_production_loop();
@@ -2721,18 +2724,19 @@ producer_plugin_impl::handle_push_result(const transaction_metadata_ptr&        
 bool producer_plugin_impl::process_unapplied_trxs(const fc::time_point& deadline) {
    bool exhausted = false;
    if (!_unapplied_transactions.empty()) {
-      const chain::controller& chain             = chain_plug->chain();
+      chain::controller&       chain             = chain_plug->chain();
       const auto               pending_block_num = chain.pending_block_num();
       int                      num_applied = 0, num_failed = 0, num_processed = 0;
       auto                     unapplied_trxs_size = _unapplied_transactions.size();
       auto                     itr                 = _unapplied_transactions.unapplied_begin();
       auto                     end_itr             = _unapplied_transactions.unapplied_end();
-      while (itr != end_itr) {
+      auto process_one = [&](const transaction_metadata_ptr& expected) {
          if (should_interrupt_start_block(deadline, pending_block_num)) {
             exhausted = true;
-            break;
+            return false;
          }
-
+         EOS_ASSERT(itr != end_itr && itr->trx_meta == expected, transaction_exception,
+                    "parallel unapplied queue order changed");
          ++num_processed;
          try {
             auto trx_tracker = _time_tracker.start_trx(itr->trx_meta->is_transient());
@@ -2740,7 +2744,7 @@ bool producer_plugin_impl::process_unapplied_trxs(const fc::time_point& deadline
 
             exhausted = pr.block_exhausted;
             if (exhausted) {
-               break;
+               return false;
             } else {
                if (pr.failed) {
                   ++num_failed;
@@ -2753,11 +2757,25 @@ bool producer_plugin_impl::process_unapplied_trxs(const fc::time_point& deadline
             } else {
                ++itr; // keep exhausted
             }
-            continue;
+            return true;
          }
          LOG_AND_DROP();
          ++num_failed;
          ++itr;
+         return true;
+      };
+      const size_t batch_size = in_producing_mode() ? chain.get_parallel_production_batch_size() : 0;
+      while (itr != end_itr) {
+         if (!batch_size) {
+            if (!process_one(itr->trx_meta)) break;
+         } else {
+            std::vector<transaction_metadata_ptr> batch;
+            batch.reserve(batch_size);
+            for (auto next = itr; next != end_itr && batch.size() < batch_size; ++next)
+               batch.push_back(next->trx_meta);
+            if (!chain.for_each_parallel_production_transaction(batch, deadline, process_one)) exhausted = true;
+            if (exhausted) break;
+         }
       }
 
       fc_dlog(_log, "Processed ${m} of ${n} previously applied transactions, Applied ${applied}, Failed/Dropped ${failed}",
@@ -2772,14 +2790,15 @@ bool producer_plugin_impl::process_incoming_trxs(const fc::time_point& deadline,
    if (itr != end) {
       size_t processed = 0;
       fc_dlog(_log, "Processing ${n} pending transactions", ("n", _unapplied_transactions.incoming_size()));
-      const chain::controller& chain             = chain_plug->chain();
+      chain::controller&       chain             = chain_plug->chain();
       const auto               pending_block_num = chain.pending_block_num();
-      while (itr != end) {
+      auto process_one = [&](const transaction_metadata_ptr& expected) {
          if (should_interrupt_start_block(deadline, pending_block_num)) {
             exhausted = true;
-            break;
+            return false;
          }
-
+         EOS_ASSERT(itr != end && itr->trx_meta == expected, transaction_exception,
+                    "parallel incoming queue order changed");
          auto trx_meta = itr->trx_meta;
          bool api_trx  = itr->trx_type == trx_enum_type::incoming_api;
 
@@ -2794,8 +2813,22 @@ bool producer_plugin_impl::process_incoming_trxs(const fc::time_point& deadline,
          }
 
          if (exhausted)
-            break;
+            return false;
          ++processed;
+         return true;
+      };
+      const size_t batch_size = in_producing_mode() ? chain.get_parallel_production_batch_size() : 0;
+      while (itr != end) {
+         if (!batch_size) {
+            if (!process_one(itr->trx_meta)) break;
+         } else {
+            std::vector<transaction_metadata_ptr> batch;
+            batch.reserve(batch_size);
+            for (auto next = itr; next != end && batch.size() < batch_size; ++next)
+               batch.push_back(next->trx_meta);
+            if (!chain.for_each_parallel_production_transaction(batch, deadline, process_one)) exhausted = true;
+            if (exhausted) break;
+         }
       }
       fc_dlog(_log, "Processed ${n} pending transactions, ${p} left", ("n", processed)("p", _unapplied_transactions.incoming_size()));
    }

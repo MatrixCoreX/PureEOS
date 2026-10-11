@@ -13,8 +13,12 @@ namespace eosio::chain::experimental {
 struct isolated_cancel {
    std::shared_ptr<const std::atomic<uint64_t>> generation;
    uint64_t observed = 0;
+   // One absolute budget for the WHOLE production batch, including queued jobs.
+   // Validation leaves it unlimited and uses the per-attempt watchdog instead.
+   std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::time_point::max();
    bool stop_requested() const {
-      return generation && generation->load(std::memory_order_relaxed) != observed;
+      return (generation && generation->load(std::memory_order_relaxed) != observed) ||
+             (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline);
    }
 };
 

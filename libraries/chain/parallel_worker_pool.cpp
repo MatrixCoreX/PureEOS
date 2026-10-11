@@ -1,4 +1,5 @@
 #include <eosio/chain/parallel_worker_pool.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <condition_variable>
 #include <mutex>
 
@@ -50,6 +51,7 @@ struct isolated_worker_pool::impl {
          try {
             if (!job.ticket.stop_token().stop_requested() && !job.cancel.stop_requested()) {
                if (!module || cached_code != job.code || cached_limits != job.limits) {
+                  performance::scope compile_timer(performance::stage::parallel_compile);
                   // Drop stale code BEFORE constructing a replacement, retaining
                   // at most one module per worker even on failure/large batches.
                   module.reset(); cached_code.clear();
@@ -57,7 +59,10 @@ struct isolated_worker_pool::impl {
                   cached_code = job.code; cached_limits = job.limits;
                }
                outcome.began = std::chrono::steady_clock::now();
-               outcome.result = module->execute(job.ticket.base(), job.input, job.ticket.stop_token(), {}, job.cancel);
+               {
+                  performance::scope execute_timer(performance::stage::parallel_execute);
+                  outcome.result = module->execute(job.ticket.base(), job.input, job.ticket.stop_token(), {}, job.cancel);
+               }
             }
          } catch (...) {
             // Local capability/compile/timeout/allocation failure is NOT a

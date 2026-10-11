@@ -1,4 +1,5 @@
 #include <eosio/chain/parallel_ordered_batch.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 
 namespace eosio::chain::experimental {
 
@@ -55,7 +56,13 @@ bool ordered_attempt_batch::can_use(const isolated_action_result& result) const 
    if (result.state.base() != identity_->base ||
        result.execution_fingerprint != identity_->transactions[next_].execution_fingerprint)
       throw primary_state_invalid_attempt();
-   for (const auto& read : result.state.read_tables()) if (dirty_.contains(read)) return false;
+   for (const auto& read : result.state.read_tables()) if (dirty_.contains(read)) {
+      // Exact dependency-conflict events only; the already-disabled serial
+      // tail is not counted repeatedly. A zero-duration sample is a counter.
+      if (performance::metrics().enabled.load(std::memory_order_relaxed))
+         performance::metrics().record(performance::stage::parallel_conflict, 0);
+      return false;
+   }
    return true;
 }
 

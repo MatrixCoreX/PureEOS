@@ -3,6 +3,7 @@
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/code_object.hpp>
 #include <eosio/chain/global_property_object.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <algorithm>
 
 namespace eosio::chain::experimental {
@@ -52,10 +53,13 @@ std::optional<prepared_isolated_action> prepare_isolated_action(const controller
 }
 
 bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
-      const isolated_wasm_limits& limits, const isolated_action_result& result) {
-   // Validation first. Production CPU charging has a separate, not-yet-enabled
-   // gate; private elapsed time must not silently disappear from producer bills.
-   if (!context.trx_context.explicit_billed_cpu_time || context.trx_context.is_transient() ||
+      const isolated_wasm_limits& limits, const isolated_action_result& result,
+      std::optional<fc::microseconds> production_elapsed) {
+   // Non-explicit production must supply the successful private execution
+   // duration. Never turn parallel work into free CPU or a fixed explicit bill.
+   if ((!context.trx_context.explicit_billed_cpu_time && !production_elapsed) ||
+       (production_elapsed && (production_elapsed->count() < 0 || *production_elapsed > fc::seconds(1))) ||
+       context.trx_context.is_transient() ||
        context.trx_context.is_implicit() || context.trx_context.is_scheduled() || context.is_context_free() ||
        context.is_privileged() || vm_type != 0 || vm_version != 0 ||
        context.get_receiver() != context.get_action().account ||
@@ -69,6 +73,7 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
        result.return_value.size() > input.max_return_bytes) return false;
 
    chainbase_transaction_state_view live(context.db);
+   performance::scope adoption_timer(performance::stage::parallel_adopt);
    // Defense in depth in addition to the ordered coordinator. Compare complete
    // bounded logical tables, including absent keys/ranges and object identities.
    // No state pointers from this check survive into the mutation loop.
@@ -91,6 +96,8 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
       if (!row || row->payer != write.payer || row->value_size != write.value.size()) return false;
    }
    auto return_value = result.return_value; // allocate before first canonical mutation
+   if (!context.trx_context.explicit_billed_cpu_time)
+      context.trx_context.charge_isolated_cpu(*production_elapsed);
    for (const auto& write : result.state.writes()) {
       context.trx_context.checktime();
       const auto iterator = context.db_find_i64(write.table.code, write.table.scope, write.table.table, write.primary_key);

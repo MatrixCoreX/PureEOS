@@ -147,6 +147,7 @@ namespace eosio::chain {
             // format or consensus parameters; unsupported work stays serial.
             uint16_t                 parallel_validation_threads = 0;
             uint16_t                 parallel_validation_batch_size = 8;
+            bool                     parallel_production_enabled = false;
             flat_set<digest_type>    parallel_code_allowlist;
             bool                     read_only              =  false;
             bool                     force_all_checks       =  false;
@@ -233,6 +234,13 @@ namespace eosio::chain {
          };
          // Serial owner only; local diagnostics, never serialized into state.
          parallel_execution_stats get_parallel_execution_stats() const;
+         parallel_execution_stats get_parallel_production_stats() const;
+         uint16_t get_parallel_production_batch_size() const;
+         // Synchronous owner-only scope. The callback retains original queue,
+         // push/receipt/resource and RPC handling. False stops without calling
+         // later entries; return value counts callbacks, never accepted trxs.
+         size_t for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
+            fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback);
 
          /**
           * Attempt to execute a specific transaction in our deferred trx database

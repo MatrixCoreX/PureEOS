@@ -69,7 +69,9 @@ struct test_chain_action {
 
 template<class T, typename Tester>
 void push_trx(Tester& test, T ac, uint32_t billed_cpu_time_us , uint32_t max_cpu_usage_ms, uint32_t max_block_cpu_ms,
-              bool explicit_bill, std::vector<char> payload = {}, name account = "testapi"_n, transaction_metadata::trx_type trx_type = transaction_metadata::trx_type::input ) {
+              bool explicit_bill, std::vector<char> payload = {}, name account = "testapi"_n,
+              transaction_metadata::trx_type trx_type = transaction_metadata::trx_type::input,
+              fc::time_point* observed_block_deadline = nullptr ) {
    signed_transaction trx;
 
    action act;
@@ -93,7 +95,9 @@ void push_trx(Tester& test, T ac, uint32_t billed_cpu_time_us , uint32_t max_cpu
    auto fut = transaction_metadata::start_recover_keys( std::move( ptrx ), test.control->get_thread_pool(),
                                                         test.get_chain_id(), fc::microseconds::maximum(),
                                                         trx_type );
-   auto res = test.control->push_transaction( fut.get(), fc::time_point::now() + fc::milliseconds(max_block_cpu_ms),
+   const auto block_deadline = fc::time_point::now() + fc::milliseconds(max_block_cpu_ms);
+   if (observed_block_deadline) *observed_block_deadline = block_deadline;
+   auto res = test.control->push_transaction( fut.get(), block_deadline,
                                               fc::milliseconds(max_cpu_usage_ms), billed_cpu_time_us, explicit_bill, 0 );
    if( res->except_ptr ) std::rethrow_exception( res->except_ptr );
 };

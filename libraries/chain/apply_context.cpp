@@ -62,6 +62,11 @@ apply_context::apply_context(controller& con, transaction_context& trx_ctx, uint
 void apply_context::exec_one()
 {
    auto start = fc::time_point::now();
+   const auto private_cpu_before = trx_context.isolated_cpu_charged();
+   auto finish_action_trace = [&](action_trace& trace) {
+      finalize_trace(trace, start);
+      trace.elapsed += trx_context.isolated_cpu_charged() - private_cpu_before;
+   };
 
    digest_type act_digest;
 
@@ -72,7 +77,7 @@ void apply_context::exec_one()
       action_trace& trace = get_current_action_trace();
       trace.error_code = controller::convert_exception_to_error_code( e );
       trace.except = e;
-      finalize_trace( trace, start );
+      finish_action_trace(trace);
       throw;
    };
 
@@ -117,7 +122,8 @@ void apply_context::exec_one()
                   bool adopted = false;
                   if (const auto* attempt = std::exchange(trx_context.parallel_action_result, nullptr)) {
                      adopted = experimental::try_adopt_primary_result(*this, receiver_account->code_hash,
-                        receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits, *attempt);
+                        receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits, *attempt,
+                        std::exchange(trx_context.parallel_action_elapsed, {}));
                      trx_context.parallel_action_adopted = adopted;
                   }
                   if (!adopted)
@@ -205,7 +211,7 @@ void apply_context::exec_one()
 
    trx_context.executed_action_receipts.compute_and_append_digests_from(trace);
 
-   finalize_trace( trace, start );
+   finish_action_trace(trace);
 
    if ( control.contracts_console() ) {
       print_debug(receiver, trace);

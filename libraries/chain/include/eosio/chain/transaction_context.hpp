@@ -180,6 +180,11 @@ namespace eosio::chain {
 
          uint32_t update_billed_cpu_time( fc::time_point now );
 
+         // Native adoption only, after authorization/dependency checks and
+         // before the first canonical write. Single-use, non-explicit billing.
+         void charge_isolated_cpu(fc::microseconds elapsed);
+         fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
+
          std::tuple<int64_t, int64_t, bool, bool> max_bandwidth_billed_accounts_can_pay( bool force_elastic_limits = false )const;
 
          void validate_referenced_accounts( const transaction& trx, bool enforce_actor_whitelist_blacklist )const;
@@ -204,6 +209,7 @@ namespace eosio::chain {
          // controller during this synchronous push. Never survives undo/retry.
          const experimental::isolated_action_result* parallel_action_result = nullptr;
          const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
+         std::optional<fc::microseconds> parallel_action_elapsed;
          bool parallel_action_adopted = false;
 
          void add_ram_usage( account_name account, int64_t ram_delta );
@@ -280,7 +286,9 @@ namespace eosio::chain {
 
          bool                          cpu_limit_due_to_greylist = false;
 
-         fc::microseconds              max_transaction_time_subjective;
+         // controller supplies its configured limit; native context callers
+         // without one still obey objective/account/block limits.
+         fc::microseconds              max_transaction_time_subjective = fc::microseconds::maximum();
          fc::time_point                paused_time;
          fc::microseconds              initial_objective_duration_limit;
          fc::microseconds              objective_duration_limit;
@@ -299,6 +307,11 @@ namespace eosio::chain {
             speculative_executed_adjusted_max_transaction_time // prev_billed_cpu_time_us > 0
          };
          tx_cpu_usage_exceeded_reason  tx_cpu_usage_reason = tx_cpu_usage_exceeded_reason::account_cpu_limit;
+         fc::time_point                isolated_cpu_deadline = fc::time_point::maximum();
+         int64_t                       isolated_cpu_exception = block_cpu_usage_exceeded::code_value;
+         tx_cpu_usage_exceeded_reason  isolated_cpu_reason = tx_cpu_usage_exceeded_reason::account_cpu_limit;
+         fc::microseconds              isolated_cpu_charge;
+         bool                          isolated_cpu_was_charged = false;
    };
 
 } // namespace eosio::chain

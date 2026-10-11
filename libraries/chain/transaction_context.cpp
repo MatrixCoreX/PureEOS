@@ -67,7 +67,11 @@ namespace eosio::chain {
       upgrade_voters_action_ordinal.reset();
       parallel_action_result = nullptr;
       parallel_action_limits = nullptr;
+      parallel_action_elapsed.reset();
       parallel_action_adopted = false;
+      isolated_cpu_charge = fc::microseconds{};
+      isolated_cpu_was_charged = false;
+      isolated_cpu_deadline = fc::time_point::maximum();
       *trace = transaction_trace{}; // reset trace
       initialize();
       transaction_timer.stop();
@@ -227,6 +231,13 @@ namespace eosio::chain {
          billing_timer_exception_code = tx_cpu_usage_exceeded::code_value;
       }
 
+      // Preserve the CPU deadline independently of the block WALL deadline.
+      // A successful isolated execution later consumes CPU budget, not the
+      // wall-clock time that already elapsed while the whole batch ran.
+      isolated_cpu_deadline = _deadline;
+      isolated_cpu_exception = billing_timer_exception_code;
+      isolated_cpu_reason = tx_cpu_usage_reason;
+
       // Possibly limit deadline to caller provided wall clock block deadline
       if( block_deadline < _deadline ) {
          _deadline = block_deadline;
@@ -236,6 +247,11 @@ namespace eosio::chain {
       if ( !is_read_only() ) {
          if( !explicit_billed_cpu_time ) {
             int64_t validate_account_cpu_limit = account_cpu_limit - subjective_cpu_bill_us + leeway.count(); // Add leeway to allow powerup
+            if (subjective_cpu_bill_us > 0 && start + fc::microseconds(validate_account_cpu_limit) < isolated_cpu_deadline) {
+               isolated_cpu_deadline = start + fc::microseconds(validate_account_cpu_limit);
+               isolated_cpu_exception = tx_cpu_usage_exceeded::code_value;
+               isolated_cpu_reason = tx_cpu_usage_exceeded_reason::account_cpu_limit;
+            }
             // Possibly limit deadline to account subjective cpu left
             if( subjective_cpu_bill_us > 0 && (start + fc::microseconds(validate_account_cpu_limit) < _deadline) ) {
                _deadline = start + fc::microseconds(validate_account_cpu_limit);
@@ -448,7 +464,7 @@ namespace eosio::chain {
       check_net_usage();
 
       auto now = fc::time_point::now();
-      trace->elapsed = now - start;
+      trace->elapsed = now - start + isolated_cpu_charge;
 
       update_billed_cpu_time( now );
 
@@ -466,6 +482,10 @@ namespace eosio::chain {
 
    void transaction_context::undo() {
       if (undo_session) undo_session->undo();
+      parallel_action_result = nullptr;
+      parallel_action_limits = nullptr;
+      parallel_action_elapsed.reset();
+      parallel_action_adopted = false;
       transaction_timer.stop();
    }
 
@@ -559,6 +579,25 @@ namespace eosio::chain {
 
       assert(false);
       __builtin_unreachable();
+   }
+
+   void transaction_context::charge_isolated_cpu(fc::microseconds elapsed) {
+      EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() &&
+                 !is_implicit() && !is_scheduled() && !isolated_cpu_was_charged &&
+                 elapsed.count() >= 0 && elapsed <= fc::seconds(1) &&
+                 pseudo_start.time_since_epoch() >= elapsed,
+                 transaction_exception, "invalid isolated CPU charge");
+      checktime(); // do not revive a timed-out or externally interrupted timer
+      isolated_cpu_was_charged = true;
+      isolated_cpu_charge = elapsed;
+      pseudo_start -= elapsed;
+      const auto cpu_deadline = isolated_cpu_deadline - elapsed;
+      _deadline = std::min(cpu_deadline, block_deadline);
+      deadline_exception_code = block_deadline < cpu_deadline ? deadline_exception::code_value : isolated_cpu_exception;
+      tx_cpu_usage_reason = isolated_cpu_reason;
+      transaction_timer.stop(); // platform_timer::start requires a stopped timer
+      transaction_timer.start(_deadline);
+      checktime();
    }
 
    void transaction_context::pause_billing_timer() {

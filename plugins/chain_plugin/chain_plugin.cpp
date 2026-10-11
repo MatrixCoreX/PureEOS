@@ -304,6 +304,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Restricted parallel block validation workers (0 disables, maximum 16). Requires eos-vm, full validation and an explicit code-hash list. Does not enable parallel block production.")
          ("experimental-parallel-validation-batch-size", bpo::value<uint16_t>()->default_value(8),
           "Maximum transactions per restricted validation batch (1-64). Unsupported work executes serially.")
+         ("experimental-parallel-production", bpo::bool_switch()->default_value(false),
+          "Also try restricted parallel execution of already queued production transactions. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
           "Reviewed WASM SHA-256 eligible for the local restricted parallel experiment. Repeat for additional hashes. No chain-level contract allowlist is introduced.")
          ("performance-metrics", bpo::bool_switch()->default_value(false),
@@ -991,6 +993,9 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
 
       chain_config->parallel_validation_threads = options.at("experimental-parallel-validation-threads").as<uint16_t>();
       chain_config->parallel_validation_batch_size = options.at("experimental-parallel-validation-batch-size").as<uint16_t>();
+      chain_config->parallel_production_enabled = options.at("experimental-parallel-production").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_production_enabled || chain_config->parallel_validation_threads > 0,
+                 plugin_config_exception, "experimental parallel production requires nonzero parallel validation threads");
       EOS_ASSERT(chain_config->parallel_validation_threads <= 16 && chain_config->parallel_validation_batch_size > 0 &&
                  chain_config->parallel_validation_batch_size <= 64, plugin_config_exception,
                  "experimental parallel validation requires threads 0-16 and batch size 1-64");
@@ -1012,9 +1017,9 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
          EOS_ASSERT(chain_config->eosvmoc_tierup == wasm_interface::vm_oc_enable::oc_none, plugin_config_exception,
                     "experimental parallel validation requires eos-vm-oc-enable=none");
 #endif
-         ilog("Experimental parallel validation enabled: workers=${w}, batch=${b}, reviewed code hashes=${h}; production remains serial",
+         ilog("Experimental parallel validation enabled: workers=${w}, batch=${b}, reviewed code hashes=${h}; restricted production=${p}",
               ("w", chain_config->parallel_validation_threads)("b", chain_config->parallel_validation_batch_size)
-              ("h", chain_config->parallel_code_allowlist.size()));
+              ("h", chain_config->parallel_code_allowlist.size())("p", chain_config->parallel_production_enabled));
       }
 
       chain.emplace( *chain_config, std::move(pfs), *chain_id );
@@ -1238,6 +1243,11 @@ void chain_plugin::plugin_shutdown() {
       if (stats.batches)
          ilog("Experimental parallel validation totals: batches=${b}, attempts=${a}, succeeded=${s}, adopted=${d}, serial_fallbacks=${f}; counts include later-rolled-back blocks",
               ("b", stats.batches)("a", stats.attempts)("s", stats.succeeded)("d", stats.adopted)("f", stats.serial_fallbacks));
+      const auto production = my->chain->get_parallel_production_stats();
+      if (production.batches)
+         ilog("Experimental parallel production totals: batches=${b}, attempts=${a}, succeeded=${s}, adopted=${d}, serial_fallbacks=${f}; counts include later-aborted blocks",
+              ("b", production.batches)("a", production.attempts)("s", production.succeeded)
+              ("d", production.adopted)("f", production.serial_fallbacks));
    }
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <eosio/chain/parallel_wasm_worker.hpp>
+#include <fc/time.hpp>
 
 namespace eosio::chain {
 class apply_context;
@@ -28,6 +29,7 @@ std::optional<prepared_isolated_action> prepare_isolated_action(const controller
 // Any exception during replay MUST propagate through the original undo path;
 // callers must never catch it and rerun WASM over partially changed state.
 bool try_adopt_primary_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
-                              const isolated_wasm_limits&, const isolated_action_result&);
+                              const isolated_wasm_limits&, const isolated_action_result&,
+                              std::optional<fc::microseconds> production_elapsed = {});
 
 } // namespace eosio::chain::experimental

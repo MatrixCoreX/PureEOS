@@ -607,4 +607,25 @@ BOOST_FIXTURE_TEST_CASE(external_interrupt_cancels_running_and_queued_attempts_w
    BOOST_CHECK_EQUAL(canonical(), 10u);
 }
 
+BOOST_FIXTURE_TEST_CASE(one_absolute_deadline_bounds_running_and_queued_work_then_pool_recovers, wasm_fixture) {
+   isolated_worker_pool pool(1);
+   isolated_wasm_limits limits; limits.max_attempt_time = std::chrono::seconds(1);
+   const auto code = increment_wasm();
+   std::vector<ordered_attempt_batch::request> requests;
+   for (size_t i = 0; i < 8; ++i) requests.push_back({fc::sha256::hash(std::to_string(i)), fc::sha256::hash("deadline")});
+   ordered_attempt_batch batch(base, requests);
+   isolated_cancel cancel;
+   cancel.deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(20);
+   std::vector<isolated_worker_job> jobs;
+   for (size_t i = 0; i < requests.size(); ++i)
+      jobs.push_back({batch.get_ticket(i), code, input(1, 7, 0, 1), limits, cancel});
+   const auto start = std::chrono::steady_clock::now();
+   const auto results = pool.run(std::move(jobs));
+   BOOST_CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(3));
+   for (const auto& result : results) BOOST_CHECK(!result.result);
+   const auto retry = pool.run({{batch.get_ticket(0), code, input(), limits, {}}});
+   BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->return_value), 17u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

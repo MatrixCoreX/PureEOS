@@ -12,6 +12,9 @@ set_tests_properties(pureeos_parallel_access_audit_unit pureeos_parallel_access_
 add_test(NAME pureeos_parallel_process_harness
   COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/parallel_execution_harness_test.py -v)
 set_tests_properties(pureeos_parallel_process_harness PROPERTIES TIMEOUT 30 LABELS "parallel-px4")
+add_test(NAME pureeos_parallel_replay_accounting
+  COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/PerformanceHarness/test_parallel_replay_benchmark.py -v)
+set_tests_properties(pureeos_parallel_replay_accounting PROPERTIES TIMEOUT 30 LABELS "parallel-px6")
 # The real process test additionally requires an explicitly hash-checked OLD
 # executable and an exported corpus; never silently use the new binary twice.
 

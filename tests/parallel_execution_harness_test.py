@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from parallel_execution_test import checked_manifest, require, sha256
+from unittest.mock import Mock, patch
+from parallel_execution_test import Node, checked_manifest, require, sha256
 
 
 class HarnessTest(unittest.TestCase):
@@ -72,6 +73,30 @@ class HarnessTest(unittest.TestCase):
     def test_checks_cannot_be_optimized_away(self):
         with self.assertRaisesRegex(RuntimeError, "must fail"):
             require(False, "must fail")
+
+    def checkpoint_node(self):
+        node = object.__new__(Node)
+        node.root, node.manifest = self.root, self.manifest
+        point = {"block_num": 6, "block_id": "head", "lib": 4, "integrity_hash": "state"}
+        info = {"head_block_num": 6, "head_block_id": "head", "last_irreversible_block_num": 4,
+                "chain_id": self.manifest["chain_id"]}
+        state = {"head_block_id": "head", "integrity_hash": "state"}
+        return node, point, info, state
+
+    def test_checkpoint_waits_for_exact_finality_after_head_cache(self):
+        node, point, info, state = self.checkpoint_node()
+        node.rpc = Mock(side_effect=[{**info, "last_irreversible_block_num": 3}, info, state])
+        with patch("parallel_execution_test.time.sleep") as sleep:
+            self.assertEqual(node.check(point)["lib"], 4)
+            sleep.assert_called_once_with(0.1)
+
+    def test_checkpoint_wrong_finality_still_fails_at_deadline(self):
+        node, point, info, _ = self.checkpoint_node()
+        for incorrect in (3, 5):
+            node.rpc = Mock(return_value={**info, "last_irreversible_block_num": incorrect})
+            with patch("parallel_execution_test.time.monotonic", side_effect=[0, 31]):
+                with self.assertRaisesRegex(RuntimeError, f"actual={incorrect}, expected=4"):
+                    node.check(point)
 
 
 if __name__ == "__main__":

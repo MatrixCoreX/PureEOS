@@ -108,8 +108,43 @@ add_executable(parallel_validation_test main.cpp parallel_validation_tests.cpp)
 target_link_libraries(parallel_validation_test PRIVATE eosio_chain_wrap eosio_testing
   state_history fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
 target_compile_options(parallel_validation_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
-add_test(NAME pureeos_parallel_validation COMMAND parallel_validation_test --report_level=detailed --color_output=no)
+add_test(NAME pureeos_parallel_validation COMMAND parallel_validation_test --run_test=parallel_validation_tests --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_validation PROPERTIES TIMEOUT 300 LABELS "parallel-px3")
+add_test(NAME pureeos_parallel_production COMMAND parallel_validation_test --run_test=parallel_production_tests --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_production PROPERTIES TIMEOUT 300 LABELS "parallel-px5")
+
+# Existing original-path suites, rebuilt against the current core. This is a
+# bounded compatibility target, not a replacement for the complete unit_test.
+add_executable(parallel_compatibility_test main.cpp read_only_trx_tests.cpp
+  sync_call_cpp_tests.cpp sync_call_wasm_tests.cpp resource_limits_test.cpp
+  database_tests.cpp delay_tests.cpp ram_tests.cpp checktime_tests.cpp api_tests.cpp
+  subjective_billing_tests.cpp unapplied_transaction_queue_tests.cpp)
+target_link_libraries(parallel_compatibility_test PRIVATE eosio_chain_wrap eosio_testing
+  state_history chainbase fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(parallel_compatibility_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+target_include_directories(parallel_compatibility_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/contracts ${CMAKE_CURRENT_BINARY_DIR}/contracts ${CMAKE_CURRENT_BINARY_DIR}/include)
+foreach(PARALLEL_COMPAT_SUITE read_only_trx_tests sync_call_cpp_tests sync_call_wasm_tests
+    resource_limits_test database_tests delay_tests ram_tests checktime_tests subjective_billing_test
+    unapplied_transaction_queue_tests)
+  add_test(NAME pureeos_parallel_compat_${PARALLEL_COMPAT_SUITE} COMMAND parallel_compatibility_test
+    --run_test=${PARALLEL_COMPAT_SUITE} --report_level=detailed --color_output=no -- --eos-vm)
+  set_tests_properties(pureeos_parallel_compat_${PARALLEL_COMPAT_SUITE} PROPERTIES
+    TIMEOUT 1800 LABELS "parallel-compatibility" RUN_SERIAL TRUE)
+endforeach()
+foreach(PARALLEL_API_CASE db_tests db_notify_tests multi_index_tests permission_tests resource_limits_tests)
+  add_test(NAME pureeos_parallel_compat_api_${PARALLEL_API_CASE} COMMAND parallel_compatibility_test
+    --run_test=api_part2_tests/${PARALLEL_API_CASE}* --report_level=detailed --color_output=no -- --eos-vm)
+  set_tests_properties(pureeos_parallel_compat_api_${PARALLEL_API_CASE} PROPERTIES
+    TIMEOUT 1800 LABELS "parallel-compatibility" RUN_SERIAL TRUE)
+endforeach()
+foreach(PARALLEL_API_CASE action_ordinal_test action_ordinal_failtest1 action_ordinal_failtest2 action_ordinal_failtest3
+    permission_usage_tests action_results_tests)
+  add_test(NAME pureeos_parallel_compat_api_${PARALLEL_API_CASE} COMMAND parallel_compatibility_test
+    --run_test=api_part3_tests/${PARALLEL_API_CASE}* --report_level=detailed --color_output=no -- --eos-vm)
+  set_tests_properties(pureeos_parallel_compat_api_${PARALLEL_API_CASE} PROPERTIES
+    TIMEOUT 1800 LABELS "parallel-compatibility" RUN_SERIAL TRUE)
+endforeach()
 
 # Opt-in native isolation checks, without pretending that non-instrumented
 # Chainbase/FC or the complete nodeos/JIT have been covered by sanitizers.

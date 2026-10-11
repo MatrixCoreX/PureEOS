@@ -15,13 +15,15 @@ enum class stage : size_t {
    signature_queue, signature_recovery, transaction_queue, transaction_execute,
    onblock, vote_queue, bls_verify, recovery_lock, recovery_pack,
    recovery_file_sync, directory_sync, recovery_store, recovery_prune,
-   finalizer_file_sync, finalizer_save, count
+   finalizer_file_sync, finalizer_save, parallel_capture, parallel_batch_wait,
+   parallel_compile, parallel_execute, parallel_adopt, parallel_fallback, parallel_conflict, count
 };
 inline constexpr std::array names{
    "signature_queue", "signature_recovery", "transaction_queue", "transaction_execute",
    "onblock", "vote_queue", "bls_verify", "recovery_lock", "recovery_pack",
    "recovery_file_sync", "directory_sync", "recovery_store", "recovery_prune",
-   "finalizer_file_sync", "finalizer_save"
+   "finalizer_file_sync", "finalizer_save", "parallel_capture", "parallel_batch_wait",
+   "parallel_compile", "parallel_execute", "parallel_adopt", "parallel_fallback", "parallel_conflict"
 };
 inline constexpr std::array<uint64_t, 13> boundaries_ns{
    1'000, 5'000, 10'000, 50'000, 100'000, 500'000, 1'000'000,

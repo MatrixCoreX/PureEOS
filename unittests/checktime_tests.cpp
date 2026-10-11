@@ -42,15 +42,18 @@ struct checktime_observation {
       return fields["billing_timer"].as_int64();
    }
 
-   void check_block_deadline(fc::microseconds requested_limit) const {
+   void check_block_deadline(fc::time_point requested_deadline) const {
       BOOST_REQUIRE(fields.contains("deadline"));
       BOOST_REQUIRE(fields.contains("start"));
       BOOST_REQUIRE(fields.contains("now"));
       const auto deadline = fields["deadline"].as<fc::time_point>();
-      const auto start = fields["start"].as<fc::time_point>();
-      // The caller sets its deadline before controller starts the transaction.
-      // Any billing pause must NOT extend that original wall-clock deadline.
-      BOOST_CHECK_LE((deadline - start).count(), requested_limit.count());
+      // controller backdates `start` by signature CPU, so deadline-start is
+      // NOT the caller's wall budget. Compare the actual supplied deadline,
+      // with the same millisecond log serialization. This is an equality,
+      // not a larger timeout tolerance that could hide a billing-pause bug.
+      BOOST_REQUIRE(requested_deadline != fc::time_point());
+      const auto logged_requested = fc::variant(requested_deadline).as<fc::time_point>();
+      BOOST_CHECK(deadline == logged_requested);
       BOOST_CHECK(fields["now"].as<fc::time_point>() >= deadline);
    }
 };
@@ -75,8 +78,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(checktime_pass_tests, T, validating_testers)  { tr
 
 template<class T, typename Tester>
 void call_test(Tester& test, T ac, uint32_t billed_cpu_time_us , uint32_t max_cpu_usage_ms, uint32_t max_block_cpu_ms,
-               std::vector<char> payload = {}, name account = "testapi"_n, transaction_metadata::trx_type trx_type = transaction_metadata::trx_type::input ) {
-   push_trx(test, ac, billed_cpu_time_us, max_cpu_usage_ms, max_block_cpu_ms, billed_cpu_time_us > 0, payload, account, trx_type);
+               std::vector<char> payload = {}, name account = "testapi"_n,
+               transaction_metadata::trx_type trx_type = transaction_metadata::trx_type::input,
+               fc::time_point* observed_block_deadline = nullptr ) {
+   push_trx(test, ac, billed_cpu_time_us, max_cpu_usage_ms, max_block_cpu_ms, billed_cpu_time_us > 0,
+            payload, account, trx_type, observed_block_deadline);
    test.produce_block();
 }
 
@@ -344,9 +350,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_test,
 
    // First call to contract which should cause the WASM to load and trx_context.pause_billing_timer() to be called.
    checktime_observation observed;
+   fc::time_point requested_deadline;
    auto before = fc::time_point::now();
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
-                                     0, 150, 75, fc::raw::pack(10000000000000000000ULL), "pause"_n ),
+                                     0, 150, 75, fc::raw::pack(10000000000000000000ULL), "pause"_n,
+                                     transaction_metadata::trx_type::input, &requested_deadline ),
                           deadline_exception, [&](const deadline_exception& e) {
                              return observed.record(e) && is_deadline_exception(e);
                           } );
@@ -359,7 +367,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_test,
 
    // Loading a cold WASM is not interruptible by this timer. Verify the actual
    // deadline was not shifted by that pause, and retain the execution bound.
-   observed.check_block_deadline(fc::milliseconds(75));
+   observed.check_block_deadline(requested_deadline);
    BOOST_CHECK_LT(observed.billed_us(), 125'000);
 
    BOOST_REQUIRE_EQUAL( t.validate(), true );
@@ -398,9 +406,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_while
 
    // First call to contract which should cause the WASM to load and trx_context.pause_billing_timer() to be called.
    checktime_observation observed;
+   fc::time_point requested_deadline;
    auto before = fc::time_point::now();
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
-                                     0, 150, 15, fc::raw::pack(10000000000000000000ULL), "pause"_n ),
+                                     0, 150, 15, fc::raw::pack(10000000000000000000ULL), "pause"_n,
+                                     transaction_metadata::trx_type::input, &requested_deadline ),
                           deadline_exception, [&](const deadline_exception& e) {
                              return observed.record(e) && is_deadline_exception(e);
                           } );
@@ -412,7 +422,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_while
    BOOST_CHECK( dur >= 15'000 ); // should never fail
    BOOST_TEST( t.is_code_cached("pause"_n) );
 
-   observed.check_block_deadline(fc::milliseconds(15));
+   observed.check_block_deadline(requested_deadline);
    BOOST_CHECK_LT(observed.billed_us(), 125'000);
    BOOST_REQUIRE_LT(observed.billed_us(), 150'000);
 

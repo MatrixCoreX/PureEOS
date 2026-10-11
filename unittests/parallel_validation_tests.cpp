@@ -2,6 +2,10 @@
 #include <eosio/chain/wast_to_wasm.hpp>
 #include <eosio/chain/merkle.hpp>
 #include <eosio/chain/snapshot.hpp>
+#include <eosio/chain/transaction_context.hpp>
+#include <eosio/chain/resource_limits.hpp>
+#include <eosio/chain/global_property_object.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <eosio/testing/tester.hpp>
 #include <eosio/testing/bls_utils.hpp>
 #include <boost/test/unit_test.hpp>
@@ -446,4 +450,477 @@ BOOST_FIXTURE_TEST_CASE(json_blocks_finalized_before_publication_remain_restarta
    BOOST_CHECK(observed.control->calculate_integrity_hash() == hash);
 }
 
+BOOST_FIXTURE_TEST_CASE(parallel_diagnostics_do_not_change_consensus_and_count_real_conflicts, validation_corpus) {
+   const auto saved = performance::metrics().enabled.exchange(false);
+   auto restore = fc::make_scoped_exit([&] { performance::metrics().enabled = saved; });
+   fc::temp_directory off_dir, on_dir;
+   tester off(configuration(off_dir, 4), genesis), on(configuration(on_dir, 4), genesis);
+   const auto disabled_before = performance::metrics().snapshot(performance::stage::parallel_capture).count;
+   prefix(off, corpus.size());
+   BOOST_CHECK_EQUAL(performance::metrics().snapshot(performance::stage::parallel_capture).count, disabled_before);
+   const auto conflicts_before = performance::metrics().snapshot(performance::stage::parallel_conflict).count;
+   performance::metrics().enabled = true;
+   prefix(on, corpus.size());
+   BOOST_CHECK(off.control->calculate_integrity_hash() == on.control->calculate_integrity_hash());
+   BOOST_CHECK_EQUAL(off.control->get_parallel_execution_stats().adopted, on.control->get_parallel_execution_stats().adopted);
+   for (auto stage : {performance::stage::parallel_capture, performance::stage::parallel_batch_wait,
+          performance::stage::parallel_compile, performance::stage::parallel_execute, performance::stage::parallel_adopt,
+          performance::stage::parallel_fallback})
+      BOOST_CHECK_GT(performance::metrics().snapshot(stage).count, 0u);
+   BOOST_CHECK_GT(performance::metrics().snapshot(performance::stage::parallel_conflict).count, conflicts_before);
+}
+
+BOOST_FIXTURE_TEST_CASE(reviewed_but_unsupported_creation_imports_fall_back_before_any_canonical_change, validation_corpus) {
+   const auto initializer = initialize_code();
+   const auto initializer_hash = fc::sha256::hash(reinterpret_cast<const char*>(initializer.data()), initializer.size());
+   fc::temp_directory reference_dir;
+   tester reference(configuration(reference_dir, 0), genesis);
+   prefix(reference, corpus.size());
+   const auto expected = reference.control->calculate_integrity_hash();
+   for (uint16_t workers : {1, 2, 4}) {
+      fc::temp_directory directory;
+      auto config = configuration(directory, workers);
+      // Being on the local code-hash list is NOT permission to use unsupported
+      // state operations. Four real stores attempt linking, then the original
+      // transaction path creates tables/rows/payer RAM in canonical order.
+      config.parallel_code_allowlist.insert(initializer_hash);
+      tester chain(config, genesis);
+      prefix(chain, corpus.size());
+      BOOST_CHECK(chain.control->calculate_integrity_hash() == expected);
+      const auto stats = chain.control->get_parallel_execution_stats();
+      BOOST_CHECK_EQUAL(stats.attempts, 23u);
+      BOOST_CHECK_EQUAL(stats.succeeded, 18u);
+      BOOST_CHECK_EQUAL(stats.adopted, 11u);
+      BOOST_CHECK_EQUAL(stats.serial_fallbacks, 12u);
+   }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_production_tests)
+using parallel_validation_tests::validation_corpus;
+
+struct production_chain : tester {
+   using tester::tester;
+   void start() { _start_block(head().block_time() + fc::microseconds(config::block_interval_us)); }
+};
+
+signed_transaction make_transaction(tester& chain, name scope, int64_t delta, uint64_t nonce,
+                                    uint64_t work = 0, name signer = "alice"_n, uint8_t cpu_ms = 0) {
+   signed_transaction trx;
+   action act; act.account = "test"_n; act.name = "run"_n; act.authorization = {{"alice"_n, "active"_n}};
+   const std::array<uint64_t, 4> data{scope.to_uint64_t(), uint64_t(delta), work, nonce};
+   act.data.assign(reinterpret_cast<const char*>(data.data()), reinterpret_cast<const char*>(data.data()) + sizeof(data));
+   trx.actions.push_back(std::move(act)); chain.set_transaction_headers(trx);
+   trx.max_cpu_usage_ms = cpu_ms;
+   trx.sign(chain.get_private_key(signer, "active"), chain.control->get_chain_id());
+   return trx;
+}
+transaction_metadata_ptr metadata(tester& chain, const signed_transaction& trx) {
+   return transaction_metadata::recover_keys(
+      std::make_shared<packed_transaction>(trx, packed_transaction::compression_type::none),
+      chain.control->get_chain_id(), fc::seconds(5), transaction_metadata::trx_type::input);
+}
+transaction_trace_ptr production_push(tester& chain, const transaction_metadata_ptr& trx,
+      fc::microseconds max_time = fc::seconds(1), fc::time_point deadline = fc::time_point::maximum()) {
+   return chain.control->push_transaction(trx, deadline, max_time, 0, false, 0);
+}
+void check_row(tester& chain, name scope, uint64_t expected) {
+   auto bytes = chain.get_row_by_account("test"_n, scope, "rows"_n, name{1});
+   BOOST_REQUIRE_EQUAL(bytes.size(), 8u);
+   uint64_t value; std::memcpy(&value, bytes.data(), 8); BOOST_CHECK_EQUAL(value, expected);
+}
+
+BOOST_FIXTURE_TEST_CASE(nonexplicit_production_preserves_order_receipts_and_serial_validation, validation_corpus) {
+   for (uint16_t workers : {0, 1, 2, 4}) {
+      fc::temp_directory producer_dir, validator_dir;
+      auto config = configuration(producer_dir, workers);
+      config.parallel_production_enabled = workers != 0;
+      production_chain producer(config, genesis);
+      tester validator(configuration(validator_dir, 0), genesis);
+      prefix(producer, 4); prefix(validator, 4);
+      producer.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      producer.start();
+      std::vector<transaction_metadata_ptr> transactions;
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n})
+         transactions.push_back(metadata(producer, make_transaction(producer, scope, 7, 9000 + transactions.size(), 20000)));
+      size_t callbacks = 0;
+      uint64_t billed = 0;
+      std::vector<std::vector<char>> produced_traces, verified_traces;
+      auto connection = validator.control->applied_transaction().connect([&](const auto& event) {
+         if (std::any_of(transactions.begin(), transactions.end(), [&](const auto& trx) { return trx->id() == std::get<0>(event)->id; }))
+            verified_traces.push_back(consensus_trace(std::get<0>(event)));
+      });
+      BOOST_CHECK_EQUAL(producer.control->get_parallel_production_batch_size(), workers ? 8 : 0);
+      BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(transactions, fc::time_point::maximum(), [&](const auto& trx) {
+         BOOST_CHECK(trx == transactions.at(callbacks++));
+         auto trace = production_push(producer, trx);
+         BOOST_REQUIRE_MESSAGE(!trace->except, (trace->except ? trace->except->to_detail_string() : ""));
+         BOOST_REQUIRE(trace->receipt);
+         BOOST_CHECK_GE(trace->receipt->cpu_usage_us, producer.control->get_global_properties().configuration.min_transaction_cpu_usage);
+         billed += trace->receipt->cpu_usage_us;
+         produced_traces.push_back(consensus_trace(trace));
+         return true;
+      }), 4u);
+      const auto stats = producer.control->get_parallel_production_stats();
+      BOOST_CHECK_EQUAL(stats.adopted, workers ? 4u : 0u);
+      BOOST_CHECK_EQUAL(stats.serial_fallbacks, 0u);
+      BOOST_CHECK_GT(billed, 0u);
+      auto block = producer.finish_block();
+      BOOST_REQUIRE_EQUAL(block->transactions.size(), 4u);
+      for (size_t i = 0; i < 4; ++i)
+         BOOST_CHECK(std::get<packed_transaction>(block->transactions[i].trx).id() == transactions[i]->id());
+      validator.push_block(block); validator.control->abort_block();
+      BOOST_CHECK(produced_traces == verified_traces);
+      BOOST_CHECK(producer.control->calculate_integrity_hash() == validator.control->calculate_integrity_hash());
+      for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) check_row(producer, scope, 17);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(conflict_failed_private_and_auth_rejection_use_original_atomic_path, validation_corpus) {
+   for (uint16_t workers : {1, 2, 4}) {
+      fc::temp_directory directory;
+      auto config = configuration(directory, workers); config.parallel_production_enabled = true;
+      production_chain chain(config, genesis); prefix(chain, 4); chain.start();
+      std::vector<transaction_metadata_ptr> batch{
+         metadata(chain, make_transaction(chain, "alice"_n, 10, 9100)),
+         metadata(chain, make_transaction(chain, "alice"_n, -15, 9101)), // private 10-15 fails; canonical 20-15 succeeds
+         metadata(chain, make_transaction(chain, "bob"_n, 2, 9102))};
+      size_t called = 0;
+      chain.control->for_each_parallel_production_transaction(batch, fc::time_point::maximum(), [&](const auto& trx) {
+         BOOST_CHECK(trx == batch.at(called++)); BOOST_REQUIRE(!production_push(chain, trx)->except); return true;
+      });
+      BOOST_CHECK_EQUAL(called, 3u);
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().adopted, 1u);
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().serial_fallbacks, 2u);
+      check_row(chain, "alice"_n, 5); check_row(chain, "bob"_n, 12);
+      batch = {metadata(chain, make_transaction(chain, "carol"_n, 1, 9200, 0, "bob"_n)),
+               metadata(chain, make_transaction(chain, "dave"_n, 1, 9201))};
+      called = 0;
+      chain.control->for_each_parallel_production_transaction(batch, fc::time_point::maximum(), [&](const auto& trx) {
+         auto trace = production_push(chain, trx);
+         if (called++ == 0) { BOOST_REQUIRE(trace->except); BOOST_CHECK(!trace->receipt); }
+         else BOOST_REQUIRE(!trace->except);
+         return true;
+      });
+      BOOST_CHECK_EQUAL(called, 2u);
+      check_row(chain, "carol"_n, 10); check_row(chain, "dave"_n, 11);
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().adopted, 1u);
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().serial_fallbacks, 4u);
+      BOOST_CHECK(!chain.control->is_known_unexpired_transaction(batch.front()->id()));
+      // Ordinary duplicate rejection cannot replay a previous accepted result.
+      auto duplicate = production_push(chain, batch.back());
+      BOOST_REQUIRE(duplicate->except); BOOST_CHECK_EQUAL(duplicate->except->code(), tx_duplicate::code_value);
+      check_row(chain, "dave"_n, 11);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(batch_stop_abort_exception_deadline_and_identity_never_reuse_private_results, validation_corpus) {
+   for (unsigned mode = 0; mode < 7; ++mode) {
+      fc::temp_directory directory;
+      auto config = configuration(directory, 2); config.parallel_production_enabled = true;
+      production_chain chain(config, genesis); prefix(chain, 4); chain.start();
+      std::vector<transaction_metadata_ptr> batch{
+         metadata(chain, make_transaction(chain, "alice"_n, 1, 9300)),
+         metadata(chain, make_transaction(chain, "bob"_n, 1, 9301))};
+      const auto before = chain.control->calculate_integrity_hash();
+      size_t callbacks = 0;
+      const auto deadline = mode == 3 ? fc::time_point::now() - fc::seconds(1) : fc::time_point::maximum();
+      auto run = [&] {
+         return chain.control->for_each_parallel_production_transaction(batch, deadline, [&](const auto& trx) {
+            ++callbacks;
+            if (mode == 0) return false; // queue declines before push
+            if (mode == 1) { chain.control->abort_block(); chain.start(); return true; }
+            if (mode == 2) throw std::runtime_error("queue callback failed");
+            if (mode == 4) {
+               BOOST_CHECK_THROW(chain.control->for_each_parallel_production_transaction(batch, deadline, [](const auto&) { return true; }), transaction_exception);
+               return false;
+            }
+            if (mode == 5) {
+               // Same signed bytes but a different queue metadata capability.
+               auto other = metadata(chain, trx->packed_trx()->get_signed_transaction());
+               BOOST_REQUIRE(!production_push(chain, other)->except);
+               return true;
+            }
+            BOOST_REQUIRE(!production_push(chain, trx)->except);
+            chain.control->interrupt_transaction(controller::interrupt_t::speculative_block_trx);
+            return true;
+         });
+      };
+      if (mode == 2) BOOST_CHECK_THROW(run(), std::runtime_error);
+      else BOOST_CHECK_EQUAL(run(), mode == 3 ? 0u : mode == 5 ? 2u : 1u);
+      BOOST_CHECK_EQUAL(callbacks, mode == 3 ? 0u : mode == 5 ? 2u : 1u);
+      if (mode <= 4) {
+         check_row(chain, "alice"_n, 10); check_row(chain, "bob"_n, 10);
+         if (mode != 1) BOOST_CHECK(chain.control->calculate_integrity_hash() == before);
+      }
+      if (mode == 5) {
+         BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().adopted, 0u);
+         BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().serial_fallbacks, 2u);
+      }
+      // Close/abort that pending context and process fresh work. No old slot or
+      // reentrancy flag survives any of the above outcomes.
+      chain.control->abort_block(); chain.start();
+      auto fresh = metadata(chain, make_transaction(chain, "carol"_n, 3, 9400));
+      BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({fresh}, fc::time_point::maximum(), [&](const auto& trx) {
+         BOOST_REQUIRE(!production_push(chain, trx)->except); return true;
+      }), 1u);
+      check_row(chain, "carol"_n, 13);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(private_cpu_is_billed_once_and_obeys_original_deadlines, validation_corpus) {
+   fc::temp_directory directory;
+   production_chain chain(configuration(directory, 0), genesis); prefix(chain, 4); chain.start();
+   const auto snapshot = chain.control->calculate_integrity_hash();
+   for (unsigned mode = 0; mode < 7; ++mode) {
+      auto trx = make_transaction(chain, "alice"_n, 1, 9500, 0, "alice"_n, mode == 2 ? 20 : 0);
+      packed_transaction packed(trx, packed_transaction::compression_type::none);
+      {
+         platform_timer timer;
+         const auto start = fc::time_point::now();
+         transaction_context context(*chain.control, packed, packed.id(), transaction_checktime_timer(timer),
+            action_digests_t::store_which_t::savanna, start, transaction_metadata::trx_type::input);
+         context.block_deadline = start + fc::seconds(5);
+         if (mode == 1) context.block_deadline = start + fc::milliseconds(20);
+         context.explicit_billed_cpu_time = mode == 3;
+         if (mode == 3) context.billed_cpu_time_us = 100;
+         context.init_for_input_trx(packed.get_unprunable_size(), packed.get_prunable_size());
+         if (mode == 0 || mode == 1) {
+            const int64_t private_us = mode == 1 ? 30000 : 10000;
+            BOOST_CHECK_NO_THROW(context.charge_isolated_cpu(fc::microseconds(private_us)));
+            BOOST_CHECK_EQUAL(context.isolated_cpu_charged().count(), private_us);
+            // Measure at a fixed instant: exact extra CPU, not another trial's
+            // noisy wall time. Existing min CPU still applies below this value.
+            BOOST_CHECK_EQUAL(context.update_billed_cpu_time(start + fc::milliseconds(12)), 12000u + private_us);
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::microseconds(1)), transaction_exception);
+            BOOST_CHECK_NO_THROW(context.checktime());
+         } else if (mode == 2) {
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::milliseconds(21)), tx_cpu_usage_exceeded);
+            BOOST_CHECK_EQUAL(context.isolated_cpu_charged().count(), 21000);
+         } else if (mode == 3) {
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::milliseconds(1)), transaction_exception);
+            BOOST_CHECK_EQUAL(context.update_billed_cpu_time(start + fc::seconds(1)), 100u);
+         } else if (mode == 4) {
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::microseconds(-1)), transaction_exception);
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::seconds(2)), transaction_exception);
+            BOOST_CHECK_EQUAL(context.isolated_cpu_charged().count(), 0);
+         } else if (mode == 5) {
+            timer.interrupt_timer();
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::milliseconds(1)), interrupt_exception);
+            BOOST_CHECK_EQUAL(context.isolated_cpu_charged().count(), 0);
+         } else {
+            // The original wall deadline must remain unchanged: private CPU
+            // does not make the remaining real wall window negative twice.
+            context.block_deadline = start - fc::microseconds(1);
+            BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::milliseconds(1)), deadline_exception);
+         }
+      }
+      BOOST_CHECK(chain.control->calculate_integrity_hash() == snapshot); // init + charge all undone
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(cpu_minimum_block_and_subjective_account_budgets_are_not_bypassed, validation_corpus) {
+   fc::temp_directory directory;
+   production_chain chain(configuration(directory, 0), genesis); prefix(chain, 4); chain.start();
+   const auto before = chain.control->calculate_integrity_hash();
+   for (unsigned mode = 0; mode < 3; ++mode) {
+      auto& limits = chain.control->get_mutable_resource_limits_manager();
+      auto trx = make_transaction(chain, "alice"_n, 1, 9600);
+      packed_transaction packed(trx, packed_transaction::compression_type::none);
+      platform_timer timer;
+      const auto start = fc::time_point::now();
+      transaction_context context(*chain.control, packed, packed.id(), transaction_checktime_timer(timer),
+         action_digests_t::store_which_t::savanna, start, transaction_metadata::trx_type::input);
+      // These fixture-only resource changes are covered by the context's
+      // original undo session; no mutable controller DB capability is exposed.
+      if (mode == 1) limits.add_transaction_usage({}, limits.get_block_cpu_limit() - 5000, 0,
+         block_timestamp_type(chain.control->pending_block_time()).slot);
+      if (mode == 2) {
+         limits.set_account_limits("alice"_n, -1, -1, 1, false);
+         limits.set_account_limits("bob"_n, -1, -1, 100, false);
+         limits.process_account_limit_updates();
+      }
+      context.block_deadline = start + fc::seconds(5); context.leeway = fc::microseconds(0);
+      if (mode == 2) {
+         auto [available, ignored] = limits.get_account_cpu_limit("alice"_n);
+         BOOST_REQUIRE_GT(available, 10000);
+         context.subjective_cpu_bill_us = available - 10000;
+      }
+      context.init_for_input_trx(packed.get_unprunable_size(), packed.get_prunable_size());
+      if (mode == 0) {
+         context.charge_isolated_cpu(fc::microseconds(0));
+         BOOST_CHECK_EQUAL(context.update_billed_cpu_time(start), chain.control->get_global_properties().configuration.min_transaction_cpu_usage);
+      } else if (mode == 1) {
+         BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::microseconds(6000)), block_cpu_usage_exceeded);
+      } else {
+         BOOST_CHECK_THROW(context.charge_isolated_cpu(fc::microseconds(11000)), tx_cpu_usage_exceeded);
+      }
+   }
+   BOOST_CHECK(chain.control->calculate_integrity_hash() == before);
+}
+
+BOOST_FIXTURE_TEST_CASE(slow_private_queue_head_falls_back_and_does_not_starve_following_transaction, validation_corpus) {
+   for (uint16_t workers : {1, 2, 4}) for (auto wall_ms : {100, 500}) {
+      fc::temp_directory directory;
+      auto config = configuration(directory, workers); config.parallel_production_enabled = true;
+      production_chain chain(config, genesis); prefix(chain, 4); chain.start();
+      std::vector<transaction_metadata_ptr> batch{
+         metadata(chain, make_transaction(chain, "alice"_n, 1, 9700, 1'000'000'000)),
+         metadata(chain, make_transaction(chain, "bob"_n, 1, 9701))};
+      const auto deadline = fc::time_point::now() + fc::milliseconds(wall_ms);
+      size_t callbacks = 0;
+      const auto count = chain.control->for_each_parallel_production_transaction(batch, deadline, [&](const auto& trx) {
+         auto trace = production_push(chain, trx, fc::milliseconds(20), deadline);
+         if (callbacks++ == 0) {
+            BOOST_REQUIRE(trace->except);
+            BOOST_CHECK_EQUAL(trace->except->code(), tx_cpu_usage_exceeded::code_value);
+            BOOST_CHECK(!trace->receipt);
+         } else BOOST_REQUIRE(!trace->except);
+         return true;
+      });
+      BOOST_CHECK_EQUAL(count, 2u); BOOST_CHECK_EQUAL(callbacks, 2u);
+      BOOST_CHECK(!chain.control->is_known_unexpired_transaction(batch.front()->id()));
+      BOOST_CHECK(chain.control->is_known_unexpired_transaction(batch.back()->id()));
+      check_row(chain, "alice"_n, 10); check_row(chain, "bob"_n, 11);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(export_fresh_live_producer_fixture) {
+   const char* destination = std::getenv("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR");
+   if (!destination) { BOOST_TEST_MESSAGE("Live process fixture export not requested"); return; }
+   const auto directory = std::filesystem::path(destination);
+   BOOST_REQUIRE(std::filesystem::create_directory(directory));
+   std::filesystem::permissions(directory, std::filesystem::perms::owner_all);
+   auto genesis = base_tester::default_genesis();
+   // FC JSON timestamps retain milliseconds, not arbitrary microseconds.
+   // Normalize BEFORE chain-ID calculation, otherwise the exported genesis
+   // round trip creates a different chain than the in-memory signed blocks.
+   genesis.initial_timestamp = block_timestamp_type(fc::time_point::now() - fc::seconds(5)).to_time_point();
+   auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+   genesis.initial_savanna.emplace();
+   genesis.initial_savanna->finalizer_key = public_key; genesis.initial_savanna->proof_of_possession = proof;
+   BOOST_REQUIRE(fc::json::from_string(fc::json::to_string(genesis, fc::time_point::maximum()))
+                    .as<genesis_state>().compute_chain_id() == genesis.compute_chain_id());
+   fc::temp_directory source_dir;
+   auto config = base_tester::default_config(source_dir).first;
+   config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+   production_chain source(config, genesis);
+   source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+   fc::variants checkpoints;
+   auto seal = [&] {
+      auto block = source.produce_block(); source.control->abort_block();
+      auto file = "block-" + std::to_string(block->block_num()) + ".json";
+      BOOST_REQUIRE(fc::json::save_to_file(*block, directory / file));
+      checkpoints.emplace_back(fc::mutable_variant_object()
+         ("block_num", block->block_num())("block_id", source.head().id())("lib", source.last_irreversible_block_num())
+         ("integrity_hash", source.control->calculate_integrity_hash())("file", file));
+   };
+   source.create_accounts({"test"_n, "alice"_n, "bob"_n, "carol"_n, "dave"_n}); seal();
+   source.set_code("test"_n, initialize_code()); seal();
+   unsigned nonce = 1;
+   for (auto scope : {"alice"_n, "bob"_n, "carol"_n, "dave"_n}) push(source, scope, 10, nonce++);
+   seal();
+   auto code = update_code(); source.set_code("test"_n, code); seal();
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   source.start();
+   fc::variants transactions;
+   unsigned transaction_count = 16;
+   if (const char* count_text = std::getenv("PUREEOS_PARALLEL_PRODUCER_TRANSACTION_COUNT")) {
+      char* end = nullptr;
+      const auto count = std::strtoul(count_text, &end, 10);
+      BOOST_REQUIRE(end && *end == '\0' && count >= 16 && count <= 4096);
+      transaction_count = count;
+   }
+   for (unsigned i = 0; i < transaction_count; ++i) {
+      const std::array scopes{"alice"_n, "bob"_n, "carol"_n, "dave"_n};
+      auto trx = make_transaction(source, scopes[i % 4], 1, 10000 + i, 20000);
+      trx.expiration = fc::time_point_sec(fc::time_point::now() + fc::seconds(1800));
+      trx.signatures.clear(); trx.sign(source.get_private_key("alice"_n, "active"), source.control->get_chain_id());
+      packed_transaction packed(trx, packed_transaction::compression_type::none);
+      transactions.emplace_back(fc::mutable_variant_object()("id", packed.id())("packed", packed));
+   }
+   BOOST_REQUIRE(fc::json::save_to_file(genesis, directory / "genesis.json"));
+   BOOST_REQUIRE(fc::json::save_to_file(transactions, directory / "transactions.json"));
+   // Public, deterministic TEST credentials only. Confined to the new private
+   // fixture directory, never printed, installed or used on an existing chain.
+   std::vector<std::string> providers{
+      base_tester::get_public_key("eosio"_n, "active").to_string({}) + "=KEY:" +
+         base_tester::get_private_key("eosio"_n, "active").to_string({}),
+      public_key.to_string() + "=KEY:" + private_key.to_string()};
+   BOOST_REQUIRE(fc::json::save_to_file(providers, directory / "TEST-ONLY-keys.json"));
+   BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format", 1)
+      ("chain_id", source.control->get_chain_id())("code_hashes", std::vector{hash})("checkpoints", checkpoints), directory / "manifest.json"));
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+// Explicit, bounded offline measurement fixture. Registered separately so an
+// ordinary correctness run does not silently claim this opt-in export ran.
+BOOST_AUTO_TEST_SUITE(parallel_benchmark_fixtures)
+BOOST_AUTO_TEST_CASE(export_fixed_replay_workloads) {
+   using namespace parallel_production_tests;
+   const char* destination = std::getenv("PUREEOS_PARALLEL_BENCHMARK_EXPORT_DIR");
+   if (!destination) { BOOST_TEST_MESSAGE("Benchmark fixture export not requested"); return; }
+   const auto root = std::filesystem::path(destination);
+   BOOST_REQUIRE(std::filesystem::create_directory(root));
+   std::filesystem::permissions(root, std::filesystem::perms::owner_all);
+   const auto code = update_code(), replacement = update_code(true);
+   const auto hash = fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size());
+   for (const std::string workload : {"independent", "hot", "mixed", "serial"}) {
+      const auto directory = root / workload;
+      BOOST_REQUIRE(std::filesystem::create_directory(directory));
+      auto genesis = base_tester::default_genesis();
+      auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
+      genesis.initial_savanna.emplace();
+      genesis.initial_savanna->finalizer_key = public_key; genesis.initial_savanna->proof_of_possession = proof;
+      fc::temp_directory source_dir;
+      auto config = base_tester::default_config(source_dir).first;
+      config.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      production_chain source(config, genesis);
+      source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+      fc::variants checkpoints;
+      auto seal = [&] {
+         auto block = source.produce_block(); source.control->abort_block();
+         auto file = "block-" + std::to_string(block->block_num()) + ".json";
+         BOOST_REQUIRE(fc::json::save_to_file(*block, directory / file));
+         checkpoints.emplace_back(fc::mutable_variant_object()
+            ("block_num", block->block_num())("block_id", source.head().id())("lib", source.last_irreversible_block_num())
+            ("integrity_hash", source.control->calculate_integrity_hash())("file", file));
+      };
+      source.create_accounts({"test"_n, "alice"_n}); seal();
+      source.set_code("test"_n, initialize_code()); seal();
+      unsigned nonce = 1;
+      for (unsigned i = 0; i < 16; ++i) push(source, name{uint64_t{100} + i}, 10, nonce++);
+      seal(); source.set_code("test"_n, workload == "serial" ? replacement : code); seal();
+      for (unsigned block = 0; block < 32; ++block) {
+         source.start();
+         for (unsigned i = 0; i < 16; ++i) {
+            // Native code changes are true serial barriers, not worker hints.
+            if (workload == "mixed" && i == 4) source.set_code("test"_n, replacement);
+            if (workload == "mixed" && i == 12) source.set_code("test"_n, code);
+            auto trx = metadata(source, make_transaction(source, name{uint64_t{100} + (workload == "hot" ? 0 : i)},
+                                                          1, nonce++, 80000));
+            auto trace = production_push(source, trx);
+            BOOST_REQUIRE_MESSAGE(!trace->except, (trace->except ? trace->except->to_detail_string() : ""));
+            BOOST_REQUIRE(trace->receipt);
+         }
+         seal();
+      }
+      for (unsigned i = 0; i < 5; ++i) seal();
+      const auto replay_height = source.last_irreversible_block_num();
+      BOOST_REQUIRE_GE(replay_height, 37u); // every measured business block is finalized
+      const auto replay_point = checkpoints.at(replay_height - 2);
+      source.close();
+      std::filesystem::create_directory(directory / "blocks");
+      for (const char* file : {"blocks.log", "blocks.index"})
+         std::filesystem::copy_file(config.blocks_dir / file, directory / "blocks" / file);
+      BOOST_REQUIRE(fc::json::save_to_file(genesis, directory / "genesis.json"));
+      BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format", 1)
+         ("chain_id", genesis.compute_chain_id())("code_hashes", std::vector{hash})("checkpoints", checkpoints)
+         ("replay_checkpoint", replay_point)("workload", workload)("business_transactions", 512)
+         ("business_blocks", 32)("loop_iterations", 80000), directory / "manifest.json"));
+   }
+}
 BOOST_AUTO_TEST_SUITE_END()
