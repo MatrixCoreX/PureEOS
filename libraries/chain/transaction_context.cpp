@@ -65,12 +65,13 @@ namespace eosio::chain {
       // electorate freshness belong to the discarded execution, not its retry.
       system_upgrade.reset();
       upgrade_voters_action_ordinal.reset();
-      parallel_action_result = nullptr;
+      parallel_transaction_result = nullptr;
       parallel_action_limits = nullptr;
-      parallel_action_elapsed.reset();
-      parallel_action_adopted = false;
+      parallel_transaction_elapsed.reset();
+      parallel_next_action = 0;
+      parallel_transaction_adopted = false;
       isolated_cpu_charge = fc::microseconds{};
-      isolated_cpu_was_charged = false;
+      isolated_cpu_last_action_ordinal = 0;
       isolated_cpu_deadline = fc::time_point::maximum();
       *trace = transaction_trace{}; // reset trace
       initialize();
@@ -482,10 +483,11 @@ namespace eosio::chain {
 
    void transaction_context::undo() {
       if (undo_session) undo_session->undo();
-      parallel_action_result = nullptr;
+      parallel_transaction_result = nullptr;
       parallel_action_limits = nullptr;
-      parallel_action_elapsed.reset();
-      parallel_action_adopted = false;
+      parallel_transaction_elapsed.reset();
+      parallel_next_action = 0;
+      parallel_transaction_adopted = false;
       transaction_timer.stop();
    }
 
@@ -581,17 +583,19 @@ namespace eosio::chain {
       __builtin_unreachable();
    }
 
-   void transaction_context::charge_isolated_cpu(fc::microseconds elapsed) {
+   void transaction_context::charge_isolated_cpu(fc::microseconds elapsed, uint32_t action_ordinal) {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() &&
-                 !is_implicit() && !is_scheduled() && !isolated_cpu_was_charged &&
-                 elapsed.count() >= 0 && elapsed <= fc::seconds(1) &&
+                 !is_implicit() && !is_scheduled() && action_ordinal > 0 &&
+                 action_ordinal == isolated_cpu_last_action_ordinal + 1 &&
+                 action_ordinal <= packed_trx.get_transaction().actions.size() &&
+                 elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
                  pseudo_start.time_since_epoch() >= elapsed,
                  transaction_exception, "invalid isolated CPU charge");
       checktime(); // do not revive a timed-out or externally interrupted timer
-      isolated_cpu_was_charged = true;
-      isolated_cpu_charge = elapsed;
+      isolated_cpu_last_action_ordinal = action_ordinal;
+      isolated_cpu_charge += elapsed;
       pseudo_start -= elapsed;
-      const auto cpu_deadline = isolated_cpu_deadline - elapsed;
+      const auto cpu_deadline = isolated_cpu_deadline - isolated_cpu_charge;
       _deadline = std::min(cpu_deadline, block_deadline);
       deadline_exception_code = block_deadline < cpu_deadline ? deadline_exception::code_value : isolated_cpu_exception;
       tx_cpu_usage_reason = isolated_cpu_reason;
@@ -617,6 +621,9 @@ namespace eosio::chain {
 
       pseudo_start = now - billed_time;
       _deadline += paused;
+      // Preserve the un-clamped CPU clock too, so a later private action does
+      // not erase an original billing pause when charging its incremental CPU.
+      if (isolated_cpu_deadline != fc::time_point::maximum()) isolated_cpu_deadline += paused;
 
       // do not allow to go past block wall clock deadline
       if( block_deadline < _deadline ) {

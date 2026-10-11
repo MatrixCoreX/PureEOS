@@ -9,7 +9,7 @@ namespace eosio::benchmark {
 
 namespace eosio::chain {
 
-   namespace experimental { struct isolated_action_result; struct isolated_wasm_limits; }
+   namespace experimental { struct isolated_transaction_result; struct isolated_wasm_limits; }
 
    struct transaction_checktime_timer {
       public:
@@ -181,8 +181,9 @@ namespace eosio::chain {
          uint32_t update_billed_cpu_time( fc::time_point now );
 
          // Native adoption only, after authorization/dependency checks and
-         // before the first canonical write. Single-use, non-explicit billing.
-         void charge_isolated_cpu(fc::microseconds elapsed);
+         // before each action's first canonical write. Ordinals must be charged
+         // exactly once in top-level order; the default preserves single use.
+         void charge_isolated_cpu(fc::microseconds elapsed, uint32_t action_ordinal = 1);
          fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
 
          std::tuple<int64_t, int64_t, bool, bool> max_bandwidth_billed_accounts_can_pay( bool force_elastic_limits = false )const;
@@ -205,12 +206,13 @@ namespace eosio::chain {
          friend class apply_context;
          friend struct benchmark::interface_in_benchmark; // defined in benchmark/bls.cpp
 
-         // Non-owning, single-use capability supplied only by the serial
+         // Non-owning, ordered capability supplied only by the serial
          // controller during this synchronous push. Never survives undo/retry.
-         const experimental::isolated_action_result* parallel_action_result = nullptr;
+         const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
-         std::optional<fc::microseconds> parallel_action_elapsed;
-         bool parallel_action_adopted = false;
+         std::optional<fc::microseconds> parallel_transaction_elapsed;
+         size_t parallel_next_action = 0;
+         bool parallel_transaction_adopted = false;
 
          void add_ram_usage( account_name account, int64_t ram_delta );
 
@@ -311,7 +313,7 @@ namespace eosio::chain {
          int64_t                       isolated_cpu_exception = block_cpu_usage_exceeded::code_value;
          tx_cpu_usage_exceeded_reason  isolated_cpu_reason = tx_cpu_usage_exceeded_reason::account_cpu_limit;
          fc::microseconds              isolated_cpu_charge;
-         bool                          isolated_cpu_was_charged = false;
+         uint32_t                      isolated_cpu_last_action_ordinal = 0;
    };
 
 } // namespace eosio::chain

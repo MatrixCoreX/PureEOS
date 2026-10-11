@@ -54,12 +54,13 @@ public:
    void discard_remaining(); // a canonical adopter selected full serial fallback
    void close();
 
-   template<typename Adopt, typename Serial>
+   template<typename Result, typename Adopt, typename Serial>
    decltype(auto) run_next(const ticket& tag, const fc::sha256& expected_transaction,
-                          const std::optional<isolated_action_result>& attempt, Adopt&& adopt, Serial&& serial) {
+                          const std::optional<Result>& attempt, Adopt&& adopt, Serial&& serial) {
+      static_assert(std::is_same_v<Result, isolated_action_result> || std::is_same_v<Result, isolated_transaction_result>);
       check_next(tag, expected_transaction); // stale/foreign/repeated/out-of-order is a caller bug
       try {
-         const bool use_private = attempt && can_use(*attempt);
+         const bool use_private = attempt && can_use(attempt->state, attempt->execution_fingerprint);
          if (use_private) {
             // Finish potentially allocating dependency bookkeeping BEFORE the
             // canonical callback. Even A->B->A or a later undo stays dirty.
@@ -74,7 +75,7 @@ public:
          // while this one's original commit/receipt/signals are still running.
          in_callback_ = true;
          auto finish = [this] { in_callback_ = false; ++next_; };
-         using result_type = std::invoke_result_t<Adopt, const isolated_action_result&>;
+         using result_type = std::invoke_result_t<Adopt, const Result&>;
          static_assert(std::is_same_v<result_type, std::invoke_result_t<Serial>>);
          if constexpr (std::is_void_v<result_type>) {
             if (use_private) std::forward<Adopt>(adopt)(*attempt);
@@ -97,7 +98,7 @@ public:
 private:
    void check_owner() const;
    void check_next(const ticket&, const fc::sha256&) const;
-   bool can_use(const isolated_action_result&) const;
+   bool can_use(const primary_overlay_result&, const fc::sha256&) const;
    void disable_speculation();
    const std::thread::id owner_ = std::this_thread::get_id();
    std::shared_ptr<identity> identity_;

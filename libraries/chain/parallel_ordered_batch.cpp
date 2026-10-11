@@ -51,22 +51,21 @@ void ordered_attempt_batch::check_next(const ticket& tag, const fc::sha256& expe
       throw primary_state_invalid_attempt();
 }
 
-bool ordered_attempt_batch::can_use(const isolated_action_result& result) const {
+bool ordered_attempt_batch::can_use(const primary_overlay_result& state, const fc::sha256& fingerprint) const {
    if (identity_->stop.stop_requested()) return false;
-   if (result.state.base() != identity_->base ||
-       result.execution_fingerprint != identity_->transactions[next_].execution_fingerprint)
+   if (state.base() != identity_->base || fingerprint != identity_->transactions[next_].execution_fingerprint)
       throw primary_state_invalid_attempt();
    auto conflict = [] {
       if (performance::metrics().enabled.load(std::memory_order_relaxed))
          performance::metrics().record(performance::stage::parallel_conflict, 0);
       return false;
    };
-   for (const auto& table : result.state.read_tables())
+   for (const auto& table : state.read_tables())
       if (structural_dirty_.contains(table)) return conflict();
-   for (const auto& query : result.state.read_queries()) {
+   for (const auto& query : state.read_queries()) {
       const auto dirty = dirty_.find(query.table);
       if (dirty == dirty_.end()) continue;
-      const auto selected = result.state.base()->locate_primary(query);
+      const auto selected = state.base()->locate_primary(query);
       // Structural changes were already ruled out above. Remaining
       // size/payer/value updates do not change absence or range selection;
       // only a selected row may be stale. Canonical adoption rechecks both

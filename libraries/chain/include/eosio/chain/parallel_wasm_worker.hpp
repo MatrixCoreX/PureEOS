@@ -74,6 +74,7 @@ struct isolated_action_effects {
    size_t writes_begin = 0;
    size_t writes_end = 0;
    std::chrono::microseconds elapsed{}; // private execution only, not compilation
+   std::chrono::steady_clock::time_point began, ended; // local overlap diagnostics, never fingerprinted
 };
 
 struct isolated_action_invocation {
@@ -119,9 +120,8 @@ private:
    std::unique_ptr<impl> impl_;
 };
 
-// Private-only G5a foundation. It does not authorize canonical adoption and is
-// not yet wired to controller or the production worker pool. One bounded module
-// cache per thread; one owned overlay per call, sealed only after ALL actions
+// Private execution does not itself authorize canonical adoption. One bounded
+// module cache per worker thread; one owned overlay per call, sealed after ALL actions
 // finish. No partial result is returned on missing state, cancellation or error.
 class isolated_transaction_executor {
 public:

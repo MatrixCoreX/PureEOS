@@ -120,11 +120,28 @@ void apply_context::exec_one()
                }
                try {
                   bool adopted = false;
-                  if (const auto* attempt = std::exchange(trx_context.parallel_action_result, nullptr)) {
+                  // Empty-code notifications must not consume the next root's
+                  // capability. Top-level ordinals were allocated before any
+                  // notifications; they are not the trace execution order.
+                  if (const auto* attempt = trx_context.parallel_transaction_result;
+                      attempt && receiver == act->account && get_current_action_trace().creator_action_ordinal.value == 0) {
                      adopted = experimental::try_adopt_primary_result(*this, receiver_account->code_hash,
                         receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits, *attempt,
-                        std::exchange(trx_context.parallel_action_elapsed, {}));
-                     trx_context.parallel_action_adopted = adopted;
+                        trx_context.parallel_next_action, trx_context.parallel_transaction_elapsed);
+                     if (adopted) {
+                        if (++trx_context.parallel_next_action == attempt->actions.size()) {
+                           trx_context.parallel_transaction_adopted = true;
+                           trx_context.parallel_transaction_result = nullptr;
+                           trx_context.parallel_transaction_elapsed.reset();
+                        }
+                     } else {
+                        // Never rerun an already canonical prefix. Any safety
+                        // mismatch uses the original path for this and later
+                        // actions, and the controller discards the batch tail.
+                        trx_context.parallel_transaction_result = nullptr;
+                        trx_context.parallel_transaction_elapsed.reset();
+                        trx_context.parallel_transaction_adopted = false;
+                     }
                   }
                   if (!adopted)
                      control.get_wasm_interface().execute( receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, *this );

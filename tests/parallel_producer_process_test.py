@@ -33,6 +33,25 @@ def wait_for(predicate, description, timeout=60):
     raise RuntimeError("Timed out: " + description)
 
 
+def check_multi_action_response(entry, response, first):
+    roots = [trace for trace in response["processed"]["action_traces"]
+             if trace["creator_action_ordinal"] == 0]
+    require(len(roots) == entry["actions"], "Lost a top-level action in submission traces")
+    if not first:
+        return {}
+    require([trace["act"]["name"] for trace in roots] == ["transfer", "transfer", "close"],
+            "First transaction did not preserve the dependent action sequence")
+    initial_ram = {delta["account"]: delta["delta"] for delta in roots[0]["account_ram_deltas"]}
+    require(initial_ram.get("alice", 0) > 0, "First action did not create and pay for the temporary balance")
+    ram = {}
+    for trace in roots:
+        for delta in trace["account_ram_deltas"]:
+            ram[delta["account"]] = ram.get(delta["account"], 0) + delta["delta"]
+    require(all(value == 0 for value in ram.values()),
+            "Creating, spending and closing the temporary balance did not refund all RAM")
+    return ram
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--old-nodeos", type=Path, required=True)
@@ -43,11 +62,14 @@ def main():
     parser.add_argument("--token-fixture", action="store_true", help="Exercise unchanged real token transfers and notification receipts")
     parser.add_argument("--ram-fixture", action="store_true", help="With --token-fixture, first transfer changes the sender row RAM payer")
     parser.add_argument("--lifecycle-fixture", action="store_true", help="With --token-fixture, first transfer creates the recipient balance and table")
+    parser.add_argument("--multi-action-fixture", action="store_true", help="With --token-fixture, execute dependent transfers and close in one transaction")
     args = parser.parse_args()
     if args.ram_fixture and not args.token_fixture:
         parser.error("--ram-fixture requires --token-fixture")
     if args.lifecycle_fixture and (not args.token_fixture or args.ram_fixture):
         parser.error("--lifecycle-fixture requires --token-fixture and cannot be combined with --ram-fixture")
+    if args.multi_action_fixture and (not args.token_fixture or args.ram_fixture or args.lifecycle_fixture):
+        parser.error("--multi-action-fixture requires --token-fixture and cannot be combined with RAM/lifecycle flags")
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
     require(sha256(old) == args.old_sha256, "Original binary hash changed")
@@ -55,7 +77,8 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
-              "fixture_kind": "real-token-first-balance" if args.lifecycle_fixture else
+              "fixture_kind": "real-token-multiple-actions" if args.multi_action_fixture else
+                              "real-token-first-balance" if args.lifecycle_fixture else
                               "real-token-payer-change" if args.ram_fixture else "real-token" if args.token_fixture else "existing-row-wat",
               "old_sha256": sha256(old), "new_sha256": sha256(new), "exporter_sha256": sha256(exporter), "phases": []}
     nodes = []
@@ -80,6 +103,10 @@ def main():
                 env["PUREEOS_PARALLEL_PRODUCER_LIFECYCLE"] = "1"
             else:
                 env.pop("PUREEOS_PARALLEL_PRODUCER_LIFECYCLE", None)
+            if args.multi_action_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_MULTI_ACTION"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_MULTI_ACTION", None)
             with (group / "export.log").open("x") as log:
                 result = subprocess.run([str(exporter), "--run_test=parallel_production_tests/export_fresh_live_producer_fixture",
                     "--report_level=detailed", "--color_output=no"], env=env, cwd=group,
@@ -112,8 +139,11 @@ def main():
                 producer.check(point)
                 observer.check(point)
             entries = json.loads((corpus / "transactions.json").read_text())
-            if args.ram_fixture or args.lifecycle_fixture:
+            if args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture:
                 require(len(entries) == 16, "RAM/lifecycle fixtures require the fixed 16-transaction corpus")
+            if args.multi_action_fixture:
+                require([entry["actions"] for entry in entries] == [3] + [2] * 15,
+                        "Multi-action fixture must contain 33 root actions in 16 transactions")
             metrics_before = scrape_stages(producer)
             (group / "metrics-before.txt").write_text(metrics_before)
             journal = Journal(group / "finality-evidence.jsonl")
@@ -127,10 +157,14 @@ def main():
             responses = []
             payer_change = {}
             for entry in entries:
-                journal.emit("sent", id=entry["id"], actions=1)
+                journal.emit("sent", id=entry["id"], actions=entry["actions"])
                 response = producer.rpc("push_transaction", entry["packed"])
                 require(response["transaction_id"] == entry["id"], "Submission ID changed")
                 require(response["processed"]["receipt"]["status"] == "executed", "Speculative submission failed")
+                if args.multi_action_fixture:
+                    ram = check_multi_action_response(entry, response, not responses)
+                    if not responses:
+                        payer_change = ram
                 if (args.ram_fixture or args.lifecycle_fixture) and not responses:
                     payer_change = {item["account"]: item["delta"] for item in
                                     response["processed"]["action_traces"][0]["account_ram_deltas"]}
@@ -205,8 +239,8 @@ def main():
                                 r"succeeded=(\d+), adopted=(\d+), serial_fallbacks=(\d+)", text)
             if workers:
                 require(len(totals) == 1 and int(totals[0][3]) > 0, "Live producer never adopted a private result")
-                if args.ram_fixture or args.lifecycle_fixture:
-                    require(int(totals[0][3]) == 6, "RAM/lifecycle transfer was not adopted in the fixed two-batch corpus")
+                if args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture:
+                    require(int(totals[0][3]) == 6, "Expected six independent transactions to be adopted in the fixed two-batch corpus")
             else:
                 require(not totals, "Serial mode unexpectedly ran a production batch")
             histories = [node.history_digests() for node in (producer, feeder, observer)]
@@ -222,6 +256,7 @@ def main():
                     "code_hashes": manifest["code_hashes"],
                     "first_transfer_ram_deltas": payer_change,
                     "state": state["integrity_hash"], "transactions": len(receipts), "slot_gaps_seconds": gaps,
+                    "root_actions": sum(entry["actions"] for entry in entries),
                     "production_totals": totals, "history_sha256": histories[0], "old_checked_replay": True}
             item["bounded_load_finality"] = finalized
             item["stages"] = stages

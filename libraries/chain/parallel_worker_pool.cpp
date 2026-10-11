@@ -34,9 +34,9 @@ struct isolated_worker_pool::impl {
       for (auto& thread : threads) if (thread.joinable()) thread.join();
    }
    void loop() {
-      std::unique_ptr<isolated_wasm_module> module;
-      std::vector<char> cached_code;
-      isolated_wasm_limits cached_limits;
+      // Construct lazily inside the guarded job, so allocation failure cannot
+      // escape this thread and terminate the process before returning fallback.
+      std::unique_ptr<isolated_transaction_executor> executor;
       while (true) {
          std::shared_ptr<batch> current;
          size_t index;
@@ -50,19 +50,11 @@ struct isolated_worker_pool::impl {
          auto& outcome = current->outcomes[index];
          try {
             if (!job.ticket.stop_token().stop_requested() && !job.cancel.stop_requested()) {
-               if (!module || cached_code != job.code || cached_limits != job.limits) {
-                  performance::scope compile_timer(performance::stage::parallel_compile);
-                  // Drop stale code BEFORE constructing a replacement, retaining
-                  // at most one module per worker even on failure/large batches.
-                  module.reset(); cached_code.clear();
-                  module = std::make_unique<isolated_wasm_module>(job.code, job.limits);
-                  cached_code = job.code; cached_limits = job.limits;
-               }
-               outcome.began = std::chrono::steady_clock::now();
-               {
-                  performance::scope execute_timer(performance::stage::parallel_execute);
-                  outcome.result = module->execute(job.ticket.base(), job.input, job.ticket.stop_token(), {}, job.cancel);
-               }
+               if (!executor) executor = std::make_unique<isolated_transaction_executor>();
+               outcome.result = executor->execute(job.ticket.base(), job.actions, job.ticket.stop_token(), {}, job.cancel);
+               outcome.began = outcome.result->actions.front().began;
+               outcome.ended = outcome.result->actions.back().ended;
+               for (const auto& action : outcome.result->actions) outcome.elapsed += action.elapsed;
             }
          } catch (const primary_state_missing& missing) {
             // Owned request only. The joined owner may capture it and restart
@@ -74,9 +66,7 @@ struct isolated_worker_pool::impl {
             // consensus rejection. Re-enter original execution on the owner.
             outcome.result.reset();
          }
-         outcome.ended = std::chrono::steady_clock::now();
-         if (outcome.began != std::chrono::steady_clock::time_point{})
-            outcome.elapsed = std::chrono::duration_cast<std::chrono::microseconds>(outcome.ended - outcome.began);
+         if (!outcome.result) outcome.ended = std::chrono::steady_clock::now();
          {
             std::lock_guard lock(mutex);
             if (--current->remaining == 0) done.notify_one();
@@ -92,9 +82,19 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    if (jobs.empty() || jobs.size() > 64) throw primary_state_budget_exceeded();
    // Bound all copied inputs too, including jobs that later fail linking.
-   for (const auto& job : jobs)
-      if (job.code.size() > 64 * 1024 || job.input.data.size() > 64 * 1024 || job.input.authorizations.size() > 64)
+   for (const auto& job : jobs) {
+      if (job.actions.empty() || job.actions.size() > isolated_transaction_executor::max_actions)
          throw primary_state_budget_exceeded();
+      size_t code_bytes = 0, data_bytes = 0;
+      for (const auto& action : job.actions) {
+         if (action.code.size() > 64 * 1024 || action.input.data.size() > 64 * 1024 ||
+             action.input.authorizations.size() > 64 ||
+             action.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes ||
+             action.input.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
+            throw primary_state_budget_exceeded();
+         code_bytes += action.code.size(); data_bytes += action.input.data.size();
+      }
+   }
    auto batch = std::make_shared<impl::batch>(std::move(jobs));
    std::unique_lock lock(impl_->mutex);
    if (impl_->stopping || impl_->active) throw primary_state_invalid_attempt();

@@ -4,9 +4,9 @@
 
 本页固定记录 PX0–PX6 首版（`0068f79`）。后续扩展与新代码证据见 [PX7 滚动计划](PX7_GENERAL_EXECUTION_PLAN.md) 和 [G1/G2 验收](PX7_G1_G2_RESULTS.md)，不要将下述历史计数当作后续版本的重测。
 
-G3b 覆盖真实 EOS/PureEOS token 的既存余额、无代码通知；G4a 放开既存行长度及 RAM payer，G4b 新增主键创建/删除、表生命周期、正式 ID 分配与恢复差分，见 [G4a](PX7_G4A_RESULTS.md)、[最新 G4b 验收](PX7_G4B_RESULTS.md)。本文历史表中的限制不得替代最新记录；多 action、带代码子调用及二级索引仍未并行。
+G3b 覆盖真实 EOS/PureEOS token 的既存余额、无代码通知；G4a 放开既存行长度及 RAM payer，G4b 新增主键创建/删除、表生命周期、正式 ID 分配与恢复差分，见 [G4a](PX7_G4A_RESULTS.md)、[G4b 验收](PX7_G4B_RESULTS.md)。本文历史表中的限制不得替代最新记录。
 
-G5a 已验收多 action 的**私有执行器基础**，见 [记录](PX7_G5A_RESULTS.md)，但正式生产/验证入口还保持单 action。其多 action 单元与串行 oracle 不计作正式采用、区块互验或完整调用树已完成。
+G5a 验收多 action 的**私有执行器基础**，见 [记录](PX7_G5A_RESULTS.md)。后续 [G5b](PX7_G5B_RESULTS.md) 已正式接入受限多顶层动作，包含整体依赖、原序重放、CPU、原回滚、真实 token 多动作上链和旧节点互验。带代码通知、inline/sync-call、二级索引及一般接口尚未全面并行；不能将本阶段计作完整调用树完成。
 
 | 原计划项目 | 首版实现和实际检查 |
 |---|---|

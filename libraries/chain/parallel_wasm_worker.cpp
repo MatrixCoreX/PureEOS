@@ -1,4 +1,5 @@
 #include <eosio/chain/parallel_wasm_worker.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <eosio/vm/backend.hpp>
 #include <eosio/vm/host_function.hpp>
 #include <fc/io/raw.hpp>
@@ -355,8 +356,9 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
    context.execute_start(&host, visitor);
    context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
    deadline.check();
+   const auto ended = std::chrono::steady_clock::now();
    return {std::move(host.return_value), fingerprint, std::move(host.recipients), writes_begin, state.write_count(),
-           std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - began)};
+           std::chrono::duration_cast<std::chrono::microseconds>(ended - began), began, ended};
 }
 
 fc::sha256 isolated_transaction_fingerprint(std::span<const fc::sha256> action_fingerprints) {
@@ -404,13 +406,17 @@ isolated_transaction_result isolated_transaction_executor::execute(std::shared_p
    for (const auto& action : actions) {
       checkpoint();
       if (!impl_->module || impl_->cached_code != action.code || impl_->cached_limits != action.limits) {
+         performance::scope compile_timer(performance::stage::parallel_compile);
          // Never hold two compiled modules, including when construction fails.
          impl_->module.reset(); impl_->cached_code.clear();
          impl_->module = std::make_unique<isolated_wasm_module>(action.code, action.limits);
          impl_->cached_code = action.code; impl_->cached_limits = action.limits;
       }
       checkpoint();
-      results.push_back(impl_->module->execute_step(state, action.input, stop, external));
+      {
+         performance::scope execute_timer(performance::stage::parallel_execute);
+         results.push_back(impl_->module->execute_step(state, action.input, stop, external));
+      }
       fingerprints.push_back(results.back().execution_fingerprint);
    }
    checkpoint();

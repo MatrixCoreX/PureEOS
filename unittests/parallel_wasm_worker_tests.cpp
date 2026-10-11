@@ -83,6 +83,12 @@ uint64_t number(const std::vector<char>& bytes) {
    return result;
 }
 
+fc::sha256 single_transaction_fingerprint(const fc::sha256& hash, const isolated_wasm_limits& limits,
+                                         const isolated_action_input& input) {
+   const std::array fingerprints{isolated_execution_fingerprint(hash, limits, input)};
+   return isolated_transaction_fingerprint(fingerprints);
+}
+
 struct fallback_import { const char* name; const char* signature; const char* invocation; };
 const std::array fallback_imports{
    fallback_import{"prints_l", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
@@ -1205,7 +1211,7 @@ BOOST_FIXTURE_TEST_CASE(cdt_primitive_hosts_and_growth_are_isolated_across_four_
       for (unsigned i = 0; i < 16; ++i) {
          const auto& code = codes[i % codes.size()];
          const auto hash = fc::sha256::hash(code.data(), code.size());
-         requests.push_back({fc::sha256::hash(std::to_string(i)), isolated_execution_fingerprint(hash, {}, input())});
+         requests.push_back({fc::sha256::hash(std::to_string(i)), single_transaction_fingerprint(hash, {}, input())});
       }
       ordered_attempt_batch batch(base, requests);
       std::vector<isolated_worker_job> jobs;
@@ -1219,8 +1225,8 @@ BOOST_FIXTURE_TEST_CASE(cdt_primitive_hosts_and_growth_are_isolated_across_four_
          if (i % codes.size() < 2) {
             BOOST_REQUIRE(output.result);
             BOOST_CHECK(output.result->state.writes().empty());
-            if (i % codes.size() == 1) BOOST_CHECK_EQUAL(number(output.result->return_value), (uint64_t{16} << 32) | 1);
-            else BOOST_CHECK_EQUAL(output.result->return_value.size(), 64u);
+            if (i % codes.size() == 1) BOOST_CHECK_EQUAL(number(output.result->actions.front().return_value), (uint64_t{16} << 32) | 1);
+            else BOOST_CHECK_EQUAL(output.result->actions.front().return_value.size(), 64u);
          } else BOOST_CHECK(!output.result);
       }
    }
@@ -1238,7 +1244,7 @@ BOOST_FIXTURE_TEST_CASE(persistent_one_two_four_threads_run_multiple_bounded_bat
          std::vector<isolated_action_input> args;
          for (size_t i = 0; i < 8; ++i) {
             args.push_back(input(i % 4 + 1, 7 + round, 150000));
-            requests.push_back({fc::sha256::hash(std::to_string(i)), isolated_execution_fingerprint(hash, {}, args.back())});
+            requests.push_back({fc::sha256::hash(std::to_string(i)), single_transaction_fingerprint(hash, {}, args.back())});
          }
          ordered_attempt_batch batch(base, requests);
          std::vector<isolated_worker_job> jobs;
@@ -1247,7 +1253,7 @@ BOOST_FIXTURE_TEST_CASE(persistent_one_two_four_threads_run_multiple_bounded_bat
          BOOST_REQUIRE_EQUAL(results.size(), args.size());
          for (size_t i = 0; i < results.size(); ++i) {
             BOOST_REQUIRE(results[i].result);
-            BOOST_CHECK_EQUAL(number(results[i].result->return_value), (i % 4 + 1) * 10 + 7 + round);
+            BOOST_CHECK_EQUAL(number(results[i].result->actions.front().return_value), (i % 4 + 1) * 10 + 7 + round);
             BOOST_CHECK(results[i].result->execution_fingerprint == requests[i].execution_fingerprint);
             BOOST_CHECK(results[i].elapsed.count() > 0);
             for (size_t j = 0; j < i; ++j)
@@ -1257,6 +1263,96 @@ BOOST_FIXTURE_TEST_CASE(persistent_one_two_four_threads_run_multiple_bounded_bat
       BOOST_CHECK_EQUAL(overlapping, count > 1);
       BOOST_CHECK_EQUAL(canonical(), 10u);
    }
+}
+
+BOOST_FIXTURE_TEST_CASE(transaction_jobs_share_prefixes_but_not_workers_and_track_late_conflicts, wasm_fixture) {
+   const auto code = increment_wasm();
+   const auto hash = fc::sha256::hash(code.data(), code.size());
+   for (size_t threads : {1u, 2u, 4u}) {
+      isolated_worker_pool pool(threads);
+      bool overlap = false;
+      for (unsigned round = 0; round < 3; ++round) {
+         std::vector<std::vector<isolated_action_invocation>> calls;
+         std::vector<ordered_attempt_batch::request> requests;
+         for (size_t i = 0; i < 8; ++i) {
+            // Split the single-action fixture's total work between two steps.
+            // Doubling it can legitimately hit the unchanged TRANSACTION-wide
+            // 500 ms cap under sanitizers; this checks overlap, not capacity.
+            calls.push_back({{code, input(i % 4 + 1, 7, 75000), {}},
+                             {code, input(i % 4 + 1, 3, 75000), {}}});
+            const std::array fingerprints{
+               isolated_execution_fingerprint(hash, {}, calls.back()[0].input),
+               isolated_execution_fingerprint(hash, {}, calls.back()[1].input)};
+            requests.push_back({fc::sha256::hash(std::to_string(i)), isolated_transaction_fingerprint(fingerprints)});
+         }
+         ordered_attempt_batch batch(base, requests);
+         std::vector<isolated_worker_job> jobs;
+         for (size_t i = 0; i < calls.size(); ++i) jobs.emplace_back(batch.get_ticket(i), calls[i]);
+         const auto results = pool.run(std::move(jobs));
+         for (size_t i = 0; i < results.size(); ++i) {
+            BOOST_REQUIRE_MESSAGE(results[i].result, "multi workers=" << threads << " round=" << round << " job=" << i);
+            const auto& output = *results[i].result;
+            BOOST_REQUIRE_EQUAL(output.actions.size(), 2u);
+            BOOST_CHECK_EQUAL(number(output.actions[0].return_value), (i % 4 + 1) * 10 + 7);
+            BOOST_CHECK_EQUAL(number(output.actions[1].return_value), (i % 4 + 1) * 10 + 10);
+            BOOST_CHECK(output.execution_fingerprint == requests[i].execution_fingerprint);
+            BOOST_CHECK(results[i].elapsed == output.actions[0].elapsed + output.actions[1].elapsed);
+            BOOST_CHECK(output.actions[0].ended <= output.actions[1].began);
+            for (size_t j = 0; j < i; ++j) for (const auto& a : output.actions)
+               for (const auto& b : results[j].result->actions)
+                  overlap |= std::max(a.began, b.began) < std::min(a.ended, b.ended);
+         }
+      }
+      BOOST_CHECK_EQUAL(overlap, threads > 1); // actual WASM step intervals, not compilation gaps
+
+      // The conflict is in action TWO of the first transaction. A root-only
+      // read/write set would incorrectly accept the second transaction.
+      const std::vector<std::vector<isolated_action_invocation>> calls{
+         {{code, input(2), {}}, {code, input(1), {}}},
+         {{code, input(1), {}}, {code, input(3), {}}}};
+      std::vector<ordered_attempt_batch::request> requests;
+      for (size_t i = 0; i < calls.size(); ++i) {
+         std::vector<fc::sha256> fingerprints;
+         for (const auto& action : calls[i]) fingerprints.push_back(isolated_execution_fingerprint(hash, {}, action.input));
+         requests.push_back({fc::sha256::hash(std::to_string(i)), isolated_transaction_fingerprint(fingerprints)});
+      }
+      ordered_attempt_batch batch(base, requests);
+      const auto results = pool.run({{batch.get_ticket(0), calls[0]}, {batch.get_ticket(1), calls[1]}});
+      size_t adopted = 0, fallback = 0;
+      for (size_t i = 0; i < 2; ++i) {
+         BOOST_REQUIRE(results[i].result);
+         batch.run_next(batch.get_ticket(i), requests[i].transaction_id, results[i].result,
+            [&](const auto&) { ++adopted; }, [&] { ++fallback; });
+      }
+      BOOST_CHECK_EQUAL(adopted, 1u); BOOST_CHECK_EQUAL(fallback, 1u);
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(transaction_job_failure_and_owner_bounds_expose_no_adoptable_prefix, wasm_fixture) {
+   isolated_worker_pool pool(2);
+   const auto code = increment_wasm();
+   const std::array<ordered_attempt_batch::request, 1> requests{{{fc::sha256::hash("multi"), fc::sha256::hash("multi")}}};
+   ordered_attempt_batch batch(base, requests);
+   isolated_worker_job job{batch.get_ticket(0), {{code, input(), {}}, {code, input(1, 7, 0, 3), {}}}};
+   const auto failed = pool.run({job});
+   BOOST_CHECK(!failed[0].result); BOOST_CHECK(!failed[0].request);
+   job.actions[1].input = input();
+   const auto retry = pool.run({job});
+   BOOST_REQUIRE(retry[0].result);
+   BOOST_CHECK_EQUAL(number(retry[0].result->actions[1].return_value), 24u);
+   const auto good = job;
+   job.actions.resize(17, good.actions[0]);
+   BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
+   job.actions.clear();
+   BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
+   job.actions.resize(5, good.actions[0]);
+   for (auto& action : job.actions) action.code.resize(64 * 1024);
+   BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
+   job.actions.assign(5, good.actions[0]);
+   for (auto& action : job.actions) action.input.data.resize(64 * 1024);
+   BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
 }
 
 BOOST_FIXTURE_TEST_CASE(failed_canceled_and_changed_code_jobs_do_not_poison_reused_pool, wasm_fixture) {
@@ -1295,15 +1391,15 @@ BOOST_FIXTURE_TEST_CASE(real_wasm_results_pass_ordered_coordinator_for_independe
    std::memcpy(second.data.data(), &scope, sizeof(scope));
    const auto code = increment_wasm(); const auto hash = fc::sha256::hash(code.data(), code.size());
    const std::array<ordered_attempt_batch::request, 2> requests{{
-      {fc::sha256::hash("a"), isolated_execution_fingerprint(hash, {}, input())},
-      {fc::sha256::hash("b"), isolated_execution_fingerprint(hash, {}, second)}}};
+      {fc::sha256::hash("a"), single_transaction_fingerprint(hash, {}, input())},
+      {fc::sha256::hash("b"), single_transaction_fingerprint(hash, {}, second)}}};
    ordered_attempt_batch batch(base, requests);
    isolated_worker_pool pool(2);
    auto results = pool.run({{batch.get_ticket(0), code, input(), {}}, {batch.get_ticket(1), code, second, {}}});
    size_t adopted = 0;
    for (size_t i = 0; i < 2; ++i)
       batch.run_next(batch.get_ticket(i), requests[i].transaction_id, results[i].result,
-         [&](const auto& result) { BOOST_CHECK_EQUAL(number(result.return_value), 17u); ++adopted; },
+         [&](const auto& result) { BOOST_CHECK_EQUAL(number(result.actions.front().return_value), 17u); ++adopted; },
          [] { BOOST_FAIL("independent table must be usable"); });
    BOOST_CHECK_EQUAL(adopted, 2u);
    BOOST_CHECK_EQUAL(canonical(), 10u); // callbacks above intentionally do NOT adopt into canonical DB
@@ -1318,7 +1414,7 @@ BOOST_FIXTURE_TEST_CASE(pool_bounds_and_thread_affinity, wasm_fixture) {
    ordered_attempt_batch batch(base, requests);
    isolated_worker_job job{batch.get_ticket(0), increment_wasm(), input(), {}};
    BOOST_CHECK_THROW(pool.run(std::vector<isolated_worker_job>(65, job)), primary_state_budget_exceeded);
-   job.code.resize(64 * 1024 + 1);
+   job.actions.front().code.resize(64 * 1024 + 1);
    BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
    auto worker = std::async(std::launch::async, [&] {
       try { (void)pool.run({}); } catch (const state_view_wrong_thread&) { return true; }
@@ -1337,7 +1433,7 @@ BOOST_FIXTURE_TEST_CASE(account_host_requests_owned_evidence_and_tracks_negative
    BOOST_CHECK_THROW(module.execute(base, input()), primary_state_missing); // after private write
    const auto hash = fc::sha256::hash(code.data(), code.size());
    const std::array<ordered_attempt_batch::request, 1> requests{{
-      {fc::sha256::hash("account"), isolated_execution_fingerprint(hash, {}, input())}}};
+      {fc::sha256::hash("account"), single_transaction_fingerprint(hash, {}, input())}}};
    ordered_attempt_batch batch(base, requests);
    isolated_worker_pool pool(2);
    const auto discovery = pool.run({{batch.get_ticket(0), code, input(), {}}});
@@ -1400,8 +1496,8 @@ BOOST_FIXTURE_TEST_CASE(pool_reports_owned_missing_queries_then_restarts_on_fres
    const auto code = increment_wasm();
    const auto hash = fc::sha256::hash(code.data(), code.size());
    const std::array<ordered_attempt_batch::request, 2> requests{{
-      {fc::sha256::hash("first"), isolated_execution_fingerprint(hash, {}, input(1))},
-      {fc::sha256::hash("second"), isolated_execution_fingerprint(hash, {}, input(2))}}};
+      {fc::sha256::hash("first"), single_transaction_fingerprint(hash, {}, input(1))},
+      {fc::sha256::hash("second"), single_transaction_fingerprint(hash, {}, input(2))}}};
    isolated_worker_pool pool(2);
    auto empty = frozen_primary_state::capture_queries(view, {}, {});
    ordered_attempt_batch discovery(empty, requests);
@@ -1428,7 +1524,7 @@ BOOST_FIXTURE_TEST_CASE(pool_reports_owned_missing_queries_then_restarts_on_fres
       BOOST_REQUIRE(results[i].result);
       BOOST_CHECK(!results[i].request);
       ready.run_next(ready.get_ticket(i), requests[i].transaction_id, results[i].result,
-         [&](const auto& output) { BOOST_CHECK_EQUAL(number(output.return_value), (i + 1) * 10 + 7); },
+         [&](const auto& output) { BOOST_CHECK_EQUAL(number(output.actions.front().return_value), (i + 1) * 10 + 7); },
          [] { BOOST_FAIL("sparse independent rows must be usable"); });
    }
    BOOST_CHECK_EQUAL(canonical(), 10u); // discovery and private updates never changed DB
@@ -1455,7 +1551,7 @@ BOOST_FIXTURE_TEST_CASE(external_interrupt_cancels_running_and_queued_attempts_w
    BOOST_CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(3));
    for (const auto& result : results) BOOST_CHECK(!result.result);
    const auto retry = pool.run({{batch.get_ticket(0), code, input(), limits, {generation, 1}}});
-   BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->return_value), 17u);
+   BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->actions.front().return_value), 17u);
    BOOST_CHECK_EQUAL(canonical(), 10u);
 }
 
@@ -1476,7 +1572,7 @@ BOOST_FIXTURE_TEST_CASE(one_absolute_deadline_bounds_running_and_queued_work_the
    BOOST_CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(3));
    for (const auto& result : results) BOOST_CHECK(!result.result);
    const auto retry = pool.run({{batch.get_ticket(0), code, input(), limits, {}}});
-   BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->return_value), 17u);
+   BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->actions.front().return_value), 17u);
    BOOST_CHECK_EQUAL(canonical(), 10u);
 }
 

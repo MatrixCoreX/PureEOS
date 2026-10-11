@@ -51,3 +51,5 @@ WASM TSan `worker-tsan-{1,2,3}.log`：三轮每轮 54 用例、1,813 断言通�
 - `g5a-process-evidence.tar.gz`：上述 6 个真实进程测试目录的完整稀疏归档，已用 `tar --compare` 核对原件；SHA-256 `babcd8a0d957b1d27f63d1fa83c0d5fcf9728c9511cb3a74c0ecc836517c2ce0`。报告另已解出到证据目录的 `pureeos-g5a-process-ItFhsC/` 下；临时内存盘目录并非永久副本。
 
 归档中的新 nodeos 内容哈希独立核对一致。旧 nodeos 仍为 `e28d831303fc6de5fe5bf62f1b165eb26128bf984e7532c75dd0a7edc5deb02c`；main/基线仍为 `a4a40a6a1e72c531cd8267758074229ccc0655ce`，reference-contracts 工作区无变更。没有开启现有链、推送或合并分支。
+
+G5b 测试准备时的空间整理：重新 `tar --compare` 核对上述进程完整归档成功、哈希不变，确认六轮报告均通过且所有 nodeos 已停止后，仅移除临时目录中 174 个生成的 `data/state/shared_memory.bin`，释放 768,380,928 个实际分配字节。精确清单及核对日志在 `build/local-tests/parallel-multiaction-adoption-20261012-tHTfot/g5a-archived-state-files.txt` 和 `g5a-archive-compare-before-cleanup.log`。区块、快照、配置和日志保留；删除的状态文件可从永久 `g5a-process-evidence.tar.gz` 恢复，没有移除用户链文件。

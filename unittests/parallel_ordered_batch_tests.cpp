@@ -54,7 +54,7 @@ BOOST_FIXTURE_TEST_CASE(independent_tables_adopt_in_original_order_and_own_resul
    std::vector<size_t> seen;
    for (size_t i = 0; i < 3; ++i) {
       const auto result = output(i, i == 0 ? a : (i == 1 ? b : absent), i != 2);
-      auto adopted = batch.run_next(batch.get_ticket(i), requests[i].transaction_id, result,
+      auto adopted = batch.run_next<isolated_action_result>(batch.get_ticket(i), requests[i].transaction_id, result,
          [&](const auto&) { seen.push_back(i); return std::make_unique<size_t>(i); },
          [&]() -> std::unique_ptr<size_t> { BOOST_FAIL("unexpected serial fallback"); return {}; });
       BOOST_REQUIRE(adopted); BOOST_CHECK_EQUAL(*adopted, i);
@@ -70,7 +70,7 @@ BOOST_FIXTURE_TEST_CASE(conflict_disables_remaining_speculation_before_serial_ca
    size_t adopted = 0, serial = 0;
    for (size_t i = 0; i < 3; ++i) {
       auto result = output(i, i == 2 ? b : a);
-      batch.run_next(batch.get_ticket(i), requests[i].transaction_id, result,
+      batch.run_next<isolated_action_result>(batch.get_ticket(i), requests[i].transaction_id, result,
          [&](const auto&) { ++adopted; }, [&] {
             BOOST_CHECK(last.stop_token().stop_requested()); ++serial;
          });
@@ -94,9 +94,9 @@ BOOST_FIXTURE_TEST_CASE(restored_value_still_invalidates_queries_selecting_the_w
       primary_state_overlay second(base);
       (void)second.locate_primary(query);
       isolated_action_result second_result{second.seal(), {}, requests[1].execution_fingerprint};
-      batch.run_next(batch.get_ticket(0), requests[0].transaction_id, first_result, [](const auto&) {}, [] {});
+      batch.run_next<isolated_action_result>(batch.get_ticket(0), requests[0].transaction_id, first_result, [](const auto&) {}, [] {});
       bool serial = false;
-      batch.run_next(batch.get_ticket(1), requests[1].transaction_id, second_result,
+      batch.run_next<isolated_action_result>(batch.get_ticket(1), requests[1].transaction_id, second_result,
          [](const auto&) { BOOST_FAIL("selected-row dependency was lost"); }, [&] { serial = true; });
       BOOST_CHECK(serial);
    }
@@ -113,9 +113,9 @@ BOOST_FIXTURE_TEST_CASE(absent_queries_and_end_metadata_ignore_unrelated_value_u
       BOOST_CHECK(!second.locate_primary(query).row);
       (void)second.read_table(a);
       isolated_action_result result{second.seal(), {}, requests[1].execution_fingerprint};
-      batch.run_next(batch.get_ticket(0), requests[0].transaction_id, output(0, a), [](const auto&) {}, [] {});
+      batch.run_next<isolated_action_result>(batch.get_ticket(0), requests[0].transaction_id, output(0, a), [](const auto&) {}, [] {});
       bool adopted = false;
-      batch.run_next(batch.get_ticket(1), requests[1].transaction_id, result,
+      batch.run_next<isolated_action_result>(batch.get_ticket(1), requests[1].transaction_id, result,
          [&](const auto&) { adopted = true; }, [] { BOOST_FAIL("unrelated value update is not a phantom"); });
       BOOST_CHECK(adopted);
    }
@@ -137,8 +137,8 @@ BOOST_FIXTURE_TEST_CASE(structural_writes_invalidate_absence_ranges_end_and_aba_
          query == 3 ? primary_query_kind::upper_bound : primary_query_kind::last, 99});
       isolated_action_result first_result{first.seal(), {}, requests[0].execution_fingerprint};
       isolated_action_result second_result{second.seal(), {}, requests[1].execution_fingerprint};
-      batch.run_next(batch.get_ticket(0), requests[0].transaction_id, first_result, [](const auto&) {}, [] { BOOST_FAIL("first"); });
-      const auto used = batch.run_next(batch.get_ticket(1), requests[1].transaction_id, second_result,
+      batch.run_next<isolated_action_result>(batch.get_ticket(0), requests[0].transaction_id, first_result, [](const auto&) {}, [] { BOOST_FAIL("first"); });
+      const auto used = batch.run_next<isolated_action_result>(batch.get_ticket(1), requests[1].transaction_id, second_result,
          [](const auto&) { return true; }, [] { return false; });
       BOOST_CHECK_EQUAL(used, query == 5);
    }
@@ -158,7 +158,7 @@ BOOST_FIXTURE_TEST_CASE(distinct_rows_in_one_table_adopt_without_losing_same_row
       primary_state_overlay overlay(base);
       overlay.update_existing(a, i == 0 ? 1 : 2, name{}, std::span<const char>("y", 1));
       isolated_action_result result{overlay.seal(), {}, requests[i].execution_fingerprint};
-      batch.run_next(batch.get_ticket(i), requests[i].transaction_id, result,
+      batch.run_next<isolated_action_result>(batch.get_ticket(i), requests[i].transaction_id, result,
          [&](const auto&) { ++adopted; }, [&] { ++serial; });
    }
    BOOST_CHECK_EQUAL(adopted, 2u); BOOST_CHECK_EQUAL(serial, 1u);
@@ -167,10 +167,10 @@ BOOST_FIXTURE_TEST_CASE(distinct_rows_in_one_table_adopt_without_losing_same_row
 BOOST_FIXTURE_TEST_CASE(no_attempt_is_a_whole_batch_serial_barrier, batch_fixture) {
    ordered_attempt_batch batch(base, requests);
    size_t serial = 0;
-   batch.run_next(batch.get_ticket(0), requests[0].transaction_id, std::nullopt,
+   batch.run_next<isolated_action_result>(batch.get_ticket(0), requests[0].transaction_id, std::optional<isolated_action_result>{},
       [](const auto&) { BOOST_FAIL("no result must not be adopted"); }, [&] { ++serial; });
    for (size_t i = 1; i < requests.size(); ++i)
-      batch.run_next(batch.get_ticket(i), requests[i].transaction_id, output(i, b),
+      batch.run_next<isolated_action_result>(batch.get_ticket(i), requests[i].transaction_id, output(i, b),
          [](const auto&) { BOOST_FAIL("barrier must invalidate tail"); }, [&] { ++serial; });
    BOOST_CHECK_EQUAL(serial, 3u);
 }
@@ -182,12 +182,12 @@ BOOST_FIXTURE_TEST_CASE(foreign_out_of_order_duplicate_and_wrong_transaction_nev
    size_t calls = 0;
    auto adopt = [&](const auto&) { ++calls; };
    auto serial = [&] { ++calls; };
-   BOOST_CHECK_THROW(batch.run_next(other.get_ticket(0), requests[0].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
-   BOOST_CHECK_THROW(batch.run_next(batch.get_ticket(1), requests[1].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
-   BOOST_CHECK_THROW(batch.run_next(first, requests[1].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
+   BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(other.get_ticket(0), requests[0].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
+   BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(batch.get_ticket(1), requests[1].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
+   BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(first, requests[1].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
    BOOST_CHECK_EQUAL(calls, 0u); BOOST_CHECK_EQUAL(batch.next_index(), 0u);
-   batch.run_next(first, requests[0].transaction_id, attempt, adopt, serial);
-   BOOST_CHECK_THROW(batch.run_next(first, requests[0].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
+   batch.run_next<isolated_action_result>(first, requests[0].transaction_id, attempt, adopt, serial);
+   BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(first, requests[0].transaction_id, attempt, adopt, serial), primary_state_invalid_attempt);
    BOOST_CHECK_EQUAL(calls, 1u);
 }
 
@@ -202,7 +202,7 @@ BOOST_FIXTURE_TEST_CASE(wrong_base_and_execution_fingerprint_poison_the_batch, b
          attempt.state = other.seal(); // identical content, DIFFERENT snapshot identity
       } else attempt.execution_fingerprint = requests[1].execution_fingerprint;
       size_t calls = 0;
-      BOOST_CHECK_THROW(batch.run_next(ticket, requests[0].transaction_id, attempt,
+      BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(ticket, requests[0].transaction_id, attempt,
          [&](const auto&) { ++calls; }, [&] { ++calls; }), primary_state_invalid_attempt);
       BOOST_CHECK_EQUAL(calls, 0u);
       BOOST_CHECK(ticket.stop_token().stop_requested());
@@ -217,7 +217,7 @@ BOOST_FIXTURE_TEST_CASE(callback_failure_never_retries_a_partial_canonical_actio
       size_t mutations = 0;
       std::optional<isolated_action_result> attempt;
       if (with_attempt) attempt = output(0, a);
-      BOOST_CHECK_THROW(batch.run_next(ticket, requests[0].transaction_id, attempt,
+      BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(ticket, requests[0].transaction_id, attempt,
          [&](const auto&) { ++mutations; throw std::runtime_error("adopt failure"); },
          [&] { ++mutations; throw std::runtime_error("serial failure"); }), std::runtime_error);
       BOOST_CHECK_EQUAL(mutations, 1u); BOOST_CHECK_EQUAL(batch.next_index(), 0u);
@@ -230,15 +230,15 @@ BOOST_FIXTURE_TEST_CASE(reentrancy_and_foreign_thread_cannot_advance_or_close_ba
    ordered_attempt_batch batch(base, requests);
    auto ticket = batch.get_ticket(1);
    auto result = output(1, b);
-   batch.run_next(batch.get_ticket(0), requests[0].transaction_id, output(0, a), [&](const auto&) {
+   batch.run_next<isolated_action_result>(batch.get_ticket(0), requests[0].transaction_id, output(0, a), [&](const auto&) {
       BOOST_CHECK_THROW(batch.close(), primary_state_invalid_attempt);
-      BOOST_CHECK_THROW(batch.run_next(ticket, requests[1].transaction_id, result, [](const auto&) {}, [] {}), primary_state_invalid_attempt);
+      BOOST_CHECK_THROW(batch.run_next<isolated_action_result>(ticket, requests[1].transaction_id, result, [](const auto&) {}, [] {}), primary_state_invalid_attempt);
    }, [] { BOOST_FAIL("unexpected fallback"); });
    auto worker = std::async(std::launch::async, [&] {
       unsigned rejected = 0;
       try { (void)batch.next_index(); } catch (const state_view_wrong_thread&) { ++rejected; }
       try { batch.close(); } catch (const state_view_wrong_thread&) { ++rejected; }
-      try { batch.run_next(ticket, requests[1].transaction_id, result, [](const auto&) {}, [] {}); }
+      try { batch.run_next<isolated_action_result>(ticket, requests[1].transaction_id, result, [](const auto&) {}, [] {}); }
       catch (const state_view_wrong_thread&) { ++rejected; }
       return rejected;
    });
@@ -257,7 +257,7 @@ BOOST_FIXTURE_TEST_CASE(tickets_outlive_closed_coordinator_but_cannot_enter_new_
    });
    BOOST_CHECK(reader.get());
    ordered_attempt_batch replacement(base, requests);
-   BOOST_CHECK_THROW(replacement.run_next(old, requests[0].transaction_id, output(0, a),
+   BOOST_CHECK_THROW(replacement.run_next<isolated_action_result>(old, requests[0].transaction_id, output(0, a),
       [](const auto&) {}, [] {}), primary_state_invalid_attempt);
    replacement.close();
    BOOST_CHECK(!replacement.complete());
@@ -284,9 +284,9 @@ BOOST_FIXTURE_TEST_CASE(adopter_can_report_serial_fallback_and_moved_ticket_fail
    BOOST_CHECK_THROW(ticket.base(), primary_state_invalid_attempt);
    BOOST_CHECK_THROW(ticket.stop_token(), primary_state_invalid_attempt);
    BOOST_CHECK_THROW(ticket.transaction_id(), primary_state_invalid_attempt);
-   batch.run_next(moved, requests[0].transaction_id, output(0, a), [&](const auto&) { batch.discard_remaining(); }, [] {});
+   batch.run_next<isolated_action_result>(moved, requests[0].transaction_id, output(0, a), [&](const auto&) { batch.discard_remaining(); }, [] {});
    bool serial = false;
-   batch.run_next(batch.get_ticket(1), requests[1].transaction_id, output(1, b),
+   batch.run_next<isolated_action_result>(batch.get_ticket(1), requests[1].transaction_id, output(1, b),
       [](const auto&) { BOOST_FAIL("canonical fallback must disable later adoption"); }, [&] { serial = true; });
    BOOST_CHECK(serial);
 }

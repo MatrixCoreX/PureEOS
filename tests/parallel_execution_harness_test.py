@@ -84,7 +84,10 @@ class HarnessTest(unittest.TestCase):
         before = sorted(path.name for path in self.root.iterdir())
         for flags, message in [(["--ram-fixture"], "requires --token-fixture"),
                                (["--lifecycle-fixture"], "requires --token-fixture"),
-                               (["--token-fixture", "--ram-fixture", "--lifecycle-fixture"], "cannot be combined")]:
+                               (["--token-fixture", "--ram-fixture", "--lifecycle-fixture"], "cannot be combined"),
+                               (["--multi-action-fixture"], "requires --token-fixture"),
+                               (["--token-fixture", "--ram-fixture", "--multi-action-fixture"], "cannot be combined"),
+                               (["--token-fixture", "--lifecycle-fixture", "--multi-action-fixture"], "cannot be combined")]:
             with self.subTest(flags=flags):
                 result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
                                         capture_output=True, text=True, timeout=15)
@@ -100,6 +103,32 @@ class HarnessTest(unittest.TestCase):
                 "chain_id": self.manifest["chain_id"]}
         state = {"head_block_id": "head", "integrity_hash": "state"}
         return node, point, info, state
+
+    def test_multi_action_trace_checks_require_all_roots_and_exact_ram_refund(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_multi_action_response
+        names = ["transfer", "transfer", "close"]
+        deltas = [{"alice": 240}, {"alice": -128, "blank": 128}, {"alice": -112, "blank": -128}]
+        roots = [{"creator_action_ordinal": 0, "act": {"name": name},
+                  "account_ram_deltas": [{"account": account, "delta": delta} for account, delta in ram.items()]}
+                 for name, ram in zip(names, deltas)]
+        response = {"processed": {"action_traces": roots}}
+        self.assertEqual(check_multi_action_response({"actions": 3}, response, True), {"alice": 0, "blank": 0})
+        response["processed"]["action_traces"].append({"creator_action_ordinal": 1})
+        self.assertEqual(check_multi_action_response({"actions": 3}, response, True), {"alice": 0, "blank": 0})
+        for mutation, message in [(0, "Lost a top-level"), (1, "action sequence"), (2, "did not create"), (3, "refund")]:
+            changed = deepcopy(response)
+            traces = changed["processed"]["action_traces"]
+            if mutation == 0:
+                traces[1]["creator_action_ordinal"] = 1
+            elif mutation == 1:
+                traces[2]["act"]["name"] = "open"
+            elif mutation == 2:
+                traces[0]["account_ram_deltas"] = []
+            else:
+                traces[2]["account_ram_deltas"][0]["delta"] += 1
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(RuntimeError, message):
+                check_multi_action_response({"actions": 3}, changed, True)
 
     def test_checkpoint_waits_for_exact_finality_after_head_cache(self):
         node, point, info, state = self.checkpoint_node()
