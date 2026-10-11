@@ -26,6 +26,7 @@
 - [完整多核实施计划快照](plan-snapshot/PureEOS_多核并行交易执行_实施计划.md)
 - [性能总计划快照](plan-snapshot/PureEOS_性能优化与TPS提升_实施计划.md)
 - [PX0 首批访问审查记录](PX0_ACCESS_REVIEW.md)
+- [首批测试与实际分支回退验证](VALIDATION_20261011.md)
 - [源码指纹和候选访问清单](access-inventory.json)
 - 审计工具：`scripts/parallel_access_audit.py`
 - 工具测试：`tests/parallel_access_audit_test.py`
