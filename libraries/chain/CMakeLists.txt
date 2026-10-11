@@ -87,6 +87,7 @@ add_library( eosio_chain
              block_state_legacy.cpp
              finalizer.cpp
              fork_database.cpp
+             reversible_recovery.cpp
              qc.cpp
              finality_core.cpp
              controller.cpp
@@ -95,6 +96,7 @@ add_library( eosio_chain
              block_log.cpp
              transaction_context.cpp
              eosio_contract.cpp
+             upgrade_governance.cpp
              eosio_contract_abi.cpp
              eosio_contract_abi_bin.cpp
              chain_config.cpp

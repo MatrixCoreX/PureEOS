@@ -76,6 +76,78 @@ add_executable( unit_test ${UNIT_TESTS} protocol_feature_digest_tests.cpp) # bui
 target_link_libraries( unit_test eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS} )
 
 target_compile_options(unit_test PUBLIC -DDISABLE_EOSLIB_SERIALIZE)
+
+# Focused consensus/genesis regression target; reuse the real controller/tester,
+# without rebuilding every unrelated unit test translation unit.
+add_executable(native_savanna_test main.cpp pureeos_genesis_tests.cpp pureeos_governance_tests.cpp performance_metrics_tests.cpp block_log_extract.cpp ../tests/block_log.cpp)
+target_link_libraries(native_savanna_test eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(native_savanna_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+target_include_directories(native_savanna_test PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/include
+  ${CMAKE_SOURCE_DIR}/libraries/testing/include)
+add_test(NAME native_savanna_genesis COMMAND native_savanna_test --run_test=pureeos_genesis_tests --report_level=detailed)
+add_test(NAME native_performance_metrics COMMAND native_savanna_test --run_test=performance_metrics_tests --report_level=detailed)
+add_test(NAME native_upgrade_governance COMMAND native_savanna_test --run_test=pureeos_governance_tests --report_level=detailed)
+set(PUREEOS_GOVERNANCE_CONTRACTS_DIR "" CACHE PATH "CDT profile-2 contract build directory for real WASM integration tests")
+if(PUREEOS_GOVERNANCE_CONTRACTS_DIR)
+  target_compile_definitions(native_savanna_test PRIVATE PUREEOS_GOVERNANCE_CONTRACTS_DIR="${PUREEOS_GOVERNANCE_CONTRACTS_DIR}")
+  target_compile_definitions(unit_test PRIVATE PUREEOS_GOVERNANCE_CONTRACTS_DIR="${PUREEOS_GOVERNANCE_CONTRACTS_DIR}")
+  add_test(NAME native_upgrade_governance_contract COMMAND native_savanna_test --run_test=pureeos_governance_contract_tests --report_level=detailed)
+endif()
+set(PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR "" CACHE PATH "Experimental fresh-chain single-choice contract build for WASM tests")
+if(PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR)
+  if(NOT PUREEOS_GOVERNANCE_CONTRACTS_DIR)
+    message(FATAL_ERROR "Single-choice tests also need the baseline PUREEOS_GOVERNANCE_CONTRACTS_DIR")
+  endif()
+  target_compile_definitions(native_savanna_test PRIVATE PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR="${PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR}")
+  target_compile_definitions(unit_test PRIVATE PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR="${PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR}")
+  target_link_libraries(native_savanna_test chain_plugin)
+  target_link_libraries(unit_test chain_plugin)
+  add_test(NAME native_single_choice_contract COMMAND native_savanna_test --run_test=pureeos_single_choice_contract_tests --report_level=detailed)
+endif()
+add_test(NAME native_genesis_blocklog_compat COMMAND native_savanna_test --run_test=blog_file_tests,block_log_extraction_tests --report_level=detailed)
+set(PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR "" CACHE PATH "Fresh-chain 10/90 resource split contract build for WASM tests")
+if(PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR)
+  if(NOT PUREEOS_GOVERNANCE_CONTRACTS_DIR)
+    message(FATAL_ERROR "Resource split tests need PUREEOS_GOVERNANCE_CONTRACTS_DIR")
+  endif()
+  target_compile_definitions(native_savanna_test PRIVATE PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR="${PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR}")
+  target_compile_definitions(unit_test PRIVATE PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR="${PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR}")
+  add_test(NAME native_resource_split_contract COMMAND native_savanna_test --run_test=pureeos_resource_split_tests --report_level=detailed)
+  if(PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR)
+    add_test(NAME native_committee_boundary_contract COMMAND native_savanna_test
+      --run_test=pureeos_committee_boundary_tests --report_level=detailed --log_level=message --color_output=no)
+    # Real BLS verification/replay is considerably slower in unoptimized builds
+    # and when both VM regression matrices run concurrently. This is a test
+    # watchdog, not a consensus block-time or finality parameter.
+    set_tests_properties(native_committee_boundary_contract PROPERTIES TIMEOUT 3600)
+  endif()
+endif()
+set(PUREEOS_ROTATION_CONTRACTS_DIR "" CACHE PATH "Fresh-chain sequential rotation contract build for WASM tests")
+set(PUREEOS_PREVIOUS_ROTATION_CONTRACTS_DIR "" CACHE PATH "Optional pre-upgrade rotation v2 contracts for real state compatibility testing")
+set(PUREEOS_PREVIOUS_REWARD_CONTRACTS_DIR "" CACHE PATH "Optional block-only contracts with the former reward activation threshold")
+if(PUREEOS_PREVIOUS_REWARD_CONTRACTS_DIR)
+  target_compile_definitions(native_savanna_test PRIVATE PUREEOS_PREVIOUS_REWARD_CONTRACTS_DIR="${PUREEOS_PREVIOUS_REWARD_CONTRACTS_DIR}")
+endif()
+if(PUREEOS_PREVIOUS_ROTATION_CONTRACTS_DIR)
+  target_compile_definitions(native_savanna_test PRIVATE PUREEOS_PREVIOUS_ROTATION_CONTRACTS_DIR="${PUREEOS_PREVIOUS_ROTATION_CONTRACTS_DIR}")
+endif()
+if(PUREEOS_ROTATION_CONTRACTS_DIR)
+  if(NOT PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR OR NOT PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR)
+    message(FATAL_ERROR "Rotation tests require the resource-split and single-choice fixtures")
+  endif()
+  target_compile_definitions(native_savanna_test PRIVATE PUREEOS_ROTATION_CONTRACTS_DIR="${PUREEOS_ROTATION_CONTRACTS_DIR}")
+  target_compile_definitions(unit_test PRIVATE PUREEOS_ROTATION_CONTRACTS_DIR="${PUREEOS_ROTATION_CONTRACTS_DIR}")
+  add_test(NAME native_sequential_rotation_contract COMMAND native_savanna_test
+    --run_test=pureeos_sequential_rotation_tests --report_level=detailed --log_level=message --color_output=no)
+  set_tests_properties(native_sequential_rotation_contract PROPERTIES TIMEOUT 10800)
+  add_test(NAME native_reward_halving_contract COMMAND native_savanna_test
+    --run_test=pureeos_reward_halving_tests --report_level=detailed --log_level=message --color_output=no)
+  set_tests_properties(native_reward_halving_contract PROPERTIES TIMEOUT 1800)
+  add_test(NAME native_reward_activation_contract COMMAND native_savanna_test
+    --run_test=pureeos_reward_activation_tests --report_level=detailed --log_level=message --color_output=no)
+  set_tests_properties(native_reward_activation_contract PROPERTIES TIMEOUT 1800)
+endif()
 target_include_directories( unit_test PUBLIC
                             ${CMAKE_CURRENT_SOURCE_DIR}
                             ${CMAKE_SOURCE_DIR}/libraries/testing/include
@@ -87,6 +159,7 @@ target_include_directories( unit_test PUBLIC
 
 ### MARK TEST SUITES FOR EXECUTION ###
 add_p_test(NAME protocol_feature_digest_unit_test COMMAND unit_test --run_test=protocol_feature_digest_tests --report_level=detailed --log_level=all --color_output)
+add_p_test(NAME protocol_feature_digest_generator_test COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/test_gen_protocol_feature_digest_tests.py)
 set(ctest_tests "protocol_feature_digest_tests")
 foreach(TEST_SUITE ${UNIT_TESTS}) # create an independent target for each test suite
   execute_process(COMMAND sh -c "grep -E 'BOOST_AUTO_TEST_SUITE\\s*[(]' '${TEST_SUITE}' | grep -vE '//.*BOOST_AUTO_TEST_SUITE\\s*[(]' | cut -d ')' -f 1 | cut -d '(' -f 2" OUTPUT_VARIABLE SUITE_NAMES OUTPUT_STRIP_TRAILING_WHITESPACE) # get the test suite name from the *.cpp file
@@ -117,9 +190,15 @@ set(ctest_tests "'${ctest_tests}' -j8") # surround test list string in apostroph
 # even on fresh first time test runs before ctest auto-detects costs
 foreach(RUNTIME ${EOSIO_WASM_RUNTIMES})
    set_tests_properties(api_part1_unit_test_${RUNTIME} PROPERTIES COST 5000)
+   # Interpreter crypto tests also run in unoptimized developer builds. This is
+   # a harness watchdog only; transaction CPU limits remain unchanged.
+   set_tests_properties(api_part1_unit_test_${RUNTIME} PROPERTIES TIMEOUT 10800)
+   # These suites assert wall-clock limits. Concurrent compiler/VM workloads
+   # must not turn CPU contention into a spurious correctness failure.
+   set_tests_properties(abi_unit_test_${RUNTIME} getpeerkeys_unit_test_${RUNTIME}
+                        checktime_unit_test_${RUNTIME} PROPERTIES RUN_SERIAL TRUE COST 10000)
    set_tests_properties(api_part2_unit_test_${RUNTIME} PROPERTIES COST 5000)
    set_tests_properties(api_part3_unit_test_${RUNTIME} PROPERTIES COST 5000)
-   set_tests_properties(checktime_unit_test_${RUNTIME} PROPERTIES COST 5000)
    set_tests_properties(wasm_part1_unit_test_${RUNTIME} PROPERTIES COST 5000)
    set_tests_properties(wasm_part2_unit_test_${RUNTIME} PROPERTIES COST 5000)
    set_tests_properties(wasm_part3_unit_test_${RUNTIME} PROPERTIES COST 5000)

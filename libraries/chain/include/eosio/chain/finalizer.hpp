@@ -99,13 +99,11 @@ namespace eosio::chain {
       const std::filesystem::path       persist_file_path;     // where we save the safety data
       std::atomic<bool>                 has_voted{false};      // true if this node has voted and updated safety info
       mutable std::mutex                mtx;
-      mutable fc::datastream<fc::cfile> cfile_ds;              // we want to keep the file open for speed
+      mutable fc::datastream<fc::cfile> cfile_ds;              // startup safety-file reader
       mutable persist_file_t            persist_file{cfile_ds};// we want to calculate checksum
       finalizer_map_t                   finalizers;            // the active finalizers for this node, loaded at startup, not mutated afterwards
       fsi_map                           inactive_safety_info;  // loaded at startup, not mutated afterwards
       fsi_t                             default_fsi = fsi_t::unset_fsi(); // default provided at helios startup
-      mutable long                      inactive_safety_info_written_pos{0};
-      mutable boost::crc_32_type        inactive_crc32; // cached value
 
    public:
       explicit my_finalizers_t(const std::filesystem::path& persist_file_path)

@@ -188,6 +188,9 @@ public:
 
    get_info_db::get_info_results get_info(const get_info_params&, const fc::time_point& deadline) const;
 
+   using get_upgrade_state_params = empty;
+   fc::variant get_upgrade_state(const get_upgrade_state_params&, const fc::time_point& deadline) const;
+
    struct get_transaction_status_params {
       chain::transaction_id_type           id;
    };
@@ -501,11 +504,15 @@ public:
 
    struct get_producers_result {
       fc::variants        rows; ///< one row per item, either encoded as hex string or JSON object
-      double              total_producer_vote_weight;
+      double              total_producer_vote_weight = 0; // legacy/display only; never integer ranking
       string              more; ///< fill lower_bound with this value to fetch more rows
+      std::optional<string> total_producer_vote_amount; // exact smallest-unit integer (decimal string)
+      std::optional<uint8_t> vote_precision;
+      string              vote_schema = "legacy";
    };
 
    get_producers_result get_producers( const get_producers_params& params, const fc::time_point& deadline )const;
+   get_producers_result get_integer_producers( const get_producers_params& params, const fc::time_point& deadline )const;
 
    struct get_producer_schedule_params {
    };
@@ -1048,7 +1055,7 @@ FC_REFLECT_EMPTY( eosio::chain_apis::read_only::get_finalizer_info_params )
 FC_REFLECT( eosio::chain_apis::read_only::get_finalizer_info_result, (active_finalizer_policy)(pending_finalizer_policy)(last_tracked_votes) );
 
 FC_REFLECT( eosio::chain_apis::read_only::get_producers_params, (json)(lower_bound)(limit)(time_limit_ms) )
-FC_REFLECT( eosio::chain_apis::read_only::get_producers_result, (rows)(total_producer_vote_weight)(more) );
+FC_REFLECT( eosio::chain_apis::read_only::get_producers_result, (rows)(total_producer_vote_weight)(more)(total_producer_vote_amount)(vote_precision)(vote_schema) );
 
 FC_REFLECT_EMPTY( eosio::chain_apis::read_only::get_producer_schedule_params )
 FC_REFLECT( eosio::chain_apis::read_only::get_producer_schedule_result, (active)(pending)(proposed) );

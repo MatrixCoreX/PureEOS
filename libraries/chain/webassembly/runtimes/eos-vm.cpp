@@ -465,6 +465,9 @@ REGISTER_LEGACY_HOST_FUNCTION(set_blockchain_parameters_packed, privileged_check
 REGISTER_HOST_FUNCTION(is_privileged, privileged_check);
 REGISTER_HOST_FUNCTION(set_privileged, privileged_check, read_only_check);
 REGISTER_HOST_FUNCTION(set_finalizers, privileged_check, read_only_check);
+REGISTER_HOST_FUNCTION(get_upgrade_developer);
+REGISTER_HOST_FUNCTION(get_rotation_context_v1);
+REGISTER_HOST_FUNCTION(set_upgrade_voters, privileged_check, read_only_check);
 
 // softfloat api
 REGISTER_INJECTED_HOST_FUNCTION(_eosio_f32_add);

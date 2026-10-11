@@ -19,11 +19,34 @@ namespace eosio { namespace chain {
       initial_version = 1,                  ///< complete block log from genesis
       block_x_start_version = 2,            ///< adds optional partial block log, cannot be used for replay without snapshot
                                             ///< this is in the form of an first_block_num that is written immediately after the version
-      genesis_state_or_chain_id_version = 3 ///< improvement on version 2 to not require the genesis state be provided when not starting from block 1
+      genesis_state_or_chain_id_version = 3, ///< no genesis required for partial logs
+      native_savanna_genesis_version = 4     ///< versioned optional native Savanna genesis manifest
    };
 
    constexpr uint32_t block_log::min_supported_version = initial_version;
-   constexpr uint32_t block_log::max_supported_version = genesis_state_or_chain_id_version;
+   constexpr uint32_t block_log::max_supported_version = native_savanna_genesis_version;
+
+   template<typename Stream>
+   genesis_state read_log_genesis(Stream& ds, uint32_t version) {
+      if (version >= native_savanna_genesis_version) {
+         genesis_state gs;
+         fc::raw::unpack(ds, gs);
+         return gs;
+      }
+      genesis_state_v0 old;
+      fc::raw::unpack(ds, old);
+      return genesis_state{old};
+   }
+
+   template<typename Stream>
+   void write_log_genesis(Stream& ds, const genesis_state& gs, uint32_t version) {
+      if (version >= native_savanna_genesis_version) {
+         fc::raw::pack(ds, gs);
+      } else {
+         EOS_ASSERT(!gs.initial_savanna, block_log_exception, "native Savanna genesis requires block log version 4");
+         fc::raw::pack(ds, gs.legacy_state());
+      }
+   }
 
    namespace detail {
       constexpr uint32_t pruned_version_flag = 1 << 31;
@@ -83,8 +106,7 @@ namespace eosio { namespace chain {
          }
 
          if (block_log::contains_genesis_state(version(), first_block_num)) {
-            chain_context.emplace<genesis_state>();
-            fc::raw::unpack(ds, std::get<genesis_state>(chain_context));
+            chain_context = read_log_genesis(ds, version());
          } else if (block_log::contains_chain_id(version(), first_block_num)) {
             chain_context = chain_id_type::empty_chain_id();
             ds >> std::get<chain_id_type>(chain_context);
@@ -115,9 +137,8 @@ namespace eosio { namespace chain {
             ds.write(reinterpret_cast<const char*>(&first_block_num), sizeof(first_block_num));
 
             std::visit(overloaded{ [&ds](const chain_id_type& id) { ds << id; },
-                                   [&ds](const genesis_state& state) {
-                                      auto data = fc::raw::pack(state);
-                                      ds.write(data.data(), data.size());
+                                   [this, &ds](const genesis_state& state) {
+                                      write_log_genesis(ds, state, version());
                                    } },
                        chain_context);
 
@@ -125,8 +146,7 @@ namespace eosio { namespace chain {
             ds.write(reinterpret_cast<const char*>(&totem), sizeof(totem));
          } else {
             const auto& state = std::get<genesis_state>(chain_context);
-            auto        data  = fc::raw::pack(state);
-            ds.write(data.data(), data.size());
+            write_log_genesis(ds, state, version());
          }
       }
 
@@ -478,7 +498,7 @@ namespace eosio { namespace chain {
       }
 
       struct block_log_impl {
-         inline static uint32_t  default_initial_version = block_log::max_supported_version;
+         inline static uint32_t  default_initial_version = genesis_state_or_chain_id_version;
 
          std::mutex       mtx;
          struct signed_block_with_id {
@@ -496,6 +516,7 @@ namespace eosio { namespace chain {
          virtual void     reset(const genesis_state& gs, const signed_block_ptr& first_block) = 0;
          virtual void     reset(const chain_id_type& chain_id, uint32_t first_block_num)      = 0;
          virtual void     flush()                                                             = 0;
+         virtual void     flush_and_sync()                                                    = 0;
 
          virtual signed_block_ptr                   read_block_by_num(uint32_t block_num)        = 0;
          virtual std::vector<char>                  read_serialized_block_by_num(uint32_t block_num) = 0;
@@ -533,6 +554,7 @@ namespace eosio { namespace chain {
          void reset(const genesis_state& gs, const signed_block_ptr& first_block) final { update_head(first_block); }
          void reset(const chain_id_type& chain_id, uint32_t first_block_num) final { first_block_number = first_block_num; }
          void flush() final {}
+         void flush_and_sync() final {}
 
          signed_block_ptr read_block_by_num(uint32_t block_num) final { return {}; };
          std::vector<char> read_serialized_block_by_num(uint32_t block_num) final { return {}; };
@@ -804,7 +826,7 @@ namespace eosio { namespace chain {
          }
 
          void reset(const genesis_state& gs, const signed_block_ptr& first_block) override {
-            this->reset(1, gs, default_initial_version);
+            this->reset(1, gs, gs.initial_savanna ? native_savanna_genesis_version : default_initial_version);
             this->append(first_block, first_block->calculate_id(), first_block->packed_signed_block());
          }
 
@@ -813,13 +835,20 @@ namespace eosio { namespace chain {
                   first_block_num > 1, block_log_exception,
                   "Block log version ${ver} needs to be created with a genesis state if starting from block number 1.");
 
-            this->reset(first_block_num, chain_id, block_log::max_supported_version);
+            // No genesis manifest is stored in a partial log; keep the v3 format.
+            this->reset(first_block_num, chain_id, genesis_state_or_chain_id_version);
             this->head.reset();
          }
 
          void flush() final {
             block_file.flush();
             index_file.flush();
+         }
+
+         void flush_and_sync() final {
+            flush();
+            block_file.sync();
+            index_file.sync();
          }
 
          signed_block_ptr read_head() final {
@@ -864,7 +893,7 @@ namespace eosio { namespace chain {
             //  block recovery can get through some blocks.
             size_t copy_to_pos = convert_existing_header_to_vacuumed(first_block_num);
 
-            preamble.ver = block_log::max_supported_version;
+            preamble.ver = first_block_num == 1 ? preamble.version() : genesis_state_or_chain_id_version;
 
             // if there is no head block though, bail now, otherwise first_block_num won't actually be available
             //  and it'll mess this all up. Be sure to still remove the 4 byte trailer though.
@@ -941,18 +970,18 @@ namespace eosio { namespace chain {
                        "Trying to vacuumed a non-pruned block log");
 
             if (block_log::contains_genesis_state(old_version, old_first_block_num)) {
-               // we'll always write a v3 log, but need to possibly mutate the genesis_state to a chainid should we have
-               // pruned a log starting with a genesis_state
-               genesis_state gs;
+               // Preserve the genesis encoding if block 1 survives; otherwise
+               // replace the genesis manifest with a v3 chain-id-only header.
                auto          ds = block_file.create_datastream();
-               fc::raw::unpack(ds, gs);
+               auto gs = read_log_genesis(ds, old_version);
 
                block_file.seek(0);
-               fc::raw::pack(block_file, block_log::max_supported_version);
+               const auto output_version = first_block_num == 1 ? old_version : genesis_state_or_chain_id_version;
+               fc::raw::pack(block_file, output_version);
                fc::raw::pack(block_file, first_block_num);
                if (first_block_num == 1) {
                   EOS_ASSERT(old_first_block_num == 1, block_log_exception, "expected an old first blocknum of 1");
-                  fc::raw::pack(block_file, gs);
+                  write_log_genesis(block_file, gs, output_version);
                } else
                   fc::raw::pack(block_file, gs.compute_chain_id());
                fc::raw::pack(block_file, totem);
@@ -962,7 +991,7 @@ namespace eosio { namespace chain {
                fc::raw::unpack(block_file, chainid);
 
                block_file.seek(0);
-               fc::raw::pack(block_file, block_log::max_supported_version);
+               fc::raw::pack(block_file, uint32_t(genesis_state_or_chain_id_version));
                fc::raw::pack(block_file, first_block_num);
                fc::raw::pack(block_file, chainid);
                fc::raw::pack(block_file, totem);
@@ -1063,6 +1092,7 @@ namespace eosio { namespace chain {
                return;
             }
 
+            flush_and_sync(); // keep retired segments durable before recovery-data pruning
             block_file.close();
             index_file.close();
 
@@ -1079,7 +1109,7 @@ namespace eosio { namespace chain {
             block_file.set_file_path(block_file_path);
             index_file.set_file_path(index_file_path);
 
-            preamble.ver             = block_log::max_supported_version;
+            preamble.ver             = genesis_state_or_chain_id_version;
             preamble.chain_context   = preamble.chain_id();
             preamble.first_block_num = this->head->ptr->block_num() + 1;
             preamble.write_to(block_file);
@@ -1237,15 +1267,15 @@ namespace eosio { namespace chain {
 
             const uint32_t prune_to_num = head_num - prune_config.prune_blocks + 1;
 
-            static_assert(block_log::max_supported_version == 3,
-                          "Code was written to support version 3 format, need to update this code for latest format.");
-            const genesis_state gs;
-            const size_t        max_header_size_v1 = sizeof(uint32_t) + fc::raw::pack_size(gs) + sizeof(uint64_t);
-            const size_t        max_header_size_v23 =
-                  sizeof(uint32_t) + sizeof(uint32_t) + sizeof(chain_id_type) + sizeof(uint64_t);
-            const auto max_header_size = std::max(max_header_size_v1, max_header_size_v23);
-
-            block_file.punch_hole(max_header_size, get_block_pos(prune_to_num));
+            // The v4 genesis header has a variable-size feature manifest. Never
+            // punch through it using a legacy fixed-size estimate.
+            const auto saved_position = block_file.tellp();
+            block_file.seek(0);
+            block_log_preamble disk_header;
+            disk_header.read_from(block_file, block_file.get_file_path());
+            const auto header_end = block_file.tellp();
+            block_file.seek(saved_position);
+            block_file.punch_hole(header_end, get_block_pos(prune_to_num));
 
             first_block_number = prune_to_num;
             block_file.flush();
@@ -1298,6 +1328,11 @@ namespace eosio { namespace chain {
    void block_log::flush() {
       std::lock_guard g(my->mtx);
       my->flush();
+   }
+
+   void block_log::flush_and_sync() {
+      std::lock_guard g(my->mtx);
+      my->flush_and_sync();
    }
 
    void block_log::reset(const genesis_state& gs, const signed_block_ptr& first_block) {
@@ -1607,7 +1642,7 @@ namespace eosio { namespace chain {
       }
 
       block_log_preamble preamble;
-      preamble.ver             = block_log::max_supported_version;
+      preamble.ver             = genesis_state_or_chain_id_version;
       preamble.first_block_num = first_block_num;
       preamble.chain_context   = log_bundle.log_data.chain_id();
       preamble.write_to(new_block_file);

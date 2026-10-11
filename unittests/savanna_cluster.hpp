@@ -350,6 +350,7 @@ namespace savanna_cluster {
    struct cluster_config {
       bool   transition_to_savanna = true;
       size_t num_nodes = 4;
+      setup_policy initial_policy = setup_policy::full_except_do_not_transition_to_savanna;
    };
 
    // ---------------------------------------------------------------------------------------
@@ -380,7 +381,7 @@ namespace savanna_cluster {
          assert(_num_nodes > 3); // cluster should have a minimum of 4 nodes (quorum = 3)
 
          _nodes.reserve(_num_nodes);
-         _nodes.emplace_back(0, *this, setup_policy::full_except_do_not_transition_to_savanna);
+         _nodes.emplace_back(0, *this, cfg.initial_policy);
          for (size_t i=1; i<_num_nodes; ++i)
             _nodes.emplace_back(i, *this);
 

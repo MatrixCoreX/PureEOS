@@ -394,6 +394,13 @@ def stepVote():
 def stepProxyVotes():
     proxyVotes(0, 0 + args.num_voters)
 def stepResign():
+    # A profile-2 eosio.prods authority is deliberately unsatisfiable. Never
+    # surrender the bootstrap keys to it (including when connecting to a node
+    # whose genesis file differs from this legacy tutorial's local arguments).
+    producers = getJsonOutput(args.cleos + 'get account eosio.prods --json')
+    active = next(p['required_auth'] for p in producers['permissions'] if p['perm_name'] == 'active')
+    if not active['keys'] and not active['accounts']:
+        raise SystemExit('Refusing legacy resign: eosio.prods has no management authority. Use genesis/developer-upgrades.md for profile 2.')
     resign('eosio', 'eosio.prods')
     for a in systemAccounts:
         resign(a, 'eosio')
@@ -464,6 +471,13 @@ for (flag, command, function, inAll, help) in commands:
         parser.add_argument('--' + command, action='store_true', help=help, dest=command)
         
 args = parser.parse_args()
+
+# Fail before this legacy tutorial starts processes, removes test directories,
+# installs multisig, or attempts a DPoS-to-Savanna transition.
+if os.path.isfile(args.genesis):
+    with open(args.genesis, encoding='utf-8') as genesis_input:
+        if json.load(genesis_input).get('initial_savanna') is not None:
+            raise SystemExit('This legacy bios tutorial does not support native Savanna genesis; see genesis/native-savanna.md and genesis/developer-upgrades.md.')
 
 # Leave a space in front of --url in case the user types cleos alone
 args.cleos += ' --url http://127.0.0.1:%d ' % args.http_port

@@ -704,7 +704,31 @@ static void sync_replayed_blockchain(const std::filesystem::path& ref_blockchain
 // run
 // `unittests/unit_test -t savanna_misc_tests/verify_block_compatibitity -- --save-blockchain`
 // ----------------------------------------------------------------------------------------------------
-BOOST_FIXTURE_TEST_CASE(verify_block_compatibitity, savanna_cluster::cluster_t) try {
+// This fixture must reproduce the original protocol manifest. Activating newly
+// added features changes the ancestor block IDs, even when consensus remains
+// compatible. Keep the reference block log/snapshot/ID unchanged so the test
+// continues to verify replay and sync of historical data.
+struct reference_consensus_cluster : savanna_cluster::cluster_t {
+   static savanna_cluster::cluster_config reference_config() {
+      using eosio::testing::setup_action;
+      using enum builtin_protocol_feature_t;
+      return {.initial_policy = {
+         {setup_action::preactivate_protocol_feature,
+          setup_action::set_before_producer_authority_bios_contract,
+          setup_action::activate_features,
+          setup_action::set_bios_contract},
+         {preactivate_feature, only_link_to_existing_permission, replace_deferred,
+          no_duplicate_deferred_id, fix_linkauth_restriction, disallow_empty_producer_schedule,
+          restrict_action_to_self, only_bill_first_authorizer, forward_setcode, get_sender,
+          ram_restrictions, webauthn_key, wtmsig_block_signatures, action_return_value,
+          blockchain_parameters, get_code_hash, configurable_wasm_limits, crypto_primitives,
+          get_block_num, bls_primitives, disable_deferred_trxs_stage_1, disable_deferred_trxs_stage_2,
+          savanna, sync_call, get_sender_fix}}};
+   }
+   reference_consensus_cluster() : cluster_t(reference_config()) {}
+};
+
+BOOST_FIXTURE_TEST_CASE(verify_block_compatibitity, reference_consensus_cluster) try {
    using namespace savanna_cluster;
    auto& A=_nodes[0];
    const auto& tester_account = "tester"_n;

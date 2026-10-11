@@ -20,7 +20,11 @@ namespace eosio::chain {
          void start(fc::time_point tp);
          void stop();
 
-         platform_timer::state_t timer_state() const { return _timer.timer_state(); }
+         platform_timer::state_t timer_state() const {
+            if (_timer.interrupt_sequence() != _interrupt_sequence)
+               return platform_timer::state_t::interrupted;
+            return _timer.timer_state();
+         }
 
          /* Sets a callback for when timer expires. Be aware this could might fire from a signal handling context and/or
             on any particular thread. Only a single callback can be registered at once; trying to register more will
@@ -29,6 +33,7 @@ namespace eosio::chain {
 
       private:
          platform_timer& _timer;
+         const uint64_t _interrupt_sequence;
 
          friend controller_impl;
    };
@@ -100,6 +105,21 @@ namespace eosio::chain {
    };
 
    class transaction_context {
+      public:
+         // An in-transaction, single-use capability created only by the native devexec handler.
+         // Not serialized and never authorizes a later transaction or a WASM forwarding action.
+         struct system_upgrade_execution {
+            account_name target;
+            digest_type code_hash;
+            digest_type abi_hash;
+            uint32_t parent_action_ordinal = 0;
+            bool code_used = false;
+            bool abi_used = false;
+         };
+         std::optional<system_upgrade_execution> system_upgrade;
+         // Filled only by the profile-2 eosio::refreshgov host call. Consumed by
+         // the immediately following top-level devpropose action.
+         std::optional<uint32_t> upgrade_voters_action_ordinal;
       private:
          // construction/reset initialization
          void initialize();

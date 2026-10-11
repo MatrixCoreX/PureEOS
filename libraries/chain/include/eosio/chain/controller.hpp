@@ -82,6 +82,7 @@ namespace eosio::chain {
    };
 
    struct controller_impl;
+   struct rotation_context_cache_metrics;
    using chainbase::database;
    using chainbase::pinnable_mapped_file;
    using boost::signals2::signal;
@@ -321,6 +322,10 @@ namespace eosio::chain {
 
          finalizer_policy_ptr   head_active_finalizer_policy()const; // returns nullptr pre-savanna
          finalizer_policy_ptr   head_pending_finalizer_policy()const; // returns nullptr pre-savanna
+         std::vector<char>      get_rotation_context_v1()const;
+         // Immutable, controller-local cache; same read-window rules as head().
+         std::shared_ptr<const std::vector<char>> get_rotation_context_v1_cached()const;
+         rotation_context_cache_metrics get_rotation_context_cache_metrics()const; // thread-safe
 
          /// Return the vote metrics for qc.block_num
          /// thread-safe

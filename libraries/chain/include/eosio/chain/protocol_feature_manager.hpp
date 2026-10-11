@@ -42,6 +42,7 @@ enum class builtin_protocol_feature_t : uint32_t {
    sync_call = 25,
    get_sender_fix = 26,
    reserved_private_fork_protocol_features = 500000,
+   pureeos_rotation_context = 500001,
 };
 
 struct protocol_feature_subjective_restrictions {

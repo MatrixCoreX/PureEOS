@@ -4,6 +4,9 @@
 #include <eosio/net_plugin/net_plugin.hpp>
 #include <eosio/producer_plugin/producer_plugin.hpp>
 #include <eosio/chain_plugin/tracked_votes.hpp>
+#include <eosio/chain/rotation_context_cache.hpp>
+#include <eosio/chain/performance_metrics.hpp>
+#include <prometheus/histogram.h>
 
 #include <prometheus/counter.h>
 #include <prometheus/info.h>
@@ -70,6 +73,16 @@ struct catalog_type {
 
    Gauge& last_irreversible;
    Gauge& head_block_num;
+   Counter& rotation_cache_hits;
+   Counter& rotation_cache_builds;
+   Counter& rotation_cache_build_seconds;
+   Gauge& rotation_cache_bytes;
+   chain::rotation_context_cache_metrics previous_rotation_metrics;
+   std::array<prometheus::Histogram*, chain::performance::names.size()> stage_histograms{};
+   std::array<chain::performance::sample, chain::performance::names.size()> previous_stage_metrics{};
+   Gauge& stage_timing_enabled = build<Gauge>("nodeos_performance_metrics_enabled", "1 when optional stage timing is enabled");
+   prometheus::Family<prometheus::Histogram>& stage_durations = family<prometheus::Histogram>(
+      "nodeos_stage_duration_seconds", "Optional inclusive wall-clock stage durations, including failed attempts; nested stages must not be summed");
 
    struct block_metrics {
       Counter& num_blocks_created;
@@ -144,6 +157,10 @@ struct catalog_type {
        , net_usage_us(family<Counter>("nodeos_net_usage_us_total", "total net usage in microseconds for blocks"))
        , last_irreversible(build<Gauge>("nodeos_last_irreversible", "last irreversible block number"))
        , head_block_num(build<Gauge>("nodeos_head_block_num", "head block number"))
+       , rotation_cache_hits(build<Counter>("nodeos_rotation_context_cache_hits_total", "rotation context cache hits"))
+       , rotation_cache_builds(build<Counter>("nodeos_rotation_context_builds_total", "rotation context serializations"))
+       , rotation_cache_build_seconds(build<Counter>("nodeos_rotation_context_build_seconds_total", "wall time building rotation context bytes, excluding lock wait"))
+       , rotation_cache_bytes(build<Gauge>("nodeos_rotation_context_cache_bytes", "current rotation context cached byte count"))
        , unapplied_transactions_total(build<Counter>("nodeos_unapplied_transactions_total",
                                                      "total number of unapplied transactions from produced blocks"))
        , subjective_bill_account_size_total(build<Counter>(
@@ -186,9 +203,30 @@ struct catalog_type {
        , blocks_incoming(build<Counter>("nodeos_blocks_incoming", "number of incoming blocks"))
        , bytes_transferred(build<Counter>("exposer_transferred_bytes_total",
                                           "total number of bytes for responses to prometheus scrape requests"))
-       , num_scrapes(build<Counter>("exposer_scrapes_total", "total number of prometheus scrape requests received")) {}
+       , num_scrapes(build<Counter>("exposer_scrapes_total", "total number of prometheus scrape requests received")) {
+         std::vector<double> boundaries;
+         for (auto ns : chain::performance::boundaries_ns) boundaries.push_back(ns / 1e9);
+         for (size_t i = 0; i < stage_histograms.size(); ++i)
+            stage_histograms[i] = &stage_durations.Add({{"stage", chain::performance::names[i]}}, boundaries);
+       }
 
    std::string report() {
+      stage_timing_enabled.Set(chain::performance::metrics().enabled.load(std::memory_order_relaxed));
+      for (size_t i = 0; i < stage_histograms.size(); ++i) {
+         const auto current = chain::performance::metrics().snapshot(static_cast<chain::performance::stage>(i));
+         auto& previous = previous_stage_metrics[i];
+         std::vector<double> increments(current.buckets.size());
+         for (size_t j = 0; j < increments.size(); ++j) increments[j] = current.buckets[j] - previous.buckets[j];
+         stage_histograms[i]->ObserveMultiple(increments, (current.nanoseconds - previous.nanoseconds) / 1e9);
+         previous = current;
+      }
+      // Only cumulative, bounded-cardinality diagnostics; never consensus input.
+      const auto rotation = app().get_plugin<chain_plugin>().chain().get_rotation_context_cache_metrics();
+      rotation_cache_hits.Increment(rotation.hits - previous_rotation_metrics.hits);
+      rotation_cache_builds.Increment(rotation.builds - previous_rotation_metrics.builds);
+      rotation_cache_build_seconds.Increment((rotation.build_nanoseconds - previous_rotation_metrics.build_nanoseconds) / 1e9);
+      rotation_cache_bytes.Set(rotation.bytes);
+      previous_rotation_metrics = rotation;
       const prometheus::TextSerializer serializer;
       auto                             result = serializer.Serialize(registry.Collect());
       bytes_transferred.Increment(result.size());

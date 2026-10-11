@@ -45,6 +45,7 @@ namespace eosio::testing {
    void provider_connection::cleanup_and_disconnect() {
       disconnect();
       _connection_thread_pool.stop();
+      after_stop();
    };
 
    fc::time_point provider_connection::get_trx_ack_time(const eosio::chain::transaction_id_type& trx_id) {
@@ -72,6 +73,7 @@ namespace eosio::testing {
       tcp::resolver r(_connection_thread_pool.get_executor());
       auto i = r.resolve(tcp::v4(), _config._peer_endpoint, std::to_string(_config._port));
       boost::asio::connect(_p2p_socket, i);
+      if (_evidence) _p2p_socket.non_blocking(true);
       ilog("Connected to ${ip}:${port}.", ("ip", _config._peer_endpoint)("port", _config._port));
    }
 
@@ -90,17 +92,60 @@ namespace eosio::testing {
          elog("disconnect failed to receive all acks in time - sent ${s} | acked ${a} | waited ${w}",
               ("s", _sent.load())("a", _sent_callback_num.load())("w", waited));
       }
+      _stopping = true;
+   }
+
+   void p2p_connection::after_stop() {
+      boost::system::error_code ignored;
+      _p2p_socket.close(ignored);
+      // All workers have joined: no record can race with/appear after the end.
+      if (_evidence) _evidence->finish(_sent.load(), _sent_callback_num.load(), _send_errors.load());
+      if (_send_errors.load() || _sent.load() != _sent_callback_num.load())
+         throw std::runtime_error("P2P sends failed or did not drain; measurement is invalid");
    }
 
    void p2p_connection::send_transaction(const chain::packed_transaction& trx) {
+      if (_evidence && _sent.load() - _sent_callback_num.load() >= _config._max_pending_sends) {
+         ++_send_errors;
+         _evidence->error();
+         throw std::runtime_error("bounded P2P sender is saturated");
+      }
       send_buffer_type msg = create_send_buffer(trx);
+      const auto queued_at = _evidence ? benchmark_monotonic_ns() : 0;
+      const auto actions = trx.get_signed_transaction().actions.size();
 
       ++_sent;
-      boost::asio::post( _strand, [this, msg{std::move(msg)}, id{trx.id()}]() {
-         boost::asio::write(_p2p_socket, boost::asio::buffer(*msg));
-         trx_acknowledged(id, fc::time_point::min()); //using min to identify ack time as not applicable for p2p
+      try { boost::asio::post( _strand, [this, msg{std::move(msg)}, id{trx.id()}, queued_at, actions]() {
+         try {
+            if (_evidence) _evidence->sent(id.str(), queued_at, actions);
+            if (_evidence) {
+               const auto deadline = std::chrono::steady_clock::now() + 2s;
+               size_t offset = 0;
+               while (offset < msg->size()) {
+                  if (_stopping || std::chrono::steady_clock::now() >= deadline)
+                     throw std::runtime_error("P2P socket write deadline exceeded");
+                  boost::system::error_code ec;
+                  offset += _p2p_socket.write_some(boost::asio::buffer(msg->data() + offset, msg->size() - offset), ec);
+                  if (ec == boost::asio::error::would_block || ec == boost::asio::error::try_again)
+                     std::this_thread::sleep_for(1ms);
+                  else if (ec) throw boost::system::system_error(ec);
+               }
+            } else {
+               boost::asio::write(_p2p_socket, boost::asio::buffer(*msg));
+            }
+            trx_acknowledged(id, fc::time_point::min()); // socket write is NOT node acceptance/finality
+         } catch (...) {
+            ++_send_errors;
+            // Still finish the callback if the evidence disk is full. The end
+            // error counter and failed exit prevent a partial journal passing.
+            try { if (_evidence) _evidence->error(); } catch (...) {}
+         }
          ++_sent_callback_num;
-      } );
+      } ); } catch (...) {
+         ++_send_errors;
+         ++_sent_callback_num;
+         throw;
+      }
    }
 
    acked_trx_trace_info p2p_connection::get_acked_trx_trace_info(const eosio::chain::transaction_id_type& trx_id) {

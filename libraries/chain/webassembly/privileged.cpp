@@ -7,13 +7,53 @@
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/finalizer_policy.hpp>
 #include <eosio/chain/finalizer_authority.hpp>
+#include <eosio/chain/upgrade_governance.hpp>
 
 #include <fc/io/datastream.hpp>
 
 #include <vector>
 #include <set>
+#include <cstring>
 
 namespace eosio { namespace chain { namespace webassembly {
+
+   uint64_t interface::get_upgrade_developer() const {
+      const auto* state = find_upgrade_governance(context.db);
+      return state ? state->developer.to_uint64_t() : 0;
+   }
+
+   uint32_t interface::get_rotation_context_v1(span<char> output) const {
+      const auto packed = context.control.get_rotation_context_v1_cached();
+      if (!packed->empty() && output.size() >= packed->size())
+         std::memcpy(output.data(), packed->data(), packed->size());
+      return packed->size();
+   }
+
+   void interface::set_upgrade_voters(span<const char> packed_voters) {
+      const auto* state = find_upgrade_governance(context.db);
+      EOS_ASSERT(state && state->developer != account_name{}, wasm_execution_error, "governance is not initialized");
+      EOS_ASSERT(context.is_action() && context.get_receiver() == "eosio"_n &&
+                 context.get_action().account == "eosio"_n &&
+                 (context.get_action().name == "refreshgov"_n || context.get_action().name == "govinit"_n) &&
+                 context.get_current_action_trace().creator_action_ordinal.value == 0,
+                 wasm_execution_error, "electorate requires top-level eosio::refreshgov or bootstrap govinit");
+      EOS_ASSERT(packed_voters.size() > 0 && packed_voters.size() <= max_upgrade_voters * 8 && packed_voters.size() % 8 == 0,
+                 wasm_execution_error, "invalid electorate size");
+      std::vector<account_name> voters(packed_voters.size() / 8);
+      fc::datastream<const char*> ds(packed_voters.data(), packed_voters.size());
+      for (auto& voter : voters) fc::raw::unpack(ds, voter);
+      account_name previous;
+      for (const auto voter : voters) {
+         EOS_ASSERT(voter > previous && voter != state->developer && context.is_account(voter),
+                    wasm_execution_error, "electorate must be sorted, unique, existing nodes, excluding the developer");
+         previous = voter;
+      }
+      context.db.modify(*state, [&](auto& s) {
+         s.current_voters = voters;
+         s.voters_updated_at = context.control.pending_block_time();
+      });
+      context.trx_context.upgrade_voters_action_ordinal = context.get_current_action_trace().action_ordinal.value;
+   }
 
    int interface::is_feature_active( int64_t feature_name ) const { return false; }
 
@@ -268,6 +308,10 @@ namespace eosio { namespace chain { namespace webassembly {
    }
 
    void interface::set_privileged( account_name n, bool is_priv ) {
+      if (const auto* state = find_upgrade_governance(context.db); state && state->developer != account_name{}) {
+         EOS_ASSERT(n == "eosio"_n && is_priv, wasm_execution_error,
+                    "sealed governance permits only eosio to remain privileged");
+      }
       const auto& a = context.db.get<account_metadata_object, by_name>( n );
       context.db.modify( a, [&]( auto& ma ){
          ma.set_privileged( is_priv );

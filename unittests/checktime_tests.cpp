@@ -24,6 +24,37 @@ using namespace fc;
 
 BOOST_AUTO_TEST_SUITE(checktime_tests)
 
+struct checktime_observation {
+   fc::variant_object fields;
+
+   bool record(const fc::exception& error) {
+      for (const auto& entry : error.get_log()) {
+         if (entry.get_data().contains("billing_timer")) {
+            fields = entry.get_data();
+            return true;
+         }
+      }
+      return false;
+   }
+
+   int64_t billed_us() const {
+      BOOST_REQUIRE(fields.contains("billing_timer"));
+      return fields["billing_timer"].as_int64();
+   }
+
+   void check_block_deadline(fc::microseconds requested_limit) const {
+      BOOST_REQUIRE(fields.contains("deadline"));
+      BOOST_REQUIRE(fields.contains("start"));
+      BOOST_REQUIRE(fields.contains("now"));
+      const auto deadline = fields["deadline"].as<fc::time_point>();
+      const auto start = fields["start"].as<fc::time_point>();
+      // The caller sets its deadline before controller starts the transaction.
+      // Any billing pause must NOT extend that original wall-clock deadline.
+      BOOST_CHECK_LE((deadline - start).count(), requested_limit.count());
+      BOOST_CHECK(fields["now"].as<fc::time_point>() >= deadline);
+   }
+};
+
 /*************************************************************************************
  * checktime_tests test case
  *************************************************************************************/
@@ -102,6 +133,9 @@ BOOST_AUTO_TEST_CASE( checktime_interrupt_test) { try {
 
    auto [trace, b] = CALL_TEST_FUNCTION_WITH_BLOCK( t, "test_checktime", "checktime_pass", {});
    BOOST_REQUIRE_EQUAL( b->transactions.size(), 1 );
+   // Keep the receiving node cold: interrupts must survive WASM load/compile
+   // billing pauses too, not only execution of an already cached module.
+   BOOST_TEST(!other.is_code_cached("testapi"_n));
 
    // Make a copy of the valid block and swicth the checktime_pass transaction with checktime_failure
    auto copy_b = b->clone();
@@ -147,6 +181,14 @@ BOOST_AUTO_TEST_CASE( checktime_interrupt_test) { try {
 
    th.join();
 
+   // Execute the original valid transaction next. Do not apply another block:
+   // interrupted blocks are deliberately retained in fork_db for a later retry.
+   // Cancellation must neither poison the next timer nor disable cached WASM.
+   auto valid_tx = std::get<packed_transaction>(b->transactions.back().trx).get_signed_transaction();
+   auto next_trace = other.push_transaction(valid_tx);
+   BOOST_REQUIRE(next_trace->receipt);
+   BOOST_CHECK_EQUAL(next_trace->receipt->status, transaction_receipt::executed);
+
 } FC_LOG_AND_RETHROW() }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_max_trx_cpu_extended_test, T, testers ) { try {
@@ -186,10 +228,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_max_trx_cpu_extended_test, T, tes
    // First call to contract which should cause the WASM to load and trx_context.pause_billing_timer() to be called.
    // Verify that the restriction on the transaction of 24'999 is honored even though there is wall clock time to
    // load the wasm. If this test fails it is possible that the wasm loaded faster or slower than expected.
+   checktime_observation observed;
    auto before = fc::time_point::now();
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
                                      0, 9999, 500, fc::raw::pack(10000000000000000000ULL), "pause"_n ),
-                          tx_cpu_usage_exceeded, fc_exception_message_contains("reached on chain max_transaction_cpu_usage") );
+                          tx_cpu_usage_exceeded, [&](const tx_cpu_usage_exceeded& e) {
+                             return observed.record(e) && fc_exception_message_contains("reached on chain max_transaction_cpu_usage")(e);
+                          } );
    auto after = fc::time_point::now();
    // Test that it runs longer than specified limit of 24'999 to allow for wasm load time.
    auto dur = (after - before).count();
@@ -200,7 +245,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_max_trx_cpu_extended_test, T, tes
    // If this check fails but duration is >= 24'999 (previous check did not fail), then the check here is likely
    // because WASM took less than 0.750 ms to load.
    BOOST_CHECK_MESSAGE( dur > 25'750, "elapsed " << dur << "us" );
-   BOOST_CHECK_MESSAGE( dur < 150'000, "elapsed " << dur << "us" ); // Should not run to block_cpu_usage deadline
+   // Compilation is deliberately unbilled and may itself exceed 150ms. Check
+   // the actual billed execution, not wall time including compilation/unwind.
+   BOOST_CHECK_GE(observed.billed_us(), 24'999);
+   BOOST_CHECK_LT(observed.billed_us(), 150'000);
 
    // Test hitting max_transaction_time throws tx_cpu_usage_exceeded
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
@@ -244,10 +292,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_max_trx_extended_test, T, testers
    // First call to contract which should cause the WASM to load and trx_context.pause_billing_timer() to be called.
    // Verify that the restriction on the max_transaction_time of 25ms is honored even though there is wall clock time to
    // load the wasm. If this test fails it is possible that the wasm loaded faster or slower than expected.
+   checktime_observation observed;
    auto before = fc::time_point::now();
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
                                      0, 25, 500, fc::raw::pack(10000000000000000000ULL), "pause"_n ),
-                          tx_cpu_usage_exceeded, fc_exception_message_contains("reached node configured max-transaction-time") );
+                          tx_cpu_usage_exceeded, [&](const tx_cpu_usage_exceeded& e) {
+                             return observed.record(e) && fc_exception_message_contains("reached node configured max-transaction-time")(e);
+                          } );
    auto after = fc::time_point::now();
    // Test that it runs longer than specified limit of 24'999 to allow for wasm load time.
    auto dur = (after - before).count();
@@ -258,7 +309,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_max_trx_extended_test, T, testers
    // If this check fails but duration is >= 25'000 (previous check did not fail), then the check here is likely
    // because WASM took less than 0.750 ms to load.
    BOOST_CHECK_MESSAGE( dur > 25'750, "elapsed " << dur << "us" );
-   BOOST_CHECK_MESSAGE( dur < 250'000, "elapsed " << dur << "us" ); // Should not run to max_transaction_cpu_usage deadline
+   BOOST_CHECK_GE(observed.billed_us(), 25'000);
+   BOOST_CHECK_LT(observed.billed_us(), 250'000);
 
    BOOST_REQUIRE_EQUAL( t.validate(), true );
 } FC_LOG_AND_RETHROW() }
@@ -291,10 +343,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_test,
    BOOST_TEST( !t.is_code_cached("pause"_n) );
 
    // First call to contract which should cause the WASM to load and trx_context.pause_billing_timer() to be called.
+   checktime_observation observed;
    auto before = fc::time_point::now();
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
                                      0, 150, 75, fc::raw::pack(10000000000000000000ULL), "pause"_n ),
-                          deadline_exception, is_deadline_exception );
+                          deadline_exception, [&](const deadline_exception& e) {
+                             return observed.record(e) && is_deadline_exception(e);
+                          } );
    auto after = fc::time_point::now();
    // WASM load times on my machine are around 35ms
    auto dur = (after - before).count();
@@ -302,9 +357,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_test,
    BOOST_CHECK( dur >= 75'000 ); // should never fail
    BOOST_TEST( t.is_code_cached("pause"_n) );
 
-   // If this check fails but duration is >= 75'000 (previous check did not fail), then the check here is likely
-   // because it took longer than 50 ms for checktime to trigger, trace to be created, and to get to the now() call.
-   BOOST_CHECK_MESSAGE( dur < 125'000, "elapsed " << dur << "us" );
+   // Loading a cold WASM is not interruptible by this timer. Verify the actual
+   // deadline was not shifted by that pause, and retain the execution bound.
+   observed.check_block_deadline(fc::milliseconds(75));
+   BOOST_CHECK_LT(observed.billed_us(), 125'000);
 
    BOOST_REQUIRE_EQUAL( t.validate(), true );
 } FC_LOG_AND_RETHROW() }
@@ -341,10 +397,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_while
    BOOST_TEST( !t.is_code_cached("pause"_n) );
 
    // First call to contract which should cause the WASM to load and trx_context.pause_billing_timer() to be called.
+   checktime_observation observed;
    auto before = fc::time_point::now();
    BOOST_CHECK_EXCEPTION( call_test( t, test_pause_action<WASM_TEST_ACTION("test_checktime", "checktime_failure")>{},
                                      0, 150, 15, fc::raw::pack(10000000000000000000ULL), "pause"_n ),
-                          deadline_exception, is_deadline_exception );
+                          deadline_exception, [&](const deadline_exception& e) {
+                             return observed.record(e) && is_deadline_exception(e);
+                          } );
    auto after = fc::time_point::now();
    // Test that it runs longer than specified limit of 15ms to allow for wasm load time.
    // WASM load times on my machine are around 35ms
@@ -353,11 +412,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( checktime_pause_block_deadline_not_extended_while
    BOOST_CHECK( dur >= 15'000 ); // should never fail
    BOOST_TEST( t.is_code_cached("pause"_n) );
 
-   // WASM load times on my machine was 35ms.
-   // Since checktime only kicks in after WASM is loaded this needs to be large enough to load the WASM, but should be
-   // lower than the 150ms max_transaction_time
-   BOOST_CHECK_MESSAGE( dur < 125'000, "elapsed " << dur << "us" );
-   BOOST_REQUIRE_MESSAGE( dur < 150'000, "elapsed " << dur << "us" ); // should never fail
+   observed.check_block_deadline(fc::milliseconds(15));
+   BOOST_CHECK_LT(observed.billed_us(), 125'000);
+   BOOST_REQUIRE_LT(observed.billed_us(), 150'000);
 
    BOOST_REQUIRE_EQUAL( t.validate(), true );
 } FC_LOG_AND_RETHROW() }

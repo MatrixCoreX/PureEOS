@@ -141,7 +141,7 @@ struct eosvmoc_tier {
                if (executing_code_hash.load() == code_id) {
                   ilog("EOS VM OC tier up interrupting ${id}", ("id", code_id));
                   eos_vm_oc_compile_interrupt = true;
-                  main_thread_timer.interrupt_timer();
+                  main_thread_timer.interrupt_timer(false); // tier-up retry, not cancellation
                }
             });
          }

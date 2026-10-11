@@ -363,6 +363,11 @@ host function call will trigger a transition to the Savanna consensus algorithm.
               builtin_protocol_feature_t::disable_deferred_trxs_stage_2
             }
          } )
+         (  builtin_protocol_feature_t::pureeos_rotation_context, builtin_protocol_feature_spec{
+            "PUREEOS_ROTATION_CONTEXT",
+            digest_type::hash(std::string("PureEOS rotation context v1: executed parent policies and deterministic finality core; CDT wire ABI v1.")),
+            {builtin_protocol_feature_t::savanna}
+         } )
          (  builtin_protocol_feature_t::sync_call, builtin_protocol_feature_spec{
             "SYNC_CALL",
             fc::variant("49f6fbc4fee045bc5c8b09a96b2b5c096afdc320ac29b54e0f3805c660b88483").as<digest_type>(),

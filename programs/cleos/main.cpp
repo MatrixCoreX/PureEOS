@@ -1535,6 +1535,11 @@ struct unregister_producer_subcommand {
    }
 };
 
+bool uses_integer_single_vote() {
+   const auto abi = abi_serializer_resolver(config::system_account_name);
+   return abi && !abi->get_table_type("votersv2"_n).empty();
+}
+
 struct vote_producer_proxy_subcommand {
    string voter_str;
    string proxy_str;
@@ -1546,6 +1551,7 @@ struct vote_producer_proxy_subcommand {
       add_standard_transaction_options_plus_signing(vote_proxy, "voter@active");
 
       vote_proxy->callback([this] {
+         EOS_ASSERT(!uses_integer_single_vote(), action_validate_exception, "Proxy voting is disabled on this chain");
          fc::variant act_payload = fc::mutable_variant_object()
                   ("voter", voter_str)
                   ("proxy", proxy_str)
@@ -1567,7 +1573,8 @@ struct vote_producers_subcommand {
       add_standard_transaction_options_plus_signing(vote_producers, "voter@active");
 
       vote_producers->callback([this] {
-
+         EOS_ASSERT(!uses_integer_single_vote() || producer_names.size() <= 1,
+                    action_validate_exception, "Select exactly one producer; a new selection replaces the old one atomically");
          std::sort( producer_names.begin(), producer_names.end() );
 
          fc::variant act_payload = fc::mutable_variant_object()
@@ -1585,12 +1592,19 @@ struct approve_producer_subcommand {
    string producer_name;
 
    approve_producer_subcommand(CLI::App* actionRoot) {
-      auto approve_producer = actionRoot->add_subcommand("approve", localized("Add one producer to list of voted producers"));
+      auto approve_producer = actionRoot->add_subcommand("approve", localized("Select a producer (replaces the current choice on single-vote chains)"));
       approve_producer->add_option("voter", voter, localized("The voting account"))->required();
       approve_producer->add_option("producer", producer_name, localized("The account to vote for"))->required();
       add_standard_transaction_options_plus_signing(approve_producer, "voter@active");
 
       approve_producer->callback([this] {
+            if (uses_integer_single_vote()) {
+               const auto payload = fc::mutable_variant_object()("voter", voter)("proxy", "")
+                  ("producers", std::vector<account_name>{name(producer_name)});
+               const auto permissions = get_account_permissions(tx_permission, {name(voter), config::active_name});
+               send_actions({create_action(permissions, config::system_account_name, "voteproducer"_n, payload)}, signing_keys_opt.get_keys());
+               return;
+            }
             auto result = call(get_table_func, fc::mutable_variant_object("json", true)
                                ("code", name(config::system_account_name).to_string())
                                ("scope", name(config::system_account_name).to_string())
@@ -1644,10 +1658,11 @@ struct unapprove_producer_subcommand {
       add_standard_transaction_options_plus_signing(approve_producer, "voter@active");
 
       approve_producer->callback([this] {
+            const bool integer_voting = uses_integer_single_vote();
             auto result = call(get_table_func, fc::mutable_variant_object("json", true)
                                ("code", name(config::system_account_name).to_string())
                                ("scope", name(config::system_account_name).to_string())
-                               ("table", "voters")
+                               ("table", integer_voting ? "votersv2" : "voters")
                                ("table_key", "owner")
                                ("lower_bound", name(voter).to_uint64_t())
                                ("upper_bound", name(voter).to_uint64_t() + 1)
@@ -1709,6 +1724,23 @@ struct list_producers_subcommand {
          auto result = rawResult.as<eosio::chain_apis::read_only::get_producers_result>();
          if ( result.rows.empty() && result.more.empty() ) {
             std::cout << "No producers found" << std::endl;
+            return;
+         }
+         if (result.vote_schema == "integer-v2") {
+            EOS_ASSERT(result.vote_precision && result.total_producer_vote_amount, action_validate_exception,
+                       "Integer voting response is missing precision or exact total");
+            printf("%-13s %-57s %-59s %s\n", "Producer", "Producer key", "Url", "Votes (exact)");
+            for (const auto& row : result.rows) {
+               std::string votes = std::to_string(row["total_votes"].as_int64());
+               const auto precision = *result.vote_precision;
+               if (precision) {
+                  if (votes.size() <= precision) votes.insert(0, precision + 1 - votes.size(), '0');
+                  votes.insert(votes.size() - precision, 1, '.');
+               }
+               printf("%-13.13s %-57.57s %-59.59s %s\n", row["owner"].as_string().c_str(),
+                      row["producer_key"].as_string().c_str(), clean_output(row["url"].as_string()).c_str(), votes.c_str());
+            }
+            if (!result.more.empty()) std::cout << "-L " << clean_output(result.more) << " for more" << std::endl;
             return;
          }
          auto weight = result.total_producer_vote_weight;
@@ -2084,6 +2116,7 @@ struct regproxy_subcommand {
       add_standard_transaction_options_plus_signing(register_proxy, "proxy@active");
 
       register_proxy->callback([this] {
+         EOS_ASSERT(!uses_integer_single_vote(), action_validate_exception, "Proxy registration is disabled on this chain");
          fc::variant act_payload = fc::mutable_variant_object()
                   ("proxy", proxy)
                   ("isproxy", true);
@@ -2102,6 +2135,7 @@ struct unregproxy_subcommand {
       add_standard_transaction_options_plus_signing(unregister_proxy, "proxy@active");
 
       unregister_proxy->callback([this] {
+         EOS_ASSERT(!uses_integer_single_vote(), action_validate_exception, "Proxy registration/unregistration is disabled on this chain");
          fc::variant act_payload = fc::mutable_variant_object()
                   ("proxy", proxy)
                   ("isproxy", false);
@@ -4348,7 +4382,12 @@ int main( int argc, char** argv ) {
       for (const string& sig : extra_signatures) {
          trx.signatures.push_back(fc::crypto::signature(sig));
       }
-      std::cout << fc::json::to_pretty_string( push_transaction( trx, signing_keys_opt.get_keys() )) << std::endl;
+      const auto result = push_transaction( trx, signing_keys_opt.get_keys() );
+      // send_transaction2 can return HTTP success with a failed execution trace.
+      // Match push action/send_actions: preserve the JSON evidence, but do not
+      // report success to deployment scripts when the transaction was rejected.
+      return_code = get_return_code( result );
+      std::cout << fc::json::to_pretty_string( result ) << std::endl;
    });
 
    // push transactions

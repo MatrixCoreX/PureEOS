@@ -163,6 +163,15 @@ namespace eosio::chain {
    }
 
    template<class BSP>
+   block_branch_t fork_database_t<BSP>::all_blocks() const {
+      std::lock_guard g(my->mtx);
+      block_branch_t blocks;
+      blocks.reserve(my->index.size());
+      for (const auto& bsp : my->index) blocks.push_back(bsp->block);
+      return blocks;
+   }
+
+   template<class BSP>
    void fork_database_impl<BSP>::close_impl(std::ofstream& out) {
       assert(!!root); // if head or root are null, we don't save and shouldn't get here
 
@@ -765,7 +774,7 @@ namespace eosio::chain {
       return std::filesystem::exists( fork_db_file );
    };
 
-   void fork_database::open( validator_t& validator ) {
+   void fork_database::open( validator_t& validator, bool retain_file ) {
       if (!std::filesystem::is_directory(data_dir))
          std::filesystem::create_directories(data_dir);
 
@@ -832,7 +841,7 @@ namespace eosio::chain {
                break;
             }
          } FC_CAPTURE_AND_RETHROW( (fork_db_file) );
-         std::filesystem::remove( fork_db_file );
+         if (!retain_file) std::filesystem::remove( fork_db_file );
       }
    }
 

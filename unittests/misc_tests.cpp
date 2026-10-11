@@ -9,8 +9,11 @@
 #include <fc/log/logger_config.hpp>
 #include <appbase/application.hpp>
 #include <fc/bitutil.hpp>
+#include <fc/crypto/hex.hpp>
 
 #include <thread>
+#include <iomanip>
+#include <sstream>
 
 #include <boost/test/unit_test.hpp>
 
@@ -79,6 +82,35 @@ using namespace chain;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(misc_tests)
+
+BOOST_AUTO_TEST_CASE(hex_encoding_preserves_all_bytes_and_large_abi_fallback)
+{
+   BOOST_CHECK(fc::to_hex(nullptr, 0).empty());
+   BOOST_CHECK(fc::to_hex(std::vector<char>{}).empty());
+   // Independent reference formatting covers signed char values as well as
+   // leading zeroes; repeat it to exercise allocation boundaries and large ABI data.
+   std::ostringstream reference;
+   for (unsigned i = 0; i < 256; ++i)
+      reference << std::hex << std::setfill('0') << std::setw(2) << i;
+   const std::string alphabet = reference.str();
+   for (size_t size : {0u, 1u, 15u, 16u, 17u, 255u, 256u, 4096u, 1u << 18}) {
+      BOOST_TEST_CONTEXT("byte length " << size) {
+         std::vector<char> input(size), decoded(size);
+         std::string expected;
+         for (size_t i = 0; i < size; ++i) {
+            input[i] = static_cast<char>(i & 0xff);
+            expected.append(alphabet, (i & 0xff) * 2, 2);
+         }
+         const auto encoded = fc::to_hex(input);
+         BOOST_CHECK(encoded == expected);
+         BOOST_CHECK(fc::to_hex(input.data(), input.size()) == expected);
+         if (size) {
+            BOOST_CHECK_EQUAL(fc::from_hex(encoded, decoded.data(), decoded.size()), size);
+            BOOST_CHECK(decoded == input);
+         }
+      }
+   }
+}
 
 BOOST_AUTO_TEST_CASE(reverse_endian_tests)
 {

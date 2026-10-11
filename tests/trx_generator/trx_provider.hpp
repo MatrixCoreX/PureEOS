@@ -8,10 +8,12 @@
 #include<boost/asio/strand.hpp>
 
 #include<chrono>
+#include<algorithm>
 #include<thread>
 #include<variant>
 #include<vector>
 #include<mutex>
+#include "send_evidence.hpp"
 
 using namespace std::chrono_literals;
 
@@ -32,6 +34,8 @@ namespace eosio::testing {
       unsigned short _port               = 9876;
       // Api endpoint not truly used for p2p connections as transactions are streamed directly to p2p endpoint
       std::string    _api_endpoint       = "/v1/chain/send_transaction2";
+      std::string    _evidence_log;
+      uint32_t       _max_pending_sends = 256;
 
       std::string to_string() const {
          std::ostringstream ss;
@@ -80,6 +84,7 @@ namespace eosio::testing {
     private:
       virtual void connect()    = 0;
       virtual void disconnect() = 0;
+      virtual void after_stop() {}
    };
 
    struct http_connection : public provider_connection {
@@ -110,12 +115,15 @@ namespace eosio::testing {
       boost::asio::io_context::strand _strand;
       std::atomic<uint64_t> _sent_callback_num{0};
       std::atomic<uint64_t> _sent{0};
-
-
+      std::atomic<uint64_t> _send_errors{0};
+      std::atomic<bool> _stopping{false};
+      std::unique_ptr<send_evidence> _evidence;
       explicit p2p_connection(const provider_base_config& provider_config)
           : provider_connection(provider_config)
           , _p2p_socket(_connection_thread_pool.get_executor())
-          , _strand(_connection_thread_pool.get_executor()){}
+          , _strand(_connection_thread_pool.get_executor()) {
+         if (!_config._evidence_log.empty()) _evidence = std::make_unique<send_evidence>(_config._evidence_log);
+      }
 
       void send_transaction(const chain::packed_transaction& trx) final;
 
@@ -124,6 +132,7 @@ namespace eosio::testing {
     private:
       void connect() override final;
       void disconnect() override final;
+      void after_stop() override final;
    };
 
    struct trx_provider {
@@ -199,8 +208,9 @@ namespace eosio::testing {
       }
 
       bool run() {
-         if ((_config._target_tps) < 1 || (_config._gen_duration_seconds < 1)) {
-            elog("target tps (${tps}) and duration (${dur}) must both be 1+", ("tps", _config._target_tps)("dur", _config._gen_duration_seconds));
+         if ((_config._target_tps) < 1 || _config._target_tps > 1000000 || (_config._gen_duration_seconds < 1) ||
+             uint64_t(_config._target_tps) * _config._gen_duration_seconds > UINT32_MAX) {
+            elog("Invalid target tps (${tps}) or duration (${dur}): positive, <=1M TPS, <=UINT32_MAX total", ("tps", _config._target_tps)("dur", _config._gen_duration_seconds));
             return false;
          }
 
@@ -214,14 +224,23 @@ namespace eosio::testing {
          stats.total_trxs = _config._gen_duration_seconds * _config._target_tps;
          stats.trxs_left = stats.total_trxs;
          stats.start_time = fc::time_point::now();
+         const auto steady_start = std::chrono::steady_clock::now();
+         // Preserve legacy diagnostic timestamps, but never pace against a wall
+         // clock that NTP or an operator can move backwards/forwards.
+         const auto pacing_now = [&] {
+            return stats.start_time + fc::microseconds(std::chrono::duration_cast<std::chrono::microseconds>(
+               std::chrono::steady_clock::now() - steady_start).count());
+         };
          stats.expected_end_time = stats.start_time + fc::microseconds{_config._gen_duration_seconds * std::chrono::microseconds(1s).count()};
          stats.time_to_next_trx_us = 0;
 
          bool keep_running = true;
 
          while (keep_running) {
-            stats.last_run = fc::time_point::now();
-            stats.next_run = stats.start_time + fc::microseconds(stats.trx_interval.count() * (stats.trxs_sent+1));
+            stats.last_run = pacing_now();
+            // Cumulative rational deadlines avoid e.g. 3000 TPS drifting to
+            // 3003 TPS by repeatedly truncating 333.333 us to 333 us.
+            stats.next_run = stats.start_time + fc::microseconds(uint64_t(stats.trxs_sent + 1) * 1000000 / _config._target_tps);
 
             if (_generator->generate_and_send()) {
                stats.trxs_sent++;
@@ -233,13 +252,14 @@ namespace eosio::testing {
                }
             }
 
-            stats.expected_sent = ((stats.last_run - stats.start_time).count() / stats.trx_interval.count()) +1;
+            stats.expected_sent = std::min<uint64_t>(UINT32_MAX,
+               uint64_t((stats.last_run - stats.start_time).count()) * _config._target_tps / 1000000 + 1);
             stats.trxs_left--;
 
             keep_running = ((_monitor == nullptr || _monitor->monitor_test(stats)) && stats.trxs_left);
 
             if (keep_running) {
-               fc::microseconds time_to_sleep{stats.next_run - fc::time_point::now()};
+               fc::microseconds time_to_sleep{stats.next_run - pacing_now()};
                if (time_to_sleep.count() >= min_sleep_us) {
                   std::this_thread::sleep_for(std::chrono::microseconds(time_to_sleep.count()));
                }
@@ -249,7 +269,7 @@ namespace eosio::testing {
 
          _generator->tear_down();
 
-         return true;
+         return stats.trxs_sent == stats.total_trxs;
       }
    };
 }

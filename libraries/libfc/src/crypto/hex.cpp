@@ -1,5 +1,6 @@
 #include <fc/crypto/hex.hpp>
 #include <fc/exception/exception.hpp>
+#include <stdexcept>
 
 namespace fc {
 
@@ -17,10 +18,19 @@ namespace fc {
     std::string to_hex( const char* d, uint32_t s ) 
     {
         std::string r;
-        const char* to_hex="0123456789abcdef";
-        uint8_t* c = (uint8_t*)d;
-        for( uint32_t i = 0; i < s; ++i )
-            (r += to_hex[(c[i]>>4)]) += to_hex[(c[i] &0x0f)];
+        // ABI decoding falls back to hex even after its deadline has expired.
+        // Allocate once and fill directly: per-character append bookkeeping is
+        // costly for large signatures, especially in unoptimized builds.
+        if( static_cast<size_t>(s) > r.max_size() / 2 )
+            throw std::length_error("hex string exceeds maximum size");
+        r.resize(static_cast<size_t>(s) * 2);
+        constexpr char digits[] = "0123456789abcdef";
+        const auto* input = reinterpret_cast<const unsigned char*>(d);
+        auto* output = r.data();
+        for( size_t i = 0; i < s; ++i ) {
+            output[2 * i] = digits[input[i] >> 4];
+            output[2 * i + 1] = digits[input[i] & 0x0f];
+        }
         return r;
     }
 

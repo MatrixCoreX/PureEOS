@@ -1,4 +1,5 @@
 #pragma once
+#include <eosio/chain/performance_metrics.hpp>
 
 #include <eosio/chain/vote_message.hpp>
 #include <eosio/chain/block_state.hpp>
@@ -215,7 +216,8 @@ public:
          return;
       ++queued_votes;
 
-      auto process_vote =  [this, connection_id, msg] {
+      auto process_vote =  [this, connection_id, msg, queued_at = performance::mark()] {
+         performance::since(performance::stage::vote_queue, queued_at);
          if (stopped)
             return;
          auto num_queued_votes = --queued_votes;

@@ -127,12 +127,13 @@ namespace eosio::testing {
 
       std::string to_string() const {
          std::ostringstream ss;
-         ss << "User Transaction Specified: Abi File: " << _abi_data_file_path << " Actions Data: " << _actions_data_json_file_or_str << " Actions Auths: " << _actions_auths_json_file_or_str;
+         ss << "User Transaction Specified: Abi File: " << _abi_data_file_path << " Actions Data: [configured] Actions Auths: [redacted]";
          return std::move(ss).str();
       };
    };
 
    struct accounts_config {
+      std::string _transfer_quantity = "1.0000 CUR"; // Legacy default; PureEOS explicitly uses SYS.
       std::vector<eosio::chain::name> _acct_name_vec;
       std::vector<fc::crypto::private_key> _priv_keys_vec;
 
@@ -145,14 +146,7 @@ namespace eosio::testing {
                   ss << ", ";
                }
          }
-         ss << " ] keys: [ ";
-         for(size_t i = 0; i < _priv_keys_vec.size(); ++i) {
-               ss << _priv_keys_vec.at(i).to_string({});
-               if(i < _priv_keys_vec.size() - 1) {
-                  ss << ", ";
-               }
-         }
-         ss << " ]";
+         ss << " ] signing key count: " << _priv_keys_vec.size() << " (contents redacted)";
          return std::move(ss).str();
       };
    };

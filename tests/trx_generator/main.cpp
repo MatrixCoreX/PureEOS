@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
    std::string lib_id_str;
    std::string accts;
    std::string p_keys;
+   std::string private_keys_file;
    int64_t spinup_time_us = 1000000;
    uint32_t max_lag_per = 5;
    int64_t max_lag_duration_us = 1000000;
@@ -49,7 +50,11 @@ int main(int argc, char** argv) {
          ("chain-id", bpo::value<std::string>(&chain_id_in), "set the chain id")
          ("contract-owner-account", bpo::value<std::string>(&contract_owner_account_in), "Account name of the contract account for the transaction actions")
          ("accounts", bpo::value<std::string>(&accts), "comma-separated list of accounts that will be used for transfers. Minimum required accounts: 2.")
+         ("transfer-quantity", bpo::value<std::string>(&accts_config._transfer_quantity)->default_value("1.0000 CUR"), "Positive transfer quantity; PureEOS uses 1.0000 SYS")
          ("priv-keys", bpo::value<std::string>(&p_keys), "comma-separated list of private keys in same order of accounts list that will be used to sign transactions. Minimum required: 2.")
+         ("priv-keys-file", bpo::value<std::string>(&private_keys_file), "Private JSON array of signing keys; preferred over exposing keys in process arguments")
+         ("evidence-log", bpo::value<std::string>(&provider_config._evidence_log), "NEW P2P send evidence JSONL, CLOCK_MONOTONIC; never logs keys or signatures")
+         ("max-pending-sends", bpo::value<uint32_t>(&provider_config._max_pending_sends)->default_value(256), "Maximum queued P2P sends in evidence mode; exceeding it invalidates the run")
          ("trx-expiration", bpo::value<int64_t>(&trx_expr)->default_value(1800), "transaction expiration time in seconds. Defaults to 1,800. Maximum allowed: 3,599")
          ("trx-gen-duration", bpo::value<uint32_t>(&tester_config._gen_duration_seconds)->default_value(60), "Transaction generation duration (seconds). Defaults to 60 seconds.")
          ("target-tps", bpo::value<uint32_t>(&tester_config._target_tps)->default_value(1), "Target transactions per second to generate/send. Defaults to 1 transaction per second.")
@@ -94,6 +99,8 @@ int main(int argc, char** argv) {
       } else {
          trx_gen_base_config._chain_id = eosio::chain::chain_id_type(chain_id_in);
       }
+      if (eosio::chain::asset::from_string(accts_config._transfer_quantity).get_amount() <= 0)
+         throw std::runtime_error("Transfer quantity must be positive");
 
       if(trx_gen_base_config._log_dir.empty()) {
          ilog("Initialization error: missing log-dir");
@@ -131,14 +138,21 @@ int main(int argc, char** argv) {
       }
 
       std::vector<std::string> private_keys_str_vector;
-      boost::split(private_keys_str_vector, p_keys, boost::is_any_of(","));
+      if (!private_keys_file.empty()) {
+         if (!p_keys.empty()) {
+            elog("Use either priv-keys-file or priv-keys, not both");
+            return INITIALIZE_FAIL;
+         }
+         private_keys_str_vector = fc::json::from_file(private_keys_file).as<std::vector<std::string>>();
+      } else {
+         boost::split(private_keys_str_vector, p_keys, boost::is_any_of(","));
+      }
       if(!transaction_specified && private_keys_str_vector.size() < 2) {
          ilog("Initialization error: did not specify accounts' private keys. Auto transfer transaction generation requires at minimum 2 private keys.");
          cli.print(std::cerr);
          return INITIALIZE_FAIL;
-      } else if (!p_keys.empty() && !private_keys_str_vector.empty()) {
+      } else if ((!p_keys.empty() || !private_keys_file.empty()) && !private_keys_str_vector.empty()) {
          for(const std::string& private_key: private_keys_str_vector) {
-            ilog("Initializing private keys. Attempt to create private_key for ${key} : gen key ${newKey}", ("key", private_key)("newKey", fc::crypto::private_key(private_key)));
             accts_config._priv_keys_vec.emplace_back(private_key);
          }
       }
@@ -148,6 +162,8 @@ int main(int argc, char** argv) {
          cli.print(std::cerr);
          return INITIALIZE_FAIL;
       }
+      if (!transaction_specified && accts_config._acct_name_vec.size() != accts_config._priv_keys_vec.size())
+         throw std::runtime_error("Account and signing-key counts differ");
 
       if(trx_expr > trx_expiration_max) {
          ilog("Initialization error: Exceeded max value for transaction expiration. Value must be less than ${max}.", ("max", trx_expiration_max));
@@ -180,9 +196,18 @@ int main(int argc, char** argv) {
          cli.print(std::cerr);
          return INITIALIZE_FAIL;
       }
+      if (!provider_config._evidence_log.empty() &&
+          (provider_config._peer_endpoint_type != "p2p" || provider_config._max_pending_sends == 0)) {
+         elog("Send evidence requires P2P and a positive max-pending-sends bound");
+         return INITIALIZE_FAIL;
+      }
    } catch(bpo::unknown_option& ex) {
-      std::cerr << ex.what() << std::endl;
+      std::cerr << "Unknown generator option; sensitive input omitted" << std::endl;
       cli.print(std::cerr);
+      return INITIALIZE_FAIL;
+   } catch (...) {
+      // Key parsing and JSON exceptions can include the secret input. Never print them.
+      elog("Transaction generator initialization failed; sensitive input details omitted");
       return INITIALIZE_FAIL;
    }
 
@@ -195,6 +220,7 @@ int main(int argc, char** argv) {
       ilog("User Transaction Specified: ${config}", ("config", user_trx_config.to_string()));
    }
 
+   try {
    std::shared_ptr<et::tps_performance_monitor> monitor;
    if (transaction_specified) {
       auto generator = std::make_shared<et::trx_generator>(trx_gen_base_config, provider_config, user_trx_config);
@@ -203,8 +229,8 @@ int main(int argc, char** argv) {
       et::trx_tps_tester<et::trx_generator, et::tps_performance_monitor> tester{generator, monitor, tester_config};
 
       if (!tester.run()) {
-         wlog("Exiting main with OTHER_FAIL");
-         return OTHER_FAIL;
+         wlog("Generator did not complete the planned send count");
+         return monitor->terminated_early() ? TERMINATED_EARLY : OTHER_FAIL;
       }
    } else {
       auto generator = std::make_shared<et::transfer_trx_generator>(trx_gen_base_config, provider_config, accts_config);
@@ -213,8 +239,8 @@ int main(int argc, char** argv) {
       et::trx_tps_tester<et::transfer_trx_generator, et::tps_performance_monitor> tester{generator, monitor, tester_config};
 
       if (!tester.run()) {
-         wlog("Exiting main with OTHER_FAIL");
-         return OTHER_FAIL;
+         wlog("Generator did not complete the planned send count");
+         return monitor->terminated_early() ? TERMINATED_EARLY : OTHER_FAIL;
       }
    }
 
@@ -225,4 +251,8 @@ int main(int argc, char** argv) {
 
    ilog("Exiting main SUCCESS");
    return SUCCESS;
+   } catch (...) {
+      elog("Generator failed; measurement invalid; sensitive exception details omitted");
+      return OTHER_FAIL;
+   }
 }

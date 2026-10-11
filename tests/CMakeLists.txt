@@ -1,8 +1,29 @@
 include_directories( "${CMAKE_SOURCE_DIR}/plugins/wallet_plugin/include" )
 
+add_test(NAME pureeos_finality_tps_accounting
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/PerformanceHarness/test_finality_tps.py)
+set_tests_properties(pureeos_finality_tps_accounting PROPERTIES TIMEOUT 30)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  add_test(NAME pureeos_benchmark_harness
+    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/PerformanceHarness/test_benchmark_harness.py)
+  set_tests_properties(pureeos_benchmark_harness PROPERTIES TIMEOUT 30)
+  add_test(NAME pureeos_cpp_sender_integration COMMAND python3
+    ${CMAKE_CURRENT_SOURCE_DIR}/PerformanceHarness/test_cpp_sender_live.py
+    --generator $<TARGET_FILE:trx_generator> --cleos $<TARGET_FILE:cleos>)
+  set_tests_properties(pureeos_cpp_sender_integration PROPERTIES TIMEOUT 45)
+endif()
+
 file(GLOB UNIT_TESTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.cpp")
 list(REMOVE_ITEM UNIT_TESTS ship_client.cpp)
 list(REMOVE_ITEM UNIT_TESTS ship_streamer.cpp)
+list(REMOVE_ITEM UNIT_TESTS reversible_recovery_tests.cpp)
+
+add_executable(reversible_recovery_test main.cpp reversible_recovery_tests.cpp
+  ${CMAKE_SOURCE_DIR}/unittests/finalizer_tests.cpp
+  ${CMAKE_SOURCE_DIR}/unittests/vote_processor_tests.cpp)
+target_include_directories(reversible_recovery_test PRIVATE ${CMAKE_BINARY_DIR}/unittests/include)
+target_link_libraries(reversible_recovery_test eosio_testing eosio_chain_wrap Boost::included_unit_test_framework)
+add_p_test(NAME reversible_recovery_test COMMAND reversible_recovery_test --report_level=detailed --color_output=no)
 
 add_executable( plugin_test ${UNIT_TESTS} )
 target_link_libraries( plugin_test eosio_testing eosio_chain_wrap chainbase chain_plugin producer_plugin wallet_plugin fc state_history Boost::included_unit_test_framework ${PLATFORM_SPECIFIC_LIBS} )
@@ -126,6 +147,34 @@ add_p_test(NAME plugin_test COMMAND plugin_test --report_level=detailed --color_
 add_np_test(NAME nodeos_sanity_test COMMAND tests/nodeos_run_test.py -v --sanity-test ${UNSHARE})
 add_np_test(NAME nodeos_run_test COMMAND tests/nodeos_run_test.py -v ${UNSHARE})
 add_np_test(NAME nodeos_run_if_test COMMAND tests/nodeos_run_test.py -v --activate-if ${UNSHARE})
+add_np_test(NAME native_savanna_nodeos_smoke COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/native_savanna_genesis_test.py --build-dir ${CMAKE_BINARY_DIR})
+add_p_test(NAME pureeos_local_test_harness COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/pureeos_local_test_harness_test.py)
+add_p_test(NAME native_savanna_offline_process COMMAND python3
+  ${CMAKE_CURRENT_SOURCE_DIR}/native_savanna_offline_process_test.py
+  --build-dir ${CMAKE_BINARY_DIR} --output-parent ${CMAKE_BINARY_DIR})
+set_tests_properties(native_savanna_offline_process PROPERTIES TIMEOUT 720 LABELS "offline_process")
+if(PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR)
+  add_np_test(NAME native_single_choice_nodeos_local COMMAND python3
+    ${CMAKE_CURRENT_SOURCE_DIR}/pureeos_single_choice_local_test.py
+    --build-dir ${CMAKE_BINARY_DIR} --contracts-dir ${PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR})
+  set_tests_properties(native_single_choice_nodeos_local PROPERTIES TIMEOUT 600)
+endif()
+if(PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR)
+  add_np_test(NAME native_resource_split_nodeos_local COMMAND python3
+    ${CMAKE_CURRENT_SOURCE_DIR}/pureeos_single_choice_local_test.py --resource-split
+    --build-dir ${CMAKE_BINARY_DIR} --contracts-dir ${PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR})
+  set_tests_properties(native_resource_split_nodeos_local PROPERTIES TIMEOUT 600)
+  # Exercise the final combined profile when configured, not an older resource-
+  # only contract that bypasses the sequential-rotation protocol activation.
+  set(PUREEOS_MULTINODE_CONTRACTS_DIR ${PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR})
+  if(PUREEOS_ROTATION_CONTRACTS_DIR)
+    set(PUREEOS_MULTINODE_CONTRACTS_DIR ${PUREEOS_ROTATION_CONTRACTS_DIR})
+  endif()
+  add_np_test(NAME native_multinode_nodeos_local COMMAND python3
+    ${CMAKE_CURRENT_SOURCE_DIR}/pureeos_multinode_local_test.py
+    --build-dir ${CMAKE_BINARY_DIR} --contracts-dir ${PUREEOS_MULTINODE_CONTRACTS_DIR})
+  set_tests_properties(native_multinode_nodeos_local PROPERTIES TIMEOUT 1200)
+endif()
 add_np_test(NAME nodeos_lib_test COMMAND tests/nodeos_lib_test.py -n 4 -p 3 -s ring -v ${UNSHARE})
 add_np_test(NAME nodeos_lib_if_test COMMAND tests/nodeos_lib_test.py -n 4 -p 3 -s ring -v --activate-if ${UNSHARE})
 add_np_test(NAME block_log_util_test COMMAND tests/block_log_util_test.py -v ${UNSHARE})

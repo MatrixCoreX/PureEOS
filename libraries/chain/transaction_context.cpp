@@ -14,11 +14,15 @@
 namespace eosio::chain {
 
    transaction_checktime_timer::transaction_checktime_timer(platform_timer& timer)
-         : _timer(timer) {
+         : _timer(timer), _interrupt_sequence(timer.interrupt_sequence()) {
    }
 
    void transaction_checktime_timer::start(fc::time_point tp) {
       _timer.start(tp);
+      // An external request may have arrived before start or while billing was
+      // paused. Deliver it again now that the watchdog can receive callbacks.
+      if (_timer.interrupt_sequence() != _interrupt_sequence)
+         _timer.interrupt_timer(false); // redeliver, do not create another request
    }
 
    void transaction_checktime_timer::stop() {
@@ -57,6 +61,10 @@ namespace eosio::chain {
 
    void transaction_context::reset() {
       undo();
+      // OC may restart a transaction after undo. Native capabilities and
+      // electorate freshness belong to the discarded execution, not its retry.
+      system_upgrade.reset();
+      upgrade_voters_action_ordinal.reset();
       *trace = transaction_trace{}; // reset trace
       initialize();
       transaction_timer.stop();

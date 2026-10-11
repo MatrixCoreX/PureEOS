@@ -16,8 +16,18 @@ struct platform_timer {
    //start() & stop() are not thread safe to each other; i.e. do not overlap calls to start() and stop()
    void start(fc::time_point tp);
    void stop();
-   //interrupt_timer() can be called from any thread
-   void interrupt_timer();
+   // Interrupts belong to the transaction, including its temporarily stopped
+   // billing timer (e.g. while compiling WASM). A sequence lets its owner retain
+   // the request across stop/start without leaking it into the next transaction.
+   // interrupt_timer() can be called from any thread.
+   // Internal tier-up notifications are transient: retrying the same transaction
+   // must clear them. External cancellation always uses the persistent default.
+   void interrupt_timer(bool persistent = true) {
+      if (persistent)
+         _interrupt_sequence.fetch_add(1);
+      interrupt_running_timer();
+   }
+   uint64_t interrupt_sequence() const { return _interrupt_sequence.load(); }
 
    /* Sets a callback for when timer expires. Be aware this could fire from a signal handling context and/or
       on any particular thread. Only a single callback can be registered at once; trying to register more will
@@ -57,6 +67,8 @@ struct platform_timer {
 
 private:
    void expire_now();
+   void interrupt_running_timer();
+   std::atomic<uint64_t> _interrupt_sequence{0};
 
    struct timer_state_t {
       state_t state = state_t::stopped;

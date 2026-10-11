@@ -11,6 +11,18 @@ if [[ -z "$EXPECTED" ]]; then
     [[ -z "$BUILDKITE_COMMIT" ]] && export BUILDKITE_COMMIT="$(pushd "$CMAKE_SOURCE_DIR" &>/dev/null && git rev-parse HEAD 2>/dev/null ; popd &>/dev/null)"
     [[ -z "$BUILDKITE_TAG" ]] && export BUILDKITE_TAG="${GIT_TAG:-$1}"
     export EXPECTED="$BUILDKITE_TAG-$BUILDKITE_COMMIT"
+    # Match VersionUtils.cmake: tracked, unstaged changes add -dirty. Do not
+    # derive the expectation from nodeos itself or ignore a stale build.
+    if git -C "$CMAKE_SOURCE_DIR" diff --quiet; then
+        :
+    else
+        version_diff_status=$?
+        if [[ "$version_diff_status" -ne 1 ]]; then
+            echo "Unable to determine source version state."
+            exit "$version_diff_status"
+        fi
+        EXPECTED="$EXPECTED-dirty"
+    fi
 fi
 if [[ -z "$EXPECTED" ]]; then
     echo "Missing version input."

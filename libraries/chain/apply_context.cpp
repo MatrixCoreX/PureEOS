@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <eosio/chain/apply_context.hpp>
+#include <eosio/chain/upgrade_governance.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/authorization_manager.hpp>
@@ -77,6 +78,17 @@ void apply_context::exec_one()
    try {
       try {
          action_return_value.clear();
+         if (trx_context.upgrade_voters_action_ordinal &&
+             !(receiver == "eosio"_n && act->account == "eosio"_n && act->name == "devpropose"_n &&
+               action_ordinal == *trx_context.upgrade_voters_action_ordinal + 1 &&
+               get_current_action_trace().creator_action_ordinal.value == 0)) {
+            // A notification/inline action in between also invalidates freshness.
+            trx_context.upgrade_voters_action_ordinal.reset();
+         }
+         if (const auto* state = find_upgrade_governance(db); state && state->developer != account_name{}) {
+            EOS_ASSERT(receiver != "eosio.msig"_n && receiver != "eosio.wrap"_n,
+                       action_validate_exception, "legacy system proposal and wrap contracts are disabled");
+         }
          receiver_account = &db.get<account_metadata_object,by_name>( receiver );
          if( !(context_free && control.skip_trx_checks()) ) {
             privileged = receiver_account->is_privileged();
@@ -103,6 +115,14 @@ void apply_context::exec_one()
                try {
                   control.get_wasm_interface().execute( receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, *this );
                } catch( const wasm_exit& ) {}
+            }
+
+            if (receiver == "eosio"_n && act->account == "eosio"_n && act->name == "govinit"_n && find_upgrade_governance(db)) {
+               // Seal atomically only if the installed system WASM actually
+               // implements the profile-2 electorate bootstrap handshake.
+               EOS_ASSERT(trx_context.upgrade_voters_action_ordinal == action_ordinal,
+                          action_validate_exception, "installed system contract does not support governance bootstrap");
+               trx_context.upgrade_voters_action_ordinal.reset();
             }
 
             if( !privileged && control.is_builtin_activated( builtin_protocol_feature_t::ram_restrictions ) ) {

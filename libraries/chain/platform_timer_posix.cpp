@@ -86,7 +86,7 @@ void platform_timer::expire_now() {
    }
 }
 
-void platform_timer::interrupt_timer() {
+void platform_timer::interrupt_running_timer() {
    timer_state_t expected{.state = state_t::running, .callback_in_flight = false};
    if (_state.compare_exchange_strong(expected, timer_state_t{state_t::interrupted, true})) {
       call_expiration_callback();

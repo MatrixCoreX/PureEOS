@@ -46,15 +46,19 @@ node_t::node_t(size_t node_idx, cluster_t& cluster, const setup_policy& policy /
       }
    };
 
-   auto node_initialization_fn = [&, node_idx]() {
+   auto node_initialization_fn = [this]() {
       [[maybe_unused]] auto _a = control->voted_block().connect(_voted_block_cb);
       [[maybe_unused]] auto _b = control->accepted_block().connect(_accepted_block_cb);
       tester::set_node_finalizers(_node_finalizers);
-      cluster.get_new_blocks_from_peers(node_idx);
    };
 
-   node_initialization_fn();                  // initialize the node when it is first created
-   set_open_callback(node_initialization_fn); // and do the initalization again every time `open()` is called
+   // emplace_back has not yet inserted this node into cluster._nodes. The cluster
+   // constructor synchronizes the initial blocks after all nodes are present.
+   node_initialization_fn();
+   set_open_callback([this, node_initialization_fn]() {
+      node_initialization_fn();
+      _cluster.get_new_blocks_from_peers(_node_idx);
+   });
 }
 
 node_t::~node_t() {}

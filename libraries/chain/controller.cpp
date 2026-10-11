@@ -3,9 +3,13 @@
 
 #include <eosio/chain/block_log.hpp>
 #include <eosio/chain/fork_database.hpp>
+#include <eosio/chain/reversible_recovery.hpp>
 #include <eosio/chain/exceptions.hpp>
 
 #include <eosio/chain/account_object.hpp>
+#include <eosio/chain/rotation_context.hpp>
+#include <eosio/chain/rotation_context_cache.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/code_object.hpp>
 #include <eosio/chain/block_summary_object.hpp>
 #include <eosio/chain/eosio_contract.hpp>
@@ -17,6 +21,7 @@
 #include <eosio/chain/genesis_intrinsics.hpp>
 #include <eosio/chain/whitelisted_intrinsics.hpp>
 #include <eosio/chain/database_header_object.hpp>
+#include <eosio/chain/upgrade_governance.hpp>
 
 #include <eosio/chain/protocol_feature_manager.hpp>
 #include <eosio/chain/authorization_manager.hpp>
@@ -65,7 +70,8 @@ using controller_index_set = index_set<
    generated_transaction_multi_index,
    table_id_multi_index,
    code_index,
-   database_header_multi_index
+   database_header_multi_index,
+   upgrade_governance_index
 >;
 
 using contract_database_index_set = index_set<
@@ -981,9 +987,14 @@ struct controller_impl {
    block_log                       blog;
    std::optional<pending_state>    pending;
    block_handle                    chain_head;
+   rotation_context_cache          rotation_context_bytes;
    block_state_ptr                 chain_head_trans_svnn_block; // chain_head's Savanna representation during transition
    std::vector<block_state_legacy_ptr> transition_legacy_branch; // transition legacy branch used during replay
    fork_database                   fork_db_;
+   std::unique_ptr<reversible_recovery> recovery;
+   bool                            native_savanna_genesis = false;
+   bool                            restoring_recovery = false; // startup, before networking
+   uint32_t                        recovery_pruned_lib = 0;
    resource_limits_manager         resource_limits;
    subjective_billing              subjective_bill;
    authorization_manager           authorization;
@@ -1369,6 +1380,7 @@ struct controller_impl {
       set_activation_handler<builtin_protocol_feature_t::bls_primitives>();
       set_activation_handler<builtin_protocol_feature_t::disable_deferred_trxs_stage_2>();
       set_activation_handler<builtin_protocol_feature_t::savanna>();
+      set_activation_handler<builtin_protocol_feature_t::pureeos_rotation_context>();
       set_activation_handler<builtin_protocol_feature_t::sync_call>();
 
       irreversible_block.connect([this](const block_signal_params& t) {
@@ -1390,13 +1402,18 @@ struct controller_impl {
    SET_APP_HANDLER( eosio, eosio, unlinkauth );
 
    SET_APP_HANDLER( eosio, eosio, canceldelay );
+   SET_APP_HANDLER( eosio, eosio, govinit );
+   SET_APP_HANDLER( eosio, eosio, devpropose );
+   SET_APP_HANDLER( eosio, eosio, devveto );
+   SET_APP_HANDLER( eosio, eosio, devcancel );
+   SET_APP_HANDLER( eosio, eosio, devexec );
    }
 
    void open_fork_db() {
       fork_db_.open([this](block_timestamp_type timestamp, const flat_set<digest_type>& cur_features,
                           const vector<digest_type>& new_features) {
          check_protocol_features(timestamp, cur_features, new_features);
-      });
+      }, !!recovery); // retain the checkpoint until recovery backfill is complete
    }
 
    void dmlog_applied_transaction(const transaction_trace_ptr& t, const signed_transaction* trx = nullptr) {
@@ -1681,11 +1698,50 @@ struct controller_impl {
 
       fork_db_.apply<void>(mark_branch_irreversible);
 
+      // Amortize collection. Never remove the last persistent copy of a block.
+      // No-block-log mode intentionally retains recovery records indefinitely.
+      if (recovery && !replaying && !std::holds_alternative<empty_blocklog_config>(conf.blog) &&
+          fork_db_root_block_num() >= recovery_pruned_lib + 256) {
+         blog.flush_and_sync();
+         reversible_recovery::sync_directory(conf.blocks_dir);
+         if (auto cfg = std::get_if<partitioned_blocklog_config>(&conf.blog); cfg && !cfg->retained_dir.empty()) {
+            auto retained = cfg->retained_dir.is_absolute() ? cfg->retained_dir : conf.blocks_dir / cfg->retained_dir;
+            reversible_recovery::sync_directory(retained);
+         }
+         recovery->prune(fork_db_root_block_num());
+         recovery_pruned_lib = fork_db_root_block_num();
+      }
+
       return result;
    }
 
    void initialize_blockchain_state(const genesis_state& genesis) {
+      native_savanna_genesis = genesis.initial_savanna.has_value();
       ilog( "Initializing new blockchain with genesis state" );
+
+      genesis.validate();
+      if (genesis.initial_savanna) {
+         const auto& pfs = protocol_features.get_protocol_feature_set();
+         for (const auto& digest : genesis.initial_savanna->protocol_features) {
+            EOS_ASSERT(pfs.is_recognized(digest, genesis.initial_timestamp) == protocol_feature_set::recognized_t::ready,
+                       protocol_feature_exception, "native Savanna genesis requires enabled protocol feature ${digest}",
+                       ("digest", digest));
+         }
+         chain_head = block_handle{block_state::create_native_genesis(genesis)};
+         db.set_revision(chain_head.block_num());
+         initialize_database(genesis);
+         // The genesis manifest, not transactions or local configuration, elects
+         // these features. Apply the normal side effects after database creation.
+         for (const auto& digest : genesis.initial_savanna->protocol_features) {
+            const auto& feature = pfs.get_protocol_feature(digest);
+            if (feature.builtin_feature)
+               trigger_activation_handler(*feature.builtin_feature);
+            db.modify(db.get<protocol_state_object>(), [&](auto& ps) {
+               ps.activated_protocol_features.emplace_back(digest, chain_head.block_num());
+            });
+         }
+         return;
+      }
 
       // genesis state starts in legacy mode
       producer_authority_schedule initial_schedule = { 0, { producer_authority{config::system_account_name, block_signing_authority_v0{ 1, {{genesis.initial_key, 1}} } } } };
@@ -2106,7 +2162,10 @@ struct controller_impl {
 
       replaying = true;
       auto replay_reset = fc::make_scoped_exit([&](){ replaying = false; });
+      initialize_recovery();
       replay( startup ); // replay any irreversible and reversible blocks ahead of current head
+
+      if (!check_shutdown()) restore_recovery();
 
       if( check_shutdown() ) return;
 
@@ -2148,6 +2207,54 @@ struct controller_impl {
             fork_db_.apply_s<void>(set_finalizer_defaults);
          }
       }
+   }
+
+   void initialize_recovery() {
+      if (conf.read_only) return;
+      const auto directory = conf.blocks_dir / config::reversible_blocks_dir_name / "recovery";
+      bool enabled = native_savanna_genesis || find_upgrade_governance(db) || std::filesystem::exists(directory);
+      if (!enabled && blog.first_block_num() == 1 && blog.head()) {
+         const auto genesis = block_log::extract_genesis_state(conf.blocks_dir);
+         enabled = genesis && genesis->initial_savanna.has_value();
+      }
+      if (enabled) {
+         blog.flush_and_sync();
+         recovery = std::make_unique<reversible_recovery>(directory, chain_id);
+      }
+   }
+
+   void restore_recovery() {
+      if (!recovery) return;
+      auto blocks = recovery->load(); // Corruption is fatal, never silently discard safety evidence.
+      // Upgrade an existing clean fork database: preserve every branch before
+      // enabling new votes, not just the current best head.
+      fork_db_.apply<void>([&](const auto& fork_db) {
+         for (const auto& block : fork_db.all_blocks()) recovery->store(block);
+      });
+      restoring_recovery = true;
+      auto reset = fc::make_scoped_exit([&] { restoring_recovery = false; });
+      std::set<block_id_type> obsolete;
+      uint32_t restored = 0;
+      for (const auto& block : blocks) {
+         if (check_shutdown()) return;
+         if (block->block_num() <= fork_db_root_block_num()) continue;
+         const bool linked = fork_db_.apply<bool>([&](const auto& fork_db) {
+            return !!fork_db.get_block(block->previous, include_root_t::yes);
+         });
+         if (!linked) {
+            // A branch diverging before the durable LIB is no longer admissible.
+            // A gap ABOVE LIB is different: fail closed rather than lose a lock.
+            EOS_ASSERT(block_header::num_from_id(block->previous) <= fork_db_root_block_num() ||
+                       obsolete.contains(block->previous), block_log_exception,
+                       "Missing reversible recovery ancestor ${id}; restore the original recovery data",
+                       ("id", block->previous));
+            obsolete.insert(block->calculate_id());
+            continue;
+         }
+         create_block_handle(block->calculate_id(), block);
+         ++restored;
+      }
+      ilog("Restored ${n} reversible recovery blocks; finalizer safety information was preserved", ("n", restored));
    }
 
    ~controller_impl() {
@@ -2354,7 +2461,9 @@ struct controller_impl {
       if (std::clamp(version, v2::minimum_version, v2::maximum_version) == version ) {
          genesis.emplace();
          snapshot.read_section<genesis_state>([&genesis=*genesis]( auto &section ){
-            section.read_row(genesis);
+            genesis_state_v0 old;
+            section.read_row(old);
+            genesis = genesis_state{old};
          });
       }
       return genesis;
@@ -2448,6 +2557,9 @@ struct controller_impl {
          using value_t = typename decltype(utils)::index_t::value_type;
 
          // prior to v7 snapshots, skip the table_id_object as it's inlined with contract tables section. for v7+ load the table_id table like any other
+         if (header.version < 10 && std::is_same_v<value_t, upgrade_governance_object>) {
+            return;
+         }
          if (header.version < chain_snapshot_header::first_version_with_split_table_sections && std::is_same_v<value_t, table_id_object>) {
             return;
          }
@@ -2658,7 +2770,14 @@ struct controller_impl {
          for( const auto& i : genesis_intrinsics ) {
             add_intrinsic_to_whitelist( pso.whitelisted_intrinsics, i );
          }
+         if (genesis.initial_savanna && genesis.initial_savanna->version == 2) {
+            add_intrinsic_to_whitelist(pso.whitelisted_intrinsics, "get_upgrade_developer");
+            add_intrinsic_to_whitelist(pso.whitelisted_intrinsics, "set_upgrade_voters");
+         }
       });
+
+      if (genesis.initial_savanna && genesis.initial_savanna->version == 2)
+         db.create<upgrade_governance_object>([](auto&) {});
 
       db.create<dynamic_global_property_object>([](auto&){});
 
@@ -2670,7 +2789,8 @@ struct controller_impl {
 
       auto empty_authority = authority(1, {}, {});
       auto active_producers_authority = authority(1, {}, {});
-      active_producers_authority.accounts.push_back({{config::system_account_name, config::active_name}, 1});
+      if (!find_upgrade_governance(db))
+         active_producers_authority.accounts.push_back({{config::system_account_name, config::active_name}, 1});
 
       create_native_account( genesis.initial_timestamp, config::null_account_name, empty_authority, empty_authority );
       create_native_account( genesis.initial_timestamp, config::producers_account_name, empty_authority, active_producers_authority );
@@ -3084,6 +3204,7 @@ struct controller_impl {
                                            int64_t subjective_cpu_bill_us )
    {
       EOS_ASSERT(block_deadline != fc::time_point(), transaction_exception, "deadline cannot be uninitialized");
+      performance::scope execution_timer(performance::stage::transaction_execute, !trx->implicit());
 
       transaction_trace_ptr trace;
       try {
@@ -3394,6 +3515,7 @@ struct controller_impl {
                   in_trx_requiring_checks = old_value;
                });
             in_trx_requiring_checks = true;
+            performance::scope onblock_timer(performance::stage::onblock);
             onblock_trace = push_transaction( onbtrx, fc::time_point::maximum(), fc::microseconds::maximum(),
                                       gpo.configuration.min_transaction_cpu_usage, true, 0 );
             if( onblock_trace->except ) {
@@ -3533,6 +3655,11 @@ struct controller_impl {
                      "cannot call commit_block until pending block is completed" );
 
          auto& cb = std::get<completed_block>(pending->_block_stage);
+
+         // The immutable block must survive a crash BEFORE any accepted-block
+         // callback or finalizer can publish a signature referring to it.
+         if (recovery && s != controller::block_status::irreversible)
+            recovery->store(cb.bsp.block());
 
          if (s != controller::block_status::irreversible) {
             auto add_completed_block = [&](auto& fork_db) {
@@ -4338,8 +4465,9 @@ struct controller_impl {
          if (qc) {
             verify_qc_future.get();
          }
+         if (recovery && !restoring_recovery) recovery->store(b);
          integrate_received_qc_to_block(bsp); // Save the received QC as soon as possible, no matter whether the block itself is valid or not
-         consider_voting(bsp, use_thread_pool_t::no);
+         if (!restoring_recovery) consider_voting(bsp, use_thread_pool_t::no);
       } else {
          assert(!verify_qc_future.valid());
       }
@@ -4404,7 +4532,7 @@ struct controller_impl {
               ("rqc", qc_ext.qc.to_qc_claim())("bn", bsp_in->block_num())("id", bsp_in->id()));
       }
 
-      if (received_qc.is_strong()) {
+      if (received_qc.is_strong() && !restoring_recovery) {
          // Update finalizer safety information based on vote evidence
          my_finalizers.maybe_update_fsi(claimed_bsp, received_qc);
       }
@@ -4702,6 +4830,9 @@ struct controller_impl {
    }
 
    void update_producers_authority() {
+      // Profile 2 producers have consensus duties and an explicit veto action,
+      // never a dynamically regenerated management authority.
+      if (find_upgrade_governance(db)) return;
       auto& bb = std::get<building_block>(pending->_block_stage);
       const auto& producers = bb.active_producers().producers;
 
@@ -5861,6 +5992,41 @@ finalizer_policy_ptr controller::head_pending_finalizer_policy()const {
    });
 }
 
+std::vector<char> controller::get_rotation_context_v1()const {
+   return *get_rotation_context_v1_cached();
+}
+
+rotation_context_cache_metrics controller::get_rotation_context_cache_metrics()const {
+   return my->rotation_context_bytes.snapshot();
+}
+
+std::shared_ptr<const std::vector<char>> controller::get_rotation_context_v1_cached()const {
+   auto packed = block_handle_accessor::apply_s<rotation_context_cache::bytes_ptr>(my->chain_head, [this](const auto& head) {
+      return my->rotation_context_bytes.get(head->id(), [&] {
+         rotation_context_v1 result;
+         result.block_num = head->block_num();
+         result.slot = head->timestamp().slot;
+         result.final_block_num = head->core.last_final_block_num();
+         result.final_slot = head->core.last_final_block_timestamp().slot;
+         result.proposer_version = head->active_schedule_auth().version;
+         result.finalizer_generation = head->active_finalizer_policy->generation;
+         result.latest_finalizer_generation = head->finalizer_policy_generation;
+         result.transitioning = bool(head->latest_proposed_proposer_policy) ||
+            bool(head->latest_pending_proposer_policy) || bool(head->pending_finalizer_policy) ||
+            !head->proposed_finalizer_policies.empty();
+         result.producers = head->active_schedule_auth().producers;
+         result.threshold = head->active_finalizer_policy->threshold;
+         result.finalizers = head->active_finalizer_policy->finalizers;
+         return fc::raw::pack(result);
+      });
+   });
+   // apply_s returns a default value for a legacy head. Preserve the former
+   // empty-vector result, including callers probing before Savanna activates.
+   if (packed) return packed;
+   static const auto empty = std::make_shared<const std::vector<char>>();
+   return empty;
+}
+
 qc_vote_metrics_t controller::vote_metrics(const block_id_type& id, const qc_t& qc) const {
    return my->vote_metrics(id, qc);
 }
@@ -6462,6 +6628,13 @@ void controller_impl::on_activation<builtin_protocol_feature_t::savanna>() {
    db.modify( db.get<protocol_state_object>(), [&]( auto& ps ) {
       add_intrinsic_to_whitelist( ps.whitelisted_intrinsics, "set_finalizers" );
    } );
+}
+
+template<>
+void controller_impl::on_activation<builtin_protocol_feature_t::pureeos_rotation_context>() {
+   db.modify(db.get<protocol_state_object>(), [&](auto& ps) {
+      add_intrinsic_to_whitelist(ps.whitelisted_intrinsics, "get_rotation_context_v1");
+   });
 }
 
 template<>

@@ -243,7 +243,7 @@ namespace fc {
    void from_variant( const variant& v, eosio::chain::shared_vector<T>& sv ) {
       std::vector<T> _v;
       from_variant(v, _v);
-      sv = v;
+      sv = std::move(_v);
    }
 
    inline

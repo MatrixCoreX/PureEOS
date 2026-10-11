@@ -269,6 +269,35 @@ std::string read_file(const fs::path& path) {
    return res;
 }
 
+BOOST_AUTO_TEST_CASE( atomic_safety_save_failure_preserves_previous_record ) try {
+   fc::temp_directory tempdir;
+   auto path = tempdir.path() / "finalizers" / "safety.dat";
+   auto temporary = fs::path(path.string() + ".tmp");
+   bls_keys_t key("alice"_n);
+   bls_pub_priv_key_map_t keys = {{key.pubkey_str, key.privkey_str}};
+   auto states = create_random_fsi<fsi_t>(2);
+   my_finalizers_t writer(path);
+   writer.set_keys(keys);
+   writer.set_fsi(key.pubkey, states[0]);
+   BOOST_REQUIRE(writer.save_finalizer_safety_info());
+   auto previous = read_file(path);
+   writer.set_fsi(key.pubkey, states[1]);
+   fs::create_directory(temporary); // deterministic write failure, even as root
+   BOOST_CHECK(!writer.save_finalizer_safety_info());
+   BOOST_CHECK_EQUAL(read_file(path), previous);
+   {
+      my_finalizers_t reader(path);
+      reader.set_keys(keys);
+      BOOST_CHECK_EQUAL(reader.get_fsi(key.pubkey), states[0]);
+   }
+   fs::remove(temporary); // only this test's empty temporary directory
+   BOOST_REQUIRE(writer.save_finalizer_safety_info());
+   my_finalizers_t reader(path);
+   reader.set_keys(keys);
+   BOOST_CHECK_EQUAL(reader.get_fsi(key.pubkey), states[1]);
+   BOOST_CHECK(!fs::exists(temporary));
+} FC_LOG_AND_RETHROW()
+
 BOOST_AUTO_TEST_CASE( finalizer_safety_file_versioning ) try {
    auto current_version = my_finalizers_t::current_safety_file_version;
 

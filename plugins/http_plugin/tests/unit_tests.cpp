@@ -19,6 +19,7 @@
 #include <thread>
 #include <future>
 #include <optional>
+#include <set>
 
 namespace bu = boost::unit_test;
 
@@ -31,6 +32,18 @@ namespace beast = boost::beast;     // from <boost/beast.hpp>
 namespace http  = beast::http;      // from <boost/beast/http.hpp>
 namespace net   = boost::asio;      // from <boost/asio.hpp>
 using tcp       = net::ip::tcp;     // from <boost/asio/ip/tcp.hpp>
+
+// Never assume a developer's normal node/API ports are unused. Remember chosen
+// numbers so listeners that outlive a fixture cannot affect the next case.
+uint16_t unused_test_port() {
+   static std::set<uint16_t> selected;
+   net::io_context ioc;
+   for (;;) {
+      tcp::acceptor probe(ioc, tcp::endpoint(net::ip::make_address("127.0.0.1"), 0));
+      const auto port = probe.local_endpoint().port();
+      if (selected.insert(port).second) return port;
+   }
+}
 
 // -------------------------------------------------------------------------
 // this class handles some basic http requests.
@@ -262,26 +275,27 @@ static auto _producer_api_plugin = application::register_plugin<producer_api_plu
 struct http_plugin_test_fixture {
    appbase::scoped_app app;
    std::thread         app_thread;
+   std::atomic<bool>   startup_failed{false};
 
    http_plugin* init(std::initializer_list<const char*> args) {
       if (app->initialize<http_plugin>(args.size(), const_cast<char**>(args.begin()))) {
          auto                       plugin  = app->find_plugin<http_plugin>();
          std::atomic<bool>& listening_or_failed = plugin->listening();
-         app_thread = std::thread([&]() {
+         app_thread = std::thread([this]() {
             try {
                app->startup();
                app->exec();
             } catch (...) {
-               plugin = nullptr;
-               listening_or_failed.store(true);
+               // init() may already have returned; never capture its stack locals.
+               startup_failed.store(true);
             }
          });
 
-         while (!listening_or_failed.load()) {
+         while (!listening_or_failed.load() && !startup_failed.load()) {
             using namespace std::chrono_literals;
             std::this_thread::sleep_for(10ms);
          }
-         return plugin;
+         return startup_failed.load() ? nullptr : plugin;
       }
       return nullptr;
    }
@@ -298,8 +312,8 @@ struct http_plugin_test_fixture {
 // -------------------------------------------------------------------------
 BOOST_FIXTURE_TEST_CASE(http_plugin_unit_tests, http_plugin_test_fixture) {
 
-   const uint16_t default_port{8888};
-   const char*    port = "8888";
+   const uint16_t default_port = unused_test_port();
+   const auto    port = std::to_string(default_port);
    const char*    host = "127.0.0.1";
 
    http_plugin::set_defaults({.default_unix_socket_path = "", .default_http_port = default_port, .server_header = "/"});
@@ -348,6 +362,19 @@ BOOST_FIXTURE_TEST_CASE(http_plugin_unit_tests, http_plugin_test_fixture) {
    {
       std::cerr << "Error: " << e.what() << "\n";
    }
+}
+
+BOOST_FIXTURE_TEST_CASE(occupied_port_fails_without_using_an_existing_service, http_plugin_test_fixture) {
+   net::io_context ioc;
+   tcp::acceptor occupied(ioc, tcp::endpoint(net::ip::make_address("127.0.0.1"), 0));
+   const auto port = occupied.local_endpoint().port();
+   const auto address = "127.0.0.1:" + std::to_string(port);
+   // Exercise startup failure with a listener owned by this test, never with
+   // another application. init must reject before any client requests occur.
+   auto plugin = init({"occupied-port-test", "--http-server-address", address.c_str()});
+   BOOST_CHECK(plugin == nullptr);
+   BOOST_CHECK(occupied.is_open());
+   BOOST_CHECK_EQUAL(occupied.local_endpoint().port(), port);
 }
 
 class app_log {
@@ -462,8 +489,18 @@ struct http_response_for {
 };
 
 BOOST_FIXTURE_TEST_CASE(valid_category_addresses, http_plugin_test_fixture) {
-   fc::temp_directory dir;
+   // Keep Unix socket paths short even when the caller's TMPDIR is long.
+   // fc::temp_directory still creates and owns an unpredictable private path.
+   fc::temp_directory dir("/tmp");
    auto               data_dir = dir.path() / "data";
+   const auto read_port = std::to_string(unused_test_port());
+   const auto write_port = std::to_string(unused_test_port());
+   const auto read_address = "127.0.0.1:" + read_port;
+   const auto write_address = "127.0.0.1:" + write_port;
+   const auto chain_ro = "chain_ro," + read_address;
+   const auto chain_rw = "chain_rw,:" + write_port;
+   const auto net_ro = "net_ro," + read_address;
+   const auto net_rw = "net_rw,:" + write_port;
 
    // clang-format off
    auto http_plugin = init({bu::framework::current_test_case().p_name->c_str(),
@@ -472,10 +509,10 @@ BOOST_FIXTURE_TEST_CASE(valid_category_addresses, http_plugin_test_fixture) {
                       "--plugin=eosio::net_api_plugin",
                       "--plugin=eosio::producer_api_plugin",
                       "--http-server-address", "http-category-address",
-                      "--http-category-address", "chain_ro,127.0.0.1:8890",
-                      "--http-category-address", "chain_rw,:8889",
-                      "--http-category-address", "net_ro,127.0.0.1:8890",
-                      "--http-category-address", "net_rw,:8889",
+                      "--http-category-address", chain_ro.c_str(),
+                      "--http-category-address", chain_rw.c_str(),
+                      "--http-category-address", net_ro.c_str(),
+                      "--http-category-address", net_rw.c_str(),
                       "--http-category-address", "producer_ro,./producer_ro.sock",
                       "--http-category-address", "producer_rw,../producer_rw.sock"
                       });
@@ -522,13 +559,13 @@ BOOST_FIXTURE_TEST_CASE(valid_category_addresses, http_plugin_test_fixture) {
 
    std::string world_string = "\"world!\"";
 
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8890", "/v1/node/hello").body(), world_string);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8889", "/v1/node/hello").body(), world_string);
+   BOOST_CHECK_EQUAL(http_response_for(read_address.c_str(), "/v1/node/hello").body(), world_string);
+   BOOST_CHECK_EQUAL(http_response_for(write_address.c_str(), "/v1/node/hello").body(), world_string);
 
    bool ip_v6_enabled = [] {
       try {
          net::io_context ioc;
-         tcp::socket     s(ioc, tcp::endpoint{net::ip::make_address("::1"), 9999});
+         tcp::socket     s(ioc, tcp::endpoint{net::ip::make_address("::1"), 0});
          return true;
       } catch (...) {
          return false;
@@ -536,27 +573,27 @@ BOOST_FIXTURE_TEST_CASE(valid_category_addresses, http_plugin_test_fixture) {
    }();
 
    if (ip_v6_enabled) {
-      BOOST_CHECK_EQUAL(http_response_for("[::1]:8889", "/v1/node/hello").body(), world_string);
+      BOOST_CHECK_EQUAL(http_response_for(("[::1]:" + write_port).c_str(), "/v1/node/hello").body(), world_string);
    }
 
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8890", "/v1/chain_ro/hello").body(), world_string);
-   BOOST_CHECK_EQUAL(http_response_for("localhost:8890", "/v1/chain_ro/hello").status(), http::status::bad_request);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8890", "/v1/net_ro/hello").body(), world_string);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8890", "/v1/chain_rw/hello").status(), http::status::not_found);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8890", "/v1/net_rw/hello").status(), http::status::not_found);
+   BOOST_CHECK_EQUAL(http_response_for(read_address.c_str(), "/v1/chain_ro/hello").body(), world_string);
+   BOOST_CHECK_EQUAL(http_response_for(("localhost:" + read_port).c_str(), "/v1/chain_ro/hello").status(), http::status::bad_request);
+   BOOST_CHECK_EQUAL(http_response_for(read_address.c_str(), "/v1/net_ro/hello").body(), world_string);
+   BOOST_CHECK_EQUAL(http_response_for(read_address.c_str(), "/v1/chain_rw/hello").status(), http::status::not_found);
+   BOOST_CHECK_EQUAL(http_response_for(read_address.c_str(), "/v1/net_rw/hello").status(), http::status::not_found);
 
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8889", "/v1/chain_ro/hello").status(), http::status::not_found);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8889", "/v1/net_ro/hello").status(), http::status::not_found);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8889", "/v1/chain_rw/hello").body(), world_string);
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8889", "/v1/net_rw/hello").body(), world_string);
+   BOOST_CHECK_EQUAL(http_response_for(write_address.c_str(), "/v1/chain_ro/hello").status(), http::status::not_found);
+   BOOST_CHECK_EQUAL(http_response_for(write_address.c_str(), "/v1/net_ro/hello").status(), http::status::not_found);
+   BOOST_CHECK_EQUAL(http_response_for(write_address.c_str(), "/v1/chain_rw/hello").body(), world_string);
+   BOOST_CHECK_EQUAL(http_response_for(write_address.c_str(), "/v1/net_rw/hello").body(), world_string);
 
    BOOST_CHECK_EQUAL(http_response_for(data_dir / "./producer_ro.sock", "/v1/producer_ro/hello").body(), world_string);
    BOOST_CHECK_EQUAL(http_response_for(data_dir / "../producer_rw.sock", "/v1/producer_rw/hello").body(), world_string);
 
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8890", "/v1/node/get_supported_apis").body(),
+   BOOST_CHECK_EQUAL(http_response_for(read_address.c_str(), "/v1/node/get_supported_apis").body(),
                      R"({"apis":["/v1/chain_ro/hello","/v1/net_ro/hello","/v1/node/hello"]})");
 
-   BOOST_CHECK_EQUAL(http_response_for("127.0.0.1:8889", "/v1/node/get_supported_apis").body(),
+   BOOST_CHECK_EQUAL(http_response_for(write_address.c_str(), "/v1/node/get_supported_apis").body(),
                      R"({"apis":["/v1/chain_rw/hello","/v1/net_rw/hello","/v1/node/hello"]})");
 }
 
@@ -576,8 +613,11 @@ BOOST_AUTO_TEST_CASE(test_on_loopback) {
 }
 
 BOOST_FIXTURE_TEST_CASE(bytes_in_flight, http_plugin_test_fixture) {
+   const auto port = std::to_string(unused_test_port());
+   const auto address = "127.0.0.1:" + port;
+   const auto listen_option = "--http-server-address=" + address;
    http_plugin* http_plugin = init({"--plugin=eosio::http_plugin",
-                                    "--http-server-address=127.0.0.1:8891",
+                                    listen_option.c_str(),
                                     "--http-max-bytes-in-flight-mb=64"});
    BOOST_REQUIRE(http_plugin);
 
@@ -600,10 +640,10 @@ BOOST_FIXTURE_TEST_CASE(bytes_in_flight, http_plugin_test_fixture) {
          //we can't control http_plugin's send buffer, but at least we can control our receive buffer size to help increase
          // chance of server blocking
          s.set_option(boost::asio::socket_base::receive_buffer_size(8*1024));
-         boost::asio::connect(s, resolver.resolve("127.0.0.1", "8891"));
+         boost::asio::connect(s, resolver.resolve("127.0.0.1", port));
          boost::beast::http::request<boost::beast::http::empty_body> req(boost::beast::http::verb::get, "/4megabyte", 11);
          req.keep_alive(true);
-         req.set(http::field::host, "127.0.0.1:8891");
+         req.set(http::field::host, address);
          boost::beast::http::write(s, req);
       }
    };
@@ -674,8 +714,11 @@ BOOST_FIXTURE_TEST_CASE(bytes_in_flight, http_plugin_test_fixture) {
 }
 
 BOOST_FIXTURE_TEST_CASE(requests_in_flight, http_plugin_test_fixture) {
+   const auto port = std::to_string(unused_test_port());
+   const auto address = "127.0.0.1:" + port;
+   const auto listen_option = "--http-server-address=" + address;
    http_plugin* http_plugin = init({"--plugin=eosio::http_plugin",
-                                    "--http-server-address=127.0.0.1:8892",
+                                    listen_option.c_str(),
                                     "--http-max-in-flight-requests=16"});
    BOOST_REQUIRE(http_plugin);
 
@@ -692,10 +735,10 @@ BOOST_FIXTURE_TEST_CASE(requests_in_flight, http_plugin_test_fixture) {
    auto send_requests = [&](unsigned count) {
       for(unsigned i = 0; i < count; ++i) {
          boost::asio::ip::tcp::socket& s = connections.emplace_back(ctx, boost::asio::ip::tcp::v4());
-         boost::asio::connect(s, resolver.resolve("127.0.0.1", "8892"));
+         boost::asio::connect(s, resolver.resolve("127.0.0.1", port));
          boost::beast::http::request<boost::beast::http::empty_body> req(boost::beast::http::verb::get, "/doit", 11);
          req.keep_alive(true);
-         req.set(http::field::host, "127.0.0.1:8892");
+         req.set(http::field::host, address);
          boost::beast::http::write(s, req);
       }
    };

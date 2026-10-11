@@ -7,6 +7,19 @@ using namespace eosio::chain;
 
 BOOST_AUTO_TEST_SUITE(savanna_cluster_tests)
 
+BOOST_FIXTURE_TEST_CASE(reopen_syncs_missing_blocks, savanna_cluster::cluster_t) { try {
+   auto& follower = _nodes[3];
+   const auto old_head = follower.head().id();
+   follower.close();
+   _nodes[0].produce_blocks(4);
+   BOOST_REQUIRE(_nodes[0].head().id() != old_head);
+   follower.open();
+   BOOST_REQUIRE_EQUAL(follower.head().id(), _nodes[0].head().id());
+   BOOST_REQUIRE_EQUAL(num_nodes(), num_lib_advancing([&]() {
+      _nodes[0].produce_blocks(2);
+   }));
+} FC_LOG_AND_RETHROW() }
+
 // test set_finalizer host function serialization and tester set_finalizers
 BOOST_FIXTURE_TEST_CASE(simple_test, savanna_cluster::cluster_t) { try {
       auto& C=_nodes[2]; auto& D=_nodes[3];

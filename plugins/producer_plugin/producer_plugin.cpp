@@ -8,6 +8,7 @@
 #include <eosio/chain/snapshot_scheduler.hpp>
 #include <eosio/chain/subjective_billing.hpp>
 #include <eosio/chain/thread_utils.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/unapplied_transaction_queue.hpp>
 #include <eosio/chain/fork_database.hpp>
 #include <eosio/chain/platform_timer.hpp>
@@ -667,6 +668,7 @@ public:
    boost::program_options::variables_map _options;
    bool                                  _production_enabled = false;
    bool                                  _pause_production   = false;
+   bool                                  _startup_catchup_pending = false;
 
    eosio::chain::named_thread_pool<struct prod>      _timer_thread;
    boost::asio::deadline_timer                       _timer{_timer_thread.get_executor()};
@@ -1006,7 +1008,9 @@ public:
 
       boost::asio::post(
               chain_plug->chain().get_thread_pool(), // use chain thread pool for key recovery
-              [this, trx{trx}, time_limit{max_trx_cpu_usage}, trx_type, is_transient, next{std::move(next)}, api_trx, return_failure_traces]() mutable {
+              [this, trx{trx}, time_limit{max_trx_cpu_usage}, trx_type, is_transient, next{std::move(next)}, api_trx, return_failure_traces,
+               queued_at = chain::performance::mark()]() mutable {
+                 chain::performance::since(chain::performance::stage::signature_queue, queued_at);
 
                  chain::controller& chain = chain_plug->chain();
                  transaction_metadata_ptr trx_meta;
@@ -1036,7 +1040,9 @@ public:
                  // key recovery complete, continue execution on the main thread
                  app().executor().post(
                          priority::low, exec_queue::read_write,
-                         [this, trx_meta{std::move(trx_meta)}, is_transient, next{std::move(next)}, api_trx, return_failure_traces]() {
+                         [this, trx_meta{std::move(trx_meta)}, is_transient, next{std::move(next)}, api_trx, return_failure_traces,
+                          queued_at = chain::performance::mark()]() {
+                            chain::performance::since(chain::performance::stage::transaction_queue, queued_at);
                             auto start       = fc::time_point::now();
                             auto idle_time   = _time_tracker.add_idle_time(start);
                             auto trx_tracker = _time_tracker.start_trx(is_transient, start);
@@ -1577,6 +1583,11 @@ void producer_plugin_impl::plugin_startup() {
 
       chain.set_node_finalizer_keys(_finalizer_keys);
 
+      // Replay restores chain state only through LIB, while the fork database can retain newer blocks.
+      // Apply those before producing, even with enable-stale-production: a persisted finalizer safety
+      // lock may refer to that reversible branch. Producing from LIB first can strand a single finalizer.
+      _startup_catchup_pending = is_configured_producer() && chain.head().id() != chain.fork_db_head().id();
+
       _accepted_block_connection.emplace(chain.accepted_block().connect([this](const block_signal_params& t) {
          const auto& [ block, id ] = t;
          on_accepted_block(block, id);
@@ -1923,7 +1934,10 @@ fc::variants producer_plugin::get_supported_protocol_features(const get_supporte
          }
       }
 
-      res.first->second = true;
+      // Recursive insertion into flat_map can shift elements even when capacity
+      // was reserved. Do not reuse the iterator returned before visiting the
+      // dependencies: it can now refer to a different protocol feature.
+      visited_protocol_features.find(pf.feature_digest)->second = true;
       results.emplace_back(pf.to_variant(true));
       return true;
    };
@@ -2217,10 +2231,37 @@ producer_plugin_impl::start_block_result producer_plugin_impl::start_block() {
 
    abort_block();
 
+   auto apply_blocks = [&]() -> controller::apply_blocks_result_t {
+      try {
+         return chain.apply_blocks([this](const transaction_metadata_ptr& trx) {
+                                      fc_dlog(_trx_log, "adding forked trx ${id} to unapplied queue", ("id", trx->id()));
+                                      _unapplied_transactions.add_forked(trx);
+                                   },
+                                   [this](const transaction_id_type& id) { return _unapplied_transactions.get_trx(id); });
+      } catch (...) {} // errors logged in apply_blocks
+      return controller::apply_blocks_result_t{.status = controller::apply_blocks_result_t::status_t::incomplete};
+   };
+
    block_handle head = chain.head();
 
    if (head.block_num() == chain.get_pause_at_block_num())
       return start_block_result::waiting_for_block;
+
+   if (_startup_catchup_pending) {
+      _pending_block_mode = pending_block_mode::speculating;
+      // Keep catch-up interruptible, and retry even without peers or a local production window.
+      schedule_delayed_production_loop(weak_from_this(), fc::time_point::now() + fc::microseconds(config::block_interval_us));
+      auto result = apply_blocks();
+      if (result.status != controller::apply_blocks_result_t::status_t::complete ||
+          chain.head().id() != chain.fork_db_head().id())
+         return start_block_result::waiting_for_production;
+
+      _startup_catchup_pending = false;
+      head = chain.head();
+      ilog("Restored startup fork database head #${n} before block production", ("n", head.block_num()));
+      if (head.block_num() == chain.get_pause_at_block_num())
+         return start_block_result::waiting_for_block;
+   }
 
    fc::time_point       now                = fc::time_point::now();
    block_timestamp_type block_time         = calculate_pending_block_time();
@@ -2231,17 +2272,6 @@ producer_plugin_impl::start_block_result producer_plugin_impl::start_block() {
       return r;
 
    auto process_pending_blocks = [&]() -> start_block_result {
-      auto apply_blocks = [&]() -> controller::apply_blocks_result_t {
-         try {
-            return chain.apply_blocks([this](const transaction_metadata_ptr& trx) {
-                                         fc_dlog(_trx_log, "adding forked trx ${id} to unapplied queue", ("id", trx->id()));
-                                         _unapplied_transactions.add_forked(trx);
-                                      },
-                                      [this](const transaction_id_type& id) { return _unapplied_transactions.get_trx(id); });
-         } catch (...) {} // errors logged in apply_blocks
-         return controller::apply_blocks_result_t{.status = controller::apply_blocks_result_t::status_t::incomplete};
-      };
-
       // producers need to be able to start producing on schedule, do not apply blocks as it might take a long time to apply
       // unless head not a child of pending lib, as there is no reason ever to produce on a branch that is not a child of pending lib
       while (in_speculating_mode() || !chain.is_head_descendant_of_pending_lib()) {

@@ -1,5 +1,7 @@
 #include <eosio/chain/finalizer.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/exceptions.hpp>
+#include <eosio/chain/reversible_recovery.hpp>
 #include <fc/log/logger_config.hpp>
 
 namespace eosio::chain {
@@ -228,43 +230,45 @@ void unpack_v1(Stream& s, finalizer_safety_information& fsi) {
 }
 
 bool my_finalizers_t::save_finalizer_safety_info() const {
+   performance::scope timer(performance::stage::finalizer_save);
    try {
-      if (!cfile_ds.is_open()) {
-         EOS_ASSERT(!persist_file_path.empty(), finalizer_safety_exception,
-                    "path for storing finalizer safety information file not specified");
-         cfile_ds.set_file_path(persist_file_path);
-         cfile_ds.open(fc::cfile::truncate_rw_mode);
-      }
-      // optimize by only calculating crc for inactive once
-      if (inactive_safety_info_written_pos == 0) {
-         persist_file.seekp(0);
-         fc::raw::pack(persist_file, fsi_t::magic);
-         fc::raw::pack(persist_file, current_safety_file_version);
-         uint64_t size = finalizers.size() + inactive_safety_info.size();
-         fc::raw::pack(persist_file, size);
-
-         // save also the fsi that was originally present in the file, but which applied to
-         // finalizers not configured anymore.
-         for (const auto& [pub_key, fsi] : inactive_safety_info) {
-            fc::raw::pack(persist_file, pub_key);
-            pack_v1(persist_file, fsi);
-         }
-         inactive_safety_info_written_pos = persist_file.tellp();
-         inactive_crc32 = persist_file.crc();
-      } else {
-         persist_file.seekp(inactive_safety_info_written_pos, inactive_crc32);
+      EOS_ASSERT(!persist_file_path.empty(), finalizer_safety_exception,
+                 "path for storing finalizer safety information file not specified");
+      // Never truncate the last committed safety record. A killed process leaves
+      // either the complete old file or the complete new file, using the same v1
+      // wire format. The caller publishes votes only after this durable commit.
+      auto temporary = persist_file_path;
+      temporary += ".tmp";
+      fc::datastream<fc::cfile> output;
+      output.set_file_path(temporary);
+      output.open(fc::cfile::truncate_rw_mode);
+      persist_file_t encoded(output);
+      fc::raw::pack(encoded, fsi_t::magic);
+      fc::raw::pack(encoded, current_safety_file_version);
+      uint64_t size = finalizers.size() + inactive_safety_info.size();
+      fc::raw::pack(encoded, size);
+      // Preserve safety information for keys no longer configured on this node.
+      for (const auto& [pub_key, fsi] : inactive_safety_info) {
+         fc::raw::pack(encoded, pub_key);
+         pack_v1(encoded, fsi);
       }
 
       // active finalizers
       for (const auto& [pub_key, f] : finalizers) {
-         fc::raw::pack(persist_file, pub_key);
-         pack_v1(persist_file, f.fsi);
+         fc::raw::pack(encoded, pub_key);
+         pack_v1(encoded, f.fsi);
       }
 
-      uint32_t cs = persist_file.checksum();
-      fc::raw::pack(persist_file, cs);
-
-      cfile_ds.flush();
+      uint32_t cs = encoded.checksum();
+      fc::raw::pack(encoded, cs);
+      output.flush();
+      {
+         performance::scope sync_timer(performance::stage::finalizer_file_sync);
+         output.sync();
+      }
+      output.close();
+      std::filesystem::rename(temporary, persist_file_path);
+      reversible_recovery::sync_directory(persist_file_path.parent_path());
       return true;
    } FC_LOG_AND_DROP()
    return false;

@@ -50,6 +50,7 @@ namespace eosio { namespace chain {
          void append(const signed_block_ptr& b, const block_id_type& id, const std::vector<char>& packed_block);
 
          void flush();
+         void flush_and_sync();
          void reset( const genesis_state& gs, const signed_block_ptr& genesis_block );
          void reset( const chain_id_type& chain_id, uint32_t first_block_num );
 

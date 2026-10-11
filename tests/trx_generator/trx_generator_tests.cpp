@@ -2,6 +2,11 @@
 #include <trx_generator.hpp>
 #include <http_client_async.hpp>
 #include <simple_rest_server.hpp>
+#include <fc/io/json.hpp>
+#include <fc/filesystem.hpp>
+#include <fc/io/raw.hpp>
+#include <boost/asio/read.hpp>
+#include <sys/stat.h>
 
 #define BOOST_TEST_MODULE trx_generator_tests
 #include <boost/test/included/unit_test.hpp>
@@ -90,6 +95,179 @@ struct mock_trx_generator {
 };
 
 BOOST_AUTO_TEST_SUITE(trx_generator_tests)
+
+#if defined(__linux__) // Evidence mode explicitly requires Linux CLOCK_MONOTONIC + boot identity.
+BOOST_AUTO_TEST_CASE(send_evidence_is_exclusive_private_and_clock_ordered) {
+   fc::temp_directory directory;
+   const auto path = (directory.path() / "sends.jsonl").string();
+   const auto before = benchmark_monotonic_ns();
+   {
+      send_evidence journal(path);
+      BOOST_CHECK_THROW(send_evidence second(path), std::runtime_error);
+      journal.sent(std::string(64, 'a'), before, 1);
+      journal.error();
+      journal.finish(1, 1, 1);
+   }
+   struct stat mode{};
+   BOOST_REQUIRE_EQUAL(::stat(path.c_str(), &mode), 0);
+   BOOST_CHECK_EQUAL(mode.st_mode & 0777, 0600);
+   std::ifstream input(path);
+   std::string line;
+   uint64_t previous = before;
+   unsigned count = 0;
+   while (std::getline(input, line)) {
+      auto record = fc::json::from_string(line);
+      const auto at = record["at_ns"].as_uint64();
+      BOOST_CHECK_GE(at, previous);
+      previous = at;
+      ++count;
+   }
+   BOOST_CHECK_EQUAL(count, 4u);
+   BOOST_CHECK_LE(previous, benchmark_monotonic_ns());
+}
+
+BOOST_AUTO_TEST_CASE(send_evidence_flush_failure_is_not_success) {
+   fc::temp_directory directory;
+   const auto path = (directory.path() / "write-failure.jsonl").string();
+   send_evidence journal(path);
+   // Linux-only evidence feature: replace ONLY this freshly created journal's
+   // exact descriptor with /dev/full. No process-wide limits or signal changes.
+   int journal_fd = -1;
+   for (int fd = 3; fd < 256; ++fd) {
+      char target[4096];
+      const auto link = "/proc/self/fd/" + std::to_string(fd);
+      const auto size = ::readlink(link.c_str(), target, sizeof(target));
+      if (size > 0 && std::string(target, size) == path) { journal_fd = fd; break; }
+   }
+   BOOST_REQUIRE_GE(journal_fd, 3);
+   const int full = ::open("/dev/full", O_WRONLY | O_CLOEXEC);
+   BOOST_REQUIRE_GE(full, 0);
+   const int replaced = ::dup2(full, journal_fd);
+   ::close(full);
+   BOOST_REQUIRE_EQUAL(replaced, journal_fd);
+   BOOST_CHECK_THROW(journal.finish(0, 0, 0), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(account_config_does_not_log_signing_keys) {
+   accounts_config config;
+   config._priv_keys_vec.emplace_back(chain::private_key_type::generate());
+   const auto secret = config._priv_keys_vec.front().to_string({});
+   BOOST_CHECK(config.to_string().find(secret) == std::string::npos);
+   user_specified_trx_config user;
+   user._actions_auths_json_file_or_str = "SECRET_AUTH";
+   BOOST_CHECK(user.to_string().find("SECRET_AUTH") == std::string::npos);
+}
+
+BOOST_AUTO_TEST_CASE(pureeos_transfer_symbol_is_explicit_and_legacy_default_survives) {
+   for (const std::string quantity : {"1.0000 CUR", "1.0000 SYS"}) {
+      accounts_config accounts;
+      BOOST_CHECK_EQUAL(accounts._transfer_quantity, "1.0000 CUR");
+      accounts._transfer_quantity = quantity;
+      accounts._acct_name_vec = {chain::name("alice"), chain::name("bob")};
+      accounts._priv_keys_vec = {chain::private_key_type::generate(), chain::private_key_type::generate()};
+      trx_generator_base_config base{};
+      base._contract_owner_account = chain::name("eosio.token");
+      provider_base_config provider;
+      transfer_trx_generator generator(base, provider, accounts);
+      generator.create_initial_transfer_actions("test", 20);
+      BOOST_REQUIRE_EQUAL(generator._action_pairs_vector.size(), 1u);
+      const auto& action = generator._action_pairs_vector[0]._first_act;
+      fc::datastream<const char*> data(action.data.data(), action.data.size());
+      chain::name from, to;
+      chain::asset amount;
+      fc::raw::unpack(data, from);
+      fc::raw::unpack(data, to);
+      fc::raw::unpack(data, amount);
+      BOOST_CHECK(from == chain::name("alice"));
+      BOOST_CHECK(to == chain::name("bob"));
+      BOOST_CHECK_EQUAL(amount.to_string(), quantity);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(p2p_bound_rejects_without_unbounded_queue) {
+   fc::temp_directory directory;
+   provider_base_config config;
+   config._evidence_log = (directory.path() / "sends.jsonl").string();
+   config._max_pending_sends = 1;
+   p2p_connection connection(config);
+   // Do not start a worker: deterministically fill exactly one pending slot.
+   chain::signed_transaction trx;
+   connection.send_transaction(chain::packed_transaction(trx));
+   BOOST_CHECK_THROW(connection.send_transaction(chain::packed_transaction(trx)), std::runtime_error);
+   BOOST_CHECK_EQUAL(connection._sent.load(), 1u);
+   BOOST_CHECK_EQUAL(connection._send_errors.load(), 1u);
+}
+
+BOOST_AUTO_TEST_CASE(p2p_socket_failure_is_not_a_successful_run) {
+   using boost::asio::ip::tcp;
+   boost::asio::io_context server;
+   tcp::acceptor acceptor(server, tcp::endpoint(boost::asio::ip::address_v4::loopback(), 0));
+   fc::temp_directory directory;
+   provider_base_config config;
+   config._port = acceptor.local_endpoint().port();
+   config._evidence_log = (directory.path() / "failed.jsonl").string();
+   p2p_connection connection(config);
+   connection.init_and_connect();
+   tcp::socket peer(server);
+   acceptor.accept(peer);
+   connection._p2p_socket.close(); // deterministic local transport failure
+   chain::signed_transaction trx;
+   connection.send_transaction(chain::packed_transaction(trx));
+   BOOST_CHECK_THROW(connection.cleanup_and_disconnect(), std::runtime_error);
+   BOOST_CHECK_EQUAL(connection._send_errors.load(), 1u);
+   BOOST_CHECK_EQUAL(connection._sent_callback_num.load(), 1u);
+   std::ifstream input(config._evidence_log);
+   std::string line, last;
+   while (std::getline(input, line)) last = line;
+   auto end = fc::json::from_string(last);
+   BOOST_CHECK_EQUAL(end["type"].as_string(), "generator_end");
+   BOOST_CHECK_EQUAL(end["errors"].as_uint64(), 1u);
+}
+
+BOOST_AUTO_TEST_CASE(p2p_evidence_preserves_wire_transaction) {
+   using boost::asio::ip::tcp;
+   boost::asio::io_context server;
+   tcp::acceptor acceptor(server, tcp::endpoint(boost::asio::ip::address_v4::loopback(), 0));
+   fc::temp_directory directory;
+   provider_base_config config;
+   config._port = acceptor.local_endpoint().port();
+   config._evidence_log = (directory.path() / "ok.jsonl").string();
+   p2p_connection connection(config);
+   connection.init_and_connect();
+   tcp::socket peer(server);
+   acceptor.accept(peer);
+   chain::signed_transaction trx;
+   chain::packed_transaction packed(trx);
+   connection.send_transaction(packed);
+   uint32_t size = 0;
+   boost::asio::read(peer, boost::asio::buffer(&size, sizeof(size)));
+   BOOST_REQUIRE_GT(size, 0u);
+   BOOST_REQUIRE_LT(size, 1024u);
+   std::vector<char> bytes(size);
+   boost::asio::read(peer, boost::asio::buffer(bytes));
+   fc::datastream<const char*> stream(bytes.data(), bytes.size());
+   fc::unsigned_int which;
+   fc::raw::unpack(stream, which);
+   BOOST_CHECK_EQUAL(which.value, 8u);
+   chain::packed_transaction decoded;
+   fc::raw::unpack(stream, decoded);
+   BOOST_CHECK(decoded.id() == packed.id());
+   BOOST_CHECK_EQUAL(stream.remaining(), 0u);
+   BOOST_REQUIRE_NO_THROW(connection.cleanup_and_disconnect());
+   BOOST_CHECK_EQUAL(connection._send_errors.load(), 0u);
+   BOOST_CHECK(connection.get_trx_ack_time(trx.id()) == fc::time_point::min());
+}
+
+BOOST_AUTO_TEST_CASE(tps_invalid_rates_and_overflow_rejected) {
+   auto generator = std::make_shared<mock_trx_generator>(1);
+   std::shared_ptr<null_tps_monitor> monitor;
+   for (const auto config : {trx_tps_tester_config{1, 1000001}, {UINT32_MAX, 2}, {1, 0}}) {
+      trx_tps_tester<mock_trx_generator, null_tps_monitor> test(generator, monitor, config);
+      BOOST_CHECK(!test.run());
+   }
+   BOOST_CHECK(generator->_calls.empty());
+}
+#endif
 
 BOOST_AUTO_TEST_CASE(tps_short_run_low_tps)
 {

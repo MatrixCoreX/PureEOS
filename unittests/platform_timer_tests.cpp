@@ -1,5 +1,6 @@
 #include <eosio/chain/thread_utils.hpp>
 #include <eosio/chain/platform_timer.hpp>
+#include <eosio/chain/transaction_context.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -8,6 +9,85 @@ using namespace std;
 using namespace chain;
 
 BOOST_AUTO_TEST_SUITE(platform_timer_tests)
+
+BOOST_AUTO_TEST_CASE(transaction_interrupt_survives_billing_pause)
+{
+   platform_timer timer;
+   // Cover interrupts before the first start, while running, and while paused.
+   for (int phase = 0; phase < 3; ++phase) {
+      {
+         transaction_checktime_timer trx(timer);
+         if (phase != 0) trx.start(fc::time_point::maximum());
+         if (phase == 2) trx.stop();
+         std::thread interrupter([&]() { timer.interrupt_timer(); });
+         interrupter.join();
+         BOOST_CHECK(trx.timer_state() == platform_timer::state_t::interrupted);
+         trx.stop();
+         trx.start(fc::time_point::maximum());
+         BOOST_CHECK(trx.timer_state() == platform_timer::state_t::interrupted);
+         BOOST_CHECK(timer.timer_state() == platform_timer::state_t::interrupted);
+         // Additional billing pauses must not clear an already delivered request.
+         trx.stop();
+         trx.start(fc::time_point::maximum());
+         BOOST_CHECK(trx.timer_state() == platform_timer::state_t::interrupted);
+      }
+      // Reusing the platform timer must not interrupt the next transaction.
+      transaction_checktime_timer next(timer);
+      next.start(fc::time_point::maximum());
+      BOOST_CHECK(next.timer_state() == platform_timer::state_t::running);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(paused_interrupt_delivers_watchdog_callback_on_resume)
+{
+   platform_timer timer;
+   transaction_checktime_timer trx(timer);
+   std::atomic<size_t> calls{0};
+   trx.start(fc::time_point::maximum());
+   trx.stop();
+   timer.interrupt_timer();
+   trx.set_expiration_callback([](void* p) { ++*static_cast<std::atomic<size_t>*>(p); }, &calls);
+   BOOST_CHECK_EQUAL(calls.load(), 0u);
+   trx.start(fc::time_point::maximum());
+   BOOST_CHECK_EQUAL(calls.load(), 1u);
+   BOOST_CHECK(trx.timer_state() == platform_timer::state_t::interrupted);
+}
+
+BOOST_AUTO_TEST_CASE(transaction_interrupt_races_with_billing_pause)
+{
+   platform_timer timer;
+   for (int i = 0; i < 200; ++i) {
+      transaction_checktime_timer trx(timer);
+      trx.start(fc::time_point::maximum());
+      std::atomic<bool> go{false};
+      std::thread interrupter([&]() {
+         while (!go.load()) std::this_thread::yield();
+         timer.interrupt_timer();
+      });
+      go.store(true);
+      trx.stop();
+      trx.start(fc::time_point::maximum());
+      interrupter.join();
+      BOOST_CHECK(trx.timer_state() == platform_timer::state_t::interrupted);
+   }
+}
+
+BOOST_AUTO_TEST_CASE(transient_interrupt_allows_retry_but_does_not_clear_cancellation)
+{
+   platform_timer timer;
+   for (int phase = 0; phase < 3; ++phase) {
+      transaction_checktime_timer trx(timer);
+      trx.start(fc::time_point::maximum());
+      if (phase == 1) timer.interrupt_timer();
+      timer.interrupt_timer(false); // internal OC tier-up notification
+      if (phase == 2) timer.interrupt_timer();
+      BOOST_CHECK(trx.timer_state() == platform_timer::state_t::interrupted);
+      trx.stop();
+      trx.start(fc::time_point::maximum());
+      BOOST_CHECK(trx.timer_state() == (phase == 0 ? platform_timer::state_t::running
+                                                  : platform_timer::state_t::interrupted));
+   }
+}
 
 BOOST_AUTO_TEST_CASE(correct_num_callbacks_test)
 {

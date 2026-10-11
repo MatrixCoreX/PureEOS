@@ -55,6 +55,8 @@ namespace eosio::chain {
       void open( const char* desc, const std::filesystem::path& fork_db_file, fc::cfile_datastream& ds, validator_t& validator );
       void close( std::ofstream& out );
       size_t size() const;
+      // Immutable raw blocks on every branch, for crash-recovery backfill at startup.
+      block_branch_t all_blocks() const;
 
       bsp_t get_block( const block_id_type& id, include_root_t include_root = include_root_t::no ) const;
       bool block_exists( const block_id_type& id ) const;
@@ -196,7 +198,7 @@ namespace eosio::chain {
       ~fork_database(); // close on destruction
 
       // not thread safe, expected to be called from main thread before allowing concurrent access
-      void open( validator_t& validator );
+      void open( validator_t& validator, bool retain_file = false );
       void close();
       bool file_exists() const;
 

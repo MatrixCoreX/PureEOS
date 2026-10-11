@@ -363,7 +363,13 @@ BOOST_DATA_TEST_CASE(non_prune_to_prune_genesis, bdata::xrange(2), enable_read) 
       eosio::chain::genesis_state gs;
       fc::raw::unpack(ds, version);
       fc::raw::unpack(ds, first_block);
-      fc::raw::unpack(ds, gs);
+      if (version < 4) {
+         eosio::chain::genesis_state_v0 old;
+         fc::raw::unpack(ds, old);
+         gs = eosio::chain::genesis_state{old};
+      } else {
+         fc::raw::unpack(ds, gs);
+      }
       BOOST_REQUIRE(gs == eosio::chain::genesis_state());
    }
 

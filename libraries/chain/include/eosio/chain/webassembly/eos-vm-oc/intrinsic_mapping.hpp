@@ -283,7 +283,10 @@ inline constexpr auto get_intrinsic_table() {
       "env.call",
       "env.get_call_return_value",
       "env.get_call_data",
-      "env.set_call_return_value"
+      "env.set_call_return_value",
+      "env.get_upgrade_developer",
+      "env.set_upgrade_voters",
+      "env.get_rotation_context_v1"
    );
 }
 inline constexpr std::size_t find_intrinsic_index(std::string_view hf) {

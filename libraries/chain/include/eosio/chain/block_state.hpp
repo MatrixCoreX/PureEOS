@@ -15,6 +15,7 @@ using signer_callback_type = std::function<std::vector<signature_type>(const dig
 
 struct block_state_legacy;
 struct block_state_accessor;
+struct genesis_state;
 
 /*
  * Important concepts:
@@ -160,6 +161,7 @@ public:
    using bhsp_t = block_header_state_ptr;
 
    block_state() = default;
+   static std::shared_ptr<block_state> create_native_genesis(const genesis_state& genesis);
    block_state(const block_state&) = delete;
    block_state(block_state&&) = default;
 

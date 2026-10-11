@@ -9,6 +9,7 @@
 #include <eosio/chain/wasm_interface.hpp>
 #include <eosio/chain/resource_limits.hpp>
 #include <eosio/chain/controller.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/snapshot.hpp>
 #include <eosio/chain/subjective_billing.hpp>
@@ -16,6 +17,7 @@
 #include <eosio/chain_plugin/trx_finality_status_processing.hpp>
 #include <eosio/chain/permission_link_object.hpp>
 #include <eosio/chain/global_property_object.hpp>
+#include <eosio/chain/upgrade_governance.hpp>
 #include <eosio/chain/chainbase_environment.hpp>
 #include <eosio/chain/block_header_state_utils.hpp>
 
@@ -298,6 +300,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Percentage of actual signature recovery cpu to bill. Whole number percentages, e.g. 50 for 50%")
          ("chain-threads", bpo::value<uint16_t>()->default_value(config::default_controller_thread_pool_size),
           "Number of worker threads in controller thread pool")
+         ("performance-metrics", bpo::bool_switch()->default_value(false),
+          "Opt-in process-local stage timing histograms; disabled by default; never changes validation or persistence")
          ("vote-threads", bpo::value<uint16_t>(),
           "Number of worker threads in vote processor thread pool. If set to 0, voting disabled, votes are not propagatged on P2P network. Defaults to 4 on producer nodes.")
          ("contracts-console", bpo::bool_switch()->default_value(false),
@@ -494,6 +498,8 @@ chain_plugin_impl::do_hard_replay(const variables_map& options) {
 void chain_plugin_impl::plugin_initialize(const variables_map& options) {
    try {
       ilog("initializing chain plugin");
+      performance::metrics().enabled.store(options.count("performance-metrics") && options.at("performance-metrics").as<bool>(),
+                                           std::memory_order_relaxed);
 
       try {
          genesis_state gs; // Check if EOSIO_ROOT_KEY is bad
@@ -1307,6 +1313,18 @@ namespace chain_apis {
 
 const string read_only::KEYi64 = "i64";
 
+fc::variant read_only::get_upgrade_state(const get_upgrade_state_params&, const fc::time_point&) const {
+   const auto* state = chain::find_upgrade_governance(db.db());
+   fc::mutable_variant_object result;
+   if (state) result = fc::mutable_variant_object(fc::variant(*state).get_object());
+   result("profile_enabled", state != nullptr)
+         ("sealed", state && state->developer != chain::account_name{})
+         ("required_vetoes", state && !state->proposal_voters.empty() ? chain::upgrade_veto_threshold(state->proposal_voters.size()) : 0)
+         ("head_block_num", db.head().block_num())
+         ("head_block_id", db.head().id());
+   return result;
+}
+
 get_info_db::get_info_results read_only::get_info(const read_only::get_info_params&, const fc::time_point&) const {
    EOS_ASSERT(gidb, plugin_config_exception, "get_info being accessed when not enabled");
 
@@ -1779,8 +1797,85 @@ read_only::get_finalizer_info_result read_only::get_finalizer_info( const read_o
 }
 
 read_only::get_producers_result
+read_only::get_integer_producers(const get_producers_params& params, const fc::time_point& deadline) const {
+   const auto& d = db.db();
+   const auto abi = eosio::chain_apis::get_abi(db, config::system_account_name);
+   const abi_serializer abis{abi_def(abi), abi_serializer::create_yield_function(abi_serializer_max_time)};
+   const auto& kv = d.get_index<key_value_index, by_scope_primary>();
+   const auto find_table = [&](name table) {
+      return d.find<chain::table_id_object, chain::by_code_scope_table>(
+         boost::make_tuple(config::system_account_name, config::system_account_name, table));
+   };
+   const auto read_singleton = [&](name table) {
+      const auto* id = find_table(table);
+      EOS_ASSERT(id, chain::contract_table_query_exception, "Missing integer voting table ${table}", ("table", table));
+      const auto it = kv.find(boost::make_tuple(id->id, table.to_uint64_t()));
+      EOS_ASSERT(it != kv.end(), chain::contract_table_query_exception, "Missing integer voting singleton ${table}", ("table", table));
+      vector<char> data;
+      copy_inline_row(*it, data);
+      return abis.binary_to_variant(abis.get_table_type(table), data,
+         abi_serializer::create_yield_function(abi_serializer_max_time), shorten_abi_errors);
+   };
+   EOS_ASSERT(read_singleton("votepolicy"_n)["version"].as_uint64() == 2,
+              chain::contract_table_query_exception, "Integer voting requires initialized policy version 2");
+   get_producers_result result;
+   result.vote_schema = "integer-v2";
+   const auto total = read_singleton("globalv2"_n)["total_producer_vote_weight"].as_int64();
+   EOS_ASSERT(total >= 0, chain::contract_table_query_exception, "Negative integer vote total");
+   result.total_producer_vote_amount = std::to_string(total);
+   // Compatibility display field only. Exact clients use the decimal string.
+   result.total_producer_vote_weight = static_cast<double>(total);
+   const auto* ram = find_table("rammarket"_n);
+   EOS_ASSERT(ram, chain::contract_table_query_exception, "Missing core-token market");
+   const auto market = kv.lower_bound(boost::make_tuple(ram->id, uint64_t(0)));
+   EOS_ASSERT(market != kv.end() && market->t_id == ram->id, chain::contract_table_query_exception, "Missing core-token symbol");
+   vector<char> data;
+   copy_inline_row(*market, data);
+   const auto market_row = abis.binary_to_variant(abis.get_table_type("rammarket"_n), data,
+      abi_serializer::create_yield_function(abi_serializer_max_time), shorten_abi_errors);
+   result.vote_precision = market_row["quote"]["balance"].as<asset>().get_symbol().decimals();
+   const auto* table = find_table("producersv2"_n);
+   if (!table) return result; // Legitimately no registrations yet, not active-21 fallback.
+   EOS_ASSERT(get_table_type(abi, "producersv2"_n) == KEYi64,
+              chain::contract_table_query_exception, "Invalid integer producer table type");
+   const auto& index = d.get_index<index128_index>().indices();
+   const auto& by_vote = index.get<by_secondary>();
+   const auto& by_owner = index.get<by_primary>();
+   const auto lower = name{params.lower_bound};
+   auto it = by_vote.lower_bound(boost::make_tuple(table->id, uint128_t(0), uint64_t(0)));
+   if (lower.to_uint64_t() != 0) {
+      const auto owner = by_owner.lower_bound(boost::make_tuple(table->id, lower.to_uint64_t()));
+      if (owner == by_owner.end() || owner->t_id != table->id) return result;
+      it = index.project<by_secondary>(owner);
+   }
+   const auto stop = params.time_limit_ms ? std::min(fc::time_point::now().safe_add(fc::milliseconds(*params.time_limit_ms)), deadline) : deadline;
+   const auto limit = deadline == fc::time_point::maximum() ? params.limit : std::min(params.limit, max_return_items);
+   uint32_t count = 0;
+   while (it != by_vote.end() && it->t_id == table->id && count < limit && fc::time_point::now() < stop) {
+      const auto row = kv.find(boost::make_tuple(table->id, it->primary_key));
+      EOS_ASSERT(row != kv.end(), chain::contract_table_query_exception, "Integer producer index has no primary row");
+      copy_inline_row(*row, data);
+      if (params.json) {
+         auto value = abis.binary_to_variant(abis.get_table_type("producersv2"_n), data,
+            abi_serializer::create_yield_function(abi_serializer_max_time), shorten_abi_errors);
+         fc::mutable_variant_object exact(value.get_object());
+         exact("total_votes", std::to_string(value["total_votes"].as_int64()));
+         result.rows.emplace_back(std::move(exact));
+      } else {
+         result.rows.emplace_back(data);
+      }
+      ++it;
+      ++count;
+   }
+   if (it != by_vote.end() && it->t_id == table->id) result.more = name{it->primary_key}.to_string();
+   return result;
+}
+
+read_only::get_producers_result
 read_only::get_producers( const read_only::get_producers_params& params, const fc::time_point& deadline ) const try {
    abi_def abi = eosio::chain_apis::get_abi(db, config::system_account_name);
+   if (std::any_of(abi.tables.begin(), abi.tables.end(), [](const auto& table) { return table.name == "producersv2"_n; }))
+      return get_integer_producers(params, deadline);
    const auto table_type = get_table_type(abi, "producers"_n);
    const abi_serializer abis{ abi_def(abi), abi_serializer::create_yield_function( abi_serializer_max_time ) };
    EOS_ASSERT(table_type == KEYi64, chain::contract_table_query_exception, "Invalid table type ${type} for table producers", ("type",table_type));
@@ -1834,6 +1929,16 @@ read_only::get_producers( const read_only::get_producers_params& params, const f
    result.total_producer_vote_weight = get_global_row(d, abi, abis, abi_serializer_max_time, shorten_abi_errors)["total_producer_vote_weight"].as_double();
    return result;
 } catch (...) {
+   // A v2 decode/index/deadline error must never masquerade as active 21 with zero votes.
+   bool integer_profile = db.db().find<chain::table_id_object, chain::by_code_scope_table>(
+      boost::make_tuple(config::system_account_name, config::system_account_name, "globalv2"_n)) != nullptr;
+   if (!integer_profile) {
+      try {
+         const auto abi = eosio::chain_apis::get_abi(db, config::system_account_name);
+         integer_profile = std::any_of(abi.tables.begin(), abi.tables.end(), [](const auto& table) { return table.name == "producersv2"_n; });
+      } catch (...) {}
+   }
+   if (integer_profile) throw;
    read_only::get_producers_result result;
    result.rows.reserve(db.active_producers().producers.size());
 
@@ -2558,10 +2663,11 @@ read_only::get_account_return_t read_only::get_account( const get_account_params
       http_params.total_resources          = lookup_object("userres"_n, params.account_name);
       http_params.self_delegated_bandwidth = lookup_object("delband"_n, params.account_name);
       http_params.refund_request           = lookup_object("refunds"_n, params.account_name);
-      http_params.voter_info               = lookup_object("voters"_n, config::system_account_name);
+      const bool integer_voting = std::any_of(abi.tables.begin(), abi.tables.end(), [](const auto& table) { return table.name == "votersv2"_n; });
+      http_params.voter_info               = lookup_object(integer_voting ? "votersv2"_n : "voters"_n, config::system_account_name);
       http_params.rex_info                 = lookup_object("rexbal"_n, config::system_account_name);
       
-      return [http_params = std::move(http_params), result = std::move(result), abi=std::move(abi), shorten_abi_errors=shorten_abi_errors,
+      return [http_params = std::move(http_params), result = std::move(result), abi=std::move(abi), integer_voting, shorten_abi_errors=shorten_abi_errors,
               abi_serializer_max_time=abi_serializer_max_time]() mutable ->  chain::t_or_exception<read_only::get_account_results> {
          auto yield = [&]() { return abi_serializer::create_yield_function(abi_serializer_max_time); };
          abi_serializer abis(std::move(abi), yield());
@@ -2572,8 +2678,15 @@ read_only::get_account_return_t read_only::get_account( const get_account_params
             result.self_delegated_bandwidth = abis.binary_to_variant("delegated_bandwidth", *http_params.self_delegated_bandwidth, yield(), shorten_abi_errors);
          if (http_params.refund_request)
             result.refund_request = abis.binary_to_variant("refund_request", *http_params.refund_request, yield(), shorten_abi_errors);
-         if (http_params.voter_info)
+         if (http_params.voter_info) {
             result.voter_info = abis.binary_to_variant("voter_info", *http_params.voter_info, yield(), shorten_abi_errors);
+            if (integer_voting) {
+               fc::mutable_variant_object exact(result.voter_info.get_object());
+               exact("staked", std::to_string(result.voter_info["staked"].as_int64()));
+               exact("last_vote_amount", std::to_string(result.voter_info["last_vote_amount"].as_int64()));
+               result.voter_info = std::move(exact);
+            }
+         }
          if (http_params.rex_info)
             result.rex_info = abis.binary_to_variant("rex_balance", *http_params.rex_info, yield(), shorten_abi_errors);
          return std::move(result);

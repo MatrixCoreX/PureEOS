@@ -1,4 +1,5 @@
 #include <eosio/chain/eosio_contract.hpp>
+#include <eosio/chain/upgrade_governance.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 
 #include <eosio/chain/controller.hpp>
@@ -68,6 +69,11 @@ void validate_authority_precondition( const apply_context& context, const author
 void apply_eosio_newaccount(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "newaccount not allowed in read-only transaction" );
    auto create = context.get_action().data_as<newaccount>();
+   if (const auto* governance = find_upgrade_governance(context.db); governance && governance->developer != account_name{}) {
+      EOS_ASSERT(!create.name.to_string().starts_with("eosio."), action_validate_exception,
+                 "new eosio.* accounts are disabled after governance sealing");
+      check_system_permission_change(context, create.name);
+   }
    try {
    context.require_authorization(create.creator);
 //   context.require_write_lock( config::eosio_auth_scope );
@@ -132,6 +138,7 @@ void apply_eosio_setcode(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "setcode not allowed in read-only transaction" );
    auto& db = context.db;
    auto  act = context.get_action().data_as<setcode>();
+   check_system_code_change(context, act.account, false, act.code);
    context.require_authorization(act.account);
 
    EOS_ASSERT( act.vmtype == 0, invalid_contract_vm_type, "code should be 0" );
@@ -220,6 +227,7 @@ void apply_eosio_setabi(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "setabi ot allowed in read-only transaction" );
    auto& db  = context.db;
    auto  act = context.get_action().data_as<setabi>();
+   check_system_code_change(context, act.account, true, act.abi);
 
    context.require_authorization(act.account);
 
@@ -259,6 +267,7 @@ void apply_eosio_updateauth(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "updateauth not allowed in read-only transaction" );
 
    auto update = context.get_action().data_as<updateauth>();
+   check_system_permission_change(context, update.account);
    context.require_authorization(update.account); // only here to mark the single authority on this action as used
 
    auto& authorization = context.control.get_mutable_authorization_manager();
@@ -334,6 +343,7 @@ void apply_eosio_deleteauth(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "deleteauth not allowed in read-only transaction" );
 
    auto remove = context.get_action().data_as<deleteauth>();
+   check_system_permission_change(context, remove.account);
    context.require_authorization(remove.account); // only here to mark the single authority on this action as used
 
    EOS_ASSERT(remove.permission != config::active_name, action_validate_exception, "Cannot delete active authority");
@@ -371,6 +381,7 @@ void apply_eosio_linkauth(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "linkauth not allowed in read-only transaction" );
 
    auto requirement = context.get_action().data_as<linkauth>();
+   check_system_permission_change(context, requirement.account);
    try {
       EOS_ASSERT(!requirement.requirement.empty(), action_validate_exception, "Required permission cannot be empty");
 
@@ -434,6 +445,7 @@ void apply_eosio_unlinkauth(apply_context& context) {
 
    auto& db = context.db;
    auto unlink = context.get_action().data_as<unlinkauth>();
+   check_system_permission_change(context, unlink.account);
 
    context.require_authorization(unlink.account); // only here to mark the single authority on this action as used
 

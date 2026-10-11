@@ -11,6 +11,7 @@
 #include <eosio/chain/name.hpp>
 
 #include <eosio/chain/application.hpp>
+#include <fc/mock_time.hpp>
 
 namespace eosio::test::detail {
 using namespace eosio::chain::literals;
@@ -99,6 +100,7 @@ BOOST_AUTO_TEST_SUITE(ordered_trxs_full)
 // Test verifies that transactions are processed, reported to caller, and not lost
 // even when blocks are aborted and some transactions fail.
 BOOST_AUTO_TEST_CASE(producer) {
+   BOOST_REQUIRE_MESSAGE(!fc::mock_time_traits::is_set(), "real producer integration requires an advancing wall clock");
    fc::temp_directory temp;
    appbase::scoped_app app;
    
@@ -129,21 +131,28 @@ BOOST_AUTO_TEST_CASE(producer) {
       std::deque<signed_block_ptr> all_blocks;
       std::promise<void> empty_blocks_promise;
       std::future<void> empty_blocks_fut = empty_blocks_promise.get_future();
+      std::atomic<size_t> num_acked = 0;
+      std::atomic<size_t> next_calls = 0;
+      const size_t num_pushes = 4242;
+      int num_empty = 10;
+      bool completion_signaled = false;
       auto ab = chain_plug->chain().accepted_block().connect( [&](const chain::block_signal_params& t) {
          const auto& [ block, id ] = t;
-         static int num_empty = std::numeric_limits<int>::max();
          all_blocks.push_back( block );
-         if( block->transactions.empty() ) {
-            --num_empty;
-            if( num_empty == 0 ) empty_blocks_promise.set_value();
-         } else { // we want a few empty blocks after we have some non-empty blocks
+         // Empty blocks alone do not prove the signature workers and posted
+         // transactions have drained, especially on a busy debug build.
+         if( block->transactions.empty() && next_calls == num_pushes && num_acked == num_pushes ) {
+            if( !completion_signaled && --num_empty == 0 ) {
+               completion_signaled = true;
+               empty_blocks_promise.set_value();
+            }
+         } else {
             num_empty = 10;
          }
       } );
       auto bs = chain_plug->chain().block_start().connect( [&]( uint32_t bn ) {
       } );
 
-      std::atomic<size_t> num_acked = 0;
       plugin_interface::compat::channels::transaction_ack::channel_type::handle incoming_transaction_ack_subscription =
             app->get_channel<plugin_interface::compat::channels::transaction_ack>().subscribe(
                   [&num_acked]( const std::pair<fc::exception_ptr, packed_transaction_ptr>& t){
@@ -151,11 +160,9 @@ BOOST_AUTO_TEST_CASE(producer) {
                   } );
 
       std::deque<packed_transaction_ptr> trxs;
-      std::atomic<size_t> next_calls = 0;
       std::atomic<size_t> num_posts = 0;
       std::atomic<size_t> trace_with_except = 0;
       std::atomic<bool> trx_match = true;
-      const size_t num_pushes = 4242;
       for( size_t i = 1; i <= num_pushes; ++i ) {
          auto ptrx = make_unique_trx( chain_id );
          dlog( "posting ${id}", ("id", ptrx->id()) );
@@ -197,17 +204,20 @@ BOOST_AUTO_TEST_CASE(producer) {
          }
       }
 
-      empty_blocks_fut.wait_for(std::chrono::seconds(15));
+      const auto drained = empty_blocks_fut.wait_for(std::chrono::seconds(120));
 
+      // Join before inspecting the deques: a timeout must not race with the
+      // callbacks which are still appending transactions and accepted blocks.
+      app->quit();
+      app_thread.join();
+
+      BOOST_CHECK_MESSAGE(drained == std::future_status::ready, "transactions did not drain within 120 seconds");
       BOOST_CHECK_EQUAL( trace_with_except, 0u ); // should not have any traces with except in it
       BOOST_CHECK( all_blocks.size() > 3u ); // should have a few blocks otherwise test is running too fast
       BOOST_CHECK_EQUAL( num_pushes, num_posts );
       BOOST_CHECK_EQUAL( num_pushes, next_calls );
       BOOST_CHECK_EQUAL( num_pushes, num_acked );
       BOOST_CHECK( trx_match.load() );
-
-      app->quit();
-      app_thread.join();
 
       BOOST_REQUIRE( verify_equal(trxs, all_blocks ) );
 

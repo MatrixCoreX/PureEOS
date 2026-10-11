@@ -34,8 +34,10 @@ struct chain_snapshot_header {
     *         - chain_config_v2 update for new members `max_sync_call_depth` and `max_sync_call_data_size`
     */
 
+   // Version 10 adds the native upgrade_governance_object section. Older
+   // snapshots restore with no governance row and retain legacy governance.
    static constexpr uint32_t minimum_compatible_version = 2;
-   static constexpr uint32_t current_version = 9;
+   static constexpr uint32_t current_version = 10;
 
    static constexpr uint32_t first_version_with_split_table_sections = 7;
 

@@ -41,6 +41,7 @@ host_context::~host_context() = default;
 
 // called from apply_context or sync_call_context
 int64_t host_context::execute_sync_call(name call_receiver, uint64_t flags, std::span<const char> data) {
+   trx_context.upgrade_voters_action_ordinal.reset();
    auto start = fc::time_point::now();
 
    // If current call is read only, or read_only flag from the user is read only,

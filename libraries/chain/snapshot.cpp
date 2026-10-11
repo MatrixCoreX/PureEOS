@@ -608,9 +608,9 @@ fc::variant snapshot_info(snapshot_reader& snapshot) {
    chain_id_type chain_id = chain_id_type::empty_chain_id();
    if(header.version <= 2) {
       snapshot.read_section<genesis_state>([&]( auto &section ) {
-         genesis_state genesis;
+         genesis_state_v0 genesis;
          section.read_row(genesis);
-         chain_id = genesis.compute_chain_id();
+         chain_id = genesis_state{genesis}.compute_chain_id();
       });
    }
    else if(header.version <= 4) {

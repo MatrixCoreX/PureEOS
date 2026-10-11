@@ -1,5 +1,6 @@
 #include <eosio/chain/transaction_metadata.hpp>
 #include <eosio/chain/thread_utils.hpp>
+#include <eosio/chain/performance_metrics.hpp>
 #include <boost/asio/thread_pool.hpp>
 
 namespace eosio { namespace chain {
@@ -11,7 +12,9 @@ recover_keys_future transaction_metadata::start_recover_keys( packed_transaction
                                                               trx_type t,
                                                               uint32_t max_variable_sig_size )
 {
-   return post_async_task( thread_pool, [trx{std::move(trx)}, chain_id, time_limit, t, max_variable_sig_size]() mutable {
+   return post_async_task( thread_pool, [trx{std::move(trx)}, chain_id, time_limit, t, max_variable_sig_size,
+                                       queued_at = performance::mark()]() mutable {
+      performance::since(performance::stage::signature_queue, queued_at);
       return recover_keys( std::move(trx), chain_id, time_limit, t, max_variable_sig_size );
    });
 }
@@ -22,6 +25,7 @@ transaction_metadata_ptr transaction_metadata::recover_keys( packed_transaction_
                                                               trx_type t,
                                                               uint32_t max_variable_sig_size )
 {
+   performance::scope signature_timer(performance::stage::signature_recovery);
    fc::time_point deadline = time_limit == fc::microseconds::maximum() ?
                              fc::time_point::maximum() : fc::time_point::now() + time_limit;
    check_variable_sig_size( trx, max_variable_sig_size );

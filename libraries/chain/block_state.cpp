@@ -4,6 +4,7 @@
 #include <eosio/chain/finalizer.hpp>
 #include <eosio/chain/snapshot_detail.hpp>
 #include <eosio/chain/exceptions.hpp>
+#include <eosio/chain/genesis_state.hpp>
 
 #include <fc/crypto/bls_utils.hpp>
 
@@ -126,6 +127,52 @@ block_state::block_state(const block_header_state&                bhs,
    sign(*new_block, block_id, signer, valid_block_signing_authority);
 
    block = signed_block::create_signed_block(std::move(new_block));
+}
+
+block_state_ptr block_state::create_native_genesis(const genesis_state& genesis) {
+   genesis.validate();
+   EOS_ASSERT(genesis.initial_savanna, chain_exception, "missing native Savanna genesis configuration");
+   auto result = std::make_shared<block_state>();
+   auto& r = *result;
+   r.header.timestamp = genesis.initial_timestamp;
+   r.header.producer = config::system_account_name;
+   r.header.schedule_version = block_header::proper_svnn_schedule_version;
+   r.header.action_mroot = genesis.compute_chain_id(); // Bind the genesis anchor to the entire manifest.
+   r.active_finalizer_policy = std::make_shared<finalizer_policy>(finalizer_policy{
+      .generation = 1, .threshold = 1,
+      .finalizers = {{config::system_account_name.to_string(), 1, genesis.initial_savanna->finalizer_key}}
+   });
+   r.active_proposer_policy = std::make_shared<proposer_policy>();
+   r.active_proposer_policy->proposer_schedule = {0, {{config::system_account_name,
+      block_signing_authority_v0{1, {{genesis.initial_key, 1}}}}}};
+   finality_extension extension{{r.header.block_num(), false},
+      finalizer_policy{}.create_diff(*r.active_finalizer_policy), std::nullopt};
+   emplace_extension(r.header.header_extensions, finality_extension::extension_id(), fc::raw::pack(extension));
+   r.header_exts = r.header.validate_and_extract_header_extensions();
+   r.block_id = r.header.calculate_id();
+   r.core = finality_core::create_core_for_genesis_block(r.block_id, r.timestamp());
+   r.activated_protocol_features = std::make_shared<protocol_feature_activation_set>();
+   r.activated_protocol_features->protocol_features.insert(genesis.initial_savanna->protocol_features.begin(),
+                                                          genesis.initial_savanna->protocol_features.end());
+   r.finalizer_policy_generation = 1;
+   r.last_pending_finalizer_policy_digest = fc::sha256::hash(*r.active_finalizer_policy);
+   r.last_pending_finalizer_policy_start_timestamp = r.timestamp();
+   signed_block_header genesis_header;
+   static_cast<block_header&>(genesis_header) = r.header;
+   r.block = signed_block::create_signed_block(signed_block::create_mutable_block(genesis_header));
+   r.strong_digest = r.compute_finality_digest();
+   r.weak_digest = create_weak_digest(r.strong_digest);
+   r.aggregating_qc = aggregating_qc_t{r.active_finalizer_policy, finalizer_policy_ptr{}};
+   r.action_mroot = {};
+   valid_t::finality_leaf_node_t leaf{
+      .block_num = r.block_num(), .timestamp = r.timestamp(), .parent_timestamp = block_timestamp_type{},
+      .finality_digest = r.strong_digest, .action_mroot = r.action_mroot
+   };
+   incremental_merkle_tree tree;
+   tree.append(fc::sha256::hash(leaf));
+   r.valid = valid_t{.validation_tree = tree, .validation_mroots = {tree.get_root()}};
+   r.set_valid(true);
+   return result;
 }
 
 // Used for transition from dpos to Savanna.

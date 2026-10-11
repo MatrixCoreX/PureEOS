@@ -59,6 +59,8 @@ void compare_files(const std::string& filename1, const std::string& filename2)
 {
    std::ifstream file1(filename1.c_str());
    std::ifstream file2(filename2.c_str());
+   BOOST_REQUIRE_MESSAGE(file1.is_open(), "Cannot open actual trace: " << filename1);
+   BOOST_REQUIRE_MESSAGE(file2.is_open(), "Cannot open expected trace: " << filename2);
    std::string line1, line2;
    int i = 1;
    while(std::getline(file2, line2))
@@ -104,17 +106,24 @@ BOOST_FIXTURE_TEST_CASE(deep_mind, deep_mind_tester)
    // Produce 2 rounds to make the schedule active
    produce_blocks(config::producer_repetitions * 2);
 
-   bool save_log = [](){
+   std::string save_log = [](){
       auto argc = boost::unit_test::framework::master_test_suite().argc;
       auto argv = boost::unit_test::framework::master_test_suite().argv;
-      return std::find(argv, argv + argc, std::string("--save-dmlog")) != (argv + argc);
+      for (int i = 0; i < argc; ++i) {
+         const std::string arg = argv[i];
+         if (arg == "--save-dmlog")
+            return std::string(DEEP_MIND_LOGFILE);
+         if (arg.starts_with("--save-dmlog="))
+            return arg.substr(std::string("--save-dmlog=").size());
+      }
+      return std::string{};
    }();
 
    auto log_output_path = tmp.file().get_file_path();
 
-   if(save_log)
+   if(!save_log.empty())
    {
-      std::filesystem::copy(log_output_path, DEEP_MIND_LOGFILE, std::filesystem::copy_options::update_existing);
+      std::filesystem::copy(log_output_path, save_log, std::filesystem::copy_options::overwrite_existing);
    }
    else
    {

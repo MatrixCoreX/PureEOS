@@ -74,12 +74,12 @@ namespace eosio::testing {
             ilog("create_initial_transfer_actions: creating transfer from ${acctA} to ${acctB}",
                  ("acctA", _accts_config._acct_name_vec.at(i))("acctB", _accts_config._acct_name_vec.at(j)));
             chain::action act_a_to_b = make_transfer_action(_config._contract_owner_account, _accts_config._acct_name_vec.at(i), _accts_config._acct_name_vec.at(j),
-                                                            chain::asset::from_string("1.0000 CUR"), salt);
+                                                            chain::asset::from_string(_accts_config._transfer_quantity), salt);
 
             ilog("create_initial_transfer_actions: creating transfer from ${acctB} to ${acctA}",
                  ("acctB", _accts_config._acct_name_vec.at(j))("acctA", _accts_config._acct_name_vec.at(i)));
             chain::action act_b_to_a = make_transfer_action(_config._contract_owner_account, _accts_config._acct_name_vec.at(j), _accts_config._acct_name_vec.at(i),
-                                                            chain::asset::from_string("1.0000 CUR"), salt);
+                                                            chain::asset::from_string(_accts_config._transfer_quantity), salt);
 
             _action_pairs_vector.emplace_back(act_a_to_b, act_b_to_a, _accts_config._priv_keys_vec.at(i), _accts_config._priv_keys_vec.at(j));
          }
@@ -238,8 +238,7 @@ namespace eosio::testing {
       _abi = chain::abi_serializer(fc::json::from_file(_usr_trx_config._abi_data_file_path).as<chain::abi_def>(), chain::abi_serializer::create_yield_function( abi_serializer_max_time ));
       fc::variant unpacked_actions_data_json = json_from_file_or_string(_usr_trx_config._actions_data_json_file_or_str);
       fc::variant unpacked_actions_auths_data_json = json_from_file_or_string(_usr_trx_config._actions_auths_json_file_or_str);
-      ilog("Loaded actions data: ${data}", ("data", fc::json::to_pretty_string(unpacked_actions_data_json)));
-      ilog("Loaded actions auths data: ${auths}", ("auths", fc::json::to_pretty_string(unpacked_actions_auths_data_json)));
+      ilog("Loaded action data and signing authorizations (contents omitted)");
 
       const std::string gen_acct_name_per_trx("ACCT_PER_TRX");
 

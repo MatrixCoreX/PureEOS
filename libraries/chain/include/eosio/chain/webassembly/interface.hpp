@@ -197,7 +197,10 @@ namespace webassembly {
           * @param packed_finalizer_format - format of the finalizer_policy data blob.
           * @param packed_finalizer_policy - a serialized finalizer_policy object.
          */
-         void set_finalizers(uint64_t packed_finalizer_format, span<const char> packed_finalizer_policy);
+      void set_finalizers(uint64_t packed_finalizer_format, span<const char> packed_finalizer_policy);
+      uint64_t get_upgrade_developer() const;
+      uint32_t get_rotation_context_v1(span<char> output) const;
+      void set_upgrade_voters(span<const char> packed_voters);
 
          /**
           * Retrieve the blockchain config parameters.

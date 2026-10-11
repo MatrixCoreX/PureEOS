@@ -5,14 +5,36 @@
 #include <eosio/chain/types.hpp>
 
 #include <fc/crypto/sha256.hpp>
+#include <fc/crypto/bls_public_key.hpp>
+#include <fc/crypto/bls_signature.hpp>
 
 #include <string>
 #include <vector>
 
 namespace eosio { namespace chain {
 
+// Both profiles start with one eosio proposer (initial_key), one equal-weight
+// finalizer and the committed Savanna dependency manifest. Profile 1 preserves
+// legacy governance; profile 2 opts into sealed developer-upgrade / node-veto governance.
+struct native_savanna_genesis {
+   native_savanna_genesis();
+   uint32_t version = 1;
+   fc::crypto::blslib::bls_public_key finalizer_key;
+   fc::crypto::blslib::bls_signature proof_of_possession;
+   std::vector<digest_type> protocol_features;
+   bool operator==(const native_savanna_genesis&) const = default;
+};
+
+// Preserve the wire format of block-log versions 1..3 and legacy snapshots.
+struct genesis_state_v0 {
+   time_point initial_timestamp;
+   public_key_type initial_key;
+   chain_config_v0 initial_configuration;
+};
+
 struct genesis_state {
    genesis_state();
+   explicit genesis_state(const genesis_state_v0& old);
 
    static const string eosio_root_key;
 
@@ -54,6 +76,12 @@ struct genesis_state {
 
    time_point                               initial_timestamp;
    public_key_type                          initial_key;
+   std::optional<native_savanna_genesis>      initial_savanna;
+
+   genesis_state_v0 legacy_state() const {
+      return {initial_timestamp, initial_key, initial_configuration};
+   }
+   void validate() const;
 
    /**
     * Get the chain_id corresponding to this genesis state.
@@ -63,8 +91,8 @@ struct genesis_state {
    chain_id_type compute_chain_id() const;
 
    friend inline bool operator==( const genesis_state& lhs, const genesis_state& rhs ) {
-      return std::tie( lhs.initial_configuration, lhs.initial_timestamp, lhs.initial_key )
-               == std::tie( rhs.initial_configuration, rhs.initial_timestamp, rhs.initial_key );
+      return std::tie( lhs.initial_configuration, lhs.initial_timestamp, lhs.initial_key, lhs.initial_savanna )
+               == std::tie( rhs.initial_configuration, rhs.initial_timestamp, rhs.initial_key, rhs.initial_savanna );
    };
 
    friend inline bool operator!=( const genesis_state& lhs, const genesis_state& rhs ) { return !(lhs == rhs); }
@@ -75,4 +103,7 @@ struct genesis_state {
 
 // @swap initial_timestamp initial_key initial_configuration
 FC_REFLECT(eosio::chain::genesis_state,
-           (initial_timestamp)(initial_key)(initial_configuration))
+           (initial_timestamp)(initial_key)(initial_configuration)(initial_savanna))
+FC_REFLECT(eosio::chain::genesis_state_v0, (initial_timestamp)(initial_key)(initial_configuration))
+FC_REFLECT(eosio::chain::native_savanna_genesis,
+           (version)(finalizer_key)(proof_of_possession)(protocol_features))
