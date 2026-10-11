@@ -74,6 +74,14 @@ struct isolated_host {
    std::vector<char> return_value;
    std::vector<isolated_notification> recipients;
    std::set<name>* group_recipients = nullptr;
+   std::vector<isolated_cursor_event>* cursor_events = nullptr;
+   size_t max_cursor_events = 0;
+
+   void record(isolated_cursor_event event) {
+      if (!cursor_events) return; // unchanged root-only mode never allocates a transcript
+      if (cursor_events->size() >= max_cursor_events) throw primary_state_budget_exceeded();
+      cursor_events->push_back(std::move(event));
+   }
 
    void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
    std::span<char> memory(uint32_t offset, uint32_t size) {
@@ -164,6 +172,7 @@ struct isolated_host {
          if (recipients.size() == isolated_action_result::max_recipients) throw primary_state_budget_exceeded();
       }
       recipients.push_back({recipient, state.write_count()});
+      if (cursor_events) record(isolated_cursor_notify{recipients.size() - 1});
    }
    // Explicit link-only imports used by ordinary CDT modules. NONE is an
    // implementation: reaching any of these discards the WHOLE attempt, even
@@ -181,33 +190,59 @@ struct isolated_host {
       return_value.assign(source.begin(), source.end());
    }
    int32_t db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
-      check(); return cursor.find({name(code), name(scope), name(table)}, primary);
+      check();
+      const table_key key{name(code), name(scope), name(table)};
+      const auto result = cursor.find(key, primary);
+      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::find, key, primary, -1, result});
+      return result;
    }
    int32_t db_store_i64(uint64_t scope, uint64_t table, uint64_t payer, uint64_t primary, uint32_t offset, uint32_t size) {
-      return cursor.store({input.receiver, name(scope), name(table)}, primary, name(payer), memory(offset, size));
+      const auto result = cursor.store({input.receiver, name(scope), name(table)}, primary, name(payer), memory(offset, size));
+      if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, result});
+      return result;
    }
-   void db_remove_i64(int32_t iterator) { check(); cursor.remove(iterator); }
+   void db_remove_i64(int32_t iterator) {
+      check(); cursor.remove(iterator);
+      if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, iterator});
+   }
    int32_t db_lowerbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
-      check(); return cursor.lower_bound({name(code), name(scope), name(table)}, primary);
+      check();
+      const table_key key{name(code), name(scope), name(table)};
+      const auto result = cursor.lower_bound(key, primary);
+      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::lower_bound, key, primary, -1, result});
+      return result;
    }
    int32_t db_upperbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
-      check(); return cursor.upper_bound({name(code), name(scope), name(table)}, primary);
+      check();
+      const table_key key{name(code), name(scope), name(table)};
+      const auto result = cursor.upper_bound(key, primary);
+      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::upper_bound, key, primary, -1, result});
+      return result;
    }
    int32_t db_end_i64(uint64_t code, uint64_t scope, uint64_t table) {
-      check(); return cursor.end({name(code), name(scope), name(table)});
+      check();
+      const table_key key{name(code), name(scope), name(table)};
+      const auto result = cursor.end(key);
+      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::end, key, 0, -1, result});
+      return result;
    }
    int32_t db_get_i64(int32_t iterator, uint32_t offset, uint32_t size) {
       return cursor.get(iterator, memory(offset, size));
    }
    void db_update_i64(int32_t iterator, uint64_t payer, uint32_t offset, uint32_t size) {
       cursor.update(iterator, name(payer), memory(offset, size));
+      if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, iterator});
    }
    int32_t adjacent(int32_t iterator, uint32_t offset, bool previous) {
       auto destination = memory(offset, sizeof(uint64_t));
       uint64_t primary;
       std::memcpy(&primary, destination.data(), sizeof(primary));
+      const auto before = primary;
       const auto result = previous ? cursor.previous(iterator, primary) : cursor.next(iterator, primary);
       std::memcpy(destination.data(), &primary, sizeof(primary)); // unaligned WASM pointers are legal
+      if (cursor_events)
+         record(isolated_cursor_query{previous ? isolated_cursor_query_kind::previous : isolated_cursor_query_kind::next,
+                                      {}, 0, iterator, result, before, primary});
       return result;
    }
    int32_t db_next_i64(int32_t iterator, uint32_t offset) { return adjacent(iterator, offset, false); }
@@ -333,11 +368,14 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
 
 isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay& state,
       const isolated_action_input& input, std::stop_token stop, isolated_cancel external,
-      primary_overlay_cursor* group_cursor, std::set<name>* group_recipients) {
+      primary_overlay_cursor* group_cursor, std::set<name>* group_recipients,
+      std::vector<isolated_cursor_event>* cursor_events, size_t max_cursor_events) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    const auto began = std::chrono::steady_clock::now();
    if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
    if (bool(group_cursor) != bool(group_recipients) ||
+       bool(group_cursor) != bool(cursor_events) || (cursor_events && !cursor_events->empty()) ||
+       max_cursor_events > isolated_notification_executor::max_cursor_events ||
        (group_recipients && !group_recipients->contains(input.receiver)) ||
        (!group_cursor && input.receiver != input.account) || input.data.size() > impl_->limits.max_action_bytes ||
        input.authorizations.size() > impl_->limits.max_authorizations || input.max_return_bytes > impl_->limits.max_return_bytes)
@@ -356,7 +394,7 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       // back too; non-memory hosts remain usable without linear memory.
       if (pages <= 0) throw primary_state_unsupported();
       return {context.linear_memory(), static_cast<size_t>(pages) * 65536u};
-   }, {}, {}, group_recipients};
+   }, {}, {}, group_recipients, cursor_events, max_cursor_events};
    const attempt_deadline deadline(impl_->limits.max_attempt_time, stop, external);
    auto& context = machine.get_context();
    // Same reset/start sequence as backend::initialize, with a bounded visitor
@@ -496,6 +534,7 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
    }
    primary_state_overlay state(std::move(base), overlay_limits);
    std::vector<isolated_receiver_effects> results;
+   size_t event_count = 0;
    // The original transaction reserves ALL top-level ordinals first. A root's
    // notification ordinal can therefore exceed the next executed root's.
    uint32_t next_ordinal = roots.size() + 1;
@@ -513,6 +552,7 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
          auto arguments = root;
          arguments.receiver = current.receiver; // original action stays intact
          isolated_action_effects effects;
+         std::vector<isolated_cursor_event> cursor_events;
          if (!program.code.empty()) {
             if (!impl_->module || impl_->cached_code != program.code || impl_->cached_limits != program.limits) {
                performance::scope compile_timer(performance::stage::parallel_compile);
@@ -522,7 +562,8 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
             }
             checkpoint();
             performance::scope execute_timer(performance::stage::parallel_execute);
-            effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified);
+            effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified,
+                                                  &cursor_events, max_cursor_events - event_count);
          } else {
             effects.writes_begin = effects.writes_end = state.write_count();
             effects.execution_fingerprint = isolated_execution_fingerprint(entry.hash, program.limits, arguments);
@@ -532,8 +573,9 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
             pending.push_back({notification.recipient, next_ordinal++, current.ordinal});
          }
          if (results.size() >= max_steps) throw primary_state_budget_exceeded();
+         event_count += cursor_events.size();
          results.push_back({root_index, current.ordinal, current.creator, current.receiver, entry.hash,
-                            !program.code.empty(), std::move(effects)});
+                            !program.code.empty(), std::move(effects), std::move(cursor_events)});
       }
    }
    checkpoint();

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <atomic>
 #include <set>
+#include <variant>
 #include <stop_token>
 
 namespace eosio::chain::experimental {
@@ -54,6 +55,31 @@ struct isolated_notification {
    bool operator==(const isolated_notification&) const = default;
 };
 
+// PRIVATE notification replay preparation. Record every host operation which
+// can change the shared primary iterator cache, in the same stream as writes
+// and recipient scheduling. db_get does not allocate/change cache entries and
+// stays covered by the ordinary state dependencies, not a cursor event.
+enum class isolated_cursor_query_kind : uint8_t { find, lower_bound, upper_bound, end, next, previous };
+struct isolated_cursor_query {
+   isolated_cursor_query_kind kind = isolated_cursor_query_kind::find;
+   table_key table{};              // find/lower/upper/end only
+   uint64_t key = 0;               // find/lower/upper only
+   int32_t iterator = -1;          // next/previous input handle
+   int32_t result = -1;            // exact returned handle, including sentinels
+   uint64_t primary_before = 0, primary_after = 0; // adjacent in/out argument
+   bool operator==(const isolated_cursor_query&) const = default;
+};
+struct isolated_cursor_write {
+   size_t write_index = 0;         // absolute index in the transaction journal
+   int32_t iterator = -1;          // store result OR update/remove input handle
+   bool operator==(const isolated_cursor_write&) const = default;
+};
+struct isolated_cursor_notify {
+   size_t notification_index = 0;  // index in THIS receiver's new recipients
+   bool operator==(const isolated_cursor_notify&) const = default;
+};
+using isolated_cursor_event = std::variant<isolated_cursor_query, isolated_cursor_write, isolated_cursor_notify>;
+
 struct isolated_action_result {
    primary_overlay_result state;
    std::vector<char> return_value;
@@ -65,7 +91,7 @@ struct isolated_action_result {
 };
 
 // One action's owned effects within a TRANSACTION-wide journal. Notifications
-// use absolute write positions, including writes by earlier actions. Iterator
+// use absolute write positions, including writes by earlier actions.
 // VM memory/start and return bytes are local to this receiver. Root-only
 // execution uses a fresh cursor; notification execution shares cursors and
 // recipient deduplication within each root group. State budgets span all steps.
@@ -120,7 +146,9 @@ private:
    isolated_action_effects execute_step(primary_state_overlay&, const isolated_action_input&,
                                        std::stop_token, isolated_cancel,
                                        primary_overlay_cursor* group_cursor = nullptr,
-                                       std::set<name>* group_recipients = nullptr);
+                                       std::set<name>* group_recipients = nullptr,
+                                       std::vector<isolated_cursor_event>* cursor_events = nullptr,
+                                       size_t max_cursor_events = 0);
    struct impl;
    std::unique_ptr<impl> impl_;
 };
@@ -169,6 +197,7 @@ struct isolated_receiver_effects {
    fc::sha256 code_hash;
    bool has_code = false;
    isolated_action_effects effects;
+   std::vector<isolated_cursor_event> cursor_events;
 };
 
 struct isolated_notification_result {
@@ -183,6 +212,7 @@ struct isolated_notification_result {
 class isolated_notification_executor {
 public:
    static constexpr size_t max_programs = 256, max_steps = 256;
+   static constexpr size_t max_cursor_events = 4096; // whole attempt, not per receiver
    isolated_notification_executor();
    ~isolated_notification_executor();
    isolated_notification_executor(const isolated_notification_executor&) = delete;
