@@ -8,6 +8,9 @@
 #include <eosio/singleton.hpp>
 
 #include <eosio.system/eosio.system.hpp>
+#if defined(PUREEOS_UPGRADE_GOVERNANCE) && defined(PUREEOS_SINGLE_CHOICE_VOTING)
+#include <eosio.system/upgrade_governance.hpp>
+#endif
 #include <eosio.token/eosio.token.hpp>
 
 #include <type_traits>
@@ -25,6 +28,9 @@ namespace eosiosystem {
    using eosio::singleton;
 
    void system_contract::register_producer( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_direct_vote_policy();
+#endif
       auto prod = _producers.find( producer.value );
       const auto ct = current_time_point();
 
@@ -48,6 +54,7 @@ namespace eosiosystem {
                info.last_claim_time = ct;
          });
 
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
          auto prod2 = _producers2.find( producer.value );
          if ( prod2 == _producers2.end() ) {
             _producers2.emplace( producer, [&]( producer_info2& info ){
@@ -57,6 +64,7 @@ namespace eosiosystem {
             update_total_votepay_share( ct, 0.0, prod->total_votes );
             // When introducing the producer2 table row for the first time, the producer's votes must also be accounted for in the global total_producer_votepay_share at the same time.
          }
+#endif
       } else {
          _producers.emplace( producer, [&]( producer_info& info ){
             info.owner              = producer;
@@ -68,10 +76,12 @@ namespace eosiosystem {
             info.last_claim_time    = ct;
             info.producer_authority.emplace( producer_authority );
          });
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
          _producers2.emplace( producer, [&]( producer_info2& info ){
             info.owner                     = producer;
             info.last_votepay_share_update = ct;
          });
+#endif
       }
 
    }
@@ -81,6 +91,9 @@ namespace eosiosystem {
       check( url.size() < 512, "url too long" );
 
       register_producer( producer, convert_to_block_signing_authority( producer_key ), url, location );
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(producer, true);
+#endif
    }
 
    void system_contract::regproducer2( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location ) {
@@ -92,6 +105,9 @@ namespace eosiosystem {
       }, producer_authority );
 
       register_producer( producer, producer_authority, url, location );
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(producer, true);
+#endif
    }
 
    void system_contract::unregprod( const name& producer ) {
@@ -101,9 +117,22 @@ namespace eosiosystem {
       _producers.modify( prod, same_payer, [&]( producer_info& info ){
          info.deactivate();
       });
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(producer);
+#endif
    }
 
    void system_contract::update_elected_producers( const block_timestamp& block_time ) {
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      // The only policy writer in this profile is advance_rotation/onblock.
+      check(false, "legacy top-21 election disabled by sequential rotation");
+#else
+#if defined(PUREEOS_UPGRADE_GOVERNANCE) && defined(PUREEOS_SINGLE_CHOICE_VOTING)
+      // Positive votes can exist during bootstrap now that reward activation
+      // has no supply threshold. Preserve the native single-node govinit
+      // prerequisite; rotation-v2 has the same guard in advance_rotation.
+      if (get_upgrade_developer() == 0) return;
+#endif
       _gstate.last_producer_schedule_update = block_time;
 
       auto idx = _producers.get_index<"prototalvote"_n>();
@@ -166,6 +195,7 @@ namespace eosiosystem {
       if( is_savanna ) {
          set_proposed_finalizers( std::move(proposed_finalizers) );
       }
+#endif
    }
 
    double stake2vote( int64_t staked ) {
@@ -174,6 +204,7 @@ namespace eosiosystem {
       return double(staked) * std::pow( 2, weight );
    }
 
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
    double system_contract::update_total_votepay_share( const time_point& ct,
                                                        double additional_shares_delta,
                                                        double shares_rate_delta )
@@ -224,36 +255,74 @@ namespace eosiosystem {
 
       return new_votepay_share;
    }
+#endif
 
    void system_contract::voteproducer( const name& voter_name, const name& proxy, const std::vector<name>& producers ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_auth(voter_name); // No hard-coded third-party/b1 voting exception.
+      require_direct_vote_policy();
+      check(!proxy, "proxy voting is disabled");
+      check(producers.size() <= 1, "select at most one producer");
+      if (!producers.empty()) require_direct_vote_target(producers.front());
+      if (_voters.find(voter_name.value) == _voters.end()) {
+         // A zero-weight selection breaks the first-buy/first-vote dependency.
+         // It does not manufacture stake or activate the chain.
+         _voters.emplace(voter_name, [&](auto& voter) { voter.owner = voter_name; });
+      }
+      // Settle deferred filled-order deltas against the OLD choice before
+      // switching/clearing it; consuming a delta twice would subtract bad votes.
+      update_rex_account(voter_name, asset(0, core_symbol()), asset(0, core_symbol()));
+#else
       if ( voter_name == "b1"_n ) {
          require_auth("eosio"_n);
       } else {
          require_auth( voter_name );
       }
+#endif
 
       vote_stake_updater( voter_name );
       update_votes( voter_name, proxy, producers, true );
    }
 
    void system_contract::voteupdate( const name& voter_name ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_auth(voter_name);
+      require_direct_vote_policy();
+#endif
       auto voter = _voters.find( voter_name.value );
       check( voter != _voters.end(), "no voter found" );
 
       int64_t new_staked = 0;
       
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check_direct_vote_state(*voter);
+      if (_rexbalance.find(voter_name.value) != _rexbalance.end()) {
+         updaterex(voter_name);
+      } else {
+         update_rex_account(voter_name, asset(0, core_symbol()), asset(0, core_symbol()));
+      }
+#else
       updaterex(voter_name);
+#endif
       
       // get rex bal
       auto rex_itr = _rexbalance.find( voter_name.value );
       if( rex_itr != _rexbalance.end() && rex_itr->rex_balance.amount > 0 ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         new_staked = checked_vote_add(new_staked, rex_itr->vote_stake.amount);
+#else
          new_staked += rex_itr->vote_stake.amount;
+#endif
       }
       del_bandwidth_table     del_tbl( get_self(), voter_name.value );
 
       auto del_itr = del_tbl.begin();
       while(del_itr != del_tbl.end()) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         new_staked = checked_vote_add(checked_vote_add(new_staked, del_itr->net_weight.amount), del_itr->cpu_weight.amount);
+#else
          new_staked += del_itr->net_weight.amount + del_itr->cpu_weight.amount;
+#endif
          del_itr++;
       }
 
@@ -264,11 +333,26 @@ namespace eosiosystem {
          });
       }
       
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      // Refreshing an existing choice must not prevent an inactive producer's
+      // supporters from settling/exiting their resources.
+      update_votes(voter_name, voter->proxy, voter->producers, false);
+#else
       update_votes(voter_name, voter->proxy, voter->producers, true);
+#endif
    } // voteupdate
 
 
    void system_contract::update_votes( const name& voter_name, const name& proxy, const std::vector<name>& producers, bool voting ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_direct_vote_policy();
+      check(!proxy, "proxy voting is disabled");
+      check(producers.size() <= 1, "select at most one producer");
+      check(!producers.empty() || !has_rex_shares(voter_name),
+            "cannot clear vote while holding REX; switch producer or sell all REX first");
+      if (voting && !producers.empty()) require_direct_vote_target(producers.front());
+      apply_direct_vote(voter_name, producers);
+#else
       //validate input
       if ( proxy ) {
          check( producers.size() == 0, "cannot vote for producers and proxy at same time" );
@@ -391,10 +475,16 @@ namespace eosiosystem {
          av.producers = producers;
          av.proxy     = proxy;
       });
+#endif
    }
 
    void system_contract::regproxy( const name& proxy, bool isproxy ) {
       require_auth( proxy );
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      // Retain the action ABI solely to give old clients an explicit rejection.
+      check(false, "proxy voting is disabled");
+      return;
+#endif
 
       auto pitr = _voters.find( proxy.value );
       if ( pitr != _voters.end() ) {
@@ -413,6 +503,11 @@ namespace eosiosystem {
    }
 
    void system_contract::propagate_weight_change( const voter_info& voter ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_direct_vote_policy();
+      check_direct_vote_state(voter);
+      update_votes(voter.owner, name{}, voter.producers, false);
+#else
       check( !voter.proxy || !voter.is_proxy, "account registered as a proxy is not allowed to use a proxy" );
       double new_weight = stake2vote( voter.staked );
       if ( voter.is_proxy ) {
@@ -469,6 +564,7 @@ namespace eosiosystem {
             v.last_vote_weight = new_weight;
          }
       );
+#endif
    }
 
 } /// namespace eosiosystem

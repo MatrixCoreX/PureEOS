@@ -23,6 +23,14 @@ void bpay::on_transfer( const name from, const name to, const asset quantity, co
     // ignore eosio system incoming transfers (caused by bpay income transfers eosio => eosio.bpay => producer)
     if ( from == "eosio"_n) return;
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+    // Keep already credited rewards claimable, but do not create fresh ranked
+    // distributions without any evidence of block production. System block-pay
+    // funding above remains supported; unsolicited ranked funding rolls back.
+    check(false, "rank-only standby reward distribution is disabled; use the system reward funding path");
+    return;
+#else
+
     symbol system_symbol = eosiosystem::system_contract::get_core_symbol();
 
     check( quantity.symbol == system_symbol, "only core token allowed" );
@@ -68,6 +76,7 @@ void bpay::on_transfer( const name from, const name to, const asset quantity, co
             });
         }
     }
+#endif
 }
 
 } /// namespace eosio

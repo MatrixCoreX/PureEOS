@@ -401,6 +401,9 @@ namespace eosiosystem {
 
    void system_contract::update_user_resources( const name from, const name receiver, const asset stake_net_delta, const asset stake_cpu_delta )
    {
+#ifdef PUREEOS_RESOURCE_SPLIT
+      update_longterm_resources(receiver, stake_net_delta.amount, stake_cpu_delta.amount);
+#endif
       user_resources_table   totals_tbl( get_self(), receiver.value );
       auto tot_itr = totals_tbl.find( receiver.value );
       if( tot_itr ==  totals_tbl.end() ) {
@@ -448,15 +451,26 @@ namespace eosiosystem {
 
    int64_t system_contract::update_voting_power( const name& voter, const asset& total_update )
    {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_direct_vote_policy();
+#endif
       auto voter_itr = _voters.find( voter.value );
       if( voter_itr == _voters.end() ) {
          voter_itr = _voters.emplace( voter, [&]( auto& v ) {
             v.owner  = voter;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+            v.staked = checked_vote_add(0, total_update.amount);
+#else
             v.staked = total_update.amount;
+#endif
          });
       } else {
          _voters.modify( voter_itr, same_payer, [&]( auto& v ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+            v.staked = checked_vote_add(v.staked, total_update.amount);
+#else
             v.staked += total_update.amount;
+#endif
          });
       }
 
@@ -489,7 +503,11 @@ namespace eosiosystem {
       check( unstake_net_quantity >= zero_asset, "must unstake a positive amount" );
       check( unstake_cpu_quantity.amount + unstake_net_quantity.amount > 0, "must unstake a positive amount" );
       check( _gstate.thresh_activated_stake_time != time_point(),
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+             "cannot undelegate bandwidth before the first positive producer vote" );
+#else
              "cannot undelegate bandwidth until the chain is activated (at least 15% of all tokens participate in voting)" );
+#endif
 
       changebw( from, receiver, -unstake_net_quantity, -unstake_cpu_quantity, false);
    } // undelegatebw

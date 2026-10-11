@@ -2,6 +2,20 @@ cmake_minimum_required(VERSION 3.5)
 
 project(contracts)
 
+option(PUREEOS_UPGRADE_GOVERNANCE "Build for PureEOS native Savanna genesis profile 2 (not deployable on legacy hosts)" OFF)
+option(PUREEOS_SINGLE_CHOICE_VOTING "EXPERIMENTAL fresh-chain integer-v2 single-choice/no-proxy voting (rotation integration incomplete)" OFF)
+option(PUREEOS_RESOURCE_SPLIT "Fresh-chain dynamic 10% staking/REX and 90% PowerUp resource weights" OFF)
+option(PUREEOS_SEQUENTIAL_ROTATION "Fresh-chain top-210 FIFO single-seat Savanna rotation" OFF)
+if(PUREEOS_SEQUENTIAL_ROTATION AND NOT PUREEOS_SINGLE_CHOICE_VOTING)
+  message(FATAL_ERROR "PUREEOS_SEQUENTIAL_ROTATION requires PUREEOS_SINGLE_CHOICE_VOTING")
+endif()
+if(PUREEOS_RESOURCE_SPLIT AND NOT PUREEOS_SINGLE_CHOICE_VOTING)
+  message(FATAL_ERROR "PUREEOS_RESOURCE_SPLIT requires fresh-chain PUREEOS_SINGLE_CHOICE_VOTING")
+endif()
+if(PUREEOS_SINGLE_CHOICE_VOTING AND NOT PUREEOS_UPGRADE_GOVERNANCE)
+  message(FATAL_ERROR "PUREEOS_SINGLE_CHOICE_VOTING requires PUREEOS_UPGRADE_GOVERNANCE; use an isolated fresh-chain build")
+endif()
+
 option(SYSTEM_CONFIGURABLE_WASM_LIMITS
        "Enables use of the host functions activated by the CONFIGURABLE_WASM_LIMITS protocol feature" ON)
 

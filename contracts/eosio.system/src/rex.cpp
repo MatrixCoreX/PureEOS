@@ -58,6 +58,9 @@ namespace eosiosystem {
 
       check( amount.symbol == core_symbol(), "asset must be core token" );
       check( 0 < amount.amount, "must use positive amount" );
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_rex_vote(from);
+#endif
       transfer_from_fund( from, amount );
       const asset rex_received    = add_to_rex_pool( amount );
       const asset delta_rex_stake = add_to_rex_balance( from, amount, rex_received );
@@ -79,6 +82,9 @@ namespace eosiosystem {
       check( from_net.symbol == core_symbol() && from_cpu.symbol == core_symbol(), "asset must be core token" );
       check( (0 <= from_net.amount) && (0 <= from_cpu.amount) && (0 < from_net.amount || 0 < from_cpu.amount),
              "must unstake a positive amount to buy rex" );
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_rex_vote(owner); // Vote belongs to the owner, not the receiver.
+#endif
 
       {
          del_bandwidth_table dbw_table( get_self(), owner.value );
@@ -409,6 +415,10 @@ namespace eosiosystem {
     */
    void system_contract::update_resource_limits( const name& from, const name& receiver, int64_t delta_net, int64_t delta_cpu )
    {
+#ifdef PUREEOS_RESOURCE_SPLIT
+      // Also covers unstaketorex, loan renewal deltas, and expired loan removal.
+      update_longterm_resources(receiver, delta_net, delta_cpu);
+#endif
       if ( delta_cpu == 0 && delta_net == 0 ) { // nothing to update
          return;
       }
@@ -486,7 +496,10 @@ namespace eosiosystem {
     */
    void system_contract::add_loan_to_rex_pool( const asset& payment, int64_t rented_tokens, bool new_loan )
    {
-      channel_to_system_fees( get_self(), payment );
+      // Deposits and renewal reserves are held by eosio.rex. Debit that custody
+      // account, not the system treasury; the renter's internal balance has
+      // already been charged (or is charged by the renewal in this transaction).
+      channel_to_system_fees( rex_account, payment );
       _rexpool.modify( _rexpool.begin(), same_payer, [&]( auto& rt ) {
          // add payment to total_rent
          rt.total_rent.amount    += payment.amount;
@@ -628,9 +641,16 @@ namespace eosiosystem {
                   const name order_owner = oitr->owner;
                   idx.modify( oitr, same_payer, [&]( auto& order ) {
                      order.proceeds.amount     = result.proceeds.amount;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+                     order.stake_change.amount = 0; // voting delta is consumed immediately below
+#else
                      order.stake_change.amount = result.stake_change.amount;
+#endif
                      order.close();
                   });
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+                  update_voting_power(order_owner, result.stake_change);
+#endif
                   /// send dummy action to show owner and proceeds of filled sellrex order
                   rex_results::orderresult_action order_act( rex_account, std::vector<eosio::permission_level>{ } );
                   order_act.send( order_owner, result.proceeds );
@@ -1139,6 +1159,9 @@ namespace eosiosystem {
     */
    asset system_contract::add_to_rex_balance( const name& owner, const asset& payment, const asset& rex_received )
    {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_rex_vote(owner); // Shared guard for any future share-entry path.
+#endif
       asset init_rex_stake( 0, core_symbol() );
       asset current_rex_stake( 0, core_symbol() );
       auto bitr = _rexbalance.find( owner.value );
@@ -1237,12 +1260,16 @@ namespace eosiosystem {
       }
 
       if ( delta_stake != 0 ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         update_voting_power(voter, asset(delta_stake, core_symbol()));
+#else
          auto vitr = _voters.find( voter.value );
          if ( vitr != _voters.end() ) {
             _voters.modify( vitr, same_payer, [&]( auto& vinfo ) {
                vinfo.staked += delta_stake;
             });
          }
+#endif
       }
    }
 

@@ -35,6 +35,8 @@ enable_testing()
 # build unit test executable
 file(GLOB UNIT_TESTS "*.cpp" "*.hpp") # find all unit test suites
 add_eosio_test_executable(unit_test ${UNIT_TESTS}) # build unit tests as one executable
+target_sources(unit_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../contracts/eosio.system/src/rotation.cpp)
+target_include_directories(unit_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../contracts/eosio.system/include)
 # mark test suites for execution
 foreach(TEST_SUITE ${UNIT_TESTS}) # create an independent target for each test suite
   execute_process(

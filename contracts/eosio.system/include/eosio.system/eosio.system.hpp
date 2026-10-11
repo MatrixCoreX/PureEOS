@@ -11,8 +11,15 @@
 
 #include <eosio.system/exchange_state.hpp>
 #include <eosio.system/native.hpp>
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+#include <eosio.system/reward_halving.hpp>
+#endif
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+#include <eosio.system/rotation_state.hpp>
+#endif
 
 #include <deque>
+#include <limits>
 #include <optional>
 #include <string>
 #include <type_traits>
@@ -45,6 +52,15 @@ namespace eosiosystem {
 
    inline constexpr int64_t powerup_frac = 1'000'000'000'000'000ll;  // 1.0 = 10^15
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   inline int64_t checked_vote_add(int64_t amount, int64_t delta) {
+      const __int128 result = __int128(amount) + delta;
+      check(amount >= 0 && result >= 0 && result <= std::numeric_limits<int64_t>::max(),
+            "integer vote amount underflow or overflow");
+      return int64_t(result);
+   }
+#endif
+
    template<typename E, typename F>
    static inline auto has_field( F flags, E field )
    -> std::enable_if_t< std::is_integral_v<F> && std::is_unsigned_v<F> &&
@@ -72,7 +88,9 @@ namespace eosiosystem {
    static constexpr int64_t  useconds_per_hour     = int64_t(seconds_per_hour) * 1000'000ll;
    static constexpr uint32_t blocks_per_day        = 2 * seconds_per_day; // half seconds per day
 
-   static constexpr int64_t  min_activated_stake   = 150'000'000'0000;
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
+   static constexpr int64_t  min_activated_stake   = 150'000'000'0000; // legacy profile only
+#endif
    static constexpr int64_t  ram_gift_bytes        = 1400;
    static constexpr int64_t  min_pervote_daily_pay = 100'0000;
    static constexpr uint32_t refund_delay_sec      = 3 * seconds_per_day;
@@ -140,7 +158,11 @@ namespace eosiosystem {
    typedef eosio::multi_index< "bidrefunds"_n, bid_refund > bid_refund_table;
 
    // Defines new global state parameters.
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   struct [[eosio::table("globalv2"), eosio::contract("eosio.system")]] eosio_global_state : eosio::blockchain_parameters {
+#else
    struct [[eosio::table("global"), eosio::contract("eosio.system")]] eosio_global_state : eosio::blockchain_parameters {
+#endif
       uint64_t free_ram()const { return max_ram_size - total_ram_bytes_reserved; }
 
       uint64_t             max_ram_size = 64ll*1024 * 1024 * 1024;
@@ -155,7 +177,11 @@ namespace eosiosystem {
       int64_t              total_activated_stake = 0;
       time_point           thresh_activated_stake_time;
       uint16_t             last_producer_schedule_size = 0;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      int64_t              total_producer_vote_weight = 0; // allocated core-token smallest units
+#else
       double               total_producer_vote_weight = 0; /// the sum of all producer votes
+#endif
       block_timestamp      last_name_close;
 
       // explicit serialization macro is not necessary, used here only to improve compilation time
@@ -210,6 +236,18 @@ namespace eosiosystem {
       EOSLIB_SERIALIZE( schedules_info, (start_time)(continuous_rate) )
    };
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   struct [[eosio::table("rewardpolicy"), eosio::contract("eosio.system")]] reward_policy_info {
+      uint32_t version = 1;
+      time_point start_time; // first reward activation, immutable after being set
+      uint64_t halving_seconds = rewards::halving_usecs / 1000000;
+      double initial_continuous_rate = rewards::initial_continuous_rate;
+      uint32_t current_era = 0;
+      EOSLIB_SERIALIZE(reward_policy_info, (version)(start_time)(halving_seconds)(initial_continuous_rate)(current_era))
+   };
+   using reward_policy_singleton = eosio::singleton<"rewardpolicy"_n, reward_policy_info>;
+#endif
+
    inline eosio::block_signing_authority convert_to_block_signing_authority( const eosio::public_key& producer_key ) {
       return eosio::block_signing_authority_v0{ .threshold = 1, .keys = {{producer_key, 1}} };
    }
@@ -217,7 +255,11 @@ namespace eosiosystem {
    // Defines `producer_info` structure to be stored in `producer_info` table, added after version 1.0
    struct [[eosio::table, eosio::contract("eosio.system")]] producer_info {
       name                                                     owner;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      int64_t                                                  total_votes = 0;
+#else
       double                                                   total_votes = 0;
+#endif
       eosio::public_key                                        producer_key; /// a packed public key object
       bool                                                     is_active = true;
       std::string                                              url;
@@ -227,7 +269,14 @@ namespace eosiosystem {
       eosio::binary_extension<eosio::block_signing_authority>  producer_authority; // added in version 1.9.0
 
       uint64_t primary_key()const { return owner.value;                             }
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      uint128_t by_votes()const {
+         const uint64_t descending = is_active ? uint64_t(-1) - uint64_t(total_votes) : uint64_t(-1);
+         return (uint128_t(descending) << 64) | owner.value;
+      }
+#else
       double   by_votes()const    { return is_active ? -total_votes : total_votes;  }
+#endif
       bool     active()const      { return is_active;                               }
       void     deactivate()       { producer_key = public_key(); producer_authority.reset(); is_active = false; }
 
@@ -384,10 +433,14 @@ namespace eosiosystem {
       std::vector<name>   producers; /// the producers approved by this voter if no proxy set
       int64_t             staked = 0;
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      int64_t             last_vote_amount = 0; // actually allocated, zero when no selection
+#else
       //  Every time a vote is cast we must first "undo" the last vote weight, before casting the
       //  new vote weight.  Vote weight is calculated as:
       //  stated.amount * 2 ^ ( weeks_since_launch/weeks_per_year)
       double              last_vote_weight = 0; /// the vote weight cast the last time the vote was updated
+#endif
 
       // Total vote weight delegated to this voter.
       double              proxied_vote_weight= 0; /// the total vote weight delegated to this voter as a proxy
@@ -407,22 +460,50 @@ namespace eosiosystem {
       };
 
       // explicit serialization macro is not necessary, used here only to improve compilation time
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      // Legacy proxy fields remain zero-only compatibility metadata, never weights.
+      EOSLIB_SERIALIZE( voter_info, (owner)(proxy)(producers)(staked)(last_vote_amount)(proxied_vote_weight)(is_proxy)(flags1)(reserved2)(reserved3) )
+#else
       EOSLIB_SERIALIZE( voter_info, (owner)(proxy)(producers)(staked)(last_vote_weight)(proxied_vote_weight)(is_proxy)(flags1)(reserved2)(reserved3) )
+#endif
    };
 
 
-   typedef eosio::multi_index< "voters"_n, voter_info >  voters_table;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   typedef eosio::multi_index< "votersv2"_n, voter_info > voters_table;
+#else
+   typedef eosio::multi_index< "voters"_n, voter_info > voters_table;
+#endif
+
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   // Fresh-chain v2 uses separate tables: never reinterpret v1 floating-point data.
+   struct [[eosio::table("votepolicy"), eosio::contract("eosio.system")]] direct_vote_policy {
+      uint32_t version = 2;
+      EOSLIB_SERIALIZE( direct_vote_policy, (version) )
+   };
+   using direct_vote_policy_singleton = eosio::singleton<"votepolicy"_n, direct_vote_policy>;
+#endif
 
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   typedef eosio::multi_index< "producersv2"_n, producer_info,
+                               indexed_by<"prototalvote"_n, const_mem_fun<producer_info, uint128_t, &producer_info::by_votes> >
+                             > producers_table;
+#else
    typedef eosio::multi_index< "producers"_n, producer_info,
                                indexed_by<"prototalvote"_n, const_mem_fun<producer_info, double, &producer_info::by_votes>  >
                              > producers_table;
+#endif
 
    typedef eosio::multi_index< "producers2"_n, producer_info2 > producers_table2;
 
    typedef eosio::multi_index< "schedules"_n, schedules_info > schedules_table;
 
-   typedef eosio::singleton< "global"_n, eosio_global_state >   global_state_singleton;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+   typedef eosio::singleton< "globalv2"_n, eosio_global_state > global_state_singleton;
+#else
+   typedef eosio::singleton< "global"_n, eosio_global_state > global_state_singleton;
+#endif
 
    typedef eosio::singleton< "global2"_n, eosio_global_state2 > global_state2_singleton;
 
@@ -769,6 +850,17 @@ namespace eosiosystem {
 
    typedef eosio::singleton<"powup.state"_n, powerup_state> powerup_state_singleton;
 
+#ifdef PUREEOS_RESOURCE_SPLIT
+   // Resource weights only: these counters never enter stake ownership or votes.
+   // Present from fresh-chain init, including bootstrap before cfgpowerup.
+   struct [[eosio::table("respolicy"),eosio::contract("eosio.system")]] resource_policy {
+      uint8_t version = 1;
+      int64_t net_weight = 0; // direct staking + outstanding REX NET loans
+      int64_t cpu_weight = 0; // direct staking + outstanding REX CPU loans
+   };
+   typedef eosio::singleton<"respolicy"_n, resource_policy> resource_policy_singleton;
+#endif
+
    struct [[eosio::table("powup.order"),eosio::contract("eosio.system")]] powerup_order {
       uint8_t              version = 0;
       uint64_t             id;
@@ -874,6 +966,29 @@ namespace eosiosystem {
          }
 
          // Actions:
+#ifdef PUREEOS_UPGRADE_GOVERNANCE
+         // Deterministic electorate refresh; caller cannot supply members.
+         // Must immediately precede native devpropose in the same transaction.
+         [[eosio::action]] void refreshgov();
+
+         // Native consensus actions: ABI stubs, except govinit's mandatory
+         // contract/host compatibility handshake and initial electorate refresh.
+         // review_seconds is retained in the ABI; the native host requires 1209600 (14 days).
+         [[eosio::action]] void govinit(name developer, uint32_t review_seconds, std::vector<name> protected_accounts) {
+#ifdef PUREEOS_RESOURCE_SPLIT
+            require_resource_policy();
+            powerup_state_singleton market(get_self(), 0);
+            check(market.exists(), "configure PowerUp before governance sealing");
+            check(market.get().version == 1, "PowerUp resource split version mismatch");
+#endif
+            refreshgov();
+         }
+         [[eosio::action]] void devpropose(name target, checksum256 old_code_hash, checksum256 old_abi_hash,
+                                          checksum256 new_code_hash, checksum256 new_abi_hash, checksum256 review_document_hash) {}
+         [[eosio::action]] void devveto(name voter, uint64_t proposal_id) {}
+         [[eosio::action]] void devcancel(uint64_t proposal_id) {}
+         [[eosio::action]] void devexec(uint64_t proposal_id, std::vector<char> code, std::vector<char> abi) {}
+#endif
          /**
           * The Init action initializes the system contract for a version and a symbol.
           * Only succeeds when:
@@ -1829,6 +1944,10 @@ namespace eosiosystem {
          void update_ram_supply();
          void channel_to_system_fees( const name& from, const asset& amount );
          bool execute_next_schedule();
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         void sync_reward_policy();
+         double accrue_halving_rewards(int64_t supply, time_point from, time_point to) const;
+#endif
 
          // defined in rex.cpp
          void runrex( uint16_t max );
@@ -1875,15 +1994,30 @@ namespace eosiosystem {
          void update_user_resources( const name from, const name receiver, const asset stake_net_delta, const asset stake_cpu_delta );
 
          // defined in voting.cpp
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         void require_direct_vote_policy() const;
+         void apply_direct_vote(const name& voter, const std::vector<name>& producers);
+         void adjust_direct_producer(const name& producer, int64_t delta);
+         void check_direct_vote_state( const voter_info& voter ) const;
+         void require_direct_vote_target( const name& producer ) const;
+         bool has_rex_shares( const name& owner ) const;
+         void require_rex_vote( const name& owner ) const;
+#endif
          void register_producer( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location );
          void update_elected_producers( const block_timestamp& timestamp );
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+         void advance_rotation(const block_timestamp& timestamp, name producer);
+         void refresh_rotation_candidate(name producer, bool reserve = false);
+#endif
          void update_votes( const name& voter, const name& proxy, const std::vector<name>& producers, bool voting );
          void propagate_weight_change( const voter_info& voter );
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
          double update_producer_votepay_share( const producers_table2::const_iterator& prod_itr,
                                                const time_point& ct,
                                                double shares_rate, bool reset_to_zero = false );
          double update_total_votepay_share( const time_point& ct,
                                             double additional_shares_delta = 0.0, double shares_rate_delta = 0.0 );
+#endif
 
          // defined in finalizer_key.cpp
          bool is_savanna_consensus();
@@ -1925,6 +2059,10 @@ namespace eosiosystem {
          registration<&system_contract::update_rex_stake> vote_stake_updater{ this };
 
          // defined in power.cpp
+#ifdef PUREEOS_RESOURCE_SPLIT
+         resource_policy require_resource_policy() const;
+         void update_longterm_resources(name receiver, int64_t net_delta, int64_t cpu_delta);
+#endif
          void adjust_resources(name payer, name account, symbol core_symbol, int64_t net_delta, int64_t cpu_delta, bool must_not_be_managed = false);
          void process_powerup_queue(
             time_point_sec now, symbol core_symbol, powerup_state& state,

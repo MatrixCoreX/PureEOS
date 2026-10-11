@@ -89,6 +89,19 @@ void system_contract::process_powerup_queue(time_point_sec now, symbol core_symb
 }
 
 void update_weight(time_point_sec now, powerup_state_resource& res, int64_t& delta_available) {
+#ifdef PUREEOS_RESOURCE_SPLIT
+   // Fixed ratio, live counters, no scan of resource owners. Outstanding paid
+   // orders are never revoked when L shrinks: P = max(9 * max(L, 1), utilization).
+   eosio::check(res.initial_weight_ratio == powerup_frac / 10 &&
+                res.target_weight_ratio == powerup_frac / 10,
+                "resource split requires a fixed 10% long-term ratio");
+   res.weight_ratio = powerup_frac / 10;
+   const int128_t desired = int128_t(res.assumed_stake_weight) * 9;
+   eosio::check(desired >= 9 && desired <= std::numeric_limits<int64_t>::max(),
+                "PowerUp resource weight out of range");
+   const int64_t new_weight = std::max(int64_t(desired), res.utilization);
+   res.adjusted_utilization = std::min(new_weight, std::max(res.utilization, res.adjusted_utilization));
+#else
    if (now >= res.target_timestamp) {
       res.weight_ratio = res.target_weight_ratio;
    } else {
@@ -98,6 +111,7 @@ void update_weight(time_point_sec now, powerup_state_resource& res, int64_t& del
                                (res.target_timestamp.utc_seconds - res.initial_timestamp.utc_seconds);
    }
    int64_t new_weight    = res.assumed_stake_weight * int128_t(powerup_frac) / res.weight_ratio - res.assumed_stake_weight;
+#endif
    delta_available += new_weight - res.weight;
    res.weight = new_weight;
 }
@@ -124,6 +138,26 @@ void system_contract::cfgpowerup(powerup_config& args) {
    auto                   state = state_sing.get_or_default();
 
    eosio::check(eosio::is_account(reserve_account), "eosio.reserv account must first be created"); // cspell:disable-line
+
+#ifdef PUREEOS_RESOURCE_SPLIT
+   const auto policy = require_resource_policy();
+   check(!state_sing.exists() || state.version == 1, "PowerUp resource split version mismatch");
+   auto fixed = [&](powerup_config_resource& config, int64_t actual) {
+      const auto ratio = powerup_frac / 10;
+      check((!config.current_weight_ratio || *config.current_weight_ratio == ratio) &&
+            (!config.target_weight_ratio || *config.target_weight_ratio == ratio),
+            "resource split requires a fixed 10% long-term ratio");
+      const auto weight = std::max(actual, int64_t{1});
+      check(!config.assumed_stake_weight || *config.assumed_stake_weight == weight,
+            "resource split uses actual staking and REX weights");
+      config.current_weight_ratio = ratio;
+      config.target_weight_ratio = ratio;
+      config.assumed_stake_weight = weight;
+   };
+   fixed(args.net, policy.net_weight);
+   fixed(args.cpu, policy.cpu_weight);
+   state.version = 1;
+#endif
 
    int64_t net_delta_available = 0;
    int64_t cpu_delta_available = 0;
@@ -316,6 +350,9 @@ int64_t calc_powerup_fee(const powerup_state_resource& state, int64_t utilizatio
 
 void system_contract::powerupexec(const name& user, uint16_t max) {
    require_auth(user);
+#ifdef PUREEOS_RESOURCE_SPLIT
+   require_resource_policy();
+#endif
    powerup_state_singleton state_sing{ get_self(), 0 };
    powerup_order_table     orders{ get_self(), 0 };
    eosio::check(state_sing.exists(), "powerup hasn't been initialized");
@@ -334,6 +371,10 @@ void system_contract::powerupexec(const name& user, uint16_t max) {
 void system_contract::powerup(const name& payer, const name& receiver, uint32_t days, int64_t net_frac, int64_t cpu_frac,
                              const asset& max_payment) {
    require_auth(payer);
+#ifdef PUREEOS_RESOURCE_SPLIT
+   require_resource_policy();
+   check(receiver != reserve_account, "PowerUp receiver cannot be the resource reserve");
+#endif
    powerup_state_singleton state_sing{ get_self(), 0 };
    powerup_order_table     orders{ get_self(), 0 };
    eosio::check(state_sing.exists(), "powerup hasn't been initialized");
@@ -357,7 +398,9 @@ void system_contract::powerup(const name& payer, const name& receiver, uint32_t 
          return;
       amount = int128_t(frac) * state.weight / powerup_frac;
       eosio::check(state.weight, "market doesn't have resources available");
-      eosio::check(state.utilization + amount <= state.weight, "market doesn't have enough resources available");
+      // Subtract first: live resource weights can be large and U + amount may
+      // overflow even though each operand is valid on its own.
+      eosio::check(amount <= state.weight - state.utilization, "market doesn't have enough resources available");
       int64_t f = calc_powerup_fee(state, amount);
       eosio::check(f > 0, "calculated fee is below minimum; try powering up with more resources");
       fee.amount += f;

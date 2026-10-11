@@ -1,6 +1,9 @@
 #include <eosio.system/eosio.system.hpp>
 
 #include <eosio/eosio.hpp>
+#ifdef PUREEOS_UPGRADE_GOVERNANCE
+#include <eosio.system/upgrade_governance.hpp>
+#endif
 
 namespace eosiosystem {
    finalizer_auth_info::finalizer_auth_info(const finalizer_info& finalizer)
@@ -14,6 +17,9 @@ namespace eosiosystem {
 
    // Returns true if nodeos has transitioned to Savanna (having last proposed finalizers)
    bool system_contract::is_savanna_consensus() {
+#ifdef PUREEOS_UPGRADE_GOVERNANCE
+      if (get_upgrade_developer() != 0) return true;
+#endif
       return !get_last_proposed_finalizers().empty();
    }
 
@@ -102,7 +108,7 @@ namespace eosiosystem {
       if( !_last_prop_finalizers_cached.has_value() ) {
          const auto finalizers_itr = _last_prop_finalizers.begin();
          if( finalizers_itr == _last_prop_finalizers.end() ) {
-            _last_prop_finalizers_cached = {};
+            _last_prop_finalizers_cached.emplace();
          } else {
             _last_prop_finalizers_cached = finalizers_itr->last_proposed_finalizers;
          }
@@ -228,6 +234,9 @@ namespace eosiosystem {
             ++f.finalizer_key_count;
          });
       }
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(finalizer_name);
+#endif
    }
 
    /*
@@ -261,6 +270,12 @@ namespace eosiosystem {
          f.active_key_binary  = finalizer_key_itr->finalizer_key_binary;
       });
 
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(finalizer_name);
+      // Register the new key now; onblock serializes its policy update with
+      // membership changes. Never overwrite an in-flight frozen rotation.
+      return;
+#endif
       const auto& last_proposed_finalizers = get_last_proposed_finalizers();
       if( last_proposed_finalizers.empty() ) {
          // prior to switching to Savanna
@@ -324,5 +339,8 @@ namespace eosiosystem {
 
       // Remove the key from finalizer_keys table
       idx.erase( fin_key_itr );
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(finalizer_name);
+#endif
    }
 } /// namespace eosiosystem

@@ -7,6 +7,18 @@ namespace eosiosystem {
    using eosio::microseconds;
    using eosio::token;
 
+   namespace {
+   int64_t integer_reward_share(int64_t bucket, uint64_t share, uint64_t total) {
+      check(bucket >= 0 && total > 0 && share <= total, "invalid producer reward ratio");
+      // Both operands fit their storage types, but their product need not.
+      // Divide in 128 bits and narrow only after checking the payable amount.
+      const uint128_t pay = uint128_t(bucket) * share / total;
+      check(pay <= uint128_t(bucket) && pay <= uint128_t(asset::max_amount),
+            "producer reward amount out of range");
+      return int64_t(pay);
+   }
+   }
+
    void system_contract::onblock( ignore<block_header> ) {
       using namespace eosio;
 
@@ -28,6 +40,14 @@ namespace eosiosystem {
       // Although this field is deprecated, we will continue updating it for now until the last_block_num field
       // is eventually completely removed, at which point this line can be removed.
       _gstate2.last_block_num = timestamp;
+
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      // Consensus rotation does not depend on the reward activation clock.
+      advance_rotation(timestamp, producer);
+#endif
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      if (_rammarket.begin() != _rammarket.end()) sync_reward_policy();
+#endif
 
       /** until activation, no new rewards are paid */
       if( _gstate.thresh_activated_stake_time == time_point() )
@@ -51,7 +71,11 @@ namespace eosiosystem {
 
       /// only update block producers once every minute, block_timestamp is in half seconds
       if( timestamp.slot - _gstate.last_producer_schedule_update.slot > 120 ) {
+#ifndef PUREEOS_SEQUENTIAL_ROTATION
          update_elected_producers( timestamp );
+#else
+         _gstate.last_producer_schedule_update = timestamp;
+#endif
 
          if( (timestamp.slot - _gstate.last_name_close.slot) > blocks_per_day ) {
             name_bid_table bids(get_self(), get_self().value);
@@ -81,12 +105,24 @@ namespace eosiosystem {
    void system_contract::claimrewards( const name& owner ) {
       require_auth( owner );
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      require_direct_vote_policy();
+      // Votes select rotation candidates; they never entitle an account to pay.
+      // Accepted on-chain blocks are accounted for by onblock; this individual
+      // action is not a standalone proof that a block has become irreversible.
+      check(_producers.get(owner.value, "producer not registered").unpaid_blocks > 0,
+            "no produced blocks: standby rewards are disabled");
+#endif
       execute_next_schedule();
       const auto& prod = _producers.get( owner.value, "producer not registered" );
       check( prod.active(), "producer does not have an active key" );
 
       check( _gstate.thresh_activated_stake_time != time_point(),
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+                    "cannot claim rewards before the first positive producer vote" );
+#else
                     "cannot claim rewards until the chain is activated (at least 15% of all tokens participate in voting)" );
+#endif
 
       const auto ct = current_time_point();
 
@@ -98,15 +134,26 @@ namespace eosiosystem {
       const auto usecs_since_last_fill = (ct - _gstate.last_pervote_bucket_fill).count();
 
       if( usecs_since_last_fill > 0 && _gstate.last_pervote_bucket_fill > time_point() ) {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         double additional_inflation = accrue_halving_rewards(token_supply.amount, _gstate.last_pervote_bucket_fill, ct);
+#else
          double additional_inflation = (_gstate4.continuous_rate * double(token_supply.amount) * double(usecs_since_last_fill)) / double(useconds_per_year);
+#endif
          check( additional_inflation <= double(std::numeric_limits<int64_t>::max() - ((1ll << 10) - 1)),
                 "overflow in calculating new tokens to be issued; inflation rate is too high" );
          int64_t new_tokens = (additional_inflation < 0.0) ? 0 : static_cast<int64_t>(additional_inflation);
+         check(new_tokens <= asset::max_amount, "new reward amount exceeds asset limit");
 
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+         const int64_t to_savings = 0; // cancel issuance; do not redistribute the former savings portion
+         const int64_t to_per_block_pay = new_tokens;
+         const int64_t to_per_vote_pay = 0; // independent of all legacy factors/revisions
+#else
          int64_t to_producers     = (new_tokens * uint128_t(pay_factor_precision)) / _gstate4.inflation_pay_factor;
          int64_t to_savings       = new_tokens - to_producers;
          int64_t to_per_block_pay = (to_producers * uint128_t(pay_factor_precision)) / _gstate4.votepay_factor;
          int64_t to_per_vote_pay  = to_producers - to_per_block_pay;
+#endif
 
          if( new_tokens > 0 ) {
             // issue new tokens or use existing eosio token balance
@@ -114,7 +161,7 @@ namespace eosiosystem {
                // issue new tokens if circulating supply does not exceed max supply
                if ( token_supply.amount + new_tokens <= token_max_supply.amount ) {
                   token::issue_action issue_act{ token_account, { {get_self(), active_permission} } };
-                  issue_act.send( get_self(), asset(new_tokens, core_symbol()), "issue tokens for producer pay and savings" );
+                  issue_act.send( get_self(), asset(new_tokens, core_symbol()), "issue producer rewards" );
 
                // use existing eosio token balance if circulating supply exceeds max supply
                } else {
@@ -140,6 +187,7 @@ namespace eosiosystem {
          _gstate.last_pervote_bucket_fill = ct;
       }
 
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
       auto prod2 = _producers2.find( owner.value );
 
       /// New metric to be used in pervote pay calculation. Instead of vote weight ratio, we combine vote weight and
@@ -161,12 +209,15 @@ namespace eosiosystem {
       // The exception leads to updated_after_threshold to be treated as true regardless of whether the threshold was crossed.
       // This is okay because in this case the producer will not get paid anything either way.
       // In fact it is desired behavior because the producers votes need to be counted in the global total_producer_votepay_share for the first time.
+#endif
 
       int64_t producer_per_block_pay = 0;
       if( _gstate.total_unpaid_blocks > 0 ) {
-         producer_per_block_pay = (_gstate.perblock_bucket * prod.unpaid_blocks) / _gstate.total_unpaid_blocks;
+         producer_per_block_pay = integer_reward_share(_gstate.perblock_bucket, prod.unpaid_blocks,
+                                                       _gstate.total_unpaid_blocks);
       }
 
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
       double new_votepay_share = update_producer_votepay_share( prod2,
                                     ct,
                                     updated_after_threshold ? 0.0 : prod.total_votes,
@@ -192,10 +243,13 @@ namespace eosiosystem {
       }
 
       _gstate.pervote_bucket      -= producer_per_vote_pay;
+      update_total_votepay_share( ct, -new_votepay_share, (updated_after_threshold ? prod.total_votes : 0.0) );
+#endif
+      // Do not confiscate, redistribute, or pay out any pre-upgrade vote pool.
+      // Its balance/ABI fields remain intact pending an explicitly reviewed
+      // historical-funds policy. New claims use only the block-pay bucket.
       _gstate.perblock_bucket     -= producer_per_block_pay;
       _gstate.total_unpaid_blocks -= prod.unpaid_blocks;
-
-      update_total_votepay_share( ct, -new_votepay_share, (updated_after_threshold ? prod.total_votes : 0.0) );
 
       _producers.modify( prod, same_payer, [&](auto& p) {
          p.last_claim_time = ct;
@@ -206,10 +260,12 @@ namespace eosiosystem {
          token::transfer_action transfer_act{ token_account, { {bpay_account, active_permission}, {owner, active_permission} } };
          transfer_act.send( bpay_account, owner, asset(producer_per_block_pay, core_symbol()), "producer block pay" );
       }
+#ifndef PUREEOS_SINGLE_CHOICE_VOTING
       if ( producer_per_vote_pay > 0 ) {
          token::transfer_action transfer_act{ token_account, { {vpay_account, active_permission}, {owner, active_permission} } };
          transfer_act.send( vpay_account, owner, asset(producer_per_vote_pay, core_symbol()), "producer vote pay" );
       }
+#endif
    }
 
 } //namespace eosiosystem

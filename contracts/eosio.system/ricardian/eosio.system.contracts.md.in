@@ -90,7 +90,9 @@ summary: '{{nowrap from}} buys REX tokens in exchange for {{nowrap amount}} and 
 icon: @ICON_BASE_URL@/@REX_ICON_URI@
 ---
 
-{{amount}} is taken out of {{from}}’s REX fund and used to purchase REX tokens at the current market exchange rate. In order for the action to succeed, {{from}} must have voted for a proxy or at least 21 block producers. {{amount}} is added to {{from}}’s vote stake.
+{{amount}} is taken out of {{from}}’s REX fund and used to purchase REX tokens at the current market exchange rate. @REX_FROM_VOTE_RULE@ {{amount}} is added to {{from}}’s vote stake.
+
+@REX_HOLDING_VOTE_RULE@
 
 A sell order of the purchased amount can only be initiated after waiting for the maturity period of 4 to 5 days to pass. Even then, depending on the market conditions, the initiated sell order may not be executed immediately.
 
@@ -126,6 +128,8 @@ icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
 
 {{owner}} claims block and vote rewards from the system.
+
+@REWARD_POLICY_RULES@
 
 <h1 class="contract">closerex</h1>
 
@@ -362,15 +366,11 @@ Block signing authority:
 ---
 spec_version: "0.2.0"
 title: Register/unregister as a Proxy
-summary: 'Register/unregister {{nowrap proxy}} as a proxy account'
+summary: '@REGPROXY_SUMMARY@'
 icon: @ICON_BASE_URL@/@VOTING_ICON_URI@
 ---
 
-{{#if isproxy}}
-{{proxy}} registers as a proxy that can vote on behalf of accounts that appoint it as their proxy.
-{{else}}
-{{proxy}} unregisters as a proxy that can vote on behalf of accounts that appoint it as their proxy.
-{{/if}}
+@REGPROXY_RULES@
 
 <h1 class="contract">rentcpu</h1>
 
@@ -673,6 +673,8 @@ summary: 'Set inflation parameters'
 icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
 
+@REWARD_ADMIN_RULES@
+
 {{$action.account}} sets the inflation parameters as follows:
 
 * Annual inflation rate (in units of a hundredth of a percent): {{annual_rate}}
@@ -687,6 +689,8 @@ title: Set Pay Factors
 summary: 'Set pay factors'
 icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
+
+@REWARD_ADMIN_RULES@
 
 {{$action.account}} sets the inflation parameters as follows:
 
@@ -739,7 +743,9 @@ summary: '{{nowrap owner}} buys REX tokens in exchange for tokens currently stak
 icon: @ICON_BASE_URL@/@REX_ICON_URI@
 ---
 
-{{from_net}} and {{from_cpu}} are withdrawn from {{receiver}}’s NET and CPU bandwidths respectively. These funds are used to purchase REX tokens at the current market exchange rate. In order for the action to succeed, {{owner}} must have voted for a proxy or at least 21 block producers.
+{{from_net}} and {{from_cpu}} are withdrawn from {{receiver}}’s NET and CPU bandwidths respectively. These funds are used to purchase REX tokens at the current market exchange rate. @REX_OWNER_VOTE_RULE@
+
+@REX_HOLDING_VOTE_RULE@
 
 A sell order of the purchased amount can only be initiated after waiting for the maturity period of 4 to 5 days to pass. Even then, depending on the market conditions, the initiated sell order may not be executed immediately.
 
@@ -777,27 +783,18 @@ icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 
 {{$action.account}} advances the system contract revision number to {{revision}}.
 
+@REWARD_REVISION_RULES@
+
 <h1 class="contract">voteproducer</h1>
 
 ---
 spec_version: "0.2.0"
 title: Vote for Block Producers
-summary: '{{nowrap voter}} votes for {{#if proxy}}the proxy {{nowrap proxy}}{{else}}up to 30 block producer candidates{{/if}}'
+summary: '@VOTEPRODUCER_SUMMARY@'
 icon: @ICON_BASE_URL@/@VOTING_ICON_URI@
 ---
 
-{{#if proxy}}
-{{voter}} votes for the proxy {{proxy}}.
-At the time of voting the full weight of voter’s staked (CPU + NET) tokens will be cast towards each of the producers voted by {{proxy}}.
-{{else}}
-{{voter}} votes for the following block producer candidates:
-
-{{#each producers}}
-  + {{this}}
-{{/each}}
-
-At the time of voting the full weight of voter’s staked (CPU + NET) tokens will be cast towards each of the above producers.
-{{/if}}
+@VOTEPRODUCER_RULES@
 
 <h1 class="contract">withdraw</h1>
 
@@ -830,6 +827,8 @@ summary: 'Set annual rate parameters'
 icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
 
+@REWARD_ADMIN_RULES@
+
 {{$action.account}} sets a pre-determined inflation schedule to adjust parameters as follows:
 
 * Start time of the schedule: {{start_time}}
@@ -844,6 +843,8 @@ summary: 'Delete annual rate schedule'
 icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
 
+@REWARD_ADMIN_RULES@
+
 {{$action.account}} to delete a pre-determined inflation schedule from {{start_time}} start time.
 
 <h1 class="contract">execschedule</h1>
@@ -854,6 +855,8 @@ title: Execute Next Annual Rate Schedule
 summary: 'Execute next annual rate schedule'
 icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
+
+@REWARD_ADMIN_RULES@
 
 {{$action.account}} to execute the next upcoming annual rate schedule.
 
@@ -867,3 +870,27 @@ icon: @ICON_BASE_URL@/@ADMIN_ICON_URI@
 ---
 
 Reclaim and retire {{$action.unvest_net_quantity}} and {{$action.unvest_cpu_quantity}} worth of unvested tokens from the account {{$action.account}}.
+
+<h1 class="contract">govinit</h1>
+
+One-time PureEOS profile-2 bootstrap, authorized by eosio@owner. Seals protected system permissions, selects the independent developer, and verifies the system contract's initial electorate handshake. The review_seconds field must equal 1209600: a fixed 14-day review period, not a configurable duration. This cannot be used after initialization.
+
+<h1 class="contract">refreshgov</h1>
+
+Refresh the deterministic, at-most-210 eligible producer electorate. The caller cannot supply its members. This action is not an upgrade proposal or an approval. A developer proposal must immediately follow it in the same transaction.
+
+<h1 class="contract">devpropose</h1>
+
+The configured developer publishes an upgrade bound to the target, base and new code/ABI hashes, review document hash, frozen electorate and full 14-day review deadline. This action does not install code. Ordinary users and producer authorities cannot publish system upgrades.
+
+<h1 class="contract">devveto</h1>
+
+A member of the proposal's frozen electorate permanently records one objection before the deadline. At least ceiling(2N/3) distinct objections block that proposal; abstention is not an objection. This does not grant any general system management authority.
+
+<h1 class="contract">devcancel</h1>
+
+The configured developer cancels the identified pending upgrade. A new proposal must use a new identifier and complete a new review period; objections and deadlines cannot be edited in place.
+
+<h1 class="contract">devexec</h1>
+
+The configured developer executes the exact reviewed code and ABI after the full 14-day deadline, only when the frozen electorate's veto threshold has not been reached. No affirmative producer approval is required; zero objections allow execution after the deadline, never before it. The native host checks all hashes and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.

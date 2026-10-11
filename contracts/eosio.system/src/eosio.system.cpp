@@ -52,9 +52,15 @@ namespace eosiosystem {
 
    eosio_global_state4 system_contract::get_default_inflation_parameters() {
       eosio_global_state4 gs4;
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      gs4.continuous_rate      = rewards::initial_continuous_rate;
+      gs4.inflation_pay_factor = pay_factor_precision;
+      gs4.votepay_factor       = rewards::block_pay_factor;
+#else
       gs4.continuous_rate      = get_continuous_rate(default_annual_rate);
       gs4.inflation_pay_factor = default_inflation_pay_factor;
       gs4.votepay_factor       = default_votepay_factor;
+#endif
       return gs4;
    }
 
@@ -248,6 +254,11 @@ namespace eosiosystem {
 
    void system_contract::setalimits( const name& account, int64_t ram, int64_t net, int64_t cpu ) {
       require_auth( get_self() );
+#ifdef PUREEOS_RESOURCE_SPLIT
+      int64_t old_ram, old_net, old_cpu;
+      get_resource_limits(account, old_ram, old_net, old_cpu);
+      check(net == old_net && cpu == old_cpu, "manual CPU/NET limits are disabled by resource split");
+#endif
 
       user_resources_table userres( get_self(), account.value );
       auto ritr = userres.find( account.value );
@@ -311,6 +322,9 @@ namespace eosiosystem {
 
    void system_contract::setacctnet( const name& account, const std::optional<int64_t>& net_weight ) {
       require_auth( get_self() );
+#ifdef PUREEOS_RESOURCE_SPLIT
+      check(false, "manual CPU/NET limits are disabled by resource split");
+#endif
 
       int64_t current_ram, current_net, current_cpu;
       get_resource_limits( account, current_ram, current_net, current_cpu );
@@ -355,6 +369,9 @@ namespace eosiosystem {
 
    void system_contract::setacctcpu( const name& account, const std::optional<int64_t>& cpu_weight ) {
       require_auth( get_self() );
+#ifdef PUREEOS_RESOURCE_SPLIT
+      check(false, "manual CPU/NET limits are disabled by resource split");
+#endif
 
       int64_t current_ram, current_net, current_cpu;
       get_resource_limits( account, current_ram, current_net, current_cpu );
@@ -413,19 +430,29 @@ namespace eosiosystem {
       _producers.modify( prod, same_payer, [&](auto& p) {
             p.deactivate();
          });
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      refresh_rotation_candidate(producer);
+#endif
    }
 
    void system_contract::updtrevision( uint8_t revision ) {
       require_auth( get_self() );
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check(false, "vote-pay revisions are disabled; rewards depend only on produced blocks");
+#else
       check( _gstate2.revision < 255, "can not increment revision" ); // prevent wrap around
       check( revision == _gstate2.revision + 1, "can only increment revision by one" );
       check( revision <= 1, // set upper bound to greatest revision supported in the code
              "specified revision is not yet supported by the code" );
       _gstate2.revision = revision;
+#endif
    }
 
    void system_contract::setinflation( int64_t annual_rate, int64_t inflation_pay_factor, int64_t votepay_factor ) {
       require_auth(get_self());
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check(false, "reward halving policy is fixed; use a reviewed system upgrade");
+#endif
       check(annual_rate >= 0, "annual_rate can't be negative");
       if ( inflation_pay_factor < pay_factor_precision ) {
          check( false, "inflation_pay_factor must not be less than " + std::to_string(pay_factor_precision) );
@@ -441,6 +468,9 @@ namespace eosiosystem {
 
    void system_contract::setpayfactor( int64_t inflation_pay_factor, int64_t votepay_factor ) {
       require_auth(get_self());
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check(false, "reward halving policy is fixed; use a reviewed system upgrade");
+#endif
       if ( inflation_pay_factor < pay_factor_precision ) {
          check( false, "inflation_pay_factor must not be less than " + std::to_string(pay_factor_precision) );
       }
@@ -455,6 +485,9 @@ namespace eosiosystem {
    void system_contract::setschedule( const time_point_sec start_time, double continuous_rate )
    {
       require_auth( get_self() );
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check(false, "reward halving policy is fixed; use a reviewed system upgrade");
+#endif
 
       check(continuous_rate >= 0, "continuous_rate can't be negative");
       check(continuous_rate <= 1, "continuous_rate can't be over 100%");
@@ -476,6 +509,9 @@ namespace eosiosystem {
    void system_contract::delschedule( const time_point_sec start_time )
    {
       require_auth( get_self() );
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check(false, "reward halving policy is fixed; use a reviewed system upgrade");
+#endif
 
       auto itr = _schedules.require_find( start_time.sec_since_epoch(), "schedule not found" );
       _schedules.erase( itr );
@@ -483,11 +519,19 @@ namespace eosiosystem {
 
    void system_contract::execschedule()
    {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      check(false, "reward halving policy is fixed; use a reviewed system upgrade");
+#endif
       check(execute_next_schedule(), "no schedule to execute");
    }
 
    bool system_contract::execute_next_schedule()
    {
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      // Legacy queued rate changes cannot revive savings or undo a halving.
+      sync_reward_policy();
+      return false;
+#else
       auto itr = _schedules.begin();
       if (itr == _schedules.end()) return false; // no schedules to execute
 
@@ -498,6 +542,7 @@ namespace eosiosystem {
          return true;
       }
       return false;
+#endif
    }
 
    /**
@@ -570,6 +615,37 @@ namespace eosiosystem {
 
       auto itr = _rammarket.find(ramcore_symbol.raw());
       check( itr == _rammarket.end(), "system contract has already been initialized" );
+
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      // Inspect presence only: never decode legacy double rows using the v2 ABI.
+      for (const auto legacy : {"voters"_n, "producers"_n, "global"_n}) {
+         check(eosio::internal_use_do_not_use::db_lowerbound_i64(
+                  get_self().value, get_self().value, legacy.value, 0) < 0,
+               "integer voting requires empty legacy state; migration is not supported");
+      }
+      check(_voters.begin() == _voters.end() && _producers.begin() == _producers.end() &&
+            _rexbalance.begin() == _rexbalance.end(),
+            "single-choice voting requires empty voting and REX state");
+      direct_vote_policy_singleton policy(get_self(), get_self().value);
+      check(!policy.exists(), "direct voting policy has already been initialized");
+      policy.set(direct_vote_policy{}, get_self());
+      sync_reward_policy();
+#endif
+
+#ifdef PUREEOS_RESOURCE_SPLIT
+      resource_policy_singleton resource_policy(get_self(), get_self().value);
+      check(!resource_policy.exists() && !powerup_state_singleton(get_self(), 0).exists(),
+            "resource split requires empty resource policy and PowerUp state");
+      resource_policy.set(eosiosystem::resource_policy{}, get_self());
+#endif
+
+#ifdef PUREEOS_SEQUENTIAL_ROTATION
+      rotation_singleton rotations(get_self(), get_self().value);
+      check(!rotations.exists(), "rotation already initialized; migration is not supported");
+      rotation_info initial_rotation;
+      initial_rotation.growth_start_slot = block_timestamp(current_time_point()).slot;
+      rotations.set(initial_rotation, get_self());
+#endif
 
       auto system_token_supply   = eosio::token::get_supply(token_account, core.code() );
       check( system_token_supply.symbol == core, "specified core symbol does not exist (precision mismatch)" );
