@@ -1,5 +1,7 @@
 #include <eosio/chain/controller.hpp>
 #include <eosio/chain/transaction_context.hpp>
+#include <eosio/chain/parallel_worker_pool.hpp>
+#include <eosio/chain/parallel_canonical_adoption.hpp>
 
 #include <eosio/chain/block_log.hpp>
 #include <eosio/chain/fork_database.hpp>
@@ -1000,6 +1002,9 @@ struct controller_impl {
    authorization_manager           authorization;
    protocol_feature_manager        protocol_features;
    controller::config              conf;
+   std::unique_ptr<experimental::isolated_worker_pool> parallel_workers;
+   controller::parallel_execution_stats parallel_stats;
+   const std::shared_ptr<std::atomic<uint64_t>> parallel_interrupts = std::make_shared<std::atomic<uint64_t>>(0);
    // persist chain_head after vote_processor shutdown, avoids concurrent access, after chain_head & conf since this uses them
    fc::scoped_exit<std::function<void()>> write_chain_head = [&]() { chain_head.write(conf.state_dir / config::chain_head_filename); };
    const chain_id_type             chain_id; // read by thread_pool threads, value will not be changed
@@ -1356,6 +1361,8 @@ struct controller_impl {
     wasm_allocator_pool([]() -> vm::wasm_allocator* { return new vm::wasm_allocator; }),
     wasmif( conf.wasm_runtime, conf.eosvmoc_tierup, db, main_thread_timer, conf.state_dir, conf.eosvmoc_config, !conf.profile_accounts.empty() )
    {
+      EOS_ASSERT(cfg.parallel_validation_threads <= 16 && cfg.parallel_validation_batch_size > 0 &&
+                 cfg.parallel_validation_batch_size <= 64, plugin_config_exception, "invalid parallel validation bounds");
       assert(cfg.chain_thread_pool_size > 0);
       thread_pool.start( cfg.chain_thread_pool_size, [this]( const fc::exception& e ) {
          elog( "Exception in chain thread pool, exiting: ${e}", ("e", e.to_detail_string()) );
@@ -2258,6 +2265,9 @@ struct controller_impl {
    }
 
    ~controller_impl() {
+      // Module/thread destruction must precede runtime/controller teardown.
+      // run() waits for every copied-state job; no canonical DB refs can escape.
+      parallel_workers.reset();
       pending.reset();
 
       if (conf.truncate_at_block > 0 && chain_head.is_valid()) {
@@ -3170,6 +3180,67 @@ struct controller_impl {
    } FC_CAPTURE_AND_RETHROW() } /// push_scheduled_transaction
 
 
+   struct validation_attempts {
+      std::unique_ptr<experimental::ordered_attempt_batch> order;
+      std::vector<experimental::isolated_worker_outcome> outcomes;
+      std::vector<experimental::isolated_wasm_limits> limits;
+      experimental::isolated_cancel cancel;
+   };
+
+   std::unique_ptr<validation_attempts> prepare_validation_attempts(const signed_block& block, size_t begin) {
+      using namespace experimental;
+      if (!conf.parallel_validation_threads || conf.parallel_code_allowlist.empty() ||
+          conf.wasm_runtime != wasm_interface::vm_type::eos_vm || !conf.profile_accounts.empty() ||
+          skip_db_sessions() || skip_auth_check() || get_deep_mind_logger(false)) return {};
+#ifdef EOSIO_EOS_VM_OC_RUNTIME_ENABLED
+      if (wasmif.is_eos_vm_oc_enabled()) return {};
+#endif
+      try {
+         const isolated_cancel cancel{parallel_interrupts, parallel_interrupts->load(std::memory_order_relaxed)};
+         std::vector<prepared_isolated_action> actions;
+         std::vector<ordered_attempt_batch::request> requests;
+         std::set<table_key, table_key_less> keys;
+         for (size_t i = begin; i < block.transactions.size() && actions.size() < conf.parallel_validation_batch_size; ++i) {
+            const auto* packed = std::get_if<packed_transaction>(&block.transactions[i].trx);
+            if (!packed) break;
+            auto action = prepare_isolated_action(self, *packed);
+            if (!action || !conf.parallel_code_allowlist.contains(action->code_hash)) break;
+            const auto& tables = db.get_index<table_id_multi_index, by_code_scope_table>();
+            for (auto it = tables.lower_bound(boost::make_tuple(action->input.receiver));
+                 it != tables.end() && it->code == action->input.receiver; ++it) {
+               keys.insert({it->code, it->scope, it->table});
+               if (keys.size() > 64) return {};
+            }
+            requests.push_back({packed->id(), isolated_execution_fingerprint(action->code_hash, action->limits, action->input)});
+            actions.push_back(std::move(*action));
+         }
+         if (actions.empty()) return {};
+         chainbase_transaction_state_view view(db);
+         const std::vector<table_key> tables(keys.begin(), keys.end());
+         auto base = frozen_primary_state::capture(view, tables);
+         auto attempts = std::make_unique<validation_attempts>();
+         attempts->cancel = cancel;
+         attempts->order = std::make_unique<ordered_attempt_batch>(base, requests);
+         std::vector<isolated_worker_job> jobs;
+         for (size_t i = 0; i < actions.size(); ++i) {
+            attempts->limits.push_back(actions[i].limits);
+            jobs.push_back({attempts->order->get_ticket(i), std::move(actions[i].code), std::move(actions[i].input), actions[i].limits, cancel});
+         }
+         if (!parallel_workers) parallel_workers = std::make_unique<isolated_worker_pool>(conf.parallel_validation_threads);
+         attempts->outcomes = parallel_workers->run(std::move(jobs));
+         EOS_ASSERT(!cancel.stop_requested(), interrupt_exception, "parallel validation interrupted");
+         ++parallel_stats.batches;
+         parallel_stats.attempts += attempts->outcomes.size();
+         for (const auto& result : attempts->outcomes) parallel_stats.succeeded += bool(result.result);
+         return attempts;
+      } catch (const interrupt_exception&) { throw; }
+      catch (const std::exception&) {
+         // Only local pre-execution work was done. Preserve canonical acceptance
+         // by routing unsupported capabilities/budgets/allocation to serial.
+         return {};
+      }
+   }
+
    /**
     *  Adds the transaction receipt to the pending block and returns it.
     */
@@ -3201,12 +3272,16 @@ struct controller_impl {
                                            fc::microseconds max_transaction_time,
                                            uint32_t billed_cpu_time_us,
                                            bool explicit_billed_cpu_time,
-                                           int64_t subjective_cpu_bill_us )
+                                           int64_t subjective_cpu_bill_us,
+                                           const experimental::isolated_action_result* parallel_result = nullptr,
+                                           const experimental::isolated_wasm_limits* parallel_limits = nullptr,
+                                           bool* parallel_adopted = nullptr )
    {
       EOS_ASSERT(block_deadline != fc::time_point(), transaction_exception, "deadline cannot be uninitialized");
       performance::scope execution_timer(performance::stage::transaction_execute, !trx->implicit());
 
       transaction_trace_ptr trace;
+      if (parallel_adopted) *parallel_adopted = false;
       try {
          auto start = fc::time_point::now();
          const bool check_auth = !skip_auth_check() && !trx->implicit() && !trx->is_read_only();
@@ -3237,6 +3312,8 @@ struct controller_impl {
          trx_context.billed_cpu_time_us = billed_cpu_time_us;
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
+         trx_context.parallel_action_result = parallel_result;
+         trx_context.parallel_action_limits = parallel_limits;
 
          auto handle_exception =[&](const auto& e)
          {
@@ -3269,6 +3346,7 @@ struct controller_impl {
                );
             }
             trx_context.exec();
+            if (parallel_adopted) *parallel_adopted = trx_context.parallel_action_adopted;
             trx_context.finalize(); // Automatically rounds up network and CPU usage in trace and bills payers if successful
 
             auto restore = make_block_restore_point( trx->is_read_only() );
@@ -4021,16 +4099,37 @@ struct controller_impl {
             transaction_trace_ptr trace;
 
             size_t packed_idx = 0;
+            size_t receipt_idx = 0;
+            std::unique_ptr<validation_attempts> parallel_batch;
             const auto& trx_receipts = std::get<building_block>(pending->_block_stage).pending_trx_receipts();
             for( const auto& receipt : b->transactions ) {
+               if (!parallel_batch) parallel_batch = prepare_validation_attempts(*b, receipt_idx);
+               if (parallel_batch) EOS_ASSERT(!parallel_batch->cancel.stop_requested(), interrupt_exception, "parallel validation interrupted");
+               ++receipt_idx;
                auto num_pending_receipts = trx_receipts.size();
                if( std::holds_alternative<packed_transaction>(receipt.trx) ) {
                   const auto& trx_meta = (use_bsp_cached ? bsp->trxs_metas().at(packed_idx)
                                                          : (!!std::get<0>(trx_metas.at(packed_idx))
                                                                ? std::get<0>(trx_metas.at(packed_idx))
                                                                : std::get<1>(trx_metas.at(packed_idx)).get()));
-                  trace = push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(),
-                                           receipt.cpu_usage_us, true, 0);
+                  auto serial = [&] {
+                     if (parallel_batch) ++parallel_stats.serial_fallbacks;
+                     return push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(), receipt.cpu_usage_us, true, 0);
+                  };
+                  if (parallel_batch) {
+                     auto& order = *parallel_batch->order;
+                     const size_t index = order.next_index();
+                     trace = order.run_next(order.get_ticket(index), trx_meta->id(), parallel_batch->outcomes[index].result,
+                        [&](const experimental::isolated_action_result& result) {
+                           bool adopted = false;
+                           auto trace = push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(),
+                              receipt.cpu_usage_us, true, 0, &result, &parallel_batch->limits[index], &adopted);
+                           if (adopted) ++parallel_stats.adopted;
+                           else { ++parallel_stats.serial_fallbacks; order.discard_remaining(); }
+                           return trace;
+                        }, serial);
+                     if (order.complete()) parallel_batch.reset();
+                  } else trace = serial();
                   ++packed_idx;
                } else if( std::holds_alternative<transaction_id_type>(receipt.trx) ) {
                   trace = push_scheduled_transaction(std::get<transaction_id_type>(receipt.trx), receipt.cpu_usage_us, true);
@@ -4800,6 +4899,8 @@ struct controller_impl {
       if (!replaying) {
          if (applying_block) {
             if (interrupt == controller::interrupt_t::all_trx || interrupt == controller::interrupt_t::apply_block_trx) {
+               static_assert(std::atomic<uint64_t>::is_always_lock_free);
+               parallel_interrupts->fetch_add(1, std::memory_order_relaxed);
                dlog("Interrupting apply block trx...");
                main_thread_timer.interrupt_timer();
             }
@@ -5644,6 +5745,10 @@ transaction_trace_ptr controller::push_scheduled_transaction( const transaction_
 {
    validate_db_available_size();
    return my->push_scheduled_transaction( trxid, billed_cpu_time_us, explicit_billed_cpu_time );
+}
+
+controller::parallel_execution_stats controller::get_parallel_execution_stats() const {
+   return my->parallel_stats;
 }
 
 const flat_set<account_name>& controller::get_actor_whitelist() const {

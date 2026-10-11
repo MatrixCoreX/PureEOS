@@ -35,6 +35,9 @@ EXPLICIT_FILES = (
     "libraries/eos-vm/CMakeLists.txt",
     # This is an active source header, not generated build output.
     "libraries/softfloat/build/Linux-x86_64-GCC/platform.h",
+    # Legacy parser type-intern ownership is exercised by WASM/serial oracles.
+    "libraries/wasm-jit/Source/IR/Types.cpp",
+    "libraries/wasm-jit/Include/IR/Types.h",
 )
 REQUIRED_FILES = (
     "libraries/chain/controller.cpp",

@@ -143,6 +143,11 @@ namespace eosio::chain {
             uint32_t                 sig_cpu_bill_pct       =  chain::config::default_sig_cpu_bill_pct;
             uint16_t                 chain_thread_pool_size =  chain::config::default_controller_thread_pool_size;
             uint16_t                 vote_thread_pool_size  =  0;
+            // Local, default-off restricted interpreter experiment. No new wire
+            // format or consensus parameters; unsupported work stays serial.
+            uint16_t                 parallel_validation_threads = 0;
+            uint16_t                 parallel_validation_batch_size = 8;
+            flat_set<digest_type>    parallel_code_allowlist;
             bool                     read_only              =  false;
             bool                     force_all_checks       =  false;
             bool                     disable_replay_opts    =  false;
@@ -222,6 +227,12 @@ namespace eosio::chain {
                                                  fc::time_point deadline, fc::microseconds max_transaction_time,
                                                  uint32_t billed_cpu_time_us, bool explicit_billed_cpu_time,
                                                  int64_t subjective_cpu_bill_us );
+
+         struct parallel_execution_stats {
+            uint64_t batches = 0, attempts = 0, succeeded = 0, adopted = 0, serial_fallbacks = 0;
+         };
+         // Serial owner only; local diagnostics, never serialized into state.
+         parallel_execution_stats get_parallel_execution_stats() const;
 
          /**
           * Attempt to execute a specific transaction in our deferred trx database

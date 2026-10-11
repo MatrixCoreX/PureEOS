@@ -2,6 +2,8 @@
 
 日期：2026-10-11；开发分支：`feature/parallel-tx-execution`。
 
+> 本文为独立 WASM 初始阶段记录。后续已修订超时机制，并补充工作池、顺序校验和检查结果；当前进度以 [顺序批次记录](PX2_ORDERED_BATCH.md) 为准，下面的“尚在进行”不覆盖后续结果。
+
 ## 当前结论
 
 已实现测试专用的主键 iterator 适配器和独立 EOS VM interpreter 执行器。后者执行真实 WASM、读取有界冻结副本、产生私有更新和返回值；没有 controller、Chainbase、资源管理器或原 host 的引用。

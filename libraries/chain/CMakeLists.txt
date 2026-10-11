@@ -74,18 +74,16 @@ set(CHAIN_WEBASSEMBLY_SOURCES
 add_library(eosio_rapidjson INTERFACE)
 target_include_directories(eosio_rapidjson INTERFACE ../rapidjson/include)
 
-# PX1 read-boundary prototype: test-only dependency, not linked into nodeos.
-# Do not add this adapter to the production execution path before the isolation
-# and independent reference gates in docs/parallel-execution are satisfied.
+# Owned read boundary used by the default-off restricted validation experiment.
 add_library(pureeos_state_view_experimental STATIC EXCLUDE_FROM_ALL
   transaction_state_view.cpp parallel_state_overlay.cpp)
 target_link_libraries(pureeos_state_view_experimental PUBLIC chainbase fc softfloat)
 target_include_directories(pureeos_state_view_experimental PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-# Restricted independent WASM host; no controller integration and no production
-# enable switch until ordered adoption and differential gates are complete.
-add_library(pureeos_wasm_worker_experimental STATIC EXCLUDE_FROM_ALL parallel_wasm_worker.cpp)
+# Restricted independent WASM host; local settings default to disabled.
+add_library(pureeos_wasm_worker_experimental STATIC EXCLUDE_FROM_ALL
+  parallel_wasm_worker.cpp parallel_ordered_batch.cpp parallel_worker_pool.cpp)
 target_link_libraries(pureeos_wasm_worker_experimental PUBLIC pureeos_state_view_experimental eos-vm)
 
 ## SORT .cpp by most likely to change / break compile
@@ -105,6 +103,7 @@ add_library( eosio_chain
              qc.cpp
              finality_core.cpp
              controller.cpp
+             parallel_canonical_adoption.cpp
              authorization_manager.cpp
              resource_limits.cpp
              block_log.cpp
@@ -160,7 +159,7 @@ add_library( eosio_chain
 ## as an interface library
 ##        ** Remove the two lines below when upgrading to Boost 1.86 or above **
 ## ----------------------------------------------------------------------------------------------------
-target_link_libraries( eosio_chain PUBLIC bn256 fc chainbase eosio_rapidjson Logging IR WAST WASM
+target_link_libraries( eosio_chain PUBLIC pureeos_wasm_worker_experimental bn256 fc chainbase eosio_rapidjson Logging IR WAST WASM
                        softfloat builtins ${CHAIN_EOSVM_LIBRARIES} ${LLVM_LIBS} ${CHAIN_RT_LINKAGE}
                        Boost::signals2 Boost::hana Boost::property_tree Boost::multi_index Boost::asio Boost::lockfree
                        Boost::assign Boost::accumulators Boost::rational

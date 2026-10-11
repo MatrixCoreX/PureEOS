@@ -97,12 +97,19 @@ target_compile_definitions(unit_test PRIVATE SOFTFLOAT_FAST_INT64)
 add_test(NAME pureeos_parallel_softfloat COMMAND parallel_softfloat_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_softfloat PROPERTIES TIMEOUT 60 LABELS "parallel-px0")
 
-add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp)
+add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp)
 target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_testing
   state_history fc custom_appbase pureeos_wasm_worker_experimental ${PLATFORM_SPECIFIC_LIBS})
 target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
 add_test(NAME pureeos_parallel_wasm_worker COMMAND parallel_wasm_worker_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
+
+add_executable(parallel_validation_test main.cpp parallel_validation_tests.cpp)
+target_link_libraries(parallel_validation_test PRIVATE eosio_chain_wrap eosio_testing
+  state_history fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(parallel_validation_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+add_test(NAME pureeos_parallel_validation COMMAND parallel_validation_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_validation PROPERTIES TIMEOUT 300 LABELS "parallel-px3")
 
 # Opt-in native isolation checks, without pretending that non-instrumented
 # Chainbase/FC or the complete nodeos/JIT have been covered by sanitizers.
@@ -143,6 +150,49 @@ if(PUREEOS_PARALLEL_SANITIZERS)
   target_link_options(parallel_native_sanitizer_test PRIVATE "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
   add_test(NAME pureeos_parallel_native_sanitizer COMMAND parallel_native_sanitizer_test --report_level=detailed --color_output=no)
   set_tests_properties(pureeos_parallel_native_sanitizer PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer")
+
+  # Instrument the worker, its VM header implementation and owned state layer.
+  # The existing canonical controller/Chainbase/FC remain uninstrumented; this
+  # is not a whole-node sanitizer build. Whole-archive selects every instrumented
+  # SoftFloat definition before the normal chain dependency archive is searched.
+  add_executable(parallel_wasm_sanitizer_test EXCLUDE_FROM_ALL main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
+    ../libraries/chain/transaction_state_view.cpp ../libraries/chain/parallel_state_overlay.cpp
+    ../libraries/chain/parallel_wasm_worker.cpp ../libraries/chain/parallel_ordered_batch.cpp ../libraries/chain/parallel_worker_pool.cpp
+    ../libraries/chain/platform_timer_accuracy.cpp)
+  # A mixed-instrumentation run hung in the original POSIX timer calibration
+  # spin loop. Include the actual configured timer backend in this test build;
+  # do not disable signals or timer checks to bypass startup.
+  get_target_property(PUREEOS_CHAIN_SOURCES eosio_chain SOURCES)
+  get_target_property(PUREEOS_CHAIN_SOURCE_DIR eosio_chain SOURCE_DIR)
+  foreach(PUREEOS_CHAIN_SOURCE IN LISTS PUREEOS_CHAIN_SOURCES)
+    if(PUREEOS_CHAIN_SOURCE MATCHES "^platform_timer_(posix|asio_fallback|kqueue)\\.cpp$")
+      target_sources(parallel_wasm_sanitizer_test PRIVATE "${PUREEOS_CHAIN_SOURCE_DIR}/${PUREEOS_CHAIN_SOURCE}")
+    endif()
+  endforeach()
+  target_link_libraries(parallel_wasm_sanitizer_test PRIVATE
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,pureeos_softfloat_sanitized>"
+    eosio_chain_wrap eosio_testing state_history fc custom_appbase eos-vm ${PLATFORM_SPECIFIC_LIBS})
+  target_compile_options(parallel_wasm_sanitizer_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE
+    -O1 -g1 -fno-omit-frame-pointer "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  target_link_options(parallel_wasm_sanitizer_test PRIVATE "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  if(PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
+    # GCC libtsan here intercepts siglongjmp, but not glibc __longjmp_chk.
+    # Fortified VM signal jumps otherwise bypass TSan's signal-frame cleanup.
+    # Test-only compatibility option; production hardening is unchanged.
+    target_compile_options(parallel_wasm_sanitizer_test PRIVATE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0)
+  endif()
+  if(PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
+    # This target instruments the private execution path, NOT the existing
+    # controller used by the two serial-oracle cases. Keep that limitation in
+    # the test name and output; do not suppress mixed-build race diagnostics.
+    add_test(NAME pureeos_parallel_wasm_private_tsan COMMAND parallel_wasm_sanitizer_test
+      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution"
+      --report_level=detailed --color_output=no)
+    set_tests_properties(pureeos_parallel_wasm_private_tsan PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer;private-only")
+  else()
+    add_test(NAME pureeos_parallel_wasm_sanitizer COMMAND parallel_wasm_sanitizer_test --report_level=detailed --color_output=no)
+    set_tests_properties(pureeos_parallel_wasm_sanitizer PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer")
+  endif()
 endif()
 
 target_compile_options(unit_test PUBLIC -DDISABLE_EOSLIB_SERIALIZE)

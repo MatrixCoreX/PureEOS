@@ -6,6 +6,7 @@ import copy
 import importlib.util
 import io
 import json
+import re
 from pathlib import Path
 import tempfile
 import unittest
@@ -18,6 +19,22 @@ spec.loader.exec_module(audit)
 
 
 class ScannerTests(unittest.TestCase):
+    def test_denied_import_fixture_covers_current_production_inventory(self):
+        root = Path(__file__).resolve().parents[1]
+        inventory = audit.build_inventory(root)
+        production = {host["name"] for item in inventory["files"] for host in item["host_registrations"]}
+        fixture = (root / "unittests/parallel_audited_intrinsics.hpp").read_text()
+        declared = set(re.findall(r'^\s+"([A-Za-z_]\w*)",$', fixture, re.MULTILINE))
+        self.assertEqual(declared, production)
+        self.assertEqual(declared, set(audit.host_classifications()))
+        implementation = (root / "libraries/chain/parallel_wasm_worker.cpp").read_text()
+        supported = set(re.findall(r'^\s+ISOLATED_HOST\((\w+)\);$', implementation, re.MULTILINE))
+        tests = (root / "unittests/parallel_wasm_worker_tests.cpp").read_text()
+        allowlist = tests.split("const std::set<std::string_view> supported{", 1)[1].split("};", 1)[0]
+        expected = set(re.findall(r'"(\w+)"', allowlist))
+        self.assertEqual(supported, expected)
+        self.assertEqual(len(supported), 15)
+
     def test_comments_strings_and_raw_strings_are_not_accesses(self):
         source = '''// db.modify(fake);
 /* db.create<fake>(); */

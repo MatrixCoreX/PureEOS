@@ -65,6 +65,9 @@ namespace eosio::chain {
       // electorate freshness belong to the discarded execution, not its retry.
       system_upgrade.reset();
       upgrade_voters_action_ordinal.reset();
+      parallel_action_result = nullptr;
+      parallel_action_limits = nullptr;
+      parallel_action_adopted = false;
       *trace = transaction_trace{}; // reset trace
       initialize();
       transaction_timer.stop();

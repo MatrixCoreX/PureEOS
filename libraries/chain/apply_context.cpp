@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <eosio/chain/apply_context.hpp>
+#include <eosio/chain/parallel_canonical_adoption.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
@@ -113,7 +114,14 @@ void apply_context::exec_one()
                   control.check_action_list( act->account, act->name );
                }
                try {
-                  control.get_wasm_interface().execute( receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, *this );
+                  bool adopted = false;
+                  if (const auto* attempt = std::exchange(trx_context.parallel_action_result, nullptr)) {
+                     adopted = experimental::try_adopt_primary_result(*this, receiver_account->code_hash,
+                        receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits, *attempt);
+                     trx_context.parallel_action_adopted = adopted;
+                  }
+                  if (!adopted)
+                     control.get_wasm_interface().execute( receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, *this );
                } catch( const wasm_exit& ) {}
             }
 

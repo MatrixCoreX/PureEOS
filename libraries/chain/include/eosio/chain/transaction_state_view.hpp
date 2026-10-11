@@ -12,8 +12,8 @@ namespace chainbase { class database; }
 
 namespace eosio::chain::experimental {
 
-// PX1 prototype, NOT wired into controller/host_context. These owned values are
-// a read boundary, not an MVCC snapshot, read-set, iterator or write capability.
+// Owned values for the restricted validation experiment. The original host
+// remains the canonical writer. This boundary is not a general MVCC database.
 struct table_key {
    name code;
    name scope;
@@ -77,7 +77,7 @@ struct primary_prefix_result {
 
 // Local experimental limits/misuse, NOT consensus transaction exceptions.
 // A future speculative caller must fall back rather than reject a block on a
-// local read budget failure. There is intentionally no worker caller yet.
+// local read budget failure.
 struct state_view_read_limit_exceeded : std::runtime_error {
    state_view_read_limit_exceeded() : std::runtime_error("state view row exceeds local copy budget") {}
 };

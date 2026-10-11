@@ -2,9 +2,9 @@
 
 更新日期：2026-10-11。
 
-本目录是 `feature/parallel-tx-execution` 分支的实施记录。已建立 PX0 基线/访问审计、PX1 主键读取原型及 Savanna 串行对照，并继续开发有界状态副本和私有更新层；同时修复 SoftFloat 构建中的线程状态隔离问题。**没有开启普通交易并行，未部署新 nodeos 或修改系统合约。PX0 全入口审查、PX1 正式接入及 PX2–PX6 尚未完成。**
+本目录是 `feature/parallel-tx-execution` 分支的实施记录。已建立基线/访问审计、主键状态隔离、私有 WASM 工作池，并实现默认关闭的受限区块并行验证：成功试算可在原事务中按序采用，不再全部串行重跑。**尚未开放生产者并行打包，未部署新 nodeos 或修改系统合约，整个 PX0–PX6 计划尚未完成。**
 
-后续已加入私有 iterator 和独占模块的真实 WASM 执行测试；尚未实现按序采用到正式状态，不将其当作 PX2 最小交易闭环完成。最新边界和实测记录见下方 WASM 阶段文档。
+受限路径已达到 PX2 最小采用闭环，并通过首批 PX3 验证矩阵：串行与 1/2/4 线程逐块比较、非法区块撤销、分叉、快照、重启和检查式重放共 5 用例/712 断言，独立重复三次通过。完整矩阵和真实进程阶段仍在推进；并非所有 EOS 合约均支持并行，也没有 TPS 提升结论。
 
 ## 1. 原分支已经保存到哪里
 
@@ -28,10 +28,13 @@
 - [完整多核实施计划快照](plan-snapshot/PureEOS_多核并行交易执行_实施计划.md)
 - [性能总计划快照](plan-snapshot/PureEOS_性能优化与TPS提升_实施计划.md)
 - [PX0 首批访问审查记录](PX0_ACCESS_REVIEW.md)
+- [受限并行路径逐入口边界复审](PX0_RESTRICTED_BOUNDARY_REVIEW.md)
 - [首批测试与实际分支回退验证](VALIDATION_20261011.md)
 - [第二批：C++ 主键读取原型与 19 块串行对照](PX1_PRIMARY_READ_PROTOTYPE.md)
 - [后续：有界主键状态隔离基础与 SoftFloat 线程状态修复](PX2_ISOLATION_FOUNDATION.md)
 - [继续推进：私有迭代器、独立 WASM 执行器与实测边界](PX2_WASM_WORKER.md)
+- [最新：有界工作池、顺序校验与正式采用接入](PX2_ORDERED_BATCH.md)
+- [区块验证真实采用、错误块撤销与恢复差分](PX3_VALIDATION.md)
 - [源码指纹和候选访问清单](access-inventory.json)
 - 审计工具：`scripts/parallel_access_audit.py`
 - 工具测试：`tests/parallel_access_audit_test.py`

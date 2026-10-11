@@ -1,8 +1,8 @@
 #include <eosio/chain/parallel_wasm_worker.hpp>
 #include <eosio/vm/backend.hpp>
 #include <eosio/vm/host_function.hpp>
+#include <fc/io/raw.hpp>
 #include <algorithm>
-#include <condition_variable>
 #include <cstring>
 #include <functional>
 #include <mutex>
@@ -10,43 +10,32 @@
 namespace eosio::chain::experimental {
 namespace {
 
-// A bounded timer/cancellation guard. Destruction synchronizes with the callback
-// before backend::timed_run restores code permissions or the module is destroyed.
-class attempt_watchdog {
+// Interpreter-only cooperative interruption: every opcode still goes through
+// the original visitor. Polling bounds loops (including module start) without
+// creating a timer thread or asynchronously changing executable page rights.
+// This is a LOCAL attempt budget; timeout always selects serial fallback.
+class attempt_deadline {
 public:
-   attempt_watchdog(std::chrono::milliseconds duration, std::stop_token stop) : duration_(duration), stop_(stop) {}
-   template<typename F> class guard {
-   public:
-      guard(std::chrono::milliseconds duration, std::stop_token stop, F callback)
-         : stop_(stop), callback_(std::move(callback)),
-           stop_callback_(stop_, [this] { std::lock_guard lock(mutex_); condition_.notify_one(); }),
-           timer_([this, duration] {
-              std::unique_lock lock(mutex_);
-              condition_.wait_for(lock, duration, [&] { return done_ || stop_.stop_requested(); });
-              if (!done_) callback_();
-           }) {}
-      ~guard() {
-         { std::lock_guard lock(mutex_); done_ = true; }
-         condition_.notify_one();
-         timer_.join();
-      }
-      guard(const guard&) = delete;
-      guard& operator=(const guard&) = delete;
-   private:
-      std::stop_token stop_;
-      F callback_;
-      std::mutex mutex_;
-      std::condition_variable condition_;
-      bool done_ = false;
-      std::stop_callback<std::function<void()>> stop_callback_;
-      std::thread timer_;
-   };
-   template<typename F> auto scoped_run(F&& callback) {
-      return guard<std::decay_t<F>>(duration_, stop_, std::forward<F>(callback));
+   attempt_deadline(std::chrono::milliseconds duration, std::stop_token stop, isolated_cancel external)
+      : end_(std::chrono::steady_clock::now() + duration), stop_(stop), external_(std::move(external)) {}
+   void check() const {
+      if (stop_.stop_requested() || external_.stop_requested()) throw primary_state_invalid_attempt();
+      if (std::chrono::steady_clock::now() >= end_) throw eosio::vm::timeout_exception{"isolated attempt timed out"};
    }
 private:
-   std::chrono::milliseconds duration_;
+   std::chrono::steady_clock::time_point end_;
    std::stop_token stop_;
+   isolated_cancel external_;
+};
+
+template<typename Context> struct interruptible_visitor {
+   eosio::vm::interpret_visitor<Context> original;
+   const attempt_deadline& deadline;
+   uint32_t remaining = 1024;
+   template<typename Op> void operator()(const Op& op) {
+      if (--remaining == 0) { deadline.check(); remaining = 1024; }
+      original(op);
+   }
 };
 
 // Strict local subset; rejecting a module here only selects serial fallback.
@@ -64,10 +53,11 @@ struct isolated_host {
    primary_overlay_cursor& cursor;
    const isolated_action_input& input;
    std::stop_token stop;
+   isolated_cancel external;
    std::function<std::span<char>()> linear_memory;
    std::vector<char> return_value;
 
-   void check() const { if (stop.stop_requested()) throw primary_state_invalid_attempt(); }
+   void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
    std::span<char> memory(uint32_t offset, uint32_t size) {
       check();
       auto bytes = linear_memory();
@@ -162,6 +152,7 @@ struct isolated_wasm_module::impl {
    isolated_wasm_limits limits;
    isolated_vm_options options;
    std::vector<uint8_t> owned_code;
+   fc::sha256 code_hash;
    eosio::vm::wasm_allocator allocator;
    std::unique_ptr<backend> machine;
 
@@ -175,6 +166,7 @@ struct isolated_wasm_module::impl {
       options.max_call_depth = limits.max_call_depth;
       register_isolated_functions();
       owned_code.assign(code.begin(), code.end());
+      code_hash = fc::sha256::hash(code.data(), code.size());
       eosio::vm::wasm_code_ptr pointer(owned_code.data(), owned_code.size());
       // Do not run the module's start function before the attempt/timeout exist.
       // Interpreter two-pass parsing limits virtual mappings. No backend::share.
@@ -202,26 +194,56 @@ isolated_wasm_module::isolated_wasm_module(std::span<const char> code, isolated_
    : impl_(std::make_unique<impl>(code, limits)) {}
 isolated_wasm_module::~isolated_wasm_module() = default;
 
+fc::sha256 isolated_execution_fingerprint(const fc::sha256& code_hash, const isolated_wasm_limits& limits,
+                                          const isolated_action_input& input) {
+   fc::sha256::encoder encoder;
+   constexpr char domain[] = "pureeos/isolated-action/v1";
+   encoder.write(domain, sizeof(domain));
+   fc::raw::pack(encoder, code_hash);
+   fc::raw::pack(encoder, limits.max_pages);
+   fc::raw::pack(encoder, limits.max_call_depth);
+   fc::raw::pack(encoder, input.receiver);
+   fc::raw::pack(encoder, input.account);
+   fc::raw::pack(encoder, input.action);
+   fc::raw::pack(encoder, input.authorizations);
+   fc::raw::pack(encoder, input.data);
+   fc::raw::pack(encoder, input.max_return_bytes);
+   return encoder.result();
+}
+
 isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const frozen_primary_state> base,
-      const isolated_action_input& input, std::stop_token stop, primary_overlay_limits overlay_limits) {
+      const isolated_action_input& input, std::stop_token stop, primary_overlay_limits overlay_limits, isolated_cancel external) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
-   if (stop.stop_requested()) throw primary_state_invalid_attempt();
+   if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
    if (input.receiver != input.account || input.data.size() > impl_->limits.max_action_bytes ||
        input.authorizations.size() > impl_->limits.max_authorizations || input.max_return_bytes > impl_->limits.max_return_bytes)
       throw primary_state_unsupported();
+   const auto fingerprint = isolated_execution_fingerprint(impl_->code_hash, impl_->limits, input);
    primary_state_overlay state(std::move(base), overlay_limits);
    primary_overlay_cursor cursor(state, input.receiver);
    auto& machine = *impl_->machine;
-   isolated_host host{cursor, input, stop, [&]() -> std::span<char> {
+   isolated_host host{cursor, input, stop, external, [&]() -> std::span<char> {
       auto& context = machine.get_context();
-      return {context.linear_memory(), static_cast<size_t>(context.current_linear_memory()) * 65536u};
+      const int32_t pages = context.current_linear_memory();
+      // EOS VM uses -1 for modules with NO memory. Never convert that sentinel
+      // into a huge unsigned span. Zero-page memory calls conservatively fall
+      // back too; non-memory hosts remain usable without linear memory.
+      if (pages <= 0) throw primary_state_unsupported();
+      return {context.linear_memory(), static_cast<size_t>(pages) * 65536u};
    }, {}};
-   machine.timed_run(attempt_watchdog(impl_->limits.max_attempt_time, stop), [&] {
-      machine.initialize(&host, impl_->options);
-      machine.call(host, "env", "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
-   });
-   if (stop.stop_requested()) throw primary_state_invalid_attempt();
-   return {state.seal(), std::move(host.return_value)};
+   const attempt_deadline deadline(impl_->limits.max_attempt_time, stop, external);
+   auto& context = machine.get_context();
+   // Same reset/start sequence as backend::initialize, with a bounded visitor
+   // for BOTH start and apply. No shared VM module/context is introduced.
+   context.set_max_call_depth(impl_->options.max_call_depth);
+   context.set_max_pages(impl_->options.max_pages);
+   context.reset();
+   interruptible_visitor<std::remove_reference_t<decltype(context)>> visitor{{context}, deadline};
+   deadline.check();
+   context.execute_start(&host, visitor);
+   context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
+   deadline.check();
+   return {state.seal(), std::move(host.return_value), fingerprint};
 }
 
 } // namespace eosio::chain::experimental

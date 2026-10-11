@@ -39,7 +39,7 @@ struct primary_state_invalid_attempt : std::logic_error {
 
 // Bounded, explicitly selected tables copied by the serial owner, then exposed
 // as immutable owned values. No Chainbase references survive capture. The
-// controller's capture/quiescence/epoch lifecycle is NOT implemented here.
+// controller's batch lifetime is managed separately; this owns only copied data.
 // Unknown tables mean unsupported, NEVER "table does not exist".
 class frozen_primary_state final : public transaction_state_view {
 public:

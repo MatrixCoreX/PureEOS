@@ -9,6 +9,8 @@ namespace eosio::benchmark {
 
 namespace eosio::chain {
 
+   namespace experimental { struct isolated_action_result; struct isolated_wasm_limits; }
+
    struct transaction_checktime_timer {
       public:
          transaction_checktime_timer() = delete;
@@ -197,6 +199,12 @@ namespace eosio::chain {
          friend struct controller_impl;
          friend class apply_context;
          friend struct benchmark::interface_in_benchmark; // defined in benchmark/bls.cpp
+
+         // Non-owning, single-use capability supplied only by the serial
+         // controller during this synchronous push. Never survives undo/retry.
+         const experimental::isolated_action_result* parallel_action_result = nullptr;
+         const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
+         bool parallel_action_adopted = false;
 
          void add_ram_usage( account_name account, int64_t ram_delta );
 
