@@ -38,6 +38,7 @@ struct isolated_worker_pool::impl {
       // escape this thread and terminate the process before returning fallback.
       std::unique_ptr<isolated_transaction_executor> executor;
       std::unique_ptr<isolated_notification_executor> notification_executor;
+      std::unique_ptr<isolated_action_tree_executor> tree_executor;
       while (true) {
          std::shared_ptr<batch> current;
          size_t index;
@@ -51,8 +52,22 @@ struct isolated_worker_pool::impl {
          auto& outcome = current->outcomes[index];
          try {
             if (!job.ticket.stop_token().stop_requested() && !job.cancel.stop_requested()) {
-               if (job.notifications) {
+               if (job.tree) {
                   executor.reset();
+                  notification_executor.reset();
+                  if (!tree_executor) tree_executor = std::make_unique<isolated_action_tree_executor>();
+                  const auto& input = *job.tree;
+                  outcome.tree_result = tree_executor->execute(job.ticket.base(), input.roots, input.programs, input.context,
+                                                               job.ticket.stop_token(), {}, job.cancel);
+                  bool first = true;
+                  for (const auto& step : outcome.tree_result->steps) if (step.has_code) {
+                     if (first) { outcome.began = step.effects.began; first = false; }
+                     outcome.ended = step.effects.ended;
+                     outcome.elapsed += step.effects.elapsed;
+                  }
+               } else if (job.notifications) {
+                  executor.reset();
+                  tree_executor.reset();
                   if (!notification_executor) notification_executor = std::make_unique<isolated_notification_executor>();
                   const auto& input = *job.notifications;
                   outcome.notification_result = notification_executor->execute(job.ticket.base(), input.roots, input.programs,
@@ -65,6 +80,7 @@ struct isolated_worker_pool::impl {
                   }
                } else {
                   notification_executor.reset();
+                  tree_executor.reset();
                   if (!executor) executor = std::make_unique<isolated_transaction_executor>();
                   outcome.result = executor->execute(job.ticket.base(), job.actions, job.ticket.stop_token(), {}, job.cancel);
                   outcome.began = outcome.result->actions.front().began;
@@ -77,18 +93,21 @@ struct isolated_worker_pool::impl {
             // with a NEW batch/base; no worker ever follows a live DB pointer.
             outcome.result.reset();
             outcome.notification_result.reset();
+            outcome.tree_result.reset();
             outcome.request = missing.request;
          } catch (const isolated_receiver_missing& missing) {
             outcome.result.reset();
             outcome.notification_result.reset();
+            outcome.tree_result.reset();
             outcome.receiver_request = missing.receiver;
          } catch (...) {
             // Local capability/compile/timeout/allocation failure is NOT a
             // consensus rejection. Re-enter original execution on the owner.
             outcome.result.reset();
             outcome.notification_result.reset();
+            outcome.tree_result.reset();
          }
-         if (!outcome.result && !outcome.notification_result) {
+         if (!outcome.result && !outcome.notification_result && !outcome.tree_result) {
             outcome.elapsed = {};
             outcome.ended = std::chrono::steady_clock::now();
          }
@@ -108,19 +127,22 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
    if (jobs.empty() || jobs.size() > 64) throw primary_state_budget_exceeded();
    // Bound all copied inputs too, including jobs that later fail linking.
    for (const auto& job : jobs) {
-      if (job.notifications) {
-         const auto& input = *job.notifications;
-         if (!job.actions.empty() || input.roots.empty() || input.roots.size() > isolated_transaction_executor::max_actions ||
-             input.programs.empty() || input.programs.size() > isolated_notification_executor::max_programs)
+      if (job.notifications || job.tree) {
+         if ((job.notifications && job.tree) || !job.actions.empty()) throw primary_state_budget_exceeded();
+         const auto& roots = job.tree ? job.tree->roots : job.notifications->roots;
+         const auto& programs = job.tree ? job.tree->programs : job.notifications->programs;
+         const auto max_programs = job.tree ? isolated_action_tree_executor::max_programs : isolated_notification_executor::max_programs;
+         if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
+             programs.empty() || programs.size() > max_programs)
             throw primary_state_budget_exceeded();
          size_t code_bytes = 0, data_bytes = 0;
-         for (const auto& program : input.programs) {
+         for (const auto& program : programs) {
             if (program.code.size() > 64 * 1024 ||
                 program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
                throw primary_state_budget_exceeded();
             code_bytes += program.code.size();
          }
-         for (const auto& root : input.roots) {
+         for (const auto& root : roots) {
             if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
                 root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
                throw primary_state_budget_exceeded();

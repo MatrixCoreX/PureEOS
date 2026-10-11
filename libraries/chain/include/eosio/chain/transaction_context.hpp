@@ -9,7 +9,7 @@ namespace eosio::benchmark {
 
 namespace eosio::chain {
 
-   namespace experimental { struct isolated_transaction_result; struct isolated_notification_result; struct isolated_wasm_limits; }
+   namespace experimental { struct isolated_transaction_result; struct isolated_notification_result; struct isolated_action_tree_result; struct isolated_wasm_limits; }
 
    struct transaction_checktime_timer {
       public:
@@ -187,6 +187,7 @@ namespace eosio::chain {
          // A notification's ordinal is NOT execution order. Bind each charge
          // to the controller-owned receiver step and consume that step once.
          void charge_isolated_notification_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
+         void charge_isolated_tree_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
 
          std::tuple<int64_t, int64_t, bool, bool> max_bandwidth_billed_accounts_can_pay( bool force_elastic_limits = false )const;
@@ -213,6 +214,7 @@ namespace eosio::chain {
          // controller during this synchronous push. Never survives undo/retry.
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_notification_result* parallel_notification_result = nullptr;
+         const experimental::isolated_action_tree_result* parallel_tree_result = nullptr;
          const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
          std::optional<fc::microseconds> parallel_transaction_elapsed;
          size_t parallel_next_action = 0;
@@ -220,7 +222,7 @@ namespace eosio::chain {
          bool parallel_transaction_adopted = false;
 
          void add_ram_usage( account_name account, int64_t ram_delta );
-         void apply_isolated_cpu_charge(fc::microseconds elapsed); // validated by the two charge entry points
+         void apply_isolated_cpu_charge(fc::microseconds elapsed); // validated by the charge entry points
 
          action_trace& get_action_trace( uint32_t action_ordinal );
          const action_trace& get_action_trace( uint32_t action_ordinal )const;

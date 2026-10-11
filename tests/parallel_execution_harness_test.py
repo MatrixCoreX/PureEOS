@@ -88,7 +88,9 @@ class HarnessTest(unittest.TestCase):
                                (["--multi-action-fixture"], "requires --token-fixture"),
                                (["--token-fixture", "--ram-fixture", "--multi-action-fixture"], "cannot be combined"),
                                (["--token-fixture", "--lifecycle-fixture", "--multi-action-fixture"], "cannot be combined"),
-                               (["--token-fixture", "--coded-notification-fixture"], "cannot be combined")]:
+                               (["--token-fixture", "--coded-notification-fixture"], "cannot be combined"),
+                               (["--token-fixture", "--inline-fixture"], "cannot be combined"),
+                               (["--coded-notification-fixture", "--inline-fixture"], "cannot be combined")]:
             with self.subTest(flags=flags):
                 result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
                                         capture_output=True, text=True, timeout=15)
@@ -185,6 +187,58 @@ class HarnessTest(unittest.TestCase):
                 entries[1]["receipt"]["global_sequence"] = entries[0]["receipt"]["global_sequence"]
             with self.subTest(mutation=mutation), self.assertRaisesRegex(RuntimeError, message):
                 check_coded_notification_response({"actions": 2}, changed)
+
+    def test_inline_trace_checks_bind_original_sends_authority_and_nonordinal_execution(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_inline_response
+        receivers = ["test", "test", "carol", "bob", "blank", "bob", "carol", "carol", "blank",
+                     "carol", "bob", "blank", "bob", "carol", "carol", "blank"]
+        creators = [0, 0, 1, 1, 1, 1, 4, 4, 8, 2, 2, 2, 2, 11, 11, 15]
+        methods = ["run", "run", "run", "child", "run", "sibling", "child", "grand", "grand",
+                   "run", "child", "run", "sibling", "child", "grand", "grand"]
+        order = {ordinal: i + 100 for i, ordinal in enumerate((1, 3, 5, 4, 7, 8, 9, 6, 2, 10, 12, 11, 14, 15, 16, 13))}
+        traces = []
+        for ordinal, receiver, creator, method in zip(range(1, 17), receivers, creators, methods):
+            account = "test" if method == "run" else "carol" if method == "grand" else "bob"
+            actor = "alice" if method == "run" else account
+            traces.append({"action_ordinal": ordinal, "creator_action_ordinal": creator,
+                "closest_unnotified_ancestor_action_ordinal": creator,
+                "receipt": {"receiver": receiver, "global_sequence": order[ordinal]},
+                "act": {"account": account, "name": method, "data": 2 if ordinal == 2 or ordinal >= 10 else 1,
+                        "authorization": [{"actor": actor, "permission": "active"}]}})
+        response = {"processed": {"action_traces": traces}}
+        check_inline_response({"actions": 2}, response)
+        nested = deepcopy(traces)
+        for trace in nested:
+            creator = trace["creator_action_ordinal"]
+            if creator:
+                nested[creator - 1].setdefault("inline_traces", []).append(trace)
+        tree = {"processed": {"action_traces": nested[:2]}}
+        check_inline_response({"actions": 2}, tree)
+        cycle = deepcopy(tree)
+        cycle["processed"]["action_traces"][0]["inline_traces"].append(cycle["processed"]["action_traces"][0])
+        with self.assertRaisesRegex(RuntimeError, "bounds"):
+            check_inline_response({"actions": 2}, cycle)
+        for mutation, message in enumerate(("lost", "ordinals", "receiver", "ancestry", "target", "authorization", "payload", "execution order")):
+            changed = deepcopy(response); entries = changed["processed"]["action_traces"]
+            if mutation == 0:
+                entries.pop()
+            elif mutation == 1:
+                entries[3]["action_ordinal"] = 1
+            elif mutation == 2:
+                entries[3]["receipt"]["receiver"] = "alice"
+            elif mutation == 3:
+                entries[7]["closest_unnotified_ancestor_action_ordinal"] = 1
+            elif mutation == 4:
+                entries[3]["act"]["account"] = "test"
+            elif mutation == 5:
+                entries[3]["act"]["authorization"][0]["actor"] = "alice"
+            elif mutation == 6:
+                entries[3]["act"]["data"] = 2
+            else:
+                entries[5]["receipt"]["global_sequence"] = entries[3]["receipt"]["global_sequence"]
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(RuntimeError, message):
+                check_inline_response({"actions": 2}, changed)
 
     def test_checkpoint_wrong_finality_still_fails_at_deadline(self):
         node, point, info, _ = self.checkpoint_node()

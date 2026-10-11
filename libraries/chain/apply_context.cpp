@@ -107,28 +107,32 @@ void apply_context::exec_one()
                (*native)( *this );
             }
 
-            auto adopt_notification = [&] {
-               const auto* attempt = trx_context.parallel_notification_result;
-               if (!attempt) return false;
-               const bool adopted = trx_context.parallel_action_limits &&
-                  experimental::try_adopt_notification_result(*this, receiver_account->code_hash,
-                     receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits,
-                     *attempt, trx_context.parallel_next_receiver, trx_context.parallel_transaction_elapsed);
-               if (adopted) {
-                  if (++trx_context.parallel_next_receiver == attempt->steps.size()) {
-                     trx_context.parallel_transaction_adopted = true;
-                     trx_context.parallel_notification_result = nullptr;
+            auto adopt_receiver = [&] {
+               auto adopt = [&](auto*& attempt, auto adopter) {
+                  if (!attempt) return false;
+                  const bool adopted = trx_context.parallel_action_limits &&
+                     adopter(*this, receiver_account->code_hash,
+                        receiver_account->vm_type, receiver_account->vm_version, *trx_context.parallel_action_limits,
+                        *attempt, trx_context.parallel_next_receiver, trx_context.parallel_transaction_elapsed);
+                  if (adopted) {
+                     if (++trx_context.parallel_next_receiver == attempt->steps.size()) {
+                        trx_context.parallel_transaction_adopted = true;
+                        attempt = nullptr;
+                        trx_context.parallel_transaction_elapsed.reset();
+                     }
+                  } else {
+                     // Prefix cursors AND already queued inline actions belong
+                     // to original contexts. Continue current/tail execution;
+                     // never restart the prefix or catch partial replay errors.
+                     attempt = nullptr;
                      trx_context.parallel_transaction_elapsed.reset();
+                     trx_context.parallel_transaction_adopted = false;
                   }
-               } else {
-                  // The prefix's original cursor events are already present in
-                  // THIS apply_context. Continue the original current/tail VM;
-                  // never re-execute a prefix or catch a partially replayed step.
-                  trx_context.parallel_notification_result = nullptr;
-                  trx_context.parallel_transaction_elapsed.reset();
-                  trx_context.parallel_transaction_adopted = false;
-               }
-               return adopted;
+                  return adopted;
+               };
+               if (trx_context.parallel_tree_result)
+                  return adopt(trx_context.parallel_tree_result, experimental::try_adopt_action_tree_result);
+               return adopt(trx_context.parallel_notification_result, experimental::try_adopt_notification_result);
             };
 
             if( ( receiver_account->code_hash != digest_type() ) &&
@@ -143,7 +147,7 @@ void apply_context::exec_one()
                   control.check_action_list( act->account, act->name );
                }
                try {
-                  bool adopted = adopt_notification();
+                  bool adopted = adopt_receiver();
                   // Empty-code notifications must not consume the next root's
                   // capability. Top-level ordinals were allocated before any
                   // notifications; they are not the trace execution order.
@@ -173,7 +177,7 @@ void apply_context::exec_one()
             } else if (receiver_account->code_hash == digest_type()) {
                // Empty receivers still consume a proved execution step and
                // create their ORIGINAL receipt, but have zero private VM CPU.
-               (void)adopt_notification();
+               (void)adopt_receiver();
             }
 
             if (receiver == "eosio"_n && act->account == "eosio"_n && act->name == "govinit"_n && find_upgrade_governance(db)) {

@@ -8,6 +8,12 @@ struct isolated_notification_job {
    std::vector<isolated_receiver_program> programs;
 };
 
+struct isolated_action_tree_job {
+   std::vector<isolated_action_input> roots;
+   std::vector<isolated_receiver_program> programs;
+   isolated_action_tree_context context;
+};
+
 struct isolated_worker_job {
    ordered_attempt_batch::ticket ticket;
    std::vector<isolated_action_invocation> actions;
@@ -15,6 +21,7 @@ struct isolated_worker_job {
    // Mutually exclusive with actions. Every code/input byte is owned by this
    // joined job; the worker may only request another owned receiver NAME.
    std::optional<isolated_notification_job> notifications;
+   std::optional<isolated_action_tree_job> tree; // exclusive with BOTH legacy modes
    isolated_worker_job(ordered_attempt_batch::ticket tag, std::vector<isolated_action_invocation> calls, isolated_cancel stop = {})
       : ticket(std::move(tag)), actions(std::move(calls)), cancel(std::move(stop)) {}
    isolated_worker_job(ordered_attempt_batch::ticket tag, std::vector<char> code, isolated_action_input input,
@@ -26,11 +33,17 @@ struct isolated_worker_job {
                        std::vector<isolated_receiver_program> programs, isolated_cancel stop = {})
       : ticket(std::move(tag)), cancel(std::move(stop)),
         notifications(isolated_notification_job{std::move(roots), std::move(programs)}) {}
+   isolated_worker_job(ordered_attempt_batch::ticket tag, std::vector<isolated_action_input> roots,
+                       std::vector<isolated_receiver_program> programs, isolated_action_tree_context context,
+                       isolated_cancel stop = {})
+      : ticket(std::move(tag)), cancel(std::move(stop)),
+        tree(isolated_action_tree_job{std::move(roots), std::move(programs), context}) {}
 };
 
 struct isolated_worker_outcome {
    std::optional<isolated_transaction_result> result; // legacy root-only mode
    std::optional<isolated_notification_result> notification_result; // requires whole-tree canonical preflight
+   std::optional<isolated_action_tree_result> tree_result; // requires tree preflight AND original send-time authorization
    std::chrono::steady_clock::time_point began, ended; // local diagnostics only
    std::chrono::microseconds elapsed{}; // successful step sum; excludes compilation and queueing
    std::optional<state_capture_request> request; // discovery only; no partial result is adoptable

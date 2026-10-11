@@ -1,7 +1,7 @@
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
-#include <eosio/chain/parallel_wasm_worker.hpp>
+#include <eosio/chain/parallel_action_tree.hpp>
 #include <eosio/chain/authorization_manager.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/resource_limits.hpp>
@@ -68,6 +68,7 @@ namespace eosio::chain {
       upgrade_voters_action_ordinal.reset();
       parallel_transaction_result = nullptr;
       parallel_notification_result = nullptr;
+      parallel_tree_result = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -590,7 +591,7 @@ namespace eosio::chain {
    void transaction_context::charge_isolated_cpu(fc::microseconds elapsed, uint32_t action_ordinal) {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() &&
                  !is_implicit() && !is_scheduled() && action_ordinal > 0 &&
-                 !parallel_notification_result && isolated_cpu_notification_steps == 0 &&
+                 !parallel_notification_result && !parallel_tree_result && isolated_cpu_notification_steps == 0 &&
                  action_ordinal == isolated_cpu_last_action_ordinal + 1 &&
                  action_ordinal <= packed_trx.get_transaction().actions.size() &&
                  elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
@@ -604,7 +605,7 @@ namespace eosio::chain {
    void transaction_context::charge_isolated_notification_cpu(fc::microseconds elapsed, size_t step_index,
                                                                uint32_t action_ordinal) {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
-                 parallel_notification_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
+                 parallel_notification_result && !parallel_tree_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_notification_result->steps.size() && action_ordinal > 0 &&
                  parallel_notification_result->steps[step_index].action_ordinal == action_ordinal &&
@@ -614,6 +615,22 @@ namespace eosio::chain {
                  transaction_exception, "invalid isolated notification CPU charge");
       checktime();
       ++isolated_cpu_notification_steps;
+      apply_isolated_cpu_charge(elapsed);
+   }
+
+   void transaction_context::charge_isolated_tree_cpu(fc::microseconds elapsed, size_t step_index,
+                                                     uint32_t action_ordinal) {
+      EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
+                 parallel_tree_result && !parallel_notification_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
+                 step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
+                 step_index < parallel_tree_result->steps.size() && action_ordinal > 0 &&
+                 parallel_tree_result->steps[step_index].action_ordinal == action_ordinal &&
+                 parallel_tree_result->steps[step_index].effects.elapsed.count() == elapsed.count() &&
+                 elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
+                 pseudo_start.time_since_epoch() >= elapsed,
+                 transaction_exception, "invalid isolated tree CPU charge");
+      checktime();
+      ++isolated_cpu_notification_steps; // shared receiver-order guard forbids changing modes mid-transaction
       apply_isolated_cpu_charge(elapsed);
    }
 

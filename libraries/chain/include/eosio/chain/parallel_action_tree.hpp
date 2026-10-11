@@ -7,7 +7,7 @@
 namespace eosio::chain::experimental {
 
 // Caller-owned protocol observations, NOT permission to bypass original checks.
-// A future adopter must compare these to the current original configuration.
+// The adopter must compare these to the current original configuration.
 struct isolated_action_tree_context {
    uint32_t max_inline_action_size = config::default_max_inline_action_size;
    uint32_t max_inline_action_depth = config::default_max_inline_action_depth;
@@ -20,7 +20,7 @@ struct isolated_tree_inline_event {
    uint32_t action_ordinal = 0; // assigned in host-event order, NOT execution order
 };
 // Do not extend the existing notification journal: its adopter cannot accept
-// inline events. This separate result type has NO canonical adoption entry point.
+// inline events. This separate result type requires its own canonical adopter.
 using isolated_action_tree_event = std::variant<isolated_cursor_event, isolated_tree_inline_event>;
 
 struct isolated_action_tree_group {

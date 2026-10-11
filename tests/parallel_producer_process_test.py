@@ -80,6 +80,45 @@ def check_coded_notification_response(entry, response):
     require(all(a < b for a, b in zip(sequences, sequences[1:])), "Notification receipt execution order changed")
 
 
+def check_inline_response(entry, response):
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 16:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending, "Inline trace tree exceeds fixture bounds")
+    require(entry["actions"] == 2 and len(traces) == 16, "Inline fixture lost a receiver or root")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 17)), "Inline ordinals are missing or repeated")
+    execution = []
+    for index in range(2):
+        root, base = index + 1, 2 + index * 7
+        # ordinal, receiver, creator, closest unnotified ancestor, action, permission actor
+        specs = [(root, "test", 0, 0, "run", "alice"),
+                 (base + 1, "carol", root, root, "run", "alice"),
+                 (base + 2, "bob", root, root, "child", "bob"),
+                 (base + 3, "blank", root, root, "run", "alice"),
+                 (base + 4, "bob", root, root, "sibling", "bob"),
+                 (base + 5, "carol", base + 2, base + 2, "child", "bob"),
+                 (base + 6, "carol", base + 2, base + 2, "grand", "carol"),
+                 (base + 7, "blank", base + 6, base + 6, "grand", "carol")]
+        for ordinal, receiver, creator, ancestor, action, actor in specs:
+            trace = by_ordinal[ordinal]
+            require(trace["receipt"]["receiver"] == receiver, "Inline receiver changed")
+            require(trace["creator_action_ordinal"] == creator and
+                    trace["closest_unnotified_ancestor_action_ordinal"] == ancestor, "Inline ancestry changed")
+            account = "test" if action == "run" else "carol" if action == "grand" else "bob"
+            require(trace["act"]["account"] == account and trace["act"]["name"] == action,
+                    "Inline action target changed")
+            require(trace["act"]["authorization"] == [{"actor": actor, "permission": "active"}],
+                    "Inline authorization declaration changed")
+            require(trace["act"]["data"] == by_ordinal[root]["act"]["data"], "Inline action payload changed")
+        execution.extend((root, base + 1, base + 3, base + 2, base + 5, base + 6, base + 7, base + 4))
+    sequences = [int(by_ordinal[ordinal]["receipt"]["global_sequence"]) for ordinal in execution]
+    require(all(a < b for a, b in zip(sequences, sequences[1:])), "Inline receipt execution order changed")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--old-nodeos", type=Path, required=True)
@@ -92,6 +131,7 @@ def main():
     parser.add_argument("--lifecycle-fixture", action="store_true", help="With --token-fixture, first transfer creates the recipient balance and table")
     parser.add_argument("--multi-action-fixture", action="store_true", help="With --token-fixture, execute dependent transfers and close in one transaction")
     parser.add_argument("--coded-notification-fixture", action="store_true", help="Two roots with shared-cursor coded notifications and child-owned writes")
+    parser.add_argument("--inline-fixture", action="store_true", help="Two roots with ordinary inline children, coded notifications, lifecycle writes and original authorization")
     args = parser.parse_args()
     if args.ram_fixture and not args.token_fixture:
         parser.error("--ram-fixture requires --token-fixture")
@@ -101,6 +141,8 @@ def main():
         parser.error("--multi-action-fixture requires --token-fixture and cannot be combined with RAM/lifecycle flags")
     if args.coded_notification_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture):
         parser.error("--coded-notification-fixture cannot be combined with token/RAM/lifecycle/multi-action flags")
+    if args.inline_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture):
+        parser.error("--inline-fixture cannot be combined with other fixture flags")
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
     require(sha256(old) == args.old_sha256, "Original binary hash changed")
@@ -108,7 +150,8 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
-              "fixture_kind": "coded-notification-multiple-actions" if args.coded_notification_fixture else
+              "fixture_kind": "ordinary-inline-multiple-actions" if args.inline_fixture else
+                              "coded-notification-multiple-actions" if args.coded_notification_fixture else
                               "real-token-multiple-actions" if args.multi_action_fixture else
                               "real-token-first-balance" if args.lifecycle_fixture else
                               "real-token-payer-change" if args.ram_fixture else "real-token" if args.token_fixture else "existing-row-wat",
@@ -124,6 +167,12 @@ def main():
             group.mkdir()
             corpus = group / "corpus"
             env = {**os.environ, "PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR": str(corpus)}
+            env.pop("PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR", None)
+            export_test = "parallel_production_tests/export_fresh_live_producer_fixture"
+            if args.inline_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_inline_adoption_tests/export_fresh_inline_producer_fixture"
             if args.token_fixture:
                 env["PUREEOS_PARALLEL_PRODUCER_TOKEN"] = "1"
             else:
@@ -145,7 +194,7 @@ def main():
             else:
                 env.pop("PUREEOS_PARALLEL_PRODUCER_CODED_NOTIFICATIONS", None)
             with (group / "export.log").open("x") as log:
-                result = subprocess.run([str(exporter), "--run_test=parallel_production_tests/export_fresh_live_producer_fixture",
+                result = subprocess.run([str(exporter), "--run_test=" + export_test,
                     "--report_level=detailed", "--color_output=no"], env=env, cwd=group,
                     stdout=log, stderr=subprocess.STDOUT, timeout=120)
             require(result.returncode == 0, "Fresh fixture export failed: " + str(group))
@@ -203,6 +252,8 @@ def main():
                 require(response["processed"]["receipt"]["status"] == "executed", "Speculative submission failed")
                 if args.coded_notification_fixture:
                     check_coded_notification_response(entry, response)
+                if args.inline_fixture:
+                    check_inline_response(entry, response)
                 if args.multi_action_fixture:
                     ram = check_multi_action_response(entry, response, not responses)
                     if not responses:

@@ -1,5 +1,5 @@
 #pragma once
-#include <eosio/chain/parallel_wasm_worker.hpp>
+#include <eosio/chain/parallel_action_tree.hpp>
 #include <fc/time.hpp>
 
 namespace eosio::chain {
@@ -28,6 +28,11 @@ std::optional<std::vector<prepared_isolated_action>> prepare_isolated_transactio
 std::optional<isolated_receiver_program> prepare_isolated_receiver_program(
    const controller&, name receiver, std::span<const isolated_action_input> roots);
 
+// Owner-only code/metadata capture, NOT dynamic native-handler eligibility.
+// Tree adoption must check every actual (receiver, account, action) separately.
+std::optional<isolated_receiver_program> prepare_isolated_tree_program(const controller&, name receiver);
+isolated_action_tree_context current_action_tree_context(const controller&);
+
 // Called at the original WASM execution point, AFTER transaction init/auth and
 // native/blacklist guards. First step preflights the WHOLE transaction before
 // any canonical write. False never changes THIS action; any previously adopted
@@ -46,6 +51,14 @@ bool try_adopt_primary_result(apply_context&, const fc::sha256& code_hash, uint8
 // cursor state allows the original VM to continue without replaying that prefix.
 bool try_adopt_notification_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
    const isolated_wasm_limits&, const isolated_notification_result&, size_t step_index,
+   std::optional<fc::microseconds> production_elapsed = {});
+
+// Ordinary inline tree: step zero binds ALL dynamic native/code pairs and the
+// frozen journal to current state. Each send re-enters ORIGINAL send_inline and
+// its immediate authorization at the recorded position. Never retains an action
+// trace reference across scheduling (the underlying vector may reallocate).
+bool try_adopt_action_tree_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
+   const isolated_wasm_limits&, const isolated_action_tree_result&, size_t step_index,
    std::optional<fc::microseconds> production_elapsed = {});
 
 } // namespace eosio::chain::experimental

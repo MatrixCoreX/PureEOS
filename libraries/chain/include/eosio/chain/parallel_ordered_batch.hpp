@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <eosio/chain/parallel_wasm_worker.hpp>
+#include <eosio/chain/parallel_action_tree.hpp>
 #include <fc/crypto/sha256.hpp>
 #include <functional>
 #include <type_traits>
@@ -58,11 +58,11 @@ public:
    decltype(auto) run_next(const ticket& tag, const fc::sha256& expected_transaction,
                           const std::optional<Result>& attempt, Adopt&& adopt, Serial&& serial) {
       static_assert(std::is_same_v<Result, isolated_action_result> || std::is_same_v<Result, isolated_transaction_result> ||
-                    std::is_same_v<Result, isolated_notification_result>);
+                    std::is_same_v<Result, isolated_notification_result> || std::is_same_v<Result, isolated_action_tree_result>);
       check_next(tag, expected_transaction); // stale/foreign/repeated/out-of-order is a caller bug
       try {
          const bool use_private = attempt && [&] {
-            if constexpr (std::is_same_v<Result, isolated_notification_result>)
+            if constexpr (std::is_same_v<Result, isolated_notification_result> || std::is_same_v<Result, isolated_action_tree_result>)
                return can_use(attempt->state, attempt->root_fingerprint);
             else return can_use(attempt->state, attempt->execution_fingerprint);
          }();

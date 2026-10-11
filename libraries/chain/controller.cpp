@@ -1009,7 +1009,7 @@ struct controller_impl {
    bool parallel_production_scope = false;
    struct production_adoption_slot {
       transaction_metadata_ptr expected;
-      const experimental::isolated_notification_result& result;
+      const experimental::isolated_action_tree_result& result;
       const experimental::isolated_wasm_limits& limits;
       fc::microseconds elapsed;
       experimental::ordered_attempt_batch& order;
@@ -3212,7 +3212,7 @@ struct controller_impl {
       if (wasmif.is_eos_vm_oc_enabled()) return {};
 #endif
       try {
-         std::vector<isolated_notification_job> invocations;
+         std::vector<isolated_action_tree_job> invocations;
          std::vector<ordered_attempt_batch::request> requests;
          size_t max_action_count = 1;
          for (const auto* packed : packed_inputs) {
@@ -3222,7 +3222,8 @@ struct controller_impl {
                   return !conf.parallel_code_allowlist.contains(action.code_hash);
                })) break;
             std::vector<fc::sha256> fingerprints;
-            isolated_notification_job invocation;
+            isolated_action_tree_job invocation;
+            invocation.context = current_action_tree_context(self);
             for (const auto& action : *transaction) {
                fingerprints.push_back(isolated_execution_fingerprint(action.code_hash, action.limits, action.input));
                invocation.roots.push_back(action.input);
@@ -3230,12 +3231,12 @@ struct controller_impl {
             std::set<name> seeded;
             bool eligible = true;
             for (const auto& root : invocation.roots) if (seeded.insert(root.receiver).second) {
-               auto program = prepare_isolated_receiver_program(self, root.receiver, invocation.roots);
+               auto program = prepare_isolated_tree_program(self, root.receiver);
                if (!program) { eligible = false; break; }
                invocation.programs.push_back(std::move(*program));
             }
             if (!eligible) break;
-            requests.push_back({packed->id(), isolated_transaction_fingerprint(fingerprints)});
+            requests.push_back({packed->id(), isolated_action_tree_fingerprint(fingerprints, invocation.context)});
             max_action_count = std::max(max_action_count, transaction->size());
             invocations.push_back(std::move(invocation));
          }
@@ -3275,7 +3276,7 @@ struct controller_impl {
             for (size_t i = 0; i < invocations.size(); ++i) {
                const auto& input = invocations[i];
                attempts->limits.push_back(input.programs.front().limits);
-               jobs.emplace_back(attempts->order->get_ticket(i), input.roots, input.programs, private_cancel);
+               jobs.emplace_back(attempts->order->get_ticket(i), input.roots, input.programs, input.context, private_cancel);
             }
             performance::since(performance::stage::parallel_capture, capture_started);
             if (round == 0) ++stats.batches;
@@ -3285,7 +3286,7 @@ struct controller_impl {
             }
             // Count ALL actual attempts, including discarded discovery passes.
             stats.attempts += attempts->outcomes.size();
-            for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.notification_result);
+            for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.tree_result);
             checkpoint();
             bool requested = false, extended = false;
             for (size_t i = 0; i < attempts->outcomes.size(); ++i) {
@@ -3306,8 +3307,8 @@ struct controller_impl {
                   const auto receiver = *result.receiver_request;
                   if (std::none_of(input.programs.begin(), input.programs.end(), [&](const auto& p) { return p.receiver == receiver; })) {
                      checkpoint();
-                     if (input.programs.size() >= isolated_notification_executor::max_programs) throw primary_state_budget_exceeded();
-                     auto program = prepare_isolated_receiver_program(self, receiver, input.roots);
+                     if (input.programs.size() >= isolated_action_tree_executor::max_programs) throw primary_state_budget_exceeded();
+                     auto program = prepare_isolated_tree_program(self, receiver);
                      if (!program) program = isolated_receiver_program{receiver, {}, input.programs.front().limits, true};
                      if (!program->code.empty() && !conf.parallel_code_allowlist.contains(
                            fc::sha256::hash(program->code.data(), program->code.size()))) {
@@ -3394,8 +3395,8 @@ struct controller_impl {
          bool proceed;
          if (attempts && i < attempts->outcomes.size()) {
             auto& order = *attempts->order;
-            proceed = order.run_next(order.get_ticket(i), transactions[i]->id(), attempts->outcomes[i].notification_result,
-               [&](const experimental::isolated_notification_result& result) {
+            proceed = order.run_next(order.get_ticket(i), transactions[i]->id(), attempts->outcomes[i].tree_result,
+               [&](const experimental::isolated_action_tree_result& result) {
                   production_adoption_slot slot{transactions[i], result, attempts->limits[i],
                      fc::microseconds(attempts->outcomes[i].elapsed.count()), order, cancel, generation};
                   production_slot = &slot;
@@ -3447,7 +3448,7 @@ struct controller_impl {
                                            uint32_t billed_cpu_time_us,
                                            bool explicit_billed_cpu_time,
                                            int64_t subjective_cpu_bill_us,
-                                           const experimental::isolated_notification_result* parallel_result = nullptr,
+                                           const experimental::isolated_action_tree_result* parallel_result = nullptr,
                                            const experimental::isolated_wasm_limits* parallel_limits = nullptr,
                                            bool* parallel_adopted = nullptr,
                                            std::optional<fc::microseconds> parallel_elapsed = {} )
@@ -3487,7 +3488,7 @@ struct controller_impl {
          trx_context.billed_cpu_time_us = billed_cpu_time_us;
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
-         trx_context.parallel_notification_result = parallel_result;
+         trx_context.parallel_tree_result = parallel_result;
          trx_context.parallel_action_limits = parallel_limits;
          trx_context.parallel_transaction_elapsed = parallel_elapsed;
 
@@ -4297,8 +4298,8 @@ struct controller_impl {
                   if (parallel_batch) {
                      auto& order = *parallel_batch->order;
                      const size_t index = order.next_index();
-                     trace = order.run_next(order.get_ticket(index), trx_meta->id(), parallel_batch->outcomes[index].notification_result,
-                        [&](const experimental::isolated_notification_result& result) {
+                     trace = order.run_next(order.get_ticket(index), trx_meta->id(), parallel_batch->outcomes[index].tree_result,
+                        [&](const experimental::isolated_action_tree_result& result) {
                            bool adopted = false;
                            auto trace = push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(),
                               receipt.cpu_usage_us, true, 0, &result, &parallel_batch->limits[index], &adopted);

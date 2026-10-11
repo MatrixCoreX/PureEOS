@@ -61,9 +61,10 @@
 - [x] G5c2b 将已验证的轨迹接入代码捕获、全树预检和真实生产/验证。
 - [x] G5c2b1 冻结副本全树预检：重建通知队列/共享游标和全部变更，核对代码指纹、写入对象代际、读取依赖覆盖及有界计费；此独立检查不能替代当前链状态、权限或资源验证。
 - [ ] G5c3 inline 与同步调用：分别完成发送位置的原授权、深度/序号/返回传播，以及嵌套独占 VM/资源池与耗尽保护。
-- [ ] G5c3a 普通 inline 的私有树基础及正式采用：发送事件绑定完整 action，通知组结束后按原队列执行；发送时由原 `execute_inline` 验证账户、权限和授权，不能把私有 require_auth 当作 inline 授权证明。
+- [x] G5c3a 普通 inline 的私有树基础及正式采用：发送事件绑定完整 action，通知组结束后按原队列执行；发送时由原 `execute_inline` 验证账户、权限和授权，不能把私有 require_auth 当作 inline 授权证明。a0–a2 和 a3 分别验收，见 [正式接入记录](PX7_G5C3A3_RESULTS.md)，其余 G5/G6/G7 未完成。
 - [ ] G5c3b context-free inline：单独建模禁止状态访问、无授权及先于普通 inline 的调度，不作为普通 inline 的附赠能力。
 - [ ] G5c3c 同步调用：先修复并验证资源池 Release 耗尽/分配失败防护，再建模立即返回、嵌套独占 VM、缓存失效、资源与异常传播；资源池修复本身不代表 sync-call 已可并行。
+- G5c3c0 前置修复设计：`sync_call_resource_pool.hpp` 明确拥有所有资源；借还登记用短临界区，锁外执行合约及资源工厂。扩容先检查数量乘法、准备全部资源与归还容量，再一次发布；中途失败不改变线程数/深度或暴露成功前缀。空池用运行时检查，正常归还不分配、不抛出，拒绝空/外来/重复归还；析构前仍要求所有使用线程停止。新增独立用例覆盖 Release 耗尽、空/抛异常/重复工厂、部分增长回滚、乘法溢出、嵌套并发及增长期间借还，随后复测原同步调用与只读线程。短锁只串行化登记，不覆盖 WASM；此设计不宣称锁开销为零。调用方仍需检查多资源申请中第二次失败时的第一次资源回收，OC 分层池需另审查，不能把通用池通过当作 OC 已验证。
 - [ ] G6 二级索引及一般接口。
 - [ ] G7 性能、稳定性与推广判定。
 
@@ -185,6 +186,12 @@ a1 的 receiver 字节码目录只供独立私有计算，不是动态 inline �
 a1/a2 初次调用树测试因新 WAT 夹具拼接多了右括号，在进入执行器之前失败；保留 `tree-first.log`，修正夹具后 `tree-second.log` 的 11 项/582 条通过，其中原串行 trace 对照 275 条。随后继续补 `get_sender`，仅在私有树入口返回实际 creator receiver，并将其与组、ancestor、ordinal、深度及协议配置一起纳入步骤指纹；老三类入口仍不能调用。新增原权限拒绝/缺失 permission、显式 `eosio.code` 授权成功、孙动作 trap 撤销测试，尚待完整回归与插桩，不将上述中间初验当作最终验收。
 
 a3 接入前的进一步代码复核：`ordered_attempt_batch::run_next` 目前只接受旧三种结果，工作池、controller 的 production slot、交易上下文指针和 CPU 防重复检查仍是通知类型，必须连同 reset 一起显式适配，不能只在 host 注册表放开 inline。原 `apply_context` 的 `recurse_depth` 和 `first_receiver_action_ordinal` 是私有字段，新增 adopter 需只读校验实际组和深度；`get_sender()` 已有原接口可对照。receiver 字节码可以先按名称由 owner 有界捕获，但正式首次写入前必须另外逐执行步检查真实 `(receiver, group.input.account, group.input.action)` 的原生处理器/特权能力，顶层 root 的组合检查不是 inline 的证明。
+
+2026-10-12：a0–a2 已保存为 `ef0c457`。a3 正式接入开发中：工作池新增互斥 tree 任务/结果并在切换时销毁旧 executor；协调器绑定树域指纹，controller 的生产与验证改用树任务；交易上下文新增独立结果指针及逐 receiver CPU 防重复入口，reset 清除新能力。新 adopter 首步检查所有动态调用对和当前代码/依赖，按混合事件顺序调用原 `send_inline`；通知/inline 调度后不保留 trace 引用。新增生产/验证/权限/RAM/深层失败及混合任务测试正在编译，尚未验收。证据目录 `build/local-tests/parallel-inline-adoption-20261012-deGm6P/`。
+
+a3 后续：完整普通 worker 三轮各 106 项/7,915 条，核心三轮各 43 入口/11,236 条，当前 token 三轮通过。已确认实际 WASM 的 2/4 线程执行重叠，补齐原授权/RAM/孙动作失败、真实原生 inline 边界、晚回退不重复父状态及 trace 扩容检查。inline 专用生产/恢复夹具已导出验证，继续 sanitizer 和 nodeos 进程验收；阶段证据与未完成项见 [a3 记录](PX7_G5C3A3_RESULTS.md)。
+
+2026-10-12：a3 完成上述受限范围验收。ASan/UBSan/LSan 单独三轮各 113 入口/9,537 条，私有 TSan 三轮各 98 项/6,958 条，原生插桩各三轮及两类注册入口通过。普通 inline、代码通知、当前 token 的五模式真实生产通过；普通 inline 与旧通知恢复各 55 阶段通过；状态/串行参考/21 组兼容复测通过。保留同时运行重负载检查导致的时序断言失败，以及空间不足和工具入口调用失败记录；不放宽生产预算、不删除采用断言。继续 G5c3c0 的同步资源池前置修复，再推进剩余调用类型，不停止整个计划。
 
 重放发送时应调用原 `webassembly::interface::send_inline`，保留严格长度、原 FC 解包和 `execute_inline` 的当场授权及调度；不要复制一套看似相同的权限逻辑。`schedule_action` 可能重分配 action trace 向量，因此跨发送不能继续使用旧 trace/act 引用；原 apply_context 会刷新自己的 action 指针，新 adopter 也不能缓存后继续解引用。所有调度、写入、CPU 检查异常走原 undo，不允许在已有正式写入后整笔重跑。
 

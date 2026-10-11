@@ -82,6 +82,8 @@ class apply_context : public host_context {
       const action* get_action_ptr()const { return act; }
 
       action_name get_sender() const override;
+      uint32_t get_inline_depth() const { return recurse_depth; }
+      uint32_t get_first_receiver_action_ordinal() const { return first_receiver_action_ordinal; }
       action_trace& get_current_action_trace() const override { return trx_context.get_action_trace( action_ordinal ); }
       uint32_t get_sync_call_ordinal() override { return 0; }
       bool is_read_only() const override { return trx_context.is_read_only(); }
