@@ -201,6 +201,11 @@ public:
    primary_overlay_cursor(const primary_overlay_cursor&) = delete;
    primary_overlay_cursor& operator=(const primary_overlay_cursor&) = delete;
 
+   // A canonical apply_context keeps one iterator cache across its notification
+   // group. Switching its receiver does NOT authorize writes to cached foreign
+   // rows: store/update/remove still compare their table code with receiver_.
+   void set_receiver_for_notification(name receiver);
+
    int find(const table_key&, uint64_t primary_key);
    int lower_bound(const table_key&, uint64_t primary_key);
    int upper_bound(const table_key&, uint64_t primary_key);

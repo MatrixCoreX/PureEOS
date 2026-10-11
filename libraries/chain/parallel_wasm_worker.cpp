@@ -73,6 +73,7 @@ struct isolated_host {
    std::function<std::span<char>()> linear_memory;
    std::vector<char> return_value;
    std::vector<isolated_notification> recipients;
+   std::set<name>* group_recipients = nullptr;
 
    void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
    std::span<char> memory(uint32_t offset, uint32_t size) {
@@ -152,9 +153,16 @@ struct isolated_host {
    void require_recipient(uint64_t account) {
       check();
       const name recipient{account};
-      if (recipient == input.receiver || std::any_of(recipients.begin(), recipients.end(),
-            [&](const auto& notification) { return notification.recipient == recipient; })) return;
-      if (recipients.size() == isolated_action_result::max_recipients) throw primary_state_budget_exceeded();
+      if (group_recipients) {
+         if (group_recipients->contains(recipient)) return;
+         if (group_recipients->size() >= isolated_action_result::max_recipients + 1)
+            throw primary_state_budget_exceeded();
+         group_recipients->insert(recipient);
+      } else {
+         if (recipient == input.receiver || std::any_of(recipients.begin(), recipients.end(),
+               [&](const auto& notification) { return notification.recipient == recipient; })) return;
+         if (recipients.size() == isolated_action_result::max_recipients) throw primary_state_budget_exceeded();
+      }
       recipients.push_back({recipient, state.write_count()});
    }
    // Explicit link-only imports used by ordinary CDT modules. NONE is an
@@ -324,16 +332,21 @@ isolated_action_result isolated_wasm_module::execute(std::shared_ptr<const froze
 }
 
 isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay& state,
-      const isolated_action_input& input, std::stop_token stop, isolated_cancel external) {
+      const isolated_action_input& input, std::stop_token stop, isolated_cancel external,
+      primary_overlay_cursor* group_cursor, std::set<name>* group_recipients) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    const auto began = std::chrono::steady_clock::now();
    if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
-   if (input.receiver != input.account || input.data.size() > impl_->limits.max_action_bytes ||
+   if (bool(group_cursor) != bool(group_recipients) ||
+       (group_recipients && !group_recipients->contains(input.receiver)) ||
+       (!group_cursor && input.receiver != input.account) || input.data.size() > impl_->limits.max_action_bytes ||
        input.authorizations.size() > impl_->limits.max_authorizations || input.max_return_bytes > impl_->limits.max_return_bytes)
       throw primary_state_unsupported();
    const auto fingerprint = isolated_execution_fingerprint(impl_->code_hash, impl_->limits, input);
    const auto writes_begin = state.write_count();
-   primary_overlay_cursor cursor(state, input.receiver);
+   primary_overlay_cursor local_cursor(state, input.receiver);
+   auto& cursor = group_cursor ? *group_cursor : local_cursor;
+   cursor.set_receiver_for_notification(input.receiver);
    auto& machine = *impl_->machine;
    isolated_host host{cursor, state, input, stop, external, [&]() -> std::span<char> {
       auto& context = machine.get_context();
@@ -343,7 +356,7 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       // back too; non-memory hosts remain usable without linear memory.
       if (pages <= 0) throw primary_state_unsupported();
       return {context.linear_memory(), static_cast<size_t>(pages) * 65536u};
-   }, {}, {}};
+   }, {}, {}, group_recipients};
    const attempt_deadline deadline(impl_->limits.max_attempt_time, stop, external);
    auto& context = machine.get_context();
    // Same reset/start sequence as backend::initialize, with a bounded visitor
@@ -424,6 +437,109 @@ isolated_transaction_result isolated_transaction_executor::execute(std::shared_p
    // State/VM/cursor exceptions propagate to the caller. The local state and
    // ALL step outputs die together; no earlier step can escape as a success.
    return {state.seal(), std::move(results), fingerprint};
+}
+
+struct isolated_notification_executor::impl {
+   const std::thread::id owner = std::this_thread::get_id();
+   std::unique_ptr<isolated_wasm_module> module;
+   std::vector<char> cached_code;
+   isolated_wasm_limits cached_limits;
+};
+
+isolated_notification_executor::isolated_notification_executor() : impl_(std::make_unique<impl>()) {}
+isolated_notification_executor::~isolated_notification_executor() = default;
+
+isolated_notification_result isolated_notification_executor::execute(std::shared_ptr<const frozen_primary_state> base,
+      std::span<const isolated_action_input> roots, std::span<const isolated_receiver_program> programs,
+      std::stop_token stop, primary_overlay_limits overlay_limits, isolated_cancel external) {
+   if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
+   external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() +
+                                                isolated_transaction_executor::max_attempt_time);
+   auto checkpoint = [&] {
+      if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+   };
+   checkpoint();
+   if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
+       programs.empty() || programs.size() > max_programs) throw primary_state_budget_exceeded();
+   size_t code_bytes = 0, data_bytes = 0;
+   // These borrowed pointers exist only during this synchronous call. Neither
+   // the cache nor any returned result retains catalog/input references.
+   struct program_entry { const isolated_receiver_program* program; fc::sha256 hash; };
+   std::map<name, program_entry> catalog;
+   for (const auto& program : programs) {
+      checkpoint();
+      if (program.code.size() > 64 * 1024 ||
+          program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
+         throw primary_state_budget_exceeded();
+      code_bytes += program.code.size();
+      if (!program.receiver || !catalog.emplace(program.receiver, program_entry{&program,
+            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+         throw primary_state_unsupported();
+   }
+   auto lookup = [&](name receiver) -> const program_entry& {
+      const auto it = catalog.find(receiver);
+      if (it == catalog.end()) throw isolated_receiver_missing(receiver);
+      if (it->second.program->serial_only) throw primary_state_unsupported();
+      return it->second;
+   };
+   std::vector<fc::sha256> root_fingerprints;
+   root_fingerprints.reserve(roots.size());
+   for (const auto& root : roots) {
+      if (root.data.size() > 64 * 1024 ||
+          root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes ||
+          root.authorizations.size() > 64 || root.max_return_bytes > 4096) throw primary_state_budget_exceeded();
+      data_bytes += root.data.size();
+      if (root.receiver != root.account) throw primary_state_unsupported();
+      const auto& entry = lookup(root.receiver);
+      if (entry.program->code.empty()) throw primary_state_unsupported();
+      root_fingerprints.push_back(isolated_execution_fingerprint(entry.hash, entry.program->limits, root));
+   }
+   primary_state_overlay state(std::move(base), overlay_limits);
+   std::vector<isolated_receiver_effects> results;
+   // The original transaction reserves ALL top-level ordinals first. A root's
+   // notification ordinal can therefore exceed the next executed root's.
+   uint32_t next_ordinal = roots.size() + 1;
+   for (size_t root_index = 0; root_index < roots.size(); ++root_index) {
+      const auto& root = roots[root_index];
+      primary_overlay_cursor cursor(state, root.receiver);
+      std::set<name> notified{root.receiver};
+      struct pending_receiver { name receiver; uint32_t ordinal, creator; };
+      std::vector<pending_receiver> pending{{root.receiver, uint32_t(root_index + 1), 0}};
+      for (size_t index = 0; index < pending.size(); ++index) {
+         checkpoint();
+         const auto current = pending[index]; // appending below may reallocate
+         const auto& entry = lookup(current.receiver);
+         const auto& program = *entry.program;
+         auto arguments = root;
+         arguments.receiver = current.receiver; // original action stays intact
+         isolated_action_effects effects;
+         if (!program.code.empty()) {
+            if (!impl_->module || impl_->cached_code != program.code || impl_->cached_limits != program.limits) {
+               performance::scope compile_timer(performance::stage::parallel_compile);
+               impl_->module.reset(); impl_->cached_code.clear();
+               impl_->module = std::make_unique<isolated_wasm_module>(program.code, program.limits);
+               impl_->cached_code = program.code; impl_->cached_limits = program.limits;
+            }
+            checkpoint();
+            performance::scope execute_timer(performance::stage::parallel_execute);
+            effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified);
+         } else {
+            effects.writes_begin = effects.writes_end = state.write_count();
+            effects.execution_fingerprint = isolated_execution_fingerprint(entry.hash, program.limits, arguments);
+         }
+         for (const auto& notification : effects.recipients) {
+            if (next_ordinal > max_steps) throw primary_state_budget_exceeded();
+            pending.push_back({notification.recipient, next_ordinal++, current.ordinal});
+         }
+         if (results.size() >= max_steps) throw primary_state_budget_exceeded();
+         results.push_back({root_index, current.ordinal, current.creator, current.receiver, entry.hash,
+                            !program.code.empty(), std::move(effects)});
+      }
+   }
+   checkpoint();
+   // Distinct private-only result: a caller cannot pass this catalog off as a
+   // revalidated canonical code dependency proof or adopt a successful prefix.
+   return {state.seal(), std::move(results), isolated_transaction_fingerprint(root_fingerprints)};
 }
 
 } // namespace eosio::chain::experimental

@@ -428,6 +428,10 @@ bool primary_overlay_result::matches_base_reads(const transaction_state_view& li
    return true;
 }
 
+void primary_overlay_cursor::set_receiver_for_notification(name receiver) {
+   checked([&] { receiver_ = receiver; });
+}
+
 const primary_overlay_cursor::row_handle& primary_overlay_cursor::get_handle(int iterator) const {
    EOS_ASSERT(iterator != -1, invalid_table_iterator, "invalid iterator");
    EOS_ASSERT(iterator >= 0, table_operation_not_permitted, "dereference of end iterator");

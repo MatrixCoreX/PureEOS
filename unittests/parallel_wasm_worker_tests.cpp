@@ -244,6 +244,50 @@ transaction_trace_ptr push_raw_actions(eosio::testing::tester& chain,
    return chain.push_transaction(trx);
 }
 
+const std::string notify_import = R"((import "env" "require_recipient" (func $notify (param i64))))";
+std::string notify(name account) {
+   return "(call $notify (i64.const " + std::to_string(account.to_uint64_t()) + "))";
+}
+
+// Notification code reads the root contract's rows, not its own table. Return
+// the iterator, value, current receiver and root data to expose group semantics.
+std::vector<char> notification_reader(uint64_t primary, const std::string& tail = {},
+                                       const std::string& extra_imports = {}) {
+   return wasm("(module " + notify_import + extra_imports + R"(
+      (import "env" "read_action_data" (func $read (param i32 i32) (result i32)))
+      (import "env" "current_receiver" (func $receiver (result i64)))
+      (import "env" "require_auth" (func $auth (param i64)))
+      (import "env" "db_find_i64" (func $find (param i64 i64 i64 i64) (result i32)))
+      (import "env" "db_get_i64" (func $get (param i32 i32 i32) (result i32)))
+      (import "env" "set_action_return_value" (func $return (param i32 i32)))
+      (memory 1 1)
+      (func $start (i64.store (i32.const 128) (i64.const 9))) (start $start)
+      (func (export "apply") (param $current i64) (param $code i64) (param $action i64)
+         (local $iterator i32)
+         (if (i64.ne (get_local $code) (i64.const )" + std::to_string(rows.code.to_uint64_t()) + R"()) (then unreachable))
+         (if (i64.ne (get_local $action) (i64.const )" + std::to_string("inc"_n.to_uint64_t()) + R"()) (then unreachable))
+         (if (i64.ne (get_local $current) (call $receiver)) (then unreachable))
+         (if (i64.ne (i64.load (i32.const 128)) (i64.const 9)) (then unreachable))
+         (i64.store (i32.const 128) (i64.const 100))
+         (call $auth (i64.const )" + std::to_string("alice"_n.to_uint64_t()) + R"())
+         (drop (call $read (i32.const 64) (i32.const 40)))
+         (set_local $iterator (call $find (get_local $code) (i64.load (i32.const 64))
+            (i64.load (i32.const 96)) (i64.const )" + std::to_string(primary) + R"()))
+         (i32.store (i32.const 0) (get_local $iterator))
+         (drop (call $get (get_local $iterator) (i32.const 8) (i32.const 8)))
+         (i64.store (i32.const 16) (call $receiver))
+         (i64.store (i32.const 24) (i64.load (i32.const 80)))
+         )" + tail + R"(
+         (call $return (i32.const 0) (i32.const 32)))))");
+}
+
+std::vector<isolated_receiver_program> notification_graph(bool empty_carol = false) {
+   return {{rows.code, increment_wasm(notify_import, notify("bob"_n) + notify("carol"_n) + notify("bob"_n)), {}},
+           {"bob"_n, notification_reader(2, notify(rows.code) + notify("carol"_n) + notify("dave"_n)), {}},
+           {"carol"_n, empty_carol ? std::vector<char>{} : notification_reader(3, notify("bob"_n)), {}},
+           {"dave"_n, notification_reader(1), {}}};
+}
+
 struct wasm_fixture {
    fc::temp_directory directory;
    chainbase::database db{directory.path(), chainbase::database::read_write, 8 * 1024 * 1024};
@@ -1078,6 +1122,302 @@ BOOST_FIXTURE_TEST_CASE(transaction_deadline_and_inflight_cancel_cover_later_act
    BOOST_CHECK(worker.get());
    BOOST_CHECK_EQUAL(number(executor.execute(base, std::span(calls).first(1)).actions[0].return_value), 17u);
    BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_notification_executor_tests)
+
+BOOST_FIXTURE_TEST_CASE(group_queue_deduplicates_cycles_and_preserves_shared_iterators, wasm_fixture) {
+   const std::array roots{input(1, 7), input(1, 3)};
+   isolated_notification_executor executor;
+   for (bool empty_carol : {false, true}) {
+      const auto programs = notification_graph(empty_carol);
+      for (unsigned repeat = 0; repeat < 3; ++repeat) {
+         const auto result = executor.execute(base, roots, programs);
+         BOOST_REQUIRE_EQUAL(result.steps.size(), 8u);
+         BOOST_REQUIRE_EQUAL(result.state.writes().size(), 2u);
+         const std::array ordinals{1u, 3u, 4u, 5u, 2u, 6u, 7u, 8u};
+         const std::array creators{0u, 1u, 1u, 3u, 0u, 2u, 2u, 6u};
+         for (size_t i = 0; i < result.steps.size(); ++i) {
+            const auto& step = result.steps[i];
+            const size_t group = i / 4, member = i % 4;
+            BOOST_CHECK_EQUAL(step.root_index, group);
+            BOOST_CHECK_EQUAL(step.action_ordinal, ordinals[i]);
+            BOOST_CHECK_EQUAL(step.creator_action_ordinal, creators[i]);
+            BOOST_CHECK(step.receiver == programs[member].receiver);
+            BOOST_CHECK_EQUAL(step.effects.writes_begin, group + (member != 0));
+            BOOST_CHECK_EQUAL(step.effects.writes_end, group + 1);
+            BOOST_CHECK_EQUAL(step.has_code, !(empty_carol && member == 2));
+            if (member == 0) {
+               BOOST_CHECK_EQUAL(number(step.effects.return_value), group ? 20u : 17u);
+               BOOST_REQUIRE_EQUAL(step.effects.recipients.size(), 2u);
+               BOOST_CHECK((step.effects.recipients[0] == isolated_notification{"bob"_n, group + 1}));
+               BOOST_CHECK((step.effects.recipients[1] == isolated_notification{"carol"_n, group + 1}));
+            } else if (!step.has_code) {
+               BOOST_CHECK(step.effects.return_value.empty());
+               BOOST_CHECK(step.code_hash == fc::sha256{});
+               BOOST_CHECK_EQUAL(step.effects.elapsed.count(), 0);
+            } else {
+               BOOST_REQUIRE_EQUAL(step.effects.return_value.size(), 32u);
+               int32_t iterator; std::array<uint64_t, 3> values;
+               std::memcpy(&iterator, step.effects.return_value.data(), 4);
+               std::memcpy(values.data(), step.effects.return_value.data() + 8, 24);
+               BOOST_CHECK_EQUAL(iterator, member == 3 ? 0 : static_cast<int32_t>(member));
+               BOOST_CHECK_EQUAL(values[0], member == 3 ? (group ? 20u : 17u) : (member + 1) * 10);
+               BOOST_CHECK_EQUAL(values[1], step.receiver.to_uint64_t());
+               BOOST_CHECK_EQUAL(values[2], group ? 3u : 7u);
+               if (member == 1) {
+                  BOOST_REQUIRE_EQUAL(step.effects.recipients.size(), 1u);
+                  BOOST_CHECK((step.effects.recipients[0] == isolated_notification{"dave"_n, group + 1}));
+               } else BOOST_CHECK(step.effects.recipients.empty());
+            }
+         }
+         BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
+         BOOST_CHECK_EQUAL(canonical(), 10u);
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(missing_code_and_state_require_a_fresh_whole_attempt, wasm_fixture) {
+   const std::array roots{input()};
+   auto programs = notification_graph();
+   isolated_notification_executor executor;
+   programs.pop_back();
+   bool requested = false;
+   try { (void)executor.execute(base, roots, programs); }
+   catch (const isolated_receiver_missing& missing) {
+      BOOST_CHECK(missing.receiver == "dave"_n); requested = true;
+   }
+   BOOST_CHECK(requested);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+   programs = notification_graph();
+   const std::array tables{rows};
+   const std::array queries{primary_query{rows, primary_query_kind::find, 1}};
+   const auto sparse = frozen_primary_state::capture_queries(view, tables, queries);
+   requested = false;
+   try { (void)executor.execute(sparse, roots, programs); }
+   catch (const primary_state_missing& missing) {
+      const auto* request = std::get_if<primary_capture_request>(&missing.request);
+      BOOST_REQUIRE(request && request->query);
+      BOOST_CHECK_EQUAL(request->query->primary_key, 2u); requested = true;
+   }
+   BOOST_CHECK(requested);
+   const auto result = executor.execute(base, roots, programs);
+   BOOST_REQUIRE_EQUAL(result.state.writes().size(), 1u);
+   BOOST_CHECK_EQUAL(number(result.state.writes()[0].value), 17u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(receiver_switch_keeps_foreign_write_protection_and_allows_own_rows, wasm_fixture) {
+   const std::array roots{input()};
+   auto programs = notification_graph();
+   isolated_notification_executor executor;
+   programs[1].code = notification_reader(1,
+      "(call $update (get_local $iterator) (i64.const 0) (i32.const 8) (i32.const 8))",
+      R"((import "env" "db_update_i64" (func $update (param i32 i64 i32 i32))))");
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), table_access_violation);
+   programs[1].code = notification_reader(1, "(call $remove (get_local $iterator))",
+      R"((import "env" "db_remove_i64" (func $remove (param i32))))");
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), table_access_violation);
+   const table_key child_rows{"bob"_n, rows.scope, rows.table};
+   const std::array tables{rows, child_rows};
+   const auto captured = frozen_primary_state::capture(view, tables);
+   programs[1].code = lifecycle_steps_wasm();
+   const auto result = executor.execute(captured, roots, programs);
+   BOOST_REQUIRE_EQUAL(result.state.writes().size(), 2u);
+   BOOST_CHECK(result.state.writes()[1].table == child_rows);
+   BOOST_CHECK(result.state.writes()[1].operation == primary_operation::store);
+   BOOST_CHECK_EQUAL(number(result.state.writes()[1].value), 7u);
+   BOOST_REQUIRE_EQUAL(result.steps[1].effects.return_value.size(), 16u);
+   int32_t iterator, end;
+   std::memcpy(&iterator, result.steps[1].effects.return_value.data(), 4);
+   std::memcpy(&end, result.steps[1].effects.return_value.data() + 4, 4);
+   BOOST_CHECK_EQUAL(iterator, 1); BOOST_CHECK_EQUAL(end, -3);
+   BOOST_CHECK(!view.read_table(child_rows));
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(deep_failure_cancellation_and_cache_recovery_discard_prefix, wasm_fixture) {
+   const std::array roots{input()};
+   isolated_notification_executor executor;
+   auto programs = notification_graph();
+   programs[3].serial_only = true;
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_unsupported);
+   programs[3].serial_only = false;
+   const auto good_child = programs[3].code;
+   const auto inline_child = notification_reader(1, "(call $inline (i32.const 0) (i32.const 0))",
+      R"((import "env" "send_inline" (func $inline (param i32 i32))))");
+   for (const auto& failed : {notification_reader(1, "unreachable"), inline_child, std::vector<char>{'b', 'a', 'd'}}) {
+      programs[3].code = failed;
+      BOOST_CHECK_THROW(executor.execute(base, roots, programs), std::exception);
+      programs[3].code = good_child;
+      BOOST_CHECK_EQUAL(number(executor.execute(base, roots, programs).steps[0].effects.return_value), 17u);
+   }
+   programs[3].code = notification_reader(1, "(loop $forever (br $forever))");
+   programs[3].limits.max_attempt_time = std::chrono::milliseconds(10);
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), eosio::vm::timeout_exception);
+   programs[3].limits = {};
+   std::stop_source stop;
+   auto generation = std::make_shared<std::atomic<uint64_t>>(0);
+   std::jthread cancel([&] { std::this_thread::sleep_for(std::chrono::milliseconds(40)); generation->store(1); });
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs, {}, {}, {generation, 0}), primary_state_invalid_attempt);
+   cancel.join();
+   stop.request_stop();
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs, stop.get_token()), primary_state_invalid_attempt);
+   isolated_cancel deadline; deadline.deadline = std::chrono::steady_clock::now();
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs, {}, {}, deadline), primary_state_invalid_attempt);
+   programs[3].code = good_child;
+   BOOST_CHECK_EQUAL(executor.execute(base, roots, programs).steps.size(), 4u);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(catalog_input_and_whole_overlay_limits_are_bounded, wasm_fixture) {
+   auto programs = notification_graph();
+   std::vector roots{input(), input()};
+   isolated_notification_executor executor;
+   primary_overlay_limits limits; limits.max_write_operations = 1;
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs, {}, limits), primary_state_budget_exceeded);
+   auto invalid = programs; invalid.push_back(programs.front());
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_unsupported);
+   invalid = programs; invalid[1].receiver = name{};
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_unsupported);
+   invalid = programs; invalid[0].code.clear();
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_unsupported);
+   invalid = programs; invalid.resize(257);
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
+   invalid.clear();
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
+   invalid = programs; invalid[0].code.resize(64 * 1024 + 1);
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
+   invalid = programs; invalid.push_back({"unused"_n, {}, {}, true});
+   for (auto& program : invalid) program.code.resize(64 * 1024);
+   BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
+   invalid = programs; invalid.push_back({"unused"_n, {}, {}, true});
+   BOOST_CHECK_EQUAL(executor.execute(base, roots, invalid).steps.size(), 8u);
+   roots[0].receiver = "bob"_n;
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_unsupported);
+   roots.assign(17, input());
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+   roots.clear(); BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+   roots.assign(5, input()); for (auto& root : roots) root.data.resize(64 * 1024);
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+   roots.assign(1, input()); roots[0].authorizations.resize(65);
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+   roots.assign(1, input()); roots[0].max_return_bytes = 4097;
+   BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(group_and_transaction_step_limits_include_empty_receivers, wasm_fixture) {
+   isolated_notification_executor executor;
+   for (size_t notifications : {63u, 64u, 65u}) {
+      std::string calls;
+      std::vector<isolated_receiver_program> programs{{rows.code, {}, {}}};
+      for (size_t i = 0; i < notifications; ++i) {
+         const name recipient{uint64_t(i + 1) << 4};
+         calls += notify(recipient); programs.push_back({recipient, {}, {}});
+      }
+      programs[0].code = increment_wasm(notify_import, calls);
+      std::vector roots{input()};
+      if (notifications > 64) {
+         BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+         continue;
+      }
+      BOOST_CHECK_EQUAL(executor.execute(base, roots, programs).steps.size(), notifications + 1);
+      roots.assign(4, input());
+      if (notifications == 63) {
+         const auto result = executor.execute(base, roots, programs);
+         BOOST_REQUIRE_EQUAL(result.steps.size(), 256u);
+         BOOST_CHECK_EQUAL(result.steps.back().action_ordinal, 256u);
+         BOOST_CHECK_EQUAL(number(result.state.writes().back().value), 38u);
+      } else BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
+   }
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(thread_affinity_and_independent_notification_executors, wasm_fixture) {
+   const auto programs = notification_graph();
+   const std::array roots{input(1, 7), input(1, 3)};
+   isolated_notification_executor owner;
+   auto wrong = std::async(std::launch::async, [&] {
+      try { (void)owner.execute(base, roots, programs); }
+      catch (const state_view_wrong_thread&) { return true; }
+      return false;
+   });
+   BOOST_CHECK(wrong.get());
+   BOOST_CHECK_EQUAL(owner.execute(base, roots, programs).steps.size(), 8u);
+   for (unsigned threads : {1u, 2u, 4u}) {
+      std::vector<std::future<bool>> futures;
+      for (unsigned i = 0; i < threads; ++i) futures.push_back(std::async(std::launch::async, [&] {
+         isolated_notification_executor executor;
+         for (unsigned repeat = 0; repeat < 3; ++repeat) {
+            const auto result = executor.execute(base, roots, programs);
+            if (result.steps.size() != 8 || result.state.writes().size() != 2 ||
+                number(result.state.writes().back().value) != 20) return false;
+         }
+         return true;
+      }));
+      for (auto& future : futures) BOOST_CHECK(future.get());
+   }
+   BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_notification_oracle_tests)
+
+BOOST_AUTO_TEST_CASE(notification_graph_matches_original_receipts_and_failed_tail_undo) {
+   for (bool empty_carol : {false, true}) {
+      eosio::testing::tester original;
+      original.create_accounts({rows.code, "alice"_n, "bob"_n, "carol"_n, "dave"_n});
+      const auto initializer = lifecycle_steps_wasm();
+      original.set_code(rows.code, std::vector<uint8_t>(initializer.begin(), initializer.end()));
+      original.produce_block();
+      for (uint64_t primary = 1; primary <= 4; ++primary)
+         push_raw(original, scoped_input(rows.scope, primary, primary * 10, 0));
+      auto programs = notification_graph(empty_carol);
+      for (const auto& program : programs)
+         if (!program.code.empty()) original.set_code(program.receiver, std::vector<uint8_t>(program.code.begin(), program.code.end()));
+      original.produce_block();
+      chainbase_transaction_state_view live(original.control->db());
+      const std::array tables{rows};
+      auto base = frozen_primary_state::capture(live, tables);
+      const std::array roots{input(1, 7), input(1, 3)};
+      isolated_notification_executor executor;
+      const auto before = original.control->calculate_integrity_hash();
+      const auto result = executor.execute(base, roots, programs);
+      BOOST_CHECK(original.control->calculate_integrity_hash() == before);
+      const std::array calls{isolated_action_invocation{programs[0].code, roots[0], {}},
+                             isolated_action_invocation{programs[0].code, roots[1], {}}};
+      const auto trace = push_raw_actions(original, calls);
+      BOOST_REQUIRE(trace && !trace->except);
+      BOOST_REQUIRE_EQUAL(trace->action_traces.size(), result.steps.size());
+      uint64_t previous_sequence = 0;
+      for (const auto& step : result.steps) {
+         const auto& actual = trace->action_traces.at(step.action_ordinal - 1);
+         BOOST_CHECK_EQUAL(actual.action_ordinal.value, step.action_ordinal);
+         BOOST_CHECK_EQUAL(actual.creator_action_ordinal.value, step.creator_action_ordinal);
+         BOOST_CHECK(actual.receiver == step.receiver);
+         BOOST_CHECK(actual.return_value == step.effects.return_value);
+         BOOST_CHECK(actual.act.account == roots[step.root_index].account);
+         BOOST_CHECK(actual.act.data == roots[step.root_index].data);
+         BOOST_REQUIRE(actual.receipt);
+         BOOST_CHECK_GT(actual.receipt->global_sequence, previous_sequence);
+         previous_sequence = actual.receipt->global_sequence;
+      }
+      BOOST_CHECK_EQUAL(number(live.read_primary({rows, primary_query_kind::find, 1}, 8).row->value), 20u);
+      original.produce_block();
+      programs[3].code = notification_reader(1, "unreachable");
+      original.set_code("dave"_n, std::vector<uint8_t>(programs[3].code.begin(), programs[3].code.end()));
+      original.produce_block();
+      base = frozen_primary_state::capture(live, tables);
+      const auto before_failure = original.control->calculate_integrity_hash();
+      BOOST_CHECK_THROW(executor.execute(base, roots, programs), std::exception);
+      BOOST_CHECK_THROW(push_raw_actions(original, calls), fc::exception);
+      BOOST_CHECK(original.control->calculate_integrity_hash() == before_failure);
+      BOOST_CHECK_EQUAL(number(live.read_primary({rows, primary_query_kind::find, 1}, 8).row->value), 20u);
+   }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

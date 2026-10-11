@@ -4,6 +4,7 @@
 #include <fc/crypto/sha256.hpp>
 #include <chrono>
 #include <atomic>
+#include <set>
 #include <stop_token>
 
 namespace eosio::chain::experimental {
@@ -65,8 +66,9 @@ struct isolated_action_result {
 
 // One action's owned effects within a TRANSACTION-wide journal. Notifications
 // use absolute write positions, including writes by earlier actions. Iterator
-// caches, VM memory/start, recipient deduplication and return bytes are local
-// to this action; the state and its resource budgets are shared by all steps.
+// VM memory/start and return bytes are local to this receiver. Root-only
+// execution uses a fresh cursor; notification execution shares cursors and
+// recipient deduplication within each root group. State budgets span all steps.
 struct isolated_action_effects {
    std::vector<char> return_value;
    fc::sha256 execution_fingerprint;
@@ -112,10 +114,13 @@ public:
                                   std::stop_token = {}, primary_overlay_limits = {}, isolated_cancel = {});
 private:
    friend class isolated_transaction_executor;
-   // Only the two owning execution entry points may call this. An exception
+   friend class isolated_notification_executor;
+   // Only the owning execution entry points may call this. An exception
    // destroys their entire local overlay; no caller can seal a partial prefix.
    isolated_action_effects execute_step(primary_state_overlay&, const isolated_action_input&,
-                                       std::stop_token, isolated_cancel);
+                                       std::stop_token, isolated_cancel,
+                                       primary_overlay_cursor* group_cursor = nullptr,
+                                       std::set<name>* group_recipients = nullptr);
    struct impl;
    std::unique_ptr<impl> impl_;
 };
@@ -135,6 +140,56 @@ public:
    isolated_transaction_executor& operator=(const isolated_transaction_executor&) = delete;
    isolated_transaction_result execute(std::shared_ptr<const frozen_primary_state>,
       std::span<const isolated_action_invocation>, std::stop_token = {}, primary_overlay_limits = {}, isolated_cancel = {});
+private:
+   struct impl;
+   std::unique_ptr<impl> impl_;
+};
+
+// PRIVATE notification foundation only. This catalog is not a canonical code
+// dependency proof: its caller must own every byte for the synchronous call.
+// Empty code explicitly represents an existing no-code receiver. Missing names
+// request an owned capture; serial_only marks native/privileged/unsupported code.
+struct isolated_receiver_program {
+   name receiver;
+   std::vector<char> code;
+   isolated_wasm_limits limits;
+   bool serial_only = false;
+};
+
+struct isolated_receiver_missing : std::runtime_error {
+   name receiver;
+   explicit isolated_receiver_missing(name account)
+      : std::runtime_error("receiver program requires owner capture"), receiver(account) {}
+};
+
+struct isolated_receiver_effects {
+   size_t root_index = 0;
+   uint32_t action_ordinal = 0, creator_action_ordinal = 0;
+   name receiver;
+   fc::sha256 code_hash;
+   bool has_code = false;
+   isolated_action_effects effects;
+};
+
+struct isolated_notification_result {
+   primary_overlay_result state;
+   std::vector<isolated_receiver_effects> steps; // execution order, NOT ordinal order
+   fc::sha256 root_fingerprint;
+};
+
+// Not wired to the worker pool, controller or canonical adopter. One root and
+// its notification queue share iterator handles and deduplication. The next
+// root starts a fresh group, while retaining the transaction-wide private state.
+class isolated_notification_executor {
+public:
+   static constexpr size_t max_programs = 256, max_steps = 256;
+   isolated_notification_executor();
+   ~isolated_notification_executor();
+   isolated_notification_executor(const isolated_notification_executor&) = delete;
+   isolated_notification_executor& operator=(const isolated_notification_executor&) = delete;
+   isolated_notification_result execute(std::shared_ptr<const frozen_primary_state>,
+      std::span<const isolated_action_input> roots, std::span<const isolated_receiver_program> programs,
+      std::stop_token = {}, primary_overlay_limits = {}, isolated_cancel = {});
 private:
    struct impl;
    std::unique_ptr<impl> impl_;

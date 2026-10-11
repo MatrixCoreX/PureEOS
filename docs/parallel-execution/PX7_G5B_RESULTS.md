@@ -58,3 +58,5 @@ ASan 二进制 `818c153b834d3e72a81de2ff017bfec8ae371b5255f2e2c27ae00a56004193a6
 TSan 二进制及匹配配置、注册入口运行日志保存在 `g5b-tsan-artifacts.tar.gz`，归档 SHA-256 `535e719d1b6d87d2ca96656303995fb57720fc3db7d33b5d46c6339271727cc3`，已逐文件核对，二进制哈希另见 `tsan-artifacts.sha256`。四个归档的汇总指纹保存在 `archives.sha256`。
 
 旧节点仍为 `e28d831303fc6de5fe5bf62f1b165eb26128bf984e7532c75dd0a7edc5deb02c`，主分支及精确基线标签未移动。上一轮临时状态的有归档清理见 [G5a 记录](PX7_G5A_RESULTS.md)，不涉及用户链、钱包或配置。
+
+G5c1 后续临时空间整理：重新验证上述进程归档哈希及全目录 `tar --compare` 成功，六份报告均通过且全部测试节点已退出后，仅删除 `/dev/shm/pureeos-g5b-process-coBiTr/` 下清单列出的 174 个生成态 `data/state/shared_memory.bin`，释放 768,380,928 字节。清单和校验记录位于 `parallel-notifications-20261012-k9wrWe/g5b-archived-state-files.txt`、`g5b-archive-compare-before-cleanup.log`。区块、快照、配置和日志仍保留原文件；状态文件可由 `g5b-process-evidence.tar.gz` 恢复。本轮新失败样本及用户数据未删除。
