@@ -224,7 +224,11 @@ b0 已提交 `a393b84`，b1 正式接入正在构建：owner 捕获 CF 数据，
 4. `apply_context::exec_one()` 在 context-free 且 `control.skip_trx_checks()` 时跳过执行。正式采用必须明确处理这种路径，不得错误消费后续普通步骤或带入原路径不会产生的输出；不能以常规 full-validation 测试代替该分支。任何后段回退都保留原父动作已经排好的两类队列和计费位置。
 5. 先独立验证私有 context-free inline 与禁止接口，再接正式采用；顶层 context-free action 若要一起开放，还必须复核 `transaction_context::exec()` 的全部顶层 ordinal 预分配、根索引映射及原交易准入，不能把目前 `trx.actions[i]` 的假设直接用于两类根。差分须含禁止 host、非法授权、读取数据的缺失/空/长度边界、两类 inline 交错、深层失败、混合模式与恢复。
 
-### G5c3c1 同步私有帧：源码研究规格（尚未实现）
+2026-10-12 后续：缓存和指令内联后的同一版本完成私有 TSan 及两类相邻检查各三轮、核心/token 各三轮、21 组兼容、四类相邻普通检查各三轮；新节点三类五模式真实生产、CF 55 阶段恢复通过，程序和进程证据均已归档校验。ASan 在四物理核亲和性条件下全套三轮通过；默认不设亲和性的约 500ms deadline 失败保留为时序敏感性，不伪装成全程无失败。详见 [b1 最新记录](PX7_G5C3B_RESULTS.md)。继续 c1 独立防护测试；不因此开放同步、二级索引或完整 OC，并行默认仍关闭。
+
+### G5c3c1 同步私有帧：源码研究规格（防护测试已写，私有执行尚未实现）
+
+新增独立原生 VM 防护测试和原链超时后复用入口，正在对未修改的 EOS VM 编译负对照。解释器/JIT 的公共清理检查不等于 JIT 并行支持；具体安全边界和进度见 [c1 记录](PX7_G5C3C1_RESULTS.md)。
 
 CF b1 普通工作池三轮通过后，在构建真实节点期间继续复查 `host_context.cpp::execute_sync_call/get_call_return_value`、`sync_call_context.cpp`、`webassembly/sync_call.cpp`、原 EOS VM 的 `do_sync_call/module_has_valid_sync_call` 和 `host_context.hpp::iterator_cache::remove`。下一步不能把 call 当作延后执行的 inline：
 
@@ -240,6 +244,9 @@ CF b1 普通工作池三轮通过后，在构建真实节点期间继续复查 `
 10. 当前 `execute_step` 的起止计时覆盖整个父 WASM；若将同步子帧再作为一项累加，会把嵌套运行重复计入生产 CPU，还可能把发生在父 host 内的子模块编译计入 WASM。同步帧需区分包含子调用的墙钟区间和自身执行耗时：在父帧扣除直接子调用整段墙钟（含子编译），只把每层真正 WASM 的自身耗时累加一次。依然共享同一整笔绝对截止，不能因进入子帧重新获得 500ms；取消/异常与负状态均需测试计时及计费清理。此约束是在尚未加入同步私有执行前预防重复计费，不是修改现行 CPU 共识规则。
 11. `state_history/serialization.hpp` 的 action_trace 输出没有序列化 call_traces，现有 CF oracle 的 trace helper 也不比较同步记录。因此当前 SHiP 摘要一致不能代替同步 trace 验证。下一阶段必须另加对 call_ordinal、sender_ordinal、receiver、read_only、data、返回字节、error_id/error_code、异常码、console 及 console_markers 的显式规范化对照；elapsed 只作诊断，不能要求新旧执行墙钟相等。不能通过改动现有 SHiP 协议格式来掩盖测试缺项。
 12. 继续源码复查发现新的嵌套前置风险：`eos-vm/signals.hpp::invoke_with_signal_handler` 会覆盖 TLS 的 `code_memory_range` / `memory_range`，各出口恢复 `signal_dest`，但没有恢复父调用的两个范围；原 `eos-vm.cpp::exe` 也未另做范围恢复。应在接入嵌套 VM 前加入独立负对照，验证内层正常返回、C++ 异常、库内 longjmp 异常路径之后的父范围/目标和退出后的初始 TLS 状态，以及多线程互不串用。仅源码观察尚不能宣称已复现某个合约崩溃；如需真实内存故障验证，必须用隔离测试进程，不向用户节点或主测试进程发故障信号。修复不得用会被 longjmp 跨越的非平凡 RAII 取代原恢复约束，也不能改变进程信号处理器链或放宽内存保护。该项尚未改码/验证，不把 c0 资源池验收延伸为整个嵌套运行时已安全。
+13. 补充另一项尚未实测的嵌套恢复风险：`backend.hpp::timed_run` 的所有活跃层共用 TLS `timed_run_has_timed_out`，任意内层清理会将其清为 false；`platform_timer` 却可按逆序调用多层过期回调，各自关闭对应代码页。因此需要验证“内外层都过期、仅父层过期、仅子层过期”时每个模块都恢复自己的代码保护，后续健康调用仍能执行。现有 `sync_call_cpp_tests::forever_loop_test` 只验证一次超时后销毁 tester，没有验证同一模块在超时后复用。先用真实 backend 和可控 watchdog 做不依赖墙钟的负对照（检查代码页恢复/可复用与超时标记），再做隔离进程中的原链超时后健康调用；不得直接在用户节点上探测挂死。若负对照成立，评估每活跃层独立过期/清理状态，加有界的线程级活跃超时记账，避免子层清理掩盖父层；重复回调不得重复计数，移除回调必须先同步再释放其捕获对象。该方案尚未修改上游代码，不把源码推断写成已复现故障。
+
+信号恢复实现还需保证范围、跳转目标与信号掩码切换的一致性；恢复快照应在 sigsetjmp 前取得且之后不修改，正常、C++ 异常和 longjmp 出口分别测试。`sigsetjmp` 的非零保存参数会使后续 siglongjmp 恢复当时掩码；函数中在保存点之后被改过的非 volatile 自动变量可能不再可靠，不能用它们承载恢复快照。[Linux man-pages：setjmp/siglongjmp](https://www.man7.org/linux/man-pages/man3/longjmp.3.html)。测试真实故障时还要防止继承的测试框架信号处理器把子进程崩溃伪装成普通断言；设置仅限隔离子进程，并禁止 core dump，不修改主进程的处理器链。
 
 编译路径研究备忘（尚未修改）：`isolated_wasm_module::impl` 目前用同一 `compilation_mutex` 保护整个 backend 构造；上游 `registered_host_functions::resolve_impl` 先 count 再调用 unordered_map 的非 const `operator[]`。即使接口已由 call_once 注册完成，也不能未经审查便取消锁。若缓存后的诊断仍证实编译锁是瓶颈，优先评估仅私有 host 类型把锁缩到调用原 resolver 的范围，保留原检查实现，不先复制一套 const/find 解析器；仍须审查 parser、allocator、静态表和失败路径，保持未知 import、非函数 import 与签名错误的原拒绝次序，并做 TSan、首次冷注册/冷模块并发、实际采用和原链接口对照。此研究不等于已证明编译无竞态，也不允许先放宽时限让测试通过；不直接改全项目上游注册器或允许注册与执行并发。
 
