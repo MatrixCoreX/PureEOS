@@ -47,11 +47,14 @@ template<typename Context> struct interruptible_visitor {
    const attempt_deadline& deadline;
    uint32_t max_pages;
    uint32_t remaining = 1024;
-   template<typename Op> void operator()(const Op& op) {
+   // Preserve the original interpreter's always-inline opcode dispatch. An
+   // out-of-line wrapper otherwise adds a call (and sanitizer stack frame) to
+   // EVERY opcode, not just the one-in-1024 deadline checkpoint.
+   template<typename Op> [[gnu::always_inline]] inline void operator()(const Op& op) {
       if (--remaining == 0) { deadline.check(); remaining = 1024; }
       original(op);
    }
-   void operator()(const eosio::vm::grow_memory_t& op) {
+   [[gnu::always_inline]] inline void operator()(const eosio::vm::grow_memory_t& op) {
       deadline.check();
       auto& context = original.get_context();
       const auto growth = context.peek_operand().to_ui32();
