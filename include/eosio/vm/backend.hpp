@@ -305,25 +305,30 @@ namespace eosio { namespace vm {
 
       template<typename Watchdog, typename F>
       inline auto timed_run(Watchdog&& wd, F&& f) {
-         //timed_run_has_timed_out -- declared in signal handling code because signal handler needs to inspect it on a SEGV too -- is a thread local
-         // so that upon a SEGV the signal handling code can discern if the thread that caused the SEGV has a timed_run that has timed out. This
-         // thread local also need to be an atomic because the thread that a Watchdog callback will be called from may not be the same as the
-         // executing thread.
-         std::atomic<bool>&      _timed_out = timed_run_has_timed_out;
+         // The callback may run on a different thread: capture references to the
+         // executing thread's counter and this active frame's own atomic flag.
+         // One count per expired live frame cannot exceed the addressable stack.
+         auto& active_timeouts = timed_run_has_timed_out;
+         std::atomic<bool> this_run_timed_out{false};
          auto reenable_code = scope_guard{[&](){
-            if (_timed_out.load(std::memory_order_acquire)) {
+            // wd_guard has already unregistered/synchronized its callback before
+            // this guard runs. Only the frame that disabled this module restores
+            // it; an inner cleanup must not hide an expired ancestor.
+            if (this_run_timed_out.load(std::memory_order_acquire)) {
                mod->allocator.enable_code(Impl::is_jit);
-               _timed_out.store(false, std::memory_order_release);
+               active_timeouts.fetch_sub(1, std::memory_order_acq_rel);
             }
          }};
          try {
-            auto wd_guard = std::forward<Watchdog>(wd).scoped_run([this,&_timed_out]() {
-               _timed_out.store(true, std::memory_order_release);
+            auto wd_guard = std::forward<Watchdog>(wd).scoped_run([this,&active_timeouts,&this_run_timed_out]() {
+               // checktime_watchdog may invoke a callback more than once.
+               if (!this_run_timed_out.exchange(true, std::memory_order_acq_rel))
+                  active_timeouts.fetch_add(1, std::memory_order_acq_rel);
                mod->allocator.disable_code();
             });
             return std::forward<F>(f)();
          } catch(wasm_memory_exception&) {
-            if (_timed_out.load(std::memory_order_acquire)) {
+            if (active_timeouts.load(std::memory_order_acquire) != 0) {
                throw timeout_exception{ "execution timed out" };
             } else {
                throw;

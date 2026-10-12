@@ -24,7 +24,9 @@ namespace eosio { namespace vm {
    inline thread_local std::span<std::byte> memory_range;
 
    __attribute__((visibility("default")))
-   inline thread_local std::atomic<bool> timed_run_has_timed_out{false};
+   // Count expired active frames, not just a boolean. A nested timed_run must
+   // never clear an ancestor's expiration while that ancestor is still active.
+   inline thread_local std::atomic<std::size_t> timed_run_has_timed_out{0};
 
    // Fixes a duplicate symbol build issue when building with `-fvisibility=hidden`
    __attribute__((visibility("default")))
@@ -49,11 +51,11 @@ namespace eosio { namespace vm {
 
          //a failure in the code range...
          if (addr >= code_memory_range.data() && addr < code_memory_range.data() + code_memory_range.size()) {
-            //a SEGV/BUS in the code range when timed_run_has_timed_out=false is due to a _different_ thread's execution activating a deadline
+            //a SEGV/BUS in the code range with no expired local frame is due to a _different_ thread's execution activating a deadline
             // timer. Return and retry executing the same code again. Eventually timed_run() on the other thread will reset the page
             // permissions and progress on this thread can continue
             //on linux no SIGBUS handler is registered (see setup_signal_handler_impl()) so it will never occur here
-            if ((sig == SIGSEGV || sig == SIGBUS) && timed_run_has_timed_out.load(std::memory_order_acquire) == false)
+            if ((sig == SIGSEGV || sig == SIGBUS) && timed_run_has_timed_out.load(std::memory_order_acquire) == 0)
                return;
             //otherwise, jump out
             siglongjmp(*dest, sig);
@@ -141,6 +143,7 @@ namespace eosio { namespace vm {
       static int init_helper = (setup_signal_handler_impl(), 0);
       ignore_unused_variable_warning(init_helper);
       static_assert(std::atomic<sigjmp_buf*>::is_always_lock_free, "Atomic pointers must be lock-free to be async signal safe.");
+      static_assert(std::atomic<std::size_t>::is_always_lock_free, "Timeout counters must be lock-free to be async signal safe.");
    }
 
    /// Call a function with a signal handler installed.  If this thread is
@@ -157,38 +160,44 @@ namespace eosio { namespace vm {
    template<typename F, typename E>
    [[gnu::noinline]] auto invoke_with_signal_handler(F&& f, E&& e, growable_allocator& code_allocator, wasm_allocator* mem_allocator) {
       setup_signal_handler();
+      // Publish/restore the ranges and destination as one signal-masked frame.
+      // All restoration snapshots are initialized BEFORE sigsetjmp and never
+      // modified afterwards; non-volatile modified locals are not reliable
+      // after longjmp. Do not use non-trivial RAII across the jump boundary.
+      sigset_t handled_mask, old_sigmask;
+      sigemptyset(&handled_mask);
+      sigaddset(&handled_mask, SIGSEGV);
+      sigaddset(&handled_mask, SIGBUS);
+      sigaddset(&handled_mask, SIGFPE);
+      sigaddset(&handled_mask, SIGPROF);
+      pthread_sigmask(SIG_BLOCK, &handled_mask, &old_sigmask);
+      const auto old_code_range = code_memory_range;
+      const auto old_memory_range = memory_range;
+      sigjmp_buf* const old_signal_handler = std::atomic_load(&signal_dest);
+      const auto restore = [&]() {
+         pthread_sigmask(SIG_BLOCK, &handled_mask, nullptr);
+         code_memory_range = old_code_range;
+         memory_range = old_memory_range;
+         std::atomic_store(&signal_dest, old_signal_handler);
+         pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
+      };
       sigjmp_buf dest;
-      sigjmp_buf* volatile old_signal_handler = nullptr;
-      code_memory_range = code_allocator.get_code_span();
-      memory_range = mem_allocator->get_span();
       int sig;
+      // longjmp returns with handled signals blocked.
       if((sig = sigsetjmp(dest, 1)) == 0) {
-         // Note: Cannot use RAII, as non-trivial destructors w/ longjmp
-         // have undefined behavior. [csetjmp.syn]
-         //
-         // Warning: The order of operations is critical here.
-         // We also have to register signal_dest before unblocking
-         // signals to make sure that only our signal handler is executed
-         // if the caller has previously blocked signals.
-         old_signal_handler = std::atomic_exchange(&signal_dest, &dest);
-         sigset_t unblock_mask, old_sigmask; // Might not be preserved across longjmp
-         sigemptyset(&unblock_mask);
-         sigaddset(&unblock_mask, SIGSEGV);
-         sigaddset(&unblock_mask, SIGBUS);
-         sigaddset(&unblock_mask, SIGFPE);
-         sigaddset(&unblock_mask, SIGPROF);
-         pthread_sigmask(SIG_UNBLOCK, &unblock_mask, &old_sigmask);
+         code_memory_range = code_allocator.get_code_span();
+         memory_range = mem_allocator->get_span();
+         std::atomic_store(&signal_dest, &dest);
+         pthread_sigmask(SIG_UNBLOCK, &handled_mask, nullptr);
          try {
             f();
-            pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
-            std::atomic_store(&signal_dest, old_signal_handler);
          } catch(...) {
-            pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
-            std::atomic_store(&signal_dest, old_signal_handler);
+            restore();
             throw;
          }
+         restore();
       } else {
-         std::atomic_store(&signal_dest, old_signal_handler);
+         restore();
          if (sig == -1) {
             std::exception_ptr exception = std::move(saved_exception);
             saved_exception = nullptr;

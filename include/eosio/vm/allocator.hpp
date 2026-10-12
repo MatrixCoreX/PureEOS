@@ -480,6 +480,12 @@ namespace eosio { namespace vm {
          raw  = (char*)mmap(NULL, max_memory + 2*syspagesize, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
          EOS_VM_ASSERT( raw != MAP_FAILED, wasm_bad_alloc, "mmap failed to alloca pages" );
          int err = mprotect(raw, syspagesize, PROT_READ);
+         // The destructor will not run if this constructor throws. Release the
+         // complete reservation before reporting the original protection error.
+         if (err != 0) {
+            munmap(raw, max_memory + 2*syspagesize);
+            raw = nullptr;
+         }
          EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "mprotect failed");
          raw += syspagesize;
          page = 0;
