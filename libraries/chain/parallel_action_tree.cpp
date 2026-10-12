@@ -1,8 +1,17 @@
 #include <eosio/chain/parallel_action_tree.hpp>
+#include <fc/io/raw.hpp>
+#include <algorithm>
 #include <map>
 
 namespace eosio::chain::experimental {
 namespace {
+fc::sha256 context_free_data_hash(const std::vector<std::vector<char>>& data) {
+   fc::sha256::encoder encoder;
+   constexpr char domain[] = "pureeos/isolated-context-free-data/v1";
+   encoder.write(domain, sizeof(domain));
+   fc::raw::pack(encoder, data);
+   return encoder.result();
+}
 bool same_input(const isolated_action_input& a, const isolated_action_input& b) {
    return a.receiver == b.receiver && a.account == b.account && a.action == b.action &&
       a.authorizations == b.authorizations && a.data == b.data && a.max_return_bytes == b.max_return_bytes;
@@ -11,6 +20,29 @@ bool same_action(const action& a, const action& b) {
    return a.account == b.account && a.name == b.name && a.authorization == b.authorization && a.data == b.data;
 }
 } // namespace
+
+isolated_context_free_data::isolated_context_free_data(std::span<const std::vector<char>> input)
+   : data_(input.begin(), input.end()), hash_(context_free_data_hash(data_)) {}
+
+std::shared_ptr<const isolated_context_free_data> isolated_context_free_data::capture(
+      std::span<const std::vector<char>> input) {
+   if (input.size() > max_entries) throw primary_state_budget_exceeded();
+   size_t bytes = 0;
+   for (const auto& item : input) {
+      if (item.size() > max_bytes - bytes) throw primary_state_budget_exceeded();
+      bytes += item.size();
+   }
+   return std::shared_ptr<const isolated_context_free_data>(new isolated_context_free_data(input));
+}
+
+int32_t isolated_context_free_data::read(uint32_t index, std::span<char> destination) const {
+   if (index >= data_.size()) return -1;
+   const auto& data = data_[index];
+   if (destination.empty()) return data.size();
+   const auto count = std::min(data.size(), destination.size());
+   std::copy_n(data.begin(), count, destination.begin());
+   return count;
+}
 
 bool validate_isolated_action_tree_journal(const isolated_action_tree_result& result,
       std::span<const isolated_action_input> roots, std::span<const isolated_receiver_program> programs,
@@ -47,7 +79,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
           root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes ||
           root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
           group.root_index != i || group.action_ordinal != i + 1 || group.creator_action_ordinal != 0 ||
-          group.closest_unnotified_ancestor != 0 || group.depth != 0 || group.sender ||
+          group.closest_unnotified_ancestor != 0 || group.depth != 0 || group.sender || group.context_free ||
           !same_input(group.input, root)) return false;
       data_bytes += root.data.size();
       const auto entry = catalog.find(root.receiver);
@@ -72,7 +104,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
       std::set<name> notified{group.input.receiver};
       std::vector<pending_receiver> pending{{group.input.receiver, group.action_ordinal,
          group.creator_action_ordinal, group.closest_unnotified_ancestor, group.sender}};
-      std::vector<size_t> children;
+      std::vector<size_t> children, context_free_children;
       for (size_t i = 0; i < pending.size(); ++i) {
          check();
          if (next_step == result.steps.size()) return false;
@@ -98,6 +130,11 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
             return false;
          if (!step.has_code && (!step.events.empty() || !effects.recipients.empty() || !effects.return_value.empty() ||
                effects.writes_end != next_write || effects.elapsed.count() != 0)) return false;
+         // A context-free step cannot read state, mutate cursors, schedule any
+         // receiver/child, or use the context-aware action-return-value API.
+         if (group.context_free && (!context.context_free_data || !group.input.authorizations.empty() ||
+               !step.events.empty() || !effects.recipients.empty() || !effects.return_value.empty() ||
+               effects.writes_end != next_write)) return false;
          cursor.set_receiver_for_notification(step.receiver);
          size_t next_notification = 0;
          for (const auto& event : step.events) {
@@ -159,18 +196,20 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
                   const auto decoded = decode_isolated_inline_action(raw, context.max_inline_action_size);
                   if (!decoded || decoded->decoded_bytes != send->sent.decoded_bytes ||
                       !same_action(decoded->decoded, send->sent.decoded)) return false;
+                  if (send->context_free && (!context.context_free_data || !decoded->decoded.authorization.empty()))
+                     return false;
                   inline_bytes += raw.size(); data_bytes += raw.size();
                   const auto& child = result.groups[next_group];
                   if (child.root_index != group.root_index || child.action_ordinal != next_ordinal ||
                       child.creator_action_ordinal != step.action_ordinal ||
                       child.closest_unnotified_ancestor != group.action_ordinal || child.depth != group.depth + 1 ||
-                      child.sender != step.receiver) return false;
+                      child.sender != step.receiver || child.context_free != send->context_free) return false;
                   isolated_action_input input;
                   input.receiver = input.account = decoded->decoded.account; input.action = decoded->decoded.name;
                   input.data = decoded->decoded.data; input.max_return_bytes = group.input.max_return_bytes;
                   for (const auto& p : decoded->decoded.authorization) input.authorizations.emplace_back(p.actor, p.permission);
                   if (!same_input(input, child.input)) return false;
-                  children.push_back(next_group++); ++next_ordinal;
+                  (send->context_free ? context_free_children : children).push_back(next_group++); ++next_ordinal;
                } else return false;
             } catch (const std::exception&) {
                return false; // private reconstruction only; canonical state is untouched
@@ -178,6 +217,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
          }
          if (next_write != effects.writes_end || next_notification != effects.recipients.size()) return false;
       }
+      for (const auto child : context_free_children) if (!replay_group(child)) return false;
       for (const auto child : children) if (!replay_group(child)) return false;
       return true;
    };

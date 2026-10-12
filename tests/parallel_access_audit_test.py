@@ -41,7 +41,7 @@ class ScannerTests(unittest.TestCase):
         tree = set(re.findall(r'^\s+ISOLATED_TREE_HOST\((\w+)\);', implementation, re.MULTILINE))
         tree_list = tests.split("const std::set<std::string_view> tree_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(tree, set(re.findall(r'"(\w+)"', tree_list)))
-        self.assertEqual(tree, {"send_inline", "get_sender"})
+        self.assertEqual(tree, {"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data"})
         self.assertFalse(supported & fallback)
         self.assertFalse(tree & (supported | fallback))
         self.assertTrue((supported | fallback | tree) <= production)

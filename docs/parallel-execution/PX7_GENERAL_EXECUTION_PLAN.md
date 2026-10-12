@@ -206,6 +206,12 @@ a3 后续：完整普通 worker 三轮各 106 项/7,915 条，核心三轮各 43
 
 ### G5c3b 补充源码约束（后续实现，尚未开放）
 
+G5c3b0 从 `11d05e7` 继续：正在增加有界不可变 context-free 数据快照、区分两类发送/子组、完整 context-aware host 防护和两队列重建；`current_action_tree_context` 仍不提供此能力，生产/验证 owner 暂不开放。新增私有与原串行 oracle 测试正在构建，证据目录 `build/local-tests/parallel-context-free-20261012-wbEaQl/`。后续 b1 正式采用还需绑定实际 packed 数据、skip_trx_checks 分支、逐步 CPU 与撤销清理，不把私有成功当正式采用。
+
+b0 普通初验完成：完整工作池三轮各 118 项 / 8,455 条通过。原链对照额外发现旧私有 next/previous 漏掉 legacy_ptr 非零检查；保留未修复版的 8 条失败负对照后补齐，修复版通过。审计 24 项、进程工具 16 项及清单检查通过；详细失败、修复和边界见 [G5c3b 记录](PX7_G5C3B_RESULTS.md)。继续 b1，尚未把 b0 初验当全阶段或全面并行完成。
+
+继续检查发现 `transaction_context::reset()` 已清除通知/树指针，但 `undo()` 仍只清旧单动作能力；后续需一起补齐通知/树指针及 receiver 索引清理，并测试复用/撤销后不能继续消费旧尝试。该发现不会因正常测试路径中对象随即销毁而忽略。
+
 2026-10-12：G5c3c0 前置修复完成验收。普通/ASan/TSan 资源池 15 项 / 1,072 条各三轮通过，真实 OC 分配器失败注入最终 3 项 / 32 条三轮通过；旧源码反向控制产生 12 条清理失败，修复版通过。普通完整回归、三类五模式真实生产、两类各 55 阶段恢复通过；详见 [c0 记录](PX7_G5C3C0_RESULTS.md)。仅资源池防护完成，私有同步调用和完整 OC 运行仍未实现/验收，继续下一步。
 
 1. `webassembly/runtimes/eos-vm.cpp` 的注册前置条件必须原样保留语义：`current_receiver`、`read_action_data`、`action_data_size` 可用于 context-free 动作；`get_context_free_data` 只能用于该类动作；`get_sender`、`set_action_return_value`、`require_recipient` 以及 `send_context_free_inline` 自身却是 context-aware API。不能只屏蔽 DB 写入便允许其余现有 host，也不能让 context-free 子动作继续发送子调用。未覆盖的接口仍整笔回退，不靠删除原限制支持合约。

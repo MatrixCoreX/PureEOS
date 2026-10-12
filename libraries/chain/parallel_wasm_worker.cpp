@@ -16,8 +16,10 @@ namespace eosio::chain::experimental {
 // to it, the VM memory, or the caller's inputs survives execute_step.
 struct isolated_tree_capture {
    std::function<void(const isolated_cursor_event&)> record;
-   std::function<void(std::span<const char>)> send;
+   std::function<void(std::span<const char>, bool context_free)> send;
    name sender;
+   bool context_free = false;
+   const isolated_context_free_data* context_free_data = nullptr; // execute_step stack only
 };
 
 namespace {
@@ -97,6 +99,10 @@ struct isolated_host {
    }
 
    void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
+   void context_aware() const {
+      check();
+      if (tree_capture && tree_capture->context_free) throw primary_state_unsupported();
+   }
    std::span<char> memory(uint32_t offset, uint32_t size) {
       check();
       auto bytes = linear_memory();
@@ -113,13 +119,13 @@ struct isolated_host {
       return count;
    }
    int32_t has_auth(uint64_t actor) {
-      check();
+      context_aware();
       return std::any_of(input.authorizations.begin(), input.authorizations.end(),
                          [&](const auto& item) { return item.first.to_uint64_t() == actor; });
    }
    void require_auth(uint64_t actor) { if (!has_auth(actor)) throw primary_state_unsupported(); }
    void require_auth2(uint64_t actor, uint64_t permission) {
-      check();
+      context_aware();
       if (!std::any_of(input.authorizations.begin(), input.authorizations.end(), [&](const auto& item) {
             return item.first.to_uint64_t() == actor && item.second.to_uint64_t() == permission;
          })) throw primary_state_unsupported();
@@ -170,9 +176,9 @@ struct isolated_host {
    }
    [[noreturn]] void abort() { throw primary_state_unsupported(); }
 
-   int32_t is_account(uint64_t account) { check(); return bool(state.read_account(name{account})); }
+   int32_t is_account(uint64_t account) { context_aware(); return bool(state.read_account(name{account})); }
    void require_recipient(uint64_t account) {
-      check();
+      context_aware();
       const name recipient{account};
       if (group_recipients) {
          if (group_recipients->contains(recipient)) return;
@@ -192,11 +198,22 @@ struct isolated_host {
    // after private writes. No default result, output or canonical effect.
    [[noreturn]] void prints_l(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    void send_inline(uint32_t offset, uint32_t size) {
+      context_aware();
       if (!tree_capture) throw primary_state_unsupported();
-      tree_capture->send(memory(offset, size));
+      tree_capture->send(memory(offset, size), false);
+   }
+   void send_context_free_inline(uint32_t offset, uint32_t size) {
+      context_aware(); // the SEND host is context-aware, unlike its child
+      if (!tree_capture || !tree_capture->context_free_data) throw primary_state_unsupported();
+      tree_capture->send(memory(offset, size), true);
+   }
+   int32_t get_context_free_data(uint32_t index, uint32_t offset, uint32_t size) {
+      if (!tree_capture || !tree_capture->context_free || !tree_capture->context_free_data)
+         throw primary_state_unsupported();
+      return tree_capture->context_free_data->read(index, memory(offset, size));
    }
    uint64_t get_sender() {
-      check();
+      context_aware();
       if (!tree_capture) throw primary_state_unsupported();
       return tree_capture->sender.to_uint64_t();
    }
@@ -206,55 +223,64 @@ struct isolated_host {
    [[noreturn]] uint64_t current_time() { throw primary_state_unsupported(); }
    [[noreturn]] int32_t get_active_producers(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    void set_action_return_value(uint32_t offset, uint32_t size) {
+      context_aware();
       if (size > input.max_return_bytes) throw primary_state_unsupported();
       const auto source = memory(offset, size);
       return_value.assign(source.begin(), source.end());
    }
    int32_t db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
-      check();
+      context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.find(key, primary);
       if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::find, key, primary, -1, result});
       return result;
    }
    int32_t db_store_i64(uint64_t scope, uint64_t table, uint64_t payer, uint64_t primary, uint32_t offset, uint32_t size) {
+      context_aware();
       const auto result = cursor.store({input.receiver, name(scope), name(table)}, primary, name(payer), memory(offset, size));
       if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, result});
       return result;
    }
    void db_remove_i64(int32_t iterator) {
-      check(); cursor.remove(iterator);
+      context_aware(); cursor.remove(iterator);
       if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, iterator});
    }
    int32_t db_lowerbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
-      check();
+      context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.lower_bound(key, primary);
       if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::lower_bound, key, primary, -1, result});
       return result;
    }
    int32_t db_upperbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
-      check();
+      context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.upper_bound(key, primary);
       if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::upper_bound, key, primary, -1, result});
       return result;
    }
    int32_t db_end_i64(uint64_t code, uint64_t scope, uint64_t table) {
-      check();
+      context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.end(key);
       if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::end, key, 0, -1, result});
       return result;
    }
    int32_t db_get_i64(int32_t iterator, uint32_t offset, uint32_t size) {
+      context_aware();
       return cursor.get(iterator, memory(offset, size));
    }
    void db_update_i64(int32_t iterator, uint64_t payer, uint32_t offset, uint32_t size) {
+      context_aware();
       cursor.update(iterator, name(payer), memory(offset, size));
       if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, iterator});
    }
    int32_t adjacent(int32_t iterator, uint32_t offset, bool previous) {
+      context_aware();
+      // ORIGINAL legacy_ptr<uint64_t> rejects WASM offset zero before the DB
+      // call, even though byte zero is inside linear memory. Cursor replay
+      // bypasses that converter, so reject the whole private attempt here.
+      if (!offset) throw primary_state_unsupported();
       auto destination = memory(offset, sizeof(uint64_t));
       uint64_t primary;
       std::memcpy(&primary, destination.data(), sizeof(primary));
@@ -315,6 +341,8 @@ void register_isolated_functions() {
       ISOLATED_FALLBACK(current_time);
       ISOLATED_FALLBACK(get_active_producers);
       ISOLATED_TREE_HOST(get_sender); // bound to creator receiver, never inferred from root account
+      ISOLATED_TREE_HOST(send_context_free_inline);
+      ISOLATED_TREE_HOST(get_context_free_data);
 #undef ISOLATED_FALLBACK
 #undef ISOLATED_TREE_HOST
 #undef ISOLATED_HOST
@@ -613,11 +641,13 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
 fc::sha256 isolated_action_tree_fingerprint(std::span<const fc::sha256> roots,
                                            const isolated_action_tree_context& context) {
    fc::sha256::encoder encoder;
-   constexpr char domain[] = "pureeos/isolated-action-tree/v1";
+   constexpr char domain[] = "pureeos/isolated-action-tree/v2";
    encoder.write(domain, sizeof(domain));
    fc::raw::pack(encoder, isolated_transaction_fingerprint(roots));
    fc::raw::pack(encoder, context.max_inline_action_size);
    fc::raw::pack(encoder, context.max_inline_action_depth);
+   fc::raw::pack(encoder, bool(context.context_free_data));
+   if (context.context_free_data) fc::raw::pack(encoder, context.context_free_data->fingerprint());
    return encoder.result();
 }
 
@@ -625,17 +655,20 @@ fc::sha256 isolated_action_tree_step_fingerprint(const fc::sha256& action_finger
       const isolated_action_tree_context& context, const isolated_action_tree_group& group,
       const isolated_action_tree_step& step) {
    fc::sha256::encoder encoder;
-   constexpr char domain[] = "pureeos/isolated-action-tree-step/v1";
+   constexpr char domain[] = "pureeos/isolated-action-tree-step/v2";
    encoder.write(domain, sizeof(domain));
    fc::raw::pack(encoder, action_fingerprint);
    fc::raw::pack(encoder, context.max_inline_action_size);
    fc::raw::pack(encoder, context.max_inline_action_depth);
+   fc::raw::pack(encoder, bool(context.context_free_data));
+   if (context.context_free_data) fc::raw::pack(encoder, context.context_free_data->fingerprint());
    fc::raw::pack(encoder, uint32_t(group.root_index));
    fc::raw::pack(encoder, group.action_ordinal);
    fc::raw::pack(encoder, group.creator_action_ordinal);
    fc::raw::pack(encoder, group.closest_unnotified_ancestor);
    fc::raw::pack(encoder, group.depth);
    fc::raw::pack(encoder, group.sender);
+   fc::raw::pack(encoder, group.context_free);
    fc::raw::pack(encoder, uint32_t(step.group_index));
    fc::raw::pack(encoder, step.action_ordinal);
    fc::raw::pack(encoder, step.creator_action_ordinal);
@@ -717,7 +750,7 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
       std::set<name> notified{group.input.receiver};
       std::vector<pending_receiver> pending{{group.input.receiver, group.action_ordinal,
          group.creator_action_ordinal, group.closest_unnotified_ancestor, group.sender}};
-      std::vector<size_t> children;
+      std::vector<size_t> children, context_free_children;
       for (size_t i = 0; i < pending.size(); ++i) {
          checkpoint();
          const auto current = pending[i];
@@ -744,17 +777,18 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
                   ++event_count;
                   step.events.emplace_back(event);
                },
-               [&](std::span<const char> bytes) {
+               [&](std::span<const char> bytes, bool context_free) {
                   checkpoint();
                   if (event_count >= max_events || inline_count >= max_steps ||
                       bytes.size() > max_total_inline_bytes - inline_bytes ||
                       bytes.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
                      throw primary_state_budget_exceeded();
                   auto sent = decode_isolated_inline_action(bytes, tree_context.max_inline_action_size);
-                  if (!sent) throw primary_state_unsupported();
+                  if (!sent || (context_free && (!tree_context.context_free_data || !sent->decoded.authorization.empty())))
+                     throw primary_state_unsupported();
                   inline_bytes += bytes.size(); data_bytes += bytes.size(); ++inline_count; ++event_count;
-                  step.events.emplace_back(isolated_tree_inline_event{std::move(*sent), state.write_count(), 0});
-               }, step.sender};
+                  step.events.emplace_back(isolated_tree_inline_event{std::move(*sent), state.write_count(), 0, context_free});
+               }, step.sender, group.context_free, tree_context.context_free_data.get()};
             std::vector<isolated_cursor_event> cursor_events;
             performance::scope execute_timer(performance::stage::parallel_execute);
             step.effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified,
@@ -784,19 +818,22 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
                child.data = act.data; child.max_return_bytes = group.input.max_return_bytes;
                for (const auto& permission : act.authorization)
                   child.authorizations.emplace_back(permission.actor, permission.permission);
-               children.push_back(groups.size());
+               (send.context_free ? context_free_children : children).push_back(groups.size());
                groups.push_back({group.root_index, send.action_ordinal, current.ordinal, group.action_ordinal,
-                  group.depth + 1, current.receiver, std::move(child)});
+                  group.depth + 1, current.receiver, std::move(child), send.context_free});
             }
          }
          if (results.size() >= max_steps) throw primary_state_budget_exceeded();
          results.push_back(std::move(step));
       }
-      // Original exec(): finish the WHOLE notification group, then run ordinary
-      // inline groups depth-first, in send order. Each child gets fresh cursors
+      // Original exec(): finish the WHOLE notification group, then context-free
+      // children, then ordinary inline groups, in each queue's send order.
+      // Each child gets fresh cursors
       // and recipient dedup, but shares transaction state and absolute budgets.
-      if (!children.empty() && (group.depth >= tree_context.max_inline_action_depth || group.depth >= max_depth))
+      if ((!children.empty() || !context_free_children.empty()) &&
+          (group.depth >= tree_context.max_inline_action_depth || group.depth >= max_depth))
          throw primary_state_unsupported();
+      for (const auto child : context_free_children) execute_group(child);
       for (const auto child : children) execute_group(child);
    };
    for (size_t i = 0; i < roots.size(); ++i) execute_group(i);

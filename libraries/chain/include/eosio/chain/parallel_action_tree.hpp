@@ -6,11 +6,28 @@
 
 namespace eosio::chain::experimental {
 
+// Owned, immutable, bounded transaction input. Never retains packed_transaction
+// or controller pointers. Copy and hash ONCE; all steps bind the same digest.
+class isolated_context_free_data {
+public:
+   static constexpr size_t max_entries = 1024, max_bytes = 256 * 1024;
+   static std::shared_ptr<const isolated_context_free_data> capture(std::span<const std::vector<char>>);
+   const fc::sha256& fingerprint() const { return hash_; }
+   int32_t read(uint32_t index, std::span<char> destination) const;
+private:
+   explicit isolated_context_free_data(std::span<const std::vector<char>>);
+   const std::vector<std::vector<char>> data_;
+   const fc::sha256 hash_;
+};
+
 // Caller-owned protocol observations, NOT permission to bypass original checks.
 // The adopter must compare these to the current original configuration.
 struct isolated_action_tree_context {
    uint32_t max_inline_action_size = config::default_max_inline_action_size;
    uint32_t max_inline_action_depth = config::default_max_inline_action_depth;
+   // Null keeps the old capability boundary. Only explicit private-tree callers
+   // supply a snapshot until the canonical owner/adopter is separately enabled.
+   std::shared_ptr<const isolated_context_free_data> context_free_data;
    bool operator==(const isolated_action_tree_context&) const = default;
 };
 
@@ -18,6 +35,7 @@ struct isolated_tree_inline_event {
    isolated_inline_action sent;
    size_t after_writes = 0;
    uint32_t action_ordinal = 0; // assigned in host-event order, NOT execution order
+   bool context_free = false;
 };
 // Do not extend the existing notification journal: its adopter cannot accept
 // inline events. This separate result type requires its own canonical adopter.
@@ -29,6 +47,7 @@ struct isolated_action_tree_group {
    uint32_t closest_unnotified_ancestor = 0, depth = 0;
    name sender;
    isolated_action_input input;
+   bool context_free = false;
 };
 
 struct isolated_action_tree_step {
