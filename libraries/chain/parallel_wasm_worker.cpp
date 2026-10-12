@@ -477,11 +477,42 @@ fc::sha256 isolated_transaction_fingerprint(std::span<const fc::sha256> action_f
    return encoder.result();
 }
 
+namespace {
+// A worker owns at most four dormant modules. Exact bytes AND all limits form
+// the key: receiver names/hashes alone must not reuse stale code or bounds.
+// This is not a pool for nested live frames: get() may evict a previous module,
+// and execute_step() always resets that module's memory/globals/start function.
+class bounded_module_cache {
+   static constexpr size_t capacity = 4;
+   struct entry {
+      std::vector<char> code;
+      isolated_wasm_limits limits;
+      std::unique_ptr<isolated_wasm_module> module;
+   };
+   std::vector<entry> entries_;
+public:
+   bounded_module_cache() { entries_.reserve(capacity); }
+   isolated_wasm_module& get(const std::vector<char>& code, const isolated_wasm_limits& limits) {
+      for (auto it = entries_.begin(); it != entries_.end(); ++it) {
+         if (it->code == code && it->limits == limits) {
+            std::rotate(it, it + 1, entries_.end()); // most recently used at back
+            return *entries_.back().module;
+         }
+      }
+      performance::scope compile_timer(performance::stage::parallel_compile);
+      // Evict BEFORE construction, including the throwing path. No transient
+      // fifth allocator/module, no partially initialized cache entry on error.
+      if (entries_.size() == capacity) entries_.erase(entries_.begin());
+      entry next{code, limits, std::make_unique<isolated_wasm_module>(code, limits)};
+      entries_.push_back(std::move(next));
+      return *entries_.back().module;
+   }
+};
+} // namespace
+
 struct isolated_transaction_executor::impl {
    const std::thread::id owner = std::this_thread::get_id();
-   std::unique_ptr<isolated_wasm_module> module;
-   std::vector<char> cached_code;
-   isolated_wasm_limits cached_limits;
+   bounded_module_cache modules;
 };
 
 isolated_transaction_executor::isolated_transaction_executor() : impl_(std::make_unique<impl>()) {}
@@ -510,17 +541,11 @@ isolated_transaction_result isolated_transaction_executor::execute(std::shared_p
    results.reserve(actions.size()); fingerprints.reserve(actions.size());
    for (const auto& action : actions) {
       checkpoint();
-      if (!impl_->module || impl_->cached_code != action.code || impl_->cached_limits != action.limits) {
-         performance::scope compile_timer(performance::stage::parallel_compile);
-         // Never hold two compiled modules, including when construction fails.
-         impl_->module.reset(); impl_->cached_code.clear();
-         impl_->module = std::make_unique<isolated_wasm_module>(action.code, action.limits);
-         impl_->cached_code = action.code; impl_->cached_limits = action.limits;
-      }
+      auto& module = impl_->modules.get(action.code, action.limits);
       checkpoint();
       {
          performance::scope execute_timer(performance::stage::parallel_execute);
-         results.push_back(impl_->module->execute_step(state, action.input, stop, external));
+         results.push_back(module.execute_step(state, action.input, stop, external));
       }
       fingerprints.push_back(results.back().execution_fingerprint);
    }
@@ -533,9 +558,7 @@ isolated_transaction_result isolated_transaction_executor::execute(std::shared_p
 
 struct isolated_notification_executor::impl {
    const std::thread::id owner = std::this_thread::get_id();
-   std::unique_ptr<isolated_wasm_module> module;
-   std::vector<char> cached_code;
-   isolated_wasm_limits cached_limits;
+   bounded_module_cache modules;
 };
 
 isolated_notification_executor::isolated_notification_executor() : impl_(std::make_unique<impl>()) {}
@@ -608,15 +631,10 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
          isolated_action_effects effects;
          std::vector<isolated_cursor_event> cursor_events;
          if (!program.code.empty()) {
-            if (!impl_->module || impl_->cached_code != program.code || impl_->cached_limits != program.limits) {
-               performance::scope compile_timer(performance::stage::parallel_compile);
-               impl_->module.reset(); impl_->cached_code.clear();
-               impl_->module = std::make_unique<isolated_wasm_module>(program.code, program.limits);
-               impl_->cached_code = program.code; impl_->cached_limits = program.limits;
-            }
+            auto& module = impl_->modules.get(program.code, program.limits);
             checkpoint();
             performance::scope execute_timer(performance::stage::parallel_execute);
-            effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified,
+            effects = module.execute_step(state, arguments, stop, external, &cursor, &notified,
                                                   &cursor_events, max_cursor_events - event_count);
          } else {
             effects.writes_begin = effects.writes_end = state.write_count();
@@ -679,9 +697,7 @@ fc::sha256 isolated_action_tree_step_fingerprint(const fc::sha256& action_finger
 
 struct isolated_action_tree_executor::impl {
    const std::thread::id owner = std::this_thread::get_id();
-   std::unique_ptr<isolated_wasm_module> module;
-   std::vector<char> cached_code;
-   isolated_wasm_limits cached_limits;
+   bounded_module_cache modules;
 };
 
 isolated_action_tree_executor::isolated_action_tree_executor() : impl_(std::make_unique<impl>()) {}
@@ -764,12 +780,7 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
          step.receiver = current.receiver; step.sender = current.sender;
          step.code_hash = entry.hash; step.has_code = !program.code.empty();
          if (step.has_code) {
-            if (!impl_->module || impl_->cached_code != program.code || impl_->cached_limits != program.limits) {
-               performance::scope compile_timer(performance::stage::parallel_compile);
-               impl_->module.reset(); impl_->cached_code.clear();
-               impl_->module = std::make_unique<isolated_wasm_module>(program.code, program.limits);
-               impl_->cached_code = program.code; impl_->cached_limits = program.limits;
-            }
+            auto& module = impl_->modules.get(program.code, program.limits);
             checkpoint();
             isolated_tree_capture capture{
                [&](const isolated_cursor_event& event) {
@@ -791,7 +802,7 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
                }, step.sender, group.context_free, tree_context.context_free_data.get()};
             std::vector<isolated_cursor_event> cursor_events;
             performance::scope execute_timer(performance::stage::parallel_execute);
-            step.effects = impl_->module->execute_step(state, arguments, stop, external, &cursor, &notified,
+            step.effects = module.execute_step(state, arguments, stop, external, &cursor, &notified,
                &cursor_events, max_events - event_count, &capture);
          } else {
             step.effects.writes_begin = step.effects.writes_end = state.write_count();

@@ -228,7 +228,7 @@ b0 已提交 `a393b84`，b1 正式接入正在构建：owner 捕获 CF 数据，
 
 CF b1 普通工作池三轮通过后，在构建真实节点期间继续复查 `host_context.cpp::execute_sync_call/get_call_return_value`、`sync_call_context.cpp`、`webassembly/sync_call.cpp`、原 EOS VM 的 `do_sync_call/module_has_valid_sync_call` 和 `host_context.hpp::iterator_cache::remove`。下一步不能把 call 当作延后执行的 inline：
 
-1. 新私有同步帧必须立即执行并返回到仍在运行的父 VM。每个活跃帧拥有不同 VM/context/allocator；现有树的“最多缓存一个模块”只能用于前一步已返回后的队列，不能在 host 回调内重置它。按整笔绝对截止、总调用数/代码/数据/活跃内存预算限制，预算不足整次回退，不修改原最大同步深度。独立小步先验证固定输入和无状态/只读嵌套，再扩展写入与正式采用。
+1. 新私有同步帧必须立即执行并返回到仍在运行的父 VM。每个活跃帧拥有不同 VM/context/allocator；现有树的休眠模块缓存（本轮由单项扩为有界四项，验证中）只能用于前一步已返回后的队列，不能在 host 回调内重置或淘汰仍活跃的父模块。按整笔绝对截止、总调用数/代码/数据/活跃内存预算限制，预算不足整次回退，不修改原最大同步深度。独立小步先验证固定输入和无状态/只读嵌套，再扩展写入与正式采用。
 2. 原 sync_call 导出签名严格为 `(i64 sender, i64 receiver, i32 data_size) -> i64`。缺账户/空代码为 -1，未支持该签名为 -2；入口返回 0 表示成功，<= -10000 是业务错误，其他值变为 -3。call 成功的外层返回值却是返回数据长度，不是入口 status。负状态不代表撤销子写入，且不把子帧返回数据交给父帧；`wasm_exit` 分支仍可保留已设置的返回数据。禁止擅自套一层局部 undo 改变原语义。
 3. `last_sync_call_return_value` 每次 call 开始清空；`get_call_data` 和 `get_call_return_value` 即使只拷贝短缓冲区也返回完整长度，不等同于 CF 数据 host 的“返回已拷贝长度”。输入、副本、返回值都要独立拥有所有权；父返回区不能被更深一层/下一次调用串用。
 4. 原检查顺序先新建 call trace、检查深度/数据预算、查账户，再检查 flags；缺失账户加非法 flags 仍先得到 -1。只读属性由父只读或 force_read_only 继承。action-only APIs（含读 action data/授权/通知）在同步帧不开放，CF 不能 call；`get_sender_fix` 激活前后返回值不同，必须绑定协议上下文。先把原语义写成 oracle，不能依据注释中的简写错误码实现。
@@ -241,7 +241,15 @@ CF b1 普通工作池三轮通过后，在构建真实节点期间继续复查 `
 11. `state_history/serialization.hpp` 的 action_trace 输出没有序列化 call_traces，现有 CF oracle 的 trace helper 也不比较同步记录。因此当前 SHiP 摘要一致不能代替同步 trace 验证。下一阶段必须另加对 call_ordinal、sender_ordinal、receiver、read_only、data、返回字节、error_id/error_code、异常码、console 及 console_markers 的显式规范化对照；elapsed 只作诊断，不能要求新旧执行墙钟相等。不能通过改动现有 SHiP 协议格式来掩盖测试缺项。
 12. 继续源码复查发现新的嵌套前置风险：`eos-vm/signals.hpp::invoke_with_signal_handler` 会覆盖 TLS 的 `code_memory_range` / `memory_range`，各出口恢复 `signal_dest`，但没有恢复父调用的两个范围；原 `eos-vm.cpp::exe` 也未另做范围恢复。应在接入嵌套 VM 前加入独立负对照，验证内层正常返回、C++ 异常、库内 longjmp 异常路径之后的父范围/目标和退出后的初始 TLS 状态，以及多线程互不串用。仅源码观察尚不能宣称已复现某个合约崩溃；如需真实内存故障验证，必须用隔离测试进程，不向用户节点或主测试进程发故障信号。修复不得用会被 longjmp 跨越的非平凡 RAII 取代原恢复约束，也不能改变进程信号处理器链或放宽内存保护。该项尚未改码/验证，不把 c0 资源池验收延伸为整个嵌套运行时已安全。
 
-编译路径研究备忘（尚未修改）：`isolated_wasm_module::impl` 目前用同一 `compilation_mutex` 保护整个 backend 构造；上游 `registered_host_functions::resolve_impl` 先 count 再调用 unordered_map 的非 const `operator[]`。即使接口已由 call_once 注册完成，也不能未经审查便取消锁。若后续诊断证实准备/编译成本是瓶颈，可优先评估仅私有 host 类型使用 const/find 的专用 resolver，再审查 parser、allocator、静态表和失败路径，保持未知 import、非函数 import 与签名错误的原拒绝次序，并做 TSan、冷模块并发、实际采用和原链接口对照。此研究不等于已证明编译无竞态，也不允许先放宽时限让测试通过；不直接改全项目上游注册器或允许注册与执行并发。
+编译路径研究备忘（尚未修改）：`isolated_wasm_module::impl` 目前用同一 `compilation_mutex` 保护整个 backend 构造；上游 `registered_host_functions::resolve_impl` 先 count 再调用 unordered_map 的非 const `operator[]`。即使接口已由 call_once 注册完成，也不能未经审查便取消锁。若缓存后的诊断仍证实编译锁是瓶颈，优先评估仅私有 host 类型把锁缩到调用原 resolver 的范围，保留原检查实现，不先复制一套 const/find 解析器；仍须审查 parser、allocator、静态表和失败路径，保持未知 import、非函数 import 与签名错误的原拒绝次序，并做 TSan、首次冷注册/冷模块并发、实际采用和原链接口对照。此研究不等于已证明编译无竞态，也不允许先放宽时限让测试通过；不直接改全项目上游注册器或允许注册与执行并发。
+
+分段测量已确认两类开销，不能混为同一根因：ASan 人工忙循环主要耗在解释执行，正式 inline/CF 夹具则重复编译相同代码并等待编译锁。因此先实施不改变锁范围的四项 LRU 休眠缓存：每个 worker 仍只保留一种 executor，键包含完整代码和全部限制；满时先淘汰再构造，失败不留下半成品；每次执行照旧 reset/start，并新建整笔 overlay/组游标。每模块最多 16 页，四模块线性内存上限为每 worker 4 MiB（不含 VM 元数据/虚拟映射）；代码副本另有界。新增三入口复用、LRU 淘汰、限制变更、内存/全局变量重置、先写后 trap、失败重试测试。旧实现仅 15 条预期复用断言失败，负对照已保存；修复构建中，尚未把此优化当 ASan 截止或全面并行已解决。保留原 50ms/500ms 预算、50,000 次忙循环和实际采用断言。
+
+解释执行待验证优化：原 `interpret_visitor.hpp` 对 get_local/set_local/i32_sub 等指令处理明确使用 `[[gnu::always_inline]]`，私有 `interruptible_visitor` 包装却没有该标注；现有 ASan 二进制的符号与反汇编确认每条指令可进入单独的包装函数，并建立插桩栈帧。缓存独立测完后，再单独试验保留上游内联意图的包装层优化，继续每 1,024 条指令检查取消/截止且每次 memory.grow 单独检查；不得降低 sanitizer 检查级别、减少忙循环或改变预算。必须以相同输入的执行分段测量及完整回归判断效果，源码推断不等于性能结果。
+
+缓存独立验证已完成普通三轮（每轮 130 项 / 9,908 条）与普通/ASan 定向 612 条；正式 ASan 全套 137 项中 136 通过，剩余一项仍为忙循环 deadline。CF 双根热批次从 128 次重复编译降为 0，普通 inline/CF 的实际采用断言已通过。详见 [缓存测量及失败记录](PX7_G5C3B_RESULTS.md)；这不是 ASan 三轮、TSan 或全计划完成，继续上面的内联优化和剩余验证。
+
+依赖维护约束：`libraries/eos-vm` 是独立子模块，研究时 HEAD 为干净的 `3b3cde5951537700c6993d50c88885526431609e`。如嵌套信号恢复的负对照证明需要修改，须保留该原始版本，独立测试后再记录子模块提交/父仓库引用，不能只改依赖工作树却遗漏可复现引用。另见原生 `wasm_allocator` 构造在 mmap 成功后 mprotect 失败会抛出、构造未完成不会进入析构的待验证清理路径；c0 的真实 OC 分配器失败注入不能当作该原生分配器已覆盖。以上目前仅列为待验证风险，不冒充已发生崩溃或已完成修复。
 
 2026-10-12：G5c1 私有通知基础验收完成。新增 8 项/845 条断言；完整工作池普通与 ASan 各三轮 69 项/3,490 条，私有 TSan 三轮 63 项/3,029 条；状态/浮点原生两类 sanitizer 各三轮 63 项/90,619 条。核心和当前 token 三轮、五模式真实多动作生产、完整 55 阶段恢复及 21 组兼容检查通过。中途恢复在第 49 阶段后、链接程序时遇到 tmpfs 用户配额限制；核验上一阶段归档并只清理其生成状态后重跑通过，失败记录保留，未放宽资源保护。实现范围、精确计数、归档与未覆盖项见 [G5c1 验收](PX7_G5C1_RESULTS.md)。
 

@@ -230,7 +230,8 @@ BOOST_FIXTURE_TEST_CASE(mixed_inline_tree_production_validation_and_conflicting_
             boost::signals2::scoped_connection b = parallel.control->applied_transaction().connect([&](const auto& e) { collect(parallel_traces, e); });
             const auto before = producer.control->get_parallel_production_stats();
             const auto vb = parallel.control->get_parallel_execution_stats();
-            BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(batch, fc::time_point::maximum(), [&](const auto& trx) {
+            BOOST_CHECK_EQUAL(parallel_test_measure("inline production", [&] {
+               return producer.control->for_each_parallel_production_transaction(batch, fc::time_point::maximum(), [&](const auto& trx) {
                const auto trace = inline_push(producer, trx);
                BOOST_REQUIRE_MESSAGE(!trace->except, (trace->except ? trace->except->to_detail_string() : ""));
                BOOST_REQUIRE(trace->receipt); BOOST_REQUIRE_EQUAL(trace->action_traces.size(), roots * 8);
@@ -256,7 +257,7 @@ BOOST_FIXTURE_TEST_CASE(mixed_inline_tree_production_validation_and_conflicting_
                BOOST_CHECK_LE(elapsed, trace->elapsed.count());
                BOOST_CHECK_GE(trace->receipt->cpu_usage_us, producer.control->get_global_properties().configuration.min_transaction_cpu_usage);
                expected.push_back(inline_consensus_trace(trace)); return true;
-            }), batch.size());
+            }); }), batch.size());
             const auto after = producer.control->get_parallel_production_stats();
             BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before, after)) {
                BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? adopted : 0u);

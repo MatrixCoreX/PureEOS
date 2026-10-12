@@ -172,7 +172,7 @@ private:
 };
 
 // Private execution does not itself authorize canonical adoption. One bounded
-// module cache per worker thread; one owned overlay per call, sealed after ALL actions
+// four-entry module cache per worker thread; one owned overlay per call, sealed after ALL actions
 // finish. No partial result is returned on missing state, cancellation or error.
 class isolated_transaction_executor {
 public:

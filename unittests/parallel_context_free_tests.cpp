@@ -448,14 +448,15 @@ BOOST_FIXTURE_TEST_CASE(production_and_validation_adopt_both_queues_and_match_or
             boost::signals2::scoped_connection a=serial.control->applied_transaction().connect([&](const auto& e) { collect(serial_traces,e); });
             boost::signals2::scoped_connection b=validator.control->applied_transaction().connect([&](const auto& e) { collect(parallel_traces,e); });
             const auto before=producer.control->get_parallel_production_stats(); const auto vb=validator.control->get_parallel_execution_stats();
-            BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(batch,fc::time_point::maximum(),[&](const auto& tx) {
+            BOOST_CHECK_EQUAL(parallel_test_measure("CF production", [&] {
+               return producer.control->for_each_parallel_production_transaction(batch,fc::time_point::maximum(),[&](const auto& tx) {
                const auto trace=cf_produce_push(producer,tx);
                BOOST_REQUIRE_MESSAGE(!trace->except,(trace->except?trace->except->to_detail_string():""));
                BOOST_REQUIRE(trace->receipt); BOOST_CHECK_EQUAL(trace->action_traces.size(),9*roots);
                BOOST_CHECK_EQUAL(std::count_if(trace->action_traces.begin(),trace->action_traces.end(),[](const auto& t) { return t.context_free; }),static_cast<std::ptrdiff_t>(4*roots));
                BOOST_CHECK_GE(trace->receipt->cpu_usage_us,producer.control->get_global_properties().configuration.min_transaction_cpu_usage);
                expected.push_back(cf_trace(trace)); return true;
-            }),batch.size());
+            }); }),batch.size());
             const auto after=producer.control->get_parallel_production_stats();
             BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before, after)) {
                BOOST_CHECK_EQUAL(after.adopted-before.adopted,workers?4u:0u);

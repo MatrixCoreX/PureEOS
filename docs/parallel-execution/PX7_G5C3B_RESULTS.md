@@ -101,3 +101,23 @@ ASan 最后资源池链接因 `/dev/shm` 用户配额不足失败（不是源码
 `diagnostics-asan-full.log` 在 79.63 秒结束：135 入口中 130 通过、5 失败（2 中止），10,400 / 10,426 条通过。新故障分类用例本身通过；树三模式切换抓到 threads=2、wall=500476us，树重叠抓到 threads=1、wall=500531us，均明确为 deadline。正式采用失败的 worker_deadlines 非零；部分 CF 批次私有成功 4 笔、仅采用部分并串行回退，不能将其与“私有完全没有结果”混为一类。生产原有 cancel.deadline 最多 50ms，owner 的外部取消/截止检查先抛 interrupt_exception，所以 preparation_deadlines/budget 可以为零；并不是一定到达 500ms 准备上限。继续保留所有采用断言并定位编译/执行耗时，尚未验收。
 
 上述两份诊断程序测试后哈希不变，归档 `fallback-diagnostics-artifacts.tar.gz` 已逐文件比较，SHA-256 `2b7bf97e2dc9247941bb8f32631819fd48752b3f5304d09ad4ad30094191b390`。此处保存开发检查点，不标记插桩/全部计划完成；后续继续有证据的性能定位和修复。
+
+开发检查点 `8360446` 已保存。接下来仅给相关测试增加显式 `PUREEOS_PARALLEL_TEST_METRICS=1` 开关，测量每批编译次数/总耗时、WASM 执行次数/总耗时和墙钟；默认不启用，不用于改变通过标准。多线程耗时之和可超过墙钟，不能据此误报异常或 TPS。计时覆盖失败尝试和发现重跑；正在 `build-stage-metrics.log` 构建，随后单独诊断，仍须用不带辅助开关的正式入口验收。
+
+## 分段测量与有界模块缓存（继续开发）
+
+辅助计时构建成功。`stage-metrics-normal.log` 的三项 / 1,004 条通过；`stage-metrics-asan.log` 的四项仅一项通过，2,003 / 2,019 条通过、16 条失败，原采用/成功断言未删除。ASan 树三模式每批 27 次编译约 18–32ms，而 WASM 总耗时约 2.24–2.47s；重叠测试出现整笔 deadline 500791us。普通 CF 两根生产夹具 128 次编译，1/2/4 线程编译耗时之和约 12.6/21/60.3ms，墙钟约 25.0/19.1/21.9ms；ASan 正式 inline/CF 则约 56–63ms 墙钟，触及原 50ms 生产尝试上限。数字仅定位该夹具，不是 TPS 或服务器容量预测；不能由编译开销推断人工忙循环也能靠缓存修复。
+
+先实现三个私有 executor 共用的四项 LRU 模块缓存，保持编译锁和所有预算不变。新测试逐项证明代码/完整 limits 绑定、A/B/C/D/A/E/B 淘汰顺序、内存/全局变量每步重置、写后 trap 不泄漏、失败后跨模块再执行和规范数据库不变。测试最初有 C++ 取值字段及 WAT 括号错误，分别保留 `build-cache-before-fix.log`、`cache-negative-control.log`，这些不是有效负对照。修正夹具后的 `cache-negative-control-wat-fixed.log` 才是有效反例：612 条中 597 通过，仅 15 条预期复用断言失败；异常隔离用例 342 条全通过。未修复程序 SHA-256 `15f3012c631be7808a90161c4bd6e46dd9b9edac9c9e51df9785f14db6306c6c`，程序及测试源码归档 `cache-negative-artifacts.tar.gz` SHA-256 `60a7dd68c2ef84483d596a29bf1b968fcdd4bd630f228d67d16c6988731b042c`。
+
+缓存实现已写入，`build-bounded-module-cache.log` 正在构建普通/ASan 程序，结果待验证。此缓存只用于非活跃模块，不能用于未来仍在运行的同步父 VM；上限是每 worker 四模块，不改变原模式切换销毁旧 executor 的规则。尚未宣称 b1 插桩验收、同步或全面并行完成。
+
+缓存源码的访问清单已同步：`audit-cache-check.log` 匹配，`audit-cache-tests.log` 24 项、`harness-cache-tests.log` 17 项通过。后两者仅为工具自检，不代替工作池或真实进程执行。缓存前的计时版 ASan 程序另归档 `stage-metrics-asan-before-cache.tar.gz`（0600），SHA-256 `71ea5071d0a8ab03a661aa9ed1ee3bb83e46681c5720a57b0f8b9c2cd9662373`；解包流的程序哈希与原 `stage-metrics-artifacts.sha256` 中的 `062e48c1b1ba1e836fe0cca65f8c2bbd85b0b95092483f5bdccfd0e3051d9cbe` 一致。负对照归档的测试源码哈希也与当前文件一致；仍保留初次夹具失败日志。
+
+缓存构建完成，无本次构建告警/错误。`cache-normal.log` 与 `cache-asan.log` 各 2 项 / 612 条全部通过；旧版仅有的 15 条复用失败已消失。完整普通工作池 `cache-worker-{1,2,3}.log` 三轮各 130 项 / 9,908 条全部通过。
+
+同参数的 `cache-stage-metrics-normal.log` 三项 / 1,004 条通过：CF 单根冷批次编译从 56 次降为 1/2/4 worker 对应的 4/8/16 次，随后双根热批次从 128 次降为 0 次；双根墙钟从此前约 25.0/19.1/21.9ms 降为本次约 4.93/4.18/3.43ms。必须注明这是同一有限夹具的冷/热序列比较，不是 TPS 倍数。`cache-stage-metrics-asan.log` 四项中三项通过；普通 inline 正式生产约 18.7–26.6ms，CF 约 19.0–33.6ms，原实际采用断言通过；树三模式仍在 4 worker 下出现 deadline=501034us（两条失败、一项中止）。缓存解决了该夹具的重复编译，但没有消除忙循环的解释执行开销。
+
+无辅助计时开关的正式 CTest `cache-asan-full.log` 在 73.65 秒结束：137 项中 136 通过、1 失败/中止，11,101 / 11,103 条通过，唯一失败为树三模式的 2 worker、deadline=500906us；没有新的 ASan/UBSan/LSan 错误报告。`--repeat until-fail:3` 在第一轮失败后停止，不能写成完整三轮通过。普通 inline、CF 正式采用及其他回归通过，但整体 b1 插桩验收仍未完成。后续保留原 50,000 次循环、50ms/500ms 上限和全部采用断言，单独验证指令包装层恢复原 always_inline 意图的优化。
+
+本次固定普通/ASan 程序 SHA-256 分别为 `db642789efcc8c5353f06c03e293bd6d92edfc575241d8069f032996e22707b7` / `d09982730de447413df71209c254c0c48718f496bb441f9dcb93748dc4b816db`，测试后校验不变；归档 `bounded-cache-artifacts.tar.gz`（0600），SHA-256 `eaa44da3dd9da7f37781061f0b3a1ff341c1a001d4d8db4422fe58819ee59814`。这是继续开发的缓存检查点，不标记同步、全 OC 或全面并行完成；当前缓存代码的 TSan、核心及真实节点重建/进程矩阵仍待后续优化合并验证。

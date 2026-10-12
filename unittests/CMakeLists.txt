@@ -130,7 +130,7 @@ endif()
 
 add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
   parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp parallel_action_tree_pool_tests.cpp
-  parallel_context_free_tests.cpp)
+  parallel_context_free_tests.cpp parallel_module_cache_tests.cpp)
 target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_testing
   state_history fc custom_appbase pureeos_wasm_worker_experimental ${PLATFORM_SPECIFIC_LIBS})
 target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
@@ -240,7 +240,7 @@ if(PUREEOS_PARALLEL_SANITIZERS)
   # SoftFloat definition before the normal chain dependency archive is searched.
   add_executable(parallel_wasm_sanitizer_test EXCLUDE_FROM_ALL main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
     parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp parallel_action_tree_pool_tests.cpp
-    parallel_inline_adoption_tests.cpp parallel_context_free_tests.cpp
+    parallel_inline_adoption_tests.cpp parallel_context_free_tests.cpp parallel_module_cache_tests.cpp
     ../libraries/chain/parallel_inline_action.cpp ../libraries/chain/parallel_action_tree.cpp
     ../libraries/chain/parallel_canonical_adoption.cpp ../libraries/chain/apply_context.cpp ../libraries/chain/transaction_context.cpp
     ../libraries/chain/transaction_state_view.cpp ../libraries/chain/parallel_state_overlay.cpp

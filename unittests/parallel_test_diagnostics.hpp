@@ -1,8 +1,46 @@
 #pragma once
 #include <eosio/chain/controller.hpp>
+#include <eosio/chain/performance_metrics.hpp>
+#include <cstdio>
+#include <cstdlib>
+#include <functional>
 #include <sstream>
+#include <string_view>
 
 namespace eosio::chain::experimental {
+// Explicit diagnostic runs only. Per-stage sums can exceed wall time when
+// workers overlap. Never use these measurements to decide a test's outcome.
+template<typename F>
+auto parallel_test_measure(const char* label, F&& run) {
+   const auto* setting = std::getenv("PUREEOS_PARALLEL_TEST_METRICS");
+   if (!setting || std::string_view(setting) != "1") return std::invoke(std::forward<F>(run));
+   auto& metrics = performance::metrics();
+   struct restore_flag {
+      std::atomic<bool>& flag;
+      bool value;
+      ~restore_flag() { flag.store(value, std::memory_order_relaxed); }
+   } restore{metrics.enabled, metrics.enabled.exchange(true, std::memory_order_relaxed)};
+   const auto compile_before = metrics.snapshot(performance::stage::parallel_compile);
+   const auto execute_before = metrics.snapshot(performance::stage::parallel_execute);
+   const auto began = std::chrono::steady_clock::now();
+   const auto report = [&] {
+      const auto compile = metrics.snapshot(performance::stage::parallel_compile);
+      const auto execute = metrics.snapshot(performance::stage::parallel_execute);
+      const auto wall = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - began);
+      std::fprintf(stderr, "PARALLEL_TEST_METRICS %s wall_us=%lld compile_count=%llu compile_us=%llu execute_count=%llu execute_us=%llu\n",
+         label, static_cast<long long>(wall.count()),
+         static_cast<unsigned long long>(compile.count - compile_before.count),
+         static_cast<unsigned long long>((compile.nanoseconds - compile_before.nanoseconds) / 1000),
+         static_cast<unsigned long long>(execute.count - execute_before.count),
+         static_cast<unsigned long long>((execute.nanoseconds - execute_before.nanoseconds) / 1000));
+   };
+   try {
+      auto result = std::invoke(std::forward<F>(run));
+      report();
+      return result;
+   } catch (...) { report(); throw; }
+}
+
 // Evaluated only after the joined attempt, and printed by Boost on failure.
 // No timing, budget or expected-adoption assertion is relaxed by this helper.
 inline std::string parallel_attempt_diagnostics(const controller::parallel_execution_stats& before,

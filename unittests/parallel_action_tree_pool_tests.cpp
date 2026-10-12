@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include "parallel_test_diagnostics.hpp"
 
 using namespace eosio::chain;
 using namespace eosio::chain::experimental;
@@ -98,7 +99,7 @@ BOOST_FIXTURE_TEST_CASE(three_exclusive_modes_keep_owned_results_and_one_thread_
             else if (i % 3 == 1) jobs.emplace_back(batch.get_ticket(i), roots, notification_programs);
             else jobs.emplace_back(batch.get_ticket(i), roots, tree_programs, tree_context);
          }
-         const auto outputs = pool.run(std::move(jobs));
+         const auto outputs = parallel_test_measure("tree three modes", [&] { return pool.run(std::move(jobs)); });
          BOOST_REQUIRE_EQUAL(outputs.size(), requests.size());
          for (size_t i = 0; i < outputs.size(); ++i) {
             const auto& out = outputs[i];
@@ -206,7 +207,8 @@ BOOST_FIXTURE_TEST_CASE(tree_workers_overlap_real_wasm_intervals_without_sharing
       for (size_t i = 0; i < 4; ++i) requests.push_back({fc::sha256::hash(std::to_string(i)), expected.root_fingerprint});
       ordered_attempt_batch batch(base, requests); std::vector<isolated_worker_job> jobs;
       for (size_t i = 0; i < requests.size(); ++i) jobs.emplace_back(batch.get_ticket(i), roots, catalog, tree_context);
-      const auto outcomes = pool.run(std::move(jobs)); bool overlap = false;
+      const auto outcomes = parallel_test_measure("tree overlap", [&] { return pool.run(std::move(jobs)); });
+      bool overlap = false;
       for (size_t i = 0; i < outcomes.size(); ++i) {
          BOOST_REQUIRE_MESSAGE(outcomes[i].tree_result, "threads=" << threads << " job=" << i << " failure=" <<
             isolated_worker_failure_name(outcomes[i].failure) << " attempt_wall_us=" << outcomes[i].attempt_wall.count());
