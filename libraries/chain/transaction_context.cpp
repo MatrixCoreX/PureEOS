@@ -489,9 +489,12 @@ namespace eosio::chain {
    void transaction_context::undo() {
       if (undo_session) undo_session->undo();
       parallel_transaction_result = nullptr;
+      parallel_notification_result = nullptr;
+      parallel_tree_result = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
+      parallel_next_receiver = 0;
       parallel_transaction_adopted = false;
       transaction_timer.stop();
    }

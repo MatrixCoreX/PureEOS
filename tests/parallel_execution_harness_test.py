@@ -90,13 +90,72 @@ class HarnessTest(unittest.TestCase):
                                (["--token-fixture", "--lifecycle-fixture", "--multi-action-fixture"], "cannot be combined"),
                                (["--token-fixture", "--coded-notification-fixture"], "cannot be combined"),
                                (["--token-fixture", "--inline-fixture"], "cannot be combined"),
-                               (["--coded-notification-fixture", "--inline-fixture"], "cannot be combined")]:
+                               (["--coded-notification-fixture", "--inline-fixture"], "cannot be combined"),
+                               (["--token-fixture", "--context-free-fixture"], "cannot be combined"),
+                               (["--inline-fixture", "--context-free-fixture"], "cannot be combined"),
+                               (["--coded-notification-fixture", "--context-free-fixture"], "cannot be combined")]:
             with self.subTest(flags=flags):
                 result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
                                         capture_output=True, text=True, timeout=15)
                 self.assertEqual(result.returncode, 2)
                 self.assertIn(message, result.stderr)
                 self.assertEqual(sorted(path.name for path in self.root.iterdir()), before)
+
+    def test_context_free_trace_checks_bind_type_data_queues_and_original_receipts(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_context_free_response
+        receivers = ["test", "test", "bob", "carol", "dave", "dave", "bob", "carol", "dave", "carol",
+                     "bob", "carol", "dave", "dave", "bob", "carol", "dave", "carol"]
+        creators = [0, 0, 1, 1, 1, 1, 1, 5, 3, 3, 2, 2, 2, 2, 2, 13, 11, 11]
+        ancestors = [0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 2, 2, 2, 2, 2, 2, 11, 11]
+        methods = ["run", "run", "normal", "pure", "run", "normal", "pure", "pure", "pure", "normal",
+                   "normal", "pure", "run", "normal", "pure", "pure", "pure", "normal"]
+        order = {ordinal: i + 100 for i, ordinal in enumerate((1, 5, 4, 7, 8, 3, 9, 10, 6, 2, 13, 12, 15, 16, 11, 17, 18, 14))}
+        traces = []
+        for ordinal, receiver, creator, ancestor, method in zip(range(1, 19), receivers, creators, ancestors, methods):
+            root = 2 if ordinal == 2 or ordinal >= 11 else 1
+            traces.append({"action_ordinal": ordinal, "creator_action_ordinal": creator,
+                "closest_unnotified_ancestor_action_ordinal": ancestor, "context_free": method == "pure",
+                "receipt": {"receiver": receiver, "global_sequence": order[ordinal]}, "account_ram_deltas": [],
+                "act": {"account": "test" if method == "run" else receiver, "name": method,
+                        "data": str(root) if method == "run" else "78797a",
+                        "authorization": [{"actor": "test", "permission": "active"}] if method == "run" else []}})
+        response = {"processed": {"action_traces": traces}}
+        check_context_free_response({"actions": 2}, response)
+        nested = deepcopy(traces)
+        for trace in nested:
+            if trace["creator_action_ordinal"]:
+                nested[trace["creator_action_ordinal"] - 1].setdefault("inline_traces", []).append(trace)
+        tree = {"processed": {"action_traces": nested[:2]}}
+        check_context_free_response({"actions": 2}, tree)
+        cycle = deepcopy(tree)
+        cycle["processed"]["action_traces"][0]["inline_traces"].append(cycle["processed"]["action_traces"][0])
+        with self.assertRaisesRegex(RuntimeError, "bounds"):
+            check_context_free_response({"actions": 2}, cycle)
+        for fault, message in enumerate(("lost", "ordinals", "receiver", "ancestry", "type", "target", "authorization", "payload", "RAM", "execution order")):
+            changed = deepcopy(response); entries = changed["processed"]["action_traces"]
+            if fault == 0:
+                entries.pop()
+            elif fault == 1:
+                entries[3]["action_ordinal"] = 1
+            elif fault == 2:
+                entries[3]["receipt"]["receiver"] = "bob"
+            elif fault == 3:
+                entries[7]["closest_unnotified_ancestor_action_ordinal"] = 5
+            elif fault == 4:
+                entries[3]["context_free"] = False
+            elif fault == 5:
+                entries[3]["act"]["name"] = "normal"
+            elif fault == 6:
+                entries[3]["act"]["authorization"] = [{"actor": "test", "permission": "active"}]
+            elif fault == 7:
+                entries[3]["act"]["data"] = ""
+            elif fault == 8:
+                entries[3]["account_ram_deltas"] = [{"account": "carol", "delta": 1}]
+            else:
+                entries[3]["receipt"]["global_sequence"] = entries[4]["receipt"]["global_sequence"]
+            with self.subTest(fault=fault), self.assertRaisesRegex(RuntimeError, message):
+                check_context_free_response({"actions": 2}, changed)
 
     def checkpoint_node(self):
         node = object.__new__(Node)

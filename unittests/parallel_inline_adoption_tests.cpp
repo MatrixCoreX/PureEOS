@@ -19,6 +19,8 @@ using namespace eosio::chain;
 using namespace eosio::testing;
 using namespace eosio::chain::experimental;
 
+#include "parallel_test_diagnostics.hpp"
+
 namespace {
 const std::array contracts{"test"_n, "bob"_n, "carol"_n};
 std::string literal(name n) { return "(i64.const " + std::to_string(n.to_uint64_t()) + ")"; }
@@ -256,8 +258,10 @@ BOOST_FIXTURE_TEST_CASE(mixed_inline_tree_production_validation_and_conflicting_
                expected.push_back(inline_consensus_trace(trace)); return true;
             }), batch.size());
             const auto after = producer.control->get_parallel_production_stats();
-            BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? adopted : 0u);
-            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? fallback : 0u);
+            BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before, after)) {
+               BOOST_CHECK_EQUAL(after.adopted - before.adopted, workers ? adopted : 0u);
+               BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? fallback : 0u);
+            }
             const auto block = producer.finish_block();
             serial.push_block(block); serial.control->abort_block(); parallel.push_block(block); parallel.control->abort_block();
             BOOST_CHECK(expected == serial_traces); BOOST_CHECK(expected == parallel_traces);
@@ -314,9 +318,11 @@ BOOST_FIXTURE_TEST_CASE(send_time_authority_ram_and_deep_trap_failures_undo_orig
             return true;
          }), 2u);
          const auto after = producer.control->get_parallel_production_stats();
-         BOOST_CHECK_EQUAL(after.adopted - before.adopted, 0u);
-         BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? 2u : 0u);
-         if (workers && failure != 1) BOOST_CHECK_GT(after.succeeded - before.succeeded, 0u);
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before, after)) {
+            BOOST_CHECK_EQUAL(after.adopted - before.adopted, 0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, workers ? 2u : 0u);
+            if (workers && failure != 1) BOOST_CHECK_GT(after.succeeded - before.succeeded, 0u);
+         }
          serial.control->abort_block(); std::vector<char> verified;
          boost::signals2::scoped_connection c = serial.control->applied_transaction().connect([&](const auto& event) {
             if (std::get<0>(event)->id == batch[1]->id()) verified = inline_consensus_trace(std::get<0>(event));
@@ -368,8 +374,10 @@ BOOST_FIXTURE_TEST_CASE(unreviewed_child_and_native_inline_remain_whole_transact
             expected = inline_consensus_trace(trace); return true;
          }), 1u);
          const auto after = producer.control->get_parallel_production_stats();
-         BOOST_CHECK_EQUAL(after.adopted - before.adopted, 0u);
-         BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, 1u);
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before, after)) {
+            BOOST_CHECK_EQUAL(after.adopted - before.adopted, 0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks - before.serial_fallbacks, 1u);
+         }
          const auto block = producer.finish_block();
          serial.push_block(block); serial.control->abort_block(); parallel.push_block(block); parallel.control->abort_block();
          BOOST_CHECK(expected == serial_trace); BOOST_CHECK(expected == parallel_trace);

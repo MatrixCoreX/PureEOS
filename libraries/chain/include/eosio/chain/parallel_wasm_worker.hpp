@@ -12,6 +12,14 @@ namespace eosio::chain::experimental {
 
 struct isolated_tree_capture; // private definition; no standalone host capability
 
+enum class isolated_interrupt_reason : uint8_t { cancelled, deadline };
+// Preserve the existing invalid-attempt catch contract, but retain the reason
+// at the checkpoint itself. Inspecting the clock later in a catch is ambiguous.
+struct isolated_execution_interrupted : primary_state_invalid_attempt {
+   const isolated_interrupt_reason reason;
+   explicit isolated_execution_interrupted(isolated_interrupt_reason why) : reason(why) {}
+};
+
 // An owned atomic generation bridges the existing controller interrupt route
 // without sending signals to workers or retaining any controller/DB pointer.
 struct isolated_cancel {
@@ -23,6 +31,12 @@ struct isolated_cancel {
    bool stop_requested() const {
       return (generation && generation->load(std::memory_order_relaxed) != observed) ||
              (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline);
+   }
+   void check(std::stop_token stop = {}) const {
+      if (stop.stop_requested() || (generation && generation->load(std::memory_order_relaxed) != observed))
+         throw isolated_execution_interrupted(isolated_interrupt_reason::cancelled);
+      if (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline)
+         throw isolated_execution_interrupted(isolated_interrupt_reason::deadline);
    }
 };
 

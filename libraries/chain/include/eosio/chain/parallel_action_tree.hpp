@@ -25,8 +25,8 @@ private:
 struct isolated_action_tree_context {
    uint32_t max_inline_action_size = config::default_max_inline_action_size;
    uint32_t max_inline_action_depth = config::default_max_inline_action_depth;
-   // Null keeps the old capability boundary. Only explicit private-tree callers
-   // supply a snapshot until the canonical owner/adopter is separately enabled.
+   // Null keeps the legacy private capability boundary. The canonical owner
+   // captures packed data; adoption must independently verify the same input.
    std::shared_ptr<const isolated_context_free_data> context_free_data;
    bool operator==(const isolated_action_tree_context&) const = default;
 };
@@ -65,6 +65,7 @@ struct isolated_action_tree_result {
    std::vector<isolated_action_tree_group> groups; // scheduling order
    std::vector<isolated_action_tree_step> steps;   // original execution order
    fc::sha256 root_fingerprint;
+   std::shared_ptr<const isolated_context_free_data> context_free_data;
 };
 
 fc::sha256 isolated_action_tree_fingerprint(std::span<const fc::sha256> roots,

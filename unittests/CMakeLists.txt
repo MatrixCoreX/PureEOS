@@ -137,7 +137,7 @@ target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIAL
 add_test(NAME pureeos_parallel_wasm_worker COMMAND parallel_wasm_worker_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
 
-add_executable(parallel_validation_test main.cpp parallel_validation_tests.cpp parallel_inline_adoption_tests.cpp)
+add_executable(parallel_validation_test main.cpp parallel_validation_tests.cpp parallel_inline_adoption_tests.cpp parallel_context_free_tests.cpp)
 target_link_libraries(parallel_validation_test PRIVATE eosio_chain_wrap eosio_testing
   state_history fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
 target_compile_options(parallel_validation_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
@@ -146,6 +146,10 @@ set_tests_properties(pureeos_parallel_validation PROPERTIES TIMEOUT 300 LABELS "
 add_test(NAME pureeos_parallel_production COMMAND parallel_validation_test --run_test=parallel_production_tests --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_production PROPERTIES TIMEOUT 300 LABELS "parallel-px5")
 add_test(NAME pureeos_parallel_inline_adoption COMMAND parallel_validation_test --run_test=parallel_inline_adoption_tests --report_level=detailed --color_output=no)
+add_test(NAME pureeos_parallel_context_free COMMAND parallel_validation_test
+  --run_test=parallel_context_free_tests:parallel_context_free_oracle_tests:parallel_context_free_adoption_tests
+  --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_context_free PROPERTIES TIMEOUT 300 LABELS "parallel-px7;context-free")
 set_tests_properties(pureeos_parallel_inline_adoption PROPERTIES TIMEOUT 300 LABELS "parallel-px7")
 
 # Existing original-path suites, rebuilt against the current core. This is a
@@ -271,7 +275,7 @@ if(PUREEOS_PARALLEL_SANITIZERS)
     # TSan still excludes mixed-controller execution. Keep that limitation in
     # the test name and output; do not suppress mixed-build race diagnostics.
     add_test(NAME pureeos_parallel_wasm_private_tsan COMMAND parallel_wasm_sanitizer_test
-      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests:!parallel_inline_adoption_tests:!parallel_context_free_oracle_tests"
+      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests:!parallel_inline_adoption_tests:!parallel_context_free_oracle_tests:!parallel_context_free_adoption_tests"
       --report_level=detailed --color_output=no)
     set_tests_properties(pureeos_parallel_wasm_private_tsan PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer;private-only")
   else()

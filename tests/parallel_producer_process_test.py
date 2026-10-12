@@ -119,6 +119,50 @@ def check_inline_response(entry, response):
     require(all(a < b for a, b in zip(sequences, sequences[1:])), "Inline receipt execution order changed")
 
 
+def check_context_free_response(entry, response):
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 18:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending, "Context-free trace tree exceeds fixture bounds")
+    require(entry["actions"] == 2 and len(traces) == 18, "Context-free fixture lost a receiver or root")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 19)), "Context-free ordinals are missing or repeated")
+    execution = []
+    for index in range(2):
+        root, base = index + 1, 2 + index * 8
+        # ordinal, receiver, creator, first receiver ancestor, method, CF flag
+        specs = [(root, "test", 0, 0, "run", False),
+                 (base + 1, "bob", root, root, "normal", False),
+                 (base + 2, "carol", root, root, "pure", True),
+                 (base + 3, "dave", root, root, "run", False),
+                 (base + 4, "dave", root, root, "normal", False),
+                 (base + 5, "bob", root, root, "pure", True),
+                 (base + 6, "carol", base + 3, root, "pure", True),
+                 (base + 7, "dave", base + 1, base + 1, "pure", True),
+                 (base + 8, "carol", base + 1, base + 1, "normal", False)]
+        for ordinal, receiver, creator, ancestor, method, pure in specs:
+            trace = by_ordinal[ordinal]
+            require(trace["receipt"]["receiver"] == receiver, "Context-free receiver changed")
+            require(trace["creator_action_ordinal"] == creator and
+                    trace["closest_unnotified_ancestor_action_ordinal"] == ancestor, "Context-free ancestry changed")
+            require(trace.get("context_free") is pure, "Context-free action type changed")
+            account = "test" if method == "run" else receiver
+            require(trace["act"]["account"] == account and trace["act"]["name"] == method,
+                    "Context-free action target changed")
+            auth = [{"actor": "test", "permission": "active"}] if method == "run" else []
+            require(trace["act"]["authorization"] == auth, "Context-free authorization changed")
+            data = by_ordinal[root]["act"]["data"] if method == "run" else "78797a"
+            require(trace["act"]["data"] == data, "Context-free payload changed")
+            if pure:
+                require(not trace.get("account_ram_deltas"), "Context-free child changed RAM")
+        execution.extend((root, base + 3, base + 2, base + 5, base + 6, base + 1, base + 7, base + 8, base + 4))
+    sequences = [int(by_ordinal[ordinal]["receipt"]["global_sequence"]) for ordinal in execution]
+    require(all(a < b for a, b in zip(sequences, sequences[1:])), "Context-free receipt execution order changed")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--old-nodeos", type=Path, required=True)
@@ -132,6 +176,7 @@ def main():
     parser.add_argument("--multi-action-fixture", action="store_true", help="With --token-fixture, execute dependent transfers and close in one transaction")
     parser.add_argument("--coded-notification-fixture", action="store_true", help="Two roots with shared-cursor coded notifications and child-owned writes")
     parser.add_argument("--inline-fixture", action="store_true", help="Two roots with ordinary inline children, coded notifications, lifecycle writes and original authorization")
+    parser.add_argument("--context-free-fixture", action="store_true", help="Two roots with parent writes, notifications, both inline queues and immutable context-free data")
     args = parser.parse_args()
     if args.ram_fixture and not args.token_fixture:
         parser.error("--ram-fixture requires --token-fixture")
@@ -143,6 +188,8 @@ def main():
         parser.error("--coded-notification-fixture cannot be combined with token/RAM/lifecycle/multi-action flags")
     if args.inline_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture):
         parser.error("--inline-fixture cannot be combined with other fixture flags")
+    if args.context_free_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture or args.inline_fixture):
+        parser.error("--context-free-fixture cannot be combined with other fixture flags")
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
     require(sha256(old) == args.old_sha256, "Original binary hash changed")
@@ -150,7 +197,8 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
-              "fixture_kind": "ordinary-inline-multiple-actions" if args.inline_fixture else
+              "fixture_kind": "context-free-inline-multiple-actions" if args.context_free_fixture else
+                              "ordinary-inline-multiple-actions" if args.inline_fixture else
                               "coded-notification-multiple-actions" if args.coded_notification_fixture else
                               "real-token-multiple-actions" if args.multi_action_fixture else
                               "real-token-first-balance" if args.lifecycle_fixture else
@@ -168,11 +216,16 @@ def main():
             corpus = group / "corpus"
             env = {**os.environ, "PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR": str(corpus)}
             env.pop("PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR", None)
+            env.pop("PUREEOS_PARALLEL_PRODUCER_CF_EXPORT_DIR", None)
             export_test = "parallel_production_tests/export_fresh_live_producer_fixture"
             if args.inline_fixture:
                 env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
                 env["PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR"] = str(corpus)
                 export_test = "parallel_inline_adoption_tests/export_fresh_inline_producer_fixture"
+            if args.context_free_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_CF_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_context_free_adoption_tests/export_fresh_context_free_producer_fixture"
             if args.token_fixture:
                 env["PUREEOS_PARALLEL_PRODUCER_TOKEN"] = "1"
             else:
@@ -254,6 +307,8 @@ def main():
                     check_coded_notification_response(entry, response)
                 if args.inline_fixture:
                     check_inline_response(entry, response)
+                if args.context_free_fixture:
+                    check_context_free_response(entry, response)
                 if args.multi_action_fixture:
                     ram = check_multi_action_response(entry, response, not responses)
                     if not responses:

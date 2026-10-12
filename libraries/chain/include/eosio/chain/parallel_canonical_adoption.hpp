@@ -53,9 +53,9 @@ bool try_adopt_notification_result(apply_context&, const fc::sha256& code_hash, 
    const isolated_wasm_limits&, const isolated_notification_result&, size_t step_index,
    std::optional<fc::microseconds> production_elapsed = {});
 
-// Ordinary inline tree: step zero binds ALL dynamic native/code pairs and the
-// frozen journal to current state. Each send re-enters ORIGINAL send_inline and
-// its immediate authorization at the recorded position. Never retains an action
+// Inline tree: step zero binds ALL dynamic native/code pairs, packed CF data and
+// the frozen journal to current state. Each send re-enters its ORIGINAL host and
+// its immediate authorization/account checks at the recorded position. Never retains an action
 // trace reference across scheduling (the underlying vector may reallocate).
 bool try_adopt_action_tree_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
    const isolated_wasm_limits&, const isolated_action_tree_result&, size_t step_index,

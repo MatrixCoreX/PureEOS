@@ -204,11 +204,15 @@ a3 后续：完整普通 worker 三轮各 106 项/7,915 条，核心三轮各 43
 
 `sync_call_resource_pool.hpp::acquire` 当前只在 assert 中检查空池，Release 下未检查 `stack.pop` 的返回值便返回未初始化指针；`resize` 还需审查乘法溢出、部分创建失败的所有权以及 push 失败。该池供原 WASM allocator/OC executor 使用，当前私有通知 worker 不借用此池；在进一步接入嵌套同步执行前单独修复并做耗尽、恢复、并发独占和失败释放测试，不能因正常深度测试通过就忽略 Release 防御。此次构建仍是 ENABLE_OC=OFF，不能宣称 OC 路径已实际验收。
 
-### G5c3b 补充源码约束（后续实现，尚未开放）
+### G5c3b 补充源码约束（b1 已接入，插桩问题修复中）
+
+当前进度：b1 的普通回归、CF 五模式真实生产与 55 阶段恢复、旧 inline/token 五模式回归已经通过；不是全计划完成。插桩验证保留了工作池偶发无结果失败，正在增加可判别诊断；ASan 还发现原串行 CF 空数据零长度 memcpy 的未定义行为，须修复再验收。详细结果与失败历史见 [b 阶段记录](PX7_G5C3B_RESULTS.md)。下文早期“尚未接入”段落为开发记录，不代表最新代码状态。
 
 G5c3b0 从 `11d05e7` 继续：正在增加有界不可变 context-free 数据快照、区分两类发送/子组、完整 context-aware host 防护和两队列重建；`current_action_tree_context` 仍不提供此能力，生产/验证 owner 暂不开放。新增私有与原串行 oracle 测试正在构建，证据目录 `build/local-tests/parallel-context-free-20261012-wbEaQl/`。后续 b1 正式采用还需绑定实际 packed 数据、skip_trx_checks 分支、逐步 CPU 与撤销清理，不把私有成功当正式采用。
 
 b0 普通初验完成：完整工作池三轮各 118 项 / 8,455 条通过。原链对照额外发现旧私有 next/previous 漏掉 legacy_ptr 非零检查；保留未修复版的 8 条失败负对照后补齐，修复版通过。审计 24 项、进程工具 16 项及清单检查通过；详细失败、修复和边界见 [G5c3b 记录](PX7_G5C3B_RESULTS.md)。继续 b1，尚未把 b0 初验当全阶段或全面并行完成。
+
+b0 已提交 `a393b84`，b1 正式接入正在构建：owner 捕获 CF 数据，结果独立持有只读快照，adopter 首步核对实际 packed 输入、匹配 CF 标志，重放原两类发送并拒绝 skip_trx_checks；undo 的遗漏清理已补上。新增父写/CF 子检查的生产、验证和撤销对照，结果待验证，默认开关继续关闭。
 
 继续检查发现 `transaction_context::reset()` 已清除通知/树指针，但 `undo()` 仍只清旧单动作能力；后续需一起补齐通知/树指针及 receiver 索引清理，并测试复用/撤销后不能继续消费旧尝试。该发现不会因正常测试路径中对象随即销毁而忽略。
 
@@ -219,6 +223,25 @@ b0 普通初验完成：完整工作池三轮各 118 项 / 8,455 条通过。原
 3. `packed_transaction::get_context_free_data()` 可在 owner 侧取得已解包的拥有数据；若支持读取该 host，必须对整笔数据数量/字节设预算，交给独立副本或不可变共同所有权，不能把 packed_transaction/controller 指针传给 worker。整笔输入绑定数据内容，逐步骤可复用经核验的摘要，避免每个子动作重复散列整段数据。
 4. `apply_context::exec_one()` 在 context-free 且 `control.skip_trx_checks()` 时跳过执行。正式采用必须明确处理这种路径，不得错误消费后续普通步骤或带入原路径不会产生的输出；不能以常规 full-validation 测试代替该分支。任何后段回退都保留原父动作已经排好的两类队列和计费位置。
 5. 先独立验证私有 context-free inline 与禁止接口，再接正式采用；顶层 context-free action 若要一起开放，还必须复核 `transaction_context::exec()` 的全部顶层 ordinal 预分配、根索引映射及原交易准入，不能把目前 `trx.actions[i]` 的假设直接用于两类根。差分须含禁止 host、非法授权、读取数据的缺失/空/长度边界、两类 inline 交错、深层失败、混合模式与恢复。
+
+### G5c3c1 同步私有帧：源码研究规格（尚未实现）
+
+CF b1 普通工作池三轮通过后，在构建真实节点期间继续复查 `host_context.cpp::execute_sync_call/get_call_return_value`、`sync_call_context.cpp`、`webassembly/sync_call.cpp`、原 EOS VM 的 `do_sync_call/module_has_valid_sync_call` 和 `host_context.hpp::iterator_cache::remove`。下一步不能把 call 当作延后执行的 inline：
+
+1. 新私有同步帧必须立即执行并返回到仍在运行的父 VM。每个活跃帧拥有不同 VM/context/allocator；现有树的“最多缓存一个模块”只能用于前一步已返回后的队列，不能在 host 回调内重置它。按整笔绝对截止、总调用数/代码/数据/活跃内存预算限制，预算不足整次回退，不修改原最大同步深度。独立小步先验证固定输入和无状态/只读嵌套，再扩展写入与正式采用。
+2. 原 sync_call 导出签名严格为 `(i64 sender, i64 receiver, i32 data_size) -> i64`。缺账户/空代码为 -1，未支持该签名为 -2；入口返回 0 表示成功，<= -10000 是业务错误，其他值变为 -3。call 成功的外层返回值却是返回数据长度，不是入口 status。负状态不代表撤销子写入，且不把子帧返回数据交给父帧；`wasm_exit` 分支仍可保留已设置的返回数据。禁止擅自套一层局部 undo 改变原语义。
+3. `last_sync_call_return_value` 每次 call 开始清空；`get_call_data` 和 `get_call_return_value` 即使只拷贝短缓冲区也返回完整长度，不等同于 CF 数据 host 的“返回已拷贝长度”。输入、副本、返回值都要独立拥有所有权；父返回区不能被更深一层/下一次调用串用。
+4. 原检查顺序先新建 call trace、检查深度/数据预算、查账户，再检查 flags；缺失账户加非法 flags 仍先得到 -1。只读属性由父只读或 force_read_only 继承。action-only APIs（含读 action data/授权/通知）在同步帧不开放，CF 不能 call；`get_sender_fix` 激活前后返回值不同，必须绑定协议上下文。先把原语义写成 oracle，不能依据注释中的简写错误码实现。
+5. call traces 在所属 action 内是独立的平面序号和 sender_ordinal，不消耗 action ordinal；原函数会扩展 vector，父代码不能持有可失效 trace 引用。同步执行的 console marker、返回字节、error_id 与异常字段须单独建模，不塞进普通 action 的返回值。
+6. 同步子帧删除对象后，原 `iterator_cache::remove` 沿父路径广播失效；每帧独立 cursor 与原父组共享通知 cursor 不可混淆。`sync_call_context::update_db_usage` 目前为空实现，这是当前原协议行为，正式重放不能用 apply_context 代替同步上下文而意外增减 RAM。写入/删除/重建、父游标失效、返回业务错误但状态保留必须在扩展写能力前逐项对照。
+7. owner 捕获同步目标还需证明存在性、代码/VM/导出能力和相关协议参数；缺失、未审核、特权或未覆盖接口依然有界回退。c0 资源池修复只是原运行时防护，本节既不宣称同步已并行，也不宣称全 OC 验证完成。
+8. 同步父帧在私有执行中已消费子返回值并继续计算，不能沿用普通 inline 的“当前/尾部动作回到原 VM，而前缀保持正式”的任意局部回退。正式接入前必须在任何写入前完成整树、同步子帧、代码/输入/依赖预检；重放须通过原 execute_sync_call 创建真实同步上下文和 call trace，并核对 status/返回字节。若允许采用中途不匹配，必须另有正确的整笔 undo、重新串行和 CPU/trace 清理设计；不能在子调用产生不同返回值后继续提交预计算的父输出。c1 先做纯私有及原串行 oracle，正式 hook 延后单独验收。
+9. b1 TSan 的旧重叠测试曾出现一次未返回结果，随后隔离五轮及带异常记录的全套三轮未复现，原日志保留，原因未唯一确定。后续 ASan 也出现工作池/正式采用数量断言失败，因此优先实现有界、仅本地的回退原因与尝试墙钟诊断：区分取消、缺状态/代码、预算、未支持能力、VM 超时及未知异常，不能只靠“没有 result”猜原因。不要携带 exception_ptr/VM 指针跨生命周期，也不能在异常清理分支分配大字符串造成第二次失败。该诊断现已写入代码，增加准备阶段与 worker 本地计数，正在构建/验证；不是原失败根因已经修复，原 500ms、忙循环和采用断言均不放宽。
+10. 当前 `execute_step` 的起止计时覆盖整个父 WASM；若将同步子帧再作为一项累加，会把嵌套运行重复计入生产 CPU，还可能把发生在父 host 内的子模块编译计入 WASM。同步帧需区分包含子调用的墙钟区间和自身执行耗时：在父帧扣除直接子调用整段墙钟（含子编译），只把每层真正 WASM 的自身耗时累加一次。依然共享同一整笔绝对截止，不能因进入子帧重新获得 500ms；取消/异常与负状态均需测试计时及计费清理。此约束是在尚未加入同步私有执行前预防重复计费，不是修改现行 CPU 共识规则。
+11. `state_history/serialization.hpp` 的 action_trace 输出没有序列化 call_traces，现有 CF oracle 的 trace helper 也不比较同步记录。因此当前 SHiP 摘要一致不能代替同步 trace 验证。下一阶段必须另加对 call_ordinal、sender_ordinal、receiver、read_only、data、返回字节、error_id/error_code、异常码、console 及 console_markers 的显式规范化对照；elapsed 只作诊断，不能要求新旧执行墙钟相等。不能通过改动现有 SHiP 协议格式来掩盖测试缺项。
+12. 继续源码复查发现新的嵌套前置风险：`eos-vm/signals.hpp::invoke_with_signal_handler` 会覆盖 TLS 的 `code_memory_range` / `memory_range`，各出口恢复 `signal_dest`，但没有恢复父调用的两个范围；原 `eos-vm.cpp::exe` 也未另做范围恢复。应在接入嵌套 VM 前加入独立负对照，验证内层正常返回、C++ 异常、库内 longjmp 异常路径之后的父范围/目标和退出后的初始 TLS 状态，以及多线程互不串用。仅源码观察尚不能宣称已复现某个合约崩溃；如需真实内存故障验证，必须用隔离测试进程，不向用户节点或主测试进程发故障信号。修复不得用会被 longjmp 跨越的非平凡 RAII 取代原恢复约束，也不能改变进程信号处理器链或放宽内存保护。该项尚未改码/验证，不把 c0 资源池验收延伸为整个嵌套运行时已安全。
+
+编译路径研究备忘（尚未修改）：`isolated_wasm_module::impl` 目前用同一 `compilation_mutex` 保护整个 backend 构造；上游 `registered_host_functions::resolve_impl` 先 count 再调用 unordered_map 的非 const `operator[]`。即使接口已由 call_once 注册完成，也不能未经审查便取消锁。若后续诊断证实准备/编译成本是瓶颈，可优先评估仅私有 host 类型使用 const/find 的专用 resolver，再审查 parser、allocator、静态表和失败路径，保持未知 import、非函数 import 与签名错误的原拒绝次序，并做 TSan、冷模块并发、实际采用和原链接口对照。此研究不等于已证明编译无竞态，也不允许先放宽时限让测试通过；不直接改全项目上游注册器或允许注册与执行并发。
 
 2026-10-12：G5c1 私有通知基础验收完成。新增 8 项/845 条断言；完整工作池普通与 ASan 各三轮 69 项/3,490 条，私有 TSan 三轮 63 项/3,029 条；状态/浮点原生两类 sanitizer 各三轮 63 项/90,619 条。核心和当前 token 三轮、五模式真实多动作生产、完整 55 阶段恢复及 21 组兼容检查通过。中途恢复在第 49 阶段后、链接程序时遇到 tmpfs 用户配额限制；核验上一阶段归档并只清理其生成状态后重跑通过，失败记录保留，未放宽资源保护。实现范围、精确计数、归档与未覆盖项见 [G5c1 验收](PX7_G5C1_RESULTS.md)。
 

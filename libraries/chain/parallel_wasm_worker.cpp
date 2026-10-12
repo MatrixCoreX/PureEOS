@@ -33,7 +33,7 @@ public:
    attempt_deadline(std::chrono::milliseconds duration, std::stop_token stop, isolated_cancel external)
       : end_(std::chrono::steady_clock::now() + duration), stop_(stop), external_(std::move(external)) {}
    void check() const {
-      if (stop_.stop_requested() || external_.stop_requested()) throw primary_state_invalid_attempt();
+      external_.check(stop_);
       if (std::chrono::steady_clock::now() >= end_) throw eosio::vm::timeout_exception{"isolated attempt timed out"};
    }
 private:
@@ -98,7 +98,7 @@ struct isolated_host {
       cursor_events->push_back(std::move(event));
    }
 
-   void check() const { if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt(); }
+   void check() const { external.check(stop); }
    void context_aware() const {
       check();
       if (tree_capture && tree_capture->context_free) throw primary_state_unsupported();
@@ -425,7 +425,7 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       isolated_tree_capture* tree_capture) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    const auto began = std::chrono::steady_clock::now();
-   if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+   external.check(stop);
    if (bool(group_cursor) != bool(group_recipients) ||
        bool(group_cursor) != bool(cursor_events) || (cursor_events && !cursor_events->empty()) ||
        (tree_capture && !group_cursor) ||
@@ -493,7 +493,7 @@ isolated_transaction_result isolated_transaction_executor::execute(std::shared_p
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() + max_attempt_time);
    auto checkpoint = [&] {
-      if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+      external.check(stop);
    };
    checkpoint();
    if (actions.empty() || actions.size() > max_actions) throw primary_state_budget_exceeded();
@@ -548,7 +548,7 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
    external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() +
                                                 isolated_transaction_executor::max_attempt_time);
    auto checkpoint = [&] {
-      if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+      external.check(stop);
    };
    checkpoint();
    if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
@@ -695,7 +695,7 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
    external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() +
                                                 isolated_transaction_executor::max_attempt_time);
    const auto checkpoint = [&] {
-      if (stop.stop_requested() || external.stop_requested()) throw primary_state_invalid_attempt();
+      external.check(stop);
    };
    checkpoint();
    if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
@@ -838,7 +838,7 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
    };
    for (size_t i = 0; i < roots.size(); ++i) execute_group(i);
    checkpoint();
-   return {state.seal(), std::move(groups), std::move(results), fingerprint};
+   return {state.seal(), std::move(groups), std::move(results), fingerprint, std::move(tree_context.context_free_data)};
 }
 
 bool validate_isolated_notification_journal(const isolated_notification_result& result,

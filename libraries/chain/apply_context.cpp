@@ -782,7 +782,9 @@ int apply_context::get_context_free_data( uint32_t index, char* buffer, size_t b
    if( buffer_size == 0 ) return s;
 
    auto copy_size = std::min( buffer_size, s );
-   memcpy( buffer, trx.context_free_data[index].data(), copy_size );
+   // Empty context-free entries are valid. Their vector::data() may be null,
+   // which is not a valid memcpy source even when the byte count is zero.
+   if( copy_size ) memcpy( buffer, trx.context_free_data[index].data(), copy_size );
 
    return copy_size;
 }

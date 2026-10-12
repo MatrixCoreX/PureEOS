@@ -103,9 +103,15 @@ BOOST_FIXTURE_TEST_CASE(three_exclusive_modes_keep_owned_results_and_one_thread_
          for (size_t i = 0; i < outputs.size(); ++i) {
             const auto& out = outputs[i];
             BOOST_CHECK_EQUAL(bool(out.result), i % 3 == 0); BOOST_CHECK_EQUAL(bool(out.notification_result), i % 3 == 1);
-            BOOST_CHECK_EQUAL(bool(out.tree_result), i % 3 == 2); BOOST_CHECK(!out.request); BOOST_CHECK(!out.receiver_request);
+            BOOST_CHECK_MESSAGE(bool(out.tree_result) == (i % 3 == 2),
+               "threads=" << threads << " round=" << round << " job=" << i << " failure=" <<
+               isolated_worker_failure_name(out.failure) << " attempt_wall_us=" << out.attempt_wall.count());
+            BOOST_CHECK(!out.request); BOOST_CHECK(!out.receiver_request);
             if (i % 3 != 2) continue;
-            BOOST_REQUIRE(out.tree_result);
+            BOOST_REQUIRE_MESSAGE(out.tree_result, isolated_worker_failure_name(out.failure) <<
+               " attempt_wall_us=" << out.attempt_wall.count());
+            BOOST_CHECK(out.failure == isolated_worker_failure::none);
+            BOOST_CHECK(out.attempt_wall >= out.elapsed);
             BOOST_CHECK(validate_isolated_action_tree_journal(*out.tree_result, roots, tree_programs, tree_context));
             BOOST_CHECK(out.tree_result->root_fingerprint == requests[i].execution_fingerprint);
             std::chrono::microseconds elapsed{}; std::chrono::steady_clock::time_point last;
@@ -137,6 +143,10 @@ BOOST_FIXTURE_TEST_CASE(tree_requests_cancellation_and_deep_failures_never_publi
       BOOST_CHECK(!outcomes[0].request); BOOST_CHECK_EQUAL(bool(outcomes[0].receiver_request), failure == 0);
       if (failure == 0) BOOST_CHECK(*outcomes[0].receiver_request == "bob"_n);
       BOOST_CHECK_EQUAL(outcomes[0].elapsed.count(), 0);
+      const std::array reasons{isolated_worker_failure::missing_receiver, isolated_worker_failure::unsupported,
+         isolated_worker_failure::vm_error, isolated_worker_failure::unsupported, isolated_worker_failure::deadline};
+      BOOST_CHECK_MESSAGE(outcomes[0].failure == reasons[failure], isolated_worker_failure_name(outcomes[0].failure));
+      BOOST_CHECK(outcomes[1].failure == isolated_worker_failure::none);
       BOOST_REQUIRE(outcomes[1].tree_result); BOOST_CHECK(validate_isolated_action_tree_journal(*outcomes[1].tree_result, roots, catalog, tree_context));
       BOOST_CHECK_EQUAL(canonical(), 10u);
    }
@@ -145,6 +155,7 @@ BOOST_FIXTURE_TEST_CASE(tree_requests_cancellation_and_deep_failures_never_publi
    const auto missing = pool.run({{missing_batch.get_ticket(0), roots, catalog, tree_context}});
    BOOST_CHECK(!missing[0].tree_result); BOOST_CHECK(!missing[0].result); BOOST_CHECK(!missing[0].notification_result);
    BOOST_REQUIRE(missing[0].request); BOOST_CHECK(!missing[0].receiver_request);
+   BOOST_CHECK(missing[0].failure == isolated_worker_failure::missing_state);
    BOOST_REQUIRE(std::holds_alternative<primary_capture_request>(*missing[0].request));
    BOOST_CHECK(std::get<primary_capture_request>(*missing[0].request).table == pool_rows);
 }
@@ -197,7 +208,8 @@ BOOST_FIXTURE_TEST_CASE(tree_workers_overlap_real_wasm_intervals_without_sharing
       for (size_t i = 0; i < requests.size(); ++i) jobs.emplace_back(batch.get_ticket(i), roots, catalog, tree_context);
       const auto outcomes = pool.run(std::move(jobs)); bool overlap = false;
       for (size_t i = 0; i < outcomes.size(); ++i) {
-         BOOST_REQUIRE(outcomes[i].tree_result);
+         BOOST_REQUIRE_MESSAGE(outcomes[i].tree_result, "threads=" << threads << " job=" << i << " failure=" <<
+            isolated_worker_failure_name(outcomes[i].failure) << " attempt_wall_us=" << outcomes[i].attempt_wall.count());
          const auto& result = *outcomes[i].tree_result;
          BOOST_CHECK(validate_isolated_action_tree_journal(result, roots, catalog, tree_context));
          BOOST_REQUIRE_EQUAL(result.state.writes().size(), 2u);

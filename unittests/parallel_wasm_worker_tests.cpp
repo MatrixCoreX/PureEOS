@@ -2101,12 +2101,14 @@ BOOST_FIXTURE_TEST_CASE(notification_discovery_and_deep_failures_publish_only_ow
    BOOST_REQUIRE_EQUAL(result.size(), 1u);
    BOOST_CHECK(!result[0].result); BOOST_CHECK(!result[0].notification_result); BOOST_CHECK(!result[0].request);
    BOOST_REQUIRE(result[0].receiver_request); BOOST_CHECK(*result[0].receiver_request == "bob"_n);
+   BOOST_CHECK(result[0].failure == isolated_worker_failure::missing_receiver);
    BOOST_CHECK_EQUAL(result[0].elapsed.count(), 0);
    const auto sparse = frozen_primary_state::capture_queries(view, {}, {});
    ordered_attempt_batch sparse_batch(sparse, requests);
    const auto state_missing = pool.run({{sparse_batch.get_ticket(0), roots, programs}});
    BOOST_CHECK(!state_missing[0].result); BOOST_CHECK(!state_missing[0].notification_result);
    BOOST_CHECK(!state_missing[0].receiver_request); BOOST_REQUIRE(state_missing[0].request);
+   BOOST_CHECK(state_missing[0].failure == isolated_worker_failure::missing_state);
    BOOST_REQUIRE(std::holds_alternative<primary_capture_request>(*state_missing[0].request));
    BOOST_CHECK(std::get<primary_capture_request>(*state_missing[0].request).table == rows);
    for (unsigned failure = 0; failure < 3; ++failure) {
@@ -2119,6 +2121,8 @@ BOOST_FIXTURE_TEST_CASE(notification_discovery_and_deep_failures_publish_only_ow
       BOOST_CHECK(!outputs[0].result); BOOST_CHECK(!outputs[0].notification_result);
       BOOST_CHECK(!outputs[0].request); BOOST_CHECK(!outputs[0].receiver_request);
       BOOST_CHECK_EQUAL(outputs[0].elapsed.count(), 0);
+      BOOST_CHECK(outputs[0].failure == (failure == 0 ? isolated_worker_failure::unsupported : isolated_worker_failure::vm_error));
+      BOOST_CHECK(outputs[1].failure == isolated_worker_failure::none);
       BOOST_REQUIRE(outputs[1].notification_result);
       BOOST_CHECK(validate_isolated_notification_journal(*outputs[1].notification_result, roots, programs));
       BOOST_CHECK_EQUAL(canonical(), 10u);
@@ -2546,10 +2550,88 @@ BOOST_FIXTURE_TEST_CASE(external_interrupt_cancels_running_and_queued_attempts_w
    const auto results = pool.run(std::move(jobs));
    interrupter.get();
    BOOST_CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(3));
-   for (const auto& result : results) BOOST_CHECK(!result.result);
+   for (const auto& result : results) {
+      BOOST_CHECK(!result.result);
+      BOOST_CHECK_MESSAGE(result.failure == isolated_worker_failure::cancelled, isolated_worker_failure_name(result.failure));
+      BOOST_CHECK_EQUAL(result.elapsed.count(), 0);
+   }
    const auto retry = pool.run({{batch.get_ticket(0), code, input(), limits, {generation, 1}}});
    BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->actions.front().return_value), 17u);
    BOOST_CHECK_EQUAL(canonical(), 10u);
+}
+
+BOOST_AUTO_TEST_CASE(interruption_checkpoint_retains_observed_reason_and_existing_catch_type) {
+   isolated_cancel cancel;
+   BOOST_CHECK_NO_THROW(cancel.check());
+   cancel.deadline = std::chrono::steady_clock::now();
+   BOOST_CHECK_EXCEPTION(cancel.check(), isolated_execution_interrupted, [](const auto& e) {
+      return e.reason == isolated_interrupt_reason::deadline;
+   });
+   std::stop_source stop; stop.request_stop();
+   BOOST_CHECK_EXCEPTION(cancel.check(stop.get_token()), isolated_execution_interrupted, [](const auto& e) {
+      return e.reason == isolated_interrupt_reason::cancelled;
+   });
+   auto generation = std::make_shared<std::atomic<uint64_t>>(2);
+   cancel.generation = generation; cancel.observed = 1;
+   BOOST_CHECK_EXCEPTION(cancel.check(), isolated_execution_interrupted, [](const auto& e) {
+      return e.reason == isolated_interrupt_reason::cancelled;
+   });
+   cancel.observed = 2;
+   BOOST_CHECK_THROW(cancel.check(), primary_state_invalid_attempt);
+   BOOST_CHECK(cancel.stop_requested());
+   cancel.deadline = std::chrono::steady_clock::time_point::max();
+   BOOST_CHECK_NO_THROW(cancel.check()); BOOST_CHECK(!cancel.stop_requested());
+   static_assert(std::is_trivially_copyable_v<isolated_worker_failure>);
+   static_assert(std::is_nothrow_copy_assignable_v<std::optional<state_capture_request>>);
+   static_assert(std::is_nothrow_copy_assignable_v<std::optional<name>>);
+}
+
+BOOST_FIXTURE_TEST_CASE(typed_worker_fallbacks_keep_no_prefix_and_do_not_poison_the_next_job, wasm_fixture) {
+   isolated_worker_pool pool(1);
+   const auto code = increment_wasm();
+   const std::array<ordered_attempt_batch::request, 1> requests{{{fc::sha256::hash("diagnostic"), fc::sha256::hash("diagnostic")}}};
+   ordered_attempt_batch batch(base, requests);
+   const isolated_worker_job good{batch.get_ticket(0), code, input(), {}};
+   auto check = [&](isolated_worker_job bad, isolated_worker_failure reason) {
+      const auto outputs = pool.run({std::move(bad), good});
+      BOOST_REQUIRE_EQUAL(outputs.size(), 2u);
+      const auto& failed = outputs[0]; const auto& recovered = outputs[1];
+      BOOST_CHECK_MESSAGE(failed.failure == reason, "expected=" << isolated_worker_failure_name(reason) <<
+         " actual=" << isolated_worker_failure_name(failed.failure) << " attempt_wall_us=" << failed.attempt_wall.count());
+      BOOST_CHECK(!failed.result && !failed.notification_result && !failed.tree_result);
+      BOOST_CHECK(!failed.request && !failed.receiver_request);
+      BOOST_CHECK_EQUAL(failed.elapsed.count(), 0);
+      BOOST_CHECK_GE(failed.attempt_wall.count(), 0);
+      BOOST_REQUIRE_MESSAGE(recovered.result, isolated_worker_failure_name(recovered.failure));
+      BOOST_CHECK(recovered.failure == isolated_worker_failure::none);
+      BOOST_CHECK(recovered.attempt_wall >= recovered.elapsed);
+      BOOST_CHECK_EQUAL(number(recovered.result->actions.front().return_value), 17u);
+      BOOST_CHECK_EQUAL(canonical(), 10u);
+   };
+   auto bad = good;
+   bad.actions.front().code = {'b','a','d'};
+   check(std::move(bad), isolated_worker_failure::vm_error);
+   bad = good; bad.actions.front().code = increment_wasm({}, "unreachable");
+   check(std::move(bad), isolated_worker_failure::vm_error);
+   bad = good; bad.actions.front().input = input(1, 7, 0, 3);
+   check(std::move(bad), isolated_worker_failure::unsupported);
+   bad = good; bad.actions.front().limits.max_pages = 17;
+   check(std::move(bad), isolated_worker_failure::budget);
+   bad = good; bad.cancel.generation = std::make_shared<std::atomic<uint64_t>>(1);
+   check(std::move(bad), isolated_worker_failure::cancelled);
+   bad = good; bad.cancel.deadline = std::chrono::steady_clock::now();
+   check(std::move(bad), isolated_worker_failure::deadline);
+   bad = good; bad.actions.front().input = input(1, 7, 0, 1);
+   bad.actions.front().limits.max_attempt_time = std::chrono::milliseconds(20);
+   check(std::move(bad), isolated_worker_failure::vm_timeout);
+   bad = good; bad.actions.front().input = input(1, 7, 0, 1);
+   bad.actions.front().limits.max_attempt_time = std::chrono::seconds(1);
+   check(std::move(bad), isolated_worker_failure::deadline); // unchanged whole-attempt 500ms cap
+   bad = good; [[maybe_unused]] auto moved_ticket = std::move(bad.ticket);
+   check(std::move(bad), isolated_worker_failure::invalid_attempt);
+   ordered_attempt_batch closed(base, requests);
+   bad = good; bad.ticket = closed.get_ticket(0); closed.close();
+   check(std::move(bad), isolated_worker_failure::cancelled);
 }
 
 BOOST_FIXTURE_TEST_CASE(one_absolute_deadline_bounds_running_and_queued_work_then_pool_recovers, wasm_fixture) {
@@ -2567,7 +2649,11 @@ BOOST_FIXTURE_TEST_CASE(one_absolute_deadline_bounds_running_and_queued_work_the
    const auto start = std::chrono::steady_clock::now();
    const auto results = pool.run(std::move(jobs));
    BOOST_CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(3));
-   for (const auto& result : results) BOOST_CHECK(!result.result);
+   for (const auto& result : results) {
+      BOOST_CHECK(!result.result);
+      BOOST_CHECK_MESSAGE(result.failure == isolated_worker_failure::deadline, isolated_worker_failure_name(result.failure));
+      BOOST_CHECK_EQUAL(result.elapsed.count(), 0);
+   }
    const auto retry = pool.run({{batch.get_ticket(0), code, input(), limits, {}}});
    BOOST_REQUIRE(retry[0].result); BOOST_CHECK_EQUAL(number(retry[0].result->actions.front().return_value), 17u);
    BOOST_CHECK_EQUAL(canonical(), 10u);

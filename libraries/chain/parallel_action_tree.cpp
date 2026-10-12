@@ -50,6 +50,9 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
    using executor = isolated_action_tree_executor;
    const auto check = [&] { if (checkpoint) checkpoint(); };
    check();
+   if (bool(result.context_free_data) != bool(context.context_free_data) ||
+       (result.context_free_data && result.context_free_data->fingerprint() != context.context_free_data->fingerprint()))
+      return false;
    const primary_overlay_limits bounds;
    if (!result.state.base() || roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
        programs.empty() || programs.size() > executor::max_programs ||

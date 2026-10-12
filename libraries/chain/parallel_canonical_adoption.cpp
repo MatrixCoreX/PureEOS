@@ -320,13 +320,14 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
    if ((!context.trx_context.explicit_billed_cpu_time && !production_elapsed) ||
        (production_elapsed && (production_elapsed->count() < 0 || *production_elapsed > fc::milliseconds(500))) ||
        context.trx_context.is_transient() || context.trx_context.is_implicit() || context.trx_context.is_scheduled() ||
-       context.is_context_free() || context.is_privileged() || vm_type != 0 || vm_version != 0 ||
+       context.control.skip_trx_checks() || context.is_privileged() || vm_type != 0 || vm_version != 0 ||
        !eligible_transaction(trx) || step_index >= result.steps.size() ||
        result.steps.size() > isolated_action_tree_executor::max_steps ||
        result.groups.size() > isolated_action_tree_executor::max_steps) return false;
    const auto& step = result.steps[step_index];
    if (step.group_index >= result.groups.size()) return false;
    const auto& group = result.groups[step.group_index];
+   if (group.context_free != context.is_context_free()) return false;
    // Inspect, but never retain a trace/act reference across the event loop:
    // ORIGINAL send_inline/require_recipient may grow the trace vector.
    {
@@ -340,7 +341,8 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
           context.control.find_apply_handler(context.get_receiver(), context.get_action().account, context.get_action().name)) return false;
    }
    const auto now_limits = current_limits(context.control);
-   const auto tree_context = current_action_tree_context(context.control);
+   auto tree_context = current_action_tree_context(context.control);
+   tree_context.context_free_data = result.context_free_data;
    if (limits.max_pages != now_limits.max_pages || limits.max_call_depth != now_limits.max_call_depth) return false;
    performance::scope adoption_timer(performance::stage::parallel_adopt);
    std::vector<char> return_value;
@@ -352,6 +354,14 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
           step.effects.return_value.size() > arguments.max_return_bytes) return false;
       if (step_index == 0) {
          const auto checkpoint = [&] { context.trx_context.checktime(); };
+         // The result owns a const copy; verify against the ACTUAL packed input
+         // once, before any canonical event. Later steps bind the same immutable
+         // digest, without copying/hashing all data again at each receiver.
+         if (result.context_free_data) {
+            checkpoint();
+            const auto actual = isolated_context_free_data::capture(context.trx_context.packed_trx.get_context_free_data());
+            if (actual->fingerprint() != result.context_free_data->fingerprint()) return false;
+         }
          std::vector<isolated_action_input> roots;
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act));
          std::vector<isolated_receiver_program> programs;
@@ -393,8 +403,10 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
       if (const auto* send = std::get_if<isolated_tree_inline_event>(&event)) {
          // legacy_span's historical constructor takes void*. const char and
          // alignment 1 mean a read-only view, no copy-back or mutation of bytes.
-         webassembly::interface(context).send_inline(legacy_span<const char>{
-            const_cast<char*>(send->sent.packed.data()), static_cast<uint32_t>(send->sent.packed.size())});
+         auto bytes = legacy_span<const char>{const_cast<char*>(send->sent.packed.data()),
+                                              static_cast<uint32_t>(send->sent.packed.size())};
+         if (send->context_free) webassembly::interface(context).send_context_free_inline(std::move(bytes));
+         else webassembly::interface(context).send_inline(std::move(bytes));
          EOS_ASSERT(context.trx_context.trace->action_traces.size() == send->action_ordinal,
                     transaction_exception, "prevalidated inline schedule mismatch");
          continue;

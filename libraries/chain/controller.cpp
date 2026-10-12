@@ -3211,6 +3211,7 @@ struct controller_impl {
 #ifdef EOSIO_EOS_VM_OC_RUNTIME_ENABLED
       if (wasmif.is_eos_vm_oc_enabled()) return {};
 #endif
+      auto& stats = production ? parallel_production_stats : parallel_stats;
       try {
          std::vector<isolated_action_tree_job> invocations;
          std::vector<ordered_attempt_batch::request> requests;
@@ -3224,6 +3225,7 @@ struct controller_impl {
             std::vector<fc::sha256> fingerprints;
             isolated_action_tree_job invocation;
             invocation.context = current_action_tree_context(self);
+            invocation.context.context_free_data = isolated_context_free_data::capture(packed->get_context_free_data());
             for (const auto& action : *transaction) {
                fingerprints.push_back(isolated_execution_fingerprint(action.code_hash, action.limits, action.input));
                invocation.roots.push_back(action.input);
@@ -3243,7 +3245,6 @@ struct controller_impl {
          if (invocations.empty()) return {};
          chainbase_transaction_state_view view(db);
          if (!parallel_workers) parallel_workers = std::make_unique<isolated_worker_pool>(conf.parallel_validation_threads);
-         auto& stats = production ? parallel_production_stats : parallel_stats;
          std::set<table_key, table_key_less> keys;
          std::set<primary_query, primary_query_less> queries;
          std::set<name> accounts;
@@ -3252,7 +3253,10 @@ struct controller_impl {
             std::chrono::steady_clock::now() + std::chrono::milliseconds(500));
          auto checkpoint = [&] {
             EOS_ASSERT(!cancel.stop_requested(), interrupt_exception, "parallel validation interrupted");
-            if (private_cancel.stop_requested()) throw primary_state_budget_exceeded();
+            if (private_cancel.stop_requested()) {
+               ++stats.preparation_deadlines;
+               throw primary_state_budget_exceeded();
+            }
          };
          // Every discovery round is fully joined BEFORE the owner reads more
          // canonical state. Fresh identity/base; no old partial result survives.
@@ -3286,7 +3290,14 @@ struct controller_impl {
             }
             // Count ALL actual attempts, including discarded discovery passes.
             stats.attempts += attempts->outcomes.size();
-            for (const auto& result : attempts->outcomes) stats.succeeded += bool(result.tree_result);
+            for (const auto& result : attempts->outcomes) {
+               stats.succeeded += bool(result.tree_result);
+               if (result.failure == isolated_worker_failure::deadline) ++stats.worker_deadlines;
+               else if (result.failure == isolated_worker_failure::vm_timeout) ++stats.worker_vm_timeouts;
+               else if (result.failure != isolated_worker_failure::none &&
+                        result.failure != isolated_worker_failure::missing_state &&
+                        result.failure != isolated_worker_failure::missing_receiver) ++stats.worker_other_failures;
+            }
             checkpoint();
             bool requested = false, extended = false;
             for (size_t i = 0; i < attempts->outcomes.size(); ++i) {
@@ -3326,9 +3337,13 @@ struct controller_impl {
          }
          return {}; // bounded discovery exhaustion is serial, NOT rejection
       } catch (const interrupt_exception&) { throw; }
-      catch (const std::exception&) {
+      catch (const primary_state_budget_exceeded&) {
+         ++stats.preparation_budget_fallbacks;
+         return {};
+      } catch (const std::exception&) {
          // Only local pre-execution work was done. Preserve canonical acceptance
          // by routing unsupported capabilities/budgets/allocation to serial.
+         ++stats.preparation_other_fallbacks;
          return {};
       }
    }

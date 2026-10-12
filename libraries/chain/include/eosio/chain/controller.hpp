@@ -231,6 +231,11 @@ namespace eosio::chain {
 
          struct parallel_execution_stats {
             uint64_t batches = 0, attempts = 0, succeeded = 0, adopted = 0, serial_fallbacks = 0;
+            // Local preparation diagnostics only. A preparation deadline is
+            // also included in budget_fallbacks; none changes serial_fallbacks,
+            // which counts transactions routed by an already prepared batch.
+            uint64_t preparation_deadlines = 0, preparation_budget_fallbacks = 0, preparation_other_fallbacks = 0;
+            uint64_t worker_deadlines = 0, worker_vm_timeouts = 0, worker_other_failures = 0;
          };
          // Serial owner only; local diagnostics, never serialized into state.
          parallel_execution_stats get_parallel_execution_stats() const;

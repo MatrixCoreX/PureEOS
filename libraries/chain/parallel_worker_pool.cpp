@@ -1,5 +1,6 @@
 #include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/performance_metrics.hpp>
+#include <eosio/vm/exceptions.hpp>
 #include <condition_variable>
 #include <mutex>
 
@@ -50,8 +51,10 @@ struct isolated_worker_pool::impl {
          }
          const auto& job = current->jobs[index];
          auto& outcome = current->outcomes[index];
+         const auto attempt_began = std::chrono::steady_clock::now();
          try {
-            if (!job.ticket.stop_token().stop_requested() && !job.cancel.stop_requested()) {
+            job.cancel.check(job.ticket.stop_token());
+            {
                if (job.tree) {
                   executor.reset();
                   notification_executor.reset();
@@ -91,18 +94,34 @@ struct isolated_worker_pool::impl {
          } catch (const primary_state_missing& missing) {
             // Owned request only. The joined owner may capture it and restart
             // with a NEW batch/base; no worker ever follows a live DB pointer.
-            outcome.result.reset();
-            outcome.notification_result.reset();
-            outcome.tree_result.reset();
+            outcome.failure = isolated_worker_failure::missing_state;
             outcome.request = missing.request;
          } catch (const isolated_receiver_missing& missing) {
-            outcome.result.reset();
-            outcome.notification_result.reset();
-            outcome.tree_result.reset();
+            outcome.failure = isolated_worker_failure::missing_receiver;
             outcome.receiver_request = missing.receiver;
+         } catch (const isolated_execution_interrupted& interrupted) {
+            outcome.failure = interrupted.reason == isolated_interrupt_reason::cancelled
+               ? isolated_worker_failure::cancelled : isolated_worker_failure::deadline;
+         } catch (const primary_state_budget_exceeded&) {
+            outcome.failure = isolated_worker_failure::budget;
+         } catch (const primary_state_unsupported&) {
+            outcome.failure = isolated_worker_failure::unsupported;
+         } catch (const primary_state_invalid_attempt&) {
+            outcome.failure = isolated_worker_failure::invalid_attempt;
+         } catch (const eosio::vm::timeout_exception&) {
+            outcome.failure = isolated_worker_failure::vm_timeout;
+         } catch (const eosio::vm::wasm_bad_alloc&) {
+            outcome.failure = isolated_worker_failure::allocation;
+         } catch (const std::bad_alloc&) {
+            outcome.failure = isolated_worker_failure::allocation;
+         } catch (const eosio::vm::exception&) {
+            outcome.failure = isolated_worker_failure::vm_error;
          } catch (...) {
             // Local capability/compile/timeout/allocation failure is NOT a
             // consensus rejection. Re-enter original execution on the owner.
+            outcome.failure = isolated_worker_failure::unexpected;
+         }
+         if (outcome.failure != isolated_worker_failure::none) {
             outcome.result.reset();
             outcome.notification_result.reset();
             outcome.tree_result.reset();
@@ -111,6 +130,8 @@ struct isolated_worker_pool::impl {
             outcome.elapsed = {};
             outcome.ended = std::chrono::steady_clock::now();
          }
+         outcome.attempt_wall = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::steady_clock::now() - attempt_began);
          {
             std::lock_guard lock(mutex);
             if (--current->remaining == 0) done.notify_one();
