@@ -228,7 +228,9 @@ b0 已提交 `a393b84`，b1 正式接入正在构建：owner 捕获 CF 数据，
 
 ### G5c3c1 同步私有帧：源码研究规格（防护测试已写，私有执行尚未实现）
 
-新增独立原生 VM 防护测试和原链超时后复用入口，正在对未修改的 EOS VM 编译负对照。解释器/JIT 的公共清理检查不等于 JIT 并行支持；具体安全边界和进度见 [c1 记录](PX7_G5C3C1_RESULTS.md)。
+2026-10-12 用户要求阶段性暂停：当前构建已主动停止，未继续改源码或启动测试；本阶段完成项、尚未验证项、会话草稿位置和恢复顺序统一记录在 [c1 暂停交接](PX7_G5C3C1_RESULTS.md#当前状态按用户要求暂停2026-10-12)。下文是研究与历史推进记录，不表示任务仍在后台运行或已经验收完成。
+
+新增独立原生 VM 防护测试和原链超时后复用入口。原 VM 两次负对照均确认 431 条防护断言失败，原链复用入口均达到 30s 超时；本地依赖修复 `16f9c4c` 的独立普通、ASan/UBSan/LSan、TSan 各三轮通过，当前正在重建原链兼容目标，尚不能把原链挂死记为已修复。以下第 12、13 点保留发现时的风险推演，最新实测以 [c1 记录](PX7_G5C3C1_RESULTS.md) 为准。解释器/JIT 的公共清理检查不等于 JIT 并行支持。
 
 CF b1 普通工作池三轮通过后，在构建真实节点期间继续复查 `host_context.cpp::execute_sync_call/get_call_return_value`、`sync_call_context.cpp`、`webassembly/sync_call.cpp`、原 EOS VM 的 `do_sync_call/module_has_valid_sync_call` 和 `host_context.hpp::iterator_cache::remove`。下一步不能把 call 当作延后执行的 inline：
 
