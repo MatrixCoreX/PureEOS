@@ -97,6 +97,37 @@ target_compile_definitions(unit_test PRIVATE SOFTFLOAT_FAST_INT64)
 add_test(NAME pureeos_parallel_softfloat COMMAND parallel_softfloat_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_softfloat PROPERTIES TIMEOUT 60 LABELS "parallel-px0")
 
+# Common synchronous-call resource ownership, independent of the VM/controller.
+add_executable(sync_call_resource_pool_test ../tests/main.cpp sync_call_resource_pool_tests.cpp sync_call_memory_pool_tests.cpp)
+target_link_libraries(sync_call_resource_pool_test PRIVATE fc Boost::included_unit_test_framework)
+target_include_directories(sync_call_resource_pool_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
+add_test(NAME pureeos_sync_call_resource_pool COMMAND sync_call_resource_pool_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_sync_call_resource_pool PROPERTIES TIMEOUT 60 LABELS "parallel-px7;sync-call")
+
+# Compile the actual changed OC call sites even in an ENABLE_OC=OFF build.
+# This OBJECT target is a syntax/type check only: it does NOT link LLVM, run OC,
+# or claim that the complete optional runtime was tested.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+add_library(sync_call_oc_compile_check OBJECT EXCLUDE_FROM_ALL
+  ../libraries/chain/webassembly/runtimes/eos-vm-oc.cpp
+  ../libraries/chain/webassembly/runtimes/eos-vm-oc/memory_pools.cpp
+  ../libraries/chain/webassembly/runtimes/eos-vm-oc/memory.cpp
+  ../libraries/chain/wasm_interface.cpp)
+target_link_libraries(sync_call_oc_compile_check PRIVATE eosio_chain)
+target_compile_definitions(sync_call_oc_compile_check PRIVATE EOSIO_EOS_VM_OC_RUNTIME_ENABLED)
+
+# Run the actual mmap constructor/cleanup with syscall failure injection and an
+# empty intrinsic directory. This is allocator lifecycle coverage, NOT OC WASM.
+add_executable(sync_call_oc_memory_failure_test ../tests/main.cpp
+  oc_memory_resource_failure_tests.cpp ../libraries/chain/webassembly/runtimes/eos-vm-oc/memory.cpp)
+target_link_libraries(sync_call_oc_memory_failure_test PRIVATE fc Boost::included_unit_test_framework)
+target_include_directories(sync_call_oc_memory_failure_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
+target_compile_definitions(sync_call_oc_memory_failure_test PRIVATE PUREEOS_OC_MEMORY_FAILURE_FIXTURE)
+target_link_options(sync_call_oc_memory_failure_test PRIVATE "-Wl,--wrap=mmap" "-Wl,--wrap=munmap")
+add_test(NAME pureeos_sync_call_oc_memory_failure COMMAND sync_call_oc_memory_failure_test --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_sync_call_oc_memory_failure PROPERTIES TIMEOUT 60 LABELS "parallel-px7;sync-call;oc-allocator-only")
+endif()
+
 add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
   parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp parallel_action_tree_pool_tests.cpp)
 target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_testing
@@ -157,6 +188,15 @@ if(PUREEOS_PARALLEL_SANITIZERS)
      NOT PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
     message(FATAL_ERROR "PUREEOS_PARALLEL_SANITIZERS must be address,undefined or thread")
   endif()
+
+  add_executable(sync_call_resource_pool_sanitizer_test EXCLUDE_FROM_ALL ../tests/main.cpp sync_call_resource_pool_tests.cpp sync_call_memory_pool_tests.cpp)
+  target_link_libraries(sync_call_resource_pool_sanitizer_test PRIVATE fc Boost::included_unit_test_framework)
+  target_include_directories(sync_call_resource_pool_sanitizer_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
+  target_compile_options(sync_call_resource_pool_sanitizer_test PRIVATE -O1 -g1 -fno-omit-frame-pointer
+    "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  target_link_options(sync_call_resource_pool_sanitizer_test PRIVATE "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+  add_test(NAME pureeos_sync_call_resource_pool_sanitizer COMMAND sync_call_resource_pool_sanitizer_test --report_level=detailed --color_output=no)
+  set_tests_properties(pureeos_sync_call_resource_pool_sanitizer PROPERTIES TIMEOUT 60 LABELS "parallel-sanitizer;sync-call")
   # Instrument the actual dependency implementation too, not merely its callers.
   get_target_property(PUREEOS_SOFTFLOAT_SOURCES softfloat SOURCES)
   get_target_property(PUREEOS_SOFTFLOAT_SOURCE_DIR softfloat SOURCE_DIR)

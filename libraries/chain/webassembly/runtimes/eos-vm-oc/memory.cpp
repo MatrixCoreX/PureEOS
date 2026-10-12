@@ -22,6 +22,9 @@ memory::memory(uint64_t sliced_pages) {
    mapsize = total_memory_per_slice*number_slices;
    mapbase = (uint8_t*)mmap(nullptr, mapsize, PROT_NONE, MAP_PRIVATE|MAP_ANON, 0, 0);
    FC_ASSERT(mapbase != MAP_FAILED, "Failed to mmap memory");
+   // A throwing constructor does not run ~memory(). Cover failures while
+   // mapping the later slices or preparing the intrinsic table as well.
+   auto cleanup_mapping = fc::make_scoped_exit([&](){ munmap(mapbase, mapsize); });
 
    uint8_t* next_slice = mapbase;
    uint8_t* last = nullptr;
@@ -41,6 +44,7 @@ memory::memory(uint64_t sliced_pages) {
    const intrinsic_map_t& intrinsics = get_intrinsic_map();
    for(const auto& intrinsic : intrinsics)
       intrinsic_jump_table[-(int)intrinsic.second.ordinal] = (uintptr_t)intrinsic.second.function_ptr;
+   cleanup_mapping.cancel();
 }
 
 memory::~memory() {

@@ -36,9 +36,11 @@ class eosvmoc_instantiated_module : public wasm_instantiated_module_interface {
 
          if (context.is_sync_call()) {  // sync call on either main thread or read only thread
             auto exec = _eosvmoc_runtime.acquire_call_exec();
-            auto mem  = _eosvmoc_runtime.acquire_call_mem(context.sync_call_depth);
-            auto cleanup = fc::make_scoped_exit([&](){
+            auto cleanup_exec = fc::make_scoped_exit([&](){
                _eosvmoc_runtime.release_call_exec(exec);
+            });
+            auto mem  = _eosvmoc_runtime.acquire_call_mem(context.sync_call_depth);
+            auto cleanup_mem = fc::make_scoped_exit([&](){
                _eosvmoc_runtime.release_call_mem(context.sync_call_depth, mem);
             });
             return exec->execute(*cd, *mem, context);

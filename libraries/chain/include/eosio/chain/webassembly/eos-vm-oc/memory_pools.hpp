@@ -1,7 +1,7 @@
 #pragma once
 
 #include <eosio/chain/webassembly/eos-vm-oc/memory.hpp>
-#include <eosio/chain/sync_call_resource_pool.hpp>
+#include <eosio/chain/sync_call_memory_pool.hpp>
 
 namespace eosio::chain::eosvmoc {
 
@@ -32,7 +32,7 @@ class memory_pools {
       eosvmoc::memory* acquire_mem(uint32_t call_depth);
 
       // Release memory `m` back to the pool of `call_depth`
-      void release_mem(uint32_t call_depth, eosvmoc::memory* m);
+      void release_mem(uint32_t call_depth, eosvmoc::memory* m) noexcept;
 
       // Update memory pools based on new number of threads
       void set_num_threads(uint32_t nthreads);
@@ -44,8 +44,7 @@ class memory_pools {
       static constexpr uint32_t first_call_depth_slices = 5;
 
    private:
-      uint32_t num_threads = 1; // main thread + read-only threads. default 1 for main thread
-      std::vector<std::unique_ptr<call_resource_pool<eosvmoc::memory>>> pools;
+      depth_resource_pools<eosvmoc::memory, first_call_depth_slices> pools;
 };
 
 }

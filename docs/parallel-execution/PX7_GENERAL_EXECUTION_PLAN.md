@@ -65,6 +65,7 @@
 - [ ] G5c3b context-free inline：单独建模禁止状态访问、无授权及先于普通 inline 的调度，不作为普通 inline 的附赠能力。
 - [ ] G5c3c 同步调用：先修复并验证资源池 Release 耗尽/分配失败防护，再建模立即返回、嵌套独占 VM、缓存失效、资源与异常传播；资源池修复本身不代表 sync-call 已可并行。
 - G5c3c0 前置修复设计：`sync_call_resource_pool.hpp` 明确拥有所有资源；借还登记用短临界区，锁外执行合约及资源工厂。扩容先检查数量乘法、准备全部资源与归还容量，再一次发布；中途失败不改变线程数/深度或暴露成功前缀。空池用运行时检查，正常归还不分配、不抛出，拒绝空/外来/重复归还；析构前仍要求所有使用线程停止。新增独立用例覆盖 Release 耗尽、空/抛异常/重复工厂、部分增长回滚、乘法溢出、嵌套并发及增长期间借还，随后复测原同步调用与只读线程。短锁只串行化登记，不覆盖 WASM；此设计不宣称锁开销为零。调用方仍需检查多资源申请中第二次失败时的第一次资源回收，OC 分层池需另审查，不能把通用池通过当作 OC 已验证。
+- G5c3c0 从 `3fdbd05` 继续：通用池及 8 项 / 222 条独立测试已实现，普通/TSan 各三轮通过；继续内存检查、原运行时回归和 OC 调用方/分层池复查，见 [前置修复记录](PX7_G5C3C0_RESULTS.md)。不是 sync-call 私有执行完成。
 - [ ] G6 二级索引及一般接口。
 - [ ] G7 性能、稳定性与推广判定。
 
@@ -202,6 +203,16 @@ a3 后续：完整普通 worker 三轮各 106 项/7,915 条，核心三轮各 43
 继续复核 `webassembly/transaction.cpp` 后补充：`send_inline` 的原始字节长度要求是严格 **小于** `max_inline_action_size`，并先执行原始 action 解包再调用 `execute_inline`。日志必须保留发送的原始字节串并绑定解包后的子输入，不能仅重打包一个等价 action（可能丢失尾部字节，改变长度检查或解包错误）；正式重放保留相同 host 包装检查和异常发生位置。`apply_context::schedule_action(action&&)` 将 inline 的 `closest_unnotified_ancestor` 设为**发送者所在组的首接收者 ordinal**，不是 0，也不是新 inline 自己；只有该 inline 后续通知才以新的组首 ordinal 为 ancestor。树节点因此需要独立保存 creator、ancestor、组标识和深度，不能继续用当前通知模式的 `root_index + 1` 推导全部 inline 关系。
 
 `sync_call_resource_pool.hpp::acquire` 当前只在 assert 中检查空池，Release 下未检查 `stack.pop` 的返回值便返回未初始化指针；`resize` 还需审查乘法溢出、部分创建失败的所有权以及 push 失败。该池供原 WASM allocator/OC executor 使用，当前私有通知 worker 不借用此池；在进一步接入嵌套同步执行前单独修复并做耗尽、恢复、并发独占和失败释放测试，不能因正常深度测试通过就忽略 Release 防御。此次构建仍是 ENABLE_OC=OFF，不能宣称 OC 路径已实际验收。
+
+### G5c3b 补充源码约束（后续实现，尚未开放）
+
+2026-10-12：G5c3c0 前置修复完成验收。普通/ASan/TSan 资源池 15 项 / 1,072 条各三轮通过，真实 OC 分配器失败注入最终 3 项 / 32 条三轮通过；旧源码反向控制产生 12 条清理失败，修复版通过。普通完整回归、三类五模式真实生产、两类各 55 阶段恢复通过；详见 [c0 记录](PX7_G5C3C0_RESULTS.md)。仅资源池防护完成，私有同步调用和完整 OC 运行仍未实现/验收，继续下一步。
+
+1. `webassembly/runtimes/eos-vm.cpp` 的注册前置条件必须原样保留语义：`current_receiver`、`read_action_data`、`action_data_size` 可用于 context-free 动作；`get_context_free_data` 只能用于该类动作；`get_sender`、`set_action_return_value`、`require_recipient` 以及 `send_context_free_inline` 自身却是 context-aware API。不能只屏蔽 DB 写入便允许其余现有 host，也不能让 context-free 子动作继续发送子调用。未覆盖的接口仍整笔回退，不靠删除原限制支持合约。
+2. 普通父动作发送的 context-free inline 要保留原始字节、严格长度检查、无授权要求及原发送时的账户检查。`apply_context::exec()` 先跑完本组通知，再执行 context-free 队列，最后普通 inline 队列；发送时 ordinal 顺序与执行顺序仍可不同。调用种类必须进入事件、组/步骤和指纹，而不是仅复用普通 inline 标记。
+3. `packed_transaction::get_context_free_data()` 可在 owner 侧取得已解包的拥有数据；若支持读取该 host，必须对整笔数据数量/字节设预算，交给独立副本或不可变共同所有权，不能把 packed_transaction/controller 指针传给 worker。整笔输入绑定数据内容，逐步骤可复用经核验的摘要，避免每个子动作重复散列整段数据。
+4. `apply_context::exec_one()` 在 context-free 且 `control.skip_trx_checks()` 时跳过执行。正式采用必须明确处理这种路径，不得错误消费后续普通步骤或带入原路径不会产生的输出；不能以常规 full-validation 测试代替该分支。任何后段回退都保留原父动作已经排好的两类队列和计费位置。
+5. 先独立验证私有 context-free inline 与禁止接口，再接正式采用；顶层 context-free action 若要一起开放，还必须复核 `transaction_context::exec()` 的全部顶层 ordinal 预分配、根索引映射及原交易准入，不能把目前 `trx.actions[i]` 的假设直接用于两类根。差分须含禁止 host、非法授权、读取数据的缺失/空/长度边界、两类 inline 交错、深层失败、混合模式与恢复。
 
 2026-10-12：G5c1 私有通知基础验收完成。新增 8 项/845 条断言；完整工作池普通与 ASan 各三轮 69 项/3,490 条，私有 TSan 三轮 63 项/3,029 条；状态/浮点原生两类 sanitizer 各三轮 63 项/90,619 条。核心和当前 token 三轮、五模式真实多动作生产、完整 55 阶段恢复及 21 组兼容检查通过。中途恢复在第 49 阶段后、链接程序时遇到 tmpfs 用户配额限制；核验上一阶段归档并只清理其生成状态后重跑通过，失败记录保留，未放宽资源保护。实现范围、精确计数、归档与未覆盖项见 [G5c1 验收](PX7_G5C1_RESULTS.md)。
 

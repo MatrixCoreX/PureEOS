@@ -179,9 +179,11 @@ struct eosvmoc_tier {
 
                if (context.is_sync_call()) {
                   auto exec = eosvmoc->exec_pool.acquire();
-                  auto mem  = eosvmoc->mem_pools.acquire_mem(context.sync_call_depth);
-                  auto cleanup = fc::make_scoped_exit([&](){
+                  auto cleanup_exec = fc::make_scoped_exit([&](){
                      eosvmoc->exec_pool.release(exec);
+                  });
+                  auto mem  = eosvmoc->mem_pools.acquire_mem(context.sync_call_depth);
+                  auto cleanup_mem = fc::make_scoped_exit([&](){
                      eosvmoc->mem_pools.release_mem(context.sync_call_depth, mem);
                   });
                   return exec->execute(*cd, *mem, context);
