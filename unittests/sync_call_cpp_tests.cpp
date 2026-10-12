@@ -172,6 +172,36 @@ BOOST_AUTO_TEST_CASE(forever_loop_test) { try {
                          fc_exception_message_contains("deadline exceeded"));
 } FC_LOG_AND_RETHROW() }
 
+// A deadline must not leave a cached parent or child module with disabled code
+// pages. Run independently with a bounded CTest timeout before modifying the VM;
+// the old failure mode may hang instead of throwing a second exception.
+BOOST_AUTO_TEST_CASE(timeout_cleanup_allows_same_parent_and_child_modules_to_execute_again) { try {
+   call_tester_cpp t;
+   for (unsigned round = 0; round < 3; ++round) {
+      signed_transaction trx;
+      trx.actions.emplace_back(vector<permission_level>{{"caller"_n, config::active_name}},
+                               "caller"_n, "forevertest"_n, bytes{});
+      t.set_transaction_headers(trx);
+      trx.sign(t.get_private_key("caller"_n, "active"), t.get_chain_id());
+      BOOST_CHECK_EXCEPTION(t.push_transaction(trx, fc::time_point::now() + fc::microseconds(config::default_max_block_cpu_usage)),
+                            deadline_exception, fc_exception_message_contains("deadline exceeded"));
+      t.produce_block(); // a fresh block budget, but the same cached WASM modules
+      const int32_t input = 40 + round;
+      const auto trace = t.push_action("caller"_n, "basictest"_n, "caller"_n, mvo()("input", std::to_string(input)));
+      BOOST_REQUIRE(trace);
+      BOOST_REQUIRE_EQUAL(trace->action_traces.size(), 1u);
+      const auto& action = trace->action_traces.front();
+      BOOST_REQUIRE_EQUAL(action.call_traces.size(), 1u);
+      const auto& call = action.call_traces.front();
+      BOOST_REQUIRE_EQUAL(call.return_value.size(), sizeof(input));
+      int32_t output = 0;
+      std::memcpy(&output, call.return_value.data(), sizeof(output));
+      BOOST_CHECK_EQUAL(output, input);
+      BOOST_CHECK_EQUAL(call.console, "I am basictest from sync_callee");
+      t.produce_block();
+   }
+} FC_LOG_AND_RETHROW() }
+
 // Verify exception throws when the called function crashes
 BOOST_AUTO_TEST_CASE(crash_test) { try {
    call_tester_cpp t;

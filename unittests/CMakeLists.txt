@@ -128,6 +128,22 @@ add_test(NAME pureeos_sync_call_oc_memory_failure COMMAND sync_call_oc_memory_fa
 set_tests_properties(pureeos_sync_call_oc_memory_failure PROPERTIES TIMEOUT 60 LABELS "parallel-px7;sync-call;oc-allocator-only")
 endif()
 
+# Actual native VM headers with test-only syscall failure injection. No live node
+# or user process receives deliberate faults. The OS fault probe is a bounded
+# child of the normal test, and is excluded from the sanitizer variants.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  function(pureeos_add_native_vm_guard_target target)
+    add_executable(${target} ../tests/main.cpp native_vm_guard_tests.cpp)
+    target_link_libraries(${target} PRIVATE fc eos-vm Boost::included_unit_test_framework)
+    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
+    target_compile_definitions(${target} PRIVATE PUREEOS_NATIVE_VM_GUARD_FIXTURE)
+    target_link_options(${target} PRIVATE "-Wl,--wrap=mmap" "-Wl,--wrap=mprotect" "-Wl,--wrap=munmap")
+  endfunction()
+  pureeos_add_native_vm_guard_target(native_vm_guard_test)
+  add_test(NAME pureeos_native_vm_guard COMMAND native_vm_guard_test --report_level=detailed --color_output=no)
+  set_tests_properties(pureeos_native_vm_guard PROPERTIES TIMEOUT 60 LABELS "parallel-px7;sync-call;native-vm")
+endif()
+
 add_executable(parallel_wasm_worker_test main.cpp parallel_wasm_worker_tests.cpp parallel_ordered_batch_tests.cpp
   parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp parallel_action_tree_pool_tests.cpp
   parallel_context_free_tests.cpp parallel_module_cache_tests.cpp)
@@ -171,6 +187,10 @@ foreach(PARALLEL_COMPAT_SUITE read_only_trx_tests sync_call_cpp_tests sync_call_
   set_tests_properties(pureeos_parallel_compat_${PARALLEL_COMPAT_SUITE} PROPERTIES
     TIMEOUT 1800 LABELS "parallel-compatibility" RUN_SERIAL TRUE)
 endforeach()
+add_test(NAME pureeos_sync_call_timeout_reuse COMMAND parallel_compatibility_test
+  --run_test=sync_call_cpp_tests/timeout_cleanup_allows_same_parent_and_child_modules_to_execute_again
+  --report_level=detailed --color_output=no -- --eos-vm)
+set_tests_properties(pureeos_sync_call_timeout_reuse PROPERTIES TIMEOUT 30 LABELS "parallel-px7;sync-call;native-vm" RUN_SERIAL TRUE)
 foreach(PARALLEL_API_CASE db_tests db_notify_tests multi_index_tests permission_tests resource_limits_tests)
   add_test(NAME pureeos_parallel_compat_api_${PARALLEL_API_CASE} COMMAND parallel_compatibility_test
     --run_test=api_part2_tests/${PARALLEL_API_CASE}* --report_level=detailed --color_output=no -- --eos-vm)
@@ -192,6 +212,21 @@ if(PUREEOS_PARALLEL_SANITIZERS)
   if(NOT PUREEOS_PARALLEL_SANITIZERS STREQUAL "address,undefined" AND
      NOT PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
     message(FATAL_ERROR "PUREEOS_PARALLEL_SANITIZERS must be address,undefined or thread")
+  endif()
+
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    pureeos_add_native_vm_guard_target(native_vm_guard_sanitizer_test)
+    set_target_properties(native_vm_guard_sanitizer_test PROPERTIES EXCLUDE_FROM_ALL TRUE)
+    target_compile_definitions(native_vm_guard_sanitizer_test PRIVATE PUREEOS_NATIVE_VM_SANITIZER)
+    target_compile_options(native_vm_guard_sanitizer_test PRIVATE -O1 -g1 -fno-omit-frame-pointer
+      "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+    target_link_options(native_vm_guard_sanitizer_test PRIVATE "-fsanitize=${PUREEOS_PARALLEL_SANITIZERS}")
+    if(PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
+      # Same test-only longjmp interceptor compatibility as the private worker.
+      target_compile_options(native_vm_guard_sanitizer_test PRIVATE -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0)
+    endif()
+    add_test(NAME pureeos_native_vm_guard_sanitizer COMMAND native_vm_guard_sanitizer_test --report_level=detailed --color_output=no)
+    set_tests_properties(pureeos_native_vm_guard_sanitizer PROPERTIES TIMEOUT 60 LABELS "parallel-sanitizer;sync-call;native-vm")
   endif()
 
   add_executable(sync_call_resource_pool_sanitizer_test EXCLUDE_FROM_ALL ../tests/main.cpp sync_call_resource_pool_tests.cpp sync_call_memory_pool_tests.cpp)

@@ -1,0 +1,122 @@
+diff --git a/include/eosio/vm/allocator.hpp b/include/eosio/vm/allocator.hpp
+index e581b27..d61f0ec 100644
+--- a/include/eosio/vm/allocator.hpp
++++ b/include/eosio/vm/allocator.hpp
+@@ -482,0 +483,6 @@ namespace eosio { namespace vm {
++         // The destructor will not run if this constructor throws. Release the
++         // complete reservation before reporting the original protection error.
++         if (err != 0) {
++            munmap(raw, max_memory + 2*syspagesize);
++            raw = nullptr;
++         }
+diff --git a/include/eosio/vm/backend.hpp b/include/eosio/vm/backend.hpp
+index fb176f0..7805743 100644
+--- a/include/eosio/vm/backend.hpp
++++ b/include/eosio/vm/backend.hpp
+@@ -308,5 +308,5 @@ namespace eosio { namespace vm {
+-         //timed_run_has_timed_out -- declared in signal handling code because signal handler needs to inspect it on a SEGV too -- is a thread local
+-         // so that upon a SEGV the signal handling code can discern if the thread that caused the SEGV has a timed_run that has timed out. This
+-         // thread local also need to be an atomic because the thread that a Watchdog callback will be called from may not be the same as the
+-         // executing thread.
+-         std::atomic<bool>&      _timed_out = timed_run_has_timed_out;
++         // The callback may run on a different thread: capture references to the
++         // executing thread's counter and this active frame's own atomic flag.
++         // One count per expired live frame cannot exceed the addressable stack.
++         auto& active_timeouts = timed_run_has_timed_out;
++         std::atomic<bool> this_run_timed_out{false};
+@@ -314 +314,4 @@ namespace eosio { namespace vm {
+-            if (_timed_out.load(std::memory_order_acquire)) {
++            // wd_guard has already unregistered/synchronized its callback before
++            // this guard runs. Only the frame that disabled this module restores
++            // it; an inner cleanup must not hide an expired ancestor.
++            if (this_run_timed_out.load(std::memory_order_acquire)) {
+@@ -316 +319 @@ namespace eosio { namespace vm {
+-               _timed_out.store(false, std::memory_order_release);
++               active_timeouts.fetch_sub(1, std::memory_order_acq_rel);
+@@ -320,2 +323,4 @@ namespace eosio { namespace vm {
+-            auto wd_guard = std::forward<Watchdog>(wd).scoped_run([this,&_timed_out]() {
+-               _timed_out.store(true, std::memory_order_release);
++            auto wd_guard = std::forward<Watchdog>(wd).scoped_run([this,&active_timeouts,&this_run_timed_out]() {
++               // checktime_watchdog may invoke a callback more than once.
++               if (!this_run_timed_out.exchange(true, std::memory_order_acq_rel))
++                  active_timeouts.fetch_add(1, std::memory_order_acq_rel);
+@@ -326 +331 @@ namespace eosio { namespace vm {
+-            if (_timed_out.load(std::memory_order_acquire)) {
++            if (active_timeouts.load(std::memory_order_acquire) != 0) {
+diff --git a/include/eosio/vm/signals.hpp b/include/eosio/vm/signals.hpp
+index 792e7a7..f7daa0e 100644
+--- a/include/eosio/vm/signals.hpp
++++ b/include/eosio/vm/signals.hpp
+@@ -27 +27,3 @@ namespace eosio { namespace vm {
+-   inline thread_local std::atomic<bool> timed_run_has_timed_out{false};
++   // Count expired active frames, not just a boolean. A nested timed_run must
++   // never clear an ancestor's expiration while that ancestor is still active.
++   inline thread_local std::atomic<std::size_t> timed_run_has_timed_out{0};
+@@ -52 +54 @@ namespace eosio { namespace vm {
+-            //a SEGV/BUS in the code range when timed_run_has_timed_out=false is due to a _different_ thread's execution activating a deadline
++            //a SEGV/BUS in the code range with no expired local frame is due to a _different_ thread's execution activating a deadline
+@@ -56 +58 @@ namespace eosio { namespace vm {
+-            if ((sig == SIGSEGV || sig == SIGBUS) && timed_run_has_timed_out.load(std::memory_order_acquire) == false)
++            if ((sig == SIGSEGV || sig == SIGBUS) && timed_run_has_timed_out.load(std::memory_order_acquire) == 0)
+@@ -143,0 +146 @@ namespace eosio { namespace vm {
++      static_assert(std::atomic<std::size_t>::is_always_lock_free, "Timeout counters must be lock-free to be async signal safe.");
+@@ -159,0 +163,21 @@ namespace eosio { namespace vm {
++      // Publish/restore the ranges and destination as one signal-masked frame.
++      // All restoration snapshots are initialized BEFORE sigsetjmp and never
++      // modified afterwards; non-volatile modified locals are not reliable
++      // after longjmp. Do not use non-trivial RAII across the jump boundary.
++      sigset_t handled_mask, old_sigmask;
++      sigemptyset(&handled_mask);
++      sigaddset(&handled_mask, SIGSEGV);
++      sigaddset(&handled_mask, SIGBUS);
++      sigaddset(&handled_mask, SIGFPE);
++      sigaddset(&handled_mask, SIGPROF);
++      pthread_sigmask(SIG_BLOCK, &handled_mask, &old_sigmask);
++      const auto old_code_range = code_memory_range;
++      const auto old_memory_range = memory_range;
++      sigjmp_buf* const old_signal_handler = std::atomic_load(&signal_dest);
++      const auto restore = [&]() {
++         pthread_sigmask(SIG_BLOCK, &handled_mask, nullptr);
++         code_memory_range = old_code_range;
++         memory_range = old_memory_range;
++         std::atomic_store(&signal_dest, old_signal_handler);
++         pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
++      };
+@@ -161,3 +184,0 @@ namespace eosio { namespace vm {
+-      sigjmp_buf* volatile old_signal_handler = nullptr;
+-      code_memory_range = code_allocator.get_code_span();
+-      memory_range = mem_allocator->get_span();
+@@ -164,0 +186 @@ namespace eosio { namespace vm {
++      // longjmp returns with handled signals blocked.
+@@ -166,15 +188,4 @@ namespace eosio { namespace vm {
+-         // Note: Cannot use RAII, as non-trivial destructors w/ longjmp
+-         // have undefined behavior. [csetjmp.syn]
+-         //
+-         // Warning: The order of operations is critical here.
+-         // We also have to register signal_dest before unblocking
+-         // signals to make sure that only our signal handler is executed
+-         // if the caller has previously blocked signals.
+-         old_signal_handler = std::atomic_exchange(&signal_dest, &dest);
+-         sigset_t unblock_mask, old_sigmask; // Might not be preserved across longjmp
+-         sigemptyset(&unblock_mask);
+-         sigaddset(&unblock_mask, SIGSEGV);
+-         sigaddset(&unblock_mask, SIGBUS);
+-         sigaddset(&unblock_mask, SIGFPE);
+-         sigaddset(&unblock_mask, SIGPROF);
+-         pthread_sigmask(SIG_UNBLOCK, &unblock_mask, &old_sigmask);
++         code_memory_range = code_allocator.get_code_span();
++         memory_range = mem_allocator->get_span();
++         std::atomic_store(&signal_dest, &dest);
++         pthread_sigmask(SIG_UNBLOCK, &handled_mask, nullptr);
+@@ -183,2 +193,0 @@ namespace eosio { namespace vm {
+-            pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
+-            std::atomic_store(&signal_dest, old_signal_handler);
+@@ -186,2 +195 @@ namespace eosio { namespace vm {
+-            pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
+-            std::atomic_store(&signal_dest, old_signal_handler);
++            restore();
+@@ -189,0 +198 @@ namespace eosio { namespace vm {
++         restore();
+@@ -191 +200 @@ namespace eosio { namespace vm {
+-         std::atomic_store(&signal_dest, old_signal_handler);
++         restore();
