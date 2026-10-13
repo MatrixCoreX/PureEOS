@@ -22,6 +22,14 @@ struct isolated_sync_program {
    bool sync_call_supported = false;
 };
 
+// Owned input/catalog/protocol bundle. A worker job and its serial owner keep
+// separate copies; this bundle alone is never a canonical replay capability.
+struct isolated_sync_job {
+   isolated_action_input root;
+   std::vector<isolated_sync_program> programs;
+   isolated_sync_context context;
+};
+
 struct isolated_sync_call_event {
    uint32_t call_ordinal = 0;
    size_t after_writes = 0;
@@ -49,7 +57,8 @@ struct isolated_sync_trace {
 
 // Separate type: existing action/notification adopters cannot consume this.
 // Exceptions/unsupported hosts discard the WHOLE attempt; no partial trace or
-// success prefix is returned. No failed trace emulation or canonical hook yet.
+// success prefix is returned. Formal replay needs a separately preflighted,
+// stack-scoped whole-root capability; the result alone cannot authorize it.
 struct isolated_sync_result {
    primary_overlay_result state;
    isolated_action_effects root;

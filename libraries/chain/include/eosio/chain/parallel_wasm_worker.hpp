@@ -21,6 +21,10 @@ struct isolated_execution_interrupted : primary_state_invalid_attempt {
    explicit isolated_execution_interrupted(isolated_interrupt_reason why) : reason(why) {}
 };
 
+// A local discovery hint only when an ordinary ROOT actually calls a sync
+// host. It is not inferred from a callee export and carries no live pointers.
+struct isolated_sync_mode_required : primary_state_unsupported {};
+
 // An owned atomic generation bridges the existing controller interrupt route
 // without sending signals to workers or retaining any controller/DB pointer.
 struct isolated_cancel {

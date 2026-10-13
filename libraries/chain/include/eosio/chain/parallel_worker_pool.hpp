@@ -14,15 +14,6 @@ struct isolated_action_tree_job {
    isolated_action_tree_context context;
 };
 
-// Independent mode, not a synchronous extension of a queued inline tree.
-// Owns every byte and protocol observation needed by the worker; no owner or
-// canonical DB pointer. Formal adoption remains a separate capability.
-struct isolated_sync_job {
-   isolated_action_input root;
-   std::vector<isolated_sync_program> programs;
-   isolated_sync_context context;
-};
-
 struct isolated_worker_job {
    ordered_attempt_batch::ticket ticket;
    std::vector<isolated_action_invocation> actions;
@@ -59,7 +50,7 @@ struct isolated_worker_job {
 // a fingerprint or a billable CPU measurement. No exception/VM ownership.
 enum class isolated_worker_failure : uint8_t {
    none, cancelled, deadline, missing_state, missing_receiver, budget,
-   unsupported, invalid_attempt, vm_timeout, vm_error, allocation, unexpected
+   unsupported, sync_required, invalid_attempt, vm_timeout, vm_error, allocation, unexpected
 };
 constexpr const char* isolated_worker_failure_name(isolated_worker_failure failure) noexcept {
    switch (failure) {
@@ -70,6 +61,7 @@ constexpr const char* isolated_worker_failure_name(isolated_worker_failure failu
       case isolated_worker_failure::missing_receiver: return "missing_receiver";
       case isolated_worker_failure::budget: return "budget";
       case isolated_worker_failure::unsupported: return "unsupported";
+      case isolated_worker_failure::sync_required: return "sync_required";
       case isolated_worker_failure::invalid_attempt: return "invalid_attempt";
       case isolated_worker_failure::vm_timeout: return "vm_timeout";
       case isolated_worker_failure::vm_error: return "vm_error";
@@ -83,7 +75,7 @@ struct isolated_worker_outcome {
    std::optional<isolated_transaction_result> result; // legacy root-only mode
    std::optional<isolated_notification_result> notification_result; // requires whole-tree canonical preflight
    std::optional<isolated_action_tree_result> tree_result; // requires tree preflight AND original send-time authorization
-   std::optional<isolated_sync_result> sync_result; // no canonical adopter yet; never a prefix
+   std::optional<isolated_sync_result> sync_result; // whole-root preflight and original sync contexts required; never a prefix
    std::chrono::steady_clock::time_point began, ended; // local diagnostics only
    std::chrono::microseconds elapsed{}; // successful step sum; excludes compilation and queueing
    std::optional<state_capture_request> request; // discovery only; no partial result is adoptable

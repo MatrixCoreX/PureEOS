@@ -152,7 +152,7 @@ target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_t
 target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
 add_test(NAME pureeos_parallel_wasm_worker COMMAND parallel_wasm_worker_test --report_level=detailed --color_output=no)
 add_test(NAME pureeos_parallel_sync_private COMMAND parallel_wasm_worker_test
-  --run_test=parallel_sync_private_tests:parallel_sync_oracle_tests:parallel_sync_owner_tests:parallel_sync_pool_tests --report_level=detailed --color_output=no -- --eos-vm)
+  --run_test=parallel_sync_private_tests:parallel_sync_oracle_tests:parallel_sync_owner_tests:parallel_sync_pool_tests:parallel_sync_adoption_tests --report_level=detailed --color_output=no -- --eos-vm)
 set_tests_properties(pureeos_parallel_sync_private PROPERTIES TIMEOUT 120 LABELS "parallel-px7;sync-call")
 set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
 
@@ -280,7 +280,7 @@ if(PUREEOS_PARALLEL_SANITIZERS)
     parallel_inline_action_tests.cpp parallel_action_tree_tests.cpp parallel_action_tree_journal_tests.cpp parallel_action_tree_pool_tests.cpp
     parallel_inline_adoption_tests.cpp parallel_context_free_tests.cpp parallel_module_cache_tests.cpp parallel_sync_call_tests.cpp
     ../libraries/chain/parallel_inline_action.cpp ../libraries/chain/parallel_action_tree.cpp ../libraries/chain/parallel_sync_call.cpp
-    ../libraries/chain/parallel_canonical_adoption.cpp ../libraries/chain/apply_context.cpp ../libraries/chain/transaction_context.cpp
+    ../libraries/chain/parallel_canonical_adoption.cpp ../libraries/chain/apply_context.cpp ../libraries/chain/host_context.cpp ../libraries/chain/transaction_context.cpp
     ../libraries/chain/transaction_state_view.cpp ../libraries/chain/parallel_state_overlay.cpp
     ../libraries/chain/parallel_wasm_worker.cpp ../libraries/chain/parallel_ordered_batch.cpp ../libraries/chain/parallel_worker_pool.cpp
     ../libraries/chain/platform_timer_accuracy.cpp)
@@ -313,12 +313,41 @@ if(PUREEOS_PARALLEL_SANITIZERS)
     # TSan still excludes mixed-controller execution. Keep that limitation in
     # the test name and output; do not suppress mixed-build race diagnostics.
     add_test(NAME pureeos_parallel_wasm_private_tsan COMMAND parallel_wasm_sanitizer_test
-      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests:!parallel_inline_adoption_tests:!parallel_context_free_oracle_tests:!parallel_context_free_adoption_tests:!parallel_sync_oracle_tests:!parallel_sync_owner_tests"
+      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests:!parallel_inline_adoption_tests:!parallel_context_free_oracle_tests:!parallel_context_free_adoption_tests:!parallel_sync_oracle_tests:!parallel_sync_owner_tests:!parallel_sync_adoption_tests"
       --report_level=detailed --color_output=no)
     set_tests_properties(pureeos_parallel_wasm_private_tsan PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer;private-only")
   else()
     add_test(NAME pureeos_parallel_wasm_sanitizer COMMAND parallel_wasm_sanitizer_test --report_level=detailed --color_output=no)
     set_tests_properties(pureeos_parallel_wasm_sanitizer PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer")
+  endif()
+
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Only auto-register for the dynamic GNU ELF runtimes understood by this
+    # checker. Do not reject Clang or non-ELF toolchains by a GNU-name heuristic.
+    # A cache switch can leave a newer executable from the OTHER sanitizer even
+    # though CMake reports its target up-to-date. Verify actual ELF dependencies
+    # before each family; a failed fixture prevents the dependent test running.
+    # This guard proves runtime identity, not complete instrumentation coverage.
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    function(pureeos_require_sanitizer_runtime test_name target_name)
+      add_test(NAME ${test_name}_runtime COMMAND ${Python3_EXECUTABLE} -B
+        ${CMAKE_SOURCE_DIR}/scripts/parallel_sanitizer_check.py
+        --sanitizer ${PUREEOS_PARALLEL_SANITIZERS} $<TARGET_FILE:${target_name}>)
+      set_tests_properties(${test_name}_runtime PROPERTIES TIMEOUT 60
+        FIXTURES_SETUP ${target_name}_runtime LABELS "parallel-sanitizer-runtime")
+      set_tests_properties(${test_name} PROPERTIES FIXTURES_REQUIRED ${target_name}_runtime)
+    endfunction()
+    pureeos_require_sanitizer_runtime(pureeos_native_vm_guard_sanitizer native_vm_guard_sanitizer_test)
+    pureeos_require_sanitizer_runtime(pureeos_sync_call_resource_pool_sanitizer sync_call_resource_pool_sanitizer_test)
+    pureeos_require_sanitizer_runtime(pureeos_parallel_native_sanitizer parallel_native_sanitizer_test)
+    if(PUREEOS_PARALLEL_SANITIZERS STREQUAL "thread")
+      pureeos_require_sanitizer_runtime(pureeos_parallel_wasm_private_tsan parallel_wasm_sanitizer_test)
+    else()
+      pureeos_require_sanitizer_runtime(pureeos_parallel_wasm_sanitizer parallel_wasm_sanitizer_test)
+    endif()
+    add_test(NAME pureeos_sanitizer_runtime_checker COMMAND ${Python3_EXECUTABLE} -B
+      ${CMAKE_SOURCE_DIR}/tests/parallel_sanitizer_check_test.py)
+    set_tests_properties(pureeos_sanitizer_runtime_checker PROPERTIES TIMEOUT 30 LABELS "parallel-sanitizer-runtime")
   endif()
 endif()
 

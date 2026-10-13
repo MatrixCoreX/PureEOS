@@ -69,6 +69,9 @@ namespace eosio::chain {
       parallel_transaction_result = nullptr;
       parallel_notification_result = nullptr;
       parallel_tree_result = nullptr;
+      parallel_sync_result = nullptr;
+      parallel_sync_input = nullptr;
+      parallel_sync_replay_guard = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -491,6 +494,9 @@ namespace eosio::chain {
       parallel_transaction_result = nullptr;
       parallel_notification_result = nullptr;
       parallel_tree_result = nullptr;
+      parallel_sync_result = nullptr;
+      parallel_sync_input = nullptr;
+      parallel_sync_replay_guard = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -595,6 +601,9 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() &&
                  !is_implicit() && !is_scheduled() && action_ordinal > 0 &&
                  !parallel_notification_result && !parallel_tree_result && isolated_cpu_notification_steps == 0 &&
+                 ((!parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard) ||
+                  (parallel_sync_result && parallel_sync_input && parallel_sync_replay_guard && action_ordinal == 1 &&
+                   packed_trx.get_transaction().actions.size() == 1)) &&
                  action_ordinal == isolated_cpu_last_action_ordinal + 1 &&
                  action_ordinal <= packed_trx.get_transaction().actions.size() &&
                  elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
@@ -609,6 +618,7 @@ namespace eosio::chain {
                                                                uint32_t action_ordinal) {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
                  parallel_notification_result && !parallel_tree_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
+                 !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_notification_result->steps.size() && action_ordinal > 0 &&
                  parallel_notification_result->steps[step_index].action_ordinal == action_ordinal &&
@@ -625,6 +635,7 @@ namespace eosio::chain {
                                                      uint32_t action_ordinal) {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
                  parallel_tree_result && !parallel_notification_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
+                 !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_tree_result->steps.size() && action_ordinal > 0 &&
                  parallel_tree_result->steps[step_index].action_ordinal == action_ordinal &&

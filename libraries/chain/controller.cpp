@@ -1009,7 +1009,9 @@ struct controller_impl {
    bool parallel_production_scope = false;
    struct production_adoption_slot {
       transaction_metadata_ptr expected;
-      const experimental::isolated_action_tree_result& result;
+      const experimental::isolated_action_tree_result* tree_result;
+      const experimental::isolated_sync_result* sync_result;
+      const experimental::isolated_sync_job* sync_input;
       const experimental::isolated_wasm_limits& limits;
       fc::microseconds elapsed;
       experimental::ordered_attempt_batch& order;
@@ -3199,6 +3201,7 @@ struct controller_impl {
       std::unique_ptr<experimental::ordered_attempt_batch> order;
       std::vector<experimental::isolated_worker_outcome> outcomes;
       std::vector<experimental::isolated_wasm_limits> limits;
+      std::vector<std::optional<experimental::isolated_sync_job>> sync_inputs; // final owned catalog, not moved worker jobs
       experimental::isolated_cancel cancel;
    };
 
@@ -3214,6 +3217,7 @@ struct controller_impl {
       auto& stats = production ? parallel_production_stats : parallel_stats;
       try {
          std::vector<isolated_action_tree_job> invocations;
+         std::vector<std::optional<isolated_sync_job>> sync_inputs;
          std::vector<ordered_attempt_batch::request> requests;
          size_t max_action_count = 1;
          for (const auto* packed : packed_inputs) {
@@ -3241,6 +3245,7 @@ struct controller_impl {
             requests.push_back({packed->id(), isolated_action_tree_fingerprint(fingerprints, invocation.context)});
             max_action_count = std::max(max_action_count, transaction->size());
             invocations.push_back(std::move(invocation));
+            sync_inputs.emplace_back();
          }
          if (invocations.empty()) return {};
          chainbase_transaction_state_view view(db);
@@ -3268,6 +3273,11 @@ struct controller_impl {
          size_t discovery_units = max_action_count;
          for (size_t round = 0; round < std::min<size_t>(64, 8 * discovery_units); ++round) {
             checkpoint();
+            for(size_t i=0;i<sync_inputs.size();++i) if(sync_inputs[i]) {
+               checkpoint();
+               const auto& input=*sync_inputs[i];
+               requests[i].execution_fingerprint=isolated_sync_fingerprint(input.root,input.programs,input.context);
+            }
             const auto capture_started = performance::mark();
             const std::vector<table_key> tables(keys.begin(), keys.end());
             const std::vector<primary_query> reads(queries.begin(), queries.end());
@@ -3275,12 +3285,16 @@ struct controller_impl {
             auto base = frozen_primary_state::capture_queries(view, tables, reads, {}, checkpoint, account_reads);
             auto attempts = std::make_unique<validation_attempts>();
             attempts->cancel = cancel;
+            attempts->sync_inputs = sync_inputs;
             attempts->order = std::make_unique<ordered_attempt_batch>(base, requests);
             std::vector<isolated_worker_job> jobs;
             for (size_t i = 0; i < invocations.size(); ++i) {
                const auto& input = invocations[i];
                attempts->limits.push_back(input.programs.front().limits);
-               jobs.emplace_back(attempts->order->get_ticket(i), input.roots, input.programs, input.context, private_cancel);
+               if(sync_inputs[i]) {
+                  const auto& sync=*sync_inputs[i];
+                  jobs.emplace_back(attempts->order->get_ticket(i),sync.root,sync.programs,sync.context,private_cancel);
+               } else jobs.emplace_back(attempts->order->get_ticket(i), input.roots, input.programs, input.context, private_cancel);
             }
             performance::since(performance::stage::parallel_capture, capture_started);
             if (round == 0) ++stats.batches;
@@ -3291,17 +3305,39 @@ struct controller_impl {
             // Count ALL actual attempts, including discarded discovery passes.
             stats.attempts += attempts->outcomes.size();
             for (const auto& result : attempts->outcomes) {
-               stats.succeeded += bool(result.tree_result);
+               stats.succeeded += bool(result.tree_result) || bool(result.sync_result);
                if (result.failure == isolated_worker_failure::deadline) ++stats.worker_deadlines;
                else if (result.failure == isolated_worker_failure::vm_timeout) ++stats.worker_vm_timeouts;
                else if (result.failure != isolated_worker_failure::none &&
                         result.failure != isolated_worker_failure::missing_state &&
+                        result.failure != isolated_worker_failure::sync_required &&
                         result.failure != isolated_worker_failure::missing_receiver) ++stats.worker_other_failures;
             }
             checkpoint();
             bool requested = false, extended = false;
             for (size_t i = 0; i < attempts->outcomes.size(); ++i) {
                const auto& result = attempts->outcomes[i];
+               if(result.failure==isolated_worker_failure::sync_required && !sync_inputs[i] && invocations[i].roots.size()==1) {
+                  // One bounded mode upgrade, only after an actual ordinary
+                  // root host call. Keep the ORIGINAL absolute batch deadline.
+                  requested=true;
+                  isolated_sync_job input;
+                  input.root=invocations[i].roots.front();
+                  input.context=current_sync_context(self);
+                  for(const auto& prior:invocations[i].programs) {
+                     checkpoint();
+                     auto program=prepare_isolated_sync_program(self,prior.receiver);
+                     if(!program) throw primary_state_unsupported();
+                     if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
+                           fc::sha256::hash(program->program.code.data(),program->program.code.size())))
+                        throw primary_state_unsupported();
+                     input.programs.push_back(std::move(*program));
+                  }
+                  if(input.programs.size()>isolated_sync_executor::max_programs) throw primary_state_budget_exceeded();
+                  accounts.insert(input.root.receiver);
+                  discovery_units=std::max(discovery_units,input.programs.size());
+                  sync_inputs[i]=std::move(input); extended=true;
+               }
                if (result.request) {
                   requested = true;
                   if (const auto* account = std::get_if<account_capture_request>(&*result.request)) {
@@ -3314,6 +3350,23 @@ struct controller_impl {
                }
                if (result.receiver_request) {
                   requested = true;
+                  if(sync_inputs[i]) {
+                     auto& input=*sync_inputs[i];
+                     const auto receiver=*result.receiver_request;
+                     if(std::none_of(input.programs.begin(),input.programs.end(),[&](const auto& p){return p.program.receiver==receiver;})) {
+                        checkpoint();
+                        if(input.programs.size()>=isolated_sync_executor::max_programs) throw primary_state_budget_exceeded();
+                        auto program=prepare_isolated_sync_program(self,receiver);
+                        if(!program) program=isolated_sync_program{{receiver,{},input.programs.front().program.limits,true},false};
+                        if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
+                              fc::sha256::hash(program->program.code.data(),program->program.code.size()))) {
+                           program->program.serial_only=true; program->program.code.clear(); program->sync_call_supported=false;
+                        }
+                        input.programs.push_back(std::move(*program));
+                        discovery_units=std::max(discovery_units,input.programs.size()); extended=true;
+                     }
+                     continue;
+                  }
                   auto& input = invocations[i];
                   const auto receiver = *result.receiver_request;
                   if (std::none_of(input.programs.begin(), input.programs.end(), [&](const auto& p) { return p.receiver == receiver; })) {
@@ -3410,20 +3463,26 @@ struct controller_impl {
          bool proceed;
          if (attempts && i < attempts->outcomes.size()) {
             auto& order = *attempts->order;
-            proceed = order.run_next(order.get_ticket(i), transactions[i]->id(), attempts->outcomes[i].tree_result,
-               [&](const experimental::isolated_action_tree_result& result) {
-                  production_adoption_slot slot{transactions[i], result, attempts->limits[i],
+            auto adopt = [&](const auto& result) {
+                  production_adoption_slot slot{transactions[i], nullptr, nullptr, nullptr, attempts->limits[i],
                      fc::microseconds(attempts->outcomes[i].elapsed.count()), order, cancel, generation};
+                  if constexpr(std::is_same_v<std::remove_cvref_t<decltype(result)>,experimental::isolated_sync_result>) {
+                     slot.sync_result=&result; slot.sync_input=&*attempts->sync_inputs[i];
+                  } else slot.tree_result=&result;
                   production_slot = &slot;
                   auto clear = fc::make_scoped_exit([&] {
                      if (production_slot) { order.discard_remaining(); ++parallel_production_stats.serial_fallbacks; }
                      production_slot = nullptr;
                   });
                   return serial();
-               }, [&] {
+               };
+            auto fallback = [&] {
                   performance::scope fallback_timer(performance::stage::parallel_fallback);
                   ++parallel_production_stats.serial_fallbacks; return serial();
-               });
+               };
+            if(attempts->sync_inputs[i])
+               proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].sync_result,adopt,fallback);
+            else proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].tree_result,adopt,fallback);
          } else proceed = serial();
          ++called;
          if (!proceed) break;
@@ -3466,7 +3525,9 @@ struct controller_impl {
                                            const experimental::isolated_action_tree_result* parallel_result = nullptr,
                                            const experimental::isolated_wasm_limits* parallel_limits = nullptr,
                                            bool* parallel_adopted = nullptr,
-                                           std::optional<fc::microseconds> parallel_elapsed = {} )
+                                           std::optional<fc::microseconds> parallel_elapsed = {},
+                                           const experimental::isolated_sync_result* parallel_sync_result = nullptr,
+                                           const experimental::isolated_sync_job* parallel_sync_input = nullptr )
    {
       EOS_ASSERT(block_deadline != fc::time_point(), transaction_exception, "deadline cannot be uninitialized");
       performance::scope execution_timer(performance::stage::transaction_execute, !trx->implicit());
@@ -3504,6 +3565,8 @@ struct controller_impl {
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
          trx_context.parallel_tree_result = parallel_result;
+         trx_context.parallel_sync_result = parallel_sync_result;
+         trx_context.parallel_sync_input = parallel_sync_input;
          trx_context.parallel_action_limits = parallel_limits;
          trx_context.parallel_transaction_elapsed = parallel_elapsed;
 
@@ -4313,15 +4376,23 @@ struct controller_impl {
                   if (parallel_batch) {
                      auto& order = *parallel_batch->order;
                      const size_t index = order.next_index();
-                     trace = order.run_next(order.get_ticket(index), trx_meta->id(), parallel_batch->outcomes[index].tree_result,
-                        [&](const experimental::isolated_action_tree_result& result) {
+                     auto adopt = [&](const auto& result) {
                            bool adopted = false;
+                           const experimental::isolated_action_tree_result* tree_result=nullptr;
+                           const experimental::isolated_sync_result* sync_result=nullptr;
+                           const experimental::isolated_sync_job* sync_input=nullptr;
+                           if constexpr(std::is_same_v<std::remove_cvref_t<decltype(result)>,experimental::isolated_sync_result>) {
+                              sync_result=&result; sync_input=&*parallel_batch->sync_inputs[index];
+                           } else tree_result=&result;
                            auto trace = push_transaction(trx_meta, fc::time_point::maximum(), fc::microseconds::maximum(),
-                              receipt.cpu_usage_us, true, 0, &result, &parallel_batch->limits[index], &adopted);
+                              receipt.cpu_usage_us, true, 0, tree_result, &parallel_batch->limits[index], &adopted,{},sync_result,sync_input);
                            if (adopted) ++parallel_stats.adopted;
                            else { ++parallel_stats.serial_fallbacks; order.discard_remaining(); }
                            return trace;
-                        }, serial);
+                        };
+                     if(parallel_batch->sync_inputs[index])
+                        trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].sync_result,adopt,serial);
+                     else trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].tree_result,adopt,serial);
                      if (order.complete()) parallel_batch.reset();
                   } else trace = serial();
                   ++packed_idx;
@@ -5942,7 +6013,7 @@ transaction_trace_ptr controller::push_transaction( const transaction_metadata_p
             if (!returned) { ++my->parallel_production_stats.serial_fallbacks; slot->order.discard_remaining(); }
          });
          auto trace = my->push_transaction(trx, block_deadline, max_transaction_time, billed_cpu_time_us,
-            false, subjective_cpu_bill_us, &slot->result, &slot->limits, &adopted, slot->elapsed);
+            false, subjective_cpu_bill_us, slot->tree_result, &slot->limits, &adopted, slot->elapsed,slot->sync_result,slot->sync_input);
          returned = true;
          if (adopted) ++my->parallel_production_stats.adopted;
          else { ++my->parallel_production_stats.serial_fallbacks; slot->order.discard_remaining(); }

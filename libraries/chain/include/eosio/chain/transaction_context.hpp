@@ -9,7 +9,10 @@ namespace eosio::benchmark {
 
 namespace eosio::chain {
 
-   namespace experimental { struct isolated_transaction_result; struct isolated_notification_result; struct isolated_action_tree_result; struct isolated_wasm_limits; }
+   namespace experimental {
+      struct isolated_transaction_result; struct isolated_notification_result; struct isolated_action_tree_result;
+      struct isolated_wasm_limits; struct isolated_sync_result; struct isolated_sync_job; class isolated_sync_replay;
+   }
 
    struct transaction_checktime_timer {
       public:
@@ -208,6 +211,7 @@ namespace eosio::chain {
 
          friend struct controller_impl;
          friend class apply_context;
+         friend class experimental::isolated_sync_replay;
          friend struct benchmark::interface_in_benchmark; // defined in benchmark/bls.cpp
 
          // Non-owning, ordered capability supplied only by the serial
@@ -215,6 +219,11 @@ namespace eosio::chain {
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_notification_result* parallel_notification_result = nullptr;
          const experimental::isolated_action_tree_result* parallel_tree_result = nullptr;
+         const experimental::isolated_sync_result* parallel_sync_result = nullptr;
+         const experimental::isolated_sync_job* parallel_sync_input = nullptr;
+         // Only a successfully preflighted, stack-owned root replay can arm
+         // this capability. The host's child hook cannot install or retain it.
+         experimental::isolated_sync_replay* parallel_sync_replay_guard = nullptr;
          const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
          std::optional<fc::microseconds> parallel_transaction_elapsed;
          size_t parallel_next_action = 0;

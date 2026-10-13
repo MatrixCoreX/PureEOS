@@ -7,6 +7,8 @@ namespace eosio::chain {
 class apply_context;
 class controller;
 class packed_transaction;
+class host_context;
+class sync_call_context;
 }
 
 namespace eosio::chain::experimental {
@@ -47,6 +49,17 @@ isolated_sync_context current_sync_context(const controller&);
 bool validate_isolated_sync_current_state(const controller&, const packed_transaction&,
    std::span<const isolated_sync_program>, const isolated_sync_result&,
    const std::function<void()>& checkpoint = {});
+
+// One ordinary root only. A false result precedes ALL canonical events. Once
+// replay starts, every error propagates through original transaction undo;
+// neither a child nor the already-consumed parent may retry in the VM.
+bool try_adopt_sync_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
+   const isolated_sync_job&, const isolated_sync_result&, std::optional<fc::microseconds> production_elapsed = {});
+
+// Original host execution-point hooks. They can only CONSUME a private,
+// stack-scoped preflight capability; callers cannot inject an arbitrary replay.
+std::optional<int64_t> replay_isolated_sync_call(sync_call_context&);
+fc::microseconds isolated_sync_trace_elapsed(host_context&, uint32_t ordinal);
 
 // Called at the original WASM execution point, AFTER transaction init/auth and
 // native/blacklist guards. First step preflights the WHOLE transaction before

@@ -8,6 +8,8 @@
 #include <eosio/chain/code_object.hpp>
 #include <eosio/chain/resource_limits.hpp>
 #include <eosio/testing/tester.hpp>
+#include <eosio/testing/bls_utils.hpp>
+#include <fc/io/raw.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <boost/test/unit_test.hpp>
 #include <array>
@@ -18,6 +20,7 @@
 
 using namespace eosio::chain;
 using namespace eosio::chain::experimental;
+#include "parallel_test_diagnostics.hpp"
 namespace {
 std::string sc_i64(uint64_t n) { return "(i64.const " + std::to_string(n) + ")"; }
 std::string sc_name(name n) { return sc_i64(n.to_uint64_t()); }
@@ -885,6 +888,73 @@ std::vector<isolated_sync_program> sc_keyed_programs(bool lifecycle=false) {
 }
 
 BOOST_AUTO_TEST_SUITE(parallel_sync_pool_tests)
+BOOST_FIXTURE_TEST_CASE(sync_stage_metrics_count_each_frame_once_including_failed_attempts,sc_state_fixture) {
+   auto& metrics=performance::metrics();
+   struct restore_flag {
+      std::atomic<bool>& flag;bool previous;
+      ~restore_flag(){flag.store(previous,std::memory_order_relaxed);}
+   } restore{metrics.enabled,metrics.enabled.exchange(true,std::memory_order_relaxed)};
+   isolated_sync_executor executor;
+   const auto pair=sc_pair(),recursive=sc_recursive(),stateful=sc_state_programs(0,true),negative=sc_state_programs(-10000,true);
+   auto trap=sc_state_programs();
+   trap[1].program.code=sc_program({},sc_update(sc_find("bob"_n),22)+"(unreachable)(i64.const 0)",sc_db_imports);
+   auto missing=sc_pair();
+   missing[0].program.code=sc_program(sc_assert64(sc_call("absent"_n,~uint64_t{}),-1)+sc_root_body());
+   auto invalid_child=sc_pair();invalid_child[1].program.code={'x'};
+   auto invalid_root=sc_pair();invalid_root[0].program.code={'x'};
+   const auto observe=[&](const auto& run,size_t expected_compile,size_t expected_execute) {
+      const auto cb=metrics.snapshot(performance::stage::parallel_compile),eb=metrics.snapshot(performance::stage::parallel_execute);
+      const auto began=std::chrono::steady_clock::now();run();
+      const auto wall=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-began).count();
+      const auto ca=metrics.snapshot(performance::stage::parallel_compile),ea=metrics.snapshot(performance::stage::parallel_execute);
+      BOOST_CHECK_EQUAL(ca.count-cb.count,expected_compile);BOOST_CHECK_EQUAL(ea.count-eb.count,expected_execute);
+      BOOST_CHECK_GT(ca.nanoseconds-cb.nanoseconds,0u);
+      if(expected_execute) BOOST_CHECK_GT(ea.nanoseconds-eb.nanoseconds,0u);
+      else BOOST_CHECK_EQUAL(ea.nanoseconds-eb.nanoseconds,0u);
+      // Direct execution on ONE thread: nested intervals must form disjoint
+      // compilation and exclusive-VM samples, even during exception unwind.
+      // Never infer a speedup or relax an attempt deadline from this diagnostic.
+      BOOST_CHECK_LE((ca.nanoseconds-cb.nanoseconds)+(ea.nanoseconds-eb.nanoseconds),static_cast<uint64_t>(wall));
+   };
+   for(unsigned round=0;round<3;++round) {
+      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),pair,{}).root.return_value),5u);},2,2);
+      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),missing,{}).root.return_value),5u);},2,2);
+      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(3),recursive,{}).root.return_value),4u);},5,5);
+      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),stateful,{}).root.return_value),33u);},3,3);
+      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),negative,{}).root.return_value),33u);},3,3);
+      observe([&]{BOOST_CHECK_THROW(executor.execute(base,sc_root(),trap,{}),eosio::vm::exception);},2,2);
+      observe([&]{BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid_child,{}),eosio::vm::exception);},2,1);
+      observe([&]{BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid_root,{}),eosio::vm::exception);},1,0);
+   }
+   const auto original=view.read_primary({sc_tables[0],primary_query_kind::find,7},8);
+   BOOST_REQUIRE(original.row);BOOST_CHECK_EQUAL(sc_number(original.row->value),10u);
+}
+BOOST_FIXTURE_TEST_CASE(ordinary_root_host_call_requests_one_local_mode_upgrade_not_export_inference,sc_state_fixture) {
+   for(const auto& body:std::array{sc_root_body(),std::string("(drop (call $ret (i32.const 0)(i32.const 0)))")}) {
+      // The caller deliberately has NO sync export. Export support describes
+      // a callee, not whether this apply entry needs synchronous execution.
+      const std::vector<isolated_receiver_program> programs{{"test"_n,sc_program(body,"",{}, {},false),{}}};
+      const std::vector roots{sc_root()}; isolated_action_tree_context context;
+      isolated_action_tree_executor executor;
+      BOOST_CHECK_THROW(executor.execute(base,roots,programs,context),isolated_sync_mode_required);
+      isolated_transaction_executor legacy;
+      const std::vector<isolated_action_invocation> calls{{programs[0].code,roots[0],{}}};
+      BOOST_CHECK_EXCEPTION(legacy.execute(base,calls),primary_state_unsupported,
+         [](const auto& e){return dynamic_cast<const isolated_sync_mode_required*>(&e)==nullptr;});
+      const std::array root_fingerprints{isolated_execution_fingerprint(
+         fc::sha256::hash(programs[0].code.data(),programs[0].code.size()),programs[0].limits,roots[0])};
+      const std::array requests{ordered_attempt_batch::request{fc::sha256::hash("sync hint"),
+         isolated_action_tree_fingerprint(root_fingerprints,context)}};
+      ordered_attempt_batch batch(base,requests); isolated_worker_pool pool(1);
+      const auto outcomes=pool.run({isolated_worker_job{batch.get_ticket(0),roots,programs,context}});
+      sc_check_no_result(outcomes[0],isolated_worker_failure::sync_required);
+      BOOST_CHECK(!outcomes[0].request); BOOST_CHECK(!outcomes[0].receiver_request);
+   }
+   // Merely exporting sync_call does not request a mode change.
+   const std::vector<isolated_receiver_program> plain{{"test"_n,sc_program(),{}}};
+   isolated_action_tree_executor executor;
+   BOOST_CHECK_NO_THROW(executor.execute(base,std::vector{sc_root()},plain,{}));
+}
 BOOST_FIXTURE_TEST_CASE(four_exclusive_owned_modes_switch_on_one_two_four_workers,sc_state_fixture) {
    const auto root=sc_root();
    const auto sync_programs=sc_state_programs(0,true);
@@ -1166,6 +1236,436 @@ BOOST_FIXTURE_TEST_CASE(sync_pool_overlaps_actual_leaf_wasm_not_parent_compile_i
          }
       }
       BOOST_CHECK_EQUAL(overlap,threads>1);
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+namespace {
+struct sc_live_chain:eosio::testing::tester {
+   using tester::tester;
+   void start() { _start_block(head().block_time()+fc::microseconds(config::block_interval_us)); }
+};
+signed_transaction sc_live_trx(eosio::testing::tester& chain,uint64_t key,uint64_t nonce,name account="test"_n,
+                               name method="run"_n) {
+   signed_transaction trx; action act;
+   act.account=account; act.name=method; act.authorization={{account,"active"_n}};
+   const std::array<uint64_t,2> data{key,nonce};
+   act.data.assign(reinterpret_cast<const char*>(data.data()),reinterpret_cast<const char*>(data.data())+sizeof(data));
+   trx.actions.push_back(std::move(act)); chain.set_transaction_headers(trx);
+   trx.sign(chain.get_private_key(account,"active"),chain.control->get_chain_id()); return trx;
+}
+transaction_metadata_ptr sc_live_meta(eosio::testing::tester& chain,const signed_transaction& trx) {
+   return transaction_metadata::recover_keys(std::make_shared<packed_transaction>(trx,packed_transaction::compression_type::none),
+      chain.control->get_chain_id(),fc::seconds(5),transaction_metadata::trx_type::input);
+}
+transaction_trace_ptr sc_live_push(eosio::testing::tester& chain,const transaction_metadata_ptr& trx) {
+   return chain.control->push_transaction(trx,fc::time_point::maximum(),fc::seconds(1),0,false,0);
+}
+// SHiP omits call_traces. Compare every non-timing call field explicitly; two
+// independent clocks are never required to have equal diagnostic elapsed.
+std::vector<char> sc_live_trace(const transaction_trace_ptr& trace) {
+   std::vector<std::vector<char>> fields{fc::raw::pack(trace->id),fc::raw::pack(trace->net_usage),
+      fc::raw::pack(trace->except?trace->except->code():int64_t{0}),fc::raw::pack(bool(trace->receipt))};
+   if(trace->receipt) fields.push_back(fc::raw::pack(*trace->receipt));
+   for(const auto& a:trace->action_traces) {
+      fields.push_back(fc::raw::pack(a.action_ordinal)); fields.push_back(fc::raw::pack(a.creator_action_ordinal));
+      fields.push_back(fc::raw::pack(a.closest_unnotified_ancestor_action_ordinal));
+      fields.push_back(fc::raw::pack(a.receiver)); fields.push_back(fc::raw::pack(a.act));
+      fields.push_back(fc::raw::pack(a.context_free)); fields.push_back(fc::raw::pack(bool(a.receipt)));
+      if(a.receipt) fields.push_back(fc::raw::pack(*a.receipt));
+      fields.push_back(a.return_value); fields.push_back(fc::raw::pack(a.account_ram_deltas));
+      fields.push_back(fc::raw::pack(a.error_code)); fields.push_back(fc::raw::pack(a.except?a.except->code():int64_t{0}));
+      fields.push_back(fc::raw::pack(a.console)); fields.push_back(fc::raw::pack(a.console_markers));
+      fields.push_back(fc::raw::pack(a.call_traces.size()));
+      for(const auto& c:a.call_traces) {
+         fields.push_back(fc::raw::pack(c.call_ordinal)); fields.push_back(fc::raw::pack(c.sender_ordinal));
+         fields.push_back(fc::raw::pack(c.receiver)); fields.push_back(fc::raw::pack(c.read_only));
+         fields.push_back(c.data); fields.push_back(c.return_value); fields.push_back(fc::raw::pack(c.console));
+         fields.push_back(fc::raw::pack(c.console_markers)); fields.push_back(fc::raw::pack(c.error_id));
+         fields.push_back(fc::raw::pack(c.error_code)); fields.push_back(fc::raw::pack(c.except?c.except->code():int64_t{0}));
+      }
+   }
+   return fc::raw::pack(fields);
+}
+struct sc_live_corpus {
+   genesis_state genesis=eosio::testing::base_tester::default_genesis();
+   std::vector<isolated_sync_program> programs;
+   flat_set<digest_type> reviewed;
+   std::vector<std::vector<char>> blocks;
+   explicit sc_live_corpus(std::vector<isolated_sync_program> supplied):programs(std::move(supplied)) {
+      auto [key,pub,proof]=eosio::testing::get_bls_key("eosio"_n);
+      genesis.initial_savanna.emplace(); genesis.initial_savanna->finalizer_key=pub; genesis.initial_savanna->proof_of_possession=proof;
+      for(const auto& p:programs) if(!p.program.code.empty())
+         reviewed.insert(fc::sha256::hash(p.program.code.data(),p.program.code.size()));
+      fc::temp_directory dir; sc_live_chain source(configuration(dir,0),genesis);
+      source.set_node_finalizers(std::array<name,1>{"eosio"_n});
+      auto seal=[&]{blocks.push_back(fc::raw::pack(*source.produce_block()));};
+      // Native Savanna's manifest deliberately does NOT activate SYNC_CALL.
+      // Activate it using the original bios actions; never alter the manifest.
+      source.set_bios_contract(); seal();
+      source.activate_builtin_protocol_features({builtin_protocol_feature_t::sync_call,builtin_protocol_feature_t::get_sender_fix});
+      seal(); seal();
+      BOOST_REQUIRE(source.control->is_builtin_activated(builtin_protocol_feature_t::sync_call));
+      source.create_accounts({"test"_n,"bob"_n,"carol"_n,"empty"_n}); seal();
+      for(name account:{"test"_n,"bob"_n}) {
+         const auto seed=sc_program(sc_store(7,10,account)+sc_store(9,90,account),"(i64.const 0)",sc_db_imports);
+         source.set_code(account,std::vector<uint8_t>(seed.begin(),seed.end()));
+         auto trx=sc_live_trx(source,7,1,account,"init"_n);
+         BOOST_REQUIRE(!source.push_transaction(trx)->except);
+      }
+      seal();
+      for(const auto& p:programs) if(!p.program.code.empty())
+         source.set_code(p.program.receiver,std::vector<uint8_t>(p.program.code.begin(),p.program.code.end()));
+      seal();
+   }
+   controller::config configuration(const fc::temp_directory& dir,uint16_t workers,bool production=false) const {
+      auto cfg=eosio::testing::base_tester::default_config(dir).first;
+      cfg.wasm_runtime=wasm_interface::vm_type::eos_vm; cfg.contracts_console=true;
+      cfg.parallel_validation_threads=workers; cfg.parallel_production_enabled=production && workers!=0;
+      cfg.parallel_code_allowlist=reviewed; return cfg;
+   }
+   void prefix(eosio::testing::tester& chain) const {
+      for(const auto& block:blocks) {
+         chain.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(block)));
+         chain.control->abort_block();
+      }
+   }
+};
+void sc_live_success(const std::vector<isolated_sync_program>& programs,const std::vector<uint64_t>& keys,
+                     size_t expected_adopted,size_t calls,uint64_t returned,bool console=true) {
+   sc_live_corpus corpus(programs);
+   for(uint16_t workers:{0,1,2,4}) {
+      BOOST_TEST_CONTEXT("sync adoption workers="<<workers) {
+         fc::temp_directory pd,sd,vd;
+         auto config=[&](const fc::temp_directory& dir,uint16_t count,bool production=false) {
+            auto cfg=corpus.configuration(dir,count,production);cfg.contracts_console=console;return cfg;
+         };
+         sc_live_chain producer(config(pd,workers,true),corpus.genesis);
+         eosio::testing::tester serial(config(sd,0),corpus.genesis),parallel(config(vd,workers),corpus.genesis);
+         corpus.prefix(producer); corpus.prefix(serial); corpus.prefix(parallel);
+         producer.set_node_finalizers(std::array<name,1>{"eosio"_n}); producer.start();
+         std::vector<transaction_metadata_ptr> batch; uint64_t nonce=100;
+         for(auto key:keys) batch.push_back(sc_live_meta(producer,sc_live_trx(producer,key,++nonce)));
+         std::vector<std::vector<char>> expected,serial_traces,parallel_traces;
+         const auto collect=[&](auto& dest,const auto& event){
+            const auto trace=std::get<0>(event);
+            if(std::any_of(batch.begin(),batch.end(),[&](const auto& t){return t->id()==trace->id;})) dest.push_back(sc_live_trace(trace));
+         };
+         boost::signals2::scoped_connection a=serial.control->applied_transaction().connect([&](const auto& e){collect(serial_traces,e);});
+         boost::signals2::scoped_connection b=parallel.control->applied_transaction().connect([&](const auto& e){collect(parallel_traces,e);});
+         const auto before=producer.control->get_parallel_production_stats();
+         const auto vb=parallel.control->get_parallel_execution_stats();
+         BOOST_CHECK_EQUAL(parallel_test_measure("sync production",[&]{
+            return producer.control->for_each_parallel_production_transaction(batch,fc::time_point::maximum(),[&](const auto& trx){
+               const auto trace=sc_live_push(producer,trx);
+               BOOST_REQUIRE_MESSAGE(!trace->except,(trace->except?trace->except->to_detail_string():""));
+               BOOST_REQUIRE(trace->receipt); BOOST_REQUIRE_EQUAL(trace->action_traces.size(),1u);
+               const auto& root=trace->action_traces[0];
+               BOOST_REQUIRE_EQUAL(root.call_traces.size(),calls); BOOST_CHECK_EQUAL(sc_number(root.return_value),returned);
+               BOOST_CHECK_LE(root.elapsed.count(),trace->elapsed.count());
+               for(const auto& child:root.call_traces) BOOST_CHECK_LE(child.elapsed.count(),root.elapsed.count());
+               BOOST_CHECK_GE(trace->receipt->cpu_usage_us,producer.control->get_global_properties().configuration.min_transaction_cpu_usage);
+               expected.push_back(sc_live_trace(trace)); return true;
+            });
+         }),batch.size());
+         const auto after=producer.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
+            BOOST_CHECK_EQUAL(after.adopted-before.adopted,workers?expected_adopted:0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,workers?keys.size()-expected_adopted:0u);
+         }
+         const auto block=producer.finish_block();
+         serial.push_block(block); serial.control->abort_block(); parallel.push_block(block); parallel.control->abort_block();
+         BOOST_CHECK(expected==serial_traces); BOOST_CHECK(expected==parallel_traces);
+         BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+         BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,workers?expected_adopted:0u);
+      }
+   }
+}
+}
+
+BOOST_AUTO_TEST_SUITE(parallel_sync_adoption_tests)
+BOOST_AUTO_TEST_CASE(one_two_four_workers_adopt_distinct_child_rows_and_fall_back_on_the_same_row) {
+   sc_live_success(sc_keyed_programs(),{7,9,7},2,1,22);
+}
+BOOST_AUTO_TEST_CASE(recursive_parent_visibility_negative_business_writes_and_full_call_traces_match_serial) {
+   sc_live_success(sc_state_programs(0,true),{7,9},1,2,33);
+   sc_live_success(sc_state_programs(-10000,true),{7,9},1,2,33);
+}
+BOOST_AUTO_TEST_CASE(nonexecuted_calls_before_a_real_child_keep_ordinals_returns_and_single_cpu_charge) {
+   auto programs=sc_keyed_programs();
+   programs[0].program.code=sc_program(sc_assert64(sc_call("absent"_n,~uint64_t{}),-1)+
+      sc_assert64(sc_call("empty"_n),-1)+sc_assert64(sc_call("carol"_n),-2)+sc_root_body());
+   programs.push_back({{"carol"_n,sc_program({},"",{}, {},false),{}},false});
+   programs.push_back({{"empty"_n,{},{}},false});
+   sc_live_success(programs,{7},1,4,22);
+}
+BOOST_AUTO_TEST_CASE(caller_without_sync_export_and_return_only_root_are_adopted_by_actual_behavior) {
+   auto programs=sc_pair();
+   programs[0].program.code=sc_program(sc_root_body(),"",{}, {},false);
+   programs[0].sync_call_supported=false;
+   sc_live_success(programs,{7,7},2,1,7);
+   const auto body=sc_assert32("(call $ret (i32.const 65536)(i32.const 0))",0)+
+      "(i64.store (i32.const 0)(i64.const 42))(call $out (i32.const 0)(i32.const 8))";
+   const std::vector<isolated_sync_program> return_only{{{"test"_n,sc_program(body,"",{}, {},false),{}},false}};
+   sc_live_success(return_only,{7,9},2,0,42);
+}
+BOOST_AUTO_TEST_CASE(same_code_recursion_and_preserved_parent_returns_match_original_contexts) {
+   for(uint64_t depth:{0,1,4,7})
+      sc_live_success(sc_recursive(),{depth},1,depth+1,depth+1);
+   sc_live_success(sc_preserved_return(),{7},1,2,42);
+   sc_live_success(sc_pair(sc_echo(),1),{7},1,1,7);
+}
+BOOST_AUTO_TEST_CASE(normalized_statuses_clear_returns_and_trace_growth_does_not_invalidate_parents) {
+   const std::array<int64_t,7> statuses{0,-10000,-10001,-1,-9999,1,std::numeric_limits<int64_t>::min()};
+   std::string root;
+   for(int64_t status:statuses) {
+      root+="(i64.store (i32.const 0)(i64.const "+std::to_string(status)+"))";
+      root+=sc_assert64(sc_call("bob"_n),status==0?8:status<=-10000?status:-3);
+      root+=sc_assert32("(call $ret (i32.const 64)(i32.const 1))",status==0?8:0);
+      root+=sc_assert32("(call $ret (i32.const 65536)(i32.const 0))",status==0?8:0);
+   }
+   root+="(i64.store (i32.const 64)(i64.const 42))(call $out (i32.const 64)(i32.const 8))";
+   auto programs=sc_pair("(drop (call $data (i32.const 0)(i32.const 8)))"
+      "(call $set (i32.const 0)(i32.const 8))(i64.load (i32.const 0))");
+   programs[0].program.code=sc_program(root);
+   sc_live_success(programs,{7},1,statuses.size(),42);
+}
+BOOST_AUTO_TEST_CASE(disabled_console_keeps_original_empty_markers_without_disabling_sync_adoption) {
+   sc_live_success(sc_state_programs(0,true),{7,9},1,2,33,false);
+}
+BOOST_AUTO_TEST_CASE(child_delete_recreate_uses_fresh_parent_queries_and_original_child_ram_semantics) {
+   sc_live_success(sc_delete_programs(sc_check_row(sc_find("bob"_n),77)+
+      "(call $out (i32.const 64)(i32.const 8))",true),{7,9},1,1,77);
+}
+BOOST_AUTO_TEST_CASE(original_ram_authorization_failure_after_child_writes_undoes_without_reexecuting_parent) {
+   auto programs=sc_keyed_programs();
+   programs[0].program.code=sc_program(sc_update(sc_find("test"_n),11)+sc_root_body()+
+      sc_update(sc_find("test"_n),33,"carol"_n),"(i64.const 0)",sc_db_imports);
+   sc_live_corpus corpus(programs);
+   for(uint16_t workers:{1,2,4}) {
+      fc::temp_directory pd,sd;
+      sc_live_chain producer(corpus.configuration(pd,workers,true),corpus.genesis),serial(corpus.configuration(sd,0),corpus.genesis);
+      corpus.prefix(producer); corpus.prefix(serial); producer.start(); serial.start();
+      const auto signed_trx=sc_live_trx(producer,7,300);
+      const auto actual_meta=sc_live_meta(producer,signed_trx), reference_meta=sc_live_meta(serial,signed_trx);
+      const auto before=producer.control->calculate_integrity_hash(), serial_before=serial.control->calculate_integrity_hash();
+      const auto stats=producer.control->get_parallel_production_stats();
+      transaction_trace_ptr actual;
+      BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({actual_meta},fc::time_point::maximum(),[&](const auto& trx){
+         actual=sc_live_push(producer,trx); return true;
+      }),1u);
+      const auto reference=sc_live_push(serial,reference_meta);
+      BOOST_REQUIRE(actual && actual->except); BOOST_REQUIRE(reference && reference->except);
+      BOOST_REQUIRE_EQUAL(actual->action_traces.size(),1u);
+      BOOST_CHECK_EQUAL(actual->action_traces[0].call_traces.size(),1u); // no retry over the canonical prefix
+      BOOST_CHECK(sc_live_trace(actual)==sc_live_trace(reference));
+      BOOST_CHECK(producer.control->calculate_integrity_hash()==before);
+      BOOST_CHECK(serial.control->calculate_integrity_hash()==serial_before);
+      const auto after=producer.control->get_parallel_production_stats();
+      BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(stats,after)) {
+         BOOST_CHECK_GT(after.succeeded-stats.succeeded,0u); // reaches the original host rejection after private success
+         BOOST_CHECK_EQUAL(after.adopted-stats.adopted,0u);
+      }
+   }
+}
+BOOST_AUTO_TEST_CASE(child_failures_and_timeouts_undo_then_reuse_the_same_chain_and_workers) {
+   for(unsigned failure=0;failure<4;++failure) {
+      const std::array<std::string,4> faults{
+         "(unreachable)", "(drop (call $read (i32.const 0)(i32.const 0)))", "",
+         "(loop $forever (br $forever))"};
+      auto programs=sc_pair();
+      const auto child="(drop (call $data (i32.const 0)(i32.const 8)))"+sc_update(sc_find("bob"_n),22)+
+         "(if (i64.eq (i64.load (i32.const 0))(i64.const 7))(then "+faults[failure]+"))"
+         "(call $set (i32.const 64)(i32.const 8))(i64.const 0)";
+      programs[1].program.code=sc_program({},child,sc_db_imports);
+      if(failure==2) programs[0].program.code=sc_program(
+         "(drop (call $read (i32.const 0)(i32.const 8)))"
+         "(if (i64.eq (i64.load (i32.const 0))(i64.const 7))(then "+sc_root_body("bob"_n,1)+")"
+         "(else "+sc_root_body()+"))");
+      sc_live_corpus corpus(programs);
+      for(uint16_t workers:{1,2,4}) {
+         BOOST_TEST_CONTEXT("failure="<<failure<<" workers="<<workers) {
+            fc::temp_directory pd,sd;
+            sc_live_chain producer(corpus.configuration(pd,workers,true),corpus.genesis),serial(corpus.configuration(sd,0),corpus.genesis);
+            corpus.prefix(producer); corpus.prefix(serial); producer.start(); serial.start();
+            for(unsigned round=0;round<3;++round) {
+               const auto snapshot=producer.control->calculate_integrity_hash(), original=serial.control->calculate_integrity_hash();
+               const auto failed=sc_live_trx(producer,7,500+round*2);
+               const auto stats=producer.control->get_parallel_production_stats();
+               transaction_trace_ptr actual;
+               BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({sc_live_meta(producer,failed)},
+                  fc::time_point::maximum(),[&](const auto& trx){actual=sc_live_push(producer,trx);return true;}),1u);
+               const auto reference=sc_live_push(serial,sc_live_meta(serial,failed));
+               BOOST_REQUIRE(actual && actual->except); BOOST_REQUIRE(reference && reference->except);
+               BOOST_CHECK(sc_live_trace(actual)==sc_live_trace(reference));
+               BOOST_CHECK(producer.control->calculate_integrity_hash()==snapshot);
+               BOOST_CHECK(serial.control->calculate_integrity_hash()==original);
+               BOOST_CHECK(!producer.control->is_known_unexpired_transaction(actual->id));
+               BOOST_CHECK_EQUAL(producer.control->get_parallel_production_stats().adopted-stats.adopted,0u);
+               const auto fresh=sc_live_trx(producer,9,501+round*2);
+               const auto before=producer.control->get_parallel_production_stats();
+               BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({sc_live_meta(producer,fresh)},
+                  fc::time_point::maximum(),[&](const auto& trx){actual=sc_live_push(producer,trx);return true;}),1u);
+               BOOST_REQUIRE(actual && !actual->except && actual->receipt);
+               BOOST_REQUIRE_EQUAL(actual->action_traces.size(),1u);
+               BOOST_REQUIRE_EQUAL(actual->action_traces[0].call_traces.size(),1u);
+               BOOST_CHECK_EQUAL(sc_number(actual->action_traces[0].return_value),22u);
+               // Same accepted CPU bill, as in full validation. Independent
+               // speculative clocks must not be mistaken for consensus data.
+               const auto accepted=serial.control->push_transaction(sc_live_meta(serial,fresh),fc::time_point::maximum(),
+                  fc::seconds(1),actual->receipt->cpu_usage_us,true,0);
+               BOOST_REQUIRE(!accepted->except);
+               BOOST_CHECK(sc_live_trace(actual)==sc_live_trace(accepted));
+               BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+               const auto after=producer.control->get_parallel_production_stats();
+               BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
+                  BOOST_CHECK_EQUAL(after.adopted-before.adopted,1u);
+                  BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,0u);
+               }
+            }
+         }
+      }
+   }
+}
+BOOST_AUTO_TEST_CASE(sync_queue_stop_exception_identity_abort_cancel_and_reentry_never_reuse_old_results) {
+   sc_live_corpus corpus(sc_keyed_programs());
+   for(unsigned mode=0;mode<7;++mode) {
+      BOOST_TEST_CONTEXT("sync queue mode="<<mode) {
+         fc::temp_directory dir; sc_live_chain chain(corpus.configuration(dir,2,true),corpus.genesis);
+         corpus.prefix(chain); chain.start();
+         const std::vector<transaction_metadata_ptr> batch{
+            sc_live_meta(chain,sc_live_trx(chain,7,700)),sc_live_meta(chain,sc_live_trx(chain,9,701))};
+         const auto snapshot=chain.control->calculate_integrity_hash();
+         const auto before=chain.control->get_parallel_production_stats();
+         size_t callbacks=0;
+         const auto deadline=mode==3?fc::time_point::now()-fc::seconds(1):fc::time_point::maximum();
+         auto run=[&]{return chain.control->for_each_parallel_production_transaction(batch,deadline,[&](const auto& trx){
+            ++callbacks;
+            if(mode==0) return false;
+            if(mode==1) {chain.control->abort_block();chain.start();return true;}
+            if(mode==2) throw std::runtime_error("sync queue callback failed");
+            if(mode==4) {
+               BOOST_CHECK_THROW(chain.control->for_each_parallel_production_transaction(batch,deadline,[](const auto&){return true;}),transaction_exception);
+               return false;
+            }
+            if(mode==5) {
+               const auto other=sc_live_meta(chain,trx->packed_trx()->get_signed_transaction());
+               BOOST_REQUIRE(!sc_live_push(chain,other)->except);return true;
+            }
+            BOOST_REQUIRE(!sc_live_push(chain,trx)->except);
+            chain.control->interrupt_transaction(controller::interrupt_t::speculative_block_trx);return true;
+         });};
+         if(mode==2) BOOST_CHECK_THROW(run(),std::runtime_error);
+         else BOOST_CHECK_EQUAL(run(),mode==3?0u:mode==5?2u:1u);
+         BOOST_CHECK_EQUAL(callbacks,mode==3?0u:mode==5?2u:1u);
+         if(mode<=4 && mode!=1) BOOST_CHECK(chain.control->calculate_integrity_hash()==snapshot);
+         if(mode==5) {
+            const auto after=chain.control->get_parallel_production_stats();
+            BOOST_CHECK_EQUAL(after.adopted-before.adopted,0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,2u);
+         }
+         chain.control->abort_block();chain.start();
+         const auto fresh=sc_live_meta(chain,sc_live_trx(chain,9,710));
+         const auto reset=chain.control->get_parallel_production_stats();
+         BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({fresh},fc::time_point::maximum(),[&](const auto& trx){
+            const auto trace=sc_live_push(chain,trx);
+            BOOST_REQUIRE(!trace->except);BOOST_REQUIRE_EQUAL(trace->action_traces.size(),1u);
+            BOOST_CHECK_EQUAL(trace->action_traces[0].call_traces.size(),1u);return true;
+         }),1u);
+         const auto after=chain.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(reset,after)) {BOOST_CHECK_EQUAL(after.adopted-reset.adopted,1u);}
+      }
+   }
+}
+BOOST_AUTO_TEST_CASE(unreviewed_child_code_and_multiple_sync_roots_keep_original_whole_transaction_execution) {
+   sc_live_corpus corpus(sc_keyed_programs());
+   const auto& child=corpus.programs[1].program.code;
+   const auto child_hash=fc::sha256::hash(child.data(),child.size());
+   for(unsigned mode=0;mode<2;++mode) for(uint16_t workers:{1,2,4}) {
+      BOOST_TEST_CONTEXT("sync fallback mode="<<mode<<" workers="<<workers) {
+         fc::temp_directory pd,sd,vd;
+         auto pc=corpus.configuration(pd,workers,true),vc=corpus.configuration(vd,workers);
+         if(mode==0) {pc.parallel_code_allowlist.erase(child_hash);vc.parallel_code_allowlist.erase(child_hash);}
+         sc_live_chain producer(pc,corpus.genesis);
+         eosio::testing::tester serial(corpus.configuration(sd,0),corpus.genesis),parallel(vc,corpus.genesis);
+         corpus.prefix(producer);corpus.prefix(serial);corpus.prefix(parallel);
+         producer.set_node_finalizers(std::array<name,1>{"eosio"_n});producer.start();
+         auto trx=sc_live_trx(producer,7,800);
+         if(mode==1) {
+            auto second=trx.actions[0];const uint64_t key=9;
+            std::memcpy(second.data.data(),&key,sizeof(key));trx.actions.push_back(std::move(second));
+            trx.signatures.clear();trx.sign(producer.get_private_key("test"_n,"active"),producer.control->get_chain_id());
+         }
+         const auto metadata=sc_live_meta(producer,trx);
+         transaction_trace_ptr actual;
+         std::vector<std::vector<char>> originals,candidates;
+         const auto collect=[&](auto& dest,const auto& event){
+            const auto trace=std::get<0>(event);if(trace->id==metadata->id())dest.push_back(sc_live_trace(trace));
+         };
+         boost::signals2::scoped_connection a=serial.control->applied_transaction().connect([&](const auto& event){collect(originals,event);});
+         boost::signals2::scoped_connection b=parallel.control->applied_transaction().connect([&](const auto& event){collect(candidates,event);});
+         const auto before=producer.control->get_parallel_production_stats(), vb=parallel.control->get_parallel_execution_stats();
+         BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({metadata},fc::time_point::maximum(),[&](const auto& tx){
+            actual=sc_live_push(producer,tx);return true;
+         }),1u);
+         BOOST_REQUIRE(actual && !actual->except && actual->receipt);
+         BOOST_REQUIRE_EQUAL(actual->action_traces.size(),mode?2u:1u);
+         for(const auto& root:actual->action_traces) {
+            BOOST_REQUIRE_EQUAL(root.call_traces.size(),1u);BOOST_CHECK_EQUAL(sc_number(root.return_value),22u);
+         }
+         const auto after=producer.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
+            BOOST_CHECK_GT(after.attempts-before.attempts,0u);
+            BOOST_CHECK_EQUAL(after.adopted-before.adopted,0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,1u);
+         }
+         const auto expected=sc_live_trace(actual);const auto block=producer.finish_block();
+         serial.push_block(block);serial.control->abort_block();parallel.push_block(block);parallel.control->abort_block();
+         BOOST_REQUIRE_EQUAL(originals.size(),1u);BOOST_REQUIRE_EQUAL(candidates.size(),1u);
+         BOOST_CHECK(originals[0]==expected);BOOST_CHECK(candidates[0]==expected);
+         BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+         BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,0u);
+      }
+   }
+}
+BOOST_AUTO_TEST_CASE(original_authorization_and_duplicate_checks_still_guard_a_successful_private_attempt) {
+   sc_live_corpus corpus(sc_keyed_programs());
+   for(uint16_t workers:{1,2,4}) {
+      fc::temp_directory dir;sc_live_chain chain(corpus.configuration(dir,workers,true),corpus.genesis);
+      corpus.prefix(chain);chain.start();
+      const auto valid=sc_live_trx(chain,7,900);
+      auto invalid=valid;invalid.signatures.clear();
+      invalid.sign(chain.get_private_key("bob"_n,"active"),chain.control->get_chain_id());
+      const auto bad=sc_live_meta(chain,invalid),good=sc_live_meta(chain,valid);
+      BOOST_CHECK(bad->id()==good->id()); // ID binds unsigned bytes, not authorization success.
+      const auto snapshot=chain.control->calculate_integrity_hash();
+      const auto before=chain.control->get_parallel_production_stats();
+      transaction_trace_ptr trace;
+      BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({bad},fc::time_point::maximum(),[&](const auto& trx){
+         trace=sc_live_push(chain,trx);return true;
+      }),1u);
+      BOOST_REQUIRE(trace && trace->except);BOOST_CHECK(!trace->receipt);
+      BOOST_CHECK(trace->action_traces.empty());
+      BOOST_CHECK(chain.control->calculate_integrity_hash()==snapshot);
+      BOOST_CHECK(!chain.control->is_known_unexpired_transaction(good->id()));
+      const auto rejected=chain.control->get_parallel_production_stats();
+      BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,rejected)) {
+         BOOST_CHECK_GT(rejected.succeeded-before.succeeded,0u);
+         BOOST_CHECK_EQUAL(rejected.adopted-before.adopted,0u);
+      }
+      BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({good},fc::time_point::maximum(),[&](const auto& trx){
+         trace=sc_live_push(chain,trx);return true;
+      }),1u);
+      BOOST_REQUIRE(trace && !trace->except && trace->receipt);
+      BOOST_REQUIRE_EQUAL(trace->action_traces.size(),1u);BOOST_CHECK_EQUAL(trace->action_traces[0].call_traces.size(),1u);
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().adopted-rejected.adopted,1u);
+      const auto accepted=chain.control->calculate_integrity_hash();
+      const auto duplicate=sc_live_push(chain,good);
+      BOOST_REQUIRE(duplicate && duplicate->except);
+      BOOST_CHECK_EQUAL(duplicate->except->code(),tx_duplicate::code_value);
+      BOOST_CHECK(chain.control->calculate_integrity_hash()==accepted);
    }
 }
 BOOST_AUTO_TEST_SUITE_END()

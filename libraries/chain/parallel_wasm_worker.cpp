@@ -5,6 +5,7 @@
 #include <eosio/vm/backend.hpp>
 #include <eosio/vm/host_function.hpp>
 #include <fc/io/raw.hpp>
+#include <fc/scoped_exit.hpp>
 #include <algorithm>
 #include <cstring>
 #include <functional>
@@ -266,20 +267,31 @@ struct isolated_host {
       const auto source = memory(offset, size);
       return_value.assign(source.begin(), source.end());
    }
+   [[noreturn]] void missing_sync_capture() const {
+      if(tree_capture && !tree_capture->context_free && tree_capture->sender==name{} && input.receiver==input.account)
+         throw isolated_sync_mode_required();
+      throw primary_state_unsupported();
+   }
    int64_t call(uint64_t receiver, uint64_t flags, uint32_t offset, uint32_t size) {
       context_aware();
-      if (!sync_capture) throw primary_state_unsupported();
+      if (!sync_capture) missing_sync_capture();
       const auto data = memory(offset, size); // validate before entering original call semantics
       last_call_return.clear();
-      const auto begin = std::chrono::steady_clock::now();
-      auto [status, bytes] = sync_capture->call(name{receiver}, flags, data);
-      sync_capture->children_time += std::chrono::steady_clock::now() - begin;
+      auto [status, bytes] = [&] {
+         const auto begin = std::chrono::steady_clock::now();
+         // Failed descendants also consumed time. Close this interval before
+         // parent return-buffer work, on BOTH return and exception unwind.
+         auto account_child = fc::make_scoped_exit([&] {
+            sync_capture->children_time += std::chrono::steady_clock::now() - begin;
+         });
+         return sync_capture->call(name{receiver}, flags, data);
+      }();
       last_call_return = std::move(bytes);
       return status < 0 ? status : static_cast<int64_t>(last_call_return.size());
    }
    uint32_t get_call_return_value(uint32_t offset, uint32_t size) {
       context_aware();
-      if (!sync_capture) throw primary_state_unsupported();
+      if (!sync_capture) missing_sync_capture();
       auto output = memory(offset, size);
       const auto count = std::min(output.size(), last_call_return.size());
       if (count) std::copy_n(last_call_return.begin(), count, output.begin());
@@ -503,6 +515,14 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       isolated_tree_capture* tree_capture, isolated_sync_capture* sync_capture) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    const auto began = std::chrono::steady_clock::now();
+   const bool sample_sync = sync_capture && performance::metrics().enabled.load(std::memory_order_relaxed);
+   auto sync_metric = fc::make_scoped_exit([&] {
+      if (sample_sync) {
+         const auto exclusive = std::chrono::steady_clock::now() - began - sync_capture->children_time;
+         const auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(exclusive).count();
+         performance::metrics().record(performance::stage::parallel_execute,static_cast<uint64_t>(std::max<int64_t>(0,ns)));
+      }
+   }); // diagnostic only, including failures; NEVER a billing/deadline input
    external.check(stop);
    if (bool(group_cursor) != bool(group_recipients) ||
        (sync_capture && (tree_capture || group_cursor)) ||
@@ -606,7 +626,10 @@ isolated_sync_result isolated_sync_executor::execute(std::shared_ptr<const froze
       if (program.serial_only || program.code.empty()) throw primary_state_unsupported();
       // Never consult the dormant action cache while an ancestor VM is live.
       // Construction, execution, destruction all finish before returning.
-      isolated_wasm_module module(program.code, program.limits);
+      isolated_wasm_module module = [&] {
+         performance::scope compile_timer(performance::stage::parallel_compile);
+         return isolated_wasm_module(program.code, program.limits); // guaranteed copy elision, no extra allocation
+      }();
       isolated_sync_capture frame;
       frame.is_sync = ordinal != 0;
       frame.read_only = read_only;

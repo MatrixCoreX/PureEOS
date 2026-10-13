@@ -128,6 +128,8 @@ struct isolated_worker_pool::impl {
                ? isolated_worker_failure::cancelled : isolated_worker_failure::deadline;
          } catch (const primary_state_budget_exceeded&) {
             outcome.failure = isolated_worker_failure::budget;
+         } catch (const isolated_sync_mode_required&) {
+            outcome.failure = isolated_worker_failure::sync_required;
          } catch (const primary_state_unsupported&) {
             outcome.failure = isolated_worker_failure::unsupported;
          } catch (const primary_state_invalid_attempt&) {

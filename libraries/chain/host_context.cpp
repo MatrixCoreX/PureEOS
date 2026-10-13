@@ -3,6 +3,7 @@
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/global_property_object.hpp>
+#include <eosio/chain/parallel_canonical_adoption.hpp>
 
 namespace eosio::chain {
 
@@ -122,7 +123,9 @@ int64_t host_context::execute_sync_call(name call_receiver, uint64_t flags, std:
 
          try {
             // execute the sync call
-            auto status = control.get_wasm_interface().execute(receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, call_ctx);
+            const auto replayed = experimental::replay_isolated_sync_call(call_ctx);
+            auto status = replayed ? *replayed : control.get_wasm_interface().execute(
+               receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version, call_ctx);
             // 0: success
             // <= -10000: valid error return code
             // otherwise (>0 || -1 .. -9999): invalid error return code
@@ -176,7 +179,7 @@ call_trace& host_context::get_call_trace(uint32_t ordinal) {
 }
 
 void host_context::finalize_call_trace(call_trace& trace, const fc::time_point& start) {
-   trace.elapsed = fc::time_point::now() - start;
+   trace.elapsed = fc::time_point::now() - start + experimental::isolated_sync_trace_elapsed(*this, trace.call_ordinal.value);
 }
 
 // called from apply_context or sync_call_context

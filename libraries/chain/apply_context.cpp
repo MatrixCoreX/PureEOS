@@ -147,7 +147,19 @@ void apply_context::exec_one()
                   control.check_action_list( act->account, act->name );
                }
                try {
-                  bool adopted = adopt_receiver();
+                  bool adopted = false;
+                  if (const auto* attempt = trx_context.parallel_sync_result) {
+                     adopted = trx_context.parallel_sync_input && experimental::try_adopt_sync_result(*this,
+                        receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version,
+                        *trx_context.parallel_sync_input, *attempt, trx_context.parallel_transaction_elapsed);
+                     // False precedes the WHOLE root. Exceptions after arming
+                     // are deliberately not caught/retried over partial writes.
+                     trx_context.parallel_transaction_adopted = adopted;
+                     trx_context.parallel_sync_result = nullptr;
+                     trx_context.parallel_sync_input = nullptr;
+                     trx_context.parallel_transaction_elapsed.reset();
+                  }
+                  if (!adopted) adopted = adopt_receiver();
                   // Empty-code notifications must not consume the next root's
                   // capability. Top-level ordinals were allocated before any
                   // notifications; they are not the trace execution order.

@@ -1,11 +1,14 @@
 #include <eosio/chain/parallel_canonical_adoption.hpp>
 #include <eosio/chain/apply_context.hpp>
+#include <eosio/chain/sync_call_context.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/code_object.hpp>
 #include <eosio/chain/global_property_object.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/webassembly/interface.hpp>
+#include <fc/scoped_exit.hpp>
 #include <algorithm>
+#include <utility>
 
 namespace eosio::chain::experimental {
 namespace {
@@ -243,7 +246,8 @@ bool validate_isolated_sync_current_state(const controller& control, const packe
    const auto check = [&] { if (checkpoint) checkpoint(); };
    check();
    const auto& trx = packed.get_transaction();
-   if (!eligible_transaction(trx) || trx.actions.size() != 1 || !eligible_account(control, trx.actions.front()) ||
+   if (!control.is_builtin_activated(builtin_protocol_feature_t::sync_call) ||
+       !eligible_transaction(trx) || trx.actions.size() != 1 || !eligible_account(control, trx.actions.front()) ||
        programs.empty() || programs.size() > isolated_sync_executor::max_programs) return false;
    std::set<name> seen;
    size_t code_bytes = 0;
@@ -265,6 +269,191 @@ bool validate_isolated_sync_current_state(const controller& control, const packe
    if (!validate_isolated_sync_journal(result, input, programs, current_sync_context(control), checkpoint)) return false;
    chainbase_transaction_state_view live(control.db());
    return result.state.matches_base_reads(live, check); // always callable, even when the optional checkpoint is absent
+}
+
+// Defined only in this implementation. Its constructor is private and the
+// borrowed transaction pointer is private too; public host hooks can consume,
+// but cannot create, this capability. All allocations/preflight precede arming.
+class isolated_sync_replay {
+   transaction_context& trx_;
+   const isolated_sync_result& result_;
+   host_context* frame_ = nullptr;
+   uint32_t next_call_ = 0, pending_ordinal_ = 0;
+   size_t next_write_ = 0;
+   std::vector<bool> entered_;
+   std::vector<fc::microseconds> subtree_cpu_;
+   std::vector<std::vector<char>> returns_;
+
+   isolated_sync_replay(apply_context& root, const isolated_sync_result& result)
+      : trx_(root.trx_context), result_(result), entered_(result.calls.size()+1),
+        subtree_cpu_(result.calls.size()+1), returns_(result.calls.size()+1) {
+      subtree_cpu_[0]=fc::microseconds(result.root.elapsed.count());
+      returns_[0]=result.root.return_value;
+      for(size_t i=0;i<result.calls.size();++i) {
+         subtree_cpu_[i+1]=fc::microseconds(result.calls[i].exclusive_elapsed.count());
+         returns_[i+1]=result.calls[i].return_value;
+      }
+      for(size_t i=result.calls.size();i>0;--i) {
+         const auto parent=result.calls[i-1].sender_ordinal;
+         EOS_ASSERT(parent<i,transaction_exception,"prevalidated sync ancestry mismatch");
+         subtree_cpu_[parent]+=subtree_cpu_[i];
+      }
+      EOS_ASSERT(!trx_.parallel_sync_replay_guard,transaction_exception,"sync replay already armed");
+      trx_.parallel_sync_replay_guard=this;
+   }
+
+   void replay_frame(host_context& context, uint32_t ordinal, std::span<const isolated_sync_event> events,
+                     size_t writes_begin, size_t writes_end, std::span<const uint32_t> markers) {
+      EOS_ASSERT(next_write_==writes_begin,transaction_exception,"prevalidated sync write prefix mismatch");
+      auto* previous=std::exchange(frame_,&context);
+      auto restore=fc::make_scoped_exit([&]{frame_=previous;});
+      for(const auto& event:events) {
+         trx_.checktime();
+         if(const auto* call=std::get_if<isolated_sync_call_event>(&event)) {
+            EOS_ASSERT(call->call_ordinal==next_call_+1 && next_call_<result_.calls.size() &&
+                       call->after_writes==next_write_,transaction_exception,"prevalidated sync call order mismatch");
+            const auto child_ordinal=++next_call_;
+            const auto& child=result_.calls[child_ordinal-1];
+            const auto previous_pending=std::exchange(pending_ordinal_,child_ordinal);
+            auto restore_pending=fc::make_scoped_exit([&]{pending_ordinal_=previous_pending;});
+            // ORIGINAL host creates the child context/trace, performs account,
+            // flag/export/depth/data checks, normalizes errors and finalizes it.
+            // No references into call_traces survive this recursive call.
+            const auto status=context.execute_sync_call(child.receiver,child.flags,child.data);
+            const auto expected=child.status<0?child.status:static_cast<int64_t>(child.return_value.size());
+            EOS_ASSERT(status==expected && entered_[child_ordinal]==child.executed &&
+                       context.last_sync_call_return_value==child.return_value && next_write_==child.writes_end,
+                       transaction_exception,"prevalidated sync return mismatch");
+            const auto& trace=context.get_call_trace(child_ordinal);
+            EOS_ASSERT(trace.call_ordinal.value==child_ordinal && trace.sender_ordinal.value==ordinal &&
+                       trace.receiver==child.receiver && trace.read_only==child.read_only && trace.data==child.data &&
+                       trace.return_value==child.return_value && !trace.except && !trace.error_code &&
+                       bool(trace.error_id)==(child.status<0) && (!trace.error_id || *trace.error_id==child.status),
+                       transaction_exception,"prevalidated sync trace mismatch");
+            continue;
+         }
+         const auto& cursor=std::get<isolated_cursor_event>(event);
+         if(const auto* query=std::get_if<isolated_cursor_query>(&cursor)) {
+            using kind=isolated_cursor_query_kind;
+            int32_t actual=-1; auto primary=query->primary_before;
+            switch(query->kind) {
+               case kind::find: actual=context.db_find_i64(query->table.code,query->table.scope,query->table.table,query->key); break;
+               case kind::lower_bound: actual=context.db_lowerbound_i64(query->table.code,query->table.scope,query->table.table,query->key); break;
+               case kind::upper_bound: actual=context.db_upperbound_i64(query->table.code,query->table.scope,query->table.table,query->key); break;
+               case kind::end: actual=context.db_end_i64(query->table.code,query->table.scope,query->table.table); break;
+               case kind::next: actual=context.db_next_i64(query->iterator,primary); break;
+               case kind::previous: actual=context.db_previous_i64(query->iterator,primary); break;
+            }
+            EOS_ASSERT(actual==query->result &&
+               ((query->kind!=kind::next && query->kind!=kind::previous) || primary==query->primary_after),
+               transaction_exception,"prevalidated sync cursor mismatch");
+         } else if(const auto* mutation=std::get_if<isolated_cursor_write>(&cursor)) {
+            // The original WASM registration owns this precondition; calling
+            // lower-level DB hosts directly must not accidentally omit it.
+            EOS_ASSERT(!context.is_read_only(),unaccessible_api,"this API is not allowed in read only action/call");
+            EOS_ASSERT(mutation->write_index==next_write_ && next_write_<writes_end,
+                       transaction_exception,"prevalidated sync mutation order mismatch");
+            const auto& write=result_.state.writes()[next_write_++];
+            EOS_ASSERT(write.table.code==context.get_receiver(),transaction_exception,"prevalidated sync write owner mismatch");
+            if(write.operation==primary_operation::store) {
+               const auto actual=context.db_store_i64(write.table.scope,write.table.table,write.payer,write.primary_key,
+                                                      write.value.data(),write.value.size());
+               EOS_ASSERT(actual==mutation->iterator,transaction_exception,"prevalidated sync store cursor mismatch");
+            } else if(write.operation==primary_operation::update) {
+               context.db_update_i64(mutation->iterator,write.payer,write.value.data(),write.value.size());
+            } else if(write.operation==primary_operation::remove) {
+               context.db_remove_i64(mutation->iterator);
+            } else EOS_ASSERT(false,transaction_exception,"prevalidated sync operation mismatch");
+         } else EOS_ASSERT(false,transaction_exception,"sync replay cannot enqueue a notification");
+      }
+      EOS_ASSERT(next_write_==writes_end,transaction_exception,"prevalidated sync write suffix mismatch");
+      const auto& actual_markers=ordinal?context.get_call_trace(ordinal).console_markers:
+                                        context.get_current_action_trace().console_markers;
+      const auto& console=ordinal?context.get_call_trace(ordinal).console:context.get_current_action_trace().console;
+      EOS_ASSERT(console.empty() && actual_markers.size()==markers.size(),transaction_exception,"prevalidated sync console mismatch");
+      for(size_t i=0;i<markers.size();++i)
+         EOS_ASSERT(actual_markers[i].value==markers[i],transaction_exception,"prevalidated sync marker mismatch");
+   }
+
+   int64_t enter(sync_call_context& context) {
+      EOS_ASSERT(&context.trx_context==&trx_ && context.ordinal==pending_ordinal_ && pending_ordinal_>0 &&
+                 pending_ordinal_<=result_.calls.size() && &context.parent_ctx==frame_ && !entered_[pending_ordinal_],
+                 transaction_exception,"unbound sync replay frame");
+      const auto ordinal=pending_ordinal_;
+      const auto& call=result_.calls[ordinal-1];
+      EOS_ASSERT(call.executed && context.sender==call.sender && context.get_receiver()==call.receiver &&
+                 context.read_only==call.read_only && context.data.size()==call.data.size() &&
+                 std::equal(context.data.begin(),context.data.end(),call.data.begin()),
+                 transaction_exception,"prevalidated sync input mismatch");
+      entered_[ordinal]=true;
+      replay_frame(context,ordinal,call.events,call.writes_begin,call.writes_end,call.console_markers);
+      context.return_value=std::move(returns_[ordinal]); // sizes/protocol checked before arming; no allocation here
+      return call.status;
+   }
+
+public:
+   isolated_sync_replay(const isolated_sync_replay&)=delete;
+   isolated_sync_replay& operator=(const isolated_sync_replay&)=delete;
+   ~isolated_sync_replay() { trx_.parallel_sync_replay_guard=nullptr; }
+
+   static bool adopt(apply_context& context,const fc::sha256& code_hash,uint8_t vm_type,uint8_t vm_version,
+                     const isolated_sync_job& input,const isolated_sync_result& result,
+                     std::optional<fc::microseconds> production_elapsed) {
+      auto& trx=context.trx_context;
+      if(trx.parallel_sync_result!=&result || trx.parallel_sync_input!=&input || trx.parallel_sync_replay_guard ||
+         trx.parallel_transaction_result || trx.parallel_notification_result || trx.parallel_tree_result ||
+         (!trx.explicit_billed_cpu_time && !production_elapsed) ||
+         trx.is_transient() || trx.is_implicit() || trx.is_scheduled() || context.control.skip_trx_checks() ||
+         context.is_context_free() || context.is_read_only() || context.is_privileged() || vm_type || vm_version ||
+         context.get_receiver()!=context.get_action().account || context.get_sender()!=name{} || context.get_inline_depth()!=0 ||
+         context.get_first_receiver_action_ordinal()!=1) return false;
+      const auto& trace=context.get_current_action_trace();
+      if(trace.action_ordinal.value!=1 || trace.creator_action_ordinal.value || !trace.call_traces.empty()) return false;
+      performance::scope adoption_timer(performance::stage::parallel_adopt);
+      std::unique_ptr<isolated_sync_replay> replay;
+      try {
+         const auto checkpoint=[&]{trx.checktime();};
+         if(isolated_sync_fingerprint(input.root,input.programs,input.context)!=result.execution_fingerprint ||
+            isolated_execution_fingerprint(code_hash,current_limits(context.control),current_input(context.control,context.get_action()))
+               !=result.root.execution_fingerprint ||
+            !validate_isolated_sync_current_state(context.control,trx.packed_trx,input.programs,result,checkpoint)) return false;
+         fc::microseconds total(result.root.elapsed.count());
+         for(const auto& call:result.calls) total+=fc::microseconds(call.exclusive_elapsed.count());
+         if(production_elapsed && *production_elapsed!=total) return false;
+         replay.reset(new isolated_sync_replay(context,result));
+      } catch(const fc::exception&) { throw; }
+        catch(const std::exception&) { return false; } // preflight/allocation ONLY; nothing canonical has run
+      // Entire successful private CPU is billed once against the ordinary root.
+      // Missing/empty/unsupported calls consume ordinals but never enter a VM;
+      // they must not break a fictional contiguous child billing sequence.
+      if(!trx.explicit_billed_cpu_time) trx.charge_isolated_cpu(replay->subtree_cpu_[0],1);
+      replay->replay_frame(context,0,result.root_events,0,result.root.writes_end,result.root_console_markers);
+      EOS_ASSERT(replay->next_call_==result.calls.size(),transaction_exception,"prevalidated sync unused calls");
+      context.action_return_value=std::move(replay->returns_[0]);
+      return true;
+   }
+
+   static std::optional<int64_t> child(sync_call_context& context) {
+      if(auto* replay=context.trx_context.parallel_sync_replay_guard) return replay->enter(context);
+      return {};
+   }
+   static fc::microseconds trace_elapsed(host_context& context,uint32_t ordinal) {
+      const auto* replay=context.trx_context.parallel_sync_replay_guard;
+      // Match existing action/transaction diagnostics: explicit validation uses
+      // its fixed bill and original replay wall, never adds/bills local VM CPU.
+      if(!replay || context.trx_context.explicit_billed_cpu_time) return fc::microseconds{};
+      EOS_ASSERT(ordinal>0 && ordinal<replay->subtree_cpu_.size(),transaction_exception,"unbound sync elapsed trace");
+      return replay->subtree_cpu_[ordinal]; // inclusive diagnostic only, never a second CPU charge
+   }
+};
+
+bool try_adopt_sync_result(apply_context& context,const fc::sha256& code_hash,uint8_t vm_type,uint8_t vm_version,
+      const isolated_sync_job& input,const isolated_sync_result& result,std::optional<fc::microseconds> production_elapsed) {
+   return isolated_sync_replay::adopt(context,code_hash,vm_type,vm_version,input,result,production_elapsed);
+}
+std::optional<int64_t> replay_isolated_sync_call(sync_call_context& context) { return isolated_sync_replay::child(context); }
+fc::microseconds isolated_sync_trace_elapsed(host_context& context,uint32_t ordinal) {
+   return isolated_sync_replay::trace_elapsed(context,ordinal);
 }
 
 bool try_adopt_notification_result(apply_context& context, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
