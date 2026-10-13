@@ -40,6 +40,7 @@ struct isolated_worker_pool::impl {
       std::unique_ptr<isolated_transaction_executor> executor;
       std::unique_ptr<isolated_notification_executor> notification_executor;
       std::unique_ptr<isolated_action_tree_executor> tree_executor;
+      std::unique_ptr<isolated_sync_executor> sync_executor;
       while (true) {
          std::shared_ptr<batch> current;
          size_t index;
@@ -55,9 +56,30 @@ struct isolated_worker_pool::impl {
          try {
             job.cancel.check(job.ticket.stop_token());
             {
-               if (job.tree) {
+               if (job.sync) {
                   executor.reset();
                   notification_executor.reset();
+                  tree_executor.reset();
+                  if (!sync_executor) sync_executor = std::make_unique<isolated_sync_executor>();
+                  const auto& input = *job.sync;
+                  outcome.sync_result = sync_executor->execute(job.ticket.base(), input.root, input.programs, input.context,
+                                                               job.ticket.stop_token(), {}, job.cancel);
+                  const auto& result = *outcome.sync_result;
+                  // Root bounds are inclusive DIAGNOSTICS, not proof of actual
+                  // leaf WASM overlap. Charge each exclusive frame exactly once.
+                  outcome.began = result.root.began;
+                  outcome.ended = result.root.ended;
+                  const auto add_elapsed = [&](std::chrono::microseconds elapsed) {
+                     if (elapsed.count() < 0 || elapsed > isolated_sync_executor::max_attempt_time - outcome.elapsed)
+                        throw primary_state_invalid_attempt();
+                     outcome.elapsed += elapsed;
+                  };
+                  add_elapsed(result.root.elapsed);
+                  for (const auto& call : result.calls) add_elapsed(call.exclusive_elapsed);
+               } else if (job.tree) {
+                  executor.reset();
+                  notification_executor.reset();
+                  sync_executor.reset();
                   if (!tree_executor) tree_executor = std::make_unique<isolated_action_tree_executor>();
                   const auto& input = *job.tree;
                   outcome.tree_result = tree_executor->execute(job.ticket.base(), input.roots, input.programs, input.context,
@@ -71,6 +93,7 @@ struct isolated_worker_pool::impl {
                } else if (job.notifications) {
                   executor.reset();
                   tree_executor.reset();
+                  sync_executor.reset();
                   if (!notification_executor) notification_executor = std::make_unique<isolated_notification_executor>();
                   const auto& input = *job.notifications;
                   outcome.notification_result = notification_executor->execute(job.ticket.base(), input.roots, input.programs,
@@ -84,6 +107,7 @@ struct isolated_worker_pool::impl {
                } else {
                   notification_executor.reset();
                   tree_executor.reset();
+                  sync_executor.reset();
                   if (!executor) executor = std::make_unique<isolated_transaction_executor>();
                   outcome.result = executor->execute(job.ticket.base(), job.actions, job.ticket.stop_token(), {}, job.cancel);
                   outcome.began = outcome.result->actions.front().began;
@@ -125,8 +149,9 @@ struct isolated_worker_pool::impl {
             outcome.result.reset();
             outcome.notification_result.reset();
             outcome.tree_result.reset();
+            outcome.sync_result.reset();
          }
-         if (!outcome.result && !outcome.notification_result && !outcome.tree_result) {
+         if (!outcome.result && !outcome.notification_result && !outcome.tree_result && !outcome.sync_result) {
             outcome.elapsed = {};
             outcome.ended = std::chrono::steady_clock::now();
          }
@@ -148,6 +173,22 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
    if (jobs.empty() || jobs.size() > 64) throw primary_state_budget_exceeded();
    // Bound all copied inputs too, including jobs that later fail linking.
    for (const auto& job : jobs) {
+      if (unsigned(!job.actions.empty()) + unsigned(bool(job.notifications)) + unsigned(bool(job.tree)) +
+          unsigned(bool(job.sync)) != 1) throw primary_state_budget_exceeded();
+      if (job.sync) {
+         const auto& input = *job.sync;
+         if (input.programs.empty() || input.programs.size() > isolated_sync_executor::max_programs ||
+             input.root.data.size() > 64 * 1024 || input.root.authorizations.size() > 64 || input.root.max_return_bytes > 4096)
+            throw primary_state_budget_exceeded();
+         size_t code_bytes = 0;
+         for (const auto& item : input.programs) {
+            if (item.program.code.size() > 64 * 1024 ||
+                item.program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes)
+               throw primary_state_budget_exceeded();
+            code_bytes += item.program.code.size();
+         }
+         continue;
+      }
       if (job.notifications || job.tree) {
          if ((job.notifications && job.tree) || !job.actions.empty()) throw primary_state_budget_exceeded();
          const auto& roots = job.tree ? job.tree->roots : job.notifications->roots;

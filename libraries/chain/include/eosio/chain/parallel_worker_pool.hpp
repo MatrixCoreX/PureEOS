@@ -14,6 +14,15 @@ struct isolated_action_tree_job {
    isolated_action_tree_context context;
 };
 
+// Independent mode, not a synchronous extension of a queued inline tree.
+// Owns every byte and protocol observation needed by the worker; no owner or
+// canonical DB pointer. Formal adoption remains a separate capability.
+struct isolated_sync_job {
+   isolated_action_input root;
+   std::vector<isolated_sync_program> programs;
+   isolated_sync_context context;
+};
+
 struct isolated_worker_job {
    ordered_attempt_batch::ticket ticket;
    std::vector<isolated_action_invocation> actions;
@@ -21,7 +30,8 @@ struct isolated_worker_job {
    // Mutually exclusive with actions. Every code/input byte is owned by this
    // joined job; the worker may only request another owned receiver NAME.
    std::optional<isolated_notification_job> notifications;
-   std::optional<isolated_action_tree_job> tree; // exclusive with BOTH legacy modes
+   std::optional<isolated_action_tree_job> tree;
+   std::optional<isolated_sync_job> sync; // all four modes are mutually exclusive
    isolated_worker_job(ordered_attempt_batch::ticket tag, std::vector<isolated_action_invocation> calls, isolated_cancel stop = {})
       : ticket(std::move(tag)), actions(std::move(calls)), cancel(std::move(stop)) {}
    isolated_worker_job(ordered_attempt_batch::ticket tag, std::vector<char> code, isolated_action_input input,
@@ -38,6 +48,11 @@ struct isolated_worker_job {
                        isolated_cancel stop = {})
       : ticket(std::move(tag)), cancel(std::move(stop)),
         tree(isolated_action_tree_job{std::move(roots), std::move(programs), context}) {}
+   isolated_worker_job(ordered_attempt_batch::ticket tag, isolated_action_input root,
+                       std::vector<isolated_sync_program> programs, isolated_sync_context context,
+                       isolated_cancel stop = {})
+      : ticket(std::move(tag)), cancel(std::move(stop)),
+        sync(isolated_sync_job{std::move(root), std::move(programs), context}) {}
 };
 
 // Bounded, process-local diagnostics, never authorization, a consensus error,
@@ -68,6 +83,7 @@ struct isolated_worker_outcome {
    std::optional<isolated_transaction_result> result; // legacy root-only mode
    std::optional<isolated_notification_result> notification_result; // requires whole-tree canonical preflight
    std::optional<isolated_action_tree_result> tree_result; // requires tree preflight AND original send-time authorization
+   std::optional<isolated_sync_result> sync_result; // no canonical adopter yet; never a prefix
    std::chrono::steady_clock::time_point began, ended; // local diagnostics only
    std::chrono::microseconds elapsed{}; // successful step sum; excludes compilation and queueing
    std::optional<state_capture_request> request; // discovery only; no partial result is adoptable
@@ -82,6 +98,7 @@ struct isolated_worker_outcome {
 // every worker before returning to canonical execution. Jobs own all inputs;
 // workers never receive controller/database pointers. Switching execution modes
 // destroys the previous executor, retaining at most ONE module cache per worker.
+// Sync frames still use fresh, independently owned LIVE modules, not that cache.
 // Neither a missing-state nor missing-program outcome can contain a prefix.
 class isolated_worker_pool {
 public:

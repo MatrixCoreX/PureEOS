@@ -152,7 +152,7 @@ target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_t
 target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
 add_test(NAME pureeos_parallel_wasm_worker COMMAND parallel_wasm_worker_test --report_level=detailed --color_output=no)
 add_test(NAME pureeos_parallel_sync_private COMMAND parallel_wasm_worker_test
-  --run_test=parallel_sync_private_tests:parallel_sync_oracle_tests --report_level=detailed --color_output=no -- --eos-vm)
+  --run_test=parallel_sync_private_tests:parallel_sync_oracle_tests:parallel_sync_pool_tests --report_level=detailed --color_output=no -- --eos-vm)
 set_tests_properties(pureeos_parallel_sync_private PROPERTIES TIMEOUT 120 LABELS "parallel-px7;sync-call")
 set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
 
