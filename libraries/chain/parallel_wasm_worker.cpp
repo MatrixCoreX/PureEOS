@@ -1,5 +1,6 @@
 #include <eosio/chain/parallel_wasm_worker.hpp>
 #include <eosio/chain/parallel_action_tree.hpp>
+#include <eosio/chain/parallel_sync_call.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/vm/backend.hpp>
 #include <eosio/vm/host_function.hpp>
@@ -7,6 +8,8 @@
 #include <algorithm>
 #include <cstring>
 #include <functional>
+#include <limits>
+#include <map>
 #include <mutex>
 
 namespace eosio::chain::experimental {
@@ -20,6 +23,19 @@ struct isolated_tree_capture {
    name sender;
    bool context_free = false;
    const isolated_context_free_data* context_free_data = nullptr; // execute_step stack only
+};
+
+// Stack-only capability supplied exclusively by isolated_sync_executor. A
+// recursive invocation owns another module and another one of these frames.
+struct isolated_sync_capture {
+   std::function<std::pair<int64_t, std::vector<char>>(name, uint64_t, std::span<const char>)> call;
+   std::function<void(const isolated_cursor_event&)> record;
+   bool is_sync = false;
+   bool read_only = false;
+   name sender;
+   bool get_sender_fix = false;
+   int64_t status = 0;
+   std::chrono::steady_clock::duration children_time{};
 };
 
 namespace {
@@ -93,8 +109,11 @@ struct isolated_host {
    std::vector<isolated_cursor_event>* cursor_events = nullptr;
    size_t max_cursor_events = 0;
    isolated_tree_capture* tree_capture = nullptr;
+   isolated_sync_capture* sync_capture = nullptr;
+   std::vector<char> last_call_return;
 
    void record(isolated_cursor_event event) {
+      if (sync_capture) { sync_capture->record(event); return; }
       if (!cursor_events) return; // unchanged root-only mode never allocates a transcript
       if (cursor_events->size() >= max_cursor_events) throw primary_state_budget_exceeded();
       if (tree_capture) tree_capture->record(event);
@@ -106,6 +125,14 @@ struct isolated_host {
       check();
       if (tree_capture && tree_capture->context_free) throw primary_state_unsupported();
    }
+   void action_only() const {
+      check();
+      if (sync_capture && sync_capture->is_sync) throw primary_state_unsupported();
+   }
+   void writable() const {
+      context_aware();
+      if (sync_capture && sync_capture->read_only) throw primary_state_unsupported();
+   }
    std::span<char> memory(uint32_t offset, uint32_t size) {
       check();
       auto bytes = linear_memory();
@@ -113,8 +140,9 @@ struct isolated_host {
       return bytes.subspan(offset, size);
    }
    uint64_t current_receiver() { check(); return input.receiver.to_uint64_t(); }
-   uint32_t action_data_size() { check(); return input.data.size(); }
+   uint32_t action_data_size() { action_only(); return input.data.size(); }
    uint32_t read_action_data(uint32_t offset, uint32_t size) {
+      action_only();
       auto destination = memory(offset, size);
       const auto count = std::min(destination.size(), input.data.size());
       if (!count) return input.data.size();
@@ -122,12 +150,14 @@ struct isolated_host {
       return count;
    }
    int32_t has_auth(uint64_t actor) {
+      action_only();
       context_aware();
       return std::any_of(input.authorizations.begin(), input.authorizations.end(),
                          [&](const auto& item) { return item.first.to_uint64_t() == actor; });
    }
    void require_auth(uint64_t actor) { if (!has_auth(actor)) throw primary_state_unsupported(); }
    void require_auth2(uint64_t actor, uint64_t permission) {
+      action_only();
       context_aware();
       if (!std::any_of(input.authorizations.begin(), input.authorizations.end(), [&](const auto& item) {
             return item.first.to_uint64_t() == actor && item.second.to_uint64_t() == permission;
@@ -182,6 +212,8 @@ struct isolated_host {
    int32_t is_account(uint64_t account) { context_aware(); return bool(state.read_account(name{account})); }
    void require_recipient(uint64_t account) {
       context_aware();
+      action_only();
+      if (sync_capture) throw primary_state_unsupported();
       const name recipient{account};
       if (group_recipients) {
          if (group_recipients->contains(recipient)) return;
@@ -217,6 +249,8 @@ struct isolated_host {
    }
    uint64_t get_sender() {
       context_aware();
+      if (sync_capture)
+         return (sync_capture->is_sync && !sync_capture->get_sender_fix ? input.receiver : sync_capture->sender).to_uint64_t();
       if (!tree_capture) throw primary_state_unsupported();
       return tree_capture->sender.to_uint64_t();
    }
@@ -226,47 +260,82 @@ struct isolated_host {
    [[noreturn]] uint64_t current_time() { throw primary_state_unsupported(); }
    [[noreturn]] int32_t get_active_producers(uint32_t, uint32_t) { throw primary_state_unsupported(); }
    void set_action_return_value(uint32_t offset, uint32_t size) {
+      action_only();
       context_aware();
       if (size > input.max_return_bytes) throw primary_state_unsupported();
       const auto source = memory(offset, size);
       return_value.assign(source.begin(), source.end());
    }
+   int64_t call(uint64_t receiver, uint64_t flags, uint32_t offset, uint32_t size) {
+      context_aware();
+      if (!sync_capture) throw primary_state_unsupported();
+      const auto data = memory(offset, size); // validate before entering original call semantics
+      last_call_return.clear();
+      const auto begin = std::chrono::steady_clock::now();
+      auto [status, bytes] = sync_capture->call(name{receiver}, flags, data);
+      sync_capture->children_time += std::chrono::steady_clock::now() - begin;
+      last_call_return = std::move(bytes);
+      return status < 0 ? status : static_cast<int64_t>(last_call_return.size());
+   }
+   uint32_t get_call_return_value(uint32_t offset, uint32_t size) {
+      context_aware();
+      if (!sync_capture) throw primary_state_unsupported();
+      auto output = memory(offset, size);
+      const auto count = std::min(output.size(), last_call_return.size());
+      if (count) std::copy_n(last_call_return.begin(), count, output.begin());
+      return last_call_return.size();
+   }
+   uint32_t get_call_data(uint32_t offset, uint32_t size) {
+      context_aware();
+      if (!sync_capture || !sync_capture->is_sync) throw primary_state_unsupported();
+      auto output = memory(offset, size);
+      const auto count = std::min(output.size(), input.data.size());
+      if (count) std::copy_n(input.data.begin(), count, output.begin());
+      return input.data.size();
+   }
+   void set_call_return_value(uint32_t offset, uint32_t size) {
+      context_aware();
+      if (!sync_capture || !sync_capture->is_sync || size > input.max_return_bytes)
+         throw primary_state_unsupported();
+      const auto bytes = memory(offset, size);
+      return_value.assign(bytes.begin(), bytes.end());
+   }
    int32_t db_find_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
       context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.find(key, primary);
-      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::find, key, primary, -1, result});
+      if (cursor_events || sync_capture) record(isolated_cursor_query{isolated_cursor_query_kind::find, key, primary, -1, result});
       return result;
    }
    int32_t db_store_i64(uint64_t scope, uint64_t table, uint64_t payer, uint64_t primary, uint32_t offset, uint32_t size) {
-      context_aware();
+      writable();
       const auto result = cursor.store({input.receiver, name(scope), name(table)}, primary, name(payer), memory(offset, size));
-      if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, result});
+      if (cursor_events || sync_capture) record(isolated_cursor_write{state.write_count() - 1, result});
       return result;
    }
    void db_remove_i64(int32_t iterator) {
-      context_aware(); cursor.remove(iterator);
-      if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, iterator});
+      writable(); cursor.remove(iterator);
+      if (cursor_events || sync_capture) record(isolated_cursor_write{state.write_count() - 1, iterator});
    }
    int32_t db_lowerbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
       context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.lower_bound(key, primary);
-      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::lower_bound, key, primary, -1, result});
+      if (cursor_events || sync_capture) record(isolated_cursor_query{isolated_cursor_query_kind::lower_bound, key, primary, -1, result});
       return result;
    }
    int32_t db_upperbound_i64(uint64_t code, uint64_t scope, uint64_t table, uint64_t primary) {
       context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.upper_bound(key, primary);
-      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::upper_bound, key, primary, -1, result});
+      if (cursor_events || sync_capture) record(isolated_cursor_query{isolated_cursor_query_kind::upper_bound, key, primary, -1, result});
       return result;
    }
    int32_t db_end_i64(uint64_t code, uint64_t scope, uint64_t table) {
       context_aware();
       const table_key key{name(code), name(scope), name(table)};
       const auto result = cursor.end(key);
-      if (cursor_events) record(isolated_cursor_query{isolated_cursor_query_kind::end, key, 0, -1, result});
+      if (cursor_events || sync_capture) record(isolated_cursor_query{isolated_cursor_query_kind::end, key, 0, -1, result});
       return result;
    }
    int32_t db_get_i64(int32_t iterator, uint32_t offset, uint32_t size) {
@@ -274,9 +343,9 @@ struct isolated_host {
       return cursor.get(iterator, memory(offset, size));
    }
    void db_update_i64(int32_t iterator, uint64_t payer, uint32_t offset, uint32_t size) {
-      context_aware();
+      writable();
       cursor.update(iterator, name(payer), memory(offset, size));
-      if (cursor_events) record(isolated_cursor_write{state.write_count() - 1, iterator});
+      if (cursor_events || sync_capture) record(isolated_cursor_write{state.write_count() - 1, iterator});
    }
    int32_t adjacent(int32_t iterator, uint32_t offset, bool previous) {
       context_aware();
@@ -290,7 +359,7 @@ struct isolated_host {
       const auto before = primary;
       const auto result = previous ? cursor.previous(iterator, primary) : cursor.next(iterator, primary);
       std::memcpy(destination.data(), &primary, sizeof(primary)); // unaligned WASM pointers are legal
-      if (cursor_events)
+      if (cursor_events || sync_capture)
          record(isolated_cursor_query{previous ? isolated_cursor_query_kind::previous : isolated_cursor_query_kind::next,
                                       {}, 0, iterator, result, before, primary});
       return result;
@@ -346,6 +415,12 @@ void register_isolated_functions() {
       ISOLATED_TREE_HOST(get_sender); // bound to creator receiver, never inferred from root account
       ISOLATED_TREE_HOST(send_context_free_inline);
       ISOLATED_TREE_HOST(get_context_free_data);
+#define ISOLATED_SYNC_HOST(method) functions::add<&isolated_host::method>("env", #method)
+      ISOLATED_SYNC_HOST(call);
+      ISOLATED_SYNC_HOST(get_call_return_value);
+      ISOLATED_SYNC_HOST(get_call_data);
+      ISOLATED_SYNC_HOST(set_call_return_value);
+#undef ISOLATED_SYNC_HOST
 #undef ISOLATED_FALLBACK
 #undef ISOLATED_TREE_HOST
 #undef ISOLATED_HOST
@@ -425,11 +500,12 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       const isolated_action_input& input, std::stop_token stop, isolated_cancel external,
       primary_overlay_cursor* group_cursor, std::set<name>* group_recipients,
       std::vector<isolated_cursor_event>* cursor_events, size_t max_cursor_events,
-      isolated_tree_capture* tree_capture) {
+      isolated_tree_capture* tree_capture, isolated_sync_capture* sync_capture) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    const auto began = std::chrono::steady_clock::now();
    external.check(stop);
    if (bool(group_cursor) != bool(group_recipients) ||
+       (sync_capture && (tree_capture || group_cursor)) ||
        bool(group_cursor) != bool(cursor_events) || (cursor_events && !cursor_events->empty()) ||
        (tree_capture && !group_cursor) ||
        max_cursor_events > isolated_notification_executor::max_cursor_events ||
@@ -451,7 +527,7 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
       // back too; non-memory hosts remain usable without linear memory.
       if (pages <= 0) throw primary_state_unsupported();
       return {context.linear_memory(), static_cast<size_t>(pages) * 65536u};
-   }, {}, {}, group_recipients, cursor_events, max_cursor_events, tree_capture};
+   }, {}, {}, group_recipients, cursor_events, max_cursor_events, tree_capture, sync_capture, {}};
    const attempt_deadline deadline(impl_->limits.max_attempt_time, stop, external);
    auto& context = machine.get_context();
    // Same reset/start sequence as backend::initialize, with a bounded visitor
@@ -461,12 +537,147 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
    context.reset();
    interruptible_visitor<std::remove_reference_t<decltype(context)>> visitor{{context}, deadline, impl_->limits.max_pages};
    deadline.check();
+   if (sync_capture && sync_capture->is_sync) {
+      const auto index = machine.get_module().get_exported_function("sync_call");
+      if (index == std::numeric_limits<uint32_t>::max() ||
+          !(machine.get_module().get_function_type(index) ==
+            eosio::vm::host_function{{eosio::vm::i64, eosio::vm::i64, eosio::vm::i32}, {eosio::vm::i64}}))
+         throw primary_state_unsupported(); // captured metadata/code mismatch, never invent -2
+   }
    context.execute_start(&host, visitor);
-   context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
+   if (sync_capture && sync_capture->is_sync) {
+      auto result = context.execute(&host, visitor, "sync_call", sync_capture->sender.to_uint64_t(),
+                                    input.receiver.to_uint64_t(), static_cast<uint32_t>(input.data.size()));
+      if (!result) throw primary_state_unsupported();
+      sync_capture->status = result->to_i64();
+   } else {
+      context.execute(&host, visitor, "apply", input.receiver.to_uint64_t(), input.account.to_uint64_t(), input.action.to_uint64_t());
+   }
    deadline.check();
    const auto ended = std::chrono::steady_clock::now();
+   const auto children_time = sync_capture ? sync_capture->children_time : std::chrono::steady_clock::duration{};
+   if (children_time > ended - began) throw primary_state_invalid_attempt();
    return {std::move(host.return_value), fingerprint, std::move(host.recipients), writes_begin, state.write_count(),
-           std::chrono::duration_cast<std::chrono::microseconds>(ended - began), began, ended};
+           std::chrono::duration_cast<std::chrono::microseconds>(ended - began - children_time), began, ended};
+}
+
+isolated_sync_result isolated_sync_executor::execute(std::shared_ptr<const frozen_primary_state> base,
+      const isolated_action_input& root, std::span<const isolated_sync_program> programs,
+      isolated_sync_context protocol, std::stop_token stop, primary_overlay_limits bounds, isolated_cancel external) {
+   if (std::this_thread::get_id() != owner_) throw state_view_wrong_thread();
+   external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() + max_attempt_time);
+   external.check(stop);
+   if (programs.empty() || programs.size() > max_programs || root.receiver != root.account ||
+       root.data.size() > max_total_data_bytes)
+      throw primary_state_budget_exceeded();
+   size_t total_code = 0, total_data = root.data.size();
+   std::map<name, const isolated_sync_program*> catalog;
+   for (const auto& item : programs) {
+      external.check(stop);
+      const auto& program = item.program;
+      if (program.code.size() > max_total_code_bytes - total_code ||
+          !catalog.emplace(program.receiver, &item).second) throw primary_state_budget_exceeded();
+      total_code += program.code.size();
+   }
+   auto find_program = [&](name receiver) -> const isolated_sync_program& {
+      const auto it = catalog.find(receiver);
+      if (it == catalog.end()) throw isolated_receiver_missing(receiver);
+      return *it->second;
+   };
+   primary_state_overlay state(std::move(base), bounds);
+   if (!state.read_account(root.receiver)) throw primary_state_unsupported();
+   std::vector<isolated_sync_trace> traces;
+   std::vector<uint32_t> root_markers;
+   std::vector<isolated_sync_event> root_events;
+   size_t event_count = 0;
+   auto record = [&](uint32_t ordinal, isolated_sync_event event) {
+      if (event_count >= max_events) throw primary_state_budget_exceeded();
+      ++event_count;
+      (ordinal ? traces.at(ordinal - 1).events : root_events).push_back(std::move(event));
+   };
+   traces.reserve(max_calls);
+   using call_result = std::pair<int64_t, std::vector<char>>;
+   std::function<isolated_action_effects(const isolated_sync_program&, const isolated_action_input&,
+      name, uint32_t, uint32_t, bool, int64_t&)> run;
+   run = [&](const isolated_sync_program& captured, const isolated_action_input& input,
+             name sender, uint32_t ordinal, uint32_t depth, bool read_only, int64_t& status) {
+      external.check(stop);
+      const auto& program = captured.program;
+      if (program.serial_only || program.code.empty()) throw primary_state_unsupported();
+      // Never consult the dormant action cache while an ancestor VM is live.
+      // Construction, execution, destruction all finish before returning.
+      isolated_wasm_module module(program.code, program.limits);
+      isolated_sync_capture frame;
+      frame.is_sync = ordinal != 0;
+      frame.read_only = read_only;
+      frame.sender = sender;
+      frame.get_sender_fix = protocol.get_sender_fix;
+      frame.record = [&](const isolated_cursor_event& event) { record(ordinal, event); };
+      frame.call = [&](name receiver, uint64_t flags, std::span<const char> data) -> call_result {
+         external.check(stop);
+         if (traces.size() >= max_calls || data.size() > max_total_data_bytes - total_data)
+            throw primary_state_budget_exceeded();
+         total_data += data.size();
+         const uint32_t child_ordinal = traces.size() + 1;
+         const bool child_read_only = read_only || bool(flags & 1);
+         // Keep ordinals, not references: nested calls can grow the vector.
+         isolated_sync_trace trace;
+         trace.call_ordinal = child_ordinal; trace.sender_ordinal = ordinal;
+         trace.sender = input.receiver; trace.receiver = receiver;
+         trace.flags = flags; trace.read_only = child_read_only;
+         trace.data.assign(data.begin(), data.end());
+         trace.writes_begin = trace.writes_end = state.write_count();
+         traces.push_back(std::move(trace));
+         record(ordinal, isolated_sync_call_event{child_ordinal, state.write_count()});
+         if (protocol.console_enabled) {
+            if (ordinal) traces[ordinal - 1].console_markers.push_back(0);
+            else root_markers.push_back(0);
+         }
+         if (depth >= protocol.max_depth || depth >= max_depth || data.size() > protocol.max_data_bytes)
+            throw primary_state_unsupported();
+         auto failed = [&](int64_t error) -> call_result {
+            traces[child_ordinal - 1].status = error;
+            external.check(stop);
+            return {error, {}};
+         };
+         // Account existence is a frozen dependency. Unknown is a capture
+         // request, NOT -1. Preserve the original flags check ordering.
+         if (!state.read_account(receiver)) return failed(-1);
+         if (flags > 1) throw primary_state_unsupported();
+         const auto& child_program = find_program(receiver);
+         if (child_program.program.serial_only) throw primary_state_unsupported();
+         if (child_program.program.code.empty()) return failed(-1);
+         if (!child_program.sync_call_supported) return failed(-2);
+         isolated_action_input child;
+         child.receiver = child.account = receiver;
+         child.data = traces[child_ordinal - 1].data;
+         child.max_return_bytes = std::min(protocol.max_data_bytes, child_program.program.limits.max_return_bytes);
+         int64_t child_status = 0;
+         auto effects = run(child_program, child, input.receiver, child_ordinal, depth + 1, child_read_only, child_status);
+         if (child_status != 0 && child_status > -10000) child_status = -3;
+         auto& completed = traces[child_ordinal - 1]; // reacquire after recursion
+         completed.exclusive_elapsed = effects.elapsed;
+         completed.executed = true;
+         completed.writes_begin = effects.writes_begin; completed.writes_end = effects.writes_end;
+         completed.execution_fingerprint = effects.execution_fingerprint;
+         completed.began = effects.began; completed.ended = effects.ended;
+         if (child_status < 0) return failed(child_status);
+         completed.return_value = std::move(effects.return_value);
+         external.check(stop);
+         return {0, completed.return_value};
+      };
+      auto effects = module.execute_step(state, input, stop, external, nullptr, nullptr, nullptr, 0, nullptr, &frame);
+      status = frame.status;
+      return effects;
+   };
+   int64_t status = 0;
+   auto effects = run(find_program(root.receiver), root, name{}, 0, 0, protocol.root_read_only, status);
+   external.check(stop);
+   if (!effects.recipients.empty()) throw primary_state_invalid_attempt();
+   const auto fingerprint = isolated_sync_fingerprint(root, programs, protocol);
+   external.check(stop);
+   return {state.seal(), std::move(effects), std::move(traces), std::move(root_markers), fingerprint,
+           std::move(root_events)};
 }
 
 fc::sha256 isolated_transaction_fingerprint(std::span<const fc::sha256> action_fingerprints) {

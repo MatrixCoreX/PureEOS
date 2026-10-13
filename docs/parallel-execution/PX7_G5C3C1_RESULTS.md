@@ -1,6 +1,52 @@
 # PX7 G5c3c1：嵌套 VM 防护与同步私有帧（开发中）
 
-## 当前状态：按用户要求暂停（2026-10-12）
+## 当前状态：已恢复推进（2026-10-13）
+
+用户已要求持续推进本实验分支，边测边改。最新状态：同步私有帧已覆盖主键读写，普通专项及完整工作池三轮通过；ASan/UBSan/LSan 同步专项通过，完整三轮在四物理核亲和性条件下通过；默认调度下的一次 500ms deadline 失败保留，不能称无条件通过。工作池任务与正式采用尚未接入同步结果，TSan 和新节点回归尚待完成，不能据此称为全面并行已完成。恢复时核对 `43767cd`、依赖 `16f9c4c` 与干净的已跟踪工作树，根盘约 14 GiB、tmpfs 用户配额余量 633,359,360 字节。以下逐时点记录和暂停记录保留为历史，以本节最新实测为准，不代表当前仍暂停。
+
+### 恢复后的原链验证
+
+`build-resumed-compatibility-20261013.log` 构建成功，无该次日志中的 warning/error。未与构建或其他重负载测试并跑，`resumed-sync-timeout-reuse-three-rounds.log` 三轮分别 1.59s、1.73s、1.89s，每轮 30 条断言通过，总计 5.35s；同一 tester 每轮分别触发三次超时并随后健康复用缓存父/子模块。此前准确旧版的两次 30s 挂住负对照仍保留。`resumed-full-compatibility.log` 21/21 组通过，总计 85.60s。原 30s CTest 上限、交易预算和功能断言未放宽。
+
+当前兼容程序 SHA-256 `85f95bcdf796394e3dc3ff216141b795253f3ecb60d75b8b7ee96b79b95289af`，精确测试源及 VM 头文件哈希见 `resumed-runtime-artifacts.sha256`。该程序归档 `resumed-compatibility-artifact.tar.gz`（0600）逐文件比较通过，SHA-256 `c4fda7c42d88249da4bc38fc4acab0b9c812b06227e417cc389637edd51c27d2`。原 nodeos 哈希再次核对未变。这里只关闭嵌套防护的原链接口回归缺口；完整并行工作池、当前新节点与真实进程还需在后续源码版本重建复测。
+
+### 私有同步第一版：已写入，尚待编译/运行
+
+新证据目录 `build/local-tests/parallel-sync-frames-20261013-1Hd871/`。审阅暂停草稿后新增 `parallel_sync_call.hpp` 和 `parallel_sync_call_tests.cpp`，修改 `parallel_wasm_worker.hpp/.cpp` 及测试注册。每个活跃帧分别构造模块/上下文/allocator，不使用会淘汰父模块的休眠缓存；只提供一个普通根动作和纯计算/主键只读同步子调用。所有写入、通知、inline、打印和 eosio_exit 仍需整笔回退，无正式 adopter hook。
+
+新 host 仅在专用栈内 capability 存在时可执行；旧入口的四种同步接口保留“可链接但调用即回退”，增加正确类型、start 调用及错误签名测试。元数据证明、账户不存在与 flags 检查次序、归一化状态/返回长度、返回数据隔离、每层独立游标、只读继承、sender 协议位、平面 call ordinals/console markers、整笔预算和不重复计 CPU 均单独建模；未支持操作不创造新共识拒绝规则。上限为 64 次调用、8 层子调用、9 个活跃模块、256 KiB 代码/输入预算和整笔 500ms，不因递归刷新。原链 oracle 显式比较同步记录，不依赖缺少这些字段的 SHiP 摘要。
+
+源码清单更新匹配，审计工具 24 项通过；`build-private-first.log` 正在以单个 `-j1` 构建。新增源码和测试尚无运行成功证据，不把“已写入”记作“同步并行已验收”。
+
+### 只读第一版普通回归通过，继续主键写入
+
+`build-private-first.log` 已完成，无 warning/error；`private-first.log` 首轮 13 项 / 578 条通过，其中私有 11 项 / 226 条，原链显式 trace 对照 2 项 / 352 条。`private-first-three-rounds.log` 随后三轮全部通过，总计 7.16s。`worker-first-three-rounds.log` 完整工作池三轮各 143 项 / 10,518 条通过；未设亲和性，也未并跑构建或其他重负载测试。
+
+准确普通程序 SHA-256 `1bc56169fdb0829dea26a76da7b544203ef3e471afbdeb4bdb5b6f266e04e92c`，源码哈希见 `first-artifacts.sha256`。这不是 sanitizer 或正式同步采用验收。下一步在同一隔离入口扩展主键写入，按帧记录查询/写入/即时子调用的混合事件，重放时每个活跃帧保有独立游标、全帧共享一个写日志；父写区间包含子写，绝不能重复重放。明确验证业务负返回保留子写、只读继承拒绝写、父旧游标在子删除/重建后失效、真实原链 RAM 行为和失败整次丢弃。新增叶帧执行区间用于验证 2/4 线程的真实重叠，不把包含子模块编译的父区间当作纯 WASM 重叠证据。
+
+只读普通三轮总计 59.21s。准确程序与测试/执行器源码归档 `readonly-first-artifacts.tar.gz`（0600），逐文件比较通过，SHA-256 `459c7bb0cf2d72d32994d9345bbece40f5752a2e400662a6ccc976801e85464b`；归档完成后才继续改源码。
+
+### 主键写入与预检查：已写入，构建中
+
+新增 `parallel_sync_call.cpp`：独立指纹和冻结状态事件重放；根/子帧分别保存查询、写入、即时子调用序列，整个尝试最多 4,096 个事件。每个帧重新创建游标，全帧共享写日志，严格检查全局写入顺序、调用 ordinal、sender、只读继承、代码/协议/输入指纹、写对象代际和读取依赖覆盖；owner 的取消异常必须逃出预检查，不能被错误转为可继续采用。仅检查冻结副本结构，不声称已经完成正式授权、RAM 或当前链状态验证。
+
+新测试覆盖三层即时写入、业务负返回保留写入但隐藏已设置的返回值、只读孙调用拒绝、父旧游标 get/next/previous 在子删除/重建后失效、父重新 find 成功、付款人变更/记录变长/表销毁重建与原链空 RAM 回调一致、事件与写入预算、写入后 trap/超时及健康重试。篡改检查包括调用关系、顺序、重复写入、指纹、只读、计时、console marker 和禁止通知。叶帧 1/2/4 线程重叠用例只比较没有子调用的执行区间，未把编译区间纳入其中。`build-primary-first.log` 正在构建，尚无本版本运行结论；源码清单匹配，审计 24 项、工具 17 项通过。正式 adopter/controller/生产开关均未接入同步能力，所有打印/inline/通知/eosio_exit 仍整次回退。
+
+主键首轮保留两类夹具失败：`build-primary-first.log` 因测试直接调用 controller 私有 `mutable_db()` 编译失败，执行器与预检查已编译；仅把初始数据构造改为现有 oracle 使用的测试内数据库引用，不扩大生产 API。`build-primary-second.log` 编译成功，`primary-first.log` 21 项中 15 通过、6 中止，710/716 条通过；6 项均抛 `primary_state_missing`。复核确认 `capture_queries(keys)` 只捕获表元数据，夹具误把它当成整表复制，未提供实际点查询。改为显式捕获 7/9/11 主键与用到的范围，并给游标/只读预期失败增加 `not primary_state_missing` 检查，避免捕获缺失被算成正确失效。未放宽未知数据回退规则、执行预算或旧成功断言。叶帧重叠 42 条及创建/变长/付款人/表退役原链对照 40 条首轮通过，但此时仍不能宣称主键版本整体通过；`build-primary-third.log` 正在重建。
+
+修正夹具后 `build-primary-third.log` 成功，无新增编译告警。`primary-second.log` 全部 21 项 / 1,394 条通过：私有 16 项 / 376 条，原链 oracle 5 项 / 1,018 条。`primary-three-rounds.log` 三轮全部通过，17.63s；`primary-worker-three-rounds.log` 完整普通工作池三轮各 151 项 / 11,334 条通过，分别 25.90s、23.57s、22.58s，总计 72.08s。无亲和性或并跑重负载条件；包括真实叶帧 2/4 线程执行重叠、原链业务错误写入/祖先游标失效/只读孙调用/原 RAM 行为的重复对照。
+
+普通程序 SHA-256 `c20dffd0d8ce28fa079c739d50e3479da79ab247e57127267e7dc357925d7ae3`，准确源哈希见 `primary-normal-artifacts.sha256`；归档 `primary-normal-artifacts.tar.gz`（0600）逐文件比较通过，SHA-256 `12b51f0fd398a1b7851321c6d36479027f4d2b2e926c03ea9593af86a37cb79d`。随后开始 `build-primary-asan.log` 的单个 `-j1` 内存检查构建。普通三轮不是 sanitizer 或正式采用验收，后续两类 sanitizer、原链核心和最新真实节点仍待完成。
+
+`build-primary-asan.log` 已完成，未发现 warning/error。准确插桩程序 SHA-256 `59243557ae495ba6d9fac1f0a6fa0e9ee46434423774649b29b13049afd0b27d`。直接运行该程序（不是指向普通程序的 sync CTest）得到 `primary-sync-asan-first.log`：21 项 / 1,394 条全部通过，包括 16 项私有测试和 5 项真实原链 oracle，进程退出 0，无 ASan/UBSan/LSan 报告。启用 `detect_leaks=1:halt_on_error=1`、`UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=0`，没有 suppressions、亲和性或并行重负载。继续 `primary-asan-three-rounds.log` 完整插桩回归；此时尚无三轮或 TSan 结论。
+
+完整插桩首次请求三轮：第一轮 158 项 / 12,956 条全部通过（72.53s）；第二轮 157/158 项通过，12,823/12,825 条通过（71.77s），旧 `parallel_action_tree_pool_tests/three_exclusive_modes_keep_owned_results_and_one_thread_local_cache` 在 threads=4、round=1、job=2 达到 `deadline attempt_wall_us=500464`，故按 until-fail 停止，第三轮未执行。没有 sanitizer 报告，同步专项两轮均通过，但不得称完整三轮成功。
+
+保留原日志并使用同一程序、不改预算/循环/断言，单独开启诊断复测该失败用例，`primary-asan-deadline-diagnostic.log` 666 条通过。九批的编译累计 6.4–21.1ms，WASM 执行累计约 1.54–1.63s（各 worker 耗时之和，不是单个任务或整批墙钟）；4 线程三批墙钟约 515.8–561.1ms。单次诊断成功只能说明失败对时序敏感，不能证明唯一原因或消除失败。下一项为同程序 `taskset -c 0-3` 的完整三轮受控检查，限制仅作用于测试子进程，不改变产品设置或原 500ms 尝试上限。
+
+受控结果 `primary-asan-physical-three-rounds.log`：三轮各 158 项 / 12,956 条全部通过，73.20s、72.95s、73.29s，总计 219.47s；进程退出 0，无 sanitizer 报告。同一准确程序及源码归档 `primary-asan-artifacts.tar.gz`（0600），逐文件比较日志为空，SHA-256 `883ffb4df02c2f241bf3065e95ebcf885ea915ceb5a15e406dd60c13517d16fd`。下一步在保留本版检查点后接入独立同步工作池模式；TSan 将继续覆盖未改动的同步帧以及新增工作池路径，不将其写成已通过。正式同步采用、一般接口/二级索引、完整 OC 和本次新节点进程矩阵仍未完成。
+
+## 暂停交接记录（2026-10-12）
 
 用户要求“先把这个工作暂时暂停，阶段性收尾”。已停止本轮唯一构建进程组，构建会话退出 130；这是主动中断，不算编译失败，也不算构建或回归通过。不再启动测试或推进新功能。
 

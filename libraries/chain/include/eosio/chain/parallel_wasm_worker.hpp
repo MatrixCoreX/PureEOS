@@ -11,6 +11,7 @@
 namespace eosio::chain::experimental {
 
 struct isolated_tree_capture; // private definition; no standalone host capability
+struct isolated_sync_capture;
 
 enum class isolated_interrupt_reason : uint8_t { cancelled, deadline };
 // Preserve the existing invalid-attempt catch contract, but retain the reason
@@ -158,6 +159,7 @@ private:
    friend class isolated_transaction_executor;
    friend class isolated_notification_executor;
    friend class isolated_action_tree_executor;
+   friend class isolated_sync_executor;
    // Only the owning execution entry points may call this. An exception
    // destroys their entire local overlay; no caller can seal a partial prefix.
    isolated_action_effects execute_step(primary_state_overlay&, const isolated_action_input&,
@@ -166,7 +168,8 @@ private:
                                        std::set<name>* group_recipients = nullptr,
                                        std::vector<isolated_cursor_event>* cursor_events = nullptr,
                                        size_t max_cursor_events = 0,
-                                       isolated_tree_capture* tree_capture = nullptr);
+                                       isolated_tree_capture* tree_capture = nullptr,
+                                       isolated_sync_capture* sync_capture = nullptr);
    struct impl;
    std::unique_ptr<impl> impl_;
 };

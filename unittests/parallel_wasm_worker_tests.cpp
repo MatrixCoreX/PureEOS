@@ -96,6 +96,10 @@ const std::array fallback_imports{
    fallback_import{"get_sender", "(result i64)", "(drop (call $stub))"},
    fallback_import{"send_context_free_inline", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"get_context_free_data", "(param i32 i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0) (i32.const 0)))"},
+   fallback_import{"call", "(param i64 i64 i32 i32) (result i64)", "(drop (call $stub (i64.const 0) (i64.const 0) (i32.const 0) (i32.const 0)))"},
+   fallback_import{"get_call_return_value", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
+   fallback_import{"get_call_data", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
+   fallback_import{"set_call_return_value", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"set_blockchain_parameters_packed", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"get_blockchain_parameters_packed", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
    fallback_import{"set_proposed_producers", "(param i32 i32) (result i64)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
@@ -712,9 +716,10 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
       "set_blockchain_parameters_packed", "get_blockchain_parameters_packed", "set_proposed_producers",
       "current_time", "get_active_producers"};
    const std::set<std::string_view> tree_only{"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data"};
+   const std::set<std::string_view> sync_only{"call", "get_call_return_value", "get_call_data", "set_call_return_value"};
    size_t rejected = 0;
    for (auto name : audited_production_intrinsics) {
-      if (supported.contains(name) || fallback_only.contains(name) || tree_only.contains(name)) continue;
+      if (supported.contains(name) || fallback_only.contains(name) || tree_only.contains(name) || sync_only.contains(name)) continue;
       BOOST_TEST_CONTEXT("denied production import=" << name) {
          // Even an UNUSED import must fail, so no unsupported call can reach
          // canonical state after earlier private writes or control flow.
@@ -724,7 +729,7 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
          ++rejected;
       }
    }
-   BOOST_CHECK_EQUAL(rejected, 225u);
+   BOOST_CHECK_EQUAL(rejected, 221u);
 }
 
 BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fixture) {

@@ -42,13 +42,18 @@ class ScannerTests(unittest.TestCase):
         tree_list = tests.split("const std::set<std::string_view> tree_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(tree, set(re.findall(r'"(\w+)"', tree_list)))
         self.assertEqual(tree, {"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data"})
+        sync = set(re.findall(r'^\s+ISOLATED_SYNC_HOST\((\w+)\);', implementation, re.MULTILINE))
+        sync_list = tests.split("const std::set<std::string_view> sync_only{", 1)[1].split("};", 1)[0]
+        self.assertEqual(sync, set(re.findall(r'"(\w+)"', sync_list)))
+        self.assertEqual(sync, {"call", "get_call_return_value", "get_call_data", "set_call_return_value"})
+        self.assertFalse(sync & (supported | fallback | tree))
         self.assertFalse(supported & fallback)
         self.assertFalse(tree & (supported | fallback))
-        self.assertTrue((supported | fallback | tree) <= production)
+        self.assertTrue((supported | fallback | tree | sync) <= production)
         # Every link-only host also has a correctly typed executable fixture;
         # simply excluding its name from the denied-import loop is not enough.
         stub_cases = tests.split("const std::array fallback_imports{", 1)[1].split("\n};", 1)[0]
-        self.assertEqual(fallback | tree, set(re.findall(r'fallback_import\{"(\w+)"', stub_cases)))
+        self.assertEqual(fallback | tree | sync, set(re.findall(r'fallback_import\{"(\w+)"', stub_cases)))
 
     def test_comments_strings_and_raw_strings_are_not_accesses(self):
         source = '''// db.modify(fake);
