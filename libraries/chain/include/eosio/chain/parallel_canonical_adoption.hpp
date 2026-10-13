@@ -1,5 +1,6 @@
 #pragma once
 #include <eosio/chain/parallel_action_tree.hpp>
+#include <eosio/chain/parallel_sync_call.hpp>
 #include <fc/time.hpp>
 
 namespace eosio::chain {
@@ -32,6 +33,20 @@ std::optional<isolated_receiver_program> prepare_isolated_receiver_program(
 // Tree adoption must check every actual (receiver, account, action) separately.
 std::optional<isolated_receiver_program> prepare_isolated_tree_program(const controller&, name receiver);
 isolated_action_tree_context current_action_tree_context(const controller&);
+
+// Sync export support is the ACTUAL code_object bit, never inferred from a
+// private parser. The caller still enforces its reviewed-code allowlist.
+std::optional<isolated_sync_program> prepare_isolated_sync_program(const controller&, name receiver);
+isolated_sync_context current_sync_context(const controller&);
+
+// Read-only OWNER check for one ordinary root. Binds the complete ordered
+// catalog (including unused entries), current protocol/limits and every base
+// dependency before any canonical event. NOT authorization or an adoption
+// capability: original transaction/apply checks and replay are still required.
+// The checkpoint's exceptions propagate; this function never mutates the DB.
+bool validate_isolated_sync_current_state(const controller&, const packed_transaction&,
+   std::span<const isolated_sync_program>, const isolated_sync_result&,
+   const std::function<void()>& checkpoint = {});
 
 // Called at the original WASM execution point, AFTER transaction init/auth and
 // native/blacklist guards. First step preflights the WHOLE transaction before

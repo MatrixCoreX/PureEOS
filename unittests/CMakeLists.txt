@@ -152,7 +152,7 @@ target_link_libraries(parallel_wasm_worker_test PRIVATE eosio_chain_wrap eosio_t
 target_compile_options(parallel_wasm_worker_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
 add_test(NAME pureeos_parallel_wasm_worker COMMAND parallel_wasm_worker_test --report_level=detailed --color_output=no)
 add_test(NAME pureeos_parallel_sync_private COMMAND parallel_wasm_worker_test
-  --run_test=parallel_sync_private_tests:parallel_sync_oracle_tests:parallel_sync_pool_tests --report_level=detailed --color_output=no -- --eos-vm)
+  --run_test=parallel_sync_private_tests:parallel_sync_oracle_tests:parallel_sync_owner_tests:parallel_sync_pool_tests --report_level=detailed --color_output=no -- --eos-vm)
 set_tests_properties(pureeos_parallel_sync_private PROPERTIES TIMEOUT 120 LABELS "parallel-px7;sync-call")
 set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
 
@@ -313,7 +313,7 @@ if(PUREEOS_PARALLEL_SANITIZERS)
     # TSan still excludes mixed-controller execution. Keep that limitation in
     # the test name and output; do not suppress mixed-build race diagnostics.
     add_test(NAME pureeos_parallel_wasm_private_tsan COMMAND parallel_wasm_sanitizer_test
-      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests:!parallel_inline_adoption_tests:!parallel_context_free_oracle_tests:!parallel_context_free_adoption_tests:!parallel_sync_oracle_tests"
+      "--run_test=!parallel_wasm_worker_tests/fixed_input_and_authorization_hosts_match_original_wasm_execution:!parallel_wasm_worker_tests/private_wasm_write_matches_original_chain_execution:!parallel_cdt_host_oracle_tests:!parallel_transaction_oracle_tests:!parallel_notification_oracle_tests:!parallel_action_tree_oracle_tests:!parallel_inline_adoption_tests:!parallel_context_free_oracle_tests:!parallel_context_free_adoption_tests:!parallel_sync_oracle_tests:!parallel_sync_owner_tests"
       --report_level=detailed --color_output=no)
     set_tests_properties(pureeos_parallel_wasm_private_tsan PROPERTIES TIMEOUT 180 LABELS "parallel-sanitizer;private-only")
   else()

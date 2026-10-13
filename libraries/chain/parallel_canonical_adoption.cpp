@@ -217,6 +217,56 @@ isolated_action_tree_context current_action_tree_context(const controller& contr
    return {configuration.max_inline_action_size, configuration.max_inline_action_depth};
 }
 
+std::optional<isolated_sync_program> prepare_isolated_sync_program(const controller& control, name receiver) {
+   auto program = prepare_isolated_tree_program(control, receiver);
+   if (!program) return {};
+   bool supported = false;
+   if (!program->code.empty()) {
+      const auto& account = control.db().get<account_metadata_object, by_name>(receiver);
+      const auto* code = control.db().find<code_object, by_code_hash>(
+         boost::make_tuple(account.code_hash, account.vm_type, account.vm_version));
+      if (!code) return {};
+      supported = code->sync_call_supported;
+   }
+   return isolated_sync_program{std::move(*program), supported};
+}
+
+isolated_sync_context current_sync_context(const controller& control) {
+   const auto& config = control.get_global_properties().configuration;
+   return {config.max_sync_call_depth, config.max_sync_call_data_size, false,
+      control.is_builtin_activated(builtin_protocol_feature_t::get_sender_fix), control.contracts_console()};
+}
+
+bool validate_isolated_sync_current_state(const controller& control, const packed_transaction& packed,
+      std::span<const isolated_sync_program> programs, const isolated_sync_result& result,
+      const std::function<void()>& checkpoint) {
+   const auto check = [&] { if (checkpoint) checkpoint(); };
+   check();
+   const auto& trx = packed.get_transaction();
+   if (!eligible_transaction(trx) || trx.actions.size() != 1 || !eligible_account(control, trx.actions.front()) ||
+       programs.empty() || programs.size() > isolated_sync_executor::max_programs) return false;
+   std::set<name> seen;
+   size_t code_bytes = 0;
+   for (const auto& captured : programs) {
+      check();
+      const auto& program = captured.program;
+      if (program.serial_only || !seen.insert(program.receiver).second ||
+          program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes) return false;
+      code_bytes += program.code.size();
+      // Never recapture only executed children: the execution fingerprint also
+      // binds unused catalog entries and their order. No canonical pointers
+      // from this temporary comparison survive into eventual replay.
+      auto current = prepare_isolated_sync_program(control, program.receiver);
+      if (!current || current->program.code != program.code ||
+          current->sync_call_supported != captured.sync_call_supported ||
+          current->program.limits != program.limits) return false;
+   }
+   const auto input = current_input(control, trx.actions.front());
+   if (!validate_isolated_sync_journal(result, input, programs, current_sync_context(control), checkpoint)) return false;
+   chainbase_transaction_state_view live(control.db());
+   return result.state.matches_base_reads(live, check); // always callable, even when the optional checkpoint is absent
+}
+
 bool try_adopt_notification_result(apply_context& context, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
       const isolated_wasm_limits& limits, const isolated_notification_result& result, size_t step_index,
       std::optional<fc::microseconds> production_elapsed) {

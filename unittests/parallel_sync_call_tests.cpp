@@ -1,5 +1,6 @@
 #include <eosio/chain/parallel_sync_call.hpp>
 #include <eosio/chain/parallel_worker_pool.hpp>
+#include <eosio/chain/parallel_canonical_adoption.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/chain/wast_to_wasm.hpp>
@@ -684,6 +685,185 @@ BOOST_AUTO_TEST_CASE(original_sync_store_resize_payer_and_table_retirement_keep_
       "(call $update "+sc_find("bob"_n)+sc_name("carol"_n)+"(i32.const 0)(i32.const 16))"+
       "(call $remove "+sc_find("bob"_n)+")"+sc_store(11,111,"absent"_n)+"(i64.const 0)",sc_db_imports);
    sc_oracle(programs,sc_root(),sc_tables,false);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+namespace {
+// Real canonical metadata/state, but NO adopted transaction. These helpers
+// only prove the read-only preflight boundary; original auth/CPU/undo and the
+// synchronous replay capability still need separate integration tests.
+struct sc_owner_fixture {
+   eosio::testing::tester chain;
+   isolated_action_input root = sc_root();
+   std::vector<isolated_sync_program> programs;
+   isolated_sync_context protocol;
+   std::optional<packed_transaction> packed;
+   std::optional<isolated_sync_result> result;
+   sc_owner_fixture() {
+      chain.create_accounts({"test"_n,"bob"_n,"carol"_n,"empty"_n});
+      auto code = sc_state_programs(0,true);
+      code.push_back({{"carol"_n,sc_program({},sc_echo()),{}},true}); // unused but fingerprinted
+      code.push_back({{"empty"_n,{},{}},false});
+      for(const auto& p:code) if(!p.program.code.empty())
+         chain.set_code(p.program.receiver,std::vector<uint8_t>(p.program.code.begin(),p.program.code.end()));
+      chain.produce_block();
+      sc_seed(db(),sc_tables); // fixture setup only, never expose a production mutable DB API
+      for(const auto& p:code) {
+         auto captured=prepare_isolated_sync_program(*chain.control,p.program.receiver);
+         BOOST_REQUIRE(captured); programs.push_back(std::move(*captured));
+      }
+      protocol=current_sync_context(*chain.control);
+      root.max_return_bytes=chain.control->get_global_properties().configuration.max_action_return_value_size;
+      signed_transaction trx; action act;
+      act.account=root.account; act.name=root.action; act.data=root.data;
+      for(const auto& [actor,permission]:root.authorizations) act.authorization.push_back({actor,permission});
+      trx.actions.push_back(std::move(act)); chain.set_transaction_headers(trx);
+      packed.emplace(trx,packed_transaction::compression_type::none);
+      chainbase_transaction_state_view view(chain.control->db());
+      const std::array accounts{"test"_n,"bob"_n,"carol"_n,"empty"_n,"absent"_n};
+      isolated_sync_executor executor;
+      result=executor.execute(sc_capture(view,sc_tables,accounts),root,programs,protocol);
+      BOOST_REQUIRE(valid());
+   }
+   chainbase::database& db() { return const_cast<chainbase::database&>(chain.control->db()); }
+   bool valid() const { return validate_isolated_sync_current_state(*chain.control,*packed,programs,*result); }
+   template<typename F> void changed(F&& change) {
+      auto undo=db().start_undo_session(true); change();
+      BOOST_CHECK(!valid()); undo.undo(); BOOST_CHECK(valid());
+   }
+};
+}
+
+BOOST_AUTO_TEST_SUITE(parallel_sync_owner_tests)
+BOOST_FIXTURE_TEST_CASE(owner_capture_uses_real_export_metadata_and_owns_code,sc_owner_fixture) {
+   for(name n:{name{},"absent"_n,"eosio"_n,"eosio.msig"_n,"eosio.wrap"_n})
+      BOOST_CHECK(!prepare_isolated_sync_program(*chain.control,n));
+   const auto empty=prepare_isolated_sync_program(*chain.control,"empty"_n);
+   BOOST_REQUIRE(empty); BOOST_CHECK(empty->program.code.empty()); BOOST_CHECK(!empty->sync_call_supported);
+   const auto original=programs[1].program.code;
+   auto owned=prepare_isolated_sync_program(*chain.control,"bob"_n);
+   BOOST_REQUIRE(owned); BOOST_CHECK(owned->sync_call_supported);
+   owned->program.code[0]^=1;
+   BOOST_CHECK(prepare_isolated_sync_program(*chain.control,"bob"_n)->program.code==original);
+   auto undo=db().start_undo_session(true);
+   const auto& account=db().get<account_metadata_object,by_name>("bob"_n);
+   const auto& code=db().get<code_object,by_code_hash>(boost::make_tuple(account.code_hash,account.vm_type,account.vm_version));
+   db().modify(code,[](auto& c){c.sync_call_supported=false;});
+   const auto unsupported=prepare_isolated_sync_program(*chain.control,"bob"_n);
+   BOOST_REQUIRE(unsupported); BOOST_CHECK(unsupported->program.code==original);
+   BOOST_CHECK(!unsupported->sync_call_supported); // export bytes still exist: never infer the canonical bit
+   BOOST_CHECK(!valid()); undo.undo(); BOOST_CHECK(valid());
+}
+
+BOOST_FIXTURE_TEST_CASE(preflight_binds_entire_ordered_catalog_and_all_limits,sc_owner_fixture) {
+   const auto original=programs;
+   for(unsigned variant=0;variant<13;++variant) {
+      programs=original;
+      switch(variant) {
+         case 0: programs.clear(); break;
+         case 1: programs.push_back(programs.front()); break;
+         case 2: programs.resize(65,programs.front()); break;
+         case 3: std::swap(programs[1],programs[2]); break;
+         case 4: programs[2].program.code[0]^=1; break; // unused receiver is still bound
+         case 5: programs[2].sync_call_supported=!programs[2].sync_call_supported; break;
+         case 6: programs[2].program.serial_only=true; break;
+         case 7: --programs[1].program.limits.max_pages; break;
+         case 8: --programs[1].program.limits.max_call_depth; break;
+         case 9: --programs[1].program.limits.max_code_bytes; break;
+         case 10: --programs[1].program.limits.max_action_bytes; break;
+         case 11: --programs[1].program.limits.max_authorizations; break;
+         case 12: --programs[1].program.limits.max_return_bytes; break;
+      }
+      BOOST_TEST_CONTEXT("catalog variant="<<variant) { BOOST_CHECK(!valid()); }
+   }
+   programs=original; programs[1].program.limits.max_attempt_time+=std::chrono::milliseconds(1);
+   BOOST_CHECK(!valid()); programs=original; BOOST_CHECK(valid());
+   auto corrupt=*result;
+   corrupt.calls[0].read_only=true;
+   BOOST_CHECK(!validate_isolated_sync_current_state(*chain.control,*packed,programs,corrupt));
+   corrupt=*result; ++std::get<isolated_cursor_write>(std::get<isolated_cursor_event>(corrupt.root_events[1])).write_index;
+   BOOST_CHECK(!validate_isolated_sync_current_state(*chain.control,*packed,programs,corrupt));
+}
+
+BOOST_FIXTURE_TEST_CASE(current_receiver_code_vm_privilege_and_unused_code_changes_invalidate,sc_owner_fixture) {
+   for(name receiver:{"test"_n,"bob"_n,"carol"_n}) for(unsigned variant=0;variant<4;++variant) {
+      BOOST_TEST_CONTEXT("receiver="<<receiver<<" variant="<<variant) {
+         changed([&]{db().modify(db().get<account_metadata_object,by_name>(receiver),[&](auto& a){
+            if(variant==0) a.code_hash=fc::sha256::hash("different current code");
+            if(variant==1) a.vm_type=1;
+            if(variant==2) a.vm_version=1;
+            if(variant==3) a.set_privileged(true);
+         });});
+      }
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(current_protocol_and_return_limits_cannot_reuse_old_proof,sc_owner_fixture) {
+   for(unsigned variant=0;variant<3;++variant) changed([&]{
+      db().modify(chain.control->get_global_properties(),[&](auto& g){
+         if(variant==0) --g.configuration.max_sync_call_depth;
+         if(variant==1) --g.configuration.max_sync_call_data_size;
+         if(variant==2) --g.configuration.max_action_return_value_size;
+      });
+   });
+   for(unsigned variant=0;variant<3;++variant) {
+      auto altered=protocol;
+      if(variant==0) altered.get_sender_fix=!altered.get_sender_fix;
+      if(variant==1) altered.console_enabled=!altered.console_enabled;
+      if(variant==2) altered.root_read_only=true;
+      auto corrupt=*result; corrupt.execution_fingerprint=isolated_sync_fingerprint(root,programs,altered);
+      BOOST_CHECK(!validate_isolated_sync_current_state(*chain.control,*packed,programs,corrupt));
+   }
+   BOOST_REQUIRE(chain.control->is_builtin_activated(builtin_protocol_feature_t::configurable_wasm_limits));
+   changed([&]{db().modify(chain.control->get_global_properties(),[](auto& g){g.wasm_configuration.max_pages=8;});});
+   changed([&]{db().modify(chain.control->get_global_properties(),[](auto& g){g.wasm_configuration.max_call_depth=32;});});
+}
+
+BOOST_FIXTURE_TEST_CASE(current_exact_row_dependencies_and_structural_changes_are_checked_without_writes,sc_owner_fixture) {
+   const auto& table=db().get<table_id_object,by_code_scope_table>(boost::make_tuple("bob"_n,"scope"_n,"rows"_n));
+   changed([&]{db().modify(db().get<key_value_object,by_scope_primary>(boost::make_tuple(table.id,uint64_t{7})),
+      [](auto& row){const uint64_t value=11; row.value.assign(reinterpret_cast<const char*>(&value),sizeof(value));});});
+   changed([&]{db().modify(table,[](auto& t){++t.count;});});
+   { auto undo=db().start_undo_session(true);
+      db().modify(db().get<key_value_object,by_scope_primary>(boost::make_tuple(table.id,uint64_t{9})),
+         [](auto& row){const uint64_t value=91; row.value.assign(reinterpret_cast<const char*>(&value),sizeof(value));});
+      BOOST_CHECK(valid()); // different value in same table, not an observed row
+   }
+   BOOST_CHECK(valid());
+   chainbase_transaction_state_view view(chain.control->db());
+   for(const auto& key:sc_tables)
+      BOOST_CHECK_EQUAL(sc_number(view.read_primary({key,primary_query_kind::find,7},8).row->value),10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(transaction_input_and_single_ordinary_root_boundaries_are_not_authorization,sc_owner_fixture) {
+   // This read-only proof accepts an UNSIGNED fixture. Only the later original
+   // controller authorization path can authorize any canonical transaction.
+   BOOST_CHECK(packed->get_signed_transaction().signatures.empty());
+   for(unsigned variant=0;variant<7;++variant) {
+      auto trx=packed->get_signed_transaction();
+      switch(variant) {
+         case 0: trx.actions.clear(); break;
+         case 1: trx.actions.push_back(trx.actions.front()); break;
+         case 2: trx.context_free_actions.push_back(trx.actions.front()); break;
+         case 3: trx.delay_sec=1; break;
+         case 4: trx.actions[0].data[0]^=1; break;
+         case 5: trx.actions[0].authorization[0].permission="owner"_n; break;
+         case 6: trx.actions[0].name="other"_n; break;
+      }
+      const packed_transaction altered(trx,packed_transaction::compression_type::none);
+      BOOST_CHECK(!validate_isolated_sync_current_state(*chain.control,altered,programs,*result));
+   }
+   BOOST_CHECK(valid());
+}
+
+BOOST_FIXTURE_TEST_CASE(owner_checkpoint_exceptions_propagate_and_leave_current_state_unchanged,sc_owner_fixture) {
+   for(unsigned at:{1u,3u,20u}) {
+      unsigned checks=0;
+      BOOST_CHECK_THROW(validate_isolated_sync_current_state(*chain.control,*packed,programs,*result,[&]{
+         if(++checks==at) throw std::runtime_error("owner preflight cancelled");
+      }),std::runtime_error);
+      BOOST_CHECK_EQUAL(checks,at); BOOST_CHECK(valid());
+   }
 }
 BOOST_AUTO_TEST_SUITE_END()
 

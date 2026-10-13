@@ -57,6 +57,20 @@
 
 ## 后续验收
 
+### 当前链证明子步骤（从 `f74ebec` 继续，普通三轮通过）
+
+新证据目录 `build/local-tests/parallel-sync-owner-20261014-TPVmH2/`。`prepare_isolated_sync_program` 复用现有普通代码捕获并读取实际 `code_object.sync_call_supported`；空代码仅代表现存普通账号，系统/特权/未知 VM/不存在账号不伪造成空代码。`current_sync_context` 捕获实际深度、数据预算、sender 协议位和控制台设置。`validate_isolated_sync_current_state` 是 owner 只读辅助函数：只接一个普通根，检查全目录去重和预算，对包含未执行 receiver 的全部代码、真实导出位及全部 limits 做比较，再以当前根输入和协议验证完整 journal、当前查询/账户依赖。checkpoint 异常向上传播，函数不写库，也不是授权或正式采用能力。
+
+新增七组 `parallel_sync_owner_tests`，覆盖真实位与代码所有权、目录重排/重复/未执行代码及 limits 篡改、当前代码/VM/特权变化、协议/返回上限变化、精确行变化与无关行更新、交易输入及单普通根边界、取消异常不被吞掉。测试夹具直接改元数据只在临时 tester 的独立 undo 内进行，没有拓宽生产可写数据库 API。普通同步专项将包含这些用例；TSan 显式排除新的混合 controller suite，ASan 则保留，不能将未插桩的原 controller 误称为线程检查覆盖。源码清单更新匹配，`build-normal-first.log` 正在单个 `-j1` 构建；新增七组尚未跑过，不列为通过。
+
+首构建已完成链库，但测试编译退出 2：新夹具两处把 `shared_blob` 当作可下标的数组。修正为该类型的原有 `assign(data, size)` 接口，没有修改底层类型或数据库 API；随后在 `build-normal-second.log` 重编。代码复查另外发现只读辅助函数把可为空的默认 checkpoint 原样传入了要求可调用对象的 `matches_base_reads`；待可运行测试确认后用非空包装修复，不能吞掉实际取消异常。此时新增用例仍未运行。
+
+`build-normal-second.log` 构建成功；`owner-first.log` 七组全部在 fixture 的默认 checkpoint 校验处复现 `std::bad_function_call`，退出 201，84 / 91 条通过。该失败版程序 SHA-256 `219b1a9025fdc30faa52d4708b820a92428ac028b1dc624334de65cfa990aa26`；源码和程序先归档 `first-failure-artifacts.tar.gz`（0600），逐文件比较通过，SHA-256 `203b2c661c9c2ad02a767319df01cda487f088f40fd6ab3bb674941c673ecaa5`。随后才将 `matches_base_reads(live, checkpoint)` 改为传入已有的非空 `check` 包装；外部实际取消回调仍直接调用并传播异常，没有 catch 或放宽证明。正在 `build-normal-fixed.log` 重建，尚未把修复写为通过。
+
+修复后构建成功，`owner-fixed-first.log` 新增七组 / 188 条全部通过（含默认省略 checkpoint，以及第 1/3/20 次检查抛异常的传播）。`sync-three-rounds.log` 完整同步专项三轮各 35 项 / 2,507 条通过，6.80s、6.85s、6.93s，总计 20.61s；没有亲和性或并跑重负载。源码审计匹配，当前继续完整普通工作池三轮。这批 owner 辅助代码尚未重新做 ASan，TSan 的混合 controller 排除边界也未改变；前一检查点的插桩通过不能自动延伸到这批新代码。
+
+`worker-three-rounds.log` 完整普通三轮各 165 项 / 12,447 条通过，23.55s、23.50s、23.71s，总计 70.79s，默认调度且不并跑重负载。准确普通程序 SHA-256 `13572261d2312fce05efa4829ce3df8615539d4096c860db6eab4754d1c649d2`；`normal-artifacts.tar.gz`（0600）逐文件比较通过，SHA-256 `a03bc80f4e6a179a866a81a86cc5411a29531cf7cfcb5b45e3f3e7a09206e5a9`。审计 24 项重新通过。保存此只读校验子步骤后继续正式重放入口；新 owner 代码的 ASan 将与正式接入一起运行，不能把这个普通测试检查点称为整个 c2 验收。
+
 先编译/修复、运行同步专项和完整普通三轮；然后使用明确插桩程序重新测试同步帧及工作池、完整 ASan 与私有 TSan，不用普通 CTest 冒充 sanitizer。之后按 [总计划 c2 拆分](PX7_GENERAL_EXECUTION_PLAN.md) 接入真实同步上下文、整根预检查、原 host 重放和逐帧 CPU/undo 清理。正式接入后仍需当前 core/token、原链兼容及旧/新节点的生产、验证、恢复矩阵；不能将本文件的私有结果替代这些验证。
 
 ### 编译期间继续核对的接入风险（尚未改源码）
