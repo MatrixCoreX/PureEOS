@@ -10,11 +10,14 @@
 #include <eosio/testing/tester.hpp>
 #include <eosio/testing/bls_utils.hpp>
 #include <fc/io/raw.hpp>
+#include <fc/io/json.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <boost/test/unit_test.hpp>
 #include <array>
 #include <barrier>
 #include <cstring>
+#include <cstdlib>
+#include <filesystem>
 #include <future>
 #include <limits>
 
@@ -1292,7 +1295,8 @@ struct sc_live_corpus {
    std::vector<isolated_sync_program> programs;
    flat_set<digest_type> reviewed;
    std::vector<std::vector<char>> blocks;
-   explicit sc_live_corpus(std::vector<isolated_sync_program> supplied):programs(std::move(supplied)) {
+   explicit sc_live_corpus(std::vector<isolated_sync_program> supplied,bool fresh=false):programs(std::move(supplied)) {
+      if(fresh) genesis.initial_timestamp=block_timestamp_type(fc::time_point::now()-fc::seconds(5)).to_time_point();
       auto [key,pub,proof]=eosio::testing::get_bls_key("eosio"_n);
       genesis.initial_savanna.emplace(); genesis.initial_savanna->finalizer_key=pub; genesis.initial_savanna->proof_of_possession=proof;
       for(const auto& p:programs) if(!p.program.code.empty())
@@ -1385,6 +1389,170 @@ void sc_live_success(const std::vector<isolated_sync_program>& programs,const st
 }
 
 BOOST_AUTO_TEST_SUITE(parallel_sync_adoption_tests)
+BOOST_AUTO_TEST_CASE(export_checked_sync_recovery_corpus) {
+   const char* destination=std::getenv("PUREEOS_PARALLEL_SYNC_RECOVERY_EXPORT_DIR");
+   if(!destination) { BOOST_TEST_MESSAGE("Sync recovery corpus export not requested"); return; }
+   const std::filesystem::path directory(destination);
+   BOOST_REQUIRE(std::filesystem::create_directory(directory));
+   std::filesystem::permissions(directory,std::filesystem::perms::owner_all);
+   auto programs=sc_keyed_programs();
+   // Real increments, not constant-value writes: switching forks must undo a
+   // changed balance even when the same account/code exists on both branches.
+   const auto find="(call $find "+sc_name("bob"_n)+sc_name("scope"_n)+sc_name("rows"_n)+"(i64.load (i32.const 0)))";
+   const auto child="(drop (call $data (i32.const 0)(i32.const 8)))(set_local $n "+find+")"+
+      sc_assert32("(call $get (get_local $n)(i32.const 64)(i32.const 8))",8)+
+      "(i64.store (i32.const 64)(i64.add (i64.load (i32.const 64))(i64.const 1)))"
+      "(call $update (get_local $n)(i64.const 0)(i32.const 64)(i32.const 8))"
+      "(call $set (i32.const 64)(i32.const 8))(i64.const 0)";
+   programs[1].program.code=sc_program({},child,sc_db_imports);
+   sc_live_corpus fixture(std::move(programs));
+   BOOST_REQUIRE(fc::json::save_to_file(fixture.genesis,directory/"genesis.json"));
+   BOOST_REQUIRE(std::filesystem::create_directory(directory/"blocks"));
+   fc::variants checkpoints,forks;
+   std::vector<std::vector<char>> corpus;
+   fc::temp_directory source_dir;
+   const auto cfg=fixture.configuration(source_dir,0);
+   {
+      sc_live_chain source(cfg,fixture.genesis);
+      source.set_node_finalizers(std::array<name,1>{"eosio"_n});
+      const auto record=[&](const signed_block_ptr& block) {
+         source.control->abort_block();
+         const auto file="block-"+std::to_string(block->block_num())+".json";
+         BOOST_REQUIRE(fc::json::save_to_file(*block,directory/file));
+         corpus.push_back(fc::raw::pack(*block));
+         checkpoints.emplace_back(fc::mutable_variant_object()("block_num",block->block_num())
+            ("block_id",source.head().id())("lib",source.last_irreversible_block_num())
+            ("integrity_hash",source.control->calculate_integrity_hash())("file",file));
+      };
+      for(const auto& bytes:fixture.blocks) {
+         const auto block=std::make_shared<signed_block>(fc::raw::unpack<signed_block>(bytes));
+         source.push_block(block); record(block);
+      }
+      uint64_t nonce=20000;
+      for(unsigned i=0;i<16;++i) {
+         source.start();
+         for(uint64_t key:{7u,9u,7u}) {
+            auto trx=sc_live_trx(source,key,nonce++);
+            BOOST_REQUIRE(!source.push_transaction(trx)->except);
+         }
+         record(source.produce_block());
+      }
+   }
+   for(const char* file:{"blocks.log","blocks.index"})
+      BOOST_REQUIRE(std::filesystem::copy_file(cfg.blocks_dir/file,directory/"blocks"/file));
+   for(uint16_t workers:{0,1,2,4}) {
+      fc::temp_directory sd,pd;
+      eosio::testing::tester serial(fixture.configuration(sd,0),fixture.genesis),
+         parallel(fixture.configuration(pd,workers),fixture.genesis);
+      std::vector<std::vector<char>> expected,observed;
+      boost::signals2::scoped_connection a=serial.control->applied_transaction().connect([&](const auto& event) {
+         expected.push_back(sc_live_trace(std::get<0>(event)));
+      });
+      boost::signals2::scoped_connection b=parallel.control->applied_transaction().connect([&](const auto& event) {
+         observed.push_back(sc_live_trace(std::get<0>(event)));
+      });
+      for(const auto& bytes:corpus) {
+         expected.clear(); observed.clear();
+         serial.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(bytes)));
+         parallel.push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(bytes)));
+         serial.control->abort_block(); parallel.control->abort_block();
+         BOOST_CHECK(expected==observed);
+         BOOST_CHECK(serial.head().id()==parallel.head().id());
+         BOOST_CHECK_EQUAL(serial.last_irreversible_block_num(),parallel.last_irreversible_block_num());
+         BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
+      }
+      if(workers) {
+         const auto stats=parallel.control->get_parallel_execution_stats();
+         BOOST_CHECK_GT(stats.adopted,0u); BOOST_CHECK_GT(stats.serial_fallbacks,0u);
+      }
+   }
+   const size_t prefix_blocks=fixture.blocks.size()+1;
+   fc::temp_directory fd,sd,rd;
+   sc_live_chain first(fixture.configuration(fd,0),fixture.genesis),second(fixture.configuration(sd,0),fixture.genesis),
+      reference(fixture.configuration(rd,0),fixture.genesis);
+   for(auto* chain:{&first,&second,&reference}) for(size_t i=0;i<prefix_blocks;++i) {
+      chain->push_block(std::make_shared<signed_block>(fc::raw::unpack<signed_block>(corpus[i])));
+      chain->control->abort_block();
+   }
+   first.set_node_finalizers(std::array<name,1>{"eosio"_n});
+   second.set_node_finalizers(std::array<name,1>{"eosio"_n});
+   const auto fork=[&](const signed_block_ptr& block) {
+      reference.push_block(block); reference.control->abort_block();
+      BOOST_REQUIRE(reference.head().id()==block->calculate_id());
+      const auto file="fork-"+std::to_string(forks.size())+".json";
+      BOOST_REQUIRE(fc::json::save_to_file(*block,directory/file));
+      forks.emplace_back(fc::mutable_variant_object()("block_num",reference.head().block_num())
+         ("block_id",reference.head().id())("lib",reference.last_irreversible_block_num())
+         ("integrity_hash",reference.control->calculate_integrity_hash())("file",file));
+   };
+   const auto balance=[&](uint64_t key) {
+      chainbase_transaction_state_view view(reference.control->db());
+      const auto row=view.read_primary({{"bob"_n,"scope"_n,"rows"_n},primary_query_kind::find,key},8);
+      BOOST_REQUIRE(row.row); return sc_number(row.row->value);
+   };
+   const auto before7=balance(7),before9=balance(9);
+   auto one=sc_live_trx(first,7,30000); BOOST_REQUIRE(!first.push_transaction(one)->except);
+   fork(first.produce_block());
+   BOOST_CHECK_EQUAL(balance(7),before7+1); BOOST_CHECK_EQUAL(balance(9),before9);
+   auto two=sc_live_trx(second,9,30100); BOOST_REQUIRE(!second.push_transaction(two)->except);
+   fork(second.produce_block(fc::milliseconds(1000)));
+   BOOST_CHECK_EQUAL(balance(7),before7); BOOST_CHECK_EQUAL(balance(9),before9+1);
+   auto three=sc_live_trx(second,7,30200); BOOST_REQUIRE(!second.push_transaction(three)->except);
+   fork(second.produce_block());
+   BOOST_CHECK_EQUAL(balance(7),before7+1); BOOST_CHECK_EQUAL(balance(9),before9+1);
+   const std::vector<fc::sha256> hashes(fixture.reviewed.begin(),fixture.reviewed.end());
+   BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format",1)
+      ("fixture_kind","ordinary-sync-recovery")("chain_id",fixture.genesis.compute_chain_id())
+      ("code_hashes",hashes)("checkpoints",checkpoints)("fork_prefix_blocks",prefix_blocks)("forks",forks),
+      directory/"manifest.json"));
+}
+BOOST_AUTO_TEST_CASE(export_fresh_sync_producer_fixture) {
+   const char* destination=std::getenv("PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR");
+   if(!destination) { BOOST_TEST_MESSAGE("Sync process fixture export not requested"); return; }
+   const std::filesystem::path directory(destination);
+   BOOST_REQUIRE(std::filesystem::create_directory(directory));
+   std::filesystem::permissions(directory,std::filesystem::perms::owner_all);
+   sc_live_corpus corpus(sc_keyed_programs(),true);
+   BOOST_REQUIRE(fc::json::from_string(fc::json::to_string(corpus.genesis,fc::time_point::maximum()))
+      .as<genesis_state>().compute_chain_id()==corpus.genesis.compute_chain_id());
+   fc::temp_directory source_dir;
+   sc_live_chain source(corpus.configuration(source_dir,0),corpus.genesis);
+   fc::variants checkpoints;
+   for(const auto& bytes:corpus.blocks) {
+      const auto block=std::make_shared<signed_block>(fc::raw::unpack<signed_block>(bytes));
+      source.push_block(block); source.control->abort_block();
+      const auto file="block-"+std::to_string(block->block_num())+".json";
+      BOOST_REQUIRE(fc::json::save_to_file(*block,directory/file));
+      checkpoints.emplace_back(fc::mutable_variant_object()("block_num",block->block_num())
+         ("block_id",source.head().id())("lib",source.last_irreversible_block_num())
+         ("integrity_hash",source.control->calculate_integrity_hash())("file",file));
+   }
+   source.start();
+   fc::variants transactions;
+   for(unsigned i=0;i<16;++i) {
+      auto trx=sc_live_trx(source,i%2?9:7,10000+i);
+      trx.expiration=fc::time_point_sec(fc::time_point::now()+fc::seconds(1800));
+      trx.signatures.clear(); trx.sign(source.get_private_key("test"_n,"active"),source.control->get_chain_id());
+      const packed_transaction packed(trx,packed_transaction::compression_type::none);
+      const auto& data=trx.actions[0].data;
+      transactions.emplace_back(fc::mutable_variant_object()("id",packed.id())("packed",packed)("actions",1)
+         ("root_data",data)("call_data",std::vector<char>(data.begin(),data.begin()+8))
+         ("return_data",fc::raw::pack(uint64_t{22})));
+   }
+   BOOST_REQUIRE(fc::json::save_to_file(corpus.genesis,directory/"genesis.json"));
+   BOOST_REQUIRE(fc::json::save_to_file(transactions,directory/"transactions.json"));
+   // Disposable deterministic TEST credentials only; never print or install.
+   auto [key,pub,proof]=eosio::testing::get_bls_key("eosio"_n);
+   const std::vector<std::string> providers{
+      eosio::testing::base_tester::get_public_key("eosio"_n,"active").to_string({})+"=KEY:"+
+         eosio::testing::base_tester::get_private_key("eosio"_n,"active").to_string({}),
+      pub.to_string()+"=KEY:"+key.to_string()};
+   BOOST_REQUIRE(fc::json::save_to_file(providers,directory/"TEST-ONLY-keys.json"));
+   const std::vector<fc::sha256> hashes(corpus.reviewed.begin(),corpus.reviewed.end());
+   BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format",1)
+      ("fixture_kind","ordinary-sync-primary")("chain_id",source.control->get_chain_id())
+      ("code_hashes",hashes)("checkpoints",checkpoints),directory/"manifest.json"));
+}
 BOOST_AUTO_TEST_CASE(one_two_four_workers_adopt_distinct_child_rows_and_fall_back_on_the_same_row) {
    sc_live_success(sc_keyed_programs(),{7,9,7},2,1,22);
 }

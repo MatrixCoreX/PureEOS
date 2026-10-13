@@ -93,13 +93,100 @@ class HarnessTest(unittest.TestCase):
                                (["--coded-notification-fixture", "--inline-fixture"], "cannot be combined"),
                                (["--token-fixture", "--context-free-fixture"], "cannot be combined"),
                                (["--inline-fixture", "--context-free-fixture"], "cannot be combined"),
-                               (["--coded-notification-fixture", "--context-free-fixture"], "cannot be combined")]:
+                               (["--coded-notification-fixture", "--context-free-fixture"], "cannot be combined"),
+                               (["--token-fixture", "--sync-fixture"], "cannot be combined"),
+                               (["--inline-fixture", "--sync-fixture"], "cannot be combined"),
+                               (["--context-free-fixture", "--sync-fixture"], "cannot be combined"),
+                               (["--coded-notification-fixture", "--sync-fixture"], "cannot be combined")]:
             with self.subTest(flags=flags):
                 result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
                                         capture_output=True, text=True, timeout=15)
                 self.assertEqual(result.returncode, 2)
                 self.assertIn(message, result.stderr)
                 self.assertEqual(sorted(path.name for path in self.root.iterdir()), before)
+
+    def test_sync_production_checks_require_exact_adoption_and_conflict_boundaries(self):
+        from parallel_producer_process_test import check_sync_production_totals
+        valid = [["2", "80", "16", "4", "12"]]
+        check_sync_production_totals(valid)
+        check_sync_production_totals([["2", "40", "16", "4", "12"]])
+        for totals in ([], valid + valid, [["2", "80"]]):
+            with self.subTest(totals=totals), self.assertRaisesRegex(RuntimeError, "totals"):
+                check_sync_production_totals(totals)
+        for counts, message in (((2, 80, 16, 3, 13), "four sync"), ((2, 80, 16, 5, 11), "four sync"),
+                                ((1, 80, 16, 4, 12), "four sync"), ((2, 80, 16, 4, 11), "four sync"),
+                                ((2, 3, 4, 4, 12), "counters"), ((2, 8, 3, 4, 12), "counters")):
+            with self.subTest(counts=counts), self.assertRaisesRegex(RuntimeError, message):
+                check_sync_production_totals([list(map(str, counts))])
+
+    def test_sync_submission_trace_checks_bind_root_child_payload_and_original_status(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_sync_response
+        data = (7).to_bytes(8, "little").hex()
+        returned = (22).to_bytes(8, "little").hex()
+        entry = {"actions": 1, "root_data": data + (10000).to_bytes(8, "little").hex(),
+                 "call_data": data, "return_data": returned}
+        common = {"except": None, "error_code": None, "console": "", "console_markers": []}
+        child = {**common, "call_ordinal": 1, "sender_ordinal": 0, "receiver": "bob", "read_only": False,
+                 "hex_data": data, "return_value_hex_data": returned, "error_id": None}
+        root = {**common, "action_ordinal": 1, "creator_action_ordinal": 0,
+                "closest_unnotified_ancestor_action_ordinal": 0, "context_free": False,
+                "receipt": {"receiver": "test"}, "account_ram_deltas": [],
+                "act": {"account": "test", "name": "run", "data": entry["root_data"],
+                        "authorization": [{"actor": "test", "permission": "active"}]},
+                "return_value_hex_data": returned, "call_traces": [child]}
+        response = {"processed": {"action_traces": [root]}}
+        check_sync_response(entry, response)
+        modern = deepcopy(response)
+        modern["processed"]["action_traces"][0]["act"]["hex_data"] = entry["root_data"]
+        modern["processed"]["action_traces"][0]["act"]["data"] = {"decoded": "ignored"}
+        check_sync_response(entry, modern)
+        for fault in ("different child input", "wrong root length"):
+            changed_entry, changed = deepcopy(entry), deepcopy(response)
+            changed_root = changed["processed"]["action_traces"][0]
+            if fault == "different child input":
+                changed_entry["call_data"] = (9).to_bytes(8, "little").hex()
+                changed_root["call_traces"][0]["hex_data"] = changed_entry["call_data"]
+            else:
+                changed_entry["root_data"] += "00"
+                changed_root["act"]["data"] = changed_entry["root_data"]
+            with self.subTest(fault=fault), self.assertRaisesRegex(RuntimeError, "payload prefix"):
+                check_sync_response(changed_entry, changed)
+        mutations = [
+            ((), "actions", 2, "sole root"),
+            (("root",), "action_ordinal", 2, "ancestry"),
+            (("root",), "creator_action_ordinal", 1, "ancestry"),
+            (("root",), "closest_unnotified_ancestor_action_ordinal", 1, "ancestry"),
+            (("root", "receipt"), "receiver", "bob", "receiver or type"),
+            (("root",), "context_free", True, "receiver or type"),
+            (("root", "act"), "account", "bob", "target or authorization"),
+            (("root", "act"), "authorization", [], "target or authorization"),
+            (("root", "act"), "data", "", "root payload"),
+            (("root",), "inline_traces", [{}], "inline action or RAM"),
+            (("root",), "account_ram_deltas", [{"account": "bob", "delta": 1}], "inline action or RAM"),
+            (("root",), "return_value_hex_data", "", "root return"),
+            (("root",), "call_traces", [], "lost or duplicated"),
+            (("call",), "call_ordinal", 2, "identity or read-only"),
+            (("call",), "sender_ordinal", 1, "identity or read-only"),
+            (("call",), "receiver", "test", "identity or read-only"),
+            (("call",), "read_only", True, "identity or read-only"),
+            (("call",), "hex_data", "", "child input or return"),
+            (("call",), "return_value_hex_data", "", "child input or return"),
+            (("call",), "error_id", -10000, "error status"),
+        ]
+        mutations += [((kind,), field, value, message) for kind in ("root", "call")
+                      for field, value, message in (("except", {"code": 1}, "exception"),
+                          ("error_code", 1, "exception"), ("console", "unexpected", "output"),
+                          ("console_markers", [0], "output"))]
+        for path, key, value, message in mutations:
+            changed_entry, changed = deepcopy(entry), deepcopy(response)
+            changed_root = changed["processed"]["action_traces"][0]
+            target = changed_entry if not path else changed_root if path[0] == "root" else changed_root["call_traces"][0]
+            for segment in path[1:]:
+                target = target[segment]
+            target[key] = value
+            with self.subTest(path=path, key=key), self.assertRaisesRegex(RuntimeError, message):
+                check_sync_response(changed_entry, changed)
 
     def test_context_free_trace_checks_bind_type_data_queues_and_original_receipts(self):
         from copy import deepcopy

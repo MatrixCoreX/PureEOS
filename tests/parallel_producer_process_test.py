@@ -163,6 +163,56 @@ def check_context_free_response(entry, response):
     require(all(a < b for a, b in zip(sequences, sequences[1:])), "Context-free receipt execution order changed")
 
 
+def check_sync_response(entry, response):
+    # This is the HTTP submission trace, possibly speculative. Production
+    # adoption is checked separately; SHiP does not serialize call_traces.
+    traces = response["processed"]["action_traces"]
+    require(entry["actions"] == 1 and len(traces) == 1, "Sync fixture lost its sole root")
+    root = traces[0]
+    require(root["action_ordinal"] == 1 and root["creator_action_ordinal"] == 0 and
+            root["closest_unnotified_ancestor_action_ordinal"] == 0, "Sync root ancestry changed")
+    require(root["receipt"]["receiver"] == "test" and root.get("context_free") is False,
+            "Sync root receiver or type changed")
+    require(root["act"]["account"] == "test" and root["act"]["name"] == "run" and
+            root["act"]["authorization"] == [{"actor": "test", "permission": "active"}],
+            "Sync root target or authorization changed")
+    require(root["act"].get("hex_data", root["act"].get("data")) == entry["root_data"],
+            "Sync root payload changed")
+    require(not root.get("inline_traces") and not root.get("account_ram_deltas"),
+            "Sync fixture acquired an inline action or RAM delta")
+    returned = (22).to_bytes(8, "little").hex()
+    require(entry["return_data"] == returned and root["return_value_hex_data"] == returned,
+            "Sync root return changed")
+    calls = root["call_traces"]
+    require(len(calls) == 1, "Sync fixture lost or duplicated its child")
+    call = calls[0]
+    require(len(entry["root_data"]) == 32 and entry["root_data"][:16] == entry["call_data"],
+            "Sync child input is not the original root payload prefix")
+    require(call["call_ordinal"] == 1 and call["sender_ordinal"] == 0 and
+            call["receiver"] == "bob" and call["read_only"] is False,
+            "Sync child identity or read-only flag changed")
+    require(entry["call_data"] in ((7).to_bytes(8, "little").hex(), (9).to_bytes(8, "little").hex()) and
+            call["hex_data"] == entry["call_data"] and call["return_value_hex_data"] == returned,
+            "Sync child input or return changed")
+    for trace in (root, call):
+        require(trace["except"] is None and trace["error_code"] is None,
+                "Successful sync trace contains an exception")
+        require(trace["console"] == "" and trace["console_markers"] == [],
+                "Console-disabled sync trace contains output")
+    require(call["error_id"] is None, "Successful sync child contains an error status")
+
+
+def check_sync_production_totals(totals):
+    require(len(totals) == 1 and len(totals[0]) == 5, "Missing or duplicate sync production totals")
+    batches, attempts, succeeded, adopted, fallbacks = map(int, totals[0])
+    # This fixture queues exactly sixteen transactions in two batches of eight.
+    # The first two write distinct rows; the third conflicts and disables its
+    # batch tail. Discovery attempt counts may improve without changing this.
+    require(batches == 2 and adopted == 4 and fallbacks == 12,
+            "Expected four sync adoptions and twelve conflict fallbacks in two fixed batches")
+    require(attempts >= succeeded >= adopted, "Inconsistent sync attempt counters")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--old-nodeos", type=Path, required=True)
@@ -177,6 +227,7 @@ def main():
     parser.add_argument("--coded-notification-fixture", action="store_true", help="Two roots with shared-cursor coded notifications and child-owned writes")
     parser.add_argument("--inline-fixture", action="store_true", help="Two roots with ordinary inline children, coded notifications, lifecycle writes and original authorization")
     parser.add_argument("--context-free-fixture", action="store_true", help="Two roots with parent writes, notifications, both inline queues and immutable context-free data")
+    parser.add_argument("--sync-fixture", action="store_true", help="One ordinary root calling a synchronous child that updates primary rows")
     args = parser.parse_args()
     if args.ram_fixture and not args.token_fixture:
         parser.error("--ram-fixture requires --token-fixture")
@@ -190,6 +241,8 @@ def main():
         parser.error("--inline-fixture cannot be combined with other fixture flags")
     if args.context_free_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture or args.inline_fixture):
         parser.error("--context-free-fixture cannot be combined with other fixture flags")
+    if args.sync_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture or args.inline_fixture or args.context_free_fixture):
+        parser.error("--sync-fixture cannot be combined with other fixture flags")
     old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
     require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
     require(sha256(old) == args.old_sha256, "Original binary hash changed")
@@ -197,7 +250,8 @@ def main():
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
     report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
-              "fixture_kind": "context-free-inline-multiple-actions" if args.context_free_fixture else
+              "fixture_kind": "ordinary-sync-primary" if args.sync_fixture else
+                              "context-free-inline-multiple-actions" if args.context_free_fixture else
                               "ordinary-inline-multiple-actions" if args.inline_fixture else
                               "coded-notification-multiple-actions" if args.coded_notification_fixture else
                               "real-token-multiple-actions" if args.multi_action_fixture else
@@ -217,6 +271,7 @@ def main():
             env = {**os.environ, "PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR": str(corpus)}
             env.pop("PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR", None)
             env.pop("PUREEOS_PARALLEL_PRODUCER_CF_EXPORT_DIR", None)
+            env.pop("PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR", None)
             export_test = "parallel_production_tests/export_fresh_live_producer_fixture"
             if args.inline_fixture:
                 env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
@@ -226,6 +281,10 @@ def main():
                 env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
                 env["PUREEOS_PARALLEL_PRODUCER_CF_EXPORT_DIR"] = str(corpus)
                 export_test = "parallel_context_free_adoption_tests/export_fresh_context_free_producer_fixture"
+            if args.sync_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_sync_adoption_tests/export_fresh_sync_producer_fixture"
             if args.token_fixture:
                 env["PUREEOS_PARALLEL_PRODUCER_TOKEN"] = "1"
             else:
@@ -278,6 +337,9 @@ def main():
                 producer.check(point)
                 observer.check(point)
             entries = json.loads((corpus / "transactions.json").read_text())
+            if args.sync_fixture:
+                require(len(entries) == 16 and all(entry["actions"] == 1 for entry in entries),
+                        "Sync fixture must contain 16 single-root transactions")
             if args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture:
                 require(len(entries) == 16, "RAM/lifecycle fixtures require the fixed 16-transaction corpus")
             if args.multi_action_fixture:
@@ -297,6 +359,7 @@ def main():
             journal.emit("window", version=1, clock="monotonic_ns", start_ns=started, end_ns=ended,
                          scope="Finite queued 16-transaction compatibility load; NOT saturation or capacity")
             responses = []
+            sync_submission_traces = []
             payer_change = {}
             for entry in entries:
                 journal.emit("sent", id=entry["id"], actions=entry["actions"])
@@ -309,6 +372,9 @@ def main():
                     check_inline_response(entry, response)
                 if args.context_free_fixture:
                     check_context_free_response(entry, response)
+                if args.sync_fixture:
+                    check_sync_response(entry, response)
+                    sync_submission_traces.append(response["processed"]["action_traces"])
                 if args.multi_action_fixture:
                     ram = check_multi_action_response(entry, response, not responses)
                     if not responses:
@@ -325,6 +391,8 @@ def main():
                 responses.append(response["transaction_id"])
                 journal.emit("ack", id=entry["id"], accepted=True)
             before = producer.rpc("get_info")
+            if args.sync_fixture:
+                (group / "sync-submission-traces.json").write_text(json.dumps(sync_submission_traces, indent=2) + "\n")
             # Default produce-block-offset accumulates across all 12 slots;
             # a 500ms boundary is NOT necessarily a full production window.
             # Resume just after the preceding slot of a six-second round so
@@ -391,6 +459,8 @@ def main():
                     require(int(totals[0][3]) == 6, "Expected six independent transactions to be adopted in the fixed two-batch corpus")
                 if args.coded_notification_fixture:
                     require(int(totals[0][3]) == 4, "Expected four coded-notification transactions adopted in the fixed two-batch corpus")
+                if args.sync_fixture:
+                    check_sync_production_totals(totals)
             else:
                 require(not totals, "Serial mode unexpectedly ran a production batch")
             histories = [node.history_digests() for node in (producer, feeder, observer)]
@@ -409,6 +479,9 @@ def main():
                     "root_actions": sum(entry["actions"] for entry in entries),
                     "production_totals": totals, "history_sha256": histories[0], "old_checked_replay": True}
             item["bounded_load_finality"] = finalized
+            if args.sync_fixture:
+                item["sync_trace_scope"] = "HTTP submission only; actual adoption traces are checked by chain-level differential tests"
+                item["submission_sync_call_traces"] = len(sync_submission_traces)
             item["stages"] = stages
             item["process_usage"] = usage
             report["phases"].append(item)
