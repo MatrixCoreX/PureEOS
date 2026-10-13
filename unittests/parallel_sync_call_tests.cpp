@@ -197,7 +197,276 @@ std::vector<isolated_sync_program> sc_delete_programs(const std::string& after,b
 }
 }
 
+namespace {
+std::vector<isolated_sync_program> sc_increment_programs(int64_t status=0,const std::string& after_write={}) {
+   const auto child=
+      "(drop (call $data (i32.const 0)(i32.const 8)))"
+      "(set_local $n "+sc_find("bob"_n)+")"
+      "(drop (call $get (get_local $n)(i32.const 64)(i32.const 8)))"
+      "(i64.store (i32.const 64)(i64.add (i64.load (i32.const 64))(i64.load (i32.const 0))))"
+      "(call $update (get_local $n)(i64.const 0)(i32.const 64)(i32.const 8))"+
+      after_write+"(call $set (i32.const 64)(i32.const 8))(i64.const "+std::to_string(status)+")";
+   const auto expected=status<=-10000?status:-3;
+   const auto root=status==0?sc_root_body():
+      "(drop (call $read (i32.const 0)(i32.const 8)))"+sc_assert64(sc_call("bob"_n),expected)+
+      sc_assert32("(call $ret (i32.const 0)(i32.const 0))",0)+
+      "(drop (call $get "+sc_find("bob"_n)+"(i32.const 64)(i32.const 8)))"
+      "(call $out (i32.const 64)(i32.const 8))";
+   return {{{"test"_n,sc_program(root,"(i64.const 0)",sc_db_imports),{}},true},
+           {{"bob"_n,sc_program({},child,sc_db_imports),{}},true}};
+}
+
+std::vector<isolated_sync_program> sc_multi_lifetime_programs() {
+   const auto root="(drop (call $read (i32.const 0)(i32.const 8)))"
+      "(set_local $n "+sc_find("bob"_n)+")"+sc_assert32("(get_local $n)",0)+
+      sc_assert64(sc_call("bob"_n),0)+
+      "(drop (call $get "+sc_find("bob"_n)+"(i32.const 64)(i32.const 8)))"
+      "(call $out (i32.const 64)(i32.const 8))";
+   const auto child="(drop (call $data (i32.const 0)(i32.const 8)))"
+      "(call $remove "+sc_find("bob"_n)+")"
+      "(drop (call $store "+sc_name("scope"_n)+sc_name("rows"_n)+sc_name("bob"_n)+
+      "(i64.const 7)(i32.const 0)(i32.const 8)))(i64.const 0)";
+   return {{{"test"_n,sc_program(root,"(i64.const 0)",sc_db_imports),{}},true},
+           {{"bob"_n,sc_program({},child,sc_db_imports),{}},true}};
+}
+}
+
 BOOST_AUTO_TEST_SUITE(parallel_sync_private_tests)
+BOOST_FIXTURE_TEST_CASE(multiple_roots_reset_vm_returns_and_call_ordinals,sc_fixture) {
+   isolated_sync_executor executor;
+   const auto reset=sc_assert32("(get_global $counter)",0)+"(set_global $counter (i32.const 1))"+
+      sc_assert32("(call $ret (i32.const 0)(i32.const 0))",0);
+   const auto ordinary=reset+sc_assert64("(call $sender)",0)+sc_root_body();
+   const auto child=reset+
+      "(call $assert (i64.eq (call $sender)(get_local $sender))(i64.const 7))"+sc_echo();
+   const std::vector<isolated_sync_program> programs{
+      {{"test"_n,sc_program(ordinary,"(i64.const 0)"),{}},true},
+      {{"bob"_n,sc_program({},child),{}},true},
+      {{"carol"_n,sc_program(ordinary,"(i64.const 0)"),{}},true}};
+   auto other=sc_root(19); other.receiver=other.account="carol"_n;
+   const std::array roots{sc_root(17),other,sc_root(23)};
+   const auto result=executor.execute_transaction(base,roots,programs,{16,512*1024,false,true,true});
+   BOOST_REQUIRE(validate_isolated_sync_transaction_journal(result,roots,programs,{16,512*1024,false,true,true}));
+   BOOST_REQUIRE_EQUAL(result.roots.size(),roots.size());
+   BOOST_CHECK(result.state.writes().empty());
+   for(size_t i=0;i<roots.size();++i) {
+      const auto& root=result.roots[i];
+      BOOST_REQUIRE_EQUAL(root.calls.size(),1u);
+      BOOST_CHECK_EQUAL(root.calls[0].call_ordinal,1u);
+      BOOST_CHECK_EQUAL(root.calls[0].sender_ordinal,0u);
+      BOOST_CHECK(root.calls[0].sender==roots[i].receiver);
+      BOOST_CHECK(root.calls[0].data==roots[i].data);
+      BOOST_CHECK(root.root.return_value==roots[i].data);
+      BOOST_REQUIRE_EQUAL(root.root_console_markers.size(),1u);
+      BOOST_CHECK_EQUAL(root.root_console_markers[0],0u);
+      const auto single=executor.execute(base,roots[i],programs,{16,512*1024,false,true,true});
+      BOOST_CHECK(single.root.return_value==root.root.return_value);
+      BOOST_CHECK(single.calls[0].return_value==root.calls[0].return_value);
+      BOOST_CHECK(single.execution_fingerprint!=result.execution_fingerprint); // distinct result domains
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(multiple_roots_share_primary_writes_and_negative_business_side_effects,sc_state_fixture) {
+   isolated_sync_executor executor;
+   const std::array roots{sc_root(3),sc_root(4)};
+   for(int64_t status:{int64_t{0},int64_t{-10000},int64_t{-7}}) {
+      const auto programs=sc_increment_programs(status);
+      const auto result=executor.execute_transaction(base,roots,programs,{});
+      BOOST_REQUIRE(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
+      BOOST_REQUIRE_EQUAL(result.state.writes().size(),2u);
+      BOOST_REQUIRE_EQUAL(result.roots.size(),2u);
+      BOOST_CHECK_EQUAL(sc_number(result.state.writes()[0].value),13u);
+      BOOST_CHECK_EQUAL(sc_number(result.state.writes()[1].value),17u);
+      for(size_t i=0;i<2;++i) {
+         BOOST_CHECK_EQUAL(result.roots[i].root.writes_begin,i);
+         BOOST_CHECK_EQUAL(result.roots[i].root.writes_end,i+1);
+         BOOST_CHECK_EQUAL(sc_number(result.roots[i].root.return_value),i?17u:13u);
+         BOOST_REQUIRE_EQUAL(result.roots[i].calls.size(),1u);
+         const auto& call=result.roots[i].calls[0];
+         BOOST_CHECK_EQUAL(call.call_ordinal,1u);
+         BOOST_CHECK_EQUAL(call.writes_begin,i);
+         BOOST_CHECK_EQUAL(call.writes_end,i+1);
+         BOOST_CHECK_EQUAL(call.status,status==0?0:status<=-10000?status:-3);
+         BOOST_CHECK_EQUAL(call.return_value.empty(),status!=0);
+      }
+      BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(multiple_roots_keep_lifetimes_but_reset_their_ordinary_cursors,sc_state_fixture) {
+   isolated_sync_executor executor;
+   const auto programs=sc_multi_lifetime_programs();
+   const std::array roots{sc_root(77),sc_root(88)};
+   const auto result=executor.execute_transaction(base,roots,programs,{});
+   BOOST_REQUIRE(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
+   BOOST_REQUIRE_EQUAL(result.state.writes().size(),4u);
+   BOOST_CHECK_EQUAL(sc_number(result.roots[0].root.return_value),77u);
+   BOOST_CHECK_EQUAL(sc_number(result.roots[1].root.return_value),88u);
+   BOOST_CHECK(result.state.writes()[1].object_id==result.state.writes()[2].object_id);
+   BOOST_CHECK(result.state.writes()[1].object_id!=result.state.writes()[3].object_id);
+   BOOST_CHECK_EQUAL(result.roots[1].root.writes_begin,2u);
+   BOOST_CHECK_EQUAL(result.roots[1].calls[0].writes_begin,2u);
+   auto bad=result;
+   auto& query=std::get<isolated_cursor_query>(std::get<isolated_cursor_event>(bad.roots[1].root_events.front()));
+   BOOST_CHECK_EQUAL(query.result,0);
+   query.result=1;
+   BOOST_CHECK(!validate_isolated_sync_transaction_journal(bad,roots,programs,{}));
+   BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+}
+
+BOOST_FIXTURE_TEST_CASE(multiple_roots_call_data_event_and_write_limits_are_transaction_wide,sc_state_fixture) {
+   isolated_sync_executor executor;
+   std::vector<isolated_action_input> roots(16,sc_root());
+   const auto pair=sc_pair();
+   const auto sixteen=executor.execute_transaction(base,roots,pair,{});
+   BOOST_REQUIRE_EQUAL(sixteen.roots.size(),16u);
+   BOOST_CHECK(validate_isolated_sync_transaction_journal(sixteen,roots,pair,{}));
+   roots.push_back(sc_root());
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,pair,{}),primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(executor.execute_transaction(base,{},pair,{}),primary_state_budget_exceeded);
+   roots.resize(2);
+   for(unsigned count:{32u,33u}) {
+      auto programs=pair;
+      programs[0].program.code=sc_program("(set_local $n (i32.const "+std::to_string(count)+"))"
+         "(loop $many (drop "+sc_call("bob"_n)+")"
+         "(set_local $n (i32.sub (get_local $n)(i32.const 1)))(br_if $many (get_local $n)))");
+      if(count==32) {
+         const auto result=executor.execute_transaction(base,roots,programs,{});
+         BOOST_CHECK_EQUAL(result.roots[0].calls.size()+result.roots[1].calls.size(),64u);
+         BOOST_CHECK(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
+      } else BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,{}),primary_state_budget_exceeded);
+   }
+   for(unsigned count:{2048u,2049u}) {
+      auto programs=pair;
+      programs[0].program.code=sc_program("(set_local $n (i32.const "+std::to_string(count)+"))"
+         "(loop $many (drop "+sc_find("test"_n)+")"
+         "(set_local $n (i32.sub (get_local $n)(i32.const 1)))(br_if $many (get_local $n)))",
+         "(i64.const 0)",sc_db_imports);
+      if(count==2048) {
+         const auto result=executor.execute_transaction(base,roots,programs,{});
+         BOOST_CHECK_EQUAL(result.roots[0].root_events.size()+result.roots[1].root_events.size(),4096u);
+         BOOST_CHECK(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
+      } else BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,{}),primary_state_budget_exceeded);
+   }
+   auto programs=pair; programs[0].program.code=sc_program();
+   roots.assign(4,sc_root()); for(auto& root:roots) root.data.resize(64*1024);
+   const auto data_limit=executor.execute_transaction(base,roots,programs,{});
+   BOOST_CHECK(validate_isolated_sync_transaction_journal(data_limit,roots,programs,{}));
+   roots.push_back(sc_root());
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,{}),primary_state_budget_exceeded);
+   roots.resize(4);
+   programs[0].program.code=sc_program("(drop "+sc_call("bob"_n)+")");
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,{}),primary_state_budget_exceeded);
+   roots={sc_root(3),sc_root(4)};
+   primary_overlay_limits limits; limits.max_write_operations=1;
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,sc_increment_programs(),{}, {},limits),primary_state_budget_exceeded);
+   limits={}; limits.max_write_value_bytes=8;
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,sc_increment_programs(),{}, {},limits),primary_state_budget_exceeded);
+}
+
+BOOST_FIXTURE_TEST_CASE(multiple_root_proof_rejects_cross_root_identity_and_journal_tampering,sc_state_fixture) {
+   isolated_sync_executor executor;
+   const auto programs=sc_increment_programs();
+   const std::array roots{sc_root(3),sc_root(4)};
+   const auto good=executor.execute_transaction(base,roots,programs,{16,512*1024,false,false,true});
+   const isolated_sync_context context{16,512*1024,false,false,true};
+   BOOST_REQUIRE(validate_isolated_sync_transaction_journal(good,roots,programs,context));
+   for(unsigned mutation=0;mutation<14;++mutation) {
+      auto bad=good;
+      switch(mutation) {
+         case 0: bad.roots[1].root.writes_begin=0; break;
+         case 1: bad.roots[0].root.writes_end=2; break;
+         case 2: bad.roots[1].calls[0].call_ordinal=2; break;
+         case 3: bad.roots[1].calls[0].sender_ordinal=1; break;
+         case 4: bad.roots[1].root.execution_fingerprint={}; break;
+         case 5: bad.roots.pop_back(); break;
+         case 6: bad.roots[1].root_events.push_back(bad.roots[1].root_events.front()); break;
+         case 7: bad.roots[1].root.return_value.resize(roots[1].max_return_bytes+1); break;
+         case 8: bad.roots[0].root.elapsed=bad.roots[1].root.elapsed=std::chrono::milliseconds(300); break;
+         case 9: bad.roots[1].calls[0].read_only=true; break;
+         case 10: bad.execution_fingerprint=isolated_sync_fingerprint(roots[0],programs,context); break;
+         case 11: bad.roots[1].calls[0].writes_begin=0; break;
+         case 12: bad.roots[1].root_console_markers[0]=1; break;
+         case 13: bad.roots[1].calls[0].sender="carol"_n; break;
+      }
+      BOOST_TEST_CONTEXT("multi-root mutation "<<mutation) {
+         BOOST_CHECK(!validate_isolated_sync_transaction_journal(bad,roots,programs,context));
+      }
+   }
+   auto reversed=roots; std::swap(reversed[0],reversed[1]);
+   BOOST_CHECK(!validate_isolated_sync_transaction_journal(good,reversed,programs,context));
+   auto changed=programs; changed[1].sync_call_supported=false;
+   BOOST_CHECK(!validate_isolated_sync_transaction_journal(good,roots,changed,context));
+   unsigned total_checks=0;
+   BOOST_REQUIRE(validate_isolated_sync_transaction_journal(good,roots,programs,context,[&]{++total_checks;}));
+   BOOST_REQUIRE_GE(total_checks,20u);
+   for(unsigned point:{1u,total_checks/2,total_checks}) {
+      unsigned count=0;
+      BOOST_CHECK_THROW(validate_isolated_sync_transaction_journal(good,roots,programs,context,[&] {
+         if(++count==point) throw std::runtime_error("multi-root owner cancelled");
+      }),std::runtime_error);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(multiple_root_late_failure_discards_every_root_and_allows_healthy_reuse,sc_state_fixture) {
+   isolated_sync_executor executor;
+   const std::array roots{sc_root(3),sc_root(4)};
+   const std::array healthy{sc_root(3),sc_root(2)};
+   for(const std::string failure:{"(unreachable)","(drop (call $read (i32.const 0)(i32.const 0)))",
+                                "(loop $busy (br $busy))"}) {
+      const auto programs=sc_increment_programs(0,
+         "(if (i64.eq (i64.load (i32.const 0))(i64.const 4))(then "+failure+"))");
+      for(unsigned repetition=0;repetition<3;++repetition) {
+         isolated_cancel cancel;
+         cancel.deadline=std::chrono::steady_clock::now()+std::chrono::milliseconds(50);
+         if(failure=="(unreachable)")
+            BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,{}),eosio::vm::exception);
+         else if(failure.find("$read")!=std::string::npos)
+            BOOST_CHECK_EXCEPTION(executor.execute_transaction(base,roots,programs,{}),primary_state_unsupported,
+               [](const auto& e){return dynamic_cast<const primary_state_missing*>(&e)==nullptr;});
+         else BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,{}, {},{},cancel),isolated_execution_interrupted);
+         BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+         const auto result=executor.execute_transaction(base,healthy,programs,{});
+         BOOST_REQUIRE(validate_isolated_sync_transaction_journal(result,healthy,programs,{}));
+         BOOST_CHECK_EQUAL(sc_number(result.roots[1].root.return_value),15u);
+      }
+   }
+   std::stop_source stopped; stopped.request_stop();
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,sc_increment_programs(),{},stopped.get_token()),
+                     isolated_execution_interrupted);
+   isolated_cancel expired; expired.deadline=std::chrono::steady_clock::now()-std::chrono::seconds(1);
+   BOOST_CHECK_THROW(executor.execute_transaction(base,roots,sc_increment_programs(),{}, {},{},expired),
+                     isolated_execution_interrupted);
+}
+
+BOOST_FIXTURE_TEST_CASE(multiple_roots_on_one_two_four_threads_never_share_mutable_state,sc_state_fixture) {
+   const auto programs=sc_increment_programs();
+   for(unsigned threads:{1u,2u,4u}) {
+      std::barrier gate(threads);
+      std::vector<std::future<isolated_sync_transaction_result>> pending;
+      for(unsigned i=0;i<threads;++i) pending.push_back(std::async(std::launch::async,[&,i] {
+         isolated_sync_executor executor;
+         const std::array roots{sc_root(i+1),sc_root(i+2)};
+         gate.arrive_and_wait();
+         return executor.execute_transaction(base,roots,programs,{});
+      }));
+      for(unsigned i=0;i<threads;++i) {
+         const auto result=pending[i].get();
+         const std::array roots{sc_root(i+1),sc_root(i+2)};
+         BOOST_CHECK(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
+         BOOST_CHECK_EQUAL(sc_number(result.roots[1].root.return_value),13u+2*i);
+      }
+   }
+   isolated_sync_executor owner;
+   auto wrong=std::async(std::launch::async,[&] {
+      try { const std::array roots{sc_root(),sc_root()}; (void)owner.execute_transaction(base,roots,programs,{}); }
+      catch(const state_view_wrong_thread&) {return true;}
+      return false;
+   });
+   BOOST_CHECK(wrong.get());
+   BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+}
+
 BOOST_FIXTURE_TEST_CASE(immediate_owned_returns_partial_reads_and_empty_buffers, sc_fixture) {
    isolated_sync_executor executor;
    for (unsigned i=0;i<3;++i) {
@@ -647,7 +916,128 @@ void sc_oracle(std::vector<isolated_sync_program> programs, isolated_action_inpu
    }
 }
 }
+namespace {
+void sc_multi_oracle(std::vector<isolated_sync_program> programs,
+      const std::vector<isolated_action_input>& roots,bool expected_trap=false) {
+   eosio::testing::tester chain;
+   chain.create_accounts({"test"_n,"bob"_n,"carol"_n,"empty"_n});
+   for(auto& captured:programs) {
+      const auto& p=captured.program;
+      if(!p.code.empty()) chain.set_code(p.receiver,std::vector<uint8_t>(p.code.begin(),p.code.end()));
+      const auto& metadata=chain.control->db().get<account_metadata_object,by_name>(p.receiver);
+      const auto* code=chain.control->db().find<code_object,by_code_hash>(
+         boost::make_tuple(metadata.code_hash,metadata.vm_type,metadata.vm_version));
+      captured.sync_call_supported=code && code->sync_call_supported;
+   }
+   chain.produce_block();
+   sc_seed(const_cast<chainbase::database&>(chain.control->db()),sc_tables); // fixture-only seed
+   chainbase_transaction_state_view view(chain.control->db());
+   const std::array accounts{"test"_n,"bob"_n,"carol"_n,"empty"_n,"absent"_n};
+   const auto base=sc_capture(view,sc_tables,accounts);
+   const auto& config=chain.control->get_global_properties().configuration;
+   const isolated_sync_context context{config.max_sync_call_depth,config.max_sync_call_data_size,false,
+      chain.control->is_builtin_activated(builtin_protocol_feature_t::get_sender_fix),chain.control->contracts_console()};
+   isolated_sync_executor executor;
+   std::optional<isolated_sync_transaction_result> result;
+   if(expected_trap) BOOST_CHECK_THROW(executor.execute_transaction(base,roots,programs,context),eosio::vm::exception);
+   else {
+      result=executor.execute_transaction(base,roots,programs,context);
+      BOOST_REQUIRE(validate_isolated_sync_transaction_journal(*result,roots,programs,context));
+   }
+   signed_transaction trx;
+   for(const auto& root:roots) {
+      action act; act.account=root.account; act.name=root.action; act.data=root.data;
+      for(const auto& [actor,permission]:root.authorizations) act.authorization.push_back({actor,permission});
+      trx.actions.push_back(std::move(act));
+   }
+   chain.set_transaction_headers(trx);
+   trx.sign(chain.get_private_key("test"_n,"active"),chain.control->get_chain_id());
+   const auto before_ram=chain.control->get_resource_limits_manager().get_account_ram_usage("bob"_n);
+   const auto push=[&] {
+      return chain.push_transaction(trx,fc::time_point::maximum(),eosio::testing::tester::DEFAULT_BILLED_CPU_TIME_US);
+   };
+   if(expected_trap) {
+      BOOST_CHECK_THROW(push(),wasm_execution_error);
+      for(const auto& table:sc_tables) for(uint64_t key:{7u,9u}) {
+         const primary_query q{table,primary_query_kind::find,key};
+         const auto before=base->read_primary(q,8),after=view.read_primary(q,8);
+         BOOST_REQUIRE(before.row && after.row);
+         BOOST_CHECK(before.row->value==after.row->value);
+         BOOST_CHECK(before.row->object_id==after.row->object_id);
+         BOOST_CHECK(before.row->payer==after.row->payer);
+      }
+   } else {
+      const auto actual=push();
+      BOOST_REQUIRE(actual && !actual->except);
+      BOOST_REQUIRE_EQUAL(actual->action_traces.size(),roots.size());
+      for(size_t i=0;i<roots.size();++i) {
+         const auto& a=actual->action_traces[i]; const auto& b=result->roots[i];
+         BOOST_CHECK_EQUAL(a.action_ordinal.value,i+1);
+         BOOST_CHECK_EQUAL(a.creator_action_ordinal.value,0u);
+         BOOST_CHECK_EQUAL(a.closest_unnotified_ancestor_action_ordinal.value,0u);
+         BOOST_CHECK(a.receiver==roots[i].receiver); BOOST_CHECK(!a.context_free);
+         BOOST_CHECK(a.return_value==b.root.return_value); BOOST_CHECK(a.console.empty());
+         BOOST_CHECK(!a.except); BOOST_CHECK(!a.error_code);
+         BOOST_REQUIRE_EQUAL(a.console_markers.size(),b.root_console_markers.size());
+         for(size_t j=0;j<a.console_markers.size();++j) BOOST_CHECK_EQUAL(a.console_markers[j].value,b.root_console_markers[j]);
+         BOOST_REQUIRE_EQUAL(a.call_traces.size(),b.calls.size());
+         for(size_t j=0;j<b.calls.size();++j) {
+            const auto& x=a.call_traces[j]; const auto& y=b.calls[j];
+            BOOST_CHECK_EQUAL(x.call_ordinal.value,y.call_ordinal);
+            BOOST_CHECK_EQUAL(x.sender_ordinal.value,y.sender_ordinal);
+            BOOST_CHECK(x.receiver==y.receiver); BOOST_CHECK_EQUAL(x.read_only,y.read_only);
+            BOOST_CHECK(x.data==y.data); BOOST_CHECK(x.return_value==y.return_value);
+            BOOST_CHECK(x.console.empty()); BOOST_CHECK(!x.except); BOOST_CHECK(!x.error_code);
+            BOOST_CHECK_EQUAL(bool(x.error_id),y.status<0);
+            if(x.error_id) BOOST_CHECK_EQUAL(*x.error_id,y.status);
+            BOOST_REQUIRE_EQUAL(x.console_markers.size(),y.console_markers.size());
+            for(size_t k=0;k<x.console_markers.size();++k) BOOST_CHECK_EQUAL(x.console_markers[k].value,y.console_markers[k]);
+         }
+      }
+      primary_state_overlay expected(base);
+      for(const auto& write:result->state.writes()) switch(write.operation) {
+         case primary_operation::store: expected.store(write.table,write.primary_key,write.payer,write.value); break;
+         case primary_operation::update: expected.update_existing(write.table,write.primary_key,write.payer,write.value); break;
+         case primary_operation::remove: expected.remove(write.table,write.primary_key); break;
+      }
+      for(const auto& table:sc_tables) {
+         const auto a=expected.read_table(table),b=view.read_table(table);
+         BOOST_REQUIRE_EQUAL(bool(a),bool(b));
+         if(a) { BOOST_CHECK_EQUAL(a->count,b->count); BOOST_CHECK(a->payer==b->payer); }
+         for(uint64_t key:{7u,9u,11u}) {
+            const primary_query q{table,primary_query_kind::find,key};
+            const auto x=expected.read_primary(q,4096),y=view.read_primary(q,4096);
+            BOOST_REQUIRE_EQUAL(bool(x.row),bool(y.row));
+            if(x.row) { BOOST_CHECK(x.row->value==y.row->value); BOOST_CHECK(x.row->payer==y.row->payer); }
+         }
+      }
+   }
+   BOOST_CHECK_EQUAL(chain.control->get_resource_limits_manager().get_account_ram_usage("bob"_n),before_ram);
+}
+}
+
 BOOST_AUTO_TEST_SUITE(parallel_sync_oracle_tests)
+BOOST_AUTO_TEST_CASE(original_multiple_roots_share_writes_and_reset_their_local_call_traces) {
+   for(int64_t status:{int64_t{0},int64_t{-10000},int64_t{-7}}) {
+      auto programs=sc_increment_programs(status);
+      programs.push_back({{"carol"_n,sc_program(
+         sc_assert32("(call $ret (i32.const 0)(i32.const 0))",0)+
+         sc_check_row(sc_find("bob"_n),13)+"(call $out (i32.const 64)(i32.const 8))",
+         "(i64.const 0)",sc_db_imports),{}},true});
+      auto middle=sc_root(); middle.receiver=middle.account="carol"_n;
+      sc_multi_oracle(programs,{sc_root(3),middle,sc_root(4)});
+   }
+   sc_multi_oracle(sc_multi_lifetime_programs(),{sc_root(77),sc_root(88)});
+}
+BOOST_AUTO_TEST_CASE(original_late_root_trap_undoes_earlier_root_and_child_writes) {
+   auto programs=sc_increment_programs(0,
+      "(if (i64.eq (i64.load (i32.const 0))(i64.const 4))(then unreachable))");
+   // Both the ordinary root's own table and its child's table must roll back.
+   programs[0].program.code=sc_program(sc_update(sc_find("test"_n),33)+sc_root_body(),
+      "(i64.const 0)",sc_db_imports);
+   sc_multi_oracle(programs,{sc_root(3),sc_root(4)},true);
+   sc_multi_oracle(programs,{sc_root(3),sc_root(2)});
+}
 BOOST_AUTO_TEST_CASE(original_returns_recursive_memory_and_full_call_traces_match) {
    sc_oracle(sc_pair()); sc_oracle(sc_pair(sc_echo(),1));
    sc_oracle(sc_recursive(),sc_root(4)); sc_oracle(sc_preserved_return());

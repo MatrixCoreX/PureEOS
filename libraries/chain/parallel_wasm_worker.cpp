@@ -584,13 +584,37 @@ isolated_action_effects isolated_wasm_module::execute_step(primary_state_overlay
 isolated_sync_result isolated_sync_executor::execute(std::shared_ptr<const frozen_primary_state> base,
       const isolated_action_input& root, std::span<const isolated_sync_program> programs,
       isolated_sync_context protocol, std::stop_token stop, primary_overlay_limits bounds, isolated_cancel external) {
+   auto transaction = execute_roots(std::move(base), {&root, 1}, programs, protocol, stop, bounds, external, true);
+   auto result = std::move(transaction.roots.front());
+   const auto fingerprint = transaction.execution_fingerprint;
+   return {std::move(transaction.state), std::move(result.root), std::move(result.calls),
+           std::move(result.root_console_markers), fingerprint, std::move(result.root_events)};
+}
+
+isolated_sync_transaction_result isolated_sync_executor::execute_transaction(
+      std::shared_ptr<const frozen_primary_state> base, std::span<const isolated_action_input> roots,
+      std::span<const isolated_sync_program> programs, isolated_sync_context protocol,
+      std::stop_token stop, primary_overlay_limits bounds, isolated_cancel external) {
+   return execute_roots(std::move(base), roots, programs, protocol, stop, bounds, external, false);
+}
+
+isolated_sync_transaction_result isolated_sync_executor::execute_roots(
+      std::shared_ptr<const frozen_primary_state> base, std::span<const isolated_action_input> roots,
+      std::span<const isolated_sync_program> programs, isolated_sync_context protocol,
+      std::stop_token stop, primary_overlay_limits bounds, isolated_cancel external, bool single_root_fingerprint) {
    if (std::this_thread::get_id() != owner_) throw state_view_wrong_thread();
    external.deadline = std::min(external.deadline, std::chrono::steady_clock::now() + max_attempt_time);
    external.check(stop);
-   if (programs.empty() || programs.size() > max_programs || root.receiver != root.account ||
-       root.data.size() > max_total_data_bytes)
+   if (programs.empty() || programs.size() > max_programs || roots.empty() || roots.size() > max_roots ||
+       (single_root_fingerprint && roots.size() != 1))
       throw primary_state_budget_exceeded();
-   size_t total_code = 0, total_data = root.data.size();
+   size_t total_code = 0, total_data = 0, total_calls = 0;
+   for (const auto& root : roots) {
+      external.check(stop);
+      if (root.receiver != root.account || root.data.size() > max_total_data_bytes - total_data)
+         throw primary_state_budget_exceeded();
+      total_data += root.data.size();
+   }
    std::map<name, const isolated_sync_program*> catalog;
    for (const auto& item : programs) {
       external.check(stop);
@@ -605,7 +629,8 @@ isolated_sync_result isolated_sync_executor::execute(std::shared_ptr<const froze
       return *it->second;
    };
    primary_state_overlay state(std::move(base), bounds);
-   if (!state.read_account(root.receiver)) throw primary_state_unsupported();
+   std::vector<isolated_sync_root_result> results;
+   results.reserve(roots.size());
    std::vector<isolated_sync_trace> traces;
    std::vector<uint32_t> root_markers;
    std::vector<isolated_sync_event> root_events;
@@ -638,8 +663,9 @@ isolated_sync_result isolated_sync_executor::execute(std::shared_ptr<const froze
       frame.record = [&](const isolated_cursor_event& event) { record(ordinal, event); };
       frame.call = [&](name receiver, uint64_t flags, std::span<const char> data) -> call_result {
          external.check(stop);
-         if (traces.size() >= max_calls || data.size() > max_total_data_bytes - total_data)
+         if (total_calls >= max_calls || data.size() > max_total_data_bytes - total_data)
             throw primary_state_budget_exceeded();
+         ++total_calls;
          total_data += data.size();
          const uint32_t child_ordinal = traces.size() + 1;
          const bool child_read_only = read_only || bool(flags & 1);
@@ -693,14 +719,23 @@ isolated_sync_result isolated_sync_executor::execute(std::shared_ptr<const froze
       status = frame.status;
       return effects;
    };
-   int64_t status = 0;
-   auto effects = run(find_program(root.receiver), root, name{}, 0, 0, protocol.root_read_only, status);
+   for (const auto& root : roots) {
+      external.check(stop);
+      if (!state.read_account(root.receiver)) throw primary_state_unsupported();
+      // Call ordinals belong to THIS action trace. The overlay and all attempt
+      // budgets above survive; memory, cursors and returned bytes do not.
+      traces.clear(); root_markers.clear(); root_events.clear();
+      traces.reserve(max_calls - total_calls);
+      int64_t status = 0;
+      auto effects = run(find_program(root.receiver), root, name{}, 0, 0, protocol.root_read_only, status);
+      external.check(stop);
+      if (!effects.recipients.empty()) throw primary_state_invalid_attempt();
+      results.push_back({std::move(effects), std::move(traces), std::move(root_markers), std::move(root_events)});
+   }
+   const auto fingerprint = single_root_fingerprint ? isolated_sync_fingerprint(roots.front(), programs, protocol) :
+                                                       isolated_sync_transaction_fingerprint(roots, programs, protocol);
    external.check(stop);
-   if (!effects.recipients.empty()) throw primary_state_invalid_attempt();
-   const auto fingerprint = isolated_sync_fingerprint(root, programs, protocol);
-   external.check(stop);
-   return {state.seal(), std::move(effects), std::move(traces), std::move(root_markers), fingerprint,
-           std::move(root_events)};
+   return {state.seal(), std::move(results), fingerprint};
 }
 
 fc::sha256 isolated_transaction_fingerprint(std::span<const fc::sha256> action_fingerprints) {
