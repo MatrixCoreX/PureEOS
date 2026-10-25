@@ -9,6 +9,9 @@ namespace eosio { namespace vm {
       [[gnu::always_inline]] inline void operator()(const unreachable_t& ) {}
       [[gnu::always_inline]] inline void operator()(const nop_t& ) {}
       [[gnu::always_inline]] inline void operator()(const exit_t& ) {}
+      [[gnu::always_inline]] inline void operator()(const execution_work_t& ) {
+         throw wasm_interpreter_exception{"visitor does not support execution work"};
+      }
       [[gnu::always_inline]] inline void operator()(const end_t& ) {}
       [[gnu::always_inline]] inline void operator()(const return_t& ) {}
       [[gnu::always_inline]] inline void operator()(const block_t& ) {}

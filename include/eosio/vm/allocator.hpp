@@ -351,12 +351,18 @@ namespace eosio { namespace vm {
          if constexpr (IsJit) {
             auto & jit_alloc = jit_allocator::instance();
             void * executable_code = jit_alloc.alloc(_code_size);
+            bool published = false;
+            scope_guard release_failed_code{[&] {
+               if (!published) jit_alloc.free(executable_code);
+            }};
             int err = mprotect(executable_code, _code_size, PROT_READ | PROT_WRITE);
             EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "mprotect failed");
             std::memcpy(executable_code, _code_base, _code_size);
+            err = mprotect(executable_code, _code_size, PROT_EXEC);
+            EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "executable mprotect failed");
             _code_base = (char*)executable_code;
-            enable_code(IsJit);
             _is_jit = true;
+            published = true;
             _offset = (char*)code_base - _base;
          }
       }
@@ -523,6 +529,31 @@ namespace eosio { namespace vm {
             EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "mprotect failed");
          }
          page = -1;
+      }
+
+      // Experimental metered execution must zero exactly the NEW accessible
+      // pages, not all pages left by whichever contract previously used this
+      // allocator. Removed pages stay protected; alloc() always zeroes them
+      // before making their bytes visible again. Ordinary reset() is unchanged.
+      void reset_for_metered_execution(uint32_t new_pages) {
+         EOS_VM_ASSERT(new_pages <= max_pages, wasm_bad_alloc, "exceeded max number of pages");
+         if (page < 0) {
+            const auto sys_page = static_cast<std::size_t>(::sysconf(_SC_PAGESIZE));
+            int err=mprotect(raw-sys_page,sys_page,PROT_READ);
+            EOS_VM_ASSERT(err==0, wasm_bad_alloc, "mprotect failed");
+            page=0;
+         }
+         if (new_pages < static_cast<uint32_t>(page)) free<char>(page-new_pages);
+         std::memset(raw,0,page_size*page);
+         if (new_pages > static_cast<uint32_t>(page)) alloc<char>(new_pages-page);
+      }
+      void reset_for_metered_execution() {
+         if (page >= 0) {
+            const auto sys_page=static_cast<std::size_t>(::sysconf(_SC_PAGESIZE));
+            int err=mprotect(raw-sys_page,page_size*page+sys_page,PROT_NONE);
+            EOS_VM_ASSERT(err==0, wasm_bad_alloc, "mprotect failed");
+         }
+         page=-1;
       }
 
       template <typename T>

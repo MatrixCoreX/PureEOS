@@ -22,6 +22,7 @@ namespace eosio { namespace vm {
       EOS_VM_NUMERIC_OPS(EOS_VM_CREATE_ENUM)
       EOS_VM_CONVERSION_OPS(EOS_VM_CREATE_ENUM)
       EOS_VM_EXIT_OP(EOS_VM_CREATE_ENUM)
+      EOS_VM_EXECUTION_WORK_OP(EOS_VM_CREATE_ENUM)
       EOS_VM_EMPTY_OPS(EOS_VM_CREATE_ENUM)
       EOS_VM_ERROR_OPS(EOS_VM_CREATE_ENUM)
    };
@@ -44,6 +45,7 @@ namespace eosio { namespace vm {
          EOS_VM_NUMERIC_OPS(EOS_VM_CREATE_MAP)
          EOS_VM_CONVERSION_OPS(EOS_VM_CREATE_MAP)
          EOS_VM_EXIT_OP(EOS_VM_CREATE_MAP)
+         EOS_VM_EXECUTION_WORK_OP(EOS_VM_CREATE_MAP)
          EOS_VM_EMPTY_OPS(EOS_VM_CREATE_MAP)
          EOS_VM_ERROR_OPS(EOS_VM_CREATE_MAP)
       };
@@ -73,6 +75,11 @@ namespace eosio { namespace vm {
    EOS_VM_NUMERIC_OPS(EOS_VM_CREATE_TYPES)
    EOS_VM_CONVERSION_OPS(EOS_VM_CREATE_TYPES)
    EOS_VM_EXIT_OP(EOS_VM_CREATE_EXIT_TYPE)
+   // Internal IR only. The WASM parser never accepts byte 0xC1 from a contract.
+   struct execution_work_t {
+      uint64_t units = 0;
+      static constexpr uint8_t opcode = 0xC1;
+   };
    EOS_VM_EMPTY_OPS(EOS_VM_CREATE_TYPES)
    EOS_VM_ERROR_OPS(EOS_VM_CREATE_TYPES)
 
@@ -93,6 +100,7 @@ namespace eosio { namespace vm {
       EOS_VM_NUMERIC_OPS(EOS_VM_IDENTITY)
       EOS_VM_CONVERSION_OPS(EOS_VM_IDENTITY)
       EOS_VM_EXIT_OP(EOS_VM_IDENTITY)
+      EOS_VM_EXECUTION_WORK_OP(EOS_VM_IDENTITY)
       EOS_VM_EMPTY_OPS(EOS_VM_IDENTITY)
       EOS_VM_ERROR_OPS(EOS_VM_IDENTITY_END)
       >;

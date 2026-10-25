@@ -4,6 +4,7 @@
 #include <eosio/vm/constants.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <eosio/vm/execution_interface.hpp>
+#include <eosio/vm/execution_work_budget.hpp>
 #include <eosio/vm/host_function.hpp>
 #include <eosio/vm/opcodes.hpp>
 #include <eosio/vm/signals.hpp>
@@ -88,6 +89,46 @@ namespace eosio { namespace vm {
       execution_context_base() {}
       execution_context_base(module* m) : _mod(m) {}
 
+      class execution_work_binding {
+         execution_context_base& context_;
+         execution_work_budget_view previous_;
+      public:
+         execution_work_binding(execution_context_base& context, execution_work_budget_view budget)
+            : context_(context), previous_(context._execution_work) {
+            budget.charge(0); // validate before changing the active binding
+            context_._execution_work = budget;
+         }
+         execution_work_binding(const execution_work_binding&) = delete;
+         execution_work_binding& operator=(const execution_work_binding&) = delete;
+         execution_work_binding(execution_work_binding&&) = delete;
+         execution_work_binding& operator=(execution_work_binding&&) = delete;
+         ~execution_work_binding() { context_._execution_work = previous_; }
+      };
+
+      [[nodiscard]] execution_work_binding bind_execution_work_budget(execution_work_budget_view budget) {
+         return execution_work_binding(*this, budget);
+      }
+
+      void charge_execution_work(uint64_t units) { _execution_work.charge(units); }
+
+      void check_execution_work_entry() const {
+         // An exported/start function can refer directly to an IMPORT, with
+         // no generated WASM prologue at all. Validate before argument setup
+         // or native dispatch, not only on completion. Explicit bindings on
+         // otherwise unmetered code must also respect their failed state.
+         if (_mod->execution_work_metered || _execution_work.remaining || _execution_work.exhausted)
+            _execution_work.charge(0);
+      }
+
+      void check_execution_work_completion() const {
+         // A native/sync callback may catch an exhaustion exception and return
+         // directly, without another WASM block checkpoint. Such an execution
+         // must still fail, including normal exit() paths. Unmetered contexts
+         // have no binding and retain their original completion semantics.
+         if (_execution_work.remaining || _execution_work.exhausted)
+            _execution_work.charge(0);
+      }
+
       inline void initialize_globals() {
          if constexpr (IsJit) {
             return initialize_globals_impl(*_mod->jit_mod);
@@ -100,6 +141,8 @@ namespace eosio { namespace vm {
       template<typename Module>
       inline void initialize_globals_impl(const Module& mod) {
          EOS_VM_ASSERT(_globals.empty(), wasm_memory_exception, "initialize_globals called on non-empty _globals");
+         if (mod.execution_work_metered && mod.globals.size())
+            _execution_work.charge_memory(0,0,mod.globals.size());
          _globals.reserve(mod.globals.size());
          for (uint32_t i = 0; i < mod.globals.size(); i++) {
             _globals.emplace_back(mod.globals[i].init);
@@ -120,11 +163,15 @@ namespace eosio { namespace vm {
          if (pages < 0) {
             if (sz + pages < 0)
                return -1;
+            if (mod.execution_work_metered)
+               _execution_work.charge_memory(uint64_t(-int64_t(pages)));
             _wasm_alloc->free<char>(-pages);
          } else {
             if (!mod.memories.size() || _max_pages - sz < static_cast<uint32_t>(pages) ||
                 (mod.memories[0].limits.flags && (static_cast<int32_t>(mod.memories[0].limits.maximum) - sz < pages)))
                return -1;
+            if (mod.execution_work_metered)
+               _execution_work.charge_memory(uint32_t(pages));
             _wasm_alloc->alloc<char>(pages);
          }
          return sz;
@@ -153,6 +200,12 @@ namespace eosio { namespace vm {
       inline void reset(Module& mod) {
          EOS_VM_ASSERT(_mod->error == nullptr, wasm_interpreter_exception, _mod->error);
 
+         if (mod.execution_work_metered && (mod.memories.size() || mod.globals.size() || mod.data.size())) {
+            const uint64_t pages=mod.memories.size() ? mod.memories[0].limits.initial : 0;
+            _execution_work.charge_memory(pages,mod.execution_work_data_bytes,
+               uint64_t(mod.globals.size())+mod.data.size());
+         }
+
          // Reset the capacity of underlying memory used by operand stack if it is
          // greater than initial_stack_size
          _os.reset_capacity();
@@ -160,9 +213,11 @@ namespace eosio { namespace vm {
          _linear_memory = _wasm_alloc->get_base_ptr<char>();
          if(mod.memories.size()) {
             EOS_VM_ASSERT(mod.memories[0].limits.initial <= _max_pages, wasm_bad_alloc, "Cannot allocate initial linear memory.");
-            _wasm_alloc->reset(mod.memories[0].limits.initial);
+            if (mod.execution_work_metered) _wasm_alloc->reset_for_metered_execution(mod.memories[0].limits.initial);
+            else _wasm_alloc->reset(mod.memories[0].limits.initial);
          } else
-            _wasm_alloc->reset();
+            if (mod.execution_work_metered) _wasm_alloc->reset_for_metered_execution();
+            else _wasm_alloc->reset();
 
          for (uint32_t i = 0; i < mod.data.size(); i++) {
             const auto& data_seg = mod.data[i];
@@ -227,6 +282,7 @@ namespace eosio { namespace vm {
       std::error_code                 _error_code;
       operand_stack                   _os;
       std::vector<init_expr>          _globals;
+      execution_work_budget_view      _execution_work{};
    };
 
    struct jit_visitor { template<typename T> jit_visitor(T&&) {} };
@@ -312,6 +368,9 @@ namespace eosio { namespace vm {
 
       template <typename... Args>
       inline std::optional<operand_stack_elem> execute(host_type* host, jit_visitor, uint32_t func_index, Args&&... args) {
+         EOS_VM_ASSERT(uint64_t(func_index) < uint64_t(_mod->jit_mod->get_imported_functions_size())+_mod->jit_mod->functions.size(),
+                       wasm_interpreter_exception, "cannot execute function, function index out of range");
+         base_type::check_execution_work_entry();
          auto saved_host = _host;
          auto saved_os_size = get_operand_stack().size();
          auto g = scope_guard([&](){ _host = saved_host; get_operand_stack().eat(saved_os_size); });
@@ -366,9 +425,19 @@ namespace eosio { namespace vm {
                }
             }
          } catch(wasm_exit_exception&) {
+            base_type::check_execution_work_completion();
             return {};
+         } catch(const execution_work_exhausted&) {
+            throw;
+         } catch(...) {
+            // Private executors also use their own ordinary frame-exit tags.
+            // Failed budgets must take precedence before such a tag reaches
+            // an outer handler that would otherwise treat it as success.
+            base_type::check_execution_work_completion();
+            throw;
          }
 
+         base_type::check_execution_work_completion();
          if(!ft.return_count)
             return {};
          else switch (ft.return_type) {
@@ -769,8 +838,9 @@ namespace eosio { namespace vm {
 
       template <typename Visitor, typename... Args>
       inline std::optional<operand_stack_elem> execute(host_type* host, Visitor&& visitor, uint32_t func_index, Args&&... args) {
-         EOS_VM_ASSERT(func_index < std::numeric_limits<uint32_t>::max(), wasm_interpreter_exception,
-                       "cannot execute function, function not found");
+         EOS_VM_ASSERT(uint64_t(func_index) < uint64_t(_mod->get_imported_functions_size())+_mod->functions.size(), wasm_interpreter_exception,
+                       "cannot execute function, function index out of range");
+         base_type::check_execution_work_entry();
 
          auto last_last_op_index = _last_op_index;
 
@@ -793,16 +863,24 @@ namespace eosio { namespace vm {
          push_args(std::forward<Args>(args)...);
          push_call<true>(func_index);
 
-         if (func_index < _mod->get_imported_functions_size()) {
-            _rhf(_state.host, get_interface(), _mod->import_functions[func_index]);
-         } else {
-            _state.pc = _mod->get_function_pc(func_index);
-            setup_locals(func_index);
-            vm::invoke_with_signal_handler([&]() {
-               execute(std::forward<Visitor>(visitor));
-            }, &handle_signal, _mod->allocator, base_type::get_wasm_allocator());
+         try {
+            if (func_index < _mod->get_imported_functions_size()) {
+               _rhf(_state.host, get_interface(), _mod->import_functions[func_index]);
+            } else {
+               _state.pc = _mod->get_function_pc(func_index);
+               setup_locals(func_index);
+               vm::invoke_with_signal_handler([&]() {
+                  execute(std::forward<Visitor>(visitor));
+               }, &handle_signal, _mod->allocator, base_type::get_wasm_allocator());
+            }
+         } catch(const execution_work_exhausted&) {
+            throw;
+         } catch(...) {
+            base_type::check_execution_work_completion();
+            throw;
          }
 
+         base_type::check_execution_work_completion();
          if (_mod->get_function_type(func_index).return_count && !_state.exiting) {
             return pop_operand();
          } else {
@@ -845,6 +923,8 @@ namespace eosio { namespace vm {
 
       inline void setup_locals(uint32_t index) {
          const auto& fn = _mod->code[index - _mod->get_imported_functions_size()];
+         if (_mod->execution_work_metered)
+            base_type::charge_execution_work(fn.execution_entry_work);
          for (uint32_t i = 0; i < fn.locals.size(); i++) {
             for (uint32_t j = 0; j < fn.locals[i].count; j++)
                switch (fn.locals[i].type) {
@@ -886,6 +966,7 @@ namespace eosio { namespace vm {
             EOS_VM_NUMERIC_OPS(CREATE_TABLE_ENTRY)
             EOS_VM_CONVERSION_OPS(CREATE_TABLE_ENTRY)
             EOS_VM_EXIT_OP(CREATE_TABLE_ENTRY)
+            EOS_VM_EXECUTION_WORK_OP(CREATE_TABLE_ENTRY)
             EOS_VM_EMPTY_OPS(CREATE_TABLE_ENTRY)
             EOS_VM_ERROR_OPS(CREATE_TABLE_ENTRY)
             &&__ev_last
@@ -909,6 +990,7 @@ namespace eosio { namespace vm {
              EOS_VM_NUMERIC_OPS(CREATE_LABEL);
              EOS_VM_CONVERSION_OPS(CREATE_LABEL);
              EOS_VM_EXIT_OP(CREATE_EXIT_LABEL);
+             EOS_VM_EXECUTION_WORK_OP(CREATE_LABEL);
              EOS_VM_EMPTY_OPS(CREATE_EMPTY_LABEL);
              EOS_VM_ERROR_OPS(CREATE_LABEL);
              __ev_last:

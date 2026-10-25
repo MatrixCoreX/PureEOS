@@ -195,6 +195,10 @@ namespace eosio { namespace vm {
          ctx.owns  = from.ctx.owns;
          initial_max_call_depth = from.initial_max_call_depth;
          initial_max_pages      = from.initial_max_pages;
+         // Only explicit immutable metadata policies opt into sharing. Per-run
+         // counters must remain in the execution context, never in this sidecar.
+         if constexpr (requires { debug.share_from(from.debug); })
+            debug.share_from(from.debug);
       }
 
       void set_context(context_t* ctx_ptr) {
