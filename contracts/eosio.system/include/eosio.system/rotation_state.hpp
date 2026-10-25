@@ -60,6 +60,8 @@ using rotation_candidates = eosio::multi_index<"rotcands"_n, rotation_candidate,
    eosio::indexed_by<"bydirty"_n, eosio::const_mem_fun<rotation_candidate, uint64_t, &rotation_candidate::by_dirty>>>;
 
 // Fresh-chain v2 schema. stage: 0 idle, 1 submitted, 2 observing, 3 key-only.
+// Submitted with incoming==0 and outgoing!=0 is a banned-member eviction:
+// complete only after BOTH native policies match; no entrant observation.
 struct [[eosio::table("rotation"), eosio::contract("eosio.system")]] rotation_info {
    uint32_t version = 2;
    uint8_t stage = 0;

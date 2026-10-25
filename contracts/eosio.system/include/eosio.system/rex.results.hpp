@@ -14,7 +14,7 @@ using eosio::name;
  * An inline convenience action does not have any effect, however,
  * its data includes the result of the parent action and appears in its trace.
  */
-class [[eosio::contract("rex.results")]] rex_results : eosio::contract {
+class [[eosio::contract("rex.results")]] rex_results : public eosio::contract {
    public:
 
       using eosio::contract::contract;
