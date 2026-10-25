@@ -3,9 +3,11 @@
 PureEOS 是独立维护的 C++ 新链项目，使用原生 Savanna 最终确认，支持不同交易的
 并行合约执行和按区块顺序提交状态。配套工具链为 **AIC CDT 1.0.0**。
 
-当前首个并行版本仍在验收，尚未联合正式发布。默认开发分支、历史程序和候选包
-不代表稳定版。实际进展见[验收状态](docs/parallel-execution/PX7_V1_CURRENT_STATUS.txt)
-和[发布清单](docs/parallel-execution/PX7_V1_RELEASE_CHECKLIST.txt)。
+本标签为 **PureEOS 2.0.0，并行首版**，与 **AIC CDT 1.0.0** 配套发行。
+[联合发行页](https://github.com/MatrixCoreX/PureEOS/releases/tag/v2.0.0)提供运行包、
+CDT SDK及源码、匹配的系统合约源码、验收摘要和 SHA256SUMS。
+当前验收范围见[验收状态](docs/parallel-execution/PX7_V1_CURRENT_STATUS.txt)和
+[发布清单](docs/parallel-execution/PX7_V1_RELEASE_CHECKLIST.txt)；历史候选包保留原身份。
 
 ## 并行执行
 
@@ -23,8 +25,8 @@ PureEOS 是独立维护的 C++ 新链项目，使用原生 Savanna 最终确认�
 
 | 环境 | 已验证范围 |
 |---|---|
-| Ubuntu 26.04 | 原生Release构建、生产者相关组件及恢复检查已有记录；最新远程原生构建仍在执行。 |
-| Ubuntu 26.10 | 当前源码节点、工具、核心回归、AIC CDT和系统合约集成，以及两VM上的30→40候选轮岗与故障拉黑已验证。整机恢复、完整插桩及真实24h领奖继续补测。 |
+| Ubuntu 26.04 | 当前源码四工具 Release 构建和四个原生组件检查通过。 |
+| Ubuntu 26.10 | 当前源码四工具构建、全部启用的原生功能、显式双引擎并行矩阵、SDK/合约和真实进程恢复通过。 |
 
 容器检查覆盖相应用户空间；各二进制包按其实际构建和运行环境标注，不宣称通用
 Linux可移植性。其他系统暂不属于首版验收范围。详细记录见
@@ -45,16 +47,17 @@ sudo apt-get install -y build-essential cmake ninja-build git openssh-client \
 ```bash
 git clone https://github.com/MatrixCoreX/PureEOS.git
 cd PureEOS
-# 选择对应发行说明给出的准确ref；当前没有已宣布的稳定标签。
+git checkout v2.0.0
 git submodule update --init --recursive --jobs=4
 python3 -I -B tools/prepare_vm_vendor.py --apply
 python3 -I -B tools/prepare_vm_vendor.py --check
 ```
 
 VM固定基线由独立公开源码镜像MatrixCoreX/AIC-VM提供，提交和继承许可均保持不变。
-已在禁用凭据的独立目录检出该提交及两个嵌套依赖，并重现三份已测VM补丁；
-整个节点的匿名递归检出仍须单独核验。完整源码归档可只读检查已准备的vendor，
-不把一个源码清单摘要伪装成Git提交。
+当前 CI 已在不提供私有部署钥的情况下从空目录递归检出全部188个固定模块，
+并验证四个 VM 头文件的补丁。GitHub 自动生成的源码压缩包不包含子模块；
+从源码编译请使用上述 Git 检出和 vendor 准备步骤。运行包的编译身份是来源清单
+摘要，发行 Git 提交另行记录，两者的文档/交付脚本差异见来源对应报告。
 
 现代构建入口使用独立目录，不替换已有节点或安装CDT：
 
@@ -70,8 +73,28 @@ bash tools/ubuntu-modern-build.sh --test --jobs=2
 
 此配置明确`ENABLE_OC=OFF`，无需另装LLVM开发包；编译合约需要匹配的AIC CDT SDK。
 首次安装、签名钥、资源初始化及矿工加入请按
-[候选使用说明](docs/parallel-execution/PX7_V1_CANDIDATE_GUIDE.txt)执行。
+[使用说明](docs/parallel-execution/PX7_V1_CANDIDATE_GUIDE.txt)执行。
 默认测试私钥和测试资金不用于正式创世；构建脚本不会自动创建或升级现用链。
+
+## 使用发行包
+
+运行包面向 Ubuntu 26.10 x86_64 用户空间，不捆绑主机动态库。
+下载运行包和 SHA256SUMS 后，在新目录中核验和解压：
+
+```bash
+sha256sum -c SHA256SUMS --ignore-missing
+mkdir pureeos-v2.0.0
+tar -xzf pureeos-v2.0.0-ubuntu26.10-x86_64.tar.gz -C pureeos-v2.0.0
+cd pureeos-v2.0.0
+sha256sum -c SHA256SUMS
+./bin/nodeos --full-version
+```
+
+运行包包含 nodeos、cleos、keosd、helios-util 和匹配的系统合约。
+CDT SDK 解压后以 `aic-cdt-1.0.0/bin` 加入 PATH，并把 SDK 根目录传给
+`CMAKE_PREFIX_PATH`；安装目录可以含空格。SDK 内也有独立 SHA256SUMS。
+本版修复了参数封装读写、零额领奖、线程CPU计费和VM函数入口下标检查。
+确定性执行工作计量/容量协议在独立分支开发，不包含在本版。
 
 ## 系统规则与恢复
 
@@ -80,7 +103,10 @@ bash tools/ubuntu-modern-build.sh --test --jobs=2
 要求全部新链功能，旧配置不能静默生成旧规则合约。
 
 非正常停机后若提示数据库dirty，先保留区块、finalizer安全数据和配置，按实际
-日志选择原生重放流程；不要手工清除finalizer安全目录。整机补测结果以验证记录为准。
+日志选择原生重放流程；不要手工清除finalizer安全目录。当前版本已完成串行和
+4-worker各三条新链的异常停止、重启与重放检查。历史40进程轮岗、真实主机停启、
+限定私有worker范围的ASan/UBSan和真实24h领奖证明保留各自的旧程序/合约摘要；
+它们不冒充本版新程序重新运行的同名整机或24h任务。
 
 ## 许可
 
