@@ -1,10 +1,25 @@
-# Define the version metadata by default, in case `git` cannot be found.
-set(_VERSION_MAJOR_  "unknown")
-set(_VERSION_MINOR_  "")
-set(_VERSION_PATCH_  "")
-set(_VERSION_SUFFIX_ "")
-set(_VERSION_HASH_   "")
-set(_VERSION_DIRTY_  "")
+# Exported source still has a real project version. Its identity must not be
+# misrepresented as a Git commit, or silently discarded as "unknown".
+set(PUREEOS_SOURCE_ID "" CACHE STRING "SHA256 of the verified exported-source manifest")
+if(PUREEOS_SOURCE_ID)
+   string(LENGTH "${PUREEOS_SOURCE_ID}" _source_id_length)
+   if(NOT _source_id_length EQUAL 64 OR NOT PUREEOS_SOURCE_ID MATCHES "^[0-9a-f]+$")
+      message(FATAL_ERROR "PUREEOS_SOURCE_ID must be a lowercase 64-character SHA256")
+   endif()
+   if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+      message(FATAL_ERROR "PUREEOS_SOURCE_ID is for exported source only; Git checkouts use their real commit")
+   endif()
+   set(_VERSION_HASH_ "${PUREEOS_SOURCE_ID}")
+   set(_VERSION_SOURCE_LABEL_ "src-")
+else()
+   set(_VERSION_HASH_ "")
+   set(_VERSION_SOURCE_LABEL_ "unidentified-source")
+endif()
+set(_VERSION_MAJOR_  "${VERSION_MAJOR}")
+set(_VERSION_MINOR_  "${VERSION_MINOR}")
+set(_VERSION_PATCH_  "${VERSION_PATCH}")
+set(_VERSION_SUFFIX_ "${VERSION_SUFFIX}")
+set(_VERSION_DIRTY_  "false")
 
 # Construct the library target.
 add_library(

@@ -430,4 +430,63 @@ BOOST_AUTO_TEST_CASE( unapplied_transaction_queue_incoming_count ) try {
 
 } FC_LOG_AND_RETHROW() /// unapplied_transaction_queue_incoming_count
 
+BOOST_AUTO_TEST_CASE(rejected_insert_preserves_contents_counters_and_callbacks) {
+   unapplied_transaction_queue q;
+   auto a = unique_trx_meta_data(), b = unique_trx_meta_data();
+   const auto cost = [](const auto& trx) {
+      return 2 * (uint64_t(trx->packed_trx()->get_unprunable_size()) + trx->packed_trx()->get_prunable_size()) + sizeof(*trx);
+   };
+   unsigned calls = 0;
+   q.set_max_transaction_queue_size(cost(a) + cost(b)); // exact boundary stays rejected
+   q.add_incoming(a, true, false, [&](auto) { ++calls; });
+   for (unsigned retry = 0; retry < 3; ++retry) {
+      BOOST_CHECK_THROW(q.add_incoming(b, false, false, [&](auto) { ++calls; }), tx_resource_exhaustion);
+      BOOST_CHECK_EQUAL(q.size(), 1u);
+      BOOST_CHECK_EQUAL(q.incoming_size(), 1u);
+      BOOST_CHECK(!q.get_trx(b->id()));
+   }
+   BOOST_CHECK_EQUAL(calls, 0u);
+   q.erase(q.begin());
+   BOOST_CHECK_EQUAL(q.incoming_size(), 0u);
+   BOOST_CHECK_NO_THROW(q.add_incoming(b, false, false, [&](auto) { ++calls; }));
+   BOOST_CHECK_EQUAL(q.size(), 1u);
+   BOOST_CHECK_EQUAL(q.incoming_size(), 1u);
+   q.clear();
+   BOOST_CHECK_EQUAL(q.incoming_size(), 0u);
+   q.set_max_transaction_queue_size(cost(a));
+   BOOST_CHECK_THROW(q.add_incoming(a, true, false, {}), tx_resource_exhaustion);
+   BOOST_CHECK(q.empty());
+   q.set_max_transaction_queue_size(cost(a) + 1);
+   BOOST_CHECK_NO_THROW(q.add_incoming(a, true, false, {}));
+}
+
+BOOST_AUTO_TEST_CASE(clear_reuses_capacity_and_full_queue_keeps_duplicate_rules) {
+   unapplied_transaction_queue q;
+   auto a = unique_trx_meta_data(), b = unique_trx_meta_data();
+   const uint64_t size = 2 * (uint64_t(a->packed_trx()->get_unprunable_size()) + a->packed_trx()->get_prunable_size()) + sizeof(*a);
+   q.set_max_transaction_queue_size(size + 1);
+   unsigned calls = 0;
+   for (unsigned i = 0; i < 3; ++i) {
+      q.add_incoming(a, false, false, [&](auto) { ++calls; });
+      q.add_incoming(a, true, false, [&](auto) { ++calls; }); // same metadata: no-op
+      auto alias = transaction_metadata::create_no_recover_keys(a->packed_trx(), transaction_metadata::trx_type::input);
+      q.add_incoming(alias, true, false, [&](const auto& result) {
+         ++calls;
+         BOOST_REQUIRE(std::holds_alternative<fc::exception_ptr>(result));
+         BOOST_CHECK_EQUAL(std::get<fc::exception_ptr>(result)->code(), tx_duplicate::code_value);
+      });
+      BOOST_CHECK_EQUAL(q.size(), 1u);
+      BOOST_CHECK_EQUAL(q.incoming_size(), 1u);
+      q.clear();
+      BOOST_CHECK_EQUAL(q.incoming_size(), 0u);
+   }
+   BOOST_CHECK_EQUAL(calls, 3u);
+   q.add_forked(b); // forked entries also count toward the same byte budget
+   BOOST_CHECK_EQUAL(q.incoming_size(), 0u);
+   BOOST_CHECK_THROW(q.add_incoming(a, false, false, {}), tx_resource_exhaustion);
+   BOOST_CHECK_EQUAL(q.size(), 1u);
+   q.clear();
+   BOOST_CHECK_NO_THROW(q.add_incoming(a, false, false, {}));
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -518,8 +518,8 @@ BOOST_FIXTURE_TEST_CASE(existing_row_resize_and_payer_changes_refresh_old_iterat
    }
    const auto result = state.seal();
    BOOST_REQUIRE_EQUAL(result.writes().size(), values.size());
-   BOOST_CHECK(result.writes()[1].payer == "carol"_n); // same_payer follows the private switch
-   BOOST_CHECK(result.writes()[4].payer == "bob"_n);
+   BOOST_CHECK(result.primary_write(1).payer == "carol"_n); // same_payer follows the private switch
+   BOOST_CHECK(result.primary_write(4).payer == "bob"_n);
    BOOST_CHECK(result.matches_base_reads(view, [] {}));
    BOOST_CHECK_EQUAL(view.locate_primary({accounts, primary_query_kind::find, 1}).row->value_size, 3u);
    BOOST_CHECK(view.locate_primary({accounts, primary_query_kind::find, 1}).row->payer == "bob"_n);
@@ -715,10 +715,10 @@ BOOST_FIXTURE_TEST_CASE(overlay_reads_own_writes_retains_order_and_does_not_writ
    BOOST_CHECK(result.base() == base);
    BOOST_CHECK_EQUAL(result.read_tables().size(), 1u);
    BOOST_REQUIRE_EQUAL(result.writes().size(), 3u);
-   BOOST_CHECK_EQUAL(result.writes()[0].primary_key, 1u);
-   BOOST_CHECK_EQUAL(result.writes()[1].primary_key, 2u);
-   BOOST_CHECK_EQUAL(result.writes()[2].primary_key, 1u);
-   BOOST_CHECK(result.writes()[0].value == std::vector<char>(3, 'c'));
+   BOOST_CHECK_EQUAL(result.primary_write(0).primary_key, 1u);
+   BOOST_CHECK_EQUAL(result.primary_write(1).primary_key, 2u);
+   BOOST_CHECK_EQUAL(result.primary_write(2).primary_key, 1u);
+   BOOST_CHECK(result.primary_write(0).value == std::vector<char>(3, 'c'));
    BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
    BOOST_CHECK_THROW(overlay.read_table(accounts), primary_state_invalid_attempt);
    BOOST_CHECK_THROW(overlay.update_existing(accounts, 1, name{}, std::string("fff")), primary_state_invalid_attempt);
@@ -757,9 +757,9 @@ BOOST_FIXTURE_TEST_CASE(lifecycle_create_erase_recreate_keeps_owned_generations_
    BOOST_CHECK_EQUAL(cursor.get(second, {}), 5);
    const auto result = state.seal();
    BOOST_REQUIRE_EQUAL(result.writes().size(), 5u);
-   BOOST_CHECK(result.writes()[0].operation == primary_operation::store);
-   BOOST_CHECK(result.writes()[1].operation == primary_operation::update);
-   BOOST_CHECK(result.writes()[2].operation == primary_operation::remove);
+   BOOST_CHECK(result.primary_write(0).operation == primary_operation::store);
+   BOOST_CHECK(result.primary_write(1).operation == primary_operation::update);
+   BOOST_CHECK(result.primary_write(2).operation == primary_operation::remove);
    BOOST_CHECK(result.matches_base_reads(view, [] {}));
    BOOST_CHECK(!view.read_table(accounts));
 }
@@ -1174,6 +1174,140 @@ BOOST_FIXTURE_TEST_CASE(sparse_capture_limits_and_metadata_only_requests_are_fai
    BOOST_CHECK_EQUAL(read(primary_query_kind::find, 1).row->value.size(), 3u);
 }
 
+// Exercise the controller's joined-discovery capture contract, not a reusable
+// cache across canonical writes. The old returned versions stay worker-safe.
+BOOST_FIXTURE_TEST_CASE(joined_capture_reuses_reads_without_extending_old_versions, view_fixture) {
+   put(1, std::string(4096, 'a')); put(9, std::string(4096, 'b'));
+   const primary_query first{accounts, primary_query_kind::find, 1};
+   const primary_query second{accounts, primary_query_kind::find, 9};
+   frozen_primary_capture_session capture(view);
+   const auto a = capture.capture({}, std::array{first}, {});
+   const auto b = capture.capture({}, std::array{first, second}, {});
+   BOOST_CHECK_THROW(a->locate_primary(second), primary_state_missing);
+   BOOST_CHECK(b->read_primary(second, 4096) == reference_read(db, second));
+   BOOST_CHECK(a->read_primary(first, 4096) == b->read_primary(first, 4096));
+   const auto c = capture.capture({}, std::array{first, second}, {});
+   BOOST_CHECK_EQUAL(c->row_count(), 2u);
+   BOOST_CHECK_EQUAL(c->value_bytes(), 8192u);
+   BOOST_CHECK_EQUAL(capture.stats().tables_read, 1u);
+   BOOST_CHECK_EQUAL(capture.stats().primary_queries_read, 2u);
+   BOOST_CHECK_EQUAL(capture.stats().primary_rows_copied, 2u); // not five copies/20 KiB
+   BOOST_CHECK(std::async(std::launch::async, [a, b, first, second] {
+      return a->read_primary(first, 4096) == b->read_primary(first, 4096) &&
+             b->read_primary(second, 4096).row->value.size() == 4096;
+   }).get());
+}
+
+BOOST_FIXTURE_TEST_CASE(joined_capture_preserves_negative_reads_and_unknown_queries, view_fixture) {
+   put(1); put(9);
+   const table_key absent{"token"_n, "missing"_n, "accounts"_n};
+   const primary_query negative{accounts, primary_query_kind::find, 5};
+   const primary_query range{accounts, primary_query_kind::lower_bound, 5};
+   frozen_primary_capture_session capture(view);
+   const auto a = capture.capture(std::array{absent}, std::array{negative}, {});
+   const auto b = capture.capture({}, std::array{range}, {});
+   BOOST_CHECK(!b->locate_primary(negative).row);
+   BOOST_CHECK(!b->locate_primary({absent, primary_query_kind::last, 123}).table);
+   BOOST_CHECK_EQUAL(b->locate_primary(range).row->primary_key, 9u);
+   BOOST_CHECK_THROW(a->locate_primary(range), primary_state_missing);
+   BOOST_CHECK_THROW(b->locate_primary({accounts, primary_query_kind::find, 6}), primary_state_missing);
+   BOOST_CHECK_THROW(b->locate_primary({accounts, primary_query_kind::previous, 9}), primary_state_missing);
+}
+
+BOOST_FIXTURE_TEST_CASE(joined_capture_budgets_cover_the_union_not_only_each_extension, view_fixture) {
+   put(1, "abc"); put(9, "def");
+   const primary_query a{accounts, primary_query_kind::find, 1};
+   const primary_query b{accounts, primary_query_kind::find, 9};
+   const primary_query negative{accounts, primary_query_kind::find, 7};
+   for (int boundary = 0; boundary != 3; ++boundary) {
+      auto limits = primary_snapshot_limits{1, 2, 6, 2, 0};
+      if (boundary == 0) limits.max_rows = 1;
+      if (boundary == 1) limits.max_value_bytes = 5;
+      if (boundary == 2) limits.max_queries = 1;
+      frozen_primary_capture_session capture(view);
+      const auto first = capture.capture({}, std::array{a}, {}, limits);
+      BOOST_CHECK_THROW(capture.capture({}, std::array{b}, {}, limits), primary_state_budget_exceeded);
+      BOOST_CHECK_EQUAL(first->row_count(), 1u);
+      BOOST_CHECK_THROW(first->locate_primary(b), primary_state_missing);
+      BOOST_CHECK(capture.capture({}, std::array{a}, {}, limits)->read_primary(a, 3) == reference_read(db, a));
+   }
+   frozen_primary_capture_session capture(view);
+   capture.capture({}, std::array{a}, {}, {1, 2, 6, 2, 1}, {}, std::array{"alice"_n});
+   BOOST_CHECK_THROW(capture.capture({}, {}, {}, {1, 2, 6, 2, 1}, {}, std::array{"bob"_n}), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(capture.capture(std::array{table_key{"other"_n, "alice"_n, "accounts"_n}}, {}, {},
+                                    {1, 2, 6, 2, 1}), primary_state_budget_exceeded);
+   capture.capture({}, std::array{negative}, {}, {1, 2, 6, 2, 1});
+   BOOST_CHECK_THROW(capture.capture({}, std::array{b}, {}, {1, 2, 6, 2, 1}), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(capture.capture({}, {}, {}, {0, 2, 6, 2, 1}), primary_state_budget_exceeded);
+}
+
+BOOST_FIXTURE_TEST_CASE(joined_capture_cancellation_and_wrong_thread_do_not_publish_partial_state, view_fixture) {
+   put(1); put(9);
+   const primary_query a{accounts, primary_query_kind::find, 1};
+   const primary_query b{accounts, primary_query_kind::find, 9};
+   frozen_primary_capture_session capture(view);
+   const auto first = capture.capture({}, std::array{a}, {});
+   unsigned checkpoints = 0;
+   BOOST_CHECK_THROW(capture.capture({}, std::array{b}, {}, {}, [&] {
+      if (++checkpoints == 2) throw std::runtime_error("capture interrupted");
+   }), std::runtime_error);
+   const auto retained = capture.capture({}, {}, {});
+   BOOST_CHECK_THROW(retained->locate_primary(b), primary_state_missing);
+   BOOST_CHECK_EQUAL(retained->row_count(), 1u);
+   BOOST_CHECK(std::async(std::launch::async, [&] {
+      try { capture.capture({}, {}, {}); } catch (const state_view_wrong_thread&) { return true; }
+      return false;
+   }).get());
+   BOOST_CHECK(std::async(std::launch::async, [&] {
+      try { capture.stats(); } catch (const state_view_wrong_thread&) { return true; }
+      return false;
+   }).get());
+   const auto second = capture.capture({}, std::array{b}, {});
+   BOOST_CHECK_THROW(first->locate_primary(b), primary_state_missing);
+   BOOST_CHECK(second->read_primary(b, 5) == reference_read(db, b));
+}
+
+BOOST_FIXTURE_TEST_CASE(joined_capture_secondary_and_primary_share_union_limits_and_immutable_versions, view_fixture) {
+   const auto& t = table();
+   put(1, "abc"); put(9, "def");
+   for (uint64_t key : {1u, 9u}) db.create<index64_object>([&](auto& row) {
+      row.t_id = t.id; row.primary_key = key; row.secondary_key = 12; row.payer = "alice"_n;
+   });
+   const primary_query primary{accounts, primary_query_kind::find, 1};
+   const secondary_query first{accounts, secondary_query_kind::find_secondary, uint64_t{12}, 0};
+   const secondary_query next{accounts, secondary_query_kind::next, uint64_t{12}, 1};
+   const primary_snapshot_limits exact{1, 3, 19, 3, 0};
+   frozen_primary_capture_session capture(view);
+   const auto a = capture.capture({}, std::array{primary}, std::array{first}, exact);
+   const auto b = capture.capture({}, std::array{primary}, std::array{first, next}, exact);
+   BOOST_CHECK_EQUAL(b->read_secondary(first).row->primary_key, 1u);
+   BOOST_CHECK_EQUAL(b->read_secondary(next).row->primary_key, 9u);
+   BOOST_CHECK_THROW(a->read_secondary(next), primary_state_missing);
+   BOOST_CHECK_EQUAL(b->row_count(), 3u);
+   BOOST_CHECK_EQUAL(b->value_bytes(), 19u);
+   BOOST_CHECK_EQUAL(capture.stats().primary_rows_copied, 1u);
+   BOOST_CHECK_EQUAL(capture.stats().secondary_queries_read, 2u);
+   BOOST_CHECK_EQUAL(capture.stats().tables_read, 1u);
+   BOOST_CHECK_THROW(capture.capture({}, std::array{primary_query{accounts, primary_query_kind::find, 9}}, {}, exact),
+                     primary_state_budget_exceeded);
+}
+
+BOOST_FIXTURE_TEST_CASE(new_capture_session_observes_current_prefix_and_undo_not_stale_balances, view_fixture) {
+   const primary_query query{accounts, primary_query_kind::find, 1};
+   put(1, "old");
+   std::shared_ptr<const frozen_primary_state> old;
+   { frozen_primary_capture_session capture(view); old = capture.capture({}, std::array{query}, {}); }
+   auto undo = db.start_undo_session(true);
+   put(1, "new");
+   std::shared_ptr<const frozen_primary_state> changed;
+   { frozen_primary_capture_session capture(view); changed = capture.capture({}, std::array{query}, {}); }
+   BOOST_CHECK(changed->read_primary(query, 3) == reference_read(db, query));
+   BOOST_CHECK(old->read_primary(query, 3) != changed->read_primary(query, 3));
+   undo.undo();
+   frozen_primary_capture_session after_undo(view);
+   BOOST_CHECK(after_undo.capture({}, std::array{query}, {})->read_primary(query, 3) == old->read_primary(query, 3));
+}
+
 BOOST_FIXTURE_TEST_CASE(overlay_budget_failure_cannot_be_sealed, view_fixture) {
    put(1, "abc");
    const std::array keys{accounts};
@@ -1247,7 +1381,7 @@ BOOST_FIXTURE_TEST_CASE(four_workers_use_private_overlays_while_source_changes, 
    for (unsigned i = 0; i < workers.size(); ++i) {
       const auto result = workers[i].get();
       BOOST_REQUIRE_EQUAL(result.writes().size(), 100u);
-      BOOST_CHECK(result.writes().back().value == std::vector<char>(8, char('a' + i)));
+      BOOST_CHECK(require_primary_mutation(result.writes().back()).value == std::vector<char>(8, char('a' + i)));
       BOOST_CHECK_EQUAL(result.read_tables().size(), 1u);
    }
    BOOST_CHECK_EQUAL(base->locate_primary({accounts, primary_query_kind::find, 1}).row->value_size, 8u);
@@ -1284,4 +1418,108 @@ BOOST_FIXTURE_TEST_CASE(random_private_updates_match_independent_serial_database
    BOOST_CHECK_EQUAL(result.read_tables().size(), 3u);
 }
 
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_primary_isolation_tests)
+BOOST_FIXTURE_TEST_CASE(owned_range_row_proves_only_its_positive_primary_point, view_fixture) {
+   put(1, "one"); put(7, "abc"); put(9, "end");
+   const primary_query range{accounts, primary_query_kind::lower_bound, 5};
+   const primary_query point{accounts, primary_query_kind::find, 7};
+   const auto base = frozen_primary_state::capture_queries(view, {}, std::array{range}, {1, 1, 3, 1});
+   const auto expected = view.read_primary(point, 3);
+   BOOST_CHECK_EQUAL(base->row_count(), 1u);
+   BOOST_CHECK_EQUAL(base->value_bytes(), 3u);
+   // Even a logically derivable negative/range answer is outside this candidate.
+   for (const auto& unknown : std::array{
+         primary_query{accounts, primary_query_kind::find, 6},
+         primary_query{accounts, primary_query_kind::find, 9},
+         primary_query{accounts, primary_query_kind::upper_bound, 7},
+         primary_query{accounts, primary_query_kind::lower_bound, 7},
+         primary_query{accounts, primary_query_kind::previous, 7},
+         primary_query{table_key{"token"_n, "bob"_n, "accounts"_n}, primary_query_kind::find, 7}})
+      BOOST_CHECK_THROW(base->locate_primary(unknown), primary_state_missing);
+   BOOST_REQUIRE_NO_THROW(base->read_primary(point, 3));
+   BOOST_CHECK(base->read_primary(point, 3) == expected);
+   primary_state_overlay overlay(base);
+   primary_overlay_cursor cursor(overlay, "token"_n);
+   const auto iterator = cursor.lower_bound(accounts, 5);
+   std::array<char, 3> bytes{};
+   BOOST_CHECK_EQUAL(cursor.get(iterator, bytes), 3);
+   BOOST_CHECK(std::string(bytes.begin(), bytes.end()) == "abc");
+   const auto result = overlay.seal();
+   BOOST_CHECK_EQUAL(result.read_queries().size(), 2u); // original range AND derived point
+   BOOST_CHECK(result.read_queries().contains(point));
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   put(9, "new"); // unrelated same-sized row update is not a point conflict
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   put(7, "xyz");
+   BOOST_CHECK(!result.matches_base_reads(view, [] {}));
+   BOOST_CHECK(base->read_primary(point, 3) == expected);
+   put(7, "abc");
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   erase(7); put(7, "abc"); // same key/value/count, different row generation
+   BOOST_CHECK(!result.matches_base_reads(view, [] {}));
+   BOOST_CHECK(base->read_primary(point, 3) == expected);
+}
+
+BOOST_FIXTURE_TEST_CASE(derived_positive_point_still_consumes_overlay_query_budget, view_fixture) {
+   put(7, "abc");
+   const primary_query range{accounts, primary_query_kind::lower_bound, 5};
+   const auto base = frozen_primary_state::capture_queries(view, {}, std::array{range}, {1, 1, 3, 1});
+   primary_overlay_limits limits; limits.max_read_queries = 1;
+   primary_state_overlay overlay(base, limits);
+   BOOST_REQUIRE_NO_THROW(overlay.locate_primary({accounts, primary_query_kind::find, 7}));
+   BOOST_CHECK_THROW(overlay.locate_primary(range), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(overlay.seal(), primary_state_invalid_attempt);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_primary_isolation_tests)
+BOOST_FIXTURE_TEST_CASE(derived_primary_point_observes_private_update_remove_and_recreation, view_fixture) {
+   put(7, "abc"); put(9, "tail"); // keep the original table alive after removal
+   const primary_query range{accounts, primary_query_kind::lower_bound, 5};
+   const primary_query point{accounts, primary_query_kind::find, 7};
+   const auto base = frozen_primary_state::capture_queries(view, {}, std::array{range}, {1, 1, 3, 1});
+   const auto original = view.read_primary(point, 3);
+   BOOST_REQUIRE(original.row);
+   primary_state_overlay overlay(base);
+
+   // Only the range was captured; every write below must still observe and
+   // record the derived exact point before consulting the private journal.
+   BOOST_REQUIRE_NO_THROW(overlay.update_existing(accounts, 7, "carol"_n, std::string("longer")));
+   auto found = overlay.read_primary(point, 6);
+   BOOST_REQUIRE(found.row);
+   BOOST_CHECK(found.row->value == std::vector<char>({'l', 'o', 'n', 'g', 'e', 'r'}));
+   BOOST_CHECK(found.row->payer == "carol"_n);
+   BOOST_CHECK_EQUAL(found.row->object_id, original.row->object_id);
+   overlay.remove(accounts, 7);
+   found = overlay.read_primary(point, 6);
+   BOOST_REQUIRE(found.table);
+   BOOST_CHECK(!found.row);
+   BOOST_CHECK_EQUAL(found.table->count, original.table->count - 1);
+   overlay.store(accounts, 7, "alice"_n, std::string("new"));
+   found = overlay.read_primary(point, 3);
+   BOOST_REQUIRE(found.row);
+   BOOST_CHECK_LT(found.row->object_id, 0);
+   BOOST_CHECK(found.row->payer == "alice"_n);
+   BOOST_CHECK_EQUAL(found.table->count, original.table->count);
+   const auto recreated_id = found.row->object_id;
+   overlay.update_existing(accounts, 7, name{}, {});
+   found = overlay.read_primary(point, 0);
+   BOOST_REQUIRE(found.row);
+   BOOST_CHECK(found.row->value.empty());
+   BOOST_CHECK_EQUAL(found.row->object_id, recreated_id);
+   BOOST_CHECK(found.row->payer == "alice"_n); // same_payer sees the recreated row
+
+   const auto result = overlay.seal();
+   BOOST_CHECK_EQUAL(result.writes().size(), 4u);
+   BOOST_CHECK_EQUAL(result.read_queries().size(), 1u);
+   BOOST_CHECK(result.read_queries().contains(point));
+   BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   BOOST_CHECK(view.read_primary(point, 3) == original); // no canonical write
+   BOOST_CHECK(base->read_primary(point, 3) == original); // no frozen-state mutation
+   put(7, "xyz");
+   BOOST_CHECK(!result.matches_base_reads(view, [] {}));
+   BOOST_CHECK(base->read_primary(point, 3) == original);
+}
 BOOST_AUTO_TEST_SUITE_END()

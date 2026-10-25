@@ -104,6 +104,65 @@ struct reward_fixture : sequential_rotation_fixture {
 
 BOOST_AUTO_TEST_SUITE(pureeos_reward_halving_tests)
 
+BOOST_AUTO_TEST_CASE(permanently_banned_producer_can_claim_old_unpaid_blocks_but_not_new_rewards) {
+   sequential_rotation_fixture f(21, true);
+   f.completed(21);
+   const auto victim = f.nodes[0];
+   const auto unpaid = [&] { return f.row("producersv2"_n, victim.to_uint64_t())["unpaid_blocks"].as_uint64(); };
+   const auto global = [&] { return f.row("globalv2"_n, "globalv2"_n.to_uint64_t()); };
+   const auto balance = [&](name owner) {
+      return reward_fixture::units(f.row("accounts"_n, symbol::from_string("4,SYS").to_symbol_code().value,
+          owner, "eosio.token"_n)["balance"]);
+   };
+   const auto old_blocks = unpaid();
+   BOOST_REQUIRE_GT(old_blocks, 0u);
+   const auto old_balance = balance(victim);
+   f.online.erase(std::find(f.online.begin(), f.online.end(), victim));
+   f.restart(f.online);
+   f.until([&] { return f.candidate(victim)["banned"].as_bool(); }, 1000);
+   BOOST_REQUIRE_EQUAL(f.candidate(victim)["zero_windows"].as_uint64(), 3u);
+   f.until([&] { return f.rotation()["stage"].as_uint64() == 0 && f.list("active").size() == 20; });
+   BOOST_REQUIRE_EQUAL(f.chain.control->head_active_finalizer_policy()->threshold, 14u);
+   f.online.push_back(victim);
+   f.restart(f.online);
+   const auto made = f.produced[victim];
+   f.production_slots(2 * 20 * config::producer_repetitions);
+   BOOST_REQUIRE_EQUAL(f.produced[victim], made);
+   BOOST_REQUIRE_EQUAL(unpaid(), old_blocks);
+   BOOST_REQUIRE_EQUAL(balance(victim), old_balance);
+   const auto total = global()["total_unpaid_blocks"].as_uint64();
+   const auto bucket = global()["perblock_bucket"].as_int64();
+   const auto trace = f.call("claimrewards"_n, fc::mutable_variant_object()("owner", victim), victim);
+   abi_def abi;
+   BOOST_REQUIRE(abi_serializer::to_abi(f.chain.control->db().get<account_object, by_name>("eosio.token"_n).abi, abi));
+   auto yield = abi_serializer::create_yield_function(fc::seconds(5));
+   abi_serializer serializer(abi, yield);
+   int64_t funded = 0, paid = 0;
+   for (const auto& action : trace->action_traces) {
+      if (action.receiver != "eosio.token"_n || action.act.account != "eosio.token"_n || action.act.name != "transfer"_n) continue;
+      const auto data = serializer.binary_to_variant("transfer", action.act.data, yield);
+      const auto from = data["from"].as_string(), to = data["to"].as_string();
+      const auto amount = reward_fixture::units(data["quantity"]);
+      BOOST_CHECK_NE(to, "eosio.saving"); BOOST_CHECK_NE(to, "eosio.vpay");
+      if (from == "eosio" && to == "eosio.bpay") funded += amount;
+      if (from == "eosio.bpay" && to == victim.to_string()) paid += amount;
+   }
+   BOOST_REQUIRE_GT(paid, 0);
+   BOOST_CHECK_EQUAL(paid, int64_t(static_cast<unsigned __int128>(bucket + funded) * old_blocks / total));
+   BOOST_CHECK_EQUAL(balance(victim), old_balance + paid);
+   BOOST_CHECK_EQUAL(unpaid(), 0u);
+   BOOST_CHECK_EQUAL(global()["total_unpaid_blocks"].as_uint64(), total - old_blocks);
+   BOOST_CHECK_EQUAL(global()["perblock_bucket"].as_int64(), bucket + funded - paid);
+   BOOST_CHECK(f.candidate(victim)["banned"].as_bool());
+   const auto paid_balance = balance(victim);
+   BOOST_CHECK_THROW(f.call("claimrewards"_n, fc::mutable_variant_object()("owner", victim), victim), fc::exception);
+   BOOST_CHECK_EQUAL(balance(victim), paid_balance);
+   f.block();
+   f.snapshot_check();
+   f.observer_replay();
+   BOOST_TEST_MESSAGE("Actual WASM claim after permanent ban paid only preserved historical blocks; no asset freeze or new reward");
+}
+
 BOOST_AUTO_TEST_CASE(activation_and_real_issuance_fund_only_actual_blocks) {
    reward_fixture f(true);
    BOOST_CHECK_EQUAL(f.rewards()["version"].as_uint64(), 1u);

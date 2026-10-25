@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
+#include <eosio/chain/parallel_mixed_tree.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
@@ -108,6 +109,27 @@ void apply_context::exec_one()
             }
 
             auto adopt_receiver = [&] {
+               if (const auto* attempt = trx_context.parallel_mixed_result) {
+                  const bool adopted = trx_context.parallel_mixed_input && experimental::try_adopt_mixed_result(*this,
+                     receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version,
+                     *trx_context.parallel_mixed_input, *attempt, trx_context.parallel_transaction_elapsed);
+                  if (adopted) {
+                     if (++trx_context.parallel_next_receiver == attempt->steps.size()) {
+                        trx_context.parallel_transaction_adopted = true;
+                        trx_context.parallel_mixed_result = nullptr;
+                        trx_context.parallel_mixed_input = nullptr;
+                        trx_context.parallel_transaction_elapsed.reset();
+                     }
+                  } else {
+                     // Keep the original queued actions, cursors AND recent
+                     // sync return. A late VM tail starts at this receiver.
+                     trx_context.parallel_mixed_result = nullptr;
+                     trx_context.parallel_mixed_input = nullptr;
+                     trx_context.parallel_transaction_elapsed.reset();
+                     trx_context.parallel_transaction_adopted = false;
+                  }
+                  return adopted;
+               }
                auto adopt = [&](auto*& attempt, auto adopter) {
                   if (!attempt) return false;
                   const bool adopted = trx_context.parallel_action_limits &&
@@ -152,12 +174,23 @@ void apply_context::exec_one()
                      adopted = trx_context.parallel_sync_input && experimental::try_adopt_sync_result(*this,
                         receiver_account->code_hash, receiver_account->vm_type, receiver_account->vm_version,
                         *trx_context.parallel_sync_input, *attempt, trx_context.parallel_transaction_elapsed);
-                     // False precedes the WHOLE root. Exceptions after arming
-                     // are deliberately not caught/retried over partial writes.
-                     trx_context.parallel_transaction_adopted = adopted;
-                     trx_context.parallel_sync_result = nullptr;
-                     trx_context.parallel_sync_input = nullptr;
-                     trx_context.parallel_transaction_elapsed.reset();
+                     // Consume exactly one ORIGINAL ordinary root. Only the
+                     // final root completes adoption of the whole transaction.
+                     // A late false preserves earlier canonical roots; an
+                     // exception after arming is never caught/retried here.
+                     if (adopted) {
+                        if (++trx_context.parallel_next_action == attempt->roots.size()) {
+                           trx_context.parallel_transaction_adopted = true;
+                           trx_context.parallel_sync_result = nullptr;
+                           trx_context.parallel_sync_input = nullptr;
+                           trx_context.parallel_transaction_elapsed.reset();
+                        }
+                     } else {
+                        trx_context.parallel_transaction_adopted = false;
+                        trx_context.parallel_sync_result = nullptr;
+                        trx_context.parallel_sync_input = nullptr;
+                        trx_context.parallel_transaction_elapsed.reset();
+                     }
                   }
                   if (!adopted) adopted = adopt_receiver();
                   // Empty-code notifications must not consume the next root's

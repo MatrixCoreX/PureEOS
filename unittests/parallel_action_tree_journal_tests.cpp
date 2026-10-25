@@ -157,7 +157,10 @@ BOOST_FIXTURE_TEST_CASE(reconstruction_rejects_forged_write_and_unproved_query_b
    auto invalid = good;
    primary_state_overlay other(base);
    (void)other.locate_primary({journal_rows, primary_query_kind::find, 1});
-   for (const auto& write : good.state.writes()) other.update_existing(journal_rows, 2, write.payer, write.value);
+   for (const auto& mutation : good.state.writes()) {
+      const auto& write = require_primary_mutation(mutation);
+      other.update_existing(journal_rows, 2, write.payer, write.value);
+   }
    invalid.state = other.seal();
    BOOST_CHECK(!validate_isolated_action_tree_journal(invalid, roots, programs, {}));
    invalid = good;

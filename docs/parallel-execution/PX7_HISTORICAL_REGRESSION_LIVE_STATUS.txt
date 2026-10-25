@@ -1,0 +1,129 @@
+PureEOS 历史异常三轮回归＋30→40完整轮岗重测
+更新时间UTC：2026-10-21T08:40:22.726280+00:00
+状态：failed-or-incomplete-backed-up-needs-repair-before-deadline
+固定最终费用期限UTC：2026-10-21T14:25:00+00:00
+备份目录：/run/media/guagua/Windows/PureEOS-history-W6fSHS-IYeOuF
+{
+  "a": {
+    "unit": "ActiveState=failed\nSubState=failed\nResult=exit-code\n",
+    "runner": {
+      "status": "failed",
+      "started_utc": "2026-10-21T02:40:45.158143+00:00",
+      "kind": "cohort",
+      "instance_id": "da58f038-c4df-4abc-8562-fbb5536e3910",
+      "exit_code": 1,
+      "finished_utc": "2026-10-21T07:31:53.699987+00:00"
+    },
+    "progress": {
+      "directory": "/opt/pureeos-history-W6fSHS/build/local-tests/integer-v2-lxm3223i",
+      "status": "running",
+      "processes": 30,
+      "active_seats": 21,
+      "phase": {
+        "candidate_count": 30,
+        "started_utc": "2026-10-21T02:44:17.193765+00:00"
+      },
+      "queue_coverage": {
+        "candidate_count": 30,
+        "unique_reentered": 30,
+        "total_replacements": 32,
+        "missing": []
+      },
+      "phases": [
+        30
+      ],
+      "resource_samples": 141,
+      "resource_evidence": "complete"
+    },
+    "final_report_exists": true,
+    "archives": {
+      "status": "passed",
+      "started_utc": "2026-10-21T07:31:53.700891+00:00",
+      "archives": {
+        "d": {
+          "status": "closed-and-archived",
+          "role": "d",
+          "instance_id": "668e5bfc-ec55-4aca-806a-38cf87d816cd",
+          "runtime_files_verified": 26,
+          "nodeos_sha256": "7837882506bc626958e6b6668427b0006fd46cb777756c203d541571a8ff4d93",
+          "utc": "2026-10-21T07:31:55.259184+00:00",
+          "archive": "/opt/pureeos-history-W6fSHS-d-closed.tar.zst",
+          "bytes": 172261967,
+          "sha256": "35ac4c67b899ba495da36aaacb679ab292fed52592c88510730969d329be6d95"
+        },
+        "c": {
+          "status": "closed-and-archived",
+          "role": "c",
+          "instance_id": "0ca58587-c905-48ba-9260-d90492ea088a",
+          "runtime_files_verified": 26,
+          "nodeos_sha256": "7837882506bc626958e6b6668427b0006fd46cb777756c203d541571a8ff4d93",
+          "utc": "2026-10-21T07:32:03.557336+00:00",
+          "archive": "/opt/pureeos-history-W6fSHS-c-closed.tar.zst",
+          "bytes": 177444908,
+          "sha256": "e0243e3a80b9f7537deedbfd3044f37645272e5526da84ef8fb41c23250a4668"
+        },
+        "b": {
+          "status": "closed-and-archived",
+          "role": "b",
+          "instance_id": "2bafc023-aabc-4c97-8460-ef16e97763f1",
+          "runtime_files_verified": 26,
+          "nodeos_sha256": "7837882506bc626958e6b6668427b0006fd46cb777756c203d541571a8ff4d93",
+          "utc": "2026-10-21T07:32:10.009334+00:00",
+          "archive": "/opt/pureeos-history-W6fSHS-b-closed.tar.zst",
+          "bytes": 228476678,
+          "sha256": "d2356201355e65e601bda667b8de74eea05462dadb8710ffdf160dcd3ce66735"
+        },
+        "a": {
+          "status": "closed-and-archived",
+          "role": "a",
+          "instance_id": "da58f038-c4df-4abc-8562-fbb5536e3910",
+          "runtime_files_verified": 26,
+          "nodeos_sha256": "7837882506bc626958e6b6668427b0006fd46cb777756c203d541571a8ff4d93",
+          "utc": "2026-10-21T07:32:23.576616+00:00",
+          "archive": "/opt/pureeos-history-W6fSHS-a-closed.tar.zst",
+          "bytes": 187384970,
+          "sha256": "13caef01b7c33c0635793008b6799a014433a5f72d05a0de5f14bb2d0f10ea23"
+        }
+      },
+      "finished_utc": "2026-10-21T07:32:30.453544+00:00"
+    },
+    "rpc_error": "URLError"
+  },
+  "b": {
+    "unit": "ActiveState=inactive\nSubState=dead\nResult=success\n",
+    "runner": {
+      "status": "passed",
+      "source": "Revised immutable historical attempt plus actual systemd result"
+    },
+    "history": {
+      "status": "passed",
+      "parallel_workers": 4,
+      "rounds": [
+        {
+          "round": 1,
+          "status": "passed",
+          "cases": 12,
+          "error": null,
+          "production_adopted": 9,
+          "validation_adopted": 41
+        },
+        {
+          "round": 2,
+          "status": "passed",
+          "cases": 12,
+          "error": null,
+          "production_adopted": 14,
+          "validation_adopted": 41
+        },
+        {
+          "round": 3,
+          "status": "passed",
+          "cases": 12,
+          "error": null,
+          "production_adopted": 17,
+          "validation_adopted": 41
+        }
+      ]
+    }
+  }
+}

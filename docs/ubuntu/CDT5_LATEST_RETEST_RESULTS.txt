@@ -1,0 +1,75 @@
+PureEOS：官方最新CDT预览版重测结果与并行优化结论
+日期：2026-10-21；本轮结束于北京时间16:24左右。
+结论：本轮限定范围的CDT5编译、串行/4-worker业务兼容与系统合约恢复检查通过。
+不代表SDK已完成安全加固、最新main编译器源码已全量重建或整版本达到发布/TPS门槛。
+
+一、版本与隔离
+官方最新正式版仍为4.1.1；本轮测最新发布的开发预览5.0.0-dev1.1，非正式稳定版。
+来源：https://github.com/AntelopeIO/cdt/releases/tag/v5.0.0-dev1.1
+官方deb包125597248字节，SHA256与GitHub API资产摘要一致：
+e8b3ef60ba5c1215e615aa1447a86148cfa99811cc50e8667f40315db568261c
+仅解压隔离使用，没有覆盖现用4.1.1、全局PATH或已有链。
+上游main固定69599db279b7b93d0688502720c15c6962a1401b；本地CDT e677213d9的
+父提交即该main。发布预览二进制与最新main源码是两个不同的基线，不混为一谈。
+本轮未改CDT源码/官方SDK，未全量重建其LLVM/Clang。
+节点固定ELF SHA256：7837882506bc626958e6b6668427b0006fd46cb777756c203d541571a8ff4d93。
+
+二、实际改造
+reference-contracts独立分支feature/cdt5-validation，尚未提交：
+* contracts/CMakeLists.txt：要求CDT major 5，正式重编时版本检查开启。
+* contracts/eosio.system/include/eosio.system/{rex.results,powerup.results}.hpp：
+  改为public继承eosio::contract，使CDT5分发器可访问set_exec_type。
+仅C++可见性/构建要求变化，不是链上账号权限、治理或经济政策变更。
+PureEOS测试增加固定八波、每波四笔预签名预打包的回环提交；不是反复重试到通过。
+目的为避免CLI启动把小批量摊成串行，同时仍要求生产与独立验证均实际采用并行结果。
+
+三、通过项目
+1. 完整重编reference-contracts的系统、token、bios、bpay、REX/PowerUp结果等合约；
+   升级治理、一票一投、10/90资源、顺序轮岗四项编译开关均开启。
+   编译了msig不代表重新启用节点多签治理。
+2. cdtcompat、complexbench、parallelcdt夹具重编通过。
+   bool参数、真实inline父子轨迹、主/二级索引、重复二级键顺序、授权失败与账本验证：
+   三个独立轮次，每轮0 worker与4 worker各确认45笔业务交易，全部通过。
+   每个模式含八波共32笔不同交易；在独立验证端检查最终确认，最终状态摘要一致。
+   4-worker生产实际adopted依次16/24/24；独立验证依次44/44/44。
+   adopted含本地尝试/可能放弃区块，不是唯一业务数或TPS。
+3. 三条不同chain ID的新原生Savanna创世链，均使用CDT5新编系统/token合约，
+   开启4 worker并各完成12类检查：
+   独立转账波次、重复交易只执行一次、原子失败与相同交易重试、过期/TAPOS/错误签名、
+   非法数量回滚、未选择节点买REX回滚、有界畸形RPC、同符号不同合约隔离、
+   过期去重后快照一致、截断快照拒绝、快照恢复接收原签名区块尾、脏状态拒绝并全检查重放。
+   每条链另确认治理封存14天参数、PowerUp前置要求和最终CPU/NET长期资源不超10%。
+   本轮未等待真实14天升级执行，也未等待24小时奖励领取。
+   历史测试生产adopted依次16/20/15；独立验证每轮41；业务与恢复结果均通过。
+   每条链的32笔波次交易均有不同ID及最终确认依据；全部本地子进程已停止。
+4. 回环波次、CDT轨迹判定和历史恢复判定的21项Python回归通过，ResourceWarning视为错误。
+5. ABI1.3的Sync Call样例生成对应ABI入口与sync_call导出，编译检查通过。
+   这是编译检查，不代表该新样例已经链上执行；parallelcdt分配器夹具本轮也仅重编。
+
+四、失败记录完整保留，不回写成成功
+初次旧版本门槛拒绝；attempt-2发现回执类私有继承；attempt-3第三轮缺少生产并行采用；
+attempt-4业务三轮通过，但历史链Unix钱包路径过长；attempt-5短路径钱包成功，
+却因/tmp总容量低于8GiB磁盘储备而正常停机。均保留原始失败状态和日志。
+attempt-6改到空间足够的/var/tmp短目录，保留8GiB保护，三个历史轮次全部通过。
+最终总审计按组件引用attempt-3的成功编译、attempt-4的成功业务三轮与attempt-6的
+成功历史三轮；不会将这些旧attempt的整体failed状态改为passed。
+
+五、尚未解决的CDT问题与优化次序
+最新版SDK有界原生探针仍复现：varuint32溢出被解为0、超长输入触发未定义移位、
+容器先分配后发现截断、skip越过声明范围后read仍接受。尚未修复；不据此声称VM逃逸。
+先修这些边界和上游测试器负退出码/BUILD_FAIL错误判定，再评测默认分配器的扩容/
+复制成本、multi_index的线性行缓存查找。它们是候选热点，尚未证明是当前主要瓶颈。
+CDT优化单交易WASM；不同交易并行、冲突证明与按序提交仍由节点负责。
+不得启用WASM线程/共享内存来代替交易级并行，也不把合约访问提示当免检许可。
+LLVM大版本升级另排，不阻塞本轮兼容验收；性能需同节点、同额度、多轮对照另验。
+文件级改造与测试要求见PUREEOS_UBUNTU_CDT_UPGRADE_PLAN.txt第八节。
+
+六、证据与独立待办
+任务根目录：build/local-tests/cdt-latest-20261021-kSARn6/
+总审计：scoped-retest-audit.json；官方包：official-cdt-package.json。
+编译日志/产物：attempt-3/；业务：attempt-4/actual-round-{1,2,3}/report.json。
+系统合约历史三轮：attempt-6/history.json、report.json、history.log。
+SDK风险：latest-header-probes/report.json；Sync编译：sync-call-compile/report.json。
+历史链目录：/var/tmp/pcdt5-AzHUKZ/local-tests/，保留原始数据，不代表仍在运行。
+本轮不是云端40候选验收：另一轮云测试30候选完整轮岗通过，第31个节点P2P同步
+超时，40候选阶段仍未通过。也未给出新性能候选的稳定TPS提升或全项目发布结论。

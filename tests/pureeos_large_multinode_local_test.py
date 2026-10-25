@@ -18,6 +18,7 @@ import time
 
 from pureeos_multinode_local_test import MultiNodeTest
 from pureeos_single_choice_local_test import LocalTest
+from pureeos_committed_policy_observer import CommittedPolicyObserver, IncompletePolicyEvidence, names
 
 
 class LargeMultiNodeTest(MultiNodeTest):
@@ -47,7 +48,7 @@ class LargeMultiNodeTest(MultiNodeTest):
             # Production-clock admission can take over an hour without wallet
             # traffic. This private disposable test wallet must remain usable
             # for the late fault/re-registration actions; it exits with the test.
-            command = [*command, "--unlock-timeout", "14400"]
+            command = [*command, "--unlock-timeout", str(getattr(self, "wallet_unlock_seconds", 14400))]
         if command[0] == str(self.nodeos):
             command = list(command)
             position = command.index("--data-dir") + 1
@@ -56,6 +57,7 @@ class LargeMultiNodeTest(MultiNodeTest):
             # Only these disposable RAM-filesystem chains use a 1 GiB reserve.
             # Existing/manual node settings and consensus CPU limits are untouched.
             options = {"--resource-monitor-space-absolute-gb": "1", "--p2p-max-nodes-per-host": "64",
+                       "--max-clients": "128",
                        "--chain-threads": "1", "--http-threads": "1", "--net-threads": "1",
                        "--vote-threads": "1", "--http-max-response-time-ms": "200",
                        "--abi-serializer-max-time-ms": "200"}
@@ -91,41 +93,43 @@ class LargeMultiNodeTest(MultiNodeTest):
 
     def observe(self):
         info = self.rpc("get_info")
-        schedule = self.rpc("get_producer_schedule")["active"]
-        members = [p["producer_name"] for p in schedule["producers"]]
-        finality = self.rpc("get_finalizer_info")
-        policy = finality["active_finalizer_policy"]
+        if not hasattr(self, "committed_observer"):
+            genesis = json.loads((self.root / "genesis.json").read_text())
+            self.committed_observer = CommittedPolicyObserver(genesis, self.report["chain_id"])
+        observer = self.committed_observer
+        target = int(info["last_irreversible_block_num"])
+        if observer.number > target:
+            raise AssertionError("Previously observed irreversible height regressed")
+        deadline = time.monotonic() + 120
+        while observer.number < target:
+            if time.monotonic() > deadline:
+                raise IncompletePolicyEvidence("Committed policy catch-up did not complete within observation budget")
+            block = self.rpc("get_block", {"block_num_or_id": observer.number + 1})
+            event = observer.feed(block, target)
+            if event:
+                self.report["committee_events"].append(event)
+                print(f"COMMITTED POLICY {event['schedule']['version']}: "
+                      f"{len(event['schedule']['producers'])} members at irreversible block {event['head']}", flush=True)
+                self.last_policy = names(observer.active)
+                self.last_version = observer.active["version"]
+                self.checkpoint()
+        if info.get("last_irreversible_block_id") and observer.block_id != info["last_irreversible_block_id"]:
+            raise AssertionError("Observed header chain does not end at the reported irreversible ID")
+        self.report["policy_observer"] = dict(through=observer.number, block_id=observer.block_id,
+            verified_blocks=observer.verified_blocks, incomplete=False,
+            scope="Consecutive native header/policy reconstruction; independent nodes still verify signatures")
+        members = names(observer.active)
         rotation = self.table("rotation")[0]
         self.latest_rotation = rotation
         if rotation["stage"] == 1 and rotation["proposer_version"] not in self.proposals:
             active, target = rotation["active"], rotation["target"]
             incoming, outgoing = rotation["incoming"], rotation["outgoing"]
-            if target != [n for n in active if n != outgoing] + [incoming]:
+            if target != [n for n in active if n != outgoing] + ([incoming] if incoming else []):
                 raise AssertionError("Proposal violated single-seat tenure ordering")
             if len(active) == 21 and not self.report["fault"] and outgoing != active[0]:
                 raise AssertionError("Healthy full committee did not replace its oldest member")
             self.proposals.add(rotation["proposer_version"])
             self.report["proposals"].append(rotation)
-        # Record each real membership policy, not just the contract's target.
-        if schedule["version"] != self.last_version:
-            if self.last_policy is not None:
-                removed, added = set(self.last_policy) - set(members), set(members) - set(self.last_policy)
-                if len(removed) > 1 or len(added) > 1 or not added:
-                    raise AssertionError("Membership transition was not a single-seat change")
-                if self.last_version is not None and schedule["version"] != self.last_version + 1:
-                    raise AssertionError("Monitoring missed a producer-policy transition")
-            if len(members) > 21:
-                raise AssertionError("More than 21 active producers")
-            self.report["committee_events"].append({"head": info["head_block_num"],
-                "lib": info["last_irreversible_block_num"], "schedule": schedule,
-                "finalizers": policy, "rotation": rotation})
-            print(f"POLICY {schedule['version']}: {len(members)} members, "
-                  f"incoming={rotation['incoming']}, outgoing={rotation['outgoing']}", flush=True)
-            self.last_policy, self.last_version = members, schedule["version"]
-            self.checkpoint()
-        if sorted(f["description"] for f in policy["finalizers"]) == sorted(members):
-            if policy["threshold"] != len(members) * 2 // 3 + 1:
-                raise AssertionError("Incorrect finalizer quorum")
         producers = self.table("producersv2")
         # Reward ledger advances only through real accepted blocks. Finalized
         # per-producer block IDs are collected separately below.
@@ -135,6 +139,8 @@ class LargeMultiNodeTest(MultiNodeTest):
     def scan_finalized(self, start, end, label):
         counts, first = Counter(), {}
         for number in range(start, end + 1):
+            if number == start or (number - start) % 64 == 0:
+                self.observe()  # Long finalized scans must not starve live observation.
             block = self.rpc("get_block", {"block_num_or_id": number})
             counts[block["producer"]] += 1
             first.setdefault(block["producer"], {key: block[key] for key in

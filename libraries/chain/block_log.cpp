@@ -4,6 +4,7 @@
 #include <eosio/chain/log_catalog.hpp>
 #include <eosio/chain/log_data_base.hpp>
 #include <eosio/chain/log_index.hpp>
+#include <eosio/chain/reversible_recovery.hpp>
 #include <fc/bitutil.hpp>
 #include <fc/io/raw.hpp>
 #include <mutex>
@@ -1453,6 +1454,24 @@ namespace eosio { namespace chain {
       auto blocks_dir_name = blocks_dir.filename();
       auto backup_dir      = blocks_dir.parent_path() / blocks_dir_name.generic_string().append("-").append(now.to_iso_string());
 
+      const auto reversible_dir = blocks_dir / reversible_block_dir_name;
+      const auto recovery_dir = reversible_dir / "recovery";
+      const bool has_reversible = strlen(reversible_block_dir_name) &&
+         std::filesystem::exists(std::filesystem::symlink_status(reversible_dir));
+      const bool has_recovery = has_reversible && std::filesystem::exists(std::filesystem::symlink_status(recovery_dir));
+      if (has_reversible) {
+         EOS_ASSERT(!std::filesystem::is_symlink(reversible_dir) && std::filesystem::is_directory(reversible_dir),
+                    block_log_exception, "Invalid reversible directory ${p}", ("p", reversible_dir));
+      }
+      if (has_recovery) {
+         EOS_ASSERT(!std::filesystem::is_symlink(recovery_dir) && std::filesystem::is_directory(recovery_dir),
+                    block_log_exception, "Invalid durable recovery directory ${p}", ("p", recovery_dir));
+         // Truncating a voting node while retaining its newer safety information
+         // is not a safe rollback. Ordinary hard replay must retain every record.
+         EOS_ASSERT(truncate_at_block == UINT32_MAX, block_log_exception,
+                    "Cannot truncate a block log with a durable recovery journal; use an isolated diagnostic copy");
+      }
+
       EOS_ASSERT(!std::filesystem::exists(backup_dir), block_log_backup_dir_exist,
                  "Cannot move existing blocks directory to already existing directory '${new_blocks_dir}'",
                  ("new_blocks_dir", backup_dir));
@@ -1462,9 +1481,26 @@ namespace eosio { namespace chain {
       if (std::filesystem::exists(blocks_dir / "blocks.index")) {
          std::filesystem::rename(blocks_dir / "blocks.index", backup_dir / "blocks.index");
       }
-      if (strlen(reversible_block_dir_name) && std::filesystem::is_directory(blocks_dir / reversible_block_dir_name)) {
-         std::filesystem::rename(blocks_dir / reversible_block_dir_name, backup_dir / reversible_block_dir_name);
+      if (has_reversible) {
+         if (has_recovery) {
+            // The journal is durable voting evidence, not a disposable fork DB.
+            // Keep it at its committed path throughout repair, including errors
+            // and crashes; moving it into the backup silently hides it at startup.
+            const auto reversible_backup = backup_dir / reversible_block_dir_name;
+            std::filesystem::create_directory(reversible_backup);
+            for (const auto& entry : std::filesystem::directory_iterator(reversible_dir)) {
+               if (entry.path().filename() != "recovery")
+                  std::filesystem::rename(entry.path(), reversible_backup / entry.path().filename());
+            }
+            reversible_recovery::sync_directory(reversible_backup);
+            reversible_recovery::sync_directory(reversible_dir);
+         } else {
+            std::filesystem::rename(reversible_dir, backup_dir / reversible_block_dir_name);
+         }
       }
+      reversible_recovery::sync_directory(backup_dir);
+      reversible_recovery::sync_directory(blocks_dir);
+      reversible_recovery::sync_directory(blocks_dir.parent_path());
       ilog("Moved existing blocks directory to backup location: '${new_blocks_dir}'", ("new_blocks_dir", backup_dir));
 
       const auto block_log_path  = blocks_dir / "blocks.log";
@@ -1484,9 +1520,12 @@ namespace eosio { namespace chain {
          new_block_file.set_file_path( block_log_path );
          new_block_file.open( fc::cfile::create_or_update_rw_mode );
          copy_file_content( log_data.ro_stream_at( 0 ), new_block_file, pos );
+         new_block_file.flush();
+         new_block_file.sync();
          new_block_file.close();
       }
       construct_index(block_log_path, block_index_path);
+      reversible_recovery::sync_directory(blocks_dir);
 
       if (error_msg.size()) {
          ilog("Recovered only up to block number ${num}. "

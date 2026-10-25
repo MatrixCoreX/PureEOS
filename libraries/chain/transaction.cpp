@@ -10,6 +10,7 @@
 #include <eosio/chain/config.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/transaction.hpp>
+#include <eosio/chain/thread_cpu_billing.hpp>
 
 namespace eosio { namespace chain {
 
@@ -60,6 +61,8 @@ fc::microseconds transaction::get_signature_keys( const vector<signature_type>& 
       const chain_id_type& chain_id, fc::time_point deadline, const vector<bytes>& cfd,
       flat_set<public_key_type>& recovered_pub_keys, bool allow_duplicate_keys)const
 { try {
+   thread_cpu_billing cpu;
+   cpu.reset();
    auto start = fc::time_point::now();
    recovered_pub_keys.clear();
 
@@ -77,7 +80,7 @@ fc::microseconds transaction::get_signature_keys( const vector<signature_type>& 
       }
    }
 
-   return fc::time_point::now() - start;
+   return fc::microseconds(cpu.elapsed().count());
 } FC_CAPTURE_AND_RETHROW() }
 
 flat_multimap<uint16_t, transaction_extension> transaction::validate_and_extract_extensions()const {

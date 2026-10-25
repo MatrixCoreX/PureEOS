@@ -13,6 +13,21 @@ class sync_call_context;
 
 namespace eosio::chain::experimental {
 
+struct isolated_mixed_tree_result;
+struct isolated_mixed_tree_job;
+
+// Owner-only action metadata/input capture for a receiver-deduplicated tree.
+// Owns NO code bytes and is deliberately not a prepared_isolated_action.
+// Callers must review every root's code hash, capture a bounded program catalog
+// and keep all ordinary authorization/resource/adoption checks.
+struct prepared_isolated_root {
+   fc::sha256 code_hash;
+   isolated_action_input input;
+   isolated_wasm_limits limits;
+};
+std::optional<std::vector<prepared_isolated_root>> prepare_isolated_transaction_roots(
+   const controller&, const packed_transaction&, const std::function<void()>& checkpoint = {});
+
 // Captured on the canonical owner. Eligibility is deliberately narrow; the
 // caller must additionally enforce its local reviewed-code allowlist and batch
 // ordering/lifetime. No signature, permissions, resource or receipt checks are
@@ -33,7 +48,9 @@ std::optional<isolated_receiver_program> prepare_isolated_receiver_program(
 
 // Owner-only code/metadata capture, NOT dynamic native-handler eligibility.
 // Tree adoption must check every actual (receiver, account, action) separately.
-std::optional<isolated_receiver_program> prepare_isolated_tree_program(const controller&, name receiver);
+// Check the remaining owned-code budget BEFORE allocating the byte copy.
+std::optional<isolated_receiver_program> prepare_isolated_tree_program(const controller&, name receiver,
+   size_t owned_code_budget = isolated_wasm_limits::max_module_code_bytes);
 isolated_action_tree_context current_action_tree_context(const controller&);
 
 // Sync export support is the ACTUAL code_object bit, never inferred from a
@@ -50,11 +67,35 @@ bool validate_isolated_sync_current_state(const controller&, const packed_transa
    std::span<const isolated_sync_program>, const isolated_sync_result&,
    const std::function<void()>& checkpoint = {});
 
-// One ordinary root only. A false result precedes ALL canonical events. Once
-// replay starts, every error propagates through original transaction undo;
-// neither a child nor the already-consumed parent may retry in the VM.
+// Whole-transaction equivalent: binds ALL ordinary roots before the first
+// canonical write. Later roots must not compare the now-mutated live prefix
+// against the original snapshot. This still provides no replay capability.
+bool validate_isolated_sync_transaction_current_state(const controller&, const packed_transaction&,
+   std::span<const isolated_sync_program>, const isolated_sync_transaction_result&,
+   const std::function<void()>& checkpoint = {});
+
+// Read-only owner proof for the complete mixed tree. Binds actual packed CF
+// data even when empty, every ordinary root/dynamic native-handler pair, the
+// entire ordered catalog and current limits/protocol before live dependencies.
+// This is NOT an authorization or a canonical replay capability.
+bool validate_isolated_mixed_tree_current_state(const controller&, const packed_transaction&,
+   std::span<const isolated_sync_program>, const isolated_mixed_tree_result&,
+   const std::function<void()>& checkpoint = {});
+
+// Consume the next ordinary root from the controller-owned transaction result.
+// First root preflights the entire attempt; false precedes THIS root's events,
+// never re-executes earlier roots. Once replay starts, every error propagates
+// through original transaction undo; no partially consumed frame may retry.
 bool try_adopt_sync_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
-   const isolated_sync_job&, const isolated_sync_result&, std::optional<fc::microseconds> production_elapsed = {});
+   const isolated_sync_transaction_job&, const isolated_sync_transaction_result&,
+   std::optional<fc::microseconds> production_elapsed = {});
+
+// Consume one original receiver step, including its immediate sync subtree.
+// Whole-tree proof precedes the first event; late false preserves the canonical
+// prefix and notification-group host buffers. Post-event errors use original undo.
+bool try_adopt_mixed_result(apply_context&, const fc::sha256& code_hash, uint8_t vm_type, uint8_t vm_version,
+   const isolated_mixed_tree_job&, const isolated_mixed_tree_result&,
+   std::optional<fc::microseconds> production_elapsed = {});
 
 // Original host execution-point hooks. They can only CONSUME a private,
 // stack-scoped preflight capability; callers cannot inject an arbitrary replay.

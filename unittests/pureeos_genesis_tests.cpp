@@ -8,6 +8,8 @@
 #include <fc/io/json.hpp>
 #include <boost/test/unit_test.hpp>
 #include <thread>
+#include <fstream>
+#include <map>
 
 #include "snapshot_suites.hpp"
 
@@ -23,6 +25,14 @@ genesis_state native_genesis() {
    genesis.initial_savanna->finalizer_key = pub;
    genesis.initial_savanna->proof_of_possession = pop;
    return genesis;
+}
+
+std::string read_recovery_test_file(const std::filesystem::path& path) {
+   std::ifstream input(path, std::ios::binary);
+   BOOST_REQUIRE(input.good());
+   std::string bytes{std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>()};
+   BOOST_REQUIRE(!input.bad());
+   return bytes;
 }
 
 void enable_local_finalizer(base_tester& chain) {
@@ -235,7 +245,12 @@ BOOST_AUTO_TEST_CASE(genesis_identity_and_validation) {
    bad.initial_savanna->version = 3;
    BOOST_CHECK_THROW(bad.validate(), fc::exception);
    bad = genesis;
-   bad.initial_savanna->protocol_features.pop_back();
+   // Make the negative manifest explicit. Do not pop through an optional
+   // repeatedly reassigned across exception checks (GCC15 warns on that path).
+   auto incomplete_features = genesis.initial_savanna.value().protocol_features;
+   BOOST_REQUIRE(!incomplete_features.empty());
+   incomplete_features.pop_back();
+   bad.initial_savanna.value().protocol_features = std::move(incomplete_features);
    BOOST_CHECK_THROW(bad.validate(), fc::exception);
    bad = genesis;
    auto [other_priv, other_pub, other_pop] = get_bls_key("other"_n);
@@ -353,6 +368,74 @@ BOOST_AUTO_TEST_CASE(native_block_log_replays_from_genesis) {
    enable_local_finalizer(replay);
    replay.produce_blocks(6);
    BOOST_CHECK_GT(replay.last_irreversible_block_num(), lib);
+}
+
+BOOST_AUTO_TEST_CASE(native_hard_replay_keeps_durable_journal_and_finalizer_safety) {
+   fc::temp_directory dir;
+   const auto cfg = base_tester::default_config(dir).first;
+   const auto genesis = native_genesis();
+   tester chain(cfg, genesis);
+   enable_local_finalizer(chain);
+   chain.produce_blocks(15);
+   chain.close();
+   const auto read = read_recovery_test_file;
+   const auto durable_prefix = read(cfg.blocks_dir / "blocks.log");
+   chain.open();
+   enable_local_finalizer(chain);
+   chain.produce_blocks(15);
+   const auto old_head = chain.head().id();
+   const auto old_lib = chain.last_irreversible_block_num();
+   chain.close();
+   const auto recovery_dir = cfg.blocks_dir / config::reversible_blocks_dir_name / "recovery";
+   std::map<std::filesystem::path, std::string> journal, safety;
+   for (const auto& entry : std::filesystem::directory_iterator(recovery_dir))
+      journal.emplace(entry.path().filename(), read(entry.path()));
+   for (const auto& entry : std::filesystem::recursive_directory_iterator(cfg.finalizers_dir))
+      if (entry.is_regular_file()) safety.emplace(entry.path().lexically_relative(cfg.finalizers_dir), read(entry.path()));
+   BOOST_REQUIRE(!journal.empty());
+   BOOST_REQUIRE(!safety.empty());
+   // Model a durable block-log prefix followed by an incomplete write. The
+   // independently fsynced per-block records and latest safety file survive.
+   const auto damaged_log = durable_prefix + std::string(19, '\x7f');
+   {
+      std::ofstream f(cfg.blocks_dir / "blocks.log", std::ios::binary | std::ios::trunc);
+      f.write(damaged_log.data(), damaged_log.size());
+      BOOST_REQUIRE(f.good());
+   }
+   const auto backup = block_log::repair_log(cfg.blocks_dir, 0, config::reversible_blocks_dir_name);
+   BOOST_CHECK(read(backup / "blocks.log") == damaged_log);
+   BOOST_CHECK(!std::filesystem::exists(backup / config::reversible_blocks_dir_name / "recovery"));
+   BOOST_REQUIRE(std::filesystem::is_directory(recovery_dir));
+   for (const auto& [name, bytes] : journal) BOOST_CHECK(read(recovery_dir / name) == bytes);
+   for (const auto& [name, bytes] : safety) BOOST_CHECK(read(cfg.finalizers_dir / name) == bytes);
+   std::filesystem::remove_all(cfg.state_dir); // only this test's derived DB
+   chain.open(genesis, call_startup_t::yes); // fresh state uses genesis/replay startup
+   BOOST_CHECK(chain.head().id() == old_head);
+   BOOST_CHECK_GE(chain.last_irreversible_block_num(), old_lib);
+   for (const auto& [name, bytes] : safety) BOOST_CHECK(read(cfg.finalizers_dir / name) == bytes);
+   enable_local_finalizer(chain);
+   chain.produce_blocks(6);
+   BOOST_CHECK_GT(chain.last_irreversible_block_num(), old_lib);
+}
+
+BOOST_AUTO_TEST_CASE(native_hard_replay_rejects_unsafe_journal_before_mutation) {
+   fc::temp_directory dir;
+   const auto cfg = base_tester::default_config(dir).first;
+   tester chain(cfg, native_genesis());
+   enable_local_finalizer(chain);
+   chain.produce_blocks(8);
+   chain.close();
+   const auto original = fc::sha256::hash(read_recovery_test_file(cfg.blocks_dir / "blocks.log"));
+   const auto reversible = cfg.blocks_dir / config::reversible_blocks_dir_name;
+   const auto recovery = reversible / "recovery";
+   BOOST_CHECK_THROW(block_log::repair_log(cfg.blocks_dir, 2, config::reversible_blocks_dir_name), block_log_exception);
+   BOOST_CHECK(fc::sha256::hash(read_recovery_test_file(cfg.blocks_dir / "blocks.log")) == original);
+   BOOST_REQUIRE(std::filesystem::is_directory(recovery));
+   std::filesystem::rename(recovery, reversible / "saved-recovery");
+   std::filesystem::create_directory_symlink(reversible / "saved-recovery", recovery);
+   BOOST_CHECK_THROW(block_log::repair_log(cfg.blocks_dir, 0, config::reversible_blocks_dir_name), block_log_exception);
+   BOOST_CHECK(fc::sha256::hash(read_recovery_test_file(cfg.blocks_dir / "blocks.log")) == original);
+   BOOST_CHECK(std::filesystem::is_directory(reversible / "saved-recovery"));
 }
 
 BOOST_AUTO_TEST_CASE(native_snapshot_and_existing_state_restart) {

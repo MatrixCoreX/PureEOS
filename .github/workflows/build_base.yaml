@@ -1,19 +1,18 @@
-name: "Build helios"
+name: PureEOS native component build
 
 on:
   workflow_call:
+    secrets:
+      AIC_VM_DEPLOY_KEY:
+        description: Read-only key for the private VM mirror during candidate validation
+        required: false
     inputs:
-      platforms:
-        description: "Platforms definitions"
-        type: string
-        required: true
-      platform-list:
-        description: "Array of platforms"
+      ubuntu-release:
+        description: Actual Ubuntu user space, either 26.04 or 26.10
         type: string
         required: true
 
 permissions:
-  packages: read
   contents: read
 
 defaults:
@@ -21,29 +20,54 @@ defaults:
     shell: bash
 
 jobs:
-  Build:
-    name: Build helios
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: ${{fromJSON(inputs.platform-list)}}
-    runs-on: ["self-hosted", "enf-x86-beefy"]
-    container: ${{fromJSON(inputs.platforms)[matrix.platform].image}}
+  native:
+    name: Build four tools and test components
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    container: ubuntu:${{ inputs.ubuntu-release }}
+    env:
+      CI_BUILD_DIR: build/ci-modern
     steps:
-        - uses: actions/checkout@v4
-          with:
-            submodules: recursive
-        - name: Build
-          id: build
-          run: |
-            # https://github.com/actions/runner/issues/2033
-            chown -R $(id -u):$(id -g) $PWD
-            cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_HELIOS_DEV_DEB=On ${HELIOS_PLATFORM_HAS_EXTRAS_CMAKE:+-C /extras.cmake} -GNinja
-            cmake --build build
-            tar -pc --exclude "*.o" build | zstd --long -T0 -9 > build.tar.zst
-        - name: Upload builddir
-          uses: actions/upload-artifact@v4
-          with:
-            name: ${{matrix.platform}}-build
-            path: build.tar.zst
-            compression-level: 0
+      - name: Install native prerequisites
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build git openssh-client pkg-config ca-certificates \
+            libcurl4-openssl-dev libgmp-dev zlib1g-dev python3 python3-yaml
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: false
+          persist-credentials: false
+      - name: Checkout fixed dependencies
+        env:
+          AIC_VM_DEPLOY_KEY: ${{ secrets.AIC_VM_DEPLOY_KEY }}
+        run: python3 -I -B tools/checkout_ci_dependencies.py
+      - name: Prepare pinned sources
+        run: |
+          mkdir -p ci-results
+          git rev-parse HEAD > ci-results/source-commit.txt
+          git submodule status --recursive > ci-results/submodules.txt
+          python3 -I -B tools/prepare_vm_vendor.py --apply > ci-results/vm-prepared.json
+          python3 -I -B tools/prepare_vm_vendor.py --check > ci-results/vm-check.json
+          bash tools/ubuntu-modern-build.sh --check > ci-results/platform.txt
+      - name: Build native tools and selected component targets
+        run: |
+          bash tools/ubuntu-modern-build.sh --build --jobs=2 --build-dir="$PWD/$CI_BUILD_DIR"
+          cmake --build "$CI_BUILD_DIR" --parallel 2 --target \
+            parallel_state_view_test parallel_secondary_state_test \
+            test_incoming_transaction_batch test_production_timer_guard
+      - name: Check four tools and exact selected test inventory
+        run: |
+          python3 -I -B tools/ci_native_checks.py \
+            --build-dir "$CI_BUILD_DIR" --output ci-results/native \
+            --expected-version "v2.0.0-$(git rev-parse HEAD)"
+      - name: Preserve actual build and test evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: native-components-ubuntu-${{ inputs.ubuntu-release }}
+          path: |
+            ci-results/
+            build/ci-modern/Testing/Temporary/*.log
+          retention-days: 7

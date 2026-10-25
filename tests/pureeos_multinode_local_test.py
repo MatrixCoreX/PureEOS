@@ -7,6 +7,7 @@ All child processes stop on exit; private data, logs and public evidence remain.
 """
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 import datetime
 import hashlib
 import json
@@ -20,6 +21,19 @@ import urllib.request
 
 from native_savanna_genesis_test import free_port
 from pureeos_single_choice_local_test import LocalTest
+
+
+def stop_owned_children(processes, stop):
+    """Stop only explicit child handles, concurrently; collect every failure."""
+    children = list({p.pid: p for p in processes if p is not None}.values())
+    def close(process):
+        try:
+            stop(process)
+            return None
+        except Exception as error:
+            return {'pid': process.pid, 'error': str(error)}
+    with ThreadPoolExecutor(max_workers=min(8, max(1, len(children)))) as pool:
+        return [error for error in pool.map(close, children) if error is not None]
 
 
 class MultiNodeTest(LocalTest):
@@ -345,8 +359,10 @@ class MultiNodeTest(LocalTest):
             self.setup(register_candidates=False)
             self.tests()
             self.report["status"] = "passed"
-        except Exception as error:
+        except (Exception, KeyboardInterrupt) as error:
             self.report["status"], self.report["error"] = "failed", self.redact(str(error))
+            if isinstance(error, KeyboardInterrupt):
+                self.report["status"] = "interrupted"
             if isinstance(error, urllib.error.HTTPError):
                 self.report["error"] += ": " + self.redact(error.read().decode(errors="replace"))
             self.report["traceback"] = self.redact(traceback.format_exc())
@@ -355,15 +371,17 @@ class MultiNodeTest(LocalTest):
             if self.report["status"] == "running":
                 self.report["status"] = "interrupted"
             processes = [p.get("process") for p in reversed(list(self.peers.values()))] + [self.node, self.wallet]
-            for process in processes:
-                try:
-                    self.stop(process)
-                except Exception as error:
-                    self.report["status"] = "failed"
-                    self.report.setdefault("shutdown_errors", []).append(self.redact(str(error)))
+            self.report['shutdown'] = dict(phase='stopping-owned-children', outcome_before_shutdown=self.report['status'],
+                started_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+            pending = self.root/'progress.pending'
+            pending.write_text(json.dumps(self.report, indent=2)); pending.replace(self.root/'progress.json')
+            for error in stop_owned_children(processes, self.stop):
+                self.report['status'] = 'failed'
+                self.report.setdefault('shutdown_errors', []).append(self.redact(str(error)))
             for log in self.logs:
                 log.close()
             self.report["processes_stopped"] = all(p is None or p.poll() is not None for p in processes)
+            self.report['shutdown'].update(phase='complete', finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
             (self.root / "report.json").write_text(json.dumps(self.report, indent=2))
             print(f"Report: {self.root / 'report.json'}", flush=True)
         return 0 if self.report["status"] == "passed" else 1

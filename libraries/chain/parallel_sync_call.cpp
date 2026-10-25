@@ -35,7 +35,7 @@ const isolated_receiver_program* pack_sync_catalog(fc::sha256::encoder& fingerpr
 fc::sha256 isolated_sync_fingerprint(const isolated_action_input& root,
       std::span<const isolated_sync_program> programs, isolated_sync_context protocol) {
    fc::sha256::encoder fingerprint;
-   constexpr char domain[] = "pureeos/isolated-sync-primary/v2";
+   constexpr char domain[] = "pureeos/isolated-sync-primary/v3";
    fingerprint.write(domain, sizeof(domain));
    const auto* root_program = pack_sync_catalog(fingerprint, programs, protocol, root.receiver);
    if (!root_program) throw isolated_receiver_missing(root.receiver);
@@ -48,7 +48,7 @@ fc::sha256 isolated_sync_transaction_fingerprint(std::span<const isolated_action
       std::span<const isolated_sync_program> programs, isolated_sync_context protocol) {
    if (roots.empty() || roots.size() > isolated_sync_executor::max_roots) throw primary_state_budget_exceeded();
    fc::sha256::encoder fingerprint;
-   constexpr char domain[] = "pureeos/isolated-sync-transaction/v1";
+   constexpr char domain[] = "pureeos/isolated-sync-transaction/v2";
    fingerprint.write(domain, sizeof(domain));
    // Shared catalog/protocol bytes are hashed once, not once per root.
    pack_sync_catalog(fingerprint, programs, protocol, {});
@@ -88,7 +88,7 @@ bool replay_cursor(primary_overlay_cursor& cursor, const isolated_cursor_query& 
 }
 bool valid_limits(const isolated_wasm_limits& l) {
    return l.max_pages && l.max_pages <= 16 && l.max_call_depth && l.max_call_depth <= 64 &&
-      l.max_code_bytes <= 64 * 1024 && l.max_action_bytes <= 64 * 1024 && l.max_authorizations <= 64 &&
+      l.max_code_bytes <= isolated_wasm_limits::max_module_code_bytes && l.max_action_bytes <= 64 * 1024 && l.max_authorizations <= 64 &&
       l.max_return_bytes <= 4096 && l.max_attempt_time.count() > 0 && l.max_attempt_time <= std::chrono::seconds(1);
 }
 }
@@ -101,7 +101,7 @@ struct sync_root_view {
    std::span<const isolated_sync_event> events;
 };
 
-// Shared by the old one-root proof and the PRIVATE multi-root proof. Only one
+// Shared by the legacy one-root and transaction-wide frozen proofs. Only one
 // replay overlay is created: later roots must observe earlier temporary IDs,
 // table lifetimes and values. The owner still needs live-state/auth checks.
 bool validate_sync_roots(const primary_overlay_result& state,
@@ -119,6 +119,7 @@ bool validate_sync_roots(const primary_overlay_result& state,
        state.writes().size() > bounds.max_write_operations ||
        state.read_tables().size() > bounds.max_read_tables ||
        state.read_queries().size() > bounds.max_read_queries ||
+       state.secondary_read_queries().size() > bounds.max_read_queries - state.read_queries().size() ||
        state.read_accounts().size() > bounds.max_read_accounts) return false;
    std::map<name, const isolated_sync_program*> catalog;
    size_t code_bytes = 0, data_bytes = 0, write_bytes = 0;
@@ -150,12 +151,14 @@ bool validate_sync_roots(const primary_overlay_result& state,
    const auto actual_fingerprint = single_root_fingerprint ? isolated_sync_fingerprint(roots.front(), programs, protocol) :
                                                            isolated_sync_transaction_fingerprint(roots, programs, protocol);
    if (expected_fingerprint != actual_fingerprint) return false;
-   for (const auto& write : state.writes()) {
+   for (const auto& mutation : state.writes()) {
       check();
-      if (write.value.size() > bounds.max_write_value_bytes - write_bytes) return false;
-      write_bytes += write.value.size();
+      const auto bytes = isolated_state_write_bytes(mutation);
+      if (bytes > bounds.max_write_value_bytes - write_bytes) return false;
+      write_bytes += bytes;
    }
    primary_state_overlay replay(state.base());
+   isolated_console_budget console_budget;
    size_t next_write = 0, total_calls = 0, event_count = 0;
    std::chrono::microseconds elapsed{};
    for (size_t root_index = 0; root_index < roots.size(); ++root_index) {
@@ -178,7 +181,9 @@ bool validate_sync_roots(const primary_overlay_result& state,
              writes_end > state.writes().size()) return false;
          event_count += events.size();
          primary_overlay_cursor cursor(replay, receiver);
+         secondary_cursor_group secondary(replay, receiver);
          size_t marker_count = 0;
+         uint32_t console_events = 0;
          for (const auto& event : events) {
             check(); // never catch the owner's cancellation/deadline as a valid fallback
             if (const auto* call = std::get_if<isolated_sync_call_event>(&event)) {
@@ -190,7 +195,7 @@ bool validate_sync_roots(const primary_overlay_result& state,
                    child.data.size() > executor::max_total_data_bytes - data_bytes || child.writes_begin != next_write ||
                    child.writes_end < next_write || child.writes_end > writes_end) return false;
                data_bytes += child.data.size();
-               if (protocol.console_enabled) ++marker_count;
+               if (!accept_isolated_console_marker(markers, marker_count, console_events, protocol.console_enabled)) return false;
                bool exists;
                try { exists = bool(replay.read_account(child.receiver)); } catch (const std::exception&) { return false; }
                const isolated_sync_program* captured = nullptr;
@@ -217,6 +222,7 @@ bool validate_sync_roots(const primary_overlay_result& state,
                elapsed += child.exclusive_elapsed;
                isolated_action_input input;
                input.receiver = input.account = child.receiver; input.data = child.data;
+               input.environment = roots[root_index].environment;
                input.max_return_bytes = std::min(protocol.max_data_bytes,captured->program.limits.max_return_bytes);
                if (child.data.size() > captured->program.limits.max_action_bytes || child.return_value.size() > input.max_return_bytes ||
                    child.execution_fingerprint != isolated_execution_fingerprint(
@@ -229,7 +235,7 @@ bool validate_sync_roots(const primary_overlay_result& state,
                      if (!replay_cursor(cursor,*query)) return false;
                   } else if (const auto* mutation = std::get_if<isolated_cursor_write>(&cursor_event)) {
                      if (read_only || mutation->write_index != next_write || next_write >= writes_end) return false;
-                     const auto& write = state.writes()[next_write++];
+                     const auto& write = state.primary_write(next_write++);
                      if (write.table.code != receiver) return false;
                      switch (write.operation) {
                         case primary_operation::store:
@@ -239,29 +245,24 @@ bool validate_sync_roots(const primary_overlay_result& state,
                         case primary_operation::remove: cursor.remove(mutation->iterator); break;
                         default: return false;
                      }
+                  } else if (const auto* secondary_event = std::get_if<isolated_secondary_cursor_event>(&cursor_event)) {
+                     if (!replay_isolated_secondary_cursor_event(secondary, *secondary_event, state,
+                           next_write, writes_end, read_only)) return false;
+                  } else if (const auto* console = std::get_if<isolated_console_event>(&cursor_event)) {
+                     if (!console_budget.accept(*console, next_write, protocol.console_enabled)) return false;
+                     ++console_events;
                   } else return false; // sync calls cannot enqueue notifications
                } catch (const std::exception&) { return false; }
             }
          }
-         return next_write == writes_end && markers.size() == marker_count &&
-            std::all_of(markers.begin(),markers.end(),[](uint32_t n){ return n == 0; }); // printing still unsupported
+         return next_write == writes_end && markers.size() == marker_count;
       };
       if (!frame(root.receiver, 0, 0, protocol.root_read_only, current.events, current.markers, effects.writes_end) ||
           next_write != effects.writes_end || next_call != current.calls.size()) return false;
    }
    if (next_write != state.writes().size()) return false;
    const auto actual = replay.seal();
-   if (actual.writes().size() != state.writes().size()) return false;
-   for (size_t i=0;i<actual.writes().size();++i) {
-      check();
-      const auto& a=actual.writes()[i]; const auto& b=state.writes()[i];
-      if (a.table != b.table || a.primary_key != b.primary_key || a.payer != b.payer || a.value != b.value ||
-          a.operation != b.operation || a.object_id != b.object_id || a.table_object_id != b.table_object_id) return false;
-   }
-   for (const auto& t:actual.read_tables()) { check(); if (!state.read_tables().contains(t)) return false; }
-   for (const auto& q:actual.read_queries()) { check(); if (!state.read_queries().contains(q)) return false; }
-   for (const auto& a:actual.read_accounts()) { check(); if (!state.read_accounts().contains(a)) return false; }
-   return true;
+   return validate_isolated_replay_state(actual, state, checkpoint);
 }
 
 } // namespace
@@ -270,6 +271,8 @@ bool validate_isolated_sync_journal(const isolated_sync_result& result, const is
       std::span<const isolated_sync_program> programs, isolated_sync_context protocol,
       const std::function<void()>& checkpoint) {
    const sync_root_view view{result.root, result.calls, result.root_console_markers, result.root_events};
+   if (checkpoint) checkpoint();
+   if (!same_isolated_environment(result.environment, root.environment)) return false;
    return validate_sync_roots(result.state, {&root, 1}, {&view, 1}, programs, protocol,
                               result.execution_fingerprint, true, checkpoint);
 }
@@ -279,6 +282,9 @@ bool validate_isolated_sync_transaction_journal(const isolated_sync_transaction_
       isolated_sync_context protocol, const std::function<void()>& checkpoint) {
    if (checkpoint) checkpoint();
    if (roots.empty() || roots.size() > isolated_sync_executor::max_roots || result.roots.size() != roots.size()) return false;
+   if (!same_isolated_environment(result.environment, roots.front().environment)) return false;
+   for (const auto& root : roots)
+      if (!same_isolated_environment(root.environment, result.environment)) return false;
    std::vector<sync_root_view> views;
    views.reserve(result.roots.size());
    for (const auto& root : result.roots)

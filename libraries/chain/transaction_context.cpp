@@ -2,6 +2,8 @@
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/parallel_action_tree.hpp>
+#include <eosio/chain/parallel_sync_call.hpp>
+#include <eosio/chain/parallel_mixed_tree.hpp>
 #include <eosio/chain/authorization_manager.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/resource_limits.hpp>
@@ -45,7 +47,8 @@ namespace eosio::chain {
                                              transaction_checktime_timer&& tmr,
                                              action_digests_t::store_which_t store_which,
                                              fc::time_point s,
-                                             transaction_metadata::trx_type type)
+                                             transaction_metadata::trx_type type,
+                                             fc::microseconds signature_cpu)
    :control(c)
    ,packed_trx(t)
    ,id(trx_id)
@@ -56,7 +59,9 @@ namespace eosio::chain {
    ,transaction_timer(std::move(tmr))
    ,trx_type(type)
    ,pseudo_start(s)
+   ,signature_cpu_charge(signature_cpu)
    {
+      EOS_ASSERT(signature_cpu.count() >= 0, transaction_exception, "negative signature CPU charge");
       initialize();
    }
 
@@ -72,6 +77,9 @@ namespace eosio::chain {
       parallel_sync_result = nullptr;
       parallel_sync_input = nullptr;
       parallel_sync_replay_guard = nullptr;
+      parallel_mixed_result = nullptr;
+      parallel_mixed_input = nullptr;
+      parallel_mixed_replay_guard = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -93,6 +101,7 @@ namespace eosio::chain {
    }
 
    void transaction_context::initialize() {
+      cpu_billing.reset();
       if (!control.skip_db_sessions() && !is_read_only()) {
          undo_session.emplace(control.mutable_db().start_undo_session(true));
       }
@@ -426,6 +435,7 @@ namespace eosio::chain {
       if ( is_read_only() ) {
          trace->net_usage = ((trace->net_usage + 7)/8)*8; // Round up to nearest multiple of word size (8 bytes)
          trace->elapsed = fc::time_point::now() - start;
+         update_billed_cpu_time(fc::time_point::now());
          return;
       }
                                          
@@ -497,6 +507,9 @@ namespace eosio::chain {
       parallel_sync_result = nullptr;
       parallel_sync_input = nullptr;
       parallel_sync_replay_guard = nullptr;
+      parallel_mixed_result = nullptr;
+      parallel_mixed_input = nullptr;
+      parallel_mixed_replay_guard = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -601,9 +614,13 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() &&
                  !is_implicit() && !is_scheduled() && action_ordinal > 0 &&
                  !parallel_notification_result && !parallel_tree_result && isolated_cpu_notification_steps == 0 &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
                  ((!parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard) ||
-                  (parallel_sync_result && parallel_sync_input && parallel_sync_replay_guard && action_ordinal == 1 &&
-                   packed_trx.get_transaction().actions.size() == 1)) &&
+                  (parallel_sync_result && parallel_sync_input && parallel_sync_replay_guard && !parallel_transaction_result &&
+                   parallel_next_action < parallel_sync_result->roots.size() &&
+                   parallel_sync_result->roots.size() == packed_trx.get_transaction().actions.size() &&
+                   parallel_sync_input->roots.size() == parallel_sync_result->roots.size() &&
+                   action_ordinal == parallel_next_action + 1)) &&
                  action_ordinal == isolated_cpu_last_action_ordinal + 1 &&
                  action_ordinal <= packed_trx.get_transaction().actions.size() &&
                  elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
@@ -619,6 +636,7 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
                  parallel_notification_result && !parallel_tree_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
                  !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_notification_result->steps.size() && action_ordinal > 0 &&
                  parallel_notification_result->steps[step_index].action_ordinal == action_ordinal &&
@@ -636,6 +654,7 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
                  parallel_tree_result && !parallel_notification_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
                  !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_tree_result->steps.size() && action_ordinal > 0 &&
                  parallel_tree_result->steps[step_index].action_ordinal == action_ordinal &&
@@ -645,6 +664,34 @@ namespace eosio::chain {
                  transaction_exception, "invalid isolated tree CPU charge");
       checktime();
       ++isolated_cpu_notification_steps; // shared receiver-order guard forbids changing modes mid-transaction
+      apply_isolated_cpu_charge(elapsed);
+   }
+
+   void transaction_context::charge_isolated_mixed_cpu(fc::microseconds elapsed, size_t step_index,
+                                                      uint32_t action_ordinal) {
+      EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
+                 parallel_mixed_result && parallel_mixed_input && parallel_mixed_replay_guard &&
+                 !parallel_tree_result && !parallel_notification_result && !parallel_transaction_result &&
+                 !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 isolated_cpu_last_action_ordinal == 0 && step_index == parallel_next_receiver &&
+                 step_index == isolated_cpu_notification_steps && step_index < parallel_mixed_result->steps.size() &&
+                 action_ordinal > 0 && parallel_mixed_result->steps[step_index].action_ordinal == action_ordinal &&
+                 elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
+                 pseudo_start.time_since_epoch() >= elapsed,
+                 transaction_exception, "invalid isolated mixed CPU charge");
+      const auto& step = parallel_mixed_result->steps[step_index];
+      auto expected = fc::microseconds(step.effects.elapsed.count());
+      EOS_ASSERT(expected.count() >= 0 && expected <= fc::milliseconds(500), transaction_exception,
+                 "invalid isolated mixed ordinary CPU");
+      for (const auto& call : step.calls) {
+         const auto cpu = fc::microseconds(call.exclusive_elapsed.count());
+         EOS_ASSERT(cpu.count() >= 0 && cpu <= fc::milliseconds(500) - expected, transaction_exception,
+                    "invalid isolated mixed child CPU");
+         expected += cpu;
+      }
+      EOS_ASSERT(expected == elapsed, transaction_exception, "isolated mixed CPU sum mismatch");
+      checktime();
+      ++isolated_cpu_notification_steps;
       apply_isolated_cpu_charge(elapsed);
    }
 
@@ -661,6 +708,7 @@ namespace eosio::chain {
    }
 
    void transaction_context::pause_billing_timer() {
+      cpu_billing.pause();
       paused_time = fc::time_point::now();
       billed_time = paused_time - pseudo_start;
       pseudo_start = fc::time_point();
@@ -688,6 +736,7 @@ namespace eosio::chain {
       }
 
       transaction_timer.start(_deadline);
+      cpu_billing.resume();
    }
 
    void transaction_context::validate_cpu_usage_to_bill( int64_t billed_us, int64_t account_cpu_limit, bool check_minimum, int64_t subjective_billed_us )const {
@@ -786,12 +835,30 @@ namespace eosio::chain {
       }
    }
 
-   uint32_t transaction_context::update_billed_cpu_time( fc::time_point now ) {
-      if( explicit_billed_cpu_time ) return static_cast<uint32_t>(billed_cpu_time_us);
+   uint32_t transaction_context::update_billed_cpu_time( fc::time_point /*now*/ ) {
+      if( explicit_billed_cpu_time ) {
+         EOS_ASSERT(billed_cpu_time_us >= 0 && billed_cpu_time_us <= std::numeric_limits<uint32_t>::max(),
+                    transaction_exception, "explicit CPU charge does not fit a receipt");
+         trace->cpu_usage = fc::microseconds(billed_cpu_time_us);
+         return static_cast<uint32_t>(billed_cpu_time_us);
+      }
 
       const auto& cfg = control.get_global_properties().configuration;
-      billed_cpu_time_us = std::max( (now - pseudo_start).count(), static_cast<int64_t>(cfg.min_transaction_cpu_usage) );
-
+      // Scheduling, sleeping and compilation pauses do not consume the
+      // account's CPU. Add only the adopted private VM CPU, exactly once;
+      // wall-clock watchdogs above still protect transaction/block deadlines.
+      const auto owner_cpu = cpu_billing.elapsed().count();
+      EOS_ASSERT(owner_cpu >= 0 && isolated_cpu_charge.count() >= 0 &&
+                 owner_cpu <= std::numeric_limits<int64_t>::max() - isolated_cpu_charge.count(),
+                 transaction_exception, "invalid transaction CPU consumption");
+      const auto execution_cpu = owner_cpu + isolated_cpu_charge.count();
+      EOS_ASSERT(signature_cpu_charge.count() <= std::numeric_limits<int64_t>::max() - execution_cpu,
+                 transaction_exception, "signature CPU charge overflow");
+      billed_cpu_time_us = std::max(execution_cpu + signature_cpu_charge.count(),
+                                   static_cast<int64_t>(cfg.min_transaction_cpu_usage));
+      EOS_ASSERT(billed_cpu_time_us <= std::numeric_limits<uint32_t>::max(), transaction_exception,
+                 "transaction CPU charge does not fit a receipt");
+      trace->cpu_usage = fc::microseconds(billed_cpu_time_us);
       return static_cast<uint32_t>(billed_cpu_time_us);
    }
 

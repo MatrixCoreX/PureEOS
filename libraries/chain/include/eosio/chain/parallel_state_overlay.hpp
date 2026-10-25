@@ -1,6 +1,7 @@
 #pragma once
 
 #include <eosio/chain/transaction_state_view.hpp>
+#include <eosio/chain/parallel_secondary_state.hpp>
 #include <map>
 #include <functional>
 #include <memory>
@@ -32,6 +33,14 @@ struct primary_snapshot_limits {
    size_t max_accounts = 256;
 };
 
+// Owner-side capture diagnostics only; never billable CPU or a dependency.
+struct primary_snapshot_capture_stats {
+   size_t tables_read = 0, primary_queries_read = 0, primary_rows_copied = 0;
+   size_t secondary_queries_read = 0, accounts_read = 0;
+};
+
+class frozen_primary_capture_session;
+
 struct primary_overlay_limits {
    size_t max_read_tables = 64;
    size_t max_write_operations = 4096;
@@ -48,7 +57,8 @@ struct primary_capture_request {
    std::optional<primary_query> query;
 };
 struct account_capture_request { name account; };
-using state_capture_request = std::variant<primary_capture_request, account_capture_request>;
+struct secondary_capture_request { secondary_query query; };
+using state_capture_request = std::variant<primary_capture_request, account_capture_request, secondary_capture_request>;
 struct primary_state_missing : primary_state_unsupported {
    explicit primary_state_missing(table_key table) : request(primary_capture_request{table, std::nullopt}) {}
    explicit primary_state_missing(primary_query query) : request(primary_capture_request{query.table, query}) {
@@ -56,6 +66,8 @@ struct primary_state_missing : primary_state_unsupported {
       if (normalized->kind == primary_query_kind::last) normalized->primary_key = 0;
    }
    explicit primary_state_missing(name account) : request(account_capture_request{account}) {}
+   explicit primary_state_missing(secondary_query query)
+      : request(secondary_capture_request{normalize_secondary_query(std::move(query))}) {}
    state_capture_request request;
 };
 struct primary_state_budget_exceeded : std::runtime_error {
@@ -78,6 +90,13 @@ public:
    static std::shared_ptr<const frozen_primary_state> capture_queries(
       const chainbase_transaction_state_view&, std::span<const table_key>, std::span<const primary_query>,
       primary_snapshot_limits = {}, const std::function<void()>& checkpoint = {}, std::span<const name> accounts = {});
+   // Primary and all secondary families share this snapshot's table metadata,
+   // row/query/value budgets and owner. No secondary host or mutation is enabled
+   // by capturing values; unrequested sparse queries still require discovery.
+   static std::shared_ptr<const frozen_primary_state> capture_queries_with_secondary(
+      const chainbase_transaction_state_view&, std::span<const table_key>, std::span<const primary_query>,
+      std::span<const secondary_query>, primary_snapshot_limits = {},
+      const std::function<void()>& checkpoint = {}, std::span<const name> accounts = {});
    frozen_primary_state(const frozen_primary_state&) = delete;
    frozen_primary_state& operator=(const frozen_primary_state&) = delete;
 
@@ -87,25 +106,61 @@ public:
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
 
+   secondary_read_result read_secondary(const secondary_query&) const override;
+
    size_t table_count() const { return tables_.size(); }
    size_t row_count() const { return row_count_; }
    size_t value_bytes() const { return value_bytes_; }
    size_t account_count() const { return accounts_.size(); }
 
 private:
+   friend class frozen_primary_capture_session;
    frozen_primary_state() = default;
+   static std::shared_ptr<const frozen_primary_state> capture_queries_impl(
+      const chainbase_transaction_state_view&, const chainbase_secondary_state_view*, std::span<const table_key>,
+      std::span<const primary_query>, std::span<const secondary_query>, primary_snapshot_limits,
+      const std::function<void()>&, std::span<const name>,
+      const frozen_primary_state* same_prefix = nullptr, primary_snapshot_capture_stats* = nullptr);
    struct table_snapshot {
       std::optional<table_read> metadata;
-      std::map<uint64_t, primary_row_read> rows;
+      std::map<uint64_t, std::shared_ptr<const primary_row_read>> rows;
       bool complete = true;
       std::map<primary_query, std::optional<uint64_t>, primary_query_less> queries;
+      std::map<std::pair<secondary_key_kind, uint64_t>, secondary_row_read> secondary_rows;
+      std::map<secondary_query, std::optional<uint64_t>, secondary_query_less> secondary_queries;
    };
    const table_snapshot& get_table(const table_key&) const;
    std::pair<const table_snapshot*, const primary_row_read*> locate(const primary_query&) const;
-   std::map<table_key, table_snapshot, table_key_less> tables_;
+   std::map<table_key, std::shared_ptr<const table_snapshot>, table_key_less> tables_;
    std::map<name, std::optional<account_read>> accounts_;
    size_t row_count_ = 0;
    size_t value_bytes_ = 0;
+   size_t query_count_ = 0;
+};
+
+// One synchronous discovery invocation, on ONE unchanged canonical prefix.
+// The owner must join all workers before extending, and MUST NOT mutate/undo
+// canonical state during this scope. Never retain this across adoption, a
+// prefix refresh, block abort, or another batch. Each returned version remains
+// immutable: table maps use copy-on-write and row payloads have const ownership.
+// This is not a cross-batch cache, MVCC, or permission for concurrent DB reads.
+class frozen_primary_capture_session {
+public:
+   explicit frozen_primary_capture_session(const chainbase_transaction_state_view& source) : source_(source) {}
+   frozen_primary_capture_session(const frozen_primary_capture_session&) = delete;
+   frozen_primary_capture_session& operator=(const frozen_primary_capture_session&) = delete;
+   std::shared_ptr<const frozen_primary_state> capture(std::span<const table_key>, std::span<const primary_query>,
+      std::span<const secondary_query>, primary_snapshot_limits = {},
+      const std::function<void()>& checkpoint = {}, std::span<const name> accounts = {});
+   const primary_snapshot_capture_stats& stats() const { check_owner(); return stats_; }
+private:
+   void check_owner() const {
+      if (std::this_thread::get_id() != owner_) throw state_view_wrong_thread();
+   }
+   const chainbase_transaction_state_view& source_;
+   const std::thread::id owner_ = std::this_thread::get_id();
+   std::shared_ptr<const frozen_primary_state> captured_;
+   primary_snapshot_capture_stats stats_;
 };
 
 enum class primary_operation : uint8_t { update, store, remove };
@@ -118,7 +173,26 @@ struct primary_mutation {
    primary_operation operation = primary_operation::update;
    int64_t object_id = 0;
    int64_t table_object_id = 0;
+   bool operator==(const primary_mutation&) const = default;
 };
+
+struct secondary_mutation {
+   table_key table;
+   uint64_t primary_key = 0;
+   name payer;
+   secondary_key key = uint64_t{0};
+   primary_operation operation = primary_operation::update; // same store/update/remove operations
+   int64_t object_id = 0;
+   int64_t table_object_id = 0;
+   bool operator==(const secondary_mutation&) const = default;
+};
+// One chronology across all families: no side journal may lose interleaving,
+// allocate another temporary table or escape existing operation/byte budgets.
+using state_mutation = std::variant<primary_mutation, secondary_mutation>;
+inline const primary_mutation& require_primary_mutation(const state_mutation& mutation) {
+   if (const auto* primary = std::get_if<primary_mutation>(&mutation)) return *primary;
+   throw primary_state_unsupported();
+}
 
 class primary_state_overlay;
 
@@ -130,22 +204,32 @@ public:
    const auto& base() const { return base_; }
    const auto& read_tables() const { return reads_; }
    const auto& read_queries() const { return queries_; }
+   const auto& secondary_read_queries() const { return secondary_queries_; }
    const auto& read_accounts() const { return accounts_; }
    const auto& writes() const { return writes_; }
+   const primary_mutation& primary_write(size_t index) const {
+      return require_primary_mutation(writes_.at(index));
+   }
+   // Temporary fail-closed boundary for existing primary-only executors and
+   // adopters; remove it per entry point only with typed replay/oracle coverage.
+   bool primary_only() const { return primary_only_; }
    bool matches_base_reads(const transaction_state_view& live, const std::function<void()>& checkpoint) const;
 private:
    friend class primary_state_overlay;
    primary_overlay_result(std::shared_ptr<const frozen_primary_state> base,
                           std::set<table_key, table_key_less> reads,
-                          std::set<primary_query, primary_query_less> queries, std::vector<primary_mutation> writes,
-                          std::set<name> accounts)
+                          std::set<primary_query, primary_query_less> queries, std::vector<state_mutation> writes,
+                          std::set<name> accounts, std::set<secondary_query, secondary_query_less> secondary_queries,
+                          bool primary_only)
       : base_(std::move(base)), reads_(std::move(reads)), queries_(std::move(queries)), writes_(std::move(writes)),
-        accounts_(std::move(accounts)) {}
+        accounts_(std::move(accounts)), secondary_queries_(std::move(secondary_queries)), primary_only_(primary_only) {}
    std::shared_ptr<const frozen_primary_state> base_;
    std::set<table_key, table_key_less> reads_;
    std::set<primary_query, primary_query_less> queries_;
-   std::vector<primary_mutation> writes_;
+   std::vector<state_mutation> writes_;
    std::set<name> accounts_;
+   std::set<secondary_query, secondary_query_less> secondary_queries_;
+   bool primary_only_ = true;
 };
 
 // One thread owns each attempt. All mutations are retained in order. Created
@@ -161,20 +245,28 @@ public:
    primary_metadata_result locate_primary(const primary_query&) const override;
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
+   secondary_read_result read_secondary(const secondary_query&) const override;
    void update_existing(const table_key&, uint64_t primary_key, name payer, std::span<const char> value);
    void store(const table_key&, uint64_t primary_key, name payer, std::span<const char> value);
    void remove(const table_key&, uint64_t primary_key);
+   void update_secondary(const table_key&, uint64_t primary_key, name payer, const secondary_key&);
+   void store_secondary(const table_key&, uint64_t primary_key, name payer, const secondary_key&);
+   void remove_secondary(const table_key&, uint64_t primary_key, const secondary_key& index_type);
    size_t write_count() const;
    primary_overlay_result seal();
 
 private:
    friend class primary_overlay_cursor;
+   friend class secondary_overlay_cursor;
    void check_owner_and_valid() const;
    void depend_on(const table_key&) const;
    void depend_on_query(primary_query) const;
+   void depend_on_secondary_query(secondary_query) const;
    const primary_mutation* latest_write(const table_key&, uint64_t primary_key) const;
+   const secondary_mutation* latest_secondary_write(const table_key&, secondary_key_kind, uint64_t primary_key) const;
    void check_write_budget(size_t) const;
    void append(primary_mutation);
+   void append(secondary_mutation);
    int64_t temporary_id();
    std::shared_ptr<const frozen_primary_state> base_;
    primary_overlay_limits limits_;
@@ -182,9 +274,14 @@ private:
    mutable bool valid_ = true;
    mutable std::set<table_key, table_key_less> reads_;
    mutable std::set<primary_query, primary_query_less> queries_;
+   mutable std::set<secondary_query, secondary_query_less> secondary_queries_;
+   // end() and next(end) can avoid row queries, but still require a typed
+   // secondary event proof before any legacy primary-only adoption is safe.
+   mutable bool secondary_accessed_ = false;
    mutable std::set<name> accounts_;
-   std::vector<primary_mutation> writes_;
+   std::vector<state_mutation> writes_;
    std::map<table_key, std::map<uint64_t, size_t>, table_key_less> latest_writes_;
+   std::map<table_key, std::map<std::pair<secondary_key_kind, uint64_t>, size_t>, table_key_less> latest_secondary_writes_;
    std::map<table_key, std::optional<table_read>, table_key_less> changed_tables_;
    size_t written_bytes_ = 0;
    int64_t next_temporary_id_ = -1;
@@ -230,6 +327,50 @@ private:
    int seek(const primary_query&);
    primary_state_overlay& state_;
    name receiver_;
+   size_t max_iterators_, max_ends_;
+   std::vector<row_handle> rows_;
+   std::vector<table_read> tables_;
+   std::map<int64_t, int> row_handles_;
+   std::map<int64_t, int> table_handles_;
+};
+
+// One cursor cache per index family, with the same lifetime as a canonical
+// generic_index. Notification receivers may share it; roots/inline/sync frames
+// must construct independent caches. These are owned handles, not WASM pointers.
+class secondary_overlay_cursor {
+public:
+   secondary_overlay_cursor(primary_state_overlay&, name receiver, secondary_key_kind,
+                            size_t max_iterators = 4096, size_t max_end_iterators = 64);
+   secondary_overlay_cursor(const secondary_overlay_cursor&) = delete;
+   secondary_overlay_cursor& operator=(const secondary_overlay_cursor&) = delete;
+   void set_receiver_for_notification(name);
+   int find_primary(const table_key&, secondary_key& output, uint64_t primary);
+   int find_secondary(const table_key&, const secondary_key&, uint64_t& primary);
+   int lower_bound(const table_key&, secondary_key&, uint64_t& primary);
+   int upper_bound(const table_key&, secondary_key&, uint64_t& primary);
+   int end(const table_key&);
+   int next(int iterator, uint64_t& primary);
+   int previous(int iterator, uint64_t& primary);
+   int store(const table_key&, uint64_t primary, name payer, const secondary_key&);
+   void update(int iterator, name payer, const secondary_key&);
+   void remove(int iterator);
+private:
+   template<class F> decltype(auto) checked(F&& fn) {
+      state_.check_owner_and_valid();
+      try { return std::forward<F>(fn)(); }
+      catch (...) { state_.valid_ = false; throw; }
+   }
+   void require_kind(const secondary_key&) const;
+   struct row_handle { table_key table; secondary_row_read row; };
+   row_handle get_handle(int iterator) const;
+   int cache_table(const table_read&);
+   int cache_row(const table_key&, const secondary_row_read&);
+   int cache_result(const table_key&, const secondary_read_result&);
+   int bound(const table_key&, secondary_key&, uint64_t&, secondary_query_kind);
+   primary_state_overlay& state_;
+   name receiver_;
+   secondary_key_kind kind_;
+   secondary_key zero_ = uint64_t{0};
    size_t max_iterators_, max_ends_;
    std::vector<row_handle> rows_;
    std::vector<table_read> tables_;

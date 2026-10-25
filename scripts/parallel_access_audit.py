@@ -41,6 +41,22 @@ EXPLICIT_FILES = (
     # Legacy parser type-intern ownership is exercised by WASM/serial oracles.
     "libraries/wasm-jit/Source/IR/Types.cpp",
     "libraries/wasm-jit/Include/IR/Types.h",
+    # Same numeric C sources are compiled under PRIVATE prefixed symbols too.
+    # Track implementations and direct headers, not merely the new wrapper.
+    "libraries/builtins/CMakeLists.txt",
+    "libraries/builtins/compiler_builtins.hpp",
+    "libraries/builtins/fixtfti.c",
+    "libraries/builtins/fixunstfti.c",
+    "libraries/builtins/fixsfti.c",
+    "libraries/builtins/fixdfti.c",
+    "libraries/builtins/fixunssfti.c",
+    "libraries/builtins/fixunsdfti.c",
+    "libraries/builtins/floattidf.c",
+    "libraries/builtins/floatuntidf.c",
+    "libraries/builtins/fp32.h",
+    "libraries/builtins/fp64.h",
+    "libraries/builtins/fp128.h",
+    "libraries/builtins/int_t.h",
 )
 REQUIRED_FILES = (
     "libraries/chain/controller.cpp",

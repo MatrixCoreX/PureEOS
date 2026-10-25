@@ -50,7 +50,10 @@ def checked_manifest(directory):
 
 
 class Node:
-    def __init__(self, binary, root, corpus, manifest, workers=None, peer=None, history=False):
+    def __init__(self, binary, root, corpus, manifest, workers=None, peer=None, history=False,
+                 engine="interpreter", batch_size=8):
+        require(engine in ("interpreter", "jit"), "Unsupported fixture engine")
+        require(1 <= batch_size <= 64, "Unsupported fixture batch size")
         self.binary, self.root, self.corpus, self.manifest = binary, root, corpus, manifest
         self.workers, self.process, self.output = workers, None, None
         root.mkdir()
@@ -66,7 +69,8 @@ class Node:
             "p2p-max-nodes-per-host = 16",  # this fixture intentionally shares loopback
             f"http-server-address = 127.0.0.1:{self.port}", "unix-socket-path =",
             f"p2p-listen-endpoint = {self.endpoint}" if peer else "p2p-listen-endpoint =",
-            "wasm-runtime = eos-vm", "validation-mode = full", "http-validate-host = true",
+            "wasm-runtime = " + ("eos-vm-jit" if engine == "jit" else "eos-vm"),
+            "validation-mode = full", "http-validate-host = true",
         ]
         if peer and peer != "listen":
             lines.append(f"p2p-peer-address = {peer}")
@@ -75,7 +79,9 @@ class Node:
                           "chain-state-history = true", "state-history-endpoint ="])
         if workers is not None:
             lines.extend([f"experimental-parallel-validation-threads = {workers}",
-                          "experimental-parallel-validation-batch-size = 8"])
+                          f"experimental-parallel-validation-batch-size = {batch_size}"])
+            if engine == "jit":
+                lines.append("experimental-parallel-engine = jit")
             lines.extend(f"experimental-parallel-code-hash = {h}" for h in manifest["code_hashes"])
         (root / "config/config.ini").write_text("\n".join(lines) + "\n")
 
@@ -108,7 +114,10 @@ class Node:
         while time.monotonic() < deadline:
             require(self.process.poll() is None, f"{self.root.name}/{phase} exited; see {self.log}")
             try:
-                return self.rpc("get_info")
+                info = self.rpc("get_info")
+                require(info["chain_id"] == self.manifest["chain_id"], "Startup endpoint belongs to another chain")
+                require(self.process.poll() is None, f"{self.root.name}/{phase} exited during startup; see {self.log}")
+                return info
             except (OSError, urllib.error.URLError):
                 time.sleep(0.1)
         raise RuntimeError(f"{phase} startup watchdog expired; see {self.log}")

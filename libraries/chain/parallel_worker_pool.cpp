@@ -1,66 +1,163 @@
 #include <eosio/chain/parallel_worker_pool.hpp>
+#include <eosio/chain/parallel_sync_discovery.hpp>
+#include <eosio/chain/parallel_worker_signals.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/vm/exceptions.hpp>
+#include <array>
 #include <condition_variable>
 #include <mutex>
 
 namespace eosio::chain::experimental {
 
 struct isolated_worker_pool::impl {
+   static constexpr size_t max_threads = parallel_runtime_limits::max_workers;
    const std::thread::id owner = std::this_thread::get_id();
    struct batch {
       std::vector<isolated_worker_job> jobs;
       std::vector<isolated_worker_outcome> outcomes;
       size_t next = 0, remaining = 0;
-      explicit batch(std::vector<isolated_worker_job> input)
-         : jobs(std::move(input)), outcomes(jobs.size()), remaining(jobs.size()) {}
+      const bool stable_small_batch;
+      std::array<bool, max_threads> claimed{}; // read/write only under pool mutex
+      std::array<size_t, max_threads> assigned{};
+      batch(std::vector<isolated_worker_job> input, size_t worker_count)
+         : jobs(std::move(input)), outcomes(jobs.size()), remaining(jobs.size()),
+           stable_small_batch(jobs.size() <= worker_count) {
+         assigned.fill(jobs.size());
+         if (!stable_small_batch) return;
+         // A discovery retry is a sparse subset of the original slots. Keep
+         // its original worker/cache, not its compacted position in this wave.
+         bool unique_original_slots = true;
+         for (size_t i = 0; i < jobs.size(); ++i) {
+            const auto slot = jobs[i].ticket.index();
+            if (slot >= worker_count || assigned[slot] != jobs.size()) {
+               unique_original_slots = false; break;
+            }
+            assigned[slot] = i;
+         }
+         if (!unique_original_slots) {
+            assigned.fill(jobs.size());
+            for (size_t i = 0; i < jobs.size(); ++i) assigned[i] = i;
+         }
+      }
+      bool has_job(size_t worker_index) const noexcept {
+         return stable_small_batch ? assigned[worker_index] < jobs.size() && !claimed[worker_index] : next < jobs.size();
+      }
+      size_t take_job(size_t worker_index) noexcept {
+         if (!stable_small_batch) return next++;
+         claimed[worker_index] = true;
+         return assigned[worker_index];
+      }
    };
    std::mutex mutex;
-   std::condition_variable work, done;
+   parallel_worker_signals<max_threads> work;
+   std::condition_variable done;
    std::shared_ptr<batch> active;
    bool stopping = false;
+   // Outlives joined workers and their caches/active frames. No timer callback
+   // can observe a released VM or borrowed stack after a worker returns.
+   std::shared_ptr<const isolated_execution_runtime> runtime;
    std::vector<std::thread> threads;
 
-   explicit impl(size_t count) {
-      if (!count || count > 16) throw primary_state_budget_exceeded();
+   explicit impl(size_t count, isolated_vm_engine engine) {
+      if (!parallel_runtime_limits::valid_workers(count)) throw primary_state_budget_exceeded();
+      runtime = std::make_shared<isolated_execution_runtime>(engine,
+         count * (isolated_sync_executor::max_depth + 1));
       threads.reserve(count);
       try {
-         for (size_t i = 0; i < count; ++i) threads.emplace_back([this] { loop(); });
+         for (size_t i = 0; i < count; ++i) threads.emplace_back([this, i] { loop(i); });
       } catch (...) { shutdown(); throw; }
    }
    ~impl() { shutdown(); }
    void shutdown() {
       { std::lock_guard lock(mutex); stopping = true; }
-      work.notify_all();
+      work.notify_shutdown();
       for (auto& thread : threads) if (thread.joinable()) thread.join();
    }
-   void loop() {
+   void loop(size_t worker_index) {
       // Construct lazily inside the guarded job, so allocation failure cannot
       // escape this thread and terminate the process before returning fallback.
+      // ONE thread-owned cache survives mode changes; no live module, overlay
+      // or host capability is shared with another thread or retained by it.
+      std::shared_ptr<isolated_module_cache> modules;
       std::unique_ptr<isolated_transaction_executor> executor;
       std::unique_ptr<isolated_notification_executor> notification_executor;
       std::unique_ptr<isolated_action_tree_executor> tree_executor;
       std::unique_ptr<isolated_sync_executor> sync_executor;
+      std::unique_ptr<isolated_mixed_tree_executor> mixed_executor;
       while (true) {
          std::shared_ptr<batch> current;
          size_t index;
          {
             std::unique_lock lock(mutex);
-            work.wait(lock, [&] { return stopping || (active && active->next < active->jobs.size()); });
+            // A small joined batch can give every job a distinct cache owner.
+            // The same slot stays on that logical worker across discovery
+            // waves, including sparse retries. Never move
+            // a VM or pin an OS CPU. Larger batches keep the shared queue.
+            work.wait(worker_index, lock, [&] { return stopping || (active && active->has_job(worker_index)); });
             if (stopping) return;
-            current = active; index = current->next++;
+            current = active; index = current->take_job(worker_index);
          }
          const auto& job = current->jobs[index];
          auto& outcome = current->outcomes[index];
          const auto attempt_began = std::chrono::steady_clock::now();
          try {
             job.cancel.check(job.ticket.stop_token());
+            if (!modules) modules = std::make_shared<isolated_module_cache>(runtime);
             {
-               if (job.sync) {
+               if (job.mixed) {
                   executor.reset();
                   notification_executor.reset();
                   tree_executor.reset();
-                  if (!sync_executor) sync_executor = std::make_unique<isolated_sync_executor>();
+                  sync_executor.reset();
+                  if (!mixed_executor) mixed_executor = std::make_unique<isolated_mixed_tree_executor>(modules);
+                  const auto& input = *job.mixed;
+                  outcome.mixed_result = mixed_executor->execute(job.ticket.base(), input.roots,
+                     input.programs, input.context, job.ticket.stop_token(), {}, job.cancel);
+                  bool first = true;
+                  const auto add_elapsed = [&](std::chrono::microseconds elapsed) {
+                     if (elapsed.count() < 0 || elapsed > isolated_mixed_tree_executor::max_attempt_time - outcome.elapsed)
+                        throw primary_state_invalid_attempt();
+                     outcome.elapsed += elapsed;
+                  };
+                  for (const auto& step : outcome.mixed_result->steps) {
+                     // Empty receivers have no VM interval. In particular, a
+                     // trailing notification must not erase the last real end.
+                     if (step.has_code) {
+                        if (first) { outcome.began = step.effects.began; first = false; }
+                        outcome.ended = step.effects.ended;
+                     }
+                     add_elapsed(step.effects.elapsed);
+                     for (const auto& call : step.calls) add_elapsed(call.exclusive_elapsed);
+                  }
+               } else if (job.sync_transaction) {
+                  mixed_executor.reset();
+                  executor.reset();
+                  notification_executor.reset();
+                  tree_executor.reset();
+                  if (!sync_executor) sync_executor = std::make_unique<isolated_sync_executor>(modules);
+                  const auto& input = *job.sync_transaction;
+                  outcome.sync_transaction_result = sync_executor->execute_transaction(job.ticket.base(), input.roots,
+                     input.programs, input.context, job.ticket.stop_token(), {}, job.cancel);
+                  const auto& result = *outcome.sync_transaction_result;
+                  outcome.began = result.roots.front().root.began;
+                  outcome.ended = result.roots.back().root.ended;
+                  const auto add_elapsed = [&](std::chrono::microseconds elapsed) {
+                     if (elapsed.count() < 0 || elapsed > isolated_sync_executor::max_attempt_time - outcome.elapsed)
+                        throw primary_state_invalid_attempt();
+                     outcome.elapsed += elapsed;
+                  };
+                  // Bill the successful exclusive time once across ALL roots;
+                  // inclusive root intervals remain local diagnostics only.
+                  for (const auto& root : result.roots) {
+                     add_elapsed(root.root.elapsed);
+                     for (const auto& call : root.calls) add_elapsed(call.exclusive_elapsed);
+                  }
+               } else if (job.sync) {
+                  mixed_executor.reset();
+                  executor.reset();
+                  notification_executor.reset();
+                  tree_executor.reset();
+                  if (!sync_executor) sync_executor = std::make_unique<isolated_sync_executor>(modules);
                   const auto& input = *job.sync;
                   outcome.sync_result = sync_executor->execute(job.ticket.base(), input.root, input.programs, input.context,
                                                                job.ticket.stop_token(), {}, job.cancel);
@@ -77,10 +174,11 @@ struct isolated_worker_pool::impl {
                   add_elapsed(result.root.elapsed);
                   for (const auto& call : result.calls) add_elapsed(call.exclusive_elapsed);
                } else if (job.tree) {
+                  mixed_executor.reset();
                   executor.reset();
                   notification_executor.reset();
                   sync_executor.reset();
-                  if (!tree_executor) tree_executor = std::make_unique<isolated_action_tree_executor>();
+                  if (!tree_executor) tree_executor = std::make_unique<isolated_action_tree_executor>(modules);
                   const auto& input = *job.tree;
                   outcome.tree_result = tree_executor->execute(job.ticket.base(), input.roots, input.programs, input.context,
                                                                job.ticket.stop_token(), {}, job.cancel);
@@ -91,10 +189,11 @@ struct isolated_worker_pool::impl {
                      outcome.elapsed += step.effects.elapsed;
                   }
                } else if (job.notifications) {
+                  mixed_executor.reset();
                   executor.reset();
                   tree_executor.reset();
                   sync_executor.reset();
-                  if (!notification_executor) notification_executor = std::make_unique<isolated_notification_executor>();
+                  if (!notification_executor) notification_executor = std::make_unique<isolated_notification_executor>(modules);
                   const auto& input = *job.notifications;
                   outcome.notification_result = notification_executor->execute(job.ticket.base(), input.roots, input.programs,
                                                                                 job.ticket.stop_token(), {}, job.cancel);
@@ -105,19 +204,26 @@ struct isolated_worker_pool::impl {
                      outcome.elapsed += step.effects.elapsed;
                   }
                } else {
+                  mixed_executor.reset();
                   notification_executor.reset();
                   tree_executor.reset();
                   sync_executor.reset();
-                  if (!executor) executor = std::make_unique<isolated_transaction_executor>();
+                  if (!executor) executor = std::make_unique<isolated_transaction_executor>(modules);
                   outcome.result = executor->execute(job.ticket.base(), job.actions, job.ticket.stop_token(), {}, job.cancel);
                   outcome.began = outcome.result->actions.front().began;
                   outcome.ended = outcome.result->actions.back().ended;
                   for (const auto& action : outcome.result->actions) outcome.elapsed += action.elapsed;
                }
             }
+         } catch (const isolated_sync_target_missing& missing) {
+            // Both values are owned. No successful prefix or live state is
+            // carried across the owner's join/capture/new-snapshot boundary.
+            outcome.failure = isolated_worker_failure::missing_state;
+            outcome.request = missing.request;
+            outcome.receiver_request = missing.receiver;
          } catch (const primary_state_missing& missing) {
             // Owned request only. The joined owner may capture it and restart
-            // with a NEW batch/base; no worker ever follows a live DB pointer.
+            // with a NEW immutable preparation/base; never a live DB pointer.
             outcome.failure = isolated_worker_failure::missing_state;
             outcome.request = missing.request;
          } catch (const isolated_receiver_missing& missing) {
@@ -130,6 +236,10 @@ struct isolated_worker_pool::impl {
             outcome.failure = isolated_worker_failure::budget;
          } catch (const isolated_sync_mode_required&) {
             outcome.failure = isolated_worker_failure::sync_required;
+         } catch (const isolated_mixed_mode_required&) {
+            outcome.failure = isolated_worker_failure::mixed_required;
+         } catch (const isolated_transaction_environment_missing&) {
+            outcome.failure = isolated_worker_failure::environment_required;
          } catch (const primary_state_unsupported&) {
             outcome.failure = isolated_worker_failure::unsupported;
          } catch (const primary_state_invalid_attempt&) {
@@ -152,8 +262,11 @@ struct isolated_worker_pool::impl {
             outcome.notification_result.reset();
             outcome.tree_result.reset();
             outcome.sync_result.reset();
+            outcome.sync_transaction_result.reset();
+            outcome.mixed_result.reset();
          }
-         if (!outcome.result && !outcome.notification_result && !outcome.tree_result && !outcome.sync_result) {
+         if (!outcome.result && !outcome.notification_result && !outcome.tree_result && !outcome.sync_result &&
+             !outcome.sync_transaction_result && !outcome.mixed_result) {
             outcome.elapsed = {};
             outcome.ended = std::chrono::steady_clock::now();
          }
@@ -167,16 +280,42 @@ struct isolated_worker_pool::impl {
    }
 };
 
-isolated_worker_pool::isolated_worker_pool(size_t threads) : impl_(std::make_unique<impl>(threads)) {}
+isolated_worker_pool::isolated_worker_pool(size_t threads, isolated_vm_engine engine)
+   : impl_(std::make_unique<impl>(threads, engine)) {}
 isolated_worker_pool::~isolated_worker_pool() = default;
 
 std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isolated_worker_job> jobs) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
-   if (jobs.empty() || jobs.size() > 64) throw primary_state_budget_exceeded();
+   if (!parallel_runtime_limits::valid_batch(jobs.size())) throw primary_state_budget_exceeded();
    // Bound all copied inputs too, including jobs that later fail linking.
    for (const auto& job : jobs) {
       if (unsigned(!job.actions.empty()) + unsigned(bool(job.notifications)) + unsigned(bool(job.tree)) +
-          unsigned(bool(job.sync)) != 1) throw primary_state_budget_exceeded();
+          unsigned(bool(job.sync)) + unsigned(bool(job.sync_transaction)) + unsigned(bool(job.mixed)) != 1)
+         throw primary_state_budget_exceeded();
+      if (job.sync_transaction || job.mixed) {
+         const auto& roots = job.mixed ? job.mixed->roots : job.sync_transaction->roots;
+         const auto& programs = job.mixed ? job.mixed->programs : job.sync_transaction->programs;
+         const auto max_roots = job.mixed ? isolated_mixed_tree_executor::max_roots : isolated_sync_executor::max_roots;
+         const auto max_programs = job.mixed ? isolated_mixed_tree_executor::max_programs : isolated_sync_executor::max_programs;
+         const auto max_code = job.mixed ? isolated_mixed_tree_executor::max_code_bytes : isolated_sync_executor::max_total_code_bytes;
+         const auto max_data = job.mixed ? isolated_mixed_tree_executor::max_data_bytes : isolated_sync_executor::max_total_data_bytes;
+         if (roots.empty() || roots.size() > max_roots || programs.empty() || programs.size() > max_programs)
+            throw primary_state_budget_exceeded();
+         size_t code_bytes = 0, data_bytes = 0;
+         for (const auto& item : programs) {
+            if (item.program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
+                item.program.code.size() > max_code - code_bytes)
+               throw primary_state_budget_exceeded();
+            code_bytes += item.program.code.size();
+         }
+         for (const auto& root : roots) {
+            if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
+                root.data.size() > max_data - data_bytes)
+               throw primary_state_budget_exceeded();
+            data_bytes += root.data.size();
+         }
+         continue;
+      }
       if (job.sync) {
          const auto& input = *job.sync;
          if (input.programs.empty() || input.programs.size() > isolated_sync_executor::max_programs ||
@@ -184,7 +323,7 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
             throw primary_state_budget_exceeded();
          size_t code_bytes = 0;
          for (const auto& item : input.programs) {
-            if (item.program.code.size() > 64 * 1024 ||
+            if (item.program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
                 item.program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes)
                throw primary_state_budget_exceeded();
             code_bytes += item.program.code.size();
@@ -201,7 +340,7 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
             throw primary_state_budget_exceeded();
          size_t code_bytes = 0, data_bytes = 0;
          for (const auto& program : programs) {
-            if (program.code.size() > 64 * 1024 ||
+            if (program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
                 program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
                throw primary_state_budget_exceeded();
             code_bytes += program.code.size();
@@ -218,7 +357,7 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
          throw primary_state_budget_exceeded();
       size_t code_bytes = 0, data_bytes = 0;
       for (const auto& action : job.actions) {
-         if (action.code.size() > 64 * 1024 || action.input.data.size() > 64 * 1024 ||
+         if (action.code.size() > isolated_wasm_limits::max_module_code_bytes || action.input.data.size() > 64 * 1024 ||
              action.input.authorizations.size() > 64 ||
              action.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes ||
              action.input.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
@@ -226,11 +365,11 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
          code_bytes += action.code.size(); data_bytes += action.input.data.size();
       }
    }
-   auto batch = std::make_shared<impl::batch>(std::move(jobs));
+   auto batch = std::make_shared<impl::batch>(std::move(jobs), impl_->threads.size());
    std::unique_lock lock(impl_->mutex);
    if (impl_->stopping || impl_->active) throw primary_state_invalid_attempt();
    impl_->active = batch;
-   impl_->work.notify_all();
+   impl_->work.notify_ready(impl_->threads.size(), [&](size_t worker) { return batch->has_job(worker); });
    impl_->done.wait(lock, [&] { return batch->remaining == 0; });
    impl_->active.reset();
    return std::move(batch->outcomes);

@@ -48,12 +48,16 @@ inline std::string parallel_attempt_diagnostics(const controller::parallel_execu
    std::ostringstream out;
    out << "attempts=" << after.attempts - before.attempts
        << " succeeded=" << after.succeeded - before.succeeded
+       << " prepared_successes=" << after.prepared_successes - before.prepared_successes
+       << " discovery_exhaustions=" << after.discovery_exhaustions - before.discovery_exhaustions
        << " preparation_deadlines=" << after.preparation_deadlines - before.preparation_deadlines
        << " preparation_budget=" << after.preparation_budget_fallbacks - before.preparation_budget_fallbacks
        << " preparation_other=" << after.preparation_other_fallbacks - before.preparation_other_fallbacks
        << " worker_deadlines=" << after.worker_deadlines - before.worker_deadlines
        << " worker_vm_timeouts=" << after.worker_vm_timeouts - before.worker_vm_timeouts
        << " worker_other=" << after.worker_other_failures - before.worker_other_failures;
+   out << " prefix_refresh_requests=" << after.prefix_refresh_requests - before.prefix_refresh_requests
+       << " prefix_refresh_successes=" << after.prefix_refresh_successes - before.prefix_refresh_successes;
    return out.str();
 }
 } // namespace eosio::chain::experimental

@@ -1,0 +1,220 @@
+PureEOS：最新 Ubuntu 适配、原生构建优化与 CDT 源码升级计划
+记录：2026-10-20，北京时间；用户要求在当前压力测试收尾后推进。
+状态：现代构建入口/CI平台/README支持矩阵已加入；26.04原生与26.10组件源码、
+生产者用户态、CDT编译和新节点CLI检查通过；全矩阵/26.10整节点源码CI未完成。
+最终结果与剩余项见同目录UBUNTU_MODERN_RESULTS.txt，不以此计划代替验收。
+
+一、目标与已核对事实
+1. 最新正式版 Ubuntu 26.10，最新 LTS 系列 Ubuntu 26.04。
+   以26.04 LTS为长期主支持目标，同时纳入26.10，不以22.04文档代表当前项目。
+   官方依据：https://lists.ubuntu.com/archives/ubuntu-announce/2026-October/000330.html
+   https://documentation.ubuntu.com/release-notes/26.04/
+2. 当前本机实际为26.04.1 LTS，GCC15.2.0、CMake4.2.3。
+   已有本地编译/测试证据，但不能据此宣称26.10已验证，或所有功能/架构已支持。
+3. 正在使用的cdt-cpp为4.1.1；/home/guagua/AntelopeIO/cdt是干净的PureEOS源码
+   基线e677213d9（5.0.0-dev1开发系），其README说明仍以Clang9为基础。
+   安装的工具版本和源码版本不同，不能直接覆盖安装或把开发版本号当成升级完成。
+4. 上游最新稳定发布页为CDT4.1.1，其修复包含bool action_wrapper和现代Clang兼容。
+   官方依据：https://github.com/AntelopeIO/cdt/releases/tag/v4.1.1
+   先检查本地开发基线是否已包含这些修复，再决定移植，避免倒退已有功能。
+
+二、边界
+* 本任务指PureEOS链项目，不是另一个名为PureOS的Linux发行版。
+* 先完成当前冻结候选的云端测试、报告和校验备份，随后删除唯一测试裸机省钱。
+  新Ubuntu/CDT工作不以继续保留该服务器计费为前提，不自动购买新机器。
+* 不做旧链迁移兼容，不变更经济治理、奖励、资源分配和共识有效性。
+* 区分“构建支持”“CDT编译运行”“节点功能支持”“性能优化”四类证据。
+  更换OS/编译器的收益不能冒充并行收益；不默认-ffast-math、-Ofast或-march=native。
+* 更新支持清单前写清验证范围。26.10未运行前只能列为适配目标/待验证。
+  不通过放宽Docker权限、暴露Docker socket或关闭安全机制解决构建问题。
+
+三、PureEOS需要检查/修改的位置
+1. README.md、docs/00_install/01_build-from-source/：
+   更新支持系统矩阵、当前并行新链的构建命令和依赖，区分26.04/26.10/24.04。
+   说明默认开发分支未发布；有源码构建支持不等于已有对应deb正式发行。
+2. CMakeLists.txt、CMakeModules/：
+   检查CMake4策略、GCC15及26.10实际编译器的warning/API变化、链接与安装路径。
+   当前OC只支持LLVM7–11；现代系统的并行JIT配置显式ENABLE_OC=OFF，
+   不要求安装已经不在新系统默认仓库中的llvm-11-dev。
+   不能把主机Clang更新等同于eos-vm-oc已经支持新版LLVM。
+3. .cicd/platforms/、.github/workflows/build*.yaml、release.yaml：
+   增加26.04与26.10真实构建/测试平台，固定镜像摘要和工具版本记录。
+   安装依赖、编译、组件回归、打包及洁净安装必须衔接，不只添加一个矩阵名称。
+   不主动触发外部发布、推送或购买runner；实际运行结果未有前明确标待验证。
+4. scripts/、tools/reproducible.Dockerfile、打包脚本：
+   新增现代Ubuntu的新链JIT构建入口/配置，避免全局修改历史冻结环境。
+   检查Python虚拟环境、依赖名称/包拆分、deb动态库依赖及可重复构建记录。
+5. libraries/eos-vm、JIT/worker、计时器与资源观测：
+   检查新编译器下原子/取消/线程本地缓存和生成代码ABI；不减少安全检查点。
+   可单独研究LTO/PGO、链接器和分配开销，但每项需同版本单变量对照，
+   先确定正确性和实际热点再启用，不以新CPU专用指令牺牲可移植发行包。
+
+四、CDT源码需要检查/修改的位置
+1. cdt/README.md、CMakeLists.txt、modules/ClangExternalProject.txt、
+   ToolsExternalProject.txt、LibrariesExternalProject.txt、TestsExternalProject.txt：
+   检查现代主机编译器、CMake4、嵌套ExternalProject参数传递、Python/依赖发现。
+   库和工具分开记录编译器/优化参数，安装到隔离前缀，不覆盖现用4.1.1。
+2. cdt/.cicd/platforms/、.github/workflows/build.yaml、脚本与deb打包：
+   增加26.04/26.10源码构建、单元和节点集成、安装后编译合约验证。
+3. cdt/libraries/eosiolib、tools/以及jsoncons等依赖：
+   核对上游4.1.1已修复项和本地5.0开发功能，修复现代编译器实际失败，
+   不盲目以“稳定号较低”覆盖开发源码；先冻结基线、子模块与差异清单。
+4. cdt/cdt-llvm：
+   将“旧Clang9在新Ubuntu主机上能构建”与“升级WASM代码生成器”分阶段。
+   LLVM大版本升级要逐项移植ABI生成、EOSIO专用pass、softfloat、链接、intrinsics
+   与运行时库，不是只改LLVM版本或替换主机clang。该项先做可行性/收益评估。
+   禁止默认产生当前VM不支持的WASM扩展；新增指令/host import必须与节点支持配套。
+
+五、测试与验收
+A. 先在实际26.04主机跑构建/原生生产者、关键WASM/并行回归，并记录系统/编译器。
+B. 再用真实26.10用户态环境构建与运行；容器共享宿主内核，不能冒称已验证26.10
+   内核特有行为。资源/磁盘不足则明确报告缺口，不删除用户数据腾空间。
+C. CDT隔离安装后编译系统、token、简单/复杂、multi_index/inline/返回值/bool参数
+   合约，检查ABI、WASM有效性、部署与结果；串行/并行账本和资源账保持一致。
+D. 新创世、原生Savanna、授权失败/撤销、节点重启/重放、资源10/90与当前奖励治理
+   的必要回归；把OS适配与仍待完成的整版本发布验收分别标记。
+E. 性能在安静环境做同硬件、同VM/编译器、同资源额度、同语料多轮对照；记录
+   实际并行覆盖率、状态发现次数、owner提交耗时和CPU。不得用预计倍数替代结果。
+F. 最终交付实际支持矩阵、可运行构建命令、精确源码/二进制摘要、完整失败记录；
+   未验证平台/架构、开发版CDT和LLVM大迁移必须清楚标注，不提前宣布全部支持。
+
+执行次序：云端基线收尾并删除服务器 → 当前微批优化集成回归 → Ubuntu主机适配与
+支持清单 → CDT主机构建修复/升级评估 → 经验证后才调整工具链默认与发布平台。
+
+六、用户追加：后续临时Vultr编译（2026-10-20）
+用户已明确允许临时购买服务器承担后续编译，但要求当前这一轮先处理完。
+因此覆盖上文“后续不购买”的默认边界：当前两个本机构建不取消、不迁移，
+后续重编译可使用一台临时Vultr实例。当前尚未创建新实例；总费用上限已询问，
+用户随后明确“用合适服务器编译和测试就行”，授权自行选择合适配置，无需再次
+等待型号选择。创建前核对实际价格，选择够用且成本合理的一台，设置费用/时长
+保护并及时销毁，不由此扩大到多台长期租用。旧45.76.104.169实例已删除，
+不再连接或复用其IP。
+
+执行要求
+1. 创建前查询真实套餐/地区库存、Ubuntu镜像和实时价格，明确总预算与结束时限。
+   优先考虑适合编译的独占CPU、足够内存/本地盘，不默认重买高内存昂贵裸机。
+   编译任务数按实际内存和vCPU设上限，保留内存余量，避免本机式大量换页；
+   编译并发与链4–16 worker配置是两回事，不能将vCPU直接说成物理核心。
+2. 冻结当前dirty工作树的实际源文件、vendor依赖、系统/CDT合约及SHA256，
+   不只上传HEAD或遗漏未跟踪文件。采用明确白名单，不上传API令牌、用户钱包、
+   手动链、个人目录、.git凭据或测试无关配置。记录HEAD与源码快照的区别。
+3. API令牌仅留本机，不写入命令输出或传入服务器；SSH和防火墙限必要来源。
+   新实例ID/IP以此次创建返回值核实，所有测试RPC/P2P仅监听回环。
+4. 使用真实26.04/26.10环境及记录的编译器/CDT、镜像摘要，继续ENABLE_OC=OFF；
+   不默认-march=native或激进浮点优化。生产程序保留正常Release配置。
+   正确性、sanitizer、性能各自记录，不拿不同编译器/OS产物比较并行倍数。
+5. 下载候选程序、源码/依赖清单、构建命令、全部成功/失败日志与测试报告，
+   校验远近端字节数/SHA256及归档完整性；确认产物的目标Ubuntu/动态库要求。
+6. 下载校验完成后立即按此次创建的精确实例ID销毁，并通过API确认不存在。
+   不以关机代替销毁，不启用自动备份/额外计费附件，不保留空闲实例持续计费。
+   失败也执行有界备份/销毁流程；不能证明已销毁时必须明确报告。
+
+官方计费/销毁依据（本日核对）
+https://docs.vultr.com/support/platform/billing/how-am-i-billed-for-my-servers
+https://docs.vultr.com/products/compute/instances/bare-metal/management/destroy-instance
+以上是后续执行约束，不是已经购买、编译或完成新云端验收的记录。
+
+当前只读选型（尚未下单，创建时必须重新查询）
+候选voc-g-16c-64gb-320s-amd：API元数据为16 vCPU、64GiB RAM、320GB盘、
+基础月价480美元；按此产品当前672小时计费口径估算约0.714美元/小时，
+不含可能的税费/附加项。拟使用不超过5小时，基础费约3.57美元，完成即销毁，
+达到时限则先保存证据并收尾，不无界延长。若届时价格/规格明显变化则重新评估。
+本日东京nrt的type=voc及不加type两种库存查询均包含此套餐；type=vc2只查
+普通Cloud Compute，不能把其结果里缺少voc误判为独占CPU套餐无库存。
+API的Ubuntu26.04 LTS x64当前os_id=2760、26.10 x64为2838；创建前复核。
+官方来源：https://api.vultr.com/v2/plans?per_page=500
+https://api.vultr.com/v2/regions/nrt/availability?type=voc
+https://api.vultr.com/v2/os?per_page=500
+
+七、2026-10-21 用户要求：核对最新CDT，并用最新版重新测试
+1. 已用GitHub API及官方发布页重新核对：EOSIO旧CDT最新发布1.8.1，仓库已归档；
+   Antelope最新正式版4.1.1，最新发布的开发预览5.0.0-dev1.1。
+   https://github.com/EOSIO/eosio.cdt/releases/latest
+   https://github.com/AntelopeIO/cdt/releases/tag/v4.1.1
+   https://github.com/AntelopeIO/cdt/releases/tag/v5.0.0-dev1.1
+2. 上游main实际最新提交69599db279b7b93d0688502720c15c6962a1401b；本地e677213d9
+   的直接父提交正是它。已再次fetch官方main核验；差异主要为PureEOS命名/构建适配。
+   因此不能仅凭本地版本字样dev1就认定它落后于官方main，也不能把main当稳定发行。
+3. 本轮先测官方完整5.0.0-dev1.1预览包，避免旧本地开发版库指向未挂载NTFS。
+   包125597248字节，官方API SHA256：
+   e8b3ef60ba5c1215e615aa1447a86148cfa99811cc50e8667f40315db568261c
+   已下载核验、仅解压到独立任务目录；现用4.1.1、系统PATH和既有链均未替换。
+4. 初次构建被旧major-4版本门槛拒绝；下一次暴露rex.results/powup.results默认
+   私有继承，CDT5生成的分发器无法调用基类set_exec_type。两次失败均完整保留。
+   reference-contracts新分支feature/cdt5-validation将两回执类改为public继承，
+   并要求CDT主版本5；新一轮已重新开启版本检查。无经济/治理/资源/共识变更。
+5. 固定重测范围：完整系统/token/资源结果合约重编；bool/inline/索引兼容、
+   complexbench与allocator夹具重编；三个独立轮次各测0/4 worker部署/账本/真实采用；
+   另三个新创世链用新编系统合约执行4-worker历史异常/恢复和10/90资源检查。
+   运行目录：build/local-tests/cdt-latest-20261021-kSARn6/attempt-3/。
+   未到最终JSON通过前，均只标运行中；不将编译通过等同于运行、TPS或发布通过。
+6. 对官方新SDK头文件的有界原生探针已复现：varuint32溢出输入被解为0、超长
+   输入未定义移位、vector在截断检查前分配、skip越过声明范围后read仍接受。
+   这是SDK加固待办，不声称已验证WASM逃逸或节点漏洞；尚未修复，不能靠升级消除。
+   原始探针：同任务latest-header-probes/report.json。
+7. 本轮不是重新全量编译LLVM/CDT编译器源码，也不是升级内部Clang9或新TPS证据。
+   使用的官方发行包与最新main源码分开记录；后续开发以固定main提交为源码基线，
+   保留预览性质和协议能力说明，修改后需要匹配重编运行库、合约并再验。
+
+八、2026-10-21 追加：CDT针对当前交易级并行架构的优化次序
+本节是后续实施/验收方案，不表示以下SDK源码修改已经完成。
+
+职责与原则
+1. 当前并行单位是不同交易；CDT生成单交易中执行的WASM。worker分发、实际读写
+   冲突核验、回退及按原序提交仍由PureEOS节点负责，不能靠升级CDT替代。
+2. 合约分配器和缓存属于各次WASM执行实例，不做跨交易共享可变缓存，不在合约中
+   开启WASM线程/共享内存，也不因并行而给所有数据库调用加全局锁。
+3. 编译期“访问声明”无法完整证明动态键、通知、inline和sync-call的实际访问；
+   如未来研究辅助提示，只能用于加速准备，节点必须重新核验，不能当免检凭证。
+4. 当前O3/LTO-O3已默认开启。SDK改进可能同时加快串行与并行，不保证并行倍率
+   上升；本轮兼容测试不是性能对照，不从成功交易数推导TPS增益。
+
+P0：先修测试可信度与解析边界（优先于性能改动）
+* tools/toolchain-tester/tests.py、testsuite.py：非零退出含负信号退出均不能误判
+  成功；BUILD_FAIL必须使用真正失败断言，补零/正/负退出码和错误原因不符的用例。
+* libraries/eosiolib/core/eosio/varint.hpp：32位编码最多5字节，第5字节先校验
+  溢出位/续位再移位；补有符号ZigZag端点、截断、超长、溢出及输出未被部分覆盖。
+  非最短但不溢出的编码是否接受另作明确策略，不能把它与溢出混为一谈。
+* 同目录datastream.hpp：skip/seekp/read/write先验证范围、位置与大小转换，
+  避免无效位置与负差转size_t绕过；primitive容器在resize前检查乘法及剩余字节。
+  变长/空序列化类型不能简单套用“元素数<=剩余字节”，要设计正确的分配预算。
+* tests/unit/datastream_tests.cpp、varint_tests.cpp（实际位置实施时复核）及
+  新WASM夹具：正常边界全覆盖；畸形输入提前拒绝，失败无状态、RAM或投票残留。
+  原生UBSan探针通过不能代替真实WASM/JIT、生产者和独立验证者回归。
+
+P1：默认分配器，先正确性再减少扩容/复制
+* libraries/eosiolib/simple_malloc.cpp：检查size/对齐/页数/乘法加法溢出，
+  仅在实际容量不足时memory.grow；realloc须掌握旧可读大小并按较小长度复制。
+* free无操作是短生命周期分配策略，不能仅凭此判断漏洞或直接替换重型通用堆。
+  先保留轻量路径，以大小分布/扩容次数/峰值页数/复杂合约耗时决定策略。
+* tools/include/compiler_options.hpp.in、运行库构建模块：确认默认链接eosio_dsm；
+  修改.cpp后必须用固定编译器重编对应运行库再编合约，不能只覆盖头文件冒充完成。
+* 分别验证malloc/calloc/realloc零长度、扩缩、OOM、对齐和数据保留，再测串行与
+  4/8/16 worker的独立复杂合约。内存保护和取消截止保持不变。
+
+P2：multi_index行缓存与序列化成本，按实际热点择优
+* libraries/eosiolib/contracts/eosio/multi_index.hpp：load_object/find/require_find
+  当前反向线性扫_items_vector；大量不同缓存行反复查找可能产生平方级比较成本。
+  评测小表保留线性快路径、大表增加实例内轻量索引，不直接全面替换为哈希表。
+* 索引须随emplace/modify/erase和迭代器生命周期一致；不改变主/二级索引顺序、
+  重复键顺序、授权、RAM付款人或host调用依赖证明，不隐藏任何真实数据库访问。
+* 用1/8/64/1024行和多种读写比例比较查找次数、内存、WASM字节数和执行耗时，
+  防止简单转账退步。序列化/复制优化同样先测量，不改变ABI/链上编码语义。
+
+P3：LLVM/Clang现代化独立排期，不阻塞本轮CDT5兼容验收
+* 上游内部工具链仍为修改过的LLVM9。升级需逐项移植ABI/专用pass/softfloat/
+  linker/runtime并验证VM能力，不是更新主机Clang或编译选项即可完成。
+  官方跟踪：https://github.com/AntelopeIO/cdt/issues/185
+
+统一验收
+先封存官方未改预览包的本轮基线，再建独立SDK开发产物，不混入正在运行的冻结测试。
+每次改动分别跑原生回归、实际WASM串行/并行账本与错误一致、生产/验证实际采用、
+新系统合约恢复/资源不变量；性能另做同节点ELF、同资源计费、同负载的多轮单变量
+对照。只报告实测收益，SDK加固、单交易提速、并行倍率和整版发布分别验收。
+
+九、本轮最新预览版重测收尾（2026-10-21，北京时间16:24）
+完整合约重编、三个串行/4-worker业务轮次、三个4-worker系统合约历史恢复轮次通过；
+21项相关夹具回归通过。隔离SDK/源文件/产物摘要复核一致，本轮本地测试进程已停止。
+结果与已知未修风险见CDT5_LATEST_RETEST_RESULTS.txt；机器可核总审计为任务目录
+scoped-retest-audit.json。保留所有失败attempt，不以此宣布TPS、安全加固或整版发布通过。
+第八节仍是待实施的优化/加固方案，不因本轮兼容通过而自动勾为完成。

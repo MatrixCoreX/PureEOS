@@ -1,5 +1,6 @@
 // Included after production_governance_fixture: real deployed WASM, no native
 // resource-manager changes or mocks. Time advances only in the controller tester.
+#include <eosio/chain/global_property_object.hpp>
 namespace {
 std::string resource_json(const fc::variant& value) {
    return fc::json::to_string(value, fc::time_point::maximum());
@@ -10,7 +11,7 @@ struct resource_split_fixture : production_governance_fixture {
    mutable std::map<name, std::pair<fc::sha256, std::unique_ptr<abi_serializer>>> abi_cache;
    explicit resource_split_fixture(bool configure = true, size_t node_count = 4,
                                    std::filesystem::path root = PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR,
-                                   bool rotation = false, bool reward_headroom = false,
+                                   bool rotation = true, bool reward_headroom = false,
                                    std::string initial_supply = {})
       : production_governance_fixture(std::move(root), false, false, false, true, node_count, rotation,
                                       reward_headroom, std::move(initial_supply)) {
@@ -107,7 +108,7 @@ struct resource_split_fixture : production_governance_fixture {
 // The system treasury must never subsidize a renter's payment or renewal.
 void check_rex_rental_fee_custody(bool forward_fees, bool empty_treasury,
                                  std::filesystem::path contracts = PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR,
-                                 bool rotation = false) {
+                                 bool rotation = true) {
    resource_split_fixture f(true, 2, std::move(contracts), rotation);
    if (forward_fees) f.deploy("eosio.fees"_n, "eosio.fees");
    f.stake("100.0000 SYS", "100.0000 SYS");
@@ -225,6 +226,25 @@ void check_rex_rental_fee_custody(bool forward_fees, bool empty_treasury,
 }
 
 BOOST_AUTO_TEST_SUITE(pureeos_resource_split_tests)
+
+BOOST_AUTO_TEST_CASE(native_configuration_mirror_survives_sealing_and_restart) {
+   resource_split_fixture f;
+   const auto check_mirror = [&] {
+      fc::variant native;
+      fc::to_variant(f.chain.control->get_global_properties().configuration.v0(), native);
+      const auto global = f.row("globalv2"_n, "globalv2"_n.to_uint64_t());
+      for (const auto& field : native.get_object()) {
+         BOOST_CHECK_EQUAL(global[field.key().c_str()].as_uint64(), field.value().as_uint64());
+      }
+   };
+   check_mirror();
+   f.seal();
+   f.chain.produce_blocks(2);
+   check_mirror();
+   f.chain.close();
+   f.chain.open();
+   check_mirror();
+}
 
 BOOST_AUTO_TEST_CASE(bootstrap_tracks_weights_and_requires_powerup_before_seal) {
    resource_split_fixture f(false);

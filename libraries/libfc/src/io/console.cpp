@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <cerrno>
+#include <system_error>
 
 namespace fc {
 
@@ -27,8 +29,12 @@ void set_console_echo( bool enable_echo )
 
 void set_console_echo( bool enable_echo )
 {
-   termios oldt;
-   tcgetattr(STDIN_FILENO, &oldt);
+   // A pipe/file has no terminal echo to change. In particular, tcgetattr
+   // fails there and must never leave an uninitialized termios in use.
+   if( !isatty(STDIN_FILENO) ) return;
+   termios oldt{};
+   if( tcgetattr(STDIN_FILENO, &oldt) != 0 )
+      throw std::system_error(errno, std::generic_category(), "cannot read terminal echo state");
    termios newt = oldt;
    if( enable_echo )
    {
@@ -38,7 +44,8 @@ void set_console_echo( bool enable_echo )
    {
       newt.c_lflag &= ~ECHO;
    }
-   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+   if( tcsetattr(STDIN_FILENO, TCSANOW, &newt) != 0 )
+      throw std::system_error(errno, std::generic_category(), "cannot change terminal echo state");
 }
 
 #endif // WIN32

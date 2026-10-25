@@ -1,214 +1,89 @@
-# Helios
+# PureEOS
 
-1. [Branches](#branches)
-2. [Supported Operating Systems](#supported-operating-systems)
-3. [Binary Installation](#binary-installation)
-4. [Build and Install from Source](#build-and-install-from-source)
-5. [Bash Autocomplete](#bash-autocomplete)
+PureEOS 是独立维护的 C++ 新链项目，使用原生 Savanna 最终确认，支持不同交易的
+并行合约执行和按区块顺序提交状态。配套工具链为 **AIC CDT 1.0.0**。
 
-Helios is a C++ implementation of the [PureEOS](https://github.com/PureEOSIO) protocol with support for Savanna consensus. It contains blockchain node software and supporting tools for developers and node operators.
+当前首个并行版本仍在验收，尚未联合正式发布。默认开发分支、历史程序和候选包
+不代表稳定版。实际进展见[验收状态](docs/parallel-execution/PX7_V1_CURRENT_STATUS.txt)
+和[发布清单](docs/parallel-execution/PX7_V1_RELEASE_CHECKLIST.txt)。
 
-## Branches
-The `main` branch is the development branch; do not use it for production. Refer to the [release page](https://github.com/PureEOSIO/helios/releases) for current information on releases, pre-releases, and obsolete releases, as well as the corresponding tags for those releases.
+## 并行执行
 
-## Supported Operating Systems
-We currently support the following operating systems.
-- Ubuntu 22.04 Jammy
+- 首版按4–16个软件worker配置；实际CPU核心数、交易复杂度及冲突会影响收益。
+- 同一交易内部保持顺序和原子性，正式数据库按区块中的交易顺序提交。
+- 提交前重新检查状态依赖；冲突、资源不足或不支持的能力走安全串行路径。
+- 使用明确的JIT运行配置和经过验证的合约代码摘要，注册多个worker本身不是TPS证据。
 
-Other Unix derivatives such as macOS are tended to on a best-effort basis and may not be full featured. If you aren't using Ubuntu, please visit the "[Build Unsupported OS](./docs/00_install/01_build-from-source/00_build-unsupported-os.md)" page to explore your options.
+首版发布后再以单台节点做串行及4/8/12/16 worker的TPS压力对比，覆盖独立转账、
+独立合约、复杂合约和混合冲突交易。尚未实测的提升倍数不作承诺。
 
-If you are running an unsupported Ubuntu derivative, such as Linux Mint, you can find the version of Ubuntu your distribution was based on by using this command:
-```bash
-cat /etc/upstream-release/lsb-release
-```
-Your best bet is to follow the instructions for your Ubuntu base, but we make no guarantees.
+## 运行环境
 
-## Binary Installation
-This is the fastest way to get started. From the [latest release](https://github.com/PureEOSIO/helios/releases/latest) page, download a binary for one of our [supported operating systems](#supported-operating-systems), or visit the [release tags](https://github.com/PureEOSIO/helios/releases) page to download a binary for a specific version of Helios.
+现代构建目标为 **Ubuntu 26.04 LTS / Ubuntu 26.10，x86_64，JIT**。
 
-Once you have a `*.deb` file downloaded for your version of Ubuntu, you can install it as follows:
-```bash
-sudo apt-get update
-sudo apt-get install -y ~/Downloads/helios*.deb
-```
-Your download path may vary. If you are in an Ubuntu docker container, omit `sudo` because you run as `root` by default.
+| 环境 | 已验证范围 |
+|---|---|
+| Ubuntu 26.04 | 原生Release构建、生产者相关组件及恢复检查已有记录；最新远程原生构建仍在执行。 |
+| Ubuntu 26.10 | 当前源码节点、工具、核心回归、AIC CDT和系统合约集成，以及两VM上的30→40候选轮岗与故障拉黑已验证。整机恢复、完整插桩及真实24h领奖继续补测。 |
 
-Finally, verify Helios was installed correctly:
-```bash
-nodeos --full-version
-```
-You should see a [semantic version](https://semver.org) string followed by a `git` commit hash with no errors. For example:
-```
-v1.0.1-9026a03c09c9b4f93edca696b5eef259f0ab96b3
-```
+容器检查覆盖相应用户空间；各二进制包按其实际构建和运行环境标注，不宣称通用
+Linux可移植性。其他系统暂不属于首版验收范围。详细记录见
+[现代Ubuntu结果](docs/ubuntu/UBUNTU_MODERN_RESULTS.txt)。
 
-## Build and Install from Source
-You can also build and install Helios from source.
+## 从源码构建
 
-### Prerequisites
-You will need to build on a [supported operating system](#supported-operating-systems).
+安装构建依赖：
 
-Requirements to build:
-- C++20 compiler and standard library
-- CMake 3.16+
-- LLVM 7 - 11 - for Linux only
-  - newer versions do not work
-- libcurl 7.40.0+
-- git
-- GMP
-- Python 3
-- python3-numpy
-- zlib
-
-### Step 1 - Clone
-If you don't have the Helios repo cloned to your computer yet, [open a terminal](https://itsfoss.com/open-terminal-ubuntu) and navigate to the folder where you want to clone the Helios repository:
-```bash
-cd ~/Downloads
-```
-Clone Helios using either HTTPS...
-```bash
-git clone --recursive https://github.com/PureEOSIO/helios.git
-```
-...or SSH:
-```bash
-git clone --recursive git@github.com:PureEOSIO/helios.git
-```
-
-> ℹ️ **HTTPS vs. SSH Clone** ℹ️  
-Both an HTTPS or SSH git clone will yield the same result - a folder named `helios` containing our source code. It doesn't matter which type you use.
-
-Navigate into that folder:
-```bash
-cd helios
-```
-
-### Step 2 - Checkout Release Tag or Branch
-Choose which [release](https://github.com/PureEOSIO/helios/releases) or [branch](#branches) you would like to build, then check it out. If you are not sure, use the [latest release](https://github.com/PureEOSIO/helios/releases/latest). For example, if you want to build release 1.0.1 then you would check it out using its tag, `v1.0.1`. In the example below, replace `v0.0.0` with your selected release tag accordingly:
-```bash
-git fetch --all --tags
-git checkout v0.0.0
-```
-
-Once you are on the branch or release tag you want to build, make sure everything is up-to-date:
-```bash
-git pull
-git submodule update --init --recursive
-```
-
-### Step 3 - Build
-Select build instructions below for a [pinned build](#pinned-build) (preferred) or an [unpinned build](#unpinned-build).
-
-> ℹ️ **Pinned vs. Unpinned Build** ℹ️  
-We have two types of builds for Helios: "pinned" and "unpinned." A pinned build is a reproducible build with the build environment and dependency versions fixed by the development team. In contrast, unpinned builds use the dependency versions provided by the build platform. Unpinned builds tend to be quicker because the pinned build environment must be built from scratch. Pinned builds, in addition to being reproducible, ensure the compiler remains the same between builds of different Helios major versions. Helios requires the compiler version to remain the same, otherwise its state might need to be recovered from a portable snapshot or the chain needs to be replayed.
-
-> ⚠️ **A Warning On Parallel Compilation Jobs (`-j` flag)** ⚠️  
-When building C/C++ software, often the build is performed in parallel via a command such as `make -j "$(nproc)"` which uses all available CPU threads. However, be aware that some compilation units (`*.cpp` files) in Helios will consume nearly 4GB of memory. Failures due to memory exhaustion will typically, but not always, manifest as compiler crashes. Using all available CPU threads may also prevent you from doing other things on your computer during compilation. For these reasons, consider reducing this value.
-
-> 🐋 **Docker and `sudo`** 🐋  
-If you are in an Ubuntu docker container, omit `sudo` from all commands because you run as `root` by default. Most other docker containers also exclude `sudo`, especially Debian-family containers. If your shell prompt is a hash tag (`#`), omit `sudo`.
-
-#### Pinned Reproducible Build
-The pinned reproducible build requires Docker. Make sure you are in the root of the `helios` repo and then run
-```bash
-DOCKER_BUILDKIT=1 docker build -f tools/reproducible.Dockerfile -o . .
-```
-This command will take a substantial amount of time because a toolchain is built from scratch. Upon completion, the current directory will contain a built `.deb` and `.tar.gz` (you can change the `-o .` argument to place the output in a different directory). If needing to reduce the number of parallel jobs as warned above, run the command as,
-```bash
-DOCKER_BUILDKIT=1 docker build --build-arg HELIOS_BUILD_JOBS=4 -f tools/reproducible.Dockerfile -o . .
-```
-
-#### Unpinned Build
-The following instructions are valid for this branch. Other release branches may have different requirements, so ensure you follow the directions in the branch or release you intend to build. If you are in an Ubuntu docker container, omit `sudo` because you run as `root` by default.
-
-Install dependencies:
 ```bash
 sudo apt-get update
-sudo apt-get install -y \
-        build-essential \
-        cmake \
-        git \
-        libcurl4-openssl-dev \
-        libgmp-dev \
-        llvm-11-dev \
-        python3-numpy \
-        file \
-        zlib1g-dev
+sudo apt-get install -y build-essential cmake ninja-build git openssh-client \
+  pkg-config libcurl4-openssl-dev libgmp-dev zlib1g-dev python3 python3-yaml
 ```
 
-To build, make sure you are in the root of the `helios` repo, then run the following command:
+检出要验证的分支或发行标签，再初始化固定依赖：
+
 ```bash
-mkdir -p build
-cd build
-
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/lib/llvm-11 ..
-
-make -j "$(nproc)" package
+git clone https://github.com/MatrixCoreX/PureEOS.git
+cd PureEOS
+# 选择对应发行说明给出的准确ref；当前没有已宣布的稳定标签。
+git submodule update --init --recursive --jobs=4
+python3 -I -B tools/prepare_vm_vendor.py --apply
+python3 -I -B tools/prepare_vm_vendor.py --check
 ```
 
-Now you can optionally [test](#step-4---test) your build, or [install](#step-5---install) the `*.deb` binary packages, which will be in the root of your build directory.
+VM固定基线由独立公开源码镜像MatrixCoreX/AIC-VM提供，提交和继承许可均保持不变。
+已在禁用凭据的独立目录检出该提交及两个嵌套依赖，并重现三份已测VM补丁；
+整个节点的匿名递归检出仍须单独核验。完整源码归档可只读检查已准备的vendor，
+不把一个源码清单摘要伪装成Git提交。
 
-### Step 4 - Test
-Helios supports the following test suites:
+现代构建入口使用独立目录，不替换已有节点或安装CDT：
 
-Test Suite | Test Type | [Test Size](https://testing.googleblog.com/2010/12/test-sizes.html) | Notes
----|:---:|:---:|---
-[Parallelizable tests](#parallelizable-tests) | Unit tests | Small
-[WASM spec tests](#wasm-spec-tests) | Unit tests | Small | Unit tests for our WASM runtime, each short but _very_ CPU-intensive
-[Serial tests](#serial-tests) | Component/Integration | Medium
-[Long-running tests](#long-running-tests) | Integration | Medium-to-Large | Tests which take an extraordinarily long amount of time to run
-
-When building from source, we recommended running at least the [parallelizable tests](#parallelizable-tests).
-
-#### Parallelizable Tests
-This test suite consists of any test that does not require shared resources, such as file descriptors, specific folders, or ports, and can therefore be run concurrently in different threads without side effects (hence, easily parallelized). These are mostly unit tests and [small tests](https://testing.googleblog.com/2010/12/test-sizes.html) which complete in a short amount of time.
-
-You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
 ```bash
-ctest -j "$(nproc)" -LE _tests
+bash tools/ubuntu-modern-build.sh --check
+bash tools/ubuntu-modern-build.sh --build --jobs=2
+bash tools/ubuntu-modern-build.sh --test --jobs=2
 ```
 
-#### WASM Spec Tests
-The WASM spec tests verify that our WASM execution engine is compliant with the web assembly standard. These are very [small](https://testing.googleblog.com/2010/12/test-sizes.html), very fast unit tests. However, there are over a thousand of them so the suite can take a little time to run. These tests are extremely CPU-intensive.
+输出位于`build/ubuntu-<版本>-jit/`：节点为`programs/nodeos/pureeos-ubuntu-nodeos`，
+同时构建cleos、keosd和helios-util。`--test`执行明确的队列、计时器及生产者组件，
+不是完整整链或TPS验收。可用`--build-dir=/your/isolated-build`指定独立目录。
 
-You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
-```bash
-ctest -j "$(nproc)" -L wasm_spec_tests
-```
-We have observed severe performance issues when multiple virtual machines are running this test suite on the same physical host at the same time, for example in a CICD system. This can be resolved by disabling hyperthreading on the host.
+此配置明确`ENABLE_OC=OFF`，无需另装LLVM开发包；编译合约需要匹配的AIC CDT SDK。
+首次安装、签名钥、资源初始化及矿工加入请按
+[候选使用说明](docs/parallel-execution/PX7_V1_CANDIDATE_GUIDE.txt)执行。
+默认测试私钥和测试资金不用于正式创世；构建脚本不会自动创建或升级现用链。
 
-#### Serial Tests
-The serial test suite consists of [medium](https://testing.googleblog.com/2010/12/test-sizes.html) component or integration tests that use specific paths, ports, rely on process names, or similar, and cannot be run concurrently with other tests. Serial tests can be sensitive to other software running on the same host and they may `SIGKILL` other `nodeos` processes. These tests take a moderate amount of time to complete, but we recommend running them.
+## 系统规则与恢复
 
-You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
-```bash
-ctest -L "nonparallelizable_tests"
-```
+本轮系统合约使用一票一投、取消代理、候选线性扩容、顺序单席轮岗、实际出块奖励，
+以及开发者升级和固定14天公示。节点与系统合约须匹配；合约构建现已默认开启并
+要求全部新链功能，旧配置不能静默生成旧规则合约。
 
-#### Long-Running Tests
-The long-running tests are [medium-to-large](https://testing.googleblog.com/2010/12/test-sizes.html) integration tests that rely on shared resources and take a very long time to run.
+非正常停机后若提示数据库dirty，先保留区块、finalizer安全数据和配置，按实际
+日志选择原生重放流程；不要手工清除finalizer安全目录。整机补测结果以验证记录为准。
 
-You can invoke them by running `ctest` from a terminal in your Helios build directory and specifying the following arguments:
-```bash
-ctest -L "long_running_tests"
-```
+## 许可
 
-### Step 5 - Install
-Once you have [built](#step-3---build-the-source-code) Helios and [tested](#step-4---test) your build, you can install Helios on your system. Don't forget to omit `sudo` if you are running in a docker container.
-
-We recommend installing the binary package you just built. Navigate to your Helios build directory in a terminal and run this command:
-```bash
-sudo apt-get update
-sudo apt-get install -y ./helios_*.deb
-```
-
-It is also possible to install using `make` instead:
-```bash
-sudo make install
-```
-
-## Bash Autocomplete
-`cleos` and `helios-util` offer a substantial amount of functionality. Consider using bash's autocompletion support which makes it easier to discover all their various options.
-
-For our provided `.deb` packages simply install Ubuntu's `bash-completion` package: `apt-get install bash-completion` (you may need to log out/in after installing).
-
-If building from source install the `build/programs/cleos/bash-completion/completions/cleos` and `build/programs/helios-util/bash-completion/completions/helios-util` files to your bash-completion directory. Refer to [bash-completion's documentation](https://github.com/scop/bash-completion#faq) on the possible install locations.
+自有原创部分的许可见[AIC开源许可1.0](AIC_LICENSE.md)。继承代码和第三方声明按
+实际许可保留，范围见[LICENSING.md](LICENSING.md)与[LICENSE](LICENSE)。当前继承
+基线中的BSL生产用途适用范围仍在核清，不以新许可文件宣称全仓库已重新授权。

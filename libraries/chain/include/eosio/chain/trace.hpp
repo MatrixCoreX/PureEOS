@@ -173,6 +173,9 @@ namespace eosio::chain {
       std::optional<block_id_type>               producer_block_id;
       std::optional<transaction_receipt_header>  receipt;
       fc::microseconds                           elapsed{};
+      // Local resource charge, including adopted VM and signature CPU. Keep
+      // diagnostics' elapsed separate: it may include scheduler waits.
+      fc::microseconds                           cpu_usage{};
       uint64_t                                   net_usage = 0;
       bool                                       scheduled = false;
       vector<action_trace>                       action_traces;
@@ -214,7 +217,7 @@ FC_REFLECT( eosio::chain::action_trace,
                (producer_block_id)(account_ram_deltas)(except)(error_code)(return_value)
                (call_traces)(console_markers) )
 
-// @ignore except_ptr
+// @ignore except_ptr, cpu_usage (local accounting, not part of a receipt/trace wire format)
 FC_REFLECT( eosio::chain::transaction_trace, (id)(block_num)(block_time)(producer_block_id)
                                              (receipt)(elapsed)(net_usage)(scheduled)
                                              (action_traces)(account_ram_delta)(failed_dtrx_trace)(except)(error_code) )

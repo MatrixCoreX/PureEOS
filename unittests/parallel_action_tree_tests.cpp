@@ -163,8 +163,8 @@ BOOST_FIXTURE_TEST_CASE(inline_and_notification_scheduling_uses_original_order_a
          BOOST_REQUIRE(parent != result.steps.end()); BOOST_CHECK(step.sender == parent->receiver);
       } else BOOST_CHECK(!step.sender);
    }
-   BOOST_CHECK_EQUAL(value64(result.state.writes()[0].value), 11u);
-   BOOST_CHECK_EQUAL(value64(result.state.writes()[1].value), 12u);
+   BOOST_CHECK_EQUAL(value64(result.state.primary_write(0).value), 11u);
+   BOOST_CHECK_EQUAL(value64(result.state.primary_write(1).value), 12u);
    const auto& sent = std::get<isolated_tree_inline_event>(result.steps[0].events[2]);
    BOOST_CHECK_EQUAL(sent.action_ordinal, 3u); BOOST_CHECK_EQUAL(sent.after_writes, 1u);
    BOOST_CHECK_EQUAL(sent.sent.packed.size(), sent.sent.decoded_bytes + 2);
@@ -318,7 +318,7 @@ BOOST_FIXTURE_TEST_CASE(one_two_four_thread_affine_executors_own_independent_cal
          for (unsigned repeat = 0; repeat < 3; ++repeat) {
             const auto result = local.execute(base, roots, programs, {});
             if (result.steps.size() != 22 || result.state.writes().size() != 2 ||
-                value64(result.state.writes()[1].value) != 12 ||
+                value64(result.state.primary_write(1).value) != 12 ||
                 !validate_isolated_action_tree_journal(result, roots, programs, {})) return false;
          }
          return true;

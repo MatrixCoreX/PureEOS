@@ -94,10 +94,22 @@ public:
    // but finalizer nodes might not vote on the late block due to the monotony_check which is
    // based on the block's timestamp.
    bool record_received_block(fc::time_point block_received_time, fc::time_point block_timestamp) {
+      // Historical replay must not consume a new process's entire observation
+      // window before it can produce/vote on its recovered head. This records
+      // no vote: absent real votes the ordinary timeout still pauses production.
+      if (block_timestamp < observation_start.load(std::memory_order_relaxed))
+         return false;
       bool recorded = false;
       recorded |= latest_other_vote.record_received_block(block_received_time, block_timestamp, block_acceptance_delta);
       recorded |= latest_producer_vote.record_received_block(block_received_time, block_timestamp, block_acceptance_delta);
       return recorded;
+   }
+
+   // Owner-only startup/catch-up boundary, concurrent only with vote signals.
+   // Preserve actual received votes; do not infer any vote from recovered data.
+   void begin_observation(fc::time_point now) {
+      observation_start.store(now, std::memory_order_relaxed);
+      force_unpause();
    }
 
    // Can be called concurrently with all member functions.
@@ -279,6 +291,7 @@ private:
 
    fc::microseconds negative_vote_timeout;
    fc::microseconds block_acceptance_delta;
+   std::atomic<fc::time_point> observation_start{};
    alignas(chain::hardware_destructive_interference_sz)
    vote_timing      latest_other_vote;
    vote_timing      latest_producer_vote;
