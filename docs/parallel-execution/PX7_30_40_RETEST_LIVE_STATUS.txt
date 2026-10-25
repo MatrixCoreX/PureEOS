@@ -1,0 +1,7 @@
+PureEOS 30→40完整重测实时状态
+更新时间UTC：2026-10-21T02:27:08.627956+00:00
+状态：observation-error-cloud-not-stopped
+本轮控制目录：/home/guagua/AntelopeIO/PureEOS/build/local-tests/rotation40-complete-20261020-W6fSHS
+固定费用期限UTC：2026-10-21T03:45:30.692794+00:00
+云端进度：{"directory": "/opt/pureeos-modern/cohort-build/local-tests/integer-v2-sw2tffzh", "processes": 30, "active_seats": 9, "queue_coverage": {"candidate_count": 30, "unique_reentered": 0, "total_replacements": 0, "missing": ["eosio", "nodea", "nodeaa", "nodeab", "nodeac", "nodeb", "nodec", "noded", "nodee", "nodef", "nodeg", "nodeh", "nodei", "nodej", "nodek", "nodel", "nodem", "noden", "nodeo", "nodep", "nodeq", "noder", "nodes", "nodet", "nodeu", "nodev", "nodew", "nodex", "nodey", "nodez"]}, "phases": [], "resource_evidence": "complete"}
+待处理：["CalledProcessError: Command '['udisksctl', 'mount', '-b', '/dev/nvme0n1p5']' returned non-zero exit status 1."]

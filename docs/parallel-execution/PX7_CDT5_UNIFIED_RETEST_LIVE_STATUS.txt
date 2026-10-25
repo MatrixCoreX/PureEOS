@@ -1,0 +1,747 @@
+PureEOS 新CDT5统一新创世重测
+状态：explicit-failure-needs-repair-before-deadline
+更新时间UTC：2026-10-22T06:42:40.572739+00:00
+截止UTC：2026-10-22T14:45:00+00:00
+本轮TPS压测已按用户要求取消，不启动、不作为收尾条件，也不记为通过。
+正式14天/四年规则未修改。
+{
+  "status": "explicit-failure-needs-repair-before-deadline",
+  "updated_utc": "2026-10-22T06:42:40.572739+00:00",
+  "a": {
+    "task_units": {
+      "pureeos-unified-TBMyRV-cohort.service": {
+        "active": "failed",
+        "sub": "failed"
+      }
+    },
+    "cohort": {
+      "status": "failed",
+      "finished_utc": "2026-10-21T13:39:09.094337+00:00",
+      "jobs": [
+        {
+          "name": "complete-30-40",
+          "status": "failed",
+          "reports": null,
+          "error": "Child command failed: complete-30-40"
+        }
+      ],
+      "error": null,
+      "unit": "ActiveState=failed\nSubState=failed\nResult=exit-code\n"
+    },
+    "cohort_progress": {
+      "directory": "/opt/pureeos-unified-TBMyRV/cohort/local-tests/integer-v2-1ywvie8g",
+      "status": "running",
+      "processes": 31,
+      "active_seats": 21,
+      "current_phase": {
+        "candidate_count": 40,
+        "started_utc": "2026-10-21T13:30:03.280271+00:00"
+      },
+      "queue_coverage": {
+        "candidate_count": 30,
+        "unique_reentered": 30,
+        "total_replacements": 31,
+        "missing": []
+      },
+      "admission_sync": [
+        {
+          "node": "nodead",
+          "status": "passed",
+          "timeout_seconds": 1532,
+          "stalled_seconds": 180,
+          "target_lib_at_start": 33808,
+          "target_head_at_start": 33810,
+          "observations": [
+            {
+              "elapsed_seconds": 1.8,
+              "peer_head": 70,
+              "peer_lib": 68,
+              "leader_head": 33813,
+              "leader_lib": 33811
+            },
+            {
+              "elapsed_seconds": 23.499,
+              "peer_head": 1428,
+              "peer_lib": 1426,
+              "leader_head": 33856,
+              "leader_lib": 33854
+            },
+            {
+              "elapsed_seconds": 43.591,
+              "peer_head": 2670,
+              "peer_lib": 2668,
+              "leader_head": 33897,
+              "leader_lib": 33895
+            },
+            {
+              "elapsed_seconds": 64.339,
+              "peer_head": 3951,
+              "peer_lib": 3950,
+              "leader_head": 33938,
+              "leader_lib": 33936
+            },
+            {
+              "elapsed_seconds": 84.397,
+              "peer_head": 5252,
+              "peer_lib": 5250,
+              "leader_head": 33978,
+              "leader_lib": 33976
+            },
+            {
+              "elapsed_seconds": 105.378,
+              "peer_head": 6620,
+              "peer_lib": 6618,
+              "leader_head": 34020,
+              "leader_lib": 34018
+            },
+            {
+              "elapsed_seconds": 125.866,
+              "peer_head": 7868,
+              "peer_lib": 7866,
+              "leader_head": 34061,
+              "leader_lib": 34059
+            },
+            {
+              "elapsed_seconds": 147.447,
+              "peer_head": 9271,
+              "peer_lib": 9269,
+              "leader_head": 34104,
+              "leader_lib": 34102
+            },
+            {
+              "elapsed_seconds": 169.07,
+              "peer_head": 10647,
+              "peer_lib": 10645,
+              "leader_head": 34148,
+              "leader_lib": 34146
+            },
+            {
+              "elapsed_seconds": 189.399,
+              "peer_head": 11896,
+              "peer_lib": 11894,
+              "leader_head": 34188,
+              "leader_lib": 34185
+            },
+            {
+              "elapsed_seconds": 209.821,
+              "peer_head": 13121,
+              "peer_lib": 13119,
+              "leader_head": 34229,
+              "leader_lib": 34227
+            },
+            {
+              "elapsed_seconds": 230.686,
+              "peer_head": 14483,
+              "peer_lib": 14481,
+              "leader_head": 34270,
+              "leader_lib": 34268
+            },
+            {
+              "elapsed_seconds": 250.765,
+              "peer_head": 15895,
+              "peer_lib": 15893,
+              "leader_head": 34311,
+              "leader_lib": 34309
+            },
+            {
+              "elapsed_seconds": 271.792,
+              "peer_head": 17454,
+              "peer_lib": 17452,
+              "leader_head": 34353,
+              "leader_lib": 34351
+            },
+            {
+              "elapsed_seconds": 292.039,
+              "peer_head": 18989,
+              "peer_lib": 18987,
+              "leader_head": 34393,
+              "leader_lib": 34391
+            },
+            {
+              "elapsed_seconds": 313.597,
+              "peer_head": 20438,
+              "peer_lib": 20436,
+              "leader_head": 34437,
+              "leader_lib": 34435
+            },
+            {
+              "elapsed_seconds": 334.247,
+              "peer_head": 21819,
+              "peer_lib": 21817,
+              "leader_head": 34478,
+              "leader_lib": 34476
+            },
+            {
+              "elapsed_seconds": 355.234,
+              "peer_head": 23318,
+              "peer_lib": 23316,
+              "leader_head": 34520,
+              "leader_lib": 34518
+            },
+            {
+              "elapsed_seconds": 375.751,
+              "peer_head": 24688,
+              "peer_lib": 24686,
+              "leader_head": 34561,
+              "leader_lib": 34559
+            },
+            {
+              "elapsed_seconds": 396.332,
+              "peer_head": 26097,
+              "peer_lib": 26095,
+              "leader_head": 34602,
+              "leader_lib": 34600
+            },
+            {
+              "elapsed_seconds": 416.526,
+              "peer_head": 27512,
+              "peer_lib": 27510,
+              "leader_head": 34642,
+              "leader_lib": 34640
+            },
+            {
+              "elapsed_seconds": 436.913,
+              "peer_head": 28706,
+              "peer_lib": 28704,
+              "leader_head": 34683,
+              "leader_lib": 34681
+            },
+            {
+              "elapsed_seconds": 457.106,
+              "peer_head": 30144,
+              "peer_lib": 30142,
+              "leader_head": 34724,
+              "leader_lib": 34722
+            },
+            {
+              "elapsed_seconds": 478.06,
+              "peer_head": 31469,
+              "peer_lib": 31467,
+              "leader_head": 34765,
+              "leader_lib": 34763
+            },
+            {
+              "elapsed_seconds": 499.001,
+              "peer_head": 32809,
+              "peer_lib": 32807,
+              "leader_head": 34808,
+              "leader_lib": 34806
+            },
+            {
+              "elapsed_seconds": 519.387,
+              "peer_head": 34233,
+              "peer_lib": 34231,
+              "leader_head": 34848,
+              "leader_lib": 34846
+            }
+          ],
+          "agreement": {
+            "common_lib": 34876,
+            "common_block_id": "0000883cfa41e0269305c14efb176b031abdcbbbbe8cd19a5c9ed6604fff763c",
+            "infos": {
+              "eosio": {
+                "server_version": "00000000",
+                "chain_id": "77506379c265ab93f0754fb8016d83357ae0bd3682b6c55b81009bbfd212ff14",
+                "head_block_num": 34878,
+                "last_irreversible_block_num": 34876,
+                "last_irreversible_block_id": "0000883cfa41e0269305c14efb176b031abdcbbbbe8cd19a5c9ed6604fff763c",
+                "head_block_id": "0000883e687c7dfb3dd803c67bb9615c52530d60208b7e18f9c71bc7d2e212f9",
+                "head_block_time": "2026-10-21T13:38:58.000",
+                "head_block_producer": "noder",
+                "virtual_block_cpu_limit": 200000000,
+                "virtual_block_net_limit": 1048576000,
+                "block_cpu_limit": 200000,
+                "block_net_limit": 1048576,
+                "server_version_string": "unknown",
+                "fork_db_head_block_num": 34878,
+                "fork_db_head_block_id": "0000883e687c7dfb3dd803c67bb9615c52530d60208b7e18f9c71bc7d2e212f9",
+                "server_full_version_string": "unknown",
+                "total_cpu_weight": 430000000,
+                "total_net_weight": 376500000,
+                "earliest_available_block_num": 1,
+                "last_irreversible_block_time": "2026-10-21T13:38:57.000"
+              },
+              "nodead": {
+                "server_version": "00000000",
+                "chain_id": "77506379c265ab93f0754fb8016d83357ae0bd3682b6c55b81009bbfd212ff14",
+                "head_block_num": 34878,
+                "last_irreversible_block_num": 34876,
+                "last_irreversible_block_id": "0000883cfa41e0269305c14efb176b031abdcbbbbe8cd19a5c9ed6604fff763c",
+                "head_block_id": "0000883e687c7dfb3dd803c67bb9615c52530d60208b7e18f9c71bc7d2e212f9",
+                "head_block_time": "2026-10-21T13:38:58.000",
+                "head_block_producer": "noder",
+                "virtual_block_cpu_limit": 200000000,
+                "virtual_block_net_limit": 1048576000,
+                "block_cpu_limit": 200000,
+                "block_net_limit": 1048576,
+                "server_version_string": "unknown",
+                "fork_db_head_block_num": 34878,
+                "fork_db_head_block_id": "0000883e687c7dfb3dd803c67bb9615c52530d60208b7e18f9c71bc7d2e212f9",
+                "server_full_version_string": "unknown",
+                "total_cpu_weight": 430000000,
+                "total_net_weight": 376500000,
+                "earliest_available_block_num": 1,
+                "last_irreversible_block_time": "2026-10-21T13:38:57.000"
+              }
+            }
+          },
+          "elapsed_seconds": 534.375
+        }
+      ]
+    }
+  },
+  "b": {
+    "task_units": {
+      "pureeos-unified-TBMyRV-functional.service": {
+        "active": "failed",
+        "sub": "failed"
+      }
+    },
+    "functional": {
+      "status": "failed",
+      "finished_utc": "2026-10-21T09:12:56.767990+00:00",
+      "jobs": [
+        {
+          "name": "python-controls",
+          "status": "failed",
+          "reports": null,
+          "error": "Child command failed: python-controls"
+        },
+        {
+          "name": "runtime-cli",
+          "status": "passed",
+          "reports": [
+            "/opt/pureeos-unified-TBMyRV/runtime-cli/report.json"
+          ],
+          "error": null
+        },
+        {
+          "name": "producer-unit",
+          "status": "passed",
+          "reports": [],
+          "error": null
+        },
+        {
+          "name": "worker-unit",
+          "status": "failed",
+          "reports": null,
+          "error": "Child command failed: worker-unit"
+        },
+        {
+          "name": "native-genesis-profile1",
+          "status": "passed",
+          "reports": [],
+          "error": null
+        },
+        {
+          "name": "native-genesis-profile2",
+          "status": "passed",
+          "reports": [],
+          "error": null
+        },
+        {
+          "name": "system-voting-rex-powerup",
+          "status": "failed",
+          "reports": null,
+          "error": "Child command failed: system-voting-rex-powerup"
+        },
+        {
+          "name": "cdt-runtime-1",
+          "status": "passed",
+          "reports": [
+            "/opt/pureeos-unified-TBMyRV/cdt-round-1/report.json"
+          ],
+          "error": null
+        },
+        {
+          "name": "cdt-runtime-2",
+          "status": "passed",
+          "reports": [
+            "/opt/pureeos-unified-TBMyRV/cdt-round-2/report.json"
+          ],
+          "error": null
+        },
+        {
+          "name": "cdt-runtime-3",
+          "status": "passed",
+          "reports": [
+            "/opt/pureeos-unified-TBMyRV/cdt-round-3/report.json"
+          ],
+          "error": null
+        },
+        {
+          "name": "history-three-0",
+          "status": "passed",
+          "reports": [
+            "/opt/pureeos-unified-TBMyRV/history-0.json"
+          ],
+          "error": null
+        },
+        {
+          "name": "history-three-4",
+          "status": "passed",
+          "reports": [
+            "/opt/pureeos-unified-TBMyRV/history-4.json"
+          ],
+          "error": null
+        }
+      ],
+      "error": null,
+      "unit": "ActiveState=failed\nSubState=failed\nResult=exit-code\n"
+    },
+    "worker_supplement": {
+      "status": "passed",
+      "rounds": [
+        {
+          "round": 1,
+          "exit_code": 0,
+          "summary": [
+            [
+              "413",
+              "413"
+            ]
+          ]
+        },
+        {
+          "round": 2,
+          "exit_code": 0,
+          "summary": [
+            [
+              "413",
+              "413"
+            ]
+          ]
+        },
+        {
+          "round": 3,
+          "exit_code": 0,
+          "summary": [
+            [
+              "413",
+              "413"
+            ]
+          ]
+        }
+      ],
+      "worker_sha256": "30ad2706a1619b7f9a9d80c44f03ff68db295fffd6971c1a25b5962069b52f7c",
+      "fixture_sha256": "93148d63a7d1b0b864d986cf97fe125136cf2334ba277951d307ab4d16471fac",
+      "source": "Exact pinned original parser-boundary regression module, not a CDT5 production contract",
+      "first_missing_fixture_failure_retained": true
+    },
+    "system_supplement": {
+      "status": "passed",
+      "report": "/opt/pureeos-unified-TBMyRV/build/local-tests/integer-v2-w_ll376v/report.json",
+      "source_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+      "system_wasm_sha256": "e88ca4fe0aea50f5ea42071ed2ba6a1f335fb000a4838756db3333aad2466833",
+      "test_only_wait_produced_timeout_seconds": 900,
+      "original_100_second_failure_retained": true,
+      "production_rotation_slots_unchanged": 252,
+      "checks": 60
+    },
+    "multinode": {
+      "status": "passed",
+      "report": "/opt/pureeos-unified-TBMyRV/multi/local-tests/integer-v2-9l6ls6zk/report.json",
+      "scope": "Four logical isolated processes on host B; separate four-host cohort covers cross-host behavior"
+    }
+  },
+  "c": {
+    "task_units": {
+      "pureeos-unified-TBMyRV-controlled-time-v2.service": {
+        "active": "failed",
+        "sub": "failed"
+      },
+      "pureeos-unified-TBMyRV-controlled-time.service": {
+        "active": "failed",
+        "sub": "failed"
+      },
+      "pureeos-unified-TBMyRV-sanitizers.service": {
+        "active": "failed",
+        "sub": "failed"
+      }
+    },
+    "shortclock": {
+      "status": "passed",
+      "started_utc": "2026-10-21T09:26:02.694742+00:00",
+      "steps": [
+        {
+          "name": "python-controls-with-complete-source",
+          "exit_code": 0
+        },
+        {
+          "name": "cdt-version",
+          "exit_code": 0
+        },
+        {
+          "name": "configure-native",
+          "exit_code": 0
+        },
+        {
+          "name": "build-native",
+          "exit_code": 0
+        },
+        {
+          "name": "native-all-round-1",
+          "exit_code": 0
+        },
+        {
+          "name": "native-all-round-2",
+          "exit_code": 0
+        },
+        {
+          "name": "native-all-round-3",
+          "exit_code": 0
+        }
+      ],
+      "production_constants_unchanged": true,
+      "clock_method": "Only tester.produce_block(time delta); real node clock and all production constants unchanged",
+      "native_test_sha256": "e4a93d4f5fab499134180d148936facdd0cb066659220b04445a6ca30cf779d2",
+      "suites": [
+        "pureeos_genesis_tests",
+        "pureeos_governance_tests",
+        "pureeos_governance_contract_tests",
+        "pureeos_single_choice_contract_tests",
+        "pureeos_resource_split_tests",
+        "pureeos_sequential_rotation_tests",
+        "pureeos_reward_halving_tests",
+        "pureeos_reward_activation_tests",
+        "pureeos_committee_boundary_tests"
+      ],
+      "rounds": 3,
+      "formal_review_seconds": 1209600,
+      "formal_economic_period_seconds": 126230400,
+      "shortened_production_parameters": false,
+      "recoverable_compiler_cache": "/opt/pureeos-unified-TBMyRV-compiler-cache-v3",
+      "finished_utc": "2026-10-21T12:38:34.121701+00:00"
+    },
+    "control_supplement": {
+      "status": "passed",
+      "utc": "2026-10-21T09:27:01.179131+00:00",
+      "original_failure": "B first control attempt lacked scripts/parallel_access_audit.py; original failure retained",
+      "modules": [
+        "pureeos_candidate_sync_test",
+        "pureeos_rotation_cohort_cloud_test_test",
+        "pureeos_fourhost_rotation_cloud_test_test",
+        "pureeos_multihost_cloud_test_test",
+        "pureeos_rotation_lifecycle_test",
+        "pureeos_host_metrics_test",
+        "pureeos_historical_edge_cases_unit_test",
+        "parallel_loopback_wave_test",
+        "ubuntu_cdt_runtime_test_test",
+        "parallel_release_benchmark_test",
+        "parallel_mixed_stress_workload_test",
+        "parallel_complex_replay_test",
+        "parallel_release_recovery_test",
+        "parallel_execution_harness_test",
+        "parallel_pressure_metrics_test",
+        "parallel_saturation_metrics_test",
+        "presigned_sender_start_unit_test",
+        "parallel_access_audit_test"
+      ],
+      "module_sha256": {
+        "pureeos_candidate_sync_test": "54bd4a04fc551841d9c763f65eee6936ca4fce12d4230fdf411c1f243703fde7",
+        "pureeos_rotation_cohort_cloud_test_test": "919405d6359bc5446e565b243962910089dcbf1ae9d530d7a4173670645a3d00",
+        "pureeos_fourhost_rotation_cloud_test_test": "3bfa4767823367b307e7f982df1c46c546848b2c4b13e7b349e262aae96e24a5",
+        "pureeos_multihost_cloud_test_test": "c971aaf5b80cf1d52cff7982a97bc1f4ee39997bdf2f2fe8fb3d6f05436f31f0",
+        "pureeos_rotation_lifecycle_test": "217b29f20cbf6a25d5b1a2a96c98e1b09bb087acab8833232401b1867865d44b",
+        "pureeos_host_metrics_test": "fc479b68d3fe07f0f48a9b1bda797043988f27aa415c09d49a4ffb60b13e88a2",
+        "pureeos_historical_edge_cases_unit_test": "adaf97f58cd5cd1c03b3ce2600e01ce8c1f68e01c06f7fbe1ffd8b9378623f49",
+        "parallel_loopback_wave_test": "a98d5a75caf22e3281dd76145c4a6bc4920ca7bf3705477bb17cbe8c67155648",
+        "ubuntu_cdt_runtime_test_test": "360102148f174385af83ced07d1fe8287b1d1486a7480828aa140b46e54af65c",
+        "parallel_release_benchmark_test": "27ed6359041a6581937cea05ec128c48b00db0f34f69b1c25507433274255d4e",
+        "parallel_mixed_stress_workload_test": "cbe6cf1b29e545230ee13751b73cd088f117473e05c61845e5b1386b9c1b447e",
+        "parallel_complex_replay_test": "04acabeb2ca05fdfde5f2c7d734c14413db4f34cb76b83d2d0a1b774c46de264",
+        "parallel_release_recovery_test": "ad5301d4a5639aacb6d150daad06bf824bc72dc6816dd0dd65e7fdce90dcfe45",
+        "parallel_execution_harness_test": "4f90a3da661b31111cd72f19daf3458877e4b94ae07d24f33ac7c142fd21fd34",
+        "parallel_pressure_metrics_test": "ddeb60fc5ab60149517672107516ebd82dd8265b4988606c991832dac0be3233",
+        "parallel_saturation_metrics_test": "b16cdaf78a1f2f42c32b6b92a930693100f10165ccef03ada48074faf9d5f822",
+        "presigned_sender_start_unit_test": "22986df565c1fa0abdefb3f9d9f2c65ec51baefe9618b4a4b2579b71933ef1bf",
+        "parallel_access_audit_test": "e3e5fb4fcc5c0341e91e609fd5610252bee4d0bfd4b40bfc2d08bbd0c1445797"
+      },
+      "log": "/opt/pureeos-unified-TBMyRV/clock-v3/python-controls-with-complete-source.log"
+    },
+    "sanitizers": {
+      "status": "passed",
+      "modes": [
+        {
+          "mode": "address,undefined",
+          "programs": {
+            "asan-ubsan-parallel_native_sanitizer_test.elf": "6426f1021d4cbc8de683af87e2527cb5eabe7182cb5e8ef9810a87fd05603113",
+            "asan-ubsan-parallel_secondary_sanitizer_test.elf": "1e693064a252dfacf9abe10775b1e5479dfe468eb31c4e7871ed0c3a54fdb20f"
+          },
+          "rounds": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "mode": "thread",
+          "programs": {
+            "tsan-parallel_native_sanitizer_test.elf": "753ae6066c2639f448b8cf9eb07e7427fe6000905b1cbc666d01e1c2dc6a6f93",
+            "tsan-parallel_secondary_sanitizer_test.elf": "38ac7ba9d04376105f29badf3e64e397a532dcd3d2821de4b57b196cd04c07f0"
+          },
+          "rounds": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "scope": "Instrumented state/overlay/secondary/SoftFloat only; not complete node, dependencies or generated JIT code",
+      "recoverable_compiler_cache": "/opt/pureeos-unified-TBMyRV-compiler-cache-after-sanitizers-v2"
+    },
+    "native_build_progress": {
+      "attempt": "clock-v3",
+      "current": "native-all-round-3",
+      "updated_utc": "2026-10-21T12:04:29.293910+00:00",
+      "steps_completed": 6
+    }
+  },
+  "d": {
+    "task_units": {
+      "pureeos-unified-TBMyRV-reward.service": {
+        "active": "active",
+        "sub": "running"
+      }
+    },
+    "reward": {
+      "status": "running",
+      "finished_utc": null,
+      "jobs": [],
+      "error": null,
+      "unit": "ActiveState=active\nSubState=running\nResult=success\n"
+    },
+    "reward_progress": {
+      "status": "running",
+      "target_utc": "2026-10-22T08:50:16.500000+00:00",
+      "updated_utc": "2026-10-22T06:42:34.515514+00:00",
+      "chain_id": "d3b04003ec1092c3717e5f95bb2fd3bb3a1418c1d6d3cdd6ba4bb3df39c64f3c",
+      "early_claim_refused": true
+    }
+  },
+  "failures": [
+    {
+      "role": "a",
+      "suite": "cohort",
+      "details": {
+        "status": "failed",
+        "finished_utc": "2026-10-21T13:39:09.094337+00:00",
+        "jobs": [
+          {
+            "name": "complete-30-40",
+            "status": "failed",
+            "reports": null,
+            "error": "Child command failed: complete-30-40"
+          }
+        ],
+        "error": null,
+        "unit": "ActiveState=failed\nSubState=failed\nResult=exit-code\n"
+      }
+    },
+    {
+      "role": "b",
+      "suite": "functional",
+      "details": {
+        "status": "failed",
+        "finished_utc": "2026-10-21T09:12:56.767990+00:00",
+        "jobs": [
+          {
+            "name": "python-controls",
+            "status": "failed",
+            "reports": null,
+            "error": "Child command failed: python-controls"
+          },
+          {
+            "name": "runtime-cli",
+            "status": "passed",
+            "reports": [
+              "/opt/pureeos-unified-TBMyRV/runtime-cli/report.json"
+            ],
+            "error": null
+          },
+          {
+            "name": "producer-unit",
+            "status": "passed",
+            "reports": [],
+            "error": null
+          },
+          {
+            "name": "worker-unit",
+            "status": "failed",
+            "reports": null,
+            "error": "Child command failed: worker-unit"
+          },
+          {
+            "name": "native-genesis-profile1",
+            "status": "passed",
+            "reports": [],
+            "error": null
+          },
+          {
+            "name": "native-genesis-profile2",
+            "status": "passed",
+            "reports": [],
+            "error": null
+          },
+          {
+            "name": "system-voting-rex-powerup",
+            "status": "failed",
+            "reports": null,
+            "error": "Child command failed: system-voting-rex-powerup"
+          },
+          {
+            "name": "cdt-runtime-1",
+            "status": "passed",
+            "reports": [
+              "/opt/pureeos-unified-TBMyRV/cdt-round-1/report.json"
+            ],
+            "error": null
+          },
+          {
+            "name": "cdt-runtime-2",
+            "status": "passed",
+            "reports": [
+              "/opt/pureeos-unified-TBMyRV/cdt-round-2/report.json"
+            ],
+            "error": null
+          },
+          {
+            "name": "cdt-runtime-3",
+            "status": "passed",
+            "reports": [
+              "/opt/pureeos-unified-TBMyRV/cdt-round-3/report.json"
+            ],
+            "error": null
+          },
+          {
+            "name": "history-three-0",
+            "status": "passed",
+            "reports": [
+              "/opt/pureeos-unified-TBMyRV/history-0.json"
+            ],
+            "error": null
+          },
+          {
+            "name": "history-three-4",
+            "status": "passed",
+            "reports": [
+              "/opt/pureeos-unified-TBMyRV/history-4.json"
+            ],
+            "error": null
+          }
+        ],
+        "error": null,
+        "unit": "ActiveState=failed\nSubState=failed\nResult=exit-code\n"
+      }
+    }
+  ],
+  "resolved_control_fixture_failure": "Original B control failure retained; complete-source rerun verified",
+  "performance_scope": {
+    "status": "cancelled-not-run-by-user",
+    "required_for_this_round": false,
+    "decision": "scope-amendment-no-tps.json",
+    "reason": "Current four low-spec VMs are reserved for non-TPS validation; reconsider higher-performance hosts after this round"
+  },
+  "error": "GET instances/da58f038-c4df-4abc-8562-fbb5536e3910: HTTP 502",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/unified-cdt5-20261021-TBMyRV/round_watch_v2.py\", line 208, in main\n    if tick(state):return\n       ~~~~^^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/unified-cdt5-20261021-TBMyRV/round_watch_v2.py\", line 185, in tick\n    for role in 'abcd':state[role]=probe(role)\n                                   ~~~~~^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/unified-cdt5-20261021-TBMyRV/round_watch_v2.py\", line 47, in probe\n    return json.loads(c.remote(role,['python3','-c',code],60))\n                      ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/unified-cdt5-20261021-TBMyRV/cloud_round.py\", line 41, in remote\n    return old.remote(role,shlex.join(list(map(str,args))),timeout)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/rotation40-complete-20261020-W6fSHS/control.py\", line 142, in remote\n    value = subprocess.run([*ssh_args(role, first), command], text=True, capture_output=True, timeout=timeout)\n                             ~~~~~~~~^^^^^^^^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/rotation40-complete-20261020-W6fSHS/control.py\", line 121, in ssh_args\n    directory, client, identifier, instance = current(role)\n                                              ~~~~~~~^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/rotation40-complete-20261020-W6fSHS/control.py\", line 115, in current\n    identifier, instance = base.selected(client)\n                           ~~~~~~~~~~~~~^^^^^^^^\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/parallel-cloud-modern-20261020-rMORSt/lifecycle.py\", line 116, in selected\n    instance = client.api('GET', 'instances/' + identifier, absent_ok=True)\n  File \"/home/guagua/AntelopeIO/PureEOS/build/local-tests/parallel-cloud-modern-20261020-rMORSt/lifecycle.py\", line 84, in api\n    raise RuntimeError(f'{method} {endpoint}: HTTP {error.code}') from None\nRuntimeError: GET instances/da58f038-c4df-4abc-8562-fbb5536e3910: HTTP 502\n"
+}

@@ -461,37 +461,47 @@ BOOST_AUTO_TEST_CASE(rotation_committee_six_offline_seven_offline_and_recovery) 
    const auto policy = *f.chain.control->head_active_finalizer_policy();
    const auto checkpoint_num = f.chain.last_irreversible_block_num();
    const auto checkpoint_id = f.chain.last_irreversible_block_id();
-   f.online.assign(members.begin(), members.begin() + 15);
+   BOOST_REQUIRE_EQUAL(members.size(), 21u);
+   BOOST_REQUIRE_EQUAL(policy.finalizers.size(), 21u);
+   BOOST_REQUIRE_EQUAL(policy.threshold, 15u);
+   // Test the STATIC 21-member quorum before any member can accumulate three
+   // complete zero-output windows. Previously six absences were allowed to
+   // earn permanent bans first; their legitimate eviction changed membership
+   // and made the subsequent hardcoded 14/21 expectation invalid.
+   f.online.assign(members.begin(), members.begin() + 14);
    f.restart(f.online);
-   f.production_slots(252);
-   const auto before = f.chain.last_irreversible_block_num();
-   const auto counts = f.produced;
-   const auto sample = f.production_slots(504);
-   BOOST_CHECK_EQUAL(sample.first, 360u);
-   BOOST_CHECK_EQUAL(sample.second, 144u);
-   BOOST_CHECK_GT(f.chain.last_irreversible_block_num(), before);
-   for (size_t i = 15; i < members.size(); ++i)
-      BOOST_CHECK_EQUAL(f.produced[members[i]], counts.at(members[i]));
-   f.online.resize(14);
-   f.restart(f.online);
-   f.production_slots(252);
+   for (unsigned i = 0; i < 8; ++i) f.block(); // drain pre-stop QCs, not three rounds
    const auto halted = f.chain.last_irreversible_block_num();
-   const auto failed = f.production_slots(504);
-   BOOST_CHECK_EQUAL(failed.first, 336u);
-   BOOST_CHECK_EQUAL(failed.second, 168u);
+   const auto counts = f.produced;
+   const auto sample = f.production_slots(252);
+   BOOST_CHECK_EQUAL(sample.first, 14u * 12);
+   BOOST_CHECK_EQUAL(sample.second, 7u * 12);
    BOOST_CHECK_EQUAL(f.chain.last_irreversible_block_num(), halted);
-   BOOST_CHECK(*f.chain.control->head_active_finalizer_policy() == policy);
+   BOOST_REQUIRE(*f.chain.control->head_active_finalizer_policy() == policy);
+   BOOST_REQUIRE(f.list("active") == members);
+   BOOST_REQUIRE_EQUAL(f.rotation()["total_banned"].as_uint64(), 0u);
+   for (size_t i = 14; i < members.size(); ++i)
+      BOOST_CHECK_EQUAL(f.produced[members[i]], counts.at(members[i]));
    f.online.push_back(members[14]);
    f.restart(f.online);
-   f.production_slots(252);
+   // At most 84 skipped slots + 8 draining blocks + 252 + 126 < 516 slots,
+   // the minimum span containing three full personal windows of one member.
+   // Thus recovery proves 15/21 WITHOUT accidentally testing a smaller policy.
+   f.production_slots(126);
    BOOST_CHECK_GT(f.chain.last_irreversible_block_num(), halted);
+   BOOST_REQUIRE(*f.chain.control->head_active_finalizer_policy() == policy);
+   BOOST_REQUIRE(f.list("active") == members);
+   BOOST_REQUIRE_EQUAL(f.rotation()["total_banned"].as_uint64(), 0u);
+   for (size_t i = 15; i < members.size(); ++i)
+      BOOST_CHECK_EQUAL(f.produced[members[i]], counts.at(members[i]));
    f.online = members;
    f.restart(f.online);
    f.verify_full_production_round();
    BOOST_CHECK(f.chain.control->fetch_block_by_number(checkpoint_num)->calculate_id() == checkpoint_id);
    BOOST_CHECK(f.list("active") == members);
+   BOOST_CHECK_EQUAL(f.rotation()["total_banned"].as_uint64(), 0u);
    f.observer_replay();
-   BOOST_TEST_MESSAGE("Rotation profile: 15/21 finalizes; 14/21 stalls; restoring the 15th recovers; offline slots produce no blocks");
+   BOOST_TEST_MESSAGE("Static 21-member profile: 14/21 stalls, restoring 15/21 recovers before ban windows; actual missing slots produce no blocks. Permanent-ban eviction is tested separately.");
 }
 
 BOOST_AUTO_TEST_CASE(producing_without_new_finalizer_quorum_cannot_complete_handoff) {
@@ -848,28 +858,45 @@ void incumbent_fault_scenario(uint32_t seed, size_t missing_count) {
    }
    disconnect();
    const auto before = f.chain.last_irreversible_block_num();
-   f.until([&] { return f.rotation()["total_banned"].as_uint64() == missing_count; });
+   f.until([&] { return f.rotation()["total_banned"].as_uint64() > 0; });
+   f.until([&] {
+      const auto active = f.list("active");
+      return f.rotation()["stage"].as_uint64() == 0 && active.size() < 21 &&
+         std::none_of(active.begin(), active.end(), [&](name n) { return f.candidate(n)["banned"].as_bool(); });
+   });
+   const auto banned_count = f.rotation()["total_banned"].as_uint64();
+   BOOST_REQUIRE_GE(banned_count, 1u);
+   BOOST_REQUIRE_LE(banned_count, missing_count);
+   BOOST_REQUIRE_EQUAL(f.list("active").size(), 21u - banned_count);
    f.block();
    f.chain.control->abort_block();
    BOOST_CHECK_GT(f.chain.last_irreversible_block_num(), before);
    for (auto n : members) {
-      const bool banned = std::find(victims.begin(), victims.end(), n) != victims.end();
-      BOOST_CHECK_EQUAL(f.candidate(n)["banned"].as_bool(), banned);
-      if (!banned) continue;
+      const bool victim = std::find(victims.begin(), victims.end(), n) != victims.end();
+      const bool banned = f.candidate(n)["banned"].as_bool();
+      if (!victim) BOOST_CHECK(!banned);
+      if (!victim) continue;
       const auto c = f.candidate(n);
-      const auto evidence = c["evidence_slots"].get_array();
-      BOOST_CHECK_EQUAL(c["zero_windows"].as_uint64(), 3u);
-      BOOST_CHECK_EQUAL(evidence[1].as_uint64() - evidence[0].as_uint64(), 252u);
-      BOOST_CHECK_EQUAL(evidence[2].as_uint64() - evidence[1].as_uint64(), 252u);
-      BOOST_CHECK_LE(c["ban_final_block"].as_uint64(), f.chain.last_irreversible_block_num());
+      if (banned) {
+         const auto evidence = c["evidence_slots"].get_array();
+         BOOST_CHECK_EQUAL(c["zero_windows"].as_uint64(), 3u);
+         BOOST_CHECK_EQUAL(evidence[1].as_uint64() - evidence[0].as_uint64(), 252u);
+         BOOST_CHECK_EQUAL(evidence[2].as_uint64() - evidence[1].as_uint64(), 252u);
+         BOOST_CHECK_LE(c["ban_final_block"].as_uint64(), f.chain.last_irreversible_block_num());
+      }
       BOOST_CHECK_EQUAL(f.row("producersv2"_n, n.to_uint64_t())["unpaid_blocks"].as_uint64(), historical_blocks[n]);
       BOOST_CHECK_EQUAL(balance(n), balances[n]);
    }
-   f.until([&] { return f.rotation()["blocked"].as_uint64() == 2; });
-   BOOST_CHECK(f.list("active") == members); // no replacement: retain native policy, do not invent a quorum
+   // Once the real committee shrinks below 21, all new penalties pause. Some
+   // other victims may have only two finalized windows: never manufacture a
+   // third one just to satisfy a pre-eviction expected count.
+   f.production_slots(3 * 21 * config::producer_repetitions);
+   BOOST_CHECK_EQUAL(f.rotation()["total_banned"].as_uint64(), banned_count);
+   BOOST_CHECK(f.rotation()["penalty_paused"].as_bool());
+   BOOST_CHECK_EQUAL(f.chain.control->head_active_finalizer_policy()->threshold, (21u-banned_count)*2/3+1);
    f.snapshot_check();
    f.observer_replay();
-   BOOST_TEST_MESSAGE("Incumbent fault scenario: " << missing_count << " victims, two zero windows then recovery, three fresh finalized zero windows then permanent ban; balances/history intact");
+   BOOST_TEST_MESSAGE("Incumbent fault scenario: " << missing_count << " victims, two zero windows then recovery; " << banned_count << " finalized bans safely evicted; remaining under-21 penalties paused; balances/history intact");
 }
 }
 

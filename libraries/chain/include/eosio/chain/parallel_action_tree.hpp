@@ -28,6 +28,7 @@ struct isolated_action_tree_context {
    // Null keeps the legacy private capability boundary. The canonical owner
    // captures packed data; adoption must independently verify the same input.
    std::shared_ptr<const isolated_context_free_data> context_free_data;
+   bool console_enabled = false;
    bool operator==(const isolated_action_tree_context&) const = default;
 };
 
@@ -94,6 +95,7 @@ public:
    static constexpr size_t max_events = 4096, max_depth = 16;
    static constexpr size_t max_total_inline_bytes = 256 * 1024;
    isolated_action_tree_executor();
+   explicit isolated_action_tree_executor(std::shared_ptr<isolated_module_cache>);
    ~isolated_action_tree_executor();
    isolated_action_tree_executor(const isolated_action_tree_executor&) = delete;
    isolated_action_tree_executor& operator=(const isolated_action_tree_executor&) = delete;

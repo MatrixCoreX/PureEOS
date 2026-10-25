@@ -6,7 +6,11 @@
 #include <fc/filesystem.hpp>
 #include <algorithm>
 #include <array>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <stdexcept>
+#include <string_view>
 #include "parallel_test_diagnostics.hpp"
 
 using namespace eosio::chain;
@@ -14,6 +18,22 @@ using namespace eosio::chain::experimental;
 
 namespace {
 constexpr table_key pool_rows{"test"_n, "test"_n, "rows"_n};
+// Test-only stress profiles for slow/instrumented machines. Never changes any
+// executor deadline, transaction, thread count or correctness assertion.
+uint32_t tree_stress_iterations(const char* setting) {
+   if (!setting || std::string_view(setting) == "100") return 50'000;
+   if (std::string_view(setting) == "50") return 25'000;
+   if (std::string_view(setting) == "25") return 12'500;
+   throw std::invalid_argument("PUREEOS_PARALLEL_TREE_STRESS_PERCENT must be 25, 50 or 100");
+}
+uint32_t tree_stress_iterations() {
+   static const auto iterations = [] {
+      const auto value = tree_stress_iterations(std::getenv("PUREEOS_PARALLEL_TREE_STRESS_PERCENT"));
+      std::fprintf(stderr, "PARALLEL_TEST_STRESS tree_percent=%u busy_iterations=%u\n", value / 500, value);
+      return value;
+   }();
+   return iterations;
+}
 std::string pool_name(name n) { return "(i64.const " + std::to_string(n.to_uint64_t()) + ")"; }
 std::vector<char> pool_code(unsigned mode, bool trap = false) {
    action act; act.account = "bob"_n; act.name = "child"_n;
@@ -39,7 +59,7 @@ std::vector<char> pool_code(unsigned mode, bool trap = false) {
          (set_local $it (call $find )" + pool_name(pool_rows.code) + " " + pool_name(pool_rows.scope) + " " +
          pool_name(pool_rows.table) + R"( (i64.const 1)))
          (drop (call $get (get_local $it) (i32.const 0) (i32.const 8)))
-         (set_local $counter (i32.const 50000))
+         (set_local $counter (i32.const )" + std::to_string(tree_stress_iterations()) + R"())
          (block $done (loop $again (br_if $done (i32.eqz (get_local $counter)))
             (set_local $counter (i32.sub (get_local $counter) (i32.const 1))) (br $again)))
          )" + tail + R"((call $return (i32.const 0) (i32.const 8)))))");
@@ -78,6 +98,15 @@ struct tree_pool_fixture {
 
 BOOST_AUTO_TEST_SUITE(parallel_action_tree_pool_tests)
 
+BOOST_AUTO_TEST_CASE(test_only_stress_profiles_keep_full_default_and_reject_invalid_settings) {
+   BOOST_CHECK_EQUAL(tree_stress_iterations(nullptr), 50'000u);
+   BOOST_CHECK_EQUAL(tree_stress_iterations("100"), 50'000u);
+   BOOST_CHECK_EQUAL(tree_stress_iterations("50"), 25'000u);
+   BOOST_CHECK_EQUAL(tree_stress_iterations("25"), 12'500u);
+   for (const char* invalid : {"", "0", "1", "24", "49", "75", "101", "-50", "50%", " 50", "50 "})
+      BOOST_CHECK_THROW(tree_stress_iterations(invalid), std::invalid_argument);
+}
+
 BOOST_FIXTURE_TEST_CASE(three_exclusive_modes_keep_owned_results_and_one_thread_local_cache, tree_pool_fixture) {
    const std::vector roots{root, root};
    const auto tree_programs = programs(true), notification_programs = programs(false);
@@ -103,7 +132,12 @@ BOOST_FIXTURE_TEST_CASE(three_exclusive_modes_keep_owned_results_and_one_thread_
          BOOST_REQUIRE_EQUAL(outputs.size(), requests.size());
          for (size_t i = 0; i < outputs.size(); ++i) {
             const auto& out = outputs[i];
-            BOOST_CHECK_EQUAL(bool(out.result), i % 3 == 0); BOOST_CHECK_EQUAL(bool(out.notification_result), i % 3 == 1);
+            BOOST_CHECK_MESSAGE(bool(out.result) == (i % 3 == 0),
+               "threads=" << threads << " round=" << round << " job=" << i << " failure=" <<
+               isolated_worker_failure_name(out.failure) << " attempt_wall_us=" << out.attempt_wall.count());
+            BOOST_CHECK_MESSAGE(bool(out.notification_result) == (i % 3 == 1),
+               "threads=" << threads << " round=" << round << " job=" << i << " failure=" <<
+               isolated_worker_failure_name(out.failure) << " attempt_wall_us=" << out.attempt_wall.count());
             BOOST_CHECK_MESSAGE(bool(out.tree_result) == (i % 3 == 2),
                "threads=" << threads << " round=" << round << " job=" << i << " failure=" <<
                isolated_worker_failure_name(out.failure) << " attempt_wall_us=" << out.attempt_wall.count());
@@ -134,10 +168,12 @@ BOOST_FIXTURE_TEST_CASE(tree_requests_cancellation_and_deep_failures_never_publi
    ordered_attempt_batch batch(base, requests); const isolated_worker_job good{batch.get_ticket(0), roots, catalog, tree_context};
    for (unsigned failure = 0; failure < 5; ++failure) {
       auto bad = good;
-      if (failure == 0) bad.tree->programs.erase(bad.tree->programs.begin() + 1);
-      if (failure == 1) bad.tree->programs[1].serial_only = true;
-      if (failure == 2) bad.tree->programs[1].code = pool_code(3, true);
-      if (failure == 3) bad.tree->context.max_inline_action_depth = 0;
+      auto input = *good.tree;
+      if (failure == 0) input.programs.erase(input.programs.begin() + 1);
+      if (failure == 1) input.programs[1].serial_only = true;
+      if (failure == 2) input.programs[1].code = pool_code(3, true);
+      if (failure == 3) input.context.max_inline_action_depth = 0;
+      bad.tree = std::move(input); // freeze the forged input, never mutate a published job
       if (failure == 4) bad.cancel.deadline = std::chrono::steady_clock::now();
       const auto outcomes = pool.run({bad, good});
       BOOST_CHECK(!outcomes[0].result); BOOST_CHECK(!outcomes[0].notification_result); BOOST_CHECK(!outcomes[0].tree_result);
@@ -166,7 +202,7 @@ BOOST_FIXTURE_TEST_CASE(tree_job_input_bounds_reject_ambiguous_modes_and_keep_po
    const std::array<ordered_attempt_batch::request, 1> requests{{{fc::sha256::hash("tree"), fc::sha256::hash("tree")}}};
    ordered_attempt_batch batch(base, requests); const isolated_worker_job good{batch.get_ticket(0), roots, catalog, tree_context};
    for (unsigned failure = 0; failure < 11; ++failure) {
-      auto bad = good; auto& input = *bad.tree;
+      auto bad = good; auto input = *good.tree;
       switch (failure) {
          case 0: bad.actions.push_back({legacy, root, {}}); break;
          case 1: bad.notifications = isolated_notification_job{roots, programs(false)}; break;
@@ -174,12 +210,13 @@ BOOST_FIXTURE_TEST_CASE(tree_job_input_bounds_reject_ambiguous_modes_and_keep_po
          case 3: input.roots.resize(17, root); break;
          case 4: input.programs.clear(); break;
          case 5: input.programs.resize(257, catalog.front()); break;
-         case 6: input.programs[0].code.resize(65537); break;
+         case 6: input.programs[0].code.resize(isolated_wasm_limits::max_module_code_bytes + 1); break;
          case 7: input.roots[0].data.resize(65537); break;
          case 8: input.roots[0].authorizations.resize(65); break;
          case 9: input.roots[0].max_return_bytes = 4097; break;
          case 10: input.roots.resize(5, root); for (auto& action : input.roots) action.data.resize(65536); break;
       }
+      bad.tree = std::move(input);
       BOOST_CHECK_THROW(pool.run({bad}), primary_state_budget_exceeded);
       BOOST_REQUIRE(pool.run({good})[0].tree_result);
    }
@@ -215,7 +252,7 @@ BOOST_FIXTURE_TEST_CASE(tree_workers_overlap_real_wasm_intervals_without_sharing
          const auto& result = *outcomes[i].tree_result;
          BOOST_CHECK(validate_isolated_action_tree_journal(result, roots, catalog, tree_context));
          BOOST_REQUIRE_EQUAL(result.state.writes().size(), 2u);
-         for (size_t j = 0; j < 2; ++j) BOOST_CHECK(result.state.writes()[j].value == expected.state.writes()[j].value);
+         for (size_t j = 0; j < 2; ++j) BOOST_CHECK(result.state.primary_write(j).value == expected.state.primary_write(j).value);
          for (size_t j = 0; j < i; ++j) for (const auto& a : result.steps)
             for (const auto& b : outcomes[j].tree_result->steps)
                if (a.has_code && b.has_code && std::max(a.effects.began, b.effects.began) < std::min(a.effects.ended, b.effects.ended))

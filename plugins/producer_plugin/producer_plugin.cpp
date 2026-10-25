@@ -1,6 +1,8 @@
 #include <eosio/producer_plugin/producer_plugin.hpp>
 #include <eosio/producer_plugin/block_timing_util.hpp>
 #include <eosio/producer_plugin/production_pause_vote_tracker.hpp>
+#include <eosio/producer_plugin/production_timer_guard.hpp>
+#include <eosio/producer_plugin/incoming_transaction_batch.hpp>
 #include <eosio/chain/plugin_interface.hpp>
 #include <eosio/chain/global_property_object.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
@@ -413,6 +415,11 @@ struct implicit_production_pause_vote_tracker {
       _vt.force_unpause(); // safe to always call, but no need if not active
    }
 
+   void begin_observation() {
+      if (get_vote_track_mode() != vote_track_mode::disabled)
+         _vt.begin_observation(fc::time_point::now());
+   }
+
    auto check_pause_status(fc::time_point now) const {
       const auto vtm = get_vote_track_mode();
 
@@ -573,6 +580,27 @@ public:
    bool     process_unapplied_trxs(const fc::time_point& deadline);
    bool     process_incoming_trxs(const fc::time_point& deadline, unapplied_transaction_queue::iterator& itr);
 
+   struct ready_incoming {
+      transaction_metadata_ptr trx;
+      next_function<transaction_trace_ptr> next;
+      bool api_trx = false, return_failure_trace = false;
+      chain::performance::clock::time_point queued_at;
+   };
+   // At most 64 retained inputs / 4 MiB accounted packed+unpacked metadata.
+   // Detached drains are owner-local; reentrant input uses the original path.
+   eosio::detail::incoming_transaction_batch<ready_incoming> _incoming_batch{4 * 1024 * 1024};
+   bool _incoming_batch_posted = false, _incoming_batch_draining = false;
+   uint64_t _incoming_staged = 0, _incoming_drains = 0, _incoming_batch_calls = 0,
+            _incoming_batch_offered = 0, _incoming_serial_dispatches = 0, _incoming_single_probe_offers = 0;
+   size_t _incoming_peak_count = 0, _incoming_peak_bytes = 0;
+   uint64_t _incoming_timed_arms = 0, _incoming_timer_drains = 0,
+            _incoming_target_drains = 0, _incoming_immediate_posts = 0, _incoming_cancel_failures = 0;
+   void receive_ready_incoming(ready_incoming entry);
+   void schedule_ready_incoming(const transaction_metadata_ptr& head);
+   void cancel_ready_incoming() noexcept;
+   bool dispatch_ready_incoming(ready_incoming& entry);
+   void drain_ready_incoming();
+
    struct push_result {
       bool block_exhausted = false;
       bool trx_exhausted   = false;
@@ -672,6 +700,8 @@ public:
 
    eosio::chain::named_thread_pool<struct prod>      _timer_thread;
    boost::asio::deadline_timer                       _timer{_timer_thread.get_executor()};
+   boost::asio::steady_timer _incoming_batch_timer{_timer_thread.get_executor()};
+   production_timer_guard _incoming_batch_timer_guard;
 
    using signature_provider_type = signature_provider_plugin::signature_provider_type;
    std::map<chain::public_key_type, signature_provider_type> _signature_providers;
@@ -718,17 +748,9 @@ public:
    std::optional<scoped_connection> _vote_block_connection;
    std::optional<scoped_connection> _aggregate_vote_connection;
 
-   /*
-    * HACK ALERT
-    * Boost timers can be in a state where a handler has not yet executed but is not abortable.
-    * As this method needs to mutate state handlers depend on for proper functioning to maintain
-    * invariants for other code (namely accepting incoming transactions in a nearly full block)
-    * the handlers capture a corelation ID at the time they are set.  When they are executed
-    * they must check that correlation_id against the global ordinal.  If it does not match that
-    * implies that this method has been called with the handler in the state where it should be
-    * cancelled but wasn't able to be.
-    */
-   uint32_t _timer_corelation_id = 0;
+   // The timer thread may already have posted a callback when cancel() runs.
+   // Check the atomic generation again on the owner before touching a block.
+   production_timer_guard _production_timer;
 
    // path to write the snapshots to
    std::filesystem::path _snapshots_dir;
@@ -867,6 +889,7 @@ public:
    }
 
    void abort_block() {
+      _production_timer.invalidate();
       auto& chain = chain_plug->chain();
 
       std::optional<std::tuple<uint32_t, account_name>> block_info;
@@ -1040,28 +1063,10 @@ public:
                  // key recovery complete, continue execution on the main thread
                  app().executor().post(
                          priority::low, exec_queue::read_write,
-                         [this, trx_meta{std::move(trx_meta)}, is_transient, next{std::move(next)}, api_trx, return_failure_traces,
-                          queued_at = chain::performance::mark()]() {
-                            chain::performance::since(chain::performance::stage::transaction_queue, queued_at);
-                            auto start       = fc::time_point::now();
-                            auto idle_time   = _time_tracker.add_idle_time(start);
-                            auto trx_tracker = _time_tracker.start_trx(is_transient, start);
-                            fc_tlog(_log, "Time since last trx: ${t}us", ("t", idle_time));
-
-                            auto exception_handler = [this, is_transient, &next, &trx_meta](fc::exception_ptr ex) {
-                               log_trx_results(trx_meta->packed_trx(), nullptr, ex, 0, is_transient);
-                               next(std::move(ex));
-                            };
-                            try {
-                               if (!process_incoming_transaction_async(trx_meta, api_trx, return_failure_traces, trx_tracker, next)) {
-                                  if (in_producing_mode()) {
-                                     schedule_maybe_produce_block(true);
-                                  } else {
-                                     restart_speculative_block();
-                                  }
-                               }
-                            }
-                            CATCH_AND_CALL(exception_handler);
+                         [this, trx_meta{std::move(trx_meta)}, next{std::move(next)}, api_trx, return_failure_traces,
+                          queued_at = chain::performance::mark()]() mutable {
+                            receive_ready_incoming({std::move(trx_meta), std::move(next), api_trx,
+                                                    return_failure_traces, queued_at});
                          });
               });
    }
@@ -1415,7 +1420,8 @@ void producer_plugin_impl::plugin_initialize(const boost::program_options::varia
 
    _max_reversible_blocks = options.at("max-reversible-blocks").as<uint32_t>();
 
-   auto max_incoming_transaction_queue_size = options.at("incoming-transaction-queue-size-mb").as<uint16_t>() * 1024 * 1024;
+   const uint64_t max_incoming_transaction_queue_size =
+      uint64_t(options.at("incoming-transaction-queue-size-mb").as<uint16_t>()) * 1024 * 1024;
 
    EOS_ASSERT(max_incoming_transaction_queue_size > 0, plugin_config_exception,
               "incoming-transaction-queue-size-mb ${mb} must be greater than 0", ("mb", max_incoming_transaction_queue_size));
@@ -1590,6 +1596,7 @@ void producer_plugin_impl::plugin_startup() {
       // Apply those before producing, even with enable-stale-production: a persisted finalizer safety
       // lock may refer to that reversible branch. Producing from LIB first can strand a single finalizer.
       _startup_catchup_pending = is_configured_producer() && chain.head().id() != chain.fork_db_head().id();
+      _implicit_pause_vote_tracker.begin_observation();
 
       _accepted_block_connection.emplace(chain.accepted_block().connect([this](const block_signal_params& t) {
          const auto& [ block, id ] = t;
@@ -1687,10 +1694,25 @@ void producer_plugin::plugin_startup() {
 }
 
 void producer_plugin_impl::plugin_shutdown() {
+   _production_timer.invalidate();
+   cancel_ready_incoming();
    _timer_thread.stop();
    _ro_thread_pool.stop();
    // unapplied transaction queue holds lambdas that reference plugins
+   _incoming_batch.clear();
+   _incoming_batch_posted = false;
    _unapplied_transactions.clear();
+
+   if (_incoming_staged)
+      ilog("Experimental parallel intake: staged=${s}, drains=${d}, batch_calls=${b}, batch_offered=${o}, "
+           "serial_dispatches=${f}, peak_transactions=${n}, peak_bytes=${m}, single_probe_offers=${p}; local dispatch counts, not adopted transactions",
+           ("s", _incoming_staged)("d", _incoming_drains)("b", _incoming_batch_calls)("o", _incoming_batch_offered)
+           ("f", _incoming_serial_dispatches)("n", _incoming_peak_count)("m", _incoming_peak_bytes)("p", _incoming_single_probe_offers));
+
+   if (_incoming_staged)
+      ilog("Experimental parallel intake microbatch: timed_arms=${a}, timer_drains=${d}, target_drains=${f}, immediate_posts=${p}, cancel_failures=${c}, max_wait_us=${w}; local scheduling counts",
+           ("a", _incoming_timed_arms)("d", _incoming_timer_drains)("f", _incoming_target_drains)
+           ("p", _incoming_immediate_posts)("c", _incoming_cancel_failures)("w", eosio::detail::incoming_microbatch_policy::max_wait_us));
 
    fc_dlog(_log, "exit shutdown");
 }
@@ -2260,6 +2282,10 @@ producer_plugin_impl::start_block_result producer_plugin_impl::start_block() {
          return start_block_result::waiting_for_production;
 
       _startup_catchup_pending = false;
+      // Replayed headers predate this observer and cannot prove missing live
+      // votes. Start one bounded window after reaching the durable branch;
+      // the original vote timeout and every finalizer safety lock remain intact.
+      _implicit_pause_vote_tracker.begin_observation();
       head = chain.head();
       ilog("Restored startup fork database head #${n} before block production", ("n", head.block_num()));
       if (head.block_num() == chain.get_pause_at_block_num())
@@ -2447,6 +2473,187 @@ producer_plugin_impl::start_block_result producer_plugin_impl::start_block() {
    }
 
    return start_block_result::failed;
+}
+
+bool producer_plugin_impl::dispatch_ready_incoming(ready_incoming& entry) {
+   chain::performance::since(chain::performance::stage::transaction_queue, entry.queued_at);
+   const auto start = fc::time_point::now();
+   const auto idle_time = _time_tracker.add_idle_time(start);
+   auto trx_tracker = _time_tracker.start_trx(entry.trx->is_transient(), start);
+   fc_tlog(_log, "Time since last trx: ${t}us", ("t", idle_time));
+   auto ex_handler = [this, &entry](fc::exception_ptr ex) {
+      log_trx_results(entry.trx, ex);
+      entry.next(std::move(ex));
+   };
+   try {
+      if (!process_incoming_transaction_async(entry.trx, entry.api_trx, entry.return_failure_trace,
+                                              trx_tracker, entry.next)) {
+         if (in_producing_mode()) schedule_maybe_produce_block(true);
+         else restart_speculative_block();
+         return false;
+      }
+   } CATCH_AND_CALL(ex_handler)
+   return true;
+}
+
+void producer_plugin_impl::cancel_ready_incoming() noexcept {
+   // A completion may already have posted to the owner. Cancellation alone is
+   // insufficient: invalidate both scheduling hops before replacing the batch.
+   _incoming_batch_timer_guard.invalidate();
+   _incoming_batch_posted = false;
+   // Modern Asio exposes only cancel(). Even if OS-level cancellation throws,
+   // the invalidated generation already makes both callback hops harmless.
+   try { _incoming_batch_timer.cancel(); }
+   catch (...) { ++_incoming_cancel_failures; }
+}
+
+void producer_plugin_impl::schedule_ready_incoming(const transaction_metadata_ptr& head) {
+   if (_incoming_batch_posted) return; // oldest arrival owns the deadline
+   const auto cid = _incoming_batch_timer_guard.next();
+   // Do not spend coalescing latency in the original serial rejection reserve,
+   // a preparation backoff or an exhausted resource window. This is only an
+   // optimization hint; the drain rechecks the real deadline/admission policy.
+   const bool parallel_available = chain_plug->chain().get_parallel_production_batch_size(
+      head, _pending_block_deadline) > 0;
+   const auto delay = eosio::detail::incoming_microbatch_policy::delay_us(
+      (_pending_block_deadline - fc::time_point::now()).count(), parallel_available);
+   auto weak = weak_from_this();
+   auto deliver = [weak, cid, delayed = bool(delay)] {
+      auto self = weak.lock();
+      if (!self || !self->_incoming_batch_timer_guard.current(cid)) return;
+      self->_incoming_batch_posted = false;
+      if (app().is_quiting()) self->_incoming_batch.clear();
+      else {
+         if (delayed) ++self->_incoming_timer_drains;
+         self->drain_ready_incoming();
+      }
+   };
+   if (!delay) {
+      app().executor().post(priority::low, exec_queue::read_write, std::move(deliver));
+      ++_incoming_immediate_posts;
+   } else {
+      _incoming_batch_timer.expires_after(std::chrono::microseconds(delay));
+      _incoming_batch_timer.async_wait([weak, cid, deliver = std::move(deliver)](const boost::system::error_code& ec) mutable {
+         // Timer threads never read the holding area or canonical chain state.
+         auto self = weak.lock();
+         if (!ec && self && self->_incoming_batch_timer_guard.current(cid))
+            app().executor().post(priority::low, exec_queue::read_write, std::move(deliver));
+      });
+      ++_incoming_timed_arms;
+   }
+   _incoming_batch_posted = true;
+}
+
+void producer_plugin_impl::receive_ready_incoming(ready_incoming entry) {
+   // All staging and delivery are on the read_write owner executor. Recovery
+   // threads only post entries; they never touch this buffer or chain state.
+   auto& chain = chain_plug->chain();
+   auto can_stage = [&] {
+      return !_incoming_batch_draining && !entry.trx->is_transient() && !app().is_quiting() &&
+             in_producing_mode() && !_pause_production && chain.is_building_block() &&
+             chain.get_parallel_production_batch_size() > 1;
+   };
+   const auto& packed = entry.trx->packed_trx();
+   const uint64_t bytes = 2 * (uint64_t(packed->get_unprunable_size()) + packed->get_prunable_size()) +
+                          sizeof(transaction_metadata) + sizeof(ready_incoming);
+   // Overflow cannot occur: packed sizes are uint32_t. This is a soft bounded
+   // holding area, not an additional acceptance or incoming-queue size limit.
+   if (!_incoming_batch.empty() && (!can_stage() || !_incoming_batch.can_fit(bytes)))
+      drain_ready_incoming(); // preserve older owner-arrival order, including API/P2P
+
+   bool staged = false;
+   if (can_stage() && _incoming_batch.can_fit(bytes)) {
+      try {
+         // Copy first: allocation failure must leave the original delivery owned
+         // by entry. Aliases retained for retry share a single delivery guard.
+         entry.next = eosio::detail::incoming_once<next_function_variant<transaction_trace_ptr>>(entry.next);
+         // Arm before ownership transfer, so allocation/registration failure
+         // leaves the original entry available to normal dispatch.
+         schedule_ready_incoming(entry.trx);
+         if (_incoming_batch.push(std::move(entry), bytes)) {
+            ++_incoming_staged;
+            _incoming_peak_count = std::max(_incoming_peak_count, _incoming_batch.size());
+            _incoming_peak_bytes = std::max(_incoming_peak_bytes, _incoming_batch.bytes());
+            staged = true;
+         }
+      } catch (const std::bad_alloc&) {
+         chain_apis::api_base::handle_bad_alloc();
+      } catch (...) {
+         // Posting can fail before ownership transfer. Keep FIFO and use the
+         // original dispatch path; staging is never required for acceptance.
+         drain_ready_incoming();
+      }
+   }
+   if (staged) {
+      // A full useful batch does not wait for its timer. Keep this OUTSIDE the
+      // pre-transfer try block: a detached drain must never redispatch a moved
+      // entry if a callback throws. Later arrivals never slide the 2ms timer.
+      if (_incoming_batch.size() >= eosio::detail::incoming_microbatch_policy::target(
+               chain.get_parallel_production_batch_size())) {
+         ++_incoming_target_drains;
+         drain_ready_incoming();
+      }
+      return;
+   }
+   ++_incoming_serial_dispatches;
+   dispatch_ready_incoming(entry);
+}
+
+void producer_plugin_impl::drain_ready_incoming() {
+   if (_incoming_batch_draining) return;
+   cancel_ready_incoming();
+   if (_incoming_batch.empty()) return;
+   _incoming_batch_draining = true;
+   auto reset = fc::make_scoped_exit([this] { _incoming_batch_draining = false; });
+   auto entries = _incoming_batch.take();
+   ++_incoming_drains;
+   auto& chain = chain_plug->chain();
+   size_t cursor = 0;
+   bool allow_parallel = true;
+   while (cursor < entries.size() && !app().is_quiting()) {
+      const auto before = cursor;
+      if (allow_parallel && entries.size() - cursor > 1 && in_producing_mode() &&
+          !_pause_production && chain.is_building_block()) {
+         try {
+            const auto deadline = _pending_block_deadline;
+            const auto amount = _incoming_batch.preparation_count(entries.size() - cursor,
+               chain.get_parallel_production_batch_size(entries[cursor].trx, deadline));
+            if (amount) {
+               std::vector<transaction_metadata_ptr> batch;
+               batch.reserve(amount);
+               for (size_t i = 0; i < amount; ++i) batch.push_back(entries[cursor + i].trx);
+               ++_incoming_batch_calls;
+               _incoming_batch_offered += amount;
+               if (amount == 1) ++_incoming_single_probe_offers;
+               chain.for_each_parallel_production_transaction(batch, deadline, [&](const auto& trx) {
+                  EOS_ASSERT(cursor < entries.size() && entries[cursor].trx == trx,
+                             producer_exception, "Live incoming batch changed owner arrival order");
+                  // Advance BEFORE invoking user callbacks. Preparation/bookkeeping
+                  // exceptions must never deliver an already-consumed entry twice.
+                  auto& current = entries[cursor++];
+                  if (!dispatch_ready_incoming(current)) allow_parallel = false;
+                  return allow_parallel;
+               });
+            }
+         } catch (const guard_exception& e) {
+            chain_plugin::handle_guard_exception(e);
+            allow_parallel = false;
+         } catch (std::bad_alloc&) {
+            chain_apis::api_base::handle_bad_alloc();
+         } catch (boost::interprocess::bad_alloc&) {
+            chain_apis::api_base::handle_db_exhaustion();
+         } catch (...) {
+            // Only the unconsumed tail falls back. Original transaction handling
+            // remains responsible for duplicate/expiry/authorization/retry/ACK.
+            allow_parallel = false;
+            fc_wlog(_log, "Live incoming preparation interrupted; dispatching unconsumed tail normally");
+         }
+      }
+      if (cursor == before && !app().is_quiting()) {
+         ++_incoming_serial_dispatches;
+         if (!dispatch_ready_incoming(entries[cursor++])) allow_parallel = false;
+      }
+   }
 }
 
 bool producer_plugin_impl::remove_expired_trxs(const fc::time_point& deadline) {
@@ -2688,7 +2895,7 @@ producer_plugin_impl::handle_push_result(const transaction_metadata_ptr&        
             fc_tlog(_log, "Subjective bill for failed ${a}: ${b} elapsed ${t}us, time ${r}us",
                     ("a", first_auth)("b", sub_bill)("t", trace->elapsed)("r", end - start));
             if (!disable_subjective_enforcement) // subjectively bill failure when producing since not in objective cpu account billing
-               subjective_bill.subjective_bill_failure(first_auth, trace->elapsed, fc::time_point::now());
+               subjective_bill.subjective_bill_failure(first_auth, trace->cpu_usage, fc::time_point::now());
 
             log_trx_results(trx, trace);
             // this failed our configured maximum transaction time, we don't want to replay it
@@ -2712,7 +2919,7 @@ producer_plugin_impl::handle_push_result(const transaction_metadata_ptr&        
       log_trx_results(trx, trace);
       // if producing then trx is in objective cpu account billing
       if (!disable_subjective_enforcement && !in_producing_mode()) {
-         subjective_bill.subjective_bill(trx->id(), trx->packed_trx()->expiration(), first_auth, trace->elapsed);
+         subjective_bill.subjective_bill(trx->id(), trx->packed_trx()->expiration(), first_auth, trace->cpu_usage);
       }
       if (next)
          next(trace);
@@ -2764,8 +2971,9 @@ bool producer_plugin_impl::process_unapplied_trxs(const fc::time_point& deadline
          ++itr;
          return true;
       };
-      const size_t batch_size = in_producing_mode() ? chain.get_parallel_production_batch_size() : 0;
       while (itr != end_itr) {
+         const size_t batch_size = in_producing_mode() ?
+            chain.get_parallel_production_batch_size(itr->trx_meta, deadline) : 0;
          if (!batch_size) {
             if (!process_one(itr->trx_meta)) break;
          } else {
@@ -2817,8 +3025,9 @@ bool producer_plugin_impl::process_incoming_trxs(const fc::time_point& deadline,
          ++processed;
          return true;
       };
-      const size_t batch_size = in_producing_mode() ? chain.get_parallel_production_batch_size() : 0;
       while (itr != end) {
+         const size_t batch_size = in_producing_mode() ?
+            chain.get_parallel_production_batch_size(itr->trx_meta, deadline) : 0;
          if (!batch_size) {
             if (!process_one(itr->trx_meta)) break;
          } else {
@@ -2855,6 +3064,7 @@ bool producer_plugin_impl::block_is_exhausted() const {
 // -> Idle
 // --> Start block B (block time y.000) at time x.500
 void producer_plugin_impl::schedule_production_loop() {
+   _production_timer.invalidate();
    _timer.cancel();
 
    auto result = start_block();
@@ -2864,12 +3074,12 @@ void producer_plugin_impl::schedule_production_loop() {
       _timer.expires_from_now(boost::posix_time::microseconds(config::block_interval_us / 10));
 
       // we failed to start a block, so try again later?
-      _timer.async_wait([this, cid = ++_timer_corelation_id](const boost::system::error_code& ec) {
-         if (ec != boost::asio::error::operation_aborted && cid == _timer_corelation_id) {
+      _timer.async_wait([this, cid = _production_timer.next()](const boost::system::error_code& ec) {
+         if (ec != boost::asio::error::operation_aborted && _production_timer.current(cid)) {
             interrupt_transaction(controller::interrupt_t::all_trx);
-            app().executor().post(priority::high, exec_queue::read_write, [this]() {
+            app().executor().post(priority::high, exec_queue::read_write, _production_timer.on_owner(cid, [this]() {
                schedule_production_loop();
-            });
+            }));
          }
       });
    } else if (result == start_block_result::waiting_for_block) {
@@ -2931,15 +3141,15 @@ void producer_plugin_impl::schedule_maybe_produce_block(bool exhausted) {
               ("num", chain.head().block_num() + 1)("desc", block_is_exhausted() ? "Exhausted" : "Deadline exceeded"));
    }
 
-   _timer.async_wait([&chain, this, cid = ++_timer_corelation_id](const boost::system::error_code& ec) {
-      if (ec != boost::asio::error::operation_aborted && cid == _timer_corelation_id) {
-         app().executor().post(priority::high, exec_queue::read_write, [&chain, this]() {
+   _timer.async_wait([&chain, this, cid = _production_timer.next()](const boost::system::error_code& ec) {
+      if (ec != boost::asio::error::operation_aborted && _production_timer.current(cid)) {
+         app().executor().post(priority::high, exec_queue::read_write, _production_timer.on_owner(cid, [&chain, this]() {
             // pending_block_state expected, but can't assert inside async_wait
             auto block_num = chain.is_building_block() ? chain.head().block_num() + 1 : 0;
             fc_dlog(_log, "Produce block timer for ${num} running at ${time}", ("num", block_num)("time", fc::time_point::now()));
             auto res = maybe_produce_block();
             fc_dlog(_log, "Producing Block #${num} returned: ${res}", ("num", block_num)("res", res));
-         });
+         }));
       }
    });
 }
@@ -2950,12 +3160,12 @@ void producer_plugin_impl::schedule_delayed_production_loop(const std::weak_ptr<
       fc_dlog(_log, "Scheduling Speculative/Production Change at ${time}", ("time", wake_up_time));
       static const boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
       _timer.expires_at(epoch + boost::posix_time::microseconds(wake_up_time->time_since_epoch().count()));
-      _timer.async_wait([this, cid = ++_timer_corelation_id](const boost::system::error_code& ec) {
-         if (ec != boost::asio::error::operation_aborted && cid == _timer_corelation_id) {
+      _timer.async_wait([this, cid = _production_timer.next()](const boost::system::error_code& ec) {
+         if (ec != boost::asio::error::operation_aborted && _production_timer.current(cid)) {
             interrupt_transaction(controller::interrupt_t::all_trx);
-            app().executor().post(priority::high, exec_queue::read_write, [this]() {
+            app().executor().post(priority::high, exec_queue::read_write, _production_timer.on_owner(cid, [this]() {
                schedule_production_loop();
-            });
+            }));
          }
       });
    } else {

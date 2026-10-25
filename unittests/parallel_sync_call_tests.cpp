@@ -1,5 +1,6 @@
 #include <eosio/chain/parallel_sync_call.hpp>
 #include <eosio/chain/parallel_worker_pool.hpp>
+#include <eosio/chain/parallel_deadline_service.hpp>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
@@ -11,6 +12,7 @@
 #include <eosio/testing/bls_utils.hpp>
 #include <fc/io/raw.hpp>
 #include <fc/io/json.hpp>
+#include <fc/scoped_exit.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <boost/test/unit_test.hpp>
 #include <array>
@@ -20,10 +22,12 @@
 #include <filesystem>
 #include <future>
 #include <limits>
+#include <tuple>
 
 using namespace eosio::chain;
 using namespace eosio::chain::experimental;
 #include "parallel_test_diagnostics.hpp"
+#include "parallel_test_runtime.hpp"
 namespace {
 std::string sc_i64(uint64_t n) { return "(i64.const " + std::to_string(n) + ")"; }
 std::string sc_name(name n) { return sc_i64(n.to_uint64_t()); }
@@ -232,6 +236,173 @@ std::vector<isolated_sync_program> sc_multi_lifetime_programs() {
 }
 
 BOOST_AUTO_TEST_SUITE(parallel_sync_private_tests)
+BOOST_FIXTURE_TEST_CASE(depth_leases_compile_once_then_reset_every_recursive_frame_and_root,sc_fixture) {
+   auto& metrics=performance::metrics();
+   const bool previous=metrics.enabled.exchange(true,std::memory_order_relaxed);
+   auto restore=fc::make_scoped_exit([&]{metrics.enabled.store(previous,std::memory_order_relaxed);});
+   const auto before=metrics.snapshot(performance::stage::parallel_compile).count;
+   isolated_sync_executor executor;
+   const auto programs=sc_recursive();
+   const auto run=[&](uint64_t depth,uint64_t expected_compile) {
+      const auto result=executor.execute(base,sc_root(depth),programs,{});
+      BOOST_CHECK_EQUAL(sc_number(result.root.return_value),depth+1);
+      BOOST_REQUIRE_EQUAL(result.calls.size(),depth+1);
+      BOOST_CHECK(validate_isolated_sync_journal(result,sc_root(depth),programs,{}));
+      for(size_t i=0;i<result.calls.size();++i) {
+         BOOST_CHECK_EQUAL(sc_number(result.calls[i].return_value),depth+1-i);
+         BOOST_CHECK_EQUAL(result.calls[i].call_ordinal,i+1);
+      }
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,expected_compile);
+   };
+   run(3,5); run(3,5); // same bytes recurse into five DISTINCT live instances
+   run(7,9); run(7,9); // nine live+dormant slots total, no second cache outside them
+   BOOST_CHECK_THROW(executor.execute(base,sc_root(8),programs,{}),primary_state_unsupported);
+   run(0,9); run(7,9); // depth failure releases every lease, including the root
+   const std::array roots{sc_root(1),sc_root(7),sc_root(2)};
+   for(unsigned round=0;round<3;++round) {
+      const auto result=executor.execute_transaction(base,roots,programs,{});
+      BOOST_CHECK(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
+      BOOST_REQUIRE_EQUAL(result.roots.size(),3u);
+      BOOST_CHECK_EQUAL(sc_number(result.roots[0].root.return_value),2u);
+      BOOST_CHECK_EQUAL(sc_number(result.roots[1].root.return_value),8u);
+      BOOST_CHECK_EQUAL(sc_number(result.roots[2].root.return_value),3u);
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,9u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(depth_leases_bind_exact_code_and_every_limit_not_receiver_or_export,sc_fixture) {
+   auto& metrics=performance::metrics();
+   const bool previous=metrics.enabled.exchange(true,std::memory_order_relaxed);
+   auto restore=fc::make_scoped_exit([&]{metrics.enabled.store(previous,std::memory_order_relaxed);});
+   isolated_sync_executor executor;
+   auto programs=sc_pair();
+   const auto run=[&](uint64_t value=5) {
+      const auto result=executor.execute(base,sc_root(value),programs,{});
+      BOOST_CHECK_EQUAL(sc_number(result.root.return_value),value);
+      BOOST_CHECK(validate_isolated_sync_journal(result,sc_root(value),programs,{}));
+   };
+   run();
+   for(unsigned field=0;field<7;++field) {
+      const auto before=metrics.snapshot(performance::stage::parallel_compile).count;
+      auto& limits=programs[1].program.limits;
+      switch(field) {
+         case 0: limits.max_pages=8; break;
+         case 1: limits.max_call_depth=32; break;
+         case 2: limits.max_code_bytes=32*1024; break;
+         case 3: limits.max_action_bytes=32*1024; break;
+         case 4: limits.max_authorizations=32; break;
+         case 5: limits.max_return_bytes=2048; break;
+         case 6: limits.max_attempt_time=std::chrono::milliseconds(400); break;
+      }
+      run(); run(19);
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,1u);
+      limits={}; run();
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,2u);
+   }
+   const auto before=metrics.snapshot(performance::stage::parallel_compile).count;
+   const auto old_code=programs[1].program.code;
+   programs[1].program.code=sc_program({},sc_echo()+" nop"); run();
+   BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,1u);
+   programs[1].program.code=old_code; run();
+   BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,2u);
+   programs[1].sync_call_supported=false; // a warm export is not captured authority
+   BOOST_CHECK_THROW(executor.execute(base,sc_root(),programs,{}),primary_state_unsupported);
+   programs[1].sync_call_supported=true; run();
+   BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,2u);
+   programs[1].program.serial_only=true;
+   BOOST_CHECK_THROW(executor.execute(base,sc_root(),programs,{}),primary_state_unsupported);
+   programs[1].program.serial_only=false; run();
+   BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,2u);
+}
+
+BOOST_FIXTURE_TEST_CASE(depth_leases_reset_start_memory_globals_after_traps_timeouts_and_rejections,sc_state_fixture) {
+   const auto guard=sc_assert32("(get_global $counter)",1)+sc_assert64("(i64.load (i32.const 128))",0)+
+      "(set_global $counter (i32.const 9))(i64.store (i32.const 128)(i64.const 9))";
+   const auto child=guard+"(drop (call $data (i32.const 0)(i32.const 8)))"+sc_update(sc_find("bob"_n),22)+
+      "(if (i64.eq (i64.load (i32.const 0))(i64.const 99))(then (unreachable)))"
+      "(if (i64.eq (i64.load (i32.const 0))(i64.const 100))(then (loop $busy (br $busy))))"
+      "(if (i64.eq (i64.load (i32.const 0))(i64.const 101))(then (drop (call $read (i32.const 0)(i32.const 8)))))"
+      "(call $set (i32.const 0)(i32.const 8))(i64.const 0)";
+   const auto code=sc_program(guard+sc_root_body(),child,sc_db_imports,"(set_global $counter (i32.const 1))");
+   const std::vector<isolated_sync_program> programs{{{"test"_n,code,{}},true},{{"bob"_n,code,{}},true}};
+   auto& metrics=performance::metrics();
+   const bool previous=metrics.enabled.exchange(true,std::memory_order_relaxed);
+   auto restore=fc::make_scoped_exit([&]{metrics.enabled.store(previous,std::memory_order_relaxed);});
+   const auto before=metrics.snapshot(performance::stage::parallel_compile).count;
+   isolated_sync_executor executor;
+   const auto healthy=[&] {
+      const auto result=executor.execute(base,sc_root(),programs,{});
+      BOOST_CHECK_EQUAL(sc_number(result.root.return_value),5u);
+      BOOST_REQUIRE_EQUAL(result.state.writes().size(),1u);
+      BOOST_CHECK_EQUAL(sc_number(result.state.primary_write(0).value),22u);
+      BOOST_CHECK(validate_isolated_sync_journal(result,sc_root(),programs,{}));
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,2u);
+      BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+   };
+   healthy();
+   for(unsigned round=0;round<3;++round) {
+      BOOST_CHECK_THROW(executor.execute(base,sc_root(99),programs,{}),eosio::vm::exception); healthy();
+      isolated_cancel cancel; cancel.deadline=std::chrono::steady_clock::now()+std::chrono::milliseconds(50);
+      BOOST_CHECK_THROW(executor.execute(base,sc_root(100),programs,{}, {},{},cancel),isolated_execution_interrupted); healthy();
+      BOOST_CHECK_THROW(executor.execute(base,sc_root(101),programs,{}),primary_state_unsupported); healthy();
+      isolated_sync_context read_only; read_only.root_read_only=true;
+      BOOST_CHECK_THROW(executor.execute(base,sc_root(),programs,read_only),primary_state_unsupported); healthy();
+      std::stop_source stopped; stopped.request_stop();
+      BOOST_CHECK_THROW(executor.execute(base,sc_root(),programs,{},stopped.get_token()),isolated_execution_interrupted); healthy();
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(depth_lease_failed_replacement_does_not_publish_a_key_or_poison_other_slots,sc_fixture) {
+   auto& metrics=performance::metrics();
+   const bool previous=metrics.enabled.exchange(true,std::memory_order_relaxed);
+   auto restore=fc::make_scoped_exit([&]{metrics.enabled.store(previous,std::memory_order_relaxed);});
+   isolated_sync_executor executor;
+   const auto original=sc_pair();
+   BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),original,{}).root.return_value),5u);
+   for(unsigned slot=0;slot<2;++slot) {
+      const auto before=metrics.snapshot(performance::stage::parallel_compile).count;
+      auto invalid=original; invalid[slot].program.code={'x'};
+      for(unsigned round=0;round<3;++round)
+         BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid,{}),eosio::vm::exception);
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,3u);
+      BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),original,{}).root.return_value),5u);
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,4u);
+      invalid=original; invalid[slot].program.limits.max_pages=0;
+      BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid,{}),primary_state_budget_exceeded);
+      BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),original,{}).root.return_value),5u);
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,6u);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(warm_recursive_depth_leases_remain_worker_local_on_one_two_four_threads,sc_fixture) {
+   auto& metrics=performance::metrics();
+   const bool previous=metrics.enabled.exchange(true,std::memory_order_relaxed);
+   auto restore=fc::make_scoped_exit([&]{metrics.enabled.store(previous,std::memory_order_relaxed);});
+   const auto programs=sc_recursive();
+   for(unsigned threads:{1u,2u,4u}) {
+      const auto before=metrics.snapshot(performance::stage::parallel_compile).count;
+      std::barrier gate(threads);
+      std::vector<std::future<std::vector<isolated_sync_result>>> pending;
+      for(unsigned i=0;i<threads;++i) pending.push_back(std::async(std::launch::async,[&] {
+         isolated_sync_executor executor;
+         std::vector<isolated_sync_result> results;
+         gate.arrive_and_wait();
+         for(unsigned round=0;round<3;++round) results.push_back(executor.execute(base,sc_root(7),programs,{}));
+         return results;
+      }));
+      for(auto& task:pending) {
+         const auto results=task.get();
+         BOOST_REQUIRE_EQUAL(results.size(),3u);
+         for(const auto& result:results) {
+            BOOST_CHECK_EQUAL(sc_number(result.root.return_value),8u);
+            BOOST_REQUIRE_EQUAL(result.calls.size(),8u);
+            BOOST_CHECK(validate_isolated_sync_journal(result,sc_root(7),programs,{}));
+         }
+      }
+      BOOST_CHECK_EQUAL(metrics.snapshot(performance::stage::parallel_compile).count-before,9u*threads);
+   }
+}
+
 BOOST_FIXTURE_TEST_CASE(multiple_roots_reset_vm_returns_and_call_ordinals,sc_fixture) {
    isolated_sync_executor executor;
    const auto reset=sc_assert32("(get_global $counter)",0)+"(set_global $counter (i32.const 1))"+
@@ -275,8 +446,8 @@ BOOST_FIXTURE_TEST_CASE(multiple_roots_share_primary_writes_and_negative_busines
       BOOST_REQUIRE(validate_isolated_sync_transaction_journal(result,roots,programs,{}));
       BOOST_REQUIRE_EQUAL(result.state.writes().size(),2u);
       BOOST_REQUIRE_EQUAL(result.roots.size(),2u);
-      BOOST_CHECK_EQUAL(sc_number(result.state.writes()[0].value),13u);
-      BOOST_CHECK_EQUAL(sc_number(result.state.writes()[1].value),17u);
+      BOOST_CHECK_EQUAL(sc_number(result.state.primary_write(0).value),13u);
+      BOOST_CHECK_EQUAL(sc_number(result.state.primary_write(1).value),17u);
       for(size_t i=0;i<2;++i) {
          BOOST_CHECK_EQUAL(result.roots[i].root.writes_begin,i);
          BOOST_CHECK_EQUAL(result.roots[i].root.writes_end,i+1);
@@ -302,8 +473,8 @@ BOOST_FIXTURE_TEST_CASE(multiple_roots_keep_lifetimes_but_reset_their_ordinary_c
    BOOST_REQUIRE_EQUAL(result.state.writes().size(),4u);
    BOOST_CHECK_EQUAL(sc_number(result.roots[0].root.return_value),77u);
    BOOST_CHECK_EQUAL(sc_number(result.roots[1].root.return_value),88u);
-   BOOST_CHECK(result.state.writes()[1].object_id==result.state.writes()[2].object_id);
-   BOOST_CHECK(result.state.writes()[1].object_id!=result.state.writes()[3].object_id);
+   BOOST_CHECK(result.state.primary_write(1).object_id==result.state.primary_write(2).object_id);
+   BOOST_CHECK(result.state.primary_write(1).object_id!=result.state.primary_write(3).object_id);
    BOOST_CHECK_EQUAL(result.roots[1].root.writes_begin,2u);
    BOOST_CHECK_EQUAL(result.roots[1].calls[0].writes_begin,2u);
    auto bad=result;
@@ -700,7 +871,7 @@ BOOST_FIXTURE_TEST_CASE(immediate_primary_writes_business_errors_and_recursive_p
       BOOST_CHECK_EQUAL(sc_number(result.root.return_value),33u);
       BOOST_REQUIRE_EQUAL(result.calls.size(),nested?2u:1u);
       BOOST_REQUIRE_EQUAL(result.state.writes().size(),nested?4u:3u);
-      BOOST_CHECK_EQUAL(sc_number(result.state.writes()[1].value),22u); // retained on business failure
+      BOOST_CHECK_EQUAL(sc_number(result.state.primary_write(1).value),22u); // retained on business failure
       BOOST_CHECK_EQUAL(result.calls[0].writes_begin,1u);
       BOOST_CHECK_EQUAL(result.calls[0].writes_end,nested?3u:2u);
       BOOST_CHECK_EQUAL(result.calls[0].status,status==0?0:status<=-10000?status:-3);
@@ -727,9 +898,9 @@ BOOST_FIXTURE_TEST_CASE(child_erasure_invalidates_ancestor_cursor_even_after_rec
    const auto result=executor.execute(base,sc_root(),fresh,{});
    BOOST_CHECK(validate_isolated_sync_journal(result,sc_root(),fresh,{}));
    BOOST_REQUIRE_EQUAL(result.state.writes().size(),2u);
-   BOOST_CHECK(result.state.writes()[0].operation==primary_operation::remove);
-   BOOST_CHECK(result.state.writes()[1].operation==primary_operation::store);
-   BOOST_CHECK(result.state.writes()[0].object_id!=result.state.writes()[1].object_id);
+   BOOST_CHECK(result.state.primary_write(0).operation==primary_operation::remove);
+   BOOST_CHECK(result.state.primary_write(1).operation==primary_operation::store);
+   BOOST_CHECK(result.state.primary_write(0).object_id!=result.state.primary_write(1).object_id);
 }
 BOOST_FIXTURE_TEST_CASE(sync_journal_rejects_reordered_duplicate_forged_and_readonly_mutations,sc_state_fixture) {
    isolated_sync_executor executor; const auto programs=sc_state_programs(0,true);
@@ -766,29 +937,82 @@ BOOST_FIXTURE_TEST_CASE(sync_journal_rejects_reordered_duplicate_forged_and_read
    }),std::runtime_error);
 }
 BOOST_FIXTURE_TEST_CASE(sync_leaf_wasm_intervals_overlap_on_two_and_four_threads,sc_fixture) {
-   const auto spin=R"((set_local $n (i32.const 10000))
-      (loop $busy (set_local $n (i32.sub (get_local $n)(i32.const 1)))(br_if $busy (get_local $n))))";
+   // Cold parsing/compilation is not guaranteed to finish together. Keep cold
+   // correctness, then three fixed warm batches with bounded REAL WASM work.
+   // Only measured leaf execution intervals can prove actual overlap. No
+   // test-only host, deadline increase, or retry-until-pass is involved.
+   using observation=std::tuple<unsigned,uint64_t,isolated_sync_result>;
+   for(auto engine:{isolated_vm_engine::interpreter,isolated_vm_engine::jit}) {
+   // The interpreter and JIT execute different work per iteration. Use the
+   // same fixed counts in ordinary, ASan and TSan builds, retaining the real
+   // 500ms deadline and all cross-thread interval assertions.
+   const auto iterations=engine==isolated_vm_engine::interpreter?50000u:500000u;
+   const auto spin="(set_local $n (i32.const "+std::to_string(iterations)+"))"+
+      "(loop $busy (set_local $n (i32.sub (get_local $n)(i32.const 1)))(br_if $busy (get_local $n)))";
    const auto programs=sc_pair(spin+sc_echo());
    for(unsigned threads:{1u,2u,4u}) {
-      std::barrier gate(threads); std::vector<std::future<std::vector<isolated_sync_result>>> pending;
-      for(unsigned i=0;i<threads;++i) pending.push_back(std::async(std::launch::async,[&,i]{
-         isolated_sync_executor executor; std::vector<isolated_sync_result> results;
-         gate.arrive_and_wait();
-         for(unsigned j=i;j<4;j+=threads) results.push_back(executor.execute(base,sc_root(j),programs,{}));
+      std::barrier gate(threads); std::vector<std::future<std::vector<observation>>> pending;
+      pending.reserve(threads);
+      unsigned launched=0;
+      try {
+      for(unsigned i=0;i<threads;++i) {
+         pending.push_back(std::async(std::launch::async,[&,i]{
+         // Drop even on an exception so another worker cannot hang at the
+         // next round's barrier while the failed future is being collected.
+         struct participant { std::barrier<>& gate; ~participant(){gate.arrive_and_drop();} } joined{gate};
+         auto runtime=std::make_shared<isolated_execution_runtime>(engine,9);
+         isolated_sync_executor executor(std::make_shared<isolated_module_cache>(runtime));
+         std::vector<observation> results;
+         for(unsigned round=0;round<4;++round) {
+            gate.arrive_and_wait();
+            for(unsigned j=i;j<4;j+=threads) {
+               const uint64_t nonce=round*16+j;
+               results.emplace_back(round,nonce,executor.execute(base,sc_root(nonce),programs,{}));
+            }
+         }
          return results;
-      }));
-      std::vector<isolated_sync_result> results;
-      for(auto& job:pending) for(auto& result:job.get()) results.push_back(std::move(result));
+         }));
+         ++launched;
+      }
+      } catch(...) {
+         for(unsigned i=launched;i<threads;++i) gate.arrive_and_drop();
+         throw;
+      }
+      std::array<std::vector<std::pair<uint64_t,isolated_sync_result>>,4> batches;
+      for(auto& job:pending) for(auto& [round,nonce,result]:job.get()) batches[round].emplace_back(nonce,std::move(result));
+      bool measured_overlap=false;
+      for(unsigned round=0;round<4;++round) {
+      const auto& results=batches[round];
       BOOST_REQUIRE_EQUAL(results.size(),4u); bool overlap=false;
+      std::string intervals="engine="+std::string(engine==isolated_vm_engine::interpreter?"interpreter":"jit")+
+         " iterations="+std::to_string(iterations)+" threads="+
+         std::to_string(threads)+" round="+std::to_string(round);
+      const auto origin=results.front().second.root.began;
       for(size_t i=0;i<results.size();++i) {
-         BOOST_REQUIRE_EQUAL(results[i].calls.size(),1u);
-         const auto& a=results[i].calls[0]; BOOST_CHECK(a.executed); BOOST_CHECK(a.events.empty());
+         const auto& [nonce,result]=results[i];
+         BOOST_CHECK_EQUAL(sc_number(result.root.return_value),nonce);
+         BOOST_CHECK(validate_isolated_sync_journal(result,sc_root(nonce),programs,{}));
+         BOOST_REQUIRE_EQUAL(result.calls.size(),1u);
+         const auto& a=result.calls[0]; BOOST_CHECK(a.executed); BOOST_CHECK(a.events.empty());
+         const auto micros=[&](auto when) {
+            return std::chrono::duration_cast<std::chrono::microseconds>(when-origin).count();
+         };
+         intervals+=" root="+std::to_string(micros(result.root.began))+".."+
+            std::to_string(micros(result.root.ended))+" leaf="+std::to_string(micros(a.began))+".."+
+            std::to_string(micros(a.ended))+" exclusive_us="+std::to_string(a.exclusive_elapsed.count());
          for(size_t j=0;j<i;++j) {
-            const auto& b=results[j].calls[0];
+            const auto& b=results[j].second.calls[0];
             if(std::max(a.began,b.began)<std::min(a.ended,b.ended)) overlap=true;
          }
       }
-      BOOST_CHECK_EQUAL(overlap,threads>1); // leaf intervals exclude child compilation, host waiting and queued tasks
+      BOOST_TEST_MESSAGE(intervals);
+      BOOST_TEST_CONTEXT(intervals) { if(threads==1) BOOST_CHECK(!overlap); }
+      if(round) measured_overlap|=overlap;
+      }
+      BOOST_TEST_CONTEXT("engine=" << static_cast<unsigned>(engine) << " threads=" << threads) {
+         BOOST_CHECK_EQUAL(measured_overlap,threads>1);
+      }
+   }
    }
 }
 BOOST_FIXTURE_TEST_CASE(sync_event_and_write_budgets_and_post_write_failure_discard_every_frame,sc_state_fixture) {
@@ -898,10 +1122,13 @@ void sc_oracle(std::vector<isolated_sync_program> programs, isolated_action_inpu
    // that original behavior; do not silently charge child writes to the root.
    BOOST_CHECK_EQUAL(resources.get_account_ram_usage("bob"_n),bob_ram);
    primary_state_overlay expected(base);
-   for(const auto& write:result.state.writes()) switch(write.operation) {
+   for(const auto& mutation:result.state.writes()) {
+      const auto& write=require_primary_mutation(mutation);
+      switch(write.operation) {
       case primary_operation::store: expected.store(write.table,write.primary_key,write.payer,write.value); break;
       case primary_operation::update: expected.update_existing(write.table,write.primary_key,write.payer,write.value); break;
       case primary_operation::remove: expected.remove(write.table,write.primary_key); break;
+      }
    }
    for(const auto& table:tables) {
       const auto a=expected.read_table(table), b=view.read_table(table);
@@ -995,10 +1222,13 @@ void sc_multi_oracle(std::vector<isolated_sync_program> programs,
          }
       }
       primary_state_overlay expected(base);
-      for(const auto& write:result->state.writes()) switch(write.operation) {
+      for(const auto& mutation:result->state.writes()) {
+         const auto& write=require_primary_mutation(mutation);
+         switch(write.operation) {
          case primary_operation::store: expected.store(write.table,write.primary_key,write.payer,write.value); break;
          case primary_operation::update: expected.update_existing(write.table,write.primary_key,write.payer,write.value); break;
          case primary_operation::remove: expected.remove(write.table,write.primary_key); break;
+         }
       }
       for(const auto& table:sc_tables) {
          const auto a=expected.read_table(table),b=view.read_table(table);
@@ -1130,7 +1360,97 @@ struct sc_owner_fixture {
 };
 }
 
+namespace {
+struct sc_multi_owner_fixture {
+   sc_owner_fixture single;
+   std::vector<isolated_action_input> roots;
+   std::optional<packed_transaction> packed;
+   std::optional<isolated_sync_transaction_result> result;
+   signed_transaction transaction_for(const std::vector<isolated_action_input>& inputs) {
+      signed_transaction trx;
+      for(const auto& root:inputs) {
+         action act; act.account=root.account; act.name=root.action; act.data=root.data;
+         for(const auto& [actor,permission]:root.authorizations) act.authorization.push_back({actor,permission});
+         trx.actions.push_back(std::move(act));
+      }
+      single.chain.set_transaction_headers(trx);
+      return trx;
+   }
+   sc_multi_owner_fixture() {
+      roots={single.root,single.root,single.root};
+      roots[1].receiver=roots[1].account="carol"_n; // ordinary no-op root between two synchronous roots
+      const uint64_t last=6; std::memcpy(roots[2].data.data(),&last,sizeof(last));
+      packed.emplace(transaction_for(roots),packed_transaction::compression_type::none);
+      isolated_sync_executor executor;
+      result=executor.execute_transaction(single.result->state.base(),roots,single.programs,single.protocol);
+      BOOST_REQUIRE(valid());
+   }
+   bool valid() const {
+      return validate_isolated_sync_transaction_current_state(*single.chain.control,*packed,single.programs,*result);
+   }
+   template<typename F> void changed(F&& change) {
+      auto undo=single.db().start_undo_session(true); change();
+      BOOST_CHECK(!valid()); undo.undo(); BOOST_CHECK(valid());
+   }
+};
+}
+
 BOOST_AUTO_TEST_SUITE(parallel_sync_owner_tests)
+BOOST_FIXTURE_TEST_CASE(multi_root_owner_proof_binds_late_inputs_current_code_protocol_and_exact_rows,sc_multi_owner_fixture) {
+   // Accepted UNSIGNED input is deliberately only a read-only state proof.
+   // The real transaction path must still authenticate every action.
+   BOOST_CHECK(valid());
+   for(unsigned reason=0;reason<5;++reason) {
+      auto trx=transaction_for(roots);
+      if(reason==0) trx.actions.back().data.push_back('x');
+      if(reason==1) trx.actions.back().authorization[0].actor="bob"_n;
+      if(reason==2) trx.actions.back().name="other"_n;
+      if(reason==3) trx.actions.pop_back();
+      if(reason==4) std::swap(trx.actions[0],trx.actions[1]);
+      const packed_transaction altered(trx,packed_transaction::compression_type::none);
+      BOOST_CHECK(!validate_isolated_sync_transaction_current_state(*single.chain.control,altered,single.programs,*result));
+   }
+   for(unsigned reason=0;reason<5;++reason) {
+      auto bad=*result;
+      if(reason==0) bad.execution_fingerprint={};
+      if(reason==1) bad.roots.back().root.execution_fingerprint={};
+      if(reason==2) bad.roots.back().root.writes_begin=0;
+      if(reason==3) bad.roots.pop_back();
+      if(reason==4) bad.roots.back().calls[0].sender="carol"_n;
+      BOOST_CHECK(!validate_isolated_sync_transaction_current_state(*single.chain.control,*packed,single.programs,bad));
+   }
+   changed([&]{
+      const auto& account=single.db().get<account_metadata_object,by_name>("carol"_n);
+      single.db().modify(account,[](auto& a){a.vm_type=1;});
+   });
+   changed([&]{single.db().modify(single.chain.control->get_global_properties(),
+      [](auto& g){--g.configuration.max_sync_call_data_size;});});
+   const auto& table=single.db().get<table_id_object,by_code_scope_table>(boost::make_tuple("bob"_n,"scope"_n,"rows"_n));
+   changed([&]{single.db().modify(single.db().get<key_value_object,by_scope_primary>(boost::make_tuple(table.id,uint64_t{7})),
+      [](auto& row){const uint64_t value=11;row.value.assign(reinterpret_cast<const char*>(&value),sizeof(value));});});
+   {
+      auto undo=single.db().start_undo_session(true);
+      single.db().modify(single.db().get<key_value_object,by_scope_primary>(boost::make_tuple(table.id,uint64_t{9})),
+         [](auto& row){const uint64_t value=91;row.value.assign(reinterpret_cast<const char*>(&value),sizeof(value));});
+      BOOST_CHECK(valid()); // same table, but this row was never observed
+   }
+   BOOST_CHECK(valid());
+}
+BOOST_FIXTURE_TEST_CASE(multi_root_owner_cancellation_propagates_without_changing_the_ledger,sc_multi_owner_fixture) {
+   const auto before=single.chain.control->calculate_integrity_hash();
+   size_t checkpoints=0;
+   BOOST_REQUIRE(validate_isolated_sync_transaction_current_state(*single.chain.control,*packed,single.programs,*result,
+      [&]{++checkpoints;}));
+   BOOST_REQUIRE_GT(checkpoints,3u);
+   for(size_t cutoff:std::array<size_t,3>{1,checkpoints/2,checkpoints}) {
+      size_t seen=0;
+      BOOST_CHECK_THROW(validate_isolated_sync_transaction_current_state(*single.chain.control,*packed,single.programs,*result,
+         [&]{if(++seen==cutoff)throw std::runtime_error("multi-root owner cancellation");}),std::runtime_error);
+      BOOST_CHECK_EQUAL(seen,cutoff);
+      BOOST_CHECK(single.chain.control->calculate_integrity_hash()==before);
+      BOOST_CHECK(valid());
+   }
+}
 BOOST_FIXTURE_TEST_CASE(owner_capture_uses_real_export_metadata_and_owns_code,sc_owner_fixture) {
    for(name n:{name{},"absent"_n,"eosio"_n,"eosio.msig"_n,"eosio.wrap"_n})
       BOOST_CHECK(!prepare_isolated_sync_program(*chain.control,n));
@@ -1267,6 +1587,7 @@ namespace {
 void sc_check_no_result(const isolated_worker_outcome& out, isolated_worker_failure expected) {
    BOOST_CHECK(!out.result); BOOST_CHECK(!out.notification_result);
    BOOST_CHECK(!out.tree_result); BOOST_CHECK(!out.sync_result);
+   BOOST_CHECK(!out.sync_transaction_result);
    BOOST_CHECK_EQUAL(out.elapsed.count(),0);
    BOOST_CHECK_MESSAGE(out.failure==expected,isolated_worker_failure_name(out.failure));
 }
@@ -1287,7 +1608,6 @@ BOOST_FIXTURE_TEST_CASE(sync_stage_metrics_count_each_frame_once_including_faile
       std::atomic<bool>& flag;bool previous;
       ~restore_flag(){flag.store(previous,std::memory_order_relaxed);}
    } restore{metrics.enabled,metrics.enabled.exchange(true,std::memory_order_relaxed)};
-   isolated_sync_executor executor;
    const auto pair=sc_pair(),recursive=sc_recursive(),stateful=sc_state_programs(0,true),negative=sc_state_programs(-10000,true);
    auto trap=sc_state_programs();
    trap[1].program.code=sc_program({},sc_update(sc_find("bob"_n),22)+"(unreachable)(i64.const 0)",sc_db_imports);
@@ -1296,8 +1616,9 @@ BOOST_FIXTURE_TEST_CASE(sync_stage_metrics_count_each_frame_once_including_faile
    auto invalid_child=sc_pair();invalid_child[1].program.code={'x'};
    auto invalid_root=sc_pair();invalid_root[0].program.code={'x'};
    const auto observe=[&](const auto& run,size_t expected_compile,size_t expected_execute) {
+      isolated_sync_executor executor; // keep this COLD accounting oracle; warm leases have separate coverage
       const auto cb=metrics.snapshot(performance::stage::parallel_compile),eb=metrics.snapshot(performance::stage::parallel_execute);
-      const auto began=std::chrono::steady_clock::now();run();
+      const auto began=std::chrono::steady_clock::now();run(executor);
       const auto wall=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-began).count();
       const auto ca=metrics.snapshot(performance::stage::parallel_compile),ea=metrics.snapshot(performance::stage::parallel_execute);
       BOOST_CHECK_EQUAL(ca.count-cb.count,expected_compile);BOOST_CHECK_EQUAL(ea.count-eb.count,expected_execute);
@@ -1310,14 +1631,14 @@ BOOST_FIXTURE_TEST_CASE(sync_stage_metrics_count_each_frame_once_including_faile
       BOOST_CHECK_LE((ca.nanoseconds-cb.nanoseconds)+(ea.nanoseconds-eb.nanoseconds),static_cast<uint64_t>(wall));
    };
    for(unsigned round=0;round<3;++round) {
-      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),pair,{}).root.return_value),5u);},2,2);
-      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),missing,{}).root.return_value),5u);},2,2);
-      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(3),recursive,{}).root.return_value),4u);},5,5);
-      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),stateful,{}).root.return_value),33u);},3,3);
-      observe([&]{BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),negative,{}).root.return_value),33u);},3,3);
-      observe([&]{BOOST_CHECK_THROW(executor.execute(base,sc_root(),trap,{}),eosio::vm::exception);},2,2);
-      observe([&]{BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid_child,{}),eosio::vm::exception);},2,1);
-      observe([&]{BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid_root,{}),eosio::vm::exception);},1,0);
+      observe([&](auto& executor){BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),pair,{}).root.return_value),5u);},2,2);
+      observe([&](auto& executor){BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),missing,{}).root.return_value),5u);},2,2);
+      observe([&](auto& executor){BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(3),recursive,{}).root.return_value),4u);},5,5);
+      observe([&](auto& executor){BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),stateful,{}).root.return_value),33u);},3,3);
+      observe([&](auto& executor){BOOST_CHECK_EQUAL(sc_number(executor.execute(base,sc_root(),negative,{}).root.return_value),33u);},3,3);
+      observe([&](auto& executor){BOOST_CHECK_THROW(executor.execute(base,sc_root(),trap,{}),eosio::vm::exception);},2,2);
+      observe([&](auto& executor){BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid_child,{}),eosio::vm::exception);},2,1);
+      observe([&](auto& executor){BOOST_CHECK_THROW(executor.execute(base,sc_root(),invalid_root,{}),eosio::vm::exception);},1,0);
    }
    const auto original=view.read_primary({sc_tables[0],primary_query_kind::find,7},8);
    BOOST_REQUIRE(original.row);BOOST_CHECK_EQUAL(sc_number(original.row->value),10u);
@@ -1472,7 +1793,7 @@ BOOST_FIXTURE_TEST_CASE(sync_input_bounds_and_all_mixed_modes_are_rejected_befor
          case 2: bad.tree=isolated_action_tree_job{{root},{programs[0].program},{}}; break;
          case 3: input.programs.clear(); break;
          case 4: input.programs.resize(65,programs[0]); break;
-         case 5: input.programs[0].program.code.resize(65537); break;
+         case 5: input.programs[0].program.code.resize(isolated_wasm_limits::max_module_code_bytes + 1); break;
          case 6: input.root.data.resize(65537); break;
          case 7: input.root.authorizations.resize(65); break;
          case 8: input.root.max_return_bytes=4097; break;
@@ -1617,18 +1938,342 @@ BOOST_FIXTURE_TEST_CASE(sync_pool_overlaps_actual_leaf_wasm_not_parent_compile_i
       ordered_attempt_batch batch(base,requests); std::vector<isolated_worker_job> jobs;
       for(size_t i=0;i<4;++i) jobs.emplace_back(batch.get_ticket(i),sc_root(i+1),programs,isolated_sync_context{});
       const auto outcomes=pool.run(std::move(jobs)); bool overlap=false;
+      std::string intervals="threads="+std::to_string(threads);
+      std::chrono::steady_clock::time_point origin{};
       for(size_t i=0;i<outcomes.size();++i) {
          BOOST_REQUIRE_MESSAGE(outcomes[i].sync_result,isolated_worker_failure_name(outcomes[i].failure));
          const auto& result=*outcomes[i].sync_result;
          BOOST_CHECK_EQUAL(sc_number(result.root.return_value),i+1);
          BOOST_REQUIRE_EQUAL(result.calls.size(),1u);
          const auto& leaf=result.calls[0]; BOOST_CHECK(leaf.executed); BOOST_CHECK(leaf.events.empty());
+         if(i==0) origin=result.root.began;
+         const auto micros=[&](auto when) {
+            return std::chrono::duration_cast<std::chrono::microseconds>(when-origin).count();
+         };
+         intervals+=" tx="+std::to_string(i)+" root="+std::to_string(micros(result.root.began))+".."+
+            std::to_string(micros(result.root.ended))+" leaf="+std::to_string(micros(leaf.began))+".."+
+            std::to_string(micros(leaf.ended))+" exclusive_us="+std::to_string(leaf.exclusive_elapsed.count());
          for(size_t j=0;j<i;++j) {
             const auto& other=outcomes[j].sync_result->calls[0];
             overlap|=std::max(leaf.began,other.began)<std::min(leaf.ended,other.ended);
          }
       }
-      BOOST_CHECK_EQUAL(overlap,threads>1);
+      BOOST_TEST_CONTEXT(intervals) { BOOST_CHECK_EQUAL(overlap,threads>1); }
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_sync_pool_tests)
+BOOST_FIXTURE_TEST_CASE(five_owned_modes_include_multi_root_sync_with_one_transaction_cpu_sum,sc_state_fixture) {
+   const auto root=sc_root();
+   const std::vector multi_roots{sc_root(3),sc_root(4)};
+   const auto sync_programs=sc_state_programs(0,true),multi_programs=sc_increment_programs();
+   const auto plain=sc_program("(drop (call $read (i32.const 0)(i32.const 8)))(call $out (i32.const 0)(i32.const 8))");
+   const std::vector<isolated_action_invocation> actions{{plain,root,{}}};
+   const std::vector roots{root};
+   const std::vector<isolated_receiver_program> programs{{"test"_n,plain,{}}};
+   const isolated_action_tree_context tree_context;
+   isolated_transaction_executor legacy; isolated_notification_executor notification;
+   isolated_action_tree_executor tree; isolated_sync_executor sync;
+   const std::array fingerprints{
+      legacy.execute(base,actions).execution_fingerprint,
+      notification.execute(base,roots,programs).root_fingerprint,
+      tree.execute(base,roots,programs,tree_context).root_fingerprint,
+      sync.execute(base,root,sync_programs,{}).execution_fingerprint,
+      sync.execute_transaction(base,multi_roots,multi_programs,{}).execution_fingerprint};
+   for(size_t threads:{1u,2u,4u}) {
+      isolated_worker_pool pool(threads);
+      for(unsigned round=0;round<3;++round) {
+         std::vector<ordered_attempt_batch::request> requests;
+         for(size_t i=0;i<10;++i) requests.push_back({fc::sha256::hash(std::to_string(i)),fingerprints[i%5]});
+         ordered_attempt_batch batch(base,requests); std::vector<isolated_worker_job> jobs;
+         for(size_t i=0;i<requests.size();++i) switch(i%5) {
+            case 0: jobs.emplace_back(batch.get_ticket(i),actions); break;
+            case 1: jobs.emplace_back(batch.get_ticket(i),roots,programs); break;
+            case 2: jobs.emplace_back(batch.get_ticket(i),roots,programs,tree_context); break;
+            case 3: jobs.emplace_back(batch.get_ticket(i),root,sync_programs,isolated_sync_context{}); break;
+            case 4: {
+               auto owned_roots=multi_roots; auto owned_programs=multi_programs;
+               jobs.emplace_back(batch.get_ticket(i),owned_roots,owned_programs,isolated_sync_context{});
+               owned_roots[0].data.assign(8,0); owned_programs[0].program.code.clear();
+               break;
+            }
+         }
+         const auto outputs=pool.run(std::move(jobs));
+         BOOST_REQUIRE_EQUAL(outputs.size(),requests.size());
+         for(size_t i=0;i<outputs.size();++i) {
+            const auto& out=outputs[i];
+            BOOST_CHECK_EQUAL(bool(out.result),i%5==0); BOOST_CHECK_EQUAL(bool(out.notification_result),i%5==1);
+            BOOST_CHECK_EQUAL(bool(out.tree_result),i%5==2); BOOST_CHECK_EQUAL(bool(out.sync_result),i%5==3);
+            BOOST_REQUIRE_MESSAGE(bool(out.sync_transaction_result)==(i%5==4),isolated_worker_failure_name(out.failure));
+            BOOST_CHECK(out.failure==isolated_worker_failure::none);
+            BOOST_CHECK(!out.request); BOOST_CHECK(!out.receiver_request);
+            if(i%5!=4) continue;
+            const auto& result=*out.sync_transaction_result;
+            BOOST_REQUIRE_EQUAL(result.roots.size(),2u);
+            BOOST_CHECK(validate_isolated_sync_transaction_journal(result,multi_roots,multi_programs,{}));
+            BOOST_CHECK(result.execution_fingerprint==fingerprints[4]);
+            BOOST_CHECK_EQUAL(sc_number(result.roots[0].root.return_value),13u);
+            BOOST_CHECK_EQUAL(sc_number(result.roots[1].root.return_value),17u);
+            BOOST_CHECK(out.began==result.roots.front().root.began);
+            BOOST_CHECK(out.ended==result.roots.back().root.ended);
+            std::chrono::microseconds elapsed{};
+            for(const auto& current:result.roots) {
+               elapsed+=current.root.elapsed;
+               for(const auto& call:current.calls) elapsed+=call.exclusive_elapsed;
+            }
+            BOOST_CHECK(out.elapsed==elapsed);
+            BOOST_CHECK_LE(out.elapsed.count(),std::chrono::duration_cast<std::chrono::microseconds>(isolated_sync_executor::max_attempt_time).count());
+         }
+      }
+   }
+   BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+}
+BOOST_FIXTURE_TEST_CASE(multi_root_worker_late_failure_cancellation_and_reuse_publish_no_prefix,sc_state_fixture) {
+   const auto programs=sc_increment_programs(0,
+      "(if (i64.eq (i64.load (i32.const 0))(i64.const 4))(then unreachable))");
+   const std::vector bad_roots{sc_root(3),sc_root(4)},good_roots{sc_root(3),sc_root(2)};
+   for(size_t threads:{1u,2u,4u}) {
+      isolated_worker_pool pool(threads);
+      for(unsigned round=0;round<3;++round) {
+         const std::array requests{
+            ordered_attempt_batch::request{fc::sha256::hash("trap"),isolated_sync_transaction_fingerprint(bad_roots,programs,{})},
+            ordered_attempt_batch::request{fc::sha256::hash("healthy"),isolated_sync_transaction_fingerprint(good_roots,programs,{})}};
+         ordered_attempt_batch batch(base,requests);
+         const auto outputs=pool.run({{batch.get_ticket(0),bad_roots,programs,isolated_sync_context{}},
+                                     {batch.get_ticket(1),good_roots,programs,isolated_sync_context{}}});
+         BOOST_REQUIRE_EQUAL(outputs.size(),2u);
+         sc_check_no_result(outputs[0],isolated_worker_failure::vm_error);
+         BOOST_REQUIRE(outputs[1].sync_transaction_result);
+         const auto& healthy=*outputs[1].sync_transaction_result;
+         BOOST_CHECK(validate_isolated_sync_transaction_journal(healthy,good_roots,programs,{}));
+         BOOST_CHECK_EQUAL(sc_number(healthy.roots.back().root.return_value),15u);
+         for(unsigned reason=0;reason<2;++reason) {
+            isolated_cancel cancel;
+            if(reason==0) {
+               cancel.generation=std::make_shared<const std::atomic<uint64_t>>(2);
+               cancel.observed=1;
+            } else cancel.deadline=std::chrono::steady_clock::now()-std::chrono::seconds(1);
+            const auto stopped=pool.run({{batch.get_ticket(1),good_roots,programs,isolated_sync_context{},cancel}});
+            sc_check_no_result(stopped[0],reason==0?isolated_worker_failure::cancelled:isolated_worker_failure::deadline);
+            const auto recovered=pool.run({{batch.get_ticket(1),good_roots,programs,isolated_sync_context{}}});
+            BOOST_REQUIRE(recovered[0].sync_transaction_result);
+            BOOST_CHECK_EQUAL(sc_number(recovered[0].sync_transaction_result->roots.back().root.return_value),15u);
+         }
+         BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+      }
+   }
+}
+BOOST_FIXTURE_TEST_CASE(multi_root_job_bounds_and_all_other_mode_collisions_fail_before_dispatch,sc_state_fixture) {
+   const std::vector roots{sc_root(3),sc_root(4)}; const auto programs=sc_increment_programs();
+   const std::array requests{ordered_attempt_batch::request{
+      fc::sha256::hash("multi bounds"),isolated_sync_transaction_fingerprint(roots,programs,{})}};
+   ordered_attempt_batch batch(base,requests); isolated_worker_pool pool(1);
+   const isolated_worker_job good{batch.get_ticket(0),roots,programs,isolated_sync_context{}};
+   for(unsigned reason=0;reason<14;++reason) {
+      auto bad=good; auto input=*good.sync_transaction;
+      switch(reason) {
+         case 0: bad.actions.push_back({programs[0].program.code,roots[0],{}}); break;
+         case 1: bad.notifications=isolated_notification_job{}; break;
+         case 2: bad.tree=isolated_action_tree_job{}; break;
+         case 3: bad.sync=isolated_sync_job{roots[0],programs,{}}; break;
+         case 4: input.roots.clear(); break;
+         case 5: input.roots.resize(17,roots[0]); break;
+         case 6: input.programs.clear(); break;
+         case 7: input.programs.resize(65,programs[0]); break;
+         case 8: input.programs[0].program.code.resize(isolated_wasm_limits::max_module_code_bytes + 1); break;
+         case 9: input.roots[0].data.resize(65537); break;
+         case 10: input.roots[0].authorizations.resize(65); break;
+         case 11: input.roots[0].max_return_bytes=4097; break;
+         case 12:
+            input.roots.resize(5,roots[0]);
+            for(auto& root:input.roots) root.data.resize(65536);
+            input.roots.back().data.resize(1);
+            break;
+         case 13:
+            input.programs.resize(5,programs[0]);
+            for(auto& program:input.programs) program.program.code.resize(65536);
+            break;
+      }
+      bad.sync_transaction=std::move(input);
+      BOOST_CHECK_THROW(pool.run({bad}),primary_state_budget_exceeded);
+      const auto next=pool.run({good});
+      BOOST_REQUIRE(next[0].sync_transaction_result);
+      BOOST_CHECK_EQUAL(sc_number(next[0].sync_transaction_result->roots.back().root.return_value),17u);
+   }
+}
+BOOST_FIXTURE_TEST_CASE(multi_root_whole_journal_conflicts_and_structural_changes_control_ordering,sc_state_fixture) {
+   const auto programs=sc_keyed_programs();
+   const std::array<uint64_t,4> keys{7,9,7,9};
+   std::vector<std::vector<isolated_action_input>> inputs;
+   std::vector<ordered_attempt_batch::request> requests;
+   for(size_t i=0;i<keys.size();++i) {
+      inputs.push_back({sc_root(keys[i]),sc_root(keys[i])});
+      requests.push_back({fc::sha256::hash(std::to_string(i)),isolated_sync_transaction_fingerprint(inputs.back(),programs,{})});
+   }
+   ordered_attempt_batch batch(base,requests); isolated_worker_pool pool(4);
+   std::vector<isolated_worker_job> jobs;
+   for(size_t i=0;i<requests.size();++i) jobs.emplace_back(batch.get_ticket(i),inputs[i],programs,isolated_sync_context{});
+   const auto outputs=pool.run(std::move(jobs)); unsigned adopted=0,fallback=0;
+   for(size_t i=0;i<outputs.size();++i) {
+      BOOST_REQUIRE(outputs[i].sync_transaction_result);
+      BOOST_CHECK(validate_isolated_sync_transaction_journal(*outputs[i].sync_transaction_result,inputs[i],programs,{}));
+      batch.run_next(batch.get_ticket(i),requests[i].transaction_id,outputs[i].sync_transaction_result,
+         [&](const isolated_sync_transaction_result&){++adopted;},[&]{++fallback;});
+      BOOST_CHECK_EQUAL(adopted,std::min(i+1,size_t{2}));
+      BOOST_CHECK_EQUAL(fallback,i<2?0u:unsigned(i-1));
+   }
+   BOOST_CHECK(batch.complete());
+   BOOST_CHECK_THROW(batch.run_next(batch.get_ticket(0),requests[0].transaction_id,outputs[0].sync_transaction_result,
+      [](const isolated_sync_transaction_result&){},[]{}),primary_state_invalid_attempt);
+   const auto lifecycle=sc_keyed_programs(true);
+   const std::array structural_requests{
+      ordered_attempt_batch::request{fc::sha256::hash("lifecycle"),isolated_sync_transaction_fingerprint(inputs[0],lifecycle,{})},
+      ordered_attempt_batch::request{fc::sha256::hash("other row"),isolated_sync_transaction_fingerprint(inputs[1],programs,{})}};
+   ordered_attempt_batch structure(base,structural_requests);
+   const auto structural=pool.run({{structure.get_ticket(0),inputs[0],lifecycle,isolated_sync_context{}},
+                                  {structure.get_ticket(1),inputs[1],programs,isolated_sync_context{}}});
+   adopted=fallback=0;
+   for(size_t i=0;i<structural.size();++i) {
+      BOOST_REQUIRE(structural[i].sync_transaction_result);
+      structure.run_next(structure.get_ticket(i),structural_requests[i].transaction_id,structural[i].sync_transaction_result,
+         [&](const isolated_sync_transaction_result&){++adopted;},[&]{++fallback;});
+   }
+   BOOST_CHECK_EQUAL(adopted,1u); BOOST_CHECK_EQUAL(fallback,1u);
+   BOOST_CHECK_EQUAL(sc_number(view.read_primary({sc_tables[1],primary_query_kind::find,7},8).row->value),10u);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_sync_pool_tests)
+BOOST_FIXTURE_TEST_CASE(multi_sync_coordinator_rejects_foreign_results_tickets_and_reentry,sc_fixture) {
+   const std::vector roots{sc_root(3),sc_root(4)}; const auto programs=sc_pair(); isolated_sync_executor executor;
+   const std::optional good{executor.execute_transaction(base,roots,programs,{})};
+   const std::array<ordered_attempt_batch::request,1> requests{{
+      {fc::sha256::hash("identity"),good->execution_fingerprint}}};
+   const auto adopt=[](const isolated_sync_transaction_result&) {}; const auto serial=[] {};
+   for(unsigned failure=0;failure<3;++failure) {
+      ordered_attempt_batch batch(base,requests); auto bad=good;
+      if(failure==0) bad->execution_fingerprint=fc::sha256::hash("wrong");
+      if(failure==1) {
+         const std::array names{"test"_n,"bob"_n};
+         const auto other=frozen_primary_state::capture_queries(view,{},{},{},{},names);
+         bad=executor.execute_transaction(other,roots,programs,{});
+      }
+      if(failure==2) {
+         ordered_attempt_batch foreign(base,requests);
+         BOOST_CHECK_THROW(batch.run_next(foreign.get_ticket(0),requests[0].transaction_id,bad,adopt,serial),primary_state_invalid_attempt);
+         batch.run_next(batch.get_ticket(0),requests[0].transaction_id,good,adopt,serial);
+         BOOST_CHECK(batch.complete());
+      } else {
+         const auto tag=batch.get_ticket(0);
+         BOOST_CHECK_THROW(batch.run_next(tag,requests[0].transaction_id,bad,adopt,serial),primary_state_invalid_attempt);
+         BOOST_CHECK(tag.stop_token().stop_requested());
+         BOOST_CHECK_THROW(batch.get_ticket(0),primary_state_invalid_attempt);
+      }
+   }
+   ordered_attempt_batch reentry(base,requests); const auto tag=reentry.get_ticket(0);
+   reentry.run_next(tag,requests[0].transaction_id,good,[&](const isolated_sync_transaction_result&) {
+      BOOST_CHECK_THROW(reentry.run_next(tag,requests[0].transaction_id,good,adopt,serial),primary_state_invalid_attempt);
+   },serial);
+   BOOST_CHECK(reentry.complete());
+   ordered_attempt_batch throwing(base,requests); const auto once=throwing.get_ticket(0);
+   unsigned entered=0,retried=0;
+   BOOST_CHECK_THROW(throwing.run_next(once,requests[0].transaction_id,good,[&](const isolated_sync_transaction_result&) {
+      ++entered;
+      throw std::runtime_error("test canonical callback failure");
+   },[&] { ++retried; }),std::runtime_error);
+   BOOST_CHECK_EQUAL(entered,1u); BOOST_CHECK_EQUAL(retried,0u);
+   BOOST_CHECK(once.stop_token().stop_requested());
+   BOOST_CHECK_THROW(throwing.run_next(once,requests[0].transaction_id,good,adopt,serial),primary_state_invalid_attempt);
+}
+
+BOOST_FIXTURE_TEST_CASE(multi_sync_coordinator_never_consumes_wrong_transaction_or_order,sc_fixture) {
+   const std::vector roots{sc_root(3),sc_root(4)};
+   const auto programs=sc_pair(); isolated_sync_executor executor;
+   const std::optional result{executor.execute_transaction(base,roots,programs,{})};
+   const std::array requests{
+      ordered_attempt_batch::request{fc::sha256::hash("first"),result->execution_fingerprint},
+      ordered_attempt_batch::request{fc::sha256::hash("second"),result->execution_fingerprint}};
+   ordered_attempt_batch batch(base,requests);
+   unsigned entered=0;
+   const auto adopt=[&](const isolated_sync_transaction_result&){++entered;};
+   const auto serial=[] { BOOST_FAIL("invalid identity cannot become serial fallback"); };
+   BOOST_CHECK_THROW(batch.run_next(batch.get_ticket(1),requests[1].transaction_id,result,adopt,serial),primary_state_invalid_attempt);
+   BOOST_CHECK_THROW(batch.run_next(batch.get_ticket(0),requests[1].transaction_id,result,adopt,serial),primary_state_invalid_attempt);
+   BOOST_CHECK_EQUAL(batch.next_index(),0u); BOOST_CHECK_EQUAL(entered,0u);
+   batch.run_next(batch.get_ticket(0),requests[0].transaction_id,result,adopt,serial);
+   BOOST_CHECK_EQUAL(entered,1u);
+   BOOST_CHECK_THROW(batch.run_next(batch.get_ticket(0),requests[0].transaction_id,result,adopt,serial),primary_state_invalid_attempt);
+   batch.run_next(batch.get_ticket(1),requests[1].transaction_id,result,adopt,serial);
+   BOOST_CHECK_EQUAL(entered,2u); BOOST_CHECK(batch.complete());
+}
+BOOST_FIXTURE_TEST_CASE(multi_sync_pool_overlaps_leaf_execution_across_transactions_and_resets_each_root,sc_fixture) {
+   // Select the pool engine explicitly: the CLI runtime setting only configures
+   // controller fixtures and never changed this direct pool's default engine.
+   for(auto engine:{isolated_vm_engine::interpreter,isolated_vm_engine::jit}) {
+   // Keep substantial real leaf work without making interpreter instrumentation
+   // exhaust the existing 500ms private-attempt bound. Both ordinary and sanitizer
+   // builds execute these same fixed per-engine workloads and all assertions.
+   const auto iterations=engine==isolated_vm_engine::interpreter?50'000u:500'000u;
+   const auto busy=R"((set_local $n (i32.const )"+std::to_string(iterations)+R"())
+      (block $done (loop $again (br_if $done (i32.eqz (get_local $n)))
+         (set_local $n (i32.sub (get_local $n)(i32.const 1))) (br $again))))";
+   // A sub-millisecond cold leaf can finish while another worker is compiling
+   // or descheduled. Keep cold correctness coverage, then three FIXED warm
+   // batches with real bounded WASM work, not a retry-until-pass or test host.
+   // Original execution limits stay unchanged. Compare LEAF intervals only.
+   const auto programs=sc_pair(busy+sc_echo());
+   const auto roots=[](size_t i) { return std::vector{sc_root(i+1),sc_root(i+11)}; };
+   for(size_t threads:{1u,2u,4u}) {
+      isolated_worker_pool pool(threads,engine);
+      bool measured_overlap=false;
+      for(unsigned round=0;round<4;++round) {
+      std::vector<ordered_attempt_batch::request> requests;
+      for(size_t i=0;i<4;++i) requests.push_back({fc::sha256::hash(std::to_string(i)),
+         isolated_sync_transaction_fingerprint(roots(i),programs,{})});
+      ordered_attempt_batch batch(base,requests); std::vector<isolated_worker_job> jobs;
+      for(size_t i=0;i<4;++i) jobs.emplace_back(batch.get_ticket(i),roots(i),programs,isolated_sync_context{});
+      const auto outcomes=pool.run(std::move(jobs)); bool overlap=false;
+      std::string intervals=std::string("engine=")+(engine==isolated_vm_engine::jit?"jit":"interpreter")+
+         " iterations="+std::to_string(iterations)+" threads="+std::to_string(threads)+" round="+std::to_string(round);
+      std::chrono::steady_clock::time_point origin{};
+      for(size_t i=0;i<outcomes.size();++i) {
+         BOOST_REQUIRE_MESSAGE(outcomes[i].sync_transaction_result,isolated_worker_failure_name(outcomes[i].failure));
+         const auto& result=*outcomes[i].sync_transaction_result;
+         BOOST_REQUIRE_EQUAL(result.roots.size(),2u);
+         BOOST_CHECK(validate_isolated_sync_transaction_journal(result,roots(i),programs,{}));
+         for(size_t k=0;k<result.roots.size();++k) {
+            const auto& current=result.roots[k];
+            BOOST_CHECK_EQUAL(sc_number(current.root.return_value),i+1+10*k);
+            BOOST_REQUIRE_EQUAL(current.calls.size(),1u);
+            const auto& leaf=current.calls[0];
+            if(i==0 && k==0) origin=current.root.began;
+            const auto micros=[&](auto when) {
+               return std::chrono::duration_cast<std::chrono::microseconds>(when-origin).count();
+            };
+            intervals+=" tx="+std::to_string(i)+" action="+std::to_string(k)+" root="+
+               std::to_string(micros(current.root.began))+".."+std::to_string(micros(current.root.ended))+
+               " leaf="+std::to_string(micros(leaf.began))+".."+std::to_string(micros(leaf.ended))+
+               " exclusive_us="+std::to_string(leaf.exclusive_elapsed.count());
+            BOOST_CHECK_EQUAL(leaf.call_ordinal,1u);
+            BOOST_CHECK(leaf.executed); BOOST_CHECK(leaf.events.empty());
+            for(size_t j=0;j<i;++j) {
+               for(const auto& previous:outcomes[j].sync_transaction_result->roots) {
+                  BOOST_REQUIRE_EQUAL(previous.calls.size(),1u);
+                  const auto& other=previous.calls[0];
+                  overlap|=std::max(leaf.began,other.began)<std::min(leaf.ended,other.ended);
+               }
+            }
+         }
+      }
+      BOOST_TEST_MESSAGE(intervals);
+      BOOST_TEST_CONTEXT(intervals) { if(threads==1) BOOST_CHECK(!overlap); }
+      if(round) measured_overlap|=overlap;
+      }
+      // All four batches must be correct; at least one of the three measured
+      // batches must show actual cross-transaction leaf overlap. Serial cannot.
+      BOOST_CHECK_EQUAL(measured_overlap,threads>1);
+   }
    }
 }
 BOOST_AUTO_TEST_SUITE_END()
@@ -1646,6 +2291,19 @@ signed_transaction sc_live_trx(eosio::testing::tester& chain,uint64_t key,uint64
    act.data.assign(reinterpret_cast<const char*>(data.data()),reinterpret_cast<const char*>(data.data())+sizeof(data));
    trx.actions.push_back(std::move(act)); chain.set_transaction_headers(trx);
    trx.sign(chain.get_private_key(account,"active"),chain.control->get_chain_id()); return trx;
+}
+signed_transaction sc_live_multi_trx(eosio::testing::tester& chain,const std::vector<uint64_t>& keys,uint64_t nonce) {
+   auto trx=sc_live_trx(chain,keys.at(0),nonce);
+   for(size_t i=1;i<keys.size();++i) {
+      auto act=trx.actions.front();
+      std::memcpy(act.data.data(),&keys[i],sizeof(keys[i]));
+      const uint64_t root_nonce=nonce+i;
+      std::memcpy(act.data.data()+sizeof(uint64_t),&root_nonce,sizeof(root_nonce));
+      trx.actions.push_back(std::move(act));
+   }
+   trx.signatures.clear();
+   trx.sign(chain.get_private_key("test"_n,"active"),chain.control->get_chain_id());
+   return trx;
 }
 transaction_metadata_ptr sc_live_meta(eosio::testing::tester& chain,const signed_transaction& trx) {
    return transaction_metadata::recover_keys(std::make_shared<packed_transaction>(trx,packed_transaction::compression_type::none),
@@ -1689,6 +2347,7 @@ struct sc_live_corpus {
       if(fresh) genesis.initial_timestamp=block_timestamp_type(fc::time_point::now()-fc::seconds(5)).to_time_point();
       auto [key,pub,proof]=eosio::testing::get_bls_key("eosio"_n);
       genesis.initial_savanna.emplace(); genesis.initial_savanna->finalizer_key=pub; genesis.initial_savanna->proof_of_possession=proof;
+      genesis.initial_savanna->version = 2;
       for(const auto& p:programs) if(!p.program.code.empty())
          reviewed.insert(fc::sha256::hash(p.program.code.data(),p.program.code.size()));
       fc::temp_directory dir; sc_live_chain source(configuration(dir,0),genesis);
@@ -1714,7 +2373,7 @@ struct sc_live_corpus {
    }
    controller::config configuration(const fc::temp_directory& dir,uint16_t workers,bool production=false) const {
       auto cfg=eosio::testing::base_tester::default_config(dir).first;
-      cfg.wasm_runtime=wasm_interface::vm_type::eos_vm; cfg.contracts_console=true;
+      eosio::testing::configure_parallel_test_runtime(cfg); cfg.contracts_console=true;
       cfg.parallel_validation_threads=workers; cfg.parallel_production_enabled=production && workers!=0;
       cfg.parallel_code_allowlist=reviewed; return cfg;
    }
@@ -1725,8 +2384,72 @@ struct sc_live_corpus {
       }
    }
 };
+// Full ORIGINAL production/validation comparison for multiple ordinary roots.
+// All canonical writes still go through the normal controller transaction path.
+void sc_live_multi_success(const std::vector<isolated_sync_program>& programs,
+      const std::vector<isolated_action_input>& roots,const std::vector<uint64_t>& returned,
+      const std::vector<size_t>& calls) {
+   BOOST_REQUIRE_EQUAL(roots.size(),returned.size()); BOOST_REQUIRE_EQUAL(roots.size(),calls.size());
+   sc_live_corpus corpus(programs);
+   for(uint16_t workers:{0,1,2,4}) {
+      BOOST_TEST_CONTEXT("multi-root canonical matrix workers="<<workers) {
+         fc::temp_directory pd,sd,vd;
+         sc_live_chain producer(corpus.configuration(pd,workers,true),corpus.genesis);
+         eosio::testing::tester serial(corpus.configuration(sd,0),corpus.genesis),
+            parallel(corpus.configuration(vd,workers),corpus.genesis);
+         corpus.prefix(producer); corpus.prefix(serial); corpus.prefix(parallel);
+         producer.set_node_finalizers(std::array<name,1>{"eosio"_n}); producer.start();
+         signed_transaction trx;
+         for(const auto& root:roots) {
+            action act; act.account=root.account; act.name=root.action; act.data=root.data;
+            for(const auto& [actor,permission]:root.authorizations) act.authorization.push_back({actor,permission});
+            trx.actions.push_back(std::move(act));
+         }
+         producer.set_transaction_headers(trx);
+         trx.sign(producer.get_private_key("test"_n,"active"),producer.control->get_chain_id());
+         const auto metadata=sc_live_meta(producer,trx);
+         std::vector<std::vector<char>> originals,candidates;
+         const auto collect=[&](auto& dest,const auto& event) {
+            const auto trace=std::get<0>(event);
+            if(trace->id==metadata->id()) dest.push_back(sc_live_trace(trace));
+         };
+         boost::signals2::scoped_connection a=serial.control->applied_transaction().connect([&](const auto& e){collect(originals,e);});
+         boost::signals2::scoped_connection b=parallel.control->applied_transaction().connect([&](const auto& e){collect(candidates,e);});
+         const auto before=producer.control->get_parallel_production_stats(),vb=parallel.control->get_parallel_execution_stats();
+         transaction_trace_ptr actual;
+         BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({metadata},fc::time_point::maximum(),
+            [&](const auto& tx){actual=sc_live_push(producer,tx);return true;}),1u);
+         BOOST_REQUIRE_MESSAGE(actual && !actual->except && actual->receipt,
+            (actual && actual->except?actual->except->to_detail_string():"missing trace or receipt"));
+         BOOST_REQUIRE_EQUAL(actual->action_traces.size(),roots.size());
+         for(size_t i=0;i<roots.size();++i) {
+            const auto& root=actual->action_traces[i];
+            BOOST_CHECK_EQUAL(root.action_ordinal.value,i+1);
+            BOOST_CHECK_EQUAL(root.creator_action_ordinal.value,0u);
+            BOOST_CHECK_EQUAL(sc_number(root.return_value),returned[i]);
+            BOOST_REQUIRE_EQUAL(root.call_traces.size(),calls[i]);
+            for(size_t j=0;j<calls[i];++j) BOOST_CHECK_EQUAL(root.call_traces[j].call_ordinal.value,j+1);
+         }
+         const auto after=producer.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
+            BOOST_CHECK_EQUAL(after.adopted-before.adopted,workers?1u:0u);
+            if(workers) BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,0u);
+         }
+         const auto expected=sc_live_trace(actual);
+         const auto block=producer.finish_block();
+         serial.push_block(block); serial.control->abort_block();
+         parallel.push_block(block); parallel.control->abort_block();
+         BOOST_REQUIRE_EQUAL(originals.size(),1u); BOOST_REQUIRE_EQUAL(candidates.size(),1u);
+         BOOST_CHECK(originals[0]==expected); BOOST_CHECK(candidates[0]==expected);
+         BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+         BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,workers?1u:0u);
+      }
+   }
+}
 void sc_live_success(const std::vector<isolated_sync_program>& programs,const std::vector<uint64_t>& keys,
-                     size_t expected_adopted,size_t calls,uint64_t returned,bool console=true) {
+                     size_t expected_adopted,size_t calls,uint64_t returned,bool console=true,
+                     size_t expected_refreshes=0) {
    sc_live_corpus corpus(programs);
    for(uint16_t workers:{0,1,2,4}) {
       BOOST_TEST_CONTEXT("sync adoption workers="<<workers) {
@@ -1766,6 +2489,8 @@ void sc_live_success(const std::vector<isolated_sync_program>& programs,const st
          BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
             BOOST_CHECK_EQUAL(after.adopted-before.adopted,workers?expected_adopted:0u);
             BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,workers?keys.size()-expected_adopted:0u);
+            BOOST_CHECK_EQUAL(after.prefix_refresh_requests-before.prefix_refresh_requests,workers?expected_refreshes:0u);
+            BOOST_CHECK_EQUAL(after.prefix_refresh_successes-before.prefix_refresh_successes,workers?expected_refreshes:0u);
          }
          const auto block=producer.finish_block();
          serial.push_block(block); serial.control->abort_block(); parallel.push_block(block); parallel.control->abort_block();
@@ -1773,15 +2498,155 @@ void sc_live_success(const std::vector<isolated_sync_program>& programs,const st
          BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
          BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
          BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,workers?expected_adopted:0u);
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().prefix_refresh_requests-vb.prefix_refresh_requests,
+                           workers?expected_refreshes:0u);
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().prefix_refresh_successes-vb.prefix_refresh_successes,
+                           workers?expected_refreshes:0u);
       }
    }
 }
 }
 
 BOOST_AUTO_TEST_SUITE(parallel_sync_adoption_tests)
-BOOST_AUTO_TEST_CASE(export_checked_sync_recovery_corpus) {
-   const char* destination=std::getenv("PUREEOS_PARALLEL_SYNC_RECOVERY_EXPORT_DIR");
-   if(!destination) { BOOST_TEST_MESSAGE("Sync recovery corpus export not requested"); return; }
+BOOST_AUTO_TEST_CASE(ordinary_roots_before_between_and_after_sync_roots_keep_original_order_and_cpu_steps) {
+   auto programs=sc_increment_programs();
+   const auto read="(drop (call $get "+sc_find("bob"_n)+"(i32.const 64)(i32.const 8)))"
+      "(call $out (i32.const 64)(i32.const 8))";
+   // No sync export: it is an ordinary apply root, not a synchronous callee.
+   programs.push_back({{"carol"_n,sc_program(read,"",sc_db_imports,{},false),{}},false});
+   auto ordinary=sc_root(); ordinary.receiver=ordinary.account="carol"_n;
+   sc_live_multi_success(programs,{ordinary,sc_root(3),ordinary,sc_root(4),ordinary},
+      {10,13,13,17,17},{0,1,0,1,0});
+}
+BOOST_AUTO_TEST_CASE(multi_root_business_errors_keep_writes_and_later_roots_see_new_lifetimes) {
+   for(int64_t status:{-10000,-1})
+      sc_live_multi_success(sc_increment_programs(status),{sc_root(3),sc_root(4)},{13,17},{1,1});
+   sc_live_multi_success(sc_multi_lifetime_programs(),{sc_root(77),sc_root(88)},{77,88},{1,1});
+}
+BOOST_AUTO_TEST_CASE(multiple_contract_roots_share_writes_but_not_call_ordinals_sender_or_returns) {
+   const auto sender="(if (i64.eq (i64.load (i32.const 0))(i64.const 4))(then "+
+      sc_assert64("(call $sender)","carol"_n.to_uint64_t())+")(else "+
+      sc_assert64("(call $sender)","test"_n.to_uint64_t())+"))";
+   auto programs=sc_increment_programs(0,sender);
+   programs[0].program.code=sc_program(sc_assert64("(call $sender)",0)+
+      sc_assert32("(call $ret (i32.const 0)(i32.const 0))",0)+sc_root_body());
+   programs.push_back({{"carol"_n,programs[0].program.code,{}},true});
+   sc_live_corpus corpus(programs);
+   for(uint16_t workers:{0,1,2,4}) {
+      BOOST_TEST_CONTEXT("multiple sync roots workers="<<workers) {
+         fc::temp_directory pd,sd,vd;
+         sc_live_chain producer(corpus.configuration(pd,workers,true),corpus.genesis);
+         eosio::testing::tester serial(corpus.configuration(sd,0),corpus.genesis),
+            parallel(corpus.configuration(vd,workers),corpus.genesis);
+         corpus.prefix(producer); corpus.prefix(serial); corpus.prefix(parallel);
+         producer.set_node_finalizers(std::array<name,1>{"eosio"_n}); producer.start();
+         auto trx=sc_live_multi_trx(producer,{3,4,5},1100);
+         // A contract account need not be the declared authorization actor.
+         // The test contract requires no additional Carol authority.
+         trx.actions[1].account="carol"_n;
+         trx.signatures.clear();
+         trx.sign(producer.get_private_key("test"_n,"active"),producer.control->get_chain_id());
+         const auto metadata=sc_live_meta(producer,trx);
+         std::vector<std::vector<char>> originals,candidates;
+         const auto collect=[&](auto& dest,const auto& event) {
+            const auto trace=std::get<0>(event);
+            if(trace->id==metadata->id()) dest.push_back(sc_live_trace(trace));
+         };
+         boost::signals2::scoped_connection a=serial.control->applied_transaction().connect([&](const auto& e){collect(originals,e);});
+         boost::signals2::scoped_connection b=parallel.control->applied_transaction().connect([&](const auto& e){collect(candidates,e);});
+         const auto before=producer.control->get_parallel_production_stats(), vb=parallel.control->get_parallel_execution_stats();
+         transaction_trace_ptr actual;
+         BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({metadata},fc::time_point::maximum(),
+            [&](const auto& tx){actual=sc_live_push(producer,tx);return true;}),1u);
+         BOOST_REQUIRE(actual && !actual->except && actual->receipt);
+         BOOST_REQUIRE_EQUAL(actual->action_traces.size(),3u);
+         const std::array<uint64_t,3> returned{13,17,22};
+         for(size_t i=0;i<3;++i) {
+            const auto& root=actual->action_traces[i];
+            BOOST_CHECK_EQUAL(root.action_ordinal.value,i+1);
+            BOOST_CHECK_EQUAL(root.creator_action_ordinal.value,0u);
+            BOOST_CHECK(root.receiver==(i==1?"carol"_n:"test"_n));
+            BOOST_CHECK_EQUAL(sc_number(root.return_value),returned[i]);
+            BOOST_REQUIRE_EQUAL(root.call_traces.size(),1u);
+            const auto& child=root.call_traces[0];
+            BOOST_CHECK_EQUAL(child.call_ordinal.value,1u);
+            BOOST_CHECK_EQUAL(child.sender_ordinal.value,0u);
+            BOOST_CHECK(child.receiver=="bob"_n);
+            BOOST_CHECK_EQUAL(sc_number(child.return_value),returned[i]);
+         }
+         const auto after=producer.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
+            BOOST_CHECK_EQUAL(after.adopted-before.adopted,workers?1u:0u);
+            if(workers) BOOST_CHECK_GT(after.succeeded-before.succeeded,0u);
+         }
+         chainbase_transaction_state_view view(producer.control->db());
+         const auto balance=view.read_primary({sc_tables[1],primary_query_kind::find,7},8);
+         BOOST_REQUIRE(balance.row); BOOST_CHECK_EQUAL(sc_number(balance.row->value),22u);
+         const auto expected=sc_live_trace(actual);
+         const auto block=producer.finish_block();
+         serial.push_block(block); serial.control->abort_block();
+         parallel.push_block(block); parallel.control->abort_block();
+         BOOST_REQUIRE_EQUAL(originals.size(),1u); BOOST_REQUIRE_EQUAL(candidates.size(),1u);
+         BOOST_CHECK(originals[0]==expected); BOOST_CHECK(candidates[0]==expected);
+         BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+         BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,workers?1u:0u);
+      }
+   }
+}
+BOOST_AUTO_TEST_CASE(late_root_ram_authorization_failure_undoes_prior_roots_and_reuses_the_chain) {
+   auto programs=sc_increment_programs();
+   programs[0].program.code=sc_program(sc_update(sc_find("test"_n),11)+sc_root_body()+
+      "(if (i64.eq (i64.load (i32.const 0))(i64.const 9))(then "+
+      sc_update(sc_find("test"_n),33,"carol"_n)+"))","(i64.const 0)",sc_db_imports);
+   sc_live_corpus corpus(programs);
+   for(uint16_t workers:{1,2,4}) {
+      fc::temp_directory pd,sd;
+      sc_live_chain producer(corpus.configuration(pd,workers,true),corpus.genesis),
+         serial(corpus.configuration(sd,0),corpus.genesis);
+      corpus.prefix(producer); corpus.prefix(serial); producer.start(); serial.start();
+      for(unsigned round=0;round<3;++round) {
+         const auto failed=sc_live_multi_trx(producer,{7,9},1200+round*2);
+         const auto before=producer.control->calculate_integrity_hash(),original=serial.control->calculate_integrity_hash();
+         const auto stats=producer.control->get_parallel_production_stats();
+         transaction_trace_ptr actual;
+         BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({sc_live_meta(producer,failed)},
+            fc::time_point::maximum(),[&](const auto& tx){actual=sc_live_push(producer,tx);return true;}),1u);
+         const auto reference=sc_live_push(serial,sc_live_meta(serial,failed));
+         BOOST_REQUIRE(actual && actual->except); BOOST_REQUIRE(reference && reference->except);
+         BOOST_REQUIRE_EQUAL(actual->action_traces.size(),2u);
+         for(const auto& root:actual->action_traces) BOOST_CHECK_EQUAL(root.call_traces.size(),1u);
+         BOOST_CHECK(sc_live_trace(actual)==sc_live_trace(reference));
+         BOOST_CHECK(producer.control->calculate_integrity_hash()==before);
+         BOOST_CHECK(serial.control->calculate_integrity_hash()==original);
+         BOOST_CHECK(!producer.control->is_known_unexpired_transaction(actual->id));
+         const auto rejected=producer.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(stats,rejected)) {
+            BOOST_CHECK_GT(rejected.succeeded-stats.succeeded,0u);
+            BOOST_CHECK_EQUAL(rejected.adopted-stats.adopted,0u);
+         }
+         const auto healthy=sc_live_multi_trx(producer,{3,2},1201+round*2);
+         BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction({sc_live_meta(producer,healthy)},
+            fc::time_point::maximum(),[&](const auto& tx){actual=sc_live_push(producer,tx);return true;}),1u);
+         BOOST_REQUIRE(actual && !actual->except && actual->receipt);
+         BOOST_REQUIRE_EQUAL(actual->action_traces.size(),2u);
+         const auto accepted=serial.control->push_transaction(sc_live_meta(serial,healthy),fc::time_point::maximum(),
+            fc::seconds(1),actual->receipt->cpu_usage_us,true,0);
+         BOOST_REQUIRE(accepted && !accepted->except);
+         BOOST_CHECK(sc_live_trace(actual)==sc_live_trace(accepted));
+         BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+         const auto after=producer.control->get_parallel_production_stats();
+         BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(rejected,after)) {
+            BOOST_CHECK_EQUAL(after.adopted-rejected.adopted,1u);
+         }
+      }
+   }
+}
+namespace {
+void sc_export_sync_recovery(const char* destination,bool multi_root) {
+   const auto make_trx=[&](auto& chain,uint64_t key,uint64_t nonce) {
+      return multi_root?sc_live_multi_trx(chain,{key,key},nonce):sc_live_trx(chain,key,nonce);
+   };
    const std::filesystem::path directory(destination);
    BOOST_REQUIRE(std::filesystem::create_directory(directory));
    std::filesystem::permissions(directory,std::filesystem::perms::owner_all);
@@ -1822,7 +2687,7 @@ BOOST_AUTO_TEST_CASE(export_checked_sync_recovery_corpus) {
       for(unsigned i=0;i<16;++i) {
          source.start();
          for(uint64_t key:{7u,9u,7u}) {
-            auto trx=sc_live_trx(source,key,nonce++);
+            auto trx=make_trx(source,key,nonce++);
             BOOST_REQUIRE(!source.push_transaction(trx)->except);
          }
          record(source.produce_block());
@@ -1881,24 +2746,23 @@ BOOST_AUTO_TEST_CASE(export_checked_sync_recovery_corpus) {
       BOOST_REQUIRE(row.row); return sc_number(row.row->value);
    };
    const auto before7=balance(7),before9=balance(9);
-   auto one=sc_live_trx(first,7,30000); BOOST_REQUIRE(!first.push_transaction(one)->except);
+   const uint64_t increment=multi_root?2:1;
+   auto one=make_trx(first,7,30000); BOOST_REQUIRE(!first.push_transaction(one)->except);
    fork(first.produce_block());
-   BOOST_CHECK_EQUAL(balance(7),before7+1); BOOST_CHECK_EQUAL(balance(9),before9);
-   auto two=sc_live_trx(second,9,30100); BOOST_REQUIRE(!second.push_transaction(two)->except);
+   BOOST_CHECK_EQUAL(balance(7),before7+increment); BOOST_CHECK_EQUAL(balance(9),before9);
+   auto two=make_trx(second,9,30100); BOOST_REQUIRE(!second.push_transaction(two)->except);
    fork(second.produce_block(fc::milliseconds(1000)));
-   BOOST_CHECK_EQUAL(balance(7),before7); BOOST_CHECK_EQUAL(balance(9),before9+1);
-   auto three=sc_live_trx(second,7,30200); BOOST_REQUIRE(!second.push_transaction(three)->except);
+   BOOST_CHECK_EQUAL(balance(7),before7); BOOST_CHECK_EQUAL(balance(9),before9+increment);
+   auto three=make_trx(second,7,30200); BOOST_REQUIRE(!second.push_transaction(three)->except);
    fork(second.produce_block());
-   BOOST_CHECK_EQUAL(balance(7),before7+1); BOOST_CHECK_EQUAL(balance(9),before9+1);
+   BOOST_CHECK_EQUAL(balance(7),before7+increment); BOOST_CHECK_EQUAL(balance(9),before9+increment);
    const std::vector<fc::sha256> hashes(fixture.reviewed.begin(),fixture.reviewed.end());
    BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format",1)
-      ("fixture_kind","ordinary-sync-recovery")("chain_id",fixture.genesis.compute_chain_id())
+      ("fixture_kind",multi_root?"ordinary-sync-multi-root-recovery":"ordinary-sync-recovery")("chain_id",fixture.genesis.compute_chain_id())
       ("code_hashes",hashes)("checkpoints",checkpoints)("fork_prefix_blocks",prefix_blocks)("forks",forks),
       directory/"manifest.json"));
 }
-BOOST_AUTO_TEST_CASE(export_fresh_sync_producer_fixture) {
-   const char* destination=std::getenv("PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR");
-   if(!destination) { BOOST_TEST_MESSAGE("Sync process fixture export not requested"); return; }
+void sc_export_sync_producer(const char* destination,bool multi_root) {
    const std::filesystem::path directory(destination);
    BOOST_REQUIRE(std::filesystem::create_directory(directory));
    std::filesystem::permissions(directory,std::filesystem::perms::owner_all);
@@ -1920,14 +2784,27 @@ BOOST_AUTO_TEST_CASE(export_fresh_sync_producer_fixture) {
    source.start();
    fc::variants transactions;
    for(unsigned i=0;i<16;++i) {
-      auto trx=sc_live_trx(source,i%2?9:7,10000+i);
+      const uint64_t key=i%2?9:7;
+      auto trx=multi_root?sc_live_multi_trx(source,{key,key},10000+i):sc_live_trx(source,key,10000+i);
       trx.expiration=fc::time_point_sec(fc::time_point::now()+fc::seconds(1800));
       trx.signatures.clear(); trx.sign(source.get_private_key("test"_n,"active"),source.control->get_chain_id());
       const packed_transaction packed(trx,packed_transaction::compression_type::none);
-      const auto& data=trx.actions[0].data;
-      transactions.emplace_back(fc::mutable_variant_object()("id",packed.id())("packed",packed)("actions",1)
-         ("root_data",data)("call_data",std::vector<char>(data.begin(),data.begin()+8))
-         ("return_data",fc::raw::pack(uint64_t{22})));
+      if(multi_root) {
+         fc::variants roots;
+         for(const auto& action:trx.actions) {
+            const auto& data=action.data;
+            roots.emplace_back(fc::mutable_variant_object()("root_data",data)
+               ("call_data",std::vector<char>(data.begin(),data.begin()+8))
+               ("return_data",fc::raw::pack(uint64_t{22})));
+         }
+         transactions.emplace_back(fc::mutable_variant_object()("id",packed.id())("packed",packed)
+            ("actions",trx.actions.size())("roots",roots));
+      } else {
+         const auto& data=trx.actions[0].data;
+         transactions.emplace_back(fc::mutable_variant_object()("id",packed.id())("packed",packed)("actions",1)
+            ("root_data",data)("call_data",std::vector<char>(data.begin(),data.begin()+8))
+            ("return_data",fc::raw::pack(uint64_t{22})));
+      }
    }
    BOOST_REQUIRE(fc::json::save_to_file(corpus.genesis,directory/"genesis.json"));
    BOOST_REQUIRE(fc::json::save_to_file(transactions,directory/"transactions.json"));
@@ -1940,15 +2817,37 @@ BOOST_AUTO_TEST_CASE(export_fresh_sync_producer_fixture) {
    BOOST_REQUIRE(fc::json::save_to_file(providers,directory/"TEST-ONLY-keys.json"));
    const std::vector<fc::sha256> hashes(corpus.reviewed.begin(),corpus.reviewed.end());
    BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format",1)
-      ("fixture_kind","ordinary-sync-primary")("chain_id",source.control->get_chain_id())
+      ("fixture_kind",multi_root?"ordinary-sync-multi-root-primary":"ordinary-sync-primary")("chain_id",source.control->get_chain_id())
       ("code_hashes",hashes)("checkpoints",checkpoints),directory/"manifest.json"));
 }
-BOOST_AUTO_TEST_CASE(one_two_four_workers_adopt_distinct_child_rows_and_fall_back_on_the_same_row) {
-   sc_live_success(sc_keyed_programs(),{7,9,7},2,1,22);
+}
+
+BOOST_AUTO_TEST_CASE(export_checked_sync_recovery_corpus) {
+   const char* destination=std::getenv("PUREEOS_PARALLEL_SYNC_RECOVERY_EXPORT_DIR");
+   if(!destination) { BOOST_TEST_MESSAGE("Sync recovery corpus export not requested"); return; }
+   sc_export_sync_recovery(destination,false);
+}
+BOOST_AUTO_TEST_CASE(export_checked_multi_root_sync_recovery_corpus) {
+   const char* destination=std::getenv("PUREEOS_PARALLEL_SYNC_MULTI_RECOVERY_EXPORT_DIR");
+   if(!destination) { BOOST_TEST_MESSAGE("Multi-root sync recovery export not requested"); return; }
+   sc_export_sync_recovery(destination,true);
+}
+BOOST_AUTO_TEST_CASE(export_fresh_sync_producer_fixture) {
+   const char* destination=std::getenv("PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR");
+   if(!destination) { BOOST_TEST_MESSAGE("Sync process fixture export not requested"); return; }
+   sc_export_sync_producer(destination,false);
+}
+BOOST_AUTO_TEST_CASE(export_fresh_multi_root_sync_producer_fixture) {
+   const char* destination=std::getenv("PUREEOS_PARALLEL_PRODUCER_SYNC_MULTI_EXPORT_DIR");
+   if(!destination) { BOOST_TEST_MESSAGE("Multi-root sync process fixture export not requested"); return; }
+   sc_export_sync_producer(destination,true);
+}
+BOOST_AUTO_TEST_CASE(one_two_four_workers_adopt_distinct_child_rows_and_refresh_the_same_row) {
+   sc_live_success(sc_keyed_programs(),{7,9,7},3,1,22,true,1);
 }
 BOOST_AUTO_TEST_CASE(recursive_parent_visibility_negative_business_writes_and_full_call_traces_match_serial) {
-   sc_live_success(sc_state_programs(0,true),{7,9},1,2,33);
-   sc_live_success(sc_state_programs(-10000,true),{7,9},1,2,33);
+   sc_live_success(sc_state_programs(0,true),{7,9},2,2,33,true,1);
+   sc_live_success(sc_state_programs(-10000,true),{7,9},2,2,33,true,1);
 }
 BOOST_AUTO_TEST_CASE(nonexecuted_calls_before_a_real_child_keep_ordinals_returns_and_single_cpu_charge) {
    auto programs=sc_keyed_programs();
@@ -1990,11 +2889,11 @@ BOOST_AUTO_TEST_CASE(normalized_statuses_clear_returns_and_trace_growth_does_not
    sc_live_success(programs,{7},1,statuses.size(),42);
 }
 BOOST_AUTO_TEST_CASE(disabled_console_keeps_original_empty_markers_without_disabling_sync_adoption) {
-   sc_live_success(sc_state_programs(0,true),{7,9},1,2,33,false);
+   sc_live_success(sc_state_programs(0,true),{7,9},2,2,33,false,1);
 }
 BOOST_AUTO_TEST_CASE(child_delete_recreate_uses_fresh_parent_queries_and_original_child_ram_semantics) {
    sc_live_success(sc_delete_programs(sc_check_row(sc_find("bob"_n),77)+
-      "(call $out (i32.const 64)(i32.const 8))",true),{7,9},1,1,77);
+      "(call $out (i32.const 64)(i32.const 8))",true),{7,9},2,1,77,true,1);
 }
 BOOST_AUTO_TEST_CASE(original_ram_authorization_failure_after_child_writes_undoes_without_reexecuting_parent) {
    auto programs=sc_keyed_programs();
@@ -2136,7 +3035,7 @@ BOOST_AUTO_TEST_CASE(sync_queue_stop_exception_identity_abort_cancel_and_reentry
       }
    }
 }
-BOOST_AUTO_TEST_CASE(unreviewed_child_code_and_multiple_sync_roots_keep_original_whole_transaction_execution) {
+BOOST_AUTO_TEST_CASE(unreviewed_child_code_falls_back_but_eligible_multiple_sync_roots_are_adopted) {
    sc_live_corpus corpus(sc_keyed_programs());
    const auto& child=corpus.programs[1].program.code;
    const auto child_hash=fc::sha256::hash(child.data(),child.size());
@@ -2175,8 +3074,8 @@ BOOST_AUTO_TEST_CASE(unreviewed_child_code_and_multiple_sync_roots_keep_original
          const auto after=producer.control->get_parallel_production_stats();
          BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
             BOOST_CHECK_GT(after.attempts-before.attempts,0u);
-            BOOST_CHECK_EQUAL(after.adopted-before.adopted,0u);
-            BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,1u);
+            BOOST_CHECK_EQUAL(after.adopted-before.adopted,mode==1?1u:0u);
+            BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,mode==1?0u:1u);
          }
          const auto expected=sc_live_trace(actual);const auto block=producer.finish_block();
          serial.push_block(block);serial.control->abort_block();parallel.push_block(block);parallel.control->abort_block();
@@ -2184,8 +3083,60 @@ BOOST_AUTO_TEST_CASE(unreviewed_child_code_and_multiple_sync_roots_keep_original
          BOOST_CHECK(originals[0]==expected);BOOST_CHECK(candidates[0]==expected);
          BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
          BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
-         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,0u);
+         BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,mode==1?1u:0u);
       }
+   }
+}
+BOOST_AUTO_TEST_CASE(multiple_sync_roots_cannot_bypass_signatures_duplicate_checks_or_abort_reset) {
+   sc_live_corpus corpus(sc_keyed_programs());
+   for(uint16_t workers:{1,2,4}) {
+      fc::temp_directory dir;sc_live_chain chain(corpus.configuration(dir,workers,true),corpus.genesis);
+      corpus.prefix(chain);chain.start();
+      const auto valid=sc_live_multi_trx(chain,{7,9,7},1400);
+      auto invalid=valid;invalid.signatures.clear();
+      invalid.sign(chain.get_private_key("bob"_n,"active"),chain.control->get_chain_id());
+      const auto bad=sc_live_meta(chain,invalid),good=sc_live_meta(chain,valid);
+      BOOST_CHECK(bad->id()==good->id()); // ID binds unsigned bytes, not authorization success.
+      const auto snapshot=chain.control->calculate_integrity_hash();
+      const auto before=chain.control->get_parallel_production_stats();
+      transaction_trace_ptr trace;
+      BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({bad},fc::time_point::maximum(),[&](const auto& trx){
+         trace=sc_live_push(chain,trx);return true;
+      }),1u);
+      BOOST_REQUIRE(trace && trace->except);BOOST_CHECK(!trace->receipt);
+      BOOST_CHECK(trace->action_traces.empty());
+      BOOST_CHECK(chain.control->calculate_integrity_hash()==snapshot);
+      BOOST_CHECK(!chain.control->is_known_unexpired_transaction(good->id()));
+      const auto rejected=chain.control->get_parallel_production_stats();
+      BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,rejected)) {
+         BOOST_CHECK_GT(rejected.succeeded-before.succeeded,0u);
+         BOOST_CHECK_EQUAL(rejected.adopted-before.adopted,0u);
+      }
+      BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({good},fc::time_point::maximum(),[&](const auto& trx){
+         trace=sc_live_push(chain,trx);return true;
+      }),1u);
+      BOOST_REQUIRE(trace && !trace->except && trace->receipt);
+      BOOST_REQUIRE_EQUAL(trace->action_traces.size(),3u);
+      for(const auto& root:trace->action_traces) {
+         BOOST_REQUIRE_EQUAL(root.call_traces.size(),1u);
+         BOOST_CHECK_EQUAL(root.call_traces[0].call_ordinal.value,1u);
+      }
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().adopted-rejected.adopted,1u);
+      const auto accepted=chain.control->calculate_integrity_hash();
+      const auto duplicate=sc_live_push(chain,good);
+      BOOST_REQUIRE(duplicate && duplicate->except);
+      BOOST_CHECK_EQUAL(duplicate->except->code(),tx_duplicate::code_value);
+      BOOST_CHECK(chain.control->calculate_integrity_hash()==accepted);
+      chain.control->abort_block(); chain.start();
+      BOOST_CHECK(!chain.control->is_known_unexpired_transaction(good->id()));
+      const auto reset=chain.control->get_parallel_production_stats();
+      const auto fresh=sc_live_meta(chain,sc_live_multi_trx(chain,{9,7},1401));
+      BOOST_CHECK_EQUAL(chain.control->for_each_parallel_production_transaction({fresh},fc::time_point::maximum(),[&](const auto& tx){
+         trace=sc_live_push(chain,tx);return true;
+      }),1u);
+      BOOST_REQUIRE(trace && !trace->except && trace->receipt);
+      BOOST_REQUIRE_EQUAL(trace->action_traces.size(),2u);
+      BOOST_CHECK_EQUAL(chain.control->get_parallel_production_stats().adopted-reset.adopted,1u);
    }
 }
 BOOST_AUTO_TEST_CASE(original_authorization_and_duplicate_checks_still_guard_a_successful_private_attempt) {
@@ -2224,6 +3175,123 @@ BOOST_AUTO_TEST_CASE(original_authorization_and_duplicate_checks_still_guard_a_s
       BOOST_REQUIRE(duplicate && duplicate->except);
       BOOST_CHECK_EQUAL(duplicate->except->code(),tx_duplicate::code_value);
       BOOST_CHECK(chain.control->calculate_integrity_hash()==accepted);
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_sync_pool_tests)
+BOOST_FIXTURE_TEST_CASE(actual_callee_account_miss_carries_only_its_owned_program_hint,sc_fixture) {
+   const std::array captured_accounts{"test"_n};
+   const auto root_only=frozen_primary_state::capture_queries(view,{},{},{},{},captured_accounts);
+   const auto unknown_root=frozen_primary_state::capture_queries(view,{},{},{},{},{});
+   for(size_t workers:{1u,2u,4u}) {
+      isolated_worker_pool pool(workers);
+      for(unsigned mode=0;mode<3;++mode) for(unsigned kind=0;kind<5;++kind) {
+         BOOST_TEST_CONTEXT("callee discovery workers="<<workers<<" mode="<<mode<<" kind="<<kind) {
+            const auto target=kind==1 ? "absent"_n : "bob"_n;
+            const auto root=sc_root();
+            const std::vector roots{root};
+            auto code=sc_program(sc_root_body(target,kind==2 ? 2u : 0u));
+            if(kind==3) code=sc_program("(drop (call $account "+sc_name(target)+"))", "(i64.const 0)",
+               "(import \"env\" \"is_account\" (func $account (param i64)(result i32)))");
+            const std::vector<isolated_sync_program> programs{{{root.receiver,code,{}},true}};
+            const auto owned=kind==4 ? unknown_root : root_only;
+            const auto fingerprint=mode==0 ? isolated_sync_fingerprint(root,programs,{}) :
+               mode==1 ? isolated_sync_transaction_fingerprint(roots,programs,{}) :
+                         isolated_mixed_tree_fingerprint(roots,programs,{});
+            const std::array requests{ordered_attempt_batch::request{fc::sha256::hash("callee discovery"),fingerprint}};
+            ordered_attempt_batch batch(owned,requests);
+            const auto job=mode==0 ? isolated_worker_job{batch.get_ticket(0),root,programs,isolated_sync_context{}} :
+               mode==1 ? isolated_worker_job{batch.get_ticket(0),roots,programs,isolated_sync_context{}} :
+                         isolated_worker_job{batch.get_ticket(0),isolated_mixed_tree_job{roots,programs,{}}};
+            const auto outcomes=pool.run({job});
+            BOOST_REQUIRE_EQUAL(outcomes.size(),1u);
+            const auto& out=outcomes[0];
+            sc_check_no_result(out,isolated_worker_failure::missing_state);
+            BOOST_CHECK(!out.mixed_result);
+            BOOST_REQUIRE(out.request);
+            const auto* account=std::get_if<account_capture_request>(&*out.request);
+            BOOST_REQUIRE(account);
+            BOOST_CHECK(account->account==(kind==4 ? root.receiver : target));
+            // Only an actual call with supported flags may ask for its code
+            // together with its unknown account. is_account/root checks must
+            // not turn into code prefetch, nor bypass account-before-flags.
+            BOOST_CHECK_EQUAL(bool(out.receiver_request),kind<2);
+            if(out.receiver_request) BOOST_CHECK(*out.receiver_request==target);
+            BOOST_CHECK(!batch.complete());
+            BOOST_CHECK_EQUAL(owned->account_count(),kind==4 ? 0u : 1u);
+         }
+      }
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_sync_adoption_tests)
+BOOST_AUTO_TEST_CASE(cold_callee_discovery_counts_match_original_production_and_validation) {
+   for(bool mixed:{false,true}) {
+      auto programs=sc_pair();
+      if(mixed) programs[0].program.code=sc_program(
+         "(call $notify "+sc_name("test"_n)+")"+sc_root_body(),"(i64.const 0)",
+         "(import \"env\" \"require_recipient\" (func $notify (param i64)))");
+      sc_live_corpus corpus(programs);
+      for(uint16_t workers:{1,2,4}) for(size_t root_count:{1u,2u}) for(size_t batch_size:{1u,3u}) {
+         BOOST_TEST_CONTEXT("cold callee mixed="<<mixed<<" workers="<<workers<<" roots="<<root_count<<" batch="<<batch_size) {
+            fc::temp_directory pd,sd,vd;
+            sc_live_chain producer(corpus.configuration(pd,workers,true),corpus.genesis);
+            eosio::testing::tester serial(corpus.configuration(sd,0),corpus.genesis),
+               parallel(corpus.configuration(vd,workers),corpus.genesis);
+            corpus.prefix(producer);corpus.prefix(serial);corpus.prefix(parallel);
+            producer.set_node_finalizers(std::array<name,1>{"eosio"_n});producer.start();
+            std::vector<transaction_metadata_ptr> batch;
+            for(size_t i=0;i<batch_size;++i) {
+               const std::vector<uint64_t> keys=root_count==1 ? std::vector<uint64_t>{13+i} : std::vector<uint64_t>{13+i,17+i};
+               batch.push_back(sc_live_meta(producer,sc_live_multi_trx(producer,keys,100+i*10)));
+            }
+            std::vector<std::vector<char>> expected,originals,candidates;
+            const auto collect=[&](auto& dest,const auto& event) {
+               const auto trace=std::get<0>(event);
+               if(std::any_of(batch.begin(),batch.end(),[&](const auto& tx){return tx->id()==trace->id;}))
+                  dest.push_back(sc_live_trace(trace));
+            };
+            boost::signals2::scoped_connection s=serial.control->applied_transaction().connect([&](const auto& e){collect(originals,e);});
+            boost::signals2::scoped_connection p=parallel.control->applied_transaction().connect([&](const auto& e){collect(candidates,e);});
+            auto& metrics=performance::metrics();
+            const bool was_enabled=metrics.enabled.exchange(true,std::memory_order_relaxed);
+            auto restore=fc::make_scoped_exit([&]{metrics.enabled.store(was_enabled,std::memory_order_relaxed);});
+            const auto cb=metrics.snapshot(performance::stage::parallel_compile).count;
+            const auto before=producer.control->get_parallel_production_stats(),vb=parallel.control->get_parallel_execution_stats();
+            BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(batch,fc::time_point::maximum(),[&](const auto& tx) {
+               const auto trace=sc_live_push(producer,tx);
+               BOOST_REQUIRE_MESSAGE(trace && !trace->except && trace->receipt,
+                  (trace && trace->except ? trace->except->to_detail_string() : "missing trace/receipt"));
+               BOOST_REQUIRE_EQUAL(trace->action_traces.size(),root_count);
+               for(size_t i=0;i<root_count;++i) {
+                  const auto& root=trace->action_traces[i];
+                  BOOST_REQUIRE_EQUAL(root.call_traces.size(),1u);
+                  BOOST_CHECK_EQUAL(sc_number(root.return_value),(i==0 ? 13u : 17u)+expected.size());
+               }
+               expected.push_back(sc_live_trace(trace));return true;
+            }),batch_size);
+            const auto after=producer.control->get_parallel_production_stats();
+            const auto compiled=metrics.snapshot(performance::stage::parallel_compile).count-cb;
+            BOOST_TEST_MESSAGE("CALLEE_DISCOVERY mixed="<<mixed<<" workers="<<workers<<" roots="<<root_count<<" batch="<<batch_size
+               <<" attempts="<<after.attempts-before.attempts<<" compiled="<<compiled);
+            BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(before,after)) {
+               BOOST_CHECK_EQUAL(after.adopted-before.adopted,batch_size);
+               BOOST_CHECK_EQUAL(after.serial_fallbacks-before.serial_fallbacks,0u);
+               BOOST_CHECK_GT(after.attempts-before.attempts,0u);
+            }
+            const auto block=producer.finish_block();
+            serial.push_block(block);serial.control->abort_block();parallel.push_block(block);parallel.control->abort_block();
+            BOOST_REQUIRE_EQUAL(originals.size(),batch_size);BOOST_REQUIRE_EQUAL(candidates.size(),batch_size);
+            BOOST_CHECK(expected==originals);BOOST_CHECK(expected==candidates);
+            BOOST_CHECK(producer.control->calculate_integrity_hash()==serial.control->calculate_integrity_hash());
+            BOOST_CHECK(serial.control->calculate_integrity_hash()==parallel.control->calculate_integrity_hash());
+            BOOST_TEST_CONTEXT(parallel_attempt_diagnostics(vb,parallel.control->get_parallel_execution_stats())) {
+               BOOST_CHECK_EQUAL(parallel.control->get_parallel_execution_stats().adopted-vb.adopted,batch_size);
+            }
+         }
+      }
    }
 }
 BOOST_AUTO_TEST_SUITE_END()

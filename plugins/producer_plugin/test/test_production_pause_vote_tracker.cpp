@@ -3,6 +3,42 @@
 
 BOOST_AUTO_TEST_SUITE(production_pause_vote_tracker_tests)
 
+BOOST_AUTO_TEST_CASE(recovery_history_gets_one_bounded_window_without_fabricated_votes) {
+   const fc::time_point startup(fc::seconds(1000));
+   eosio::production_pause_vote_tracker without_epoch{fc::microseconds(0), fc::seconds(6)};
+   BOOST_CHECK(without_epoch.record_received_block(startup, startup - fc::seconds(100)));
+   BOOST_CHECK(without_epoch.check_pause_status(startup).should_pause());
+   eosio::production_pause_vote_tracker vt{fc::microseconds(0), fc::seconds(6)};
+   vt.begin_observation(startup);
+   BOOST_CHECK(!vt.record_received_block(startup, startup - fc::seconds(100)));
+   BOOST_CHECK(!vt.check_pause_status(startup + fc::seconds(20)).should_pause());
+   const auto live = startup + fc::seconds(21);
+   BOOST_CHECK(vt.record_received_block(live, live));
+   BOOST_CHECK(!vt.check_pause_status(live + fc::seconds(5)).should_pause());
+   // More old blocks do not renew the live observation window.
+   BOOST_CHECK(!vt.record_received_block(live + fc::seconds(5), startup - fc::seconds(50)));
+   auto status = vt.check_pause_status(live + fc::seconds(6) + fc::microseconds(1));
+   BOOST_CHECK(status.should_pause());
+   BOOST_CHECK(status.producer_vote.latest_vote == fc::time_point{});
+   BOOST_CHECK(status.other_vote.latest_vote == fc::time_point{});
+   vt.record_received_producer_vote(live + fc::seconds(7));
+   BOOST_CHECK(vt.check_pause_status(live + fc::seconds(7)).should_pause());
+   vt.record_received_other_vote(live + fc::seconds(7));
+   BOOST_CHECK(!vt.check_pause_status(live + fc::seconds(7)).should_pause());
+}
+
+BOOST_AUTO_TEST_CASE(recovery_observation_preserves_real_votes_and_live_timeout) {
+   eosio::production_pause_vote_tracker vt{fc::microseconds(0), fc::seconds(6)};
+   const fc::time_point startup(fc::seconds(1000));
+   vt.record_received_producer_vote(startup);
+   vt.record_received_other_vote(startup);
+   vt.begin_observation(startup);
+   vt.record_received_block(startup, startup - fc::seconds(100));
+   BOOST_CHECK(!vt.check_pause_status(startup + fc::seconds(20)).should_pause());
+   vt.record_received_block(startup + fc::seconds(21), startup + fc::seconds(21));
+   BOOST_CHECK(vt.check_pause_status(startup + fc::seconds(28)).should_pause());
+}
+
 BOOST_AUTO_TEST_CASE(test_production_pause) {
    // Setup production pause vote tracker:
    eosio::production_pause_vote_tracker vt{fc::milliseconds(250)}; // Use block acceptance threshold of 250 milliseconds.

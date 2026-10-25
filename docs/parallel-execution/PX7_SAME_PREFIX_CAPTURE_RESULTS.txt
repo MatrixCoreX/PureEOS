@@ -1,0 +1,62 @@
+PureEOS：同一前缀的不可变状态捕获复用
+日期：2026-10-20；feature/parallel-tx-execution；未发布，TPS未验。
+
+解决什么
+原实现发现缺失数据后，每轮都从正式库重新复制此前已捕获的内容。
+本次只复用单次同步准备中、正式状态没有变化的查询与行；没有减少发现轮数，
+也没有取消整批等待、权限/资源校验或有序提交，不称为已解决全部并行开销。
+
+如何避免过期余额
+controller::prepare_isolated_attempts 在栈上创建一个捕获 session。
+worker 只拿不可变快照；全部返回后，owner 才能扩展下一版快照。
+旧版表映射不变，新增查询使用写时复制；行数据是 const 共享所有权。
+成功结果保留自己的旧快照和 ticket，未完成位置拿到新快照与新 ticket。
+session 不跨函数返回：提交、新批次、当前前缀冲突重试均创建新的 session。
+回滚/重建后的值与对象身份必须重新读，不能将共享行指针当作正式状态版本证明。
+此作用域“没有正式库写入”的前提来自现有同步控制流，不是跨批 MVCC 缓存。
+
+涉及文件
+libraries/chain/include/eosio/chain/parallel_state_overlay.hpp：
+  新增 owner-only frozen_primary_capture_session；表/行的 const 共享所有权，
+  累计查询计数及仅用于验证的源读取/行复制计数；返回快照不包含 live view。
+libraries/chain/parallel_state_overlay.cpp：
+  稀疏捕获只读取未捕获查询；扩展表映射写时复制。未知查询仍请求数据，
+  不从稀疏行推断缺失/邻接；负查询、五类二级索引语义保留。
+  行、字节、表、账户、主键＋二级查询预算按全部内容累计，失败不发布半成品。
+libraries/chain/controller.cpp：
+  单次 prepare 构造/使用 session；不改变50ms生产/500ms验证准备保护、
+  发现轮次、worker上限、原正式采用与失败回退。
+unittests/parallel_state_view_tests.cpp：
+  新增六项：不可变旧版本、负/未知查询、跨扩展累计预算、取消/线程亲和、
+  主键二级联合边界、新 session 与撤销后重新读取。
+
+已实际完成
+Ubuntu26.04/GCC15.2 定向源码构建；完整状态层66项/90,629断言通过。
+状态层＋SoftFloat的 ASan/UBSan 插桩程序连续三轮通过，每轮72项/90,718断言，
+detect_leaks=1、halt_on_error=1。运行库检查确认 asan/ubsan 真实链接。
+没有报告内存/未定义行为/泄漏，但非插桩的FC/Chainbase、生成JIT和整节点不在
+这个结论内。二级索引独立插桩专项也已固定三轮通过，每轮42项/81,086断言。
+独立TSan插桩状态视图/overlay/二级实现与测试，固定三轮均66项/90,629断言
+通过；运行库检查确认thread sanitizer真实链接，未报告数据竞争，无新增抑制。
+没有重配活动CMake缓存：独立对象/程序使用冻结的本机包含路径与已构建静态依赖。
+FC、Chainbase、SoftFloat依赖未插桩；此项不代表整节点、生成JIT机器码或所有依赖
+完整线程安全验证。原始编译命令、退出码和三轮记录在state-tsan/及driver日志。
+示例复用回归中，两行4KiB payload在三次递增捕获中只从源复制两次，而非五次；
+这是显式捕获/源payload复制计数证明，不包含VM读取副本或适配器内部索引探测，
+不是耗时、TPS或真实业务性能结论。
+
+安全/来源复核
+新访问清单与源码一致。相对旧清单，仅增加一处 owned map::find 与四处
+shared_ptr::get 的词法命中；262个正式host注册及分类、157个潜在写入计数不变。
+旧清单漂移与本次人工复核保留，未把词法匹配当作线程安全审批。
+随后备份原dirty清单并按已复核内容刷新仓库清单；与新生成文件逐字节一致，
+正常--check返回matches=true，approved_parallel_paths仍为0，不扩大任何能力。
+源码归档63ef54ca3e0d27f4c6f34fb9d2f5a74ec88b9ab6d9eed3b7c533bb05bfede39f；
+45,243个构建源码/合约文件与当前字节逐一核验，包括修改过的vendor依赖。
+证据：build/local-tests/parallel-v1-20261020/。
+
+仍需验收
+新整节点、真实WASM/JIT生产与验证、冲突/资源失败/分叉恢复整合回归，
+以及编译结束后的多轮同程序串行/并行真实负载对照。
+首次捕获会增加 const 行所有权控制块，小交易未必受益；必须保留不利样本。
+不得把云端旧9f6446a6或微批50920139的测试成绩移到本次源码上。

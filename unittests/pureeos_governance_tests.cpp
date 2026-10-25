@@ -479,12 +479,14 @@ struct production_governance_fixture : governance_fixture {
    std::filesystem::path contract_dir;
    production_governance_fixture(std::filesystem::path root = PUREEOS_GOVERNANCE_CONTRACTS_DIR,
                                  bool seal_now = true, bool with_extra_voter = false, bool large_supply = false,
-                                 bool resource_split = false, size_t node_count = 4, bool rotation = false,
-                                 bool reward_headroom = false, std::string initial_supply = {})
+                                 bool resource_split = false, size_t node_count = 4, bool rotation = true,
+                                 bool reward_headroom = false, std::string initial_supply = {},
+                                 bool initialize_system = true)
       : governance_fixture(node_count, false), contract_dir(std::move(root)) {
       if (rotation) {
-         // Activate the versioned host API through a real privileged contract
-         // action. Existing genesis manifests and legacy profiles stay unchanged.
+         // Every current production WASM profile imports this API. Activate it
+         // through the real privileged bios action before setcode, not by
+         // changing the native import whitelist or mutating feature tables.
          deploy("eosio"_n, "eosio.bios");
          chain.activate_builtin_protocol_features({builtin_protocol_feature_t::pureeos_rotation_context});
          chain.produce_blocks(2);
@@ -492,7 +494,7 @@ struct production_governance_fixture : governance_fixture {
       chain.create_accounts({"eosio.stake"_n, "eosio.rex"_n, "eosio.ram"_n, "eosio.ramfee"_n,
                              "eosio.bpay"_n, "eosio.vpay"_n, "eosio.saving"_n, "eosio.fees"_n});
       // Bootstrap test users before installing system newaccount RAM billing.
-      if (resource_split) chain.create_account("eosio.reserv"_n);
+      chain.create_account("eosio.reserv"_n);
       if (with_extra_voter) chain.create_account("b1"_n);
       deploy("eosio.token"_n, "eosio.token");
       const std::string supply = initial_supply.empty()
@@ -506,7 +508,42 @@ struct production_governance_fixture : governance_fixture {
       chain.push_action("eosio.token"_n, "transfer"_n, "eosio"_n,
                         fc::mutable_variant_object()("from", "eosio")("to", "alice")("quantity", "1000.0000 SYS")("memo", "test"));
       deploy("eosio"_n, "eosio.system");
+      if (!initialize_system) {
+         BOOST_REQUIRE(!seal_now); // deploy-only negative fixture, no implicit initialization or sealing
+         return;
+      }
       chain.push_action("eosio"_n, "init"_n, "eosio"_n, fc::mutable_variant_object()("version", 0)("core", "4,SYS"));
+      // Governance/single-choice fixtures now deploy the SAME complete new-chain
+      // contract as resource/rotation tests. Sealing needs a real PowerUp market.
+      // Resource fixtures retain control of setup to test the unconfigured case.
+      if (!resource_split) {
+         const auto base = contract_dir / "eosio.system/.powerup/powup.results";
+         chain.set_code("eosio.reserv"_n, read_wasm((base.string() + ".wasm").c_str()));
+         std::string abi; fc::read_file_contents(base.string() + ".abi", abi);
+         chain.set_abi("eosio.reserv"_n, abi);
+         // cfgpowerup assigns native resource limits. Its 1400-byte gift must
+         // not be mistaken for enough RAM for this account's code and ABI.
+         // Buy RAM with real tokens, including the high-supply precision fixture.
+         chain.push_action("eosio"_n, "buyram"_n, "eosio"_n,
+            fc::mutable_variant_object()("payer", "eosio")("receiver", "eosio.reserv")
+               ("quant", large_supply ? "1000000.0000 SYS" : "100.0000 SYS"));
+         auto config = [] {
+            return fc::mutable_variant_object()("current_weight_ratio", fc::variant())
+               ("target_weight_ratio", fc::variant())("assumed_stake_weight", fc::variant())
+               ("target_timestamp", fc::variant())("exponent", 2.0)("decay_secs", 86400)
+               ("min_price", "1.0000 SYS")("max_price", "100.0000 SYS");
+         };
+         chain.push_action("eosio"_n, "cfgpowerup"_n, "eosio"_n,
+            fc::mutable_variant_object()("args", fc::mutable_variant_object()
+               ("net", config())("cpu", config())("powerup_days", 1)("min_powerup_fee", "0.0001 SYS")));
+      }
+      // After the first positive vote the current contract may really admit a
+      // signer. These socket-free fixtures represent online nodes, not missing
+      // keys masquerading as a quorum or production failure.
+      chain.produce_blocks(2);
+      chain.close(); chain.open();
+      auto signers = nodes; signers.push_back("eosio"_n);
+      chain.set_node_finalizers(signers);
       if (seal_now) seal();
    }
    void deploy(account_name account, const std::string& contract) {
@@ -556,14 +593,32 @@ struct production_governance_fixture : governance_fixture {
 
 BOOST_AUTO_TEST_SUITE(pureeos_governance_contract_tests)
 BOOST_AUTO_TEST_CASE(production_bootstrap_and_electorate_ranking) {
-   production_governance_fixture f;
+   production_governance_fixture f(PUREEOS_GOVERNANCE_CONTRACTS_DIR, false);
+   // The genesis key can distribute funds only before govinit seals eosio.
+   // Actual registration, staking and voting below still occur after sealing
+   // with each candidate's own ordinary key, never an administrative bypass.
+   for (auto n : f.nodes) {
+      f.chain.push_action("eosio"_n, "buyram"_n, "eosio"_n,
+         fc::mutable_variant_object()("payer", "eosio")("receiver", n)("quant", "10.0000 SYS"));
+      f.chain.push_action("eosio.token"_n, "transfer"_n, "eosio"_n,
+         fc::mutable_variant_object()("from", "eosio")("to", n)("quantity", "10.0000 SYS")("memo", "one-choice electorate"));
+   }
+   f.seal();
+   BOOST_CHECK_THROW(f.push({f.chain.get_action("eosio"_n, "buyram"_n, {{"eosio"_n, "active"_n}},
+      fc::mutable_variant_object()("payer", "eosio")("receiver", f.nodes[0])("quant", "1.0000 SYS"))},
+      "eosio"_n), unsatisfied_authorization);
    f.push({f.production_refresh()}, "developer"_n);
    BOOST_REQUIRE_EQUAL(f.state().current_voters.size(), 1u);
    BOOST_CHECK(f.state().current_voters[0] == "eosio"_n);
-   for (size_t i = 0; i < f.nodes.size(); ++i) f.register_node(f.nodes[i], i != 3);
-   f.fund_voter();
-   f.chain.push_action("eosio"_n, "voteproducer"_n, "alice"_n,
-                       fc::mutable_variant_object()("voter", "alice")("proxy", "")("producers", f.nodes));
+   for (size_t i = 0; i < f.nodes.size(); ++i) {
+      const auto n = f.nodes[i];
+      f.register_node(n, i != 3);
+      f.chain.push_action("eosio"_n, "delegatebw"_n, n,
+         fc::mutable_variant_object()("from", n)("receiver", n)("stake_net_quantity", "1.0000 SYS")
+            ("stake_cpu_quantity", "1.0000 SYS")("transfer", false));
+      f.chain.push_action("eosio"_n, "voteproducer"_n, n,
+         fc::mutable_variant_object()("voter", n)("proxy", "")("producers", std::vector<name>{n}));
+   }
    f.push({f.production_refresh(), action({permission_level{"developer"_n, "upgrade"_n}}, f.proposal())}, "developer"_n);
    BOOST_REQUIRE_EQUAL(f.state().proposal_voters.size(), 3u); // fourth lacks BLS
    for (size_t i = 0; i < 3; ++i) BOOST_CHECK(f.state().proposal_voters[i] == f.nodes[i]);
@@ -609,6 +664,17 @@ struct single_choice_fixture : production_governance_fixture {
       if (with_loan_liquidity) {
          chain.push_action("eosio.token"_n, "transfer"_n, "eosio"_n,
             fc::mutable_variant_object()("from", "eosio")("to", "alice")("quantity", "50000.0000 SYS")("memo", "test liquidity"));
+         // The renter needs NET before its first deposit; a CPU-only loan
+         // cannot supply it. Sponsor ordinary resources before sealing, owned
+         // by eosio (transfer=false), so neither recipient gains voting stake.
+         // The maintenance payer must also retain bandwidth after loan expiry.
+         for (auto receiver : {"b1"_n, nodes[3]}) {
+            chain.push_action("eosio"_n, "buyram"_n, "eosio"_n, fc::mutable_variant_object()
+               ("payer", "eosio")("receiver", receiver)("quant", "10.0000 SYS"));
+            chain.push_action("eosio"_n, "delegatebw"_n, "eosio"_n, fc::mutable_variant_object()
+               ("from", "eosio")("receiver", receiver)("stake_net_quantity", "10.0000 SYS")
+               ("stake_cpu_quantity", "10.0000 SYS")("transfer", false));
+         }
       }
       if (large_supply) {
          for (auto user : {"alice"_n, "b1"_n})
@@ -676,7 +742,7 @@ struct single_choice_fixture : production_governance_fixture {
 }
 
 BOOST_AUTO_TEST_SUITE(pureeos_single_choice_contract_tests)
-BOOST_AUTO_TEST_CASE(governance_scan_bounds_visited_rows_and_never_truncates_electorate) {
+BOOST_AUTO_TEST_CASE(governance_live_index_preserves_full_electorate_above_1024_registrations) {
    production_governance_fixture f(PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR, false, false, false, false, 1025);
    f.populate_sparse_governance_candidates();
    f.chain.push_action("eosio"_n, "unregprod"_n, f.nodes[209],
@@ -692,18 +758,19 @@ BOOST_AUTO_TEST_CASE(governance_scan_bounds_visited_rows_and_never_truncates_ele
       return f.push({f.production_refresh(), action({permission_level{"developer"_n, "upgrade"_n}}, f.proposal())},
                     "developer"_n);
    };
-   BOOST_CHECK_EXCEPTION(propose(), fc::exception, [](const auto& e) {
-      return e.to_detail_string().find("governance candidate scan limit exceeded") != std::string::npos;
-   });
-   BOOST_REQUIRE(!f.state().pending); // never publish the first 209 with a smaller threshold
-   BOOST_CHECK(fc::raw::pack(f.state().current_voters) == before); // complete transaction rollback
-   f.chain.produce_block(); // give the second identical unregister action a distinct transaction header
-   f.chain.push_action("eosio"_n, "unregprod"_n, f.nodes[209],
-      fc::mutable_variant_object()("producer", f.nodes[209]));
-   BOOST_REQUIRE_NO_THROW(propose()); // exactly 1024 visited rows now contain all 210 eligible nodes
+   BOOST_REQUIRE_NO_THROW(propose()); // incomplete registrations cannot consume live qualification-index work
+   BOOST_REQUIRE(f.state().pending);
    BOOST_REQUIRE_EQUAL(f.state().proposal_voters.size(), 210u);
    BOOST_CHECK(std::find(f.state().proposal_voters.begin(), f.state().proposal_voters.end(), f.nodes.back()) !=
                f.state().proposal_voters.end());
+   const auto frozen = fc::raw::pack(f.state().proposal_voters);
+   BOOST_CHECK(fc::raw::pack(f.state().current_voters) == before);
+   f.chain.produce_block();
+   f.chain.push_action("eosio"_n, "unregprod"_n, f.nodes[209],
+      fc::mutable_variant_object()("producer", f.nodes[209]));
+   f.push({f.production_refresh()}, "developer"_n);
+   BOOST_REQUIRE_EQUAL(f.state().current_voters.size(), 210u);
+   BOOST_CHECK(fc::raw::pack(f.state().proposal_voters) == frozen);
 }
 
 BOOST_AUTO_TEST_CASE(zero_stake_can_select_one_producer_without_creating_votes) {
@@ -870,15 +937,27 @@ BOOST_AUTO_TEST_CASE(cpu_net_only_voter_can_refresh_and_clear) {
    BOOST_CHECK_EQUAL(f.row("voters"_n)["staked"].as_int64(), 2000000);
 }
 
-BOOST_AUTO_TEST_CASE(uninitialized_upgrade_cannot_silently_enable_new_policy) {
-   production_governance_fixture f(PUREEOS_GOVERNANCE_CONTRACTS_DIR, false);
-   f.contract_dir = PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR;
-   f.deploy("eosio"_n, "eosio.system");
-   BOOST_CHECK_EXCEPTION(f.chain.push_action("eosio"_n, "voteproducer"_n, "alice"_n,
-      fc::mutable_variant_object()("voter", "alice")("proxy", "")("producers", std::vector<account_name>{})),
+BOOST_AUTO_TEST_CASE(uninitialized_current_profile_rejects_votes_and_initializes_only_once) {
+   // All release contract paths are the same CURRENT profile, not an old
+   // governance-only WASM to migrate. Test a genuinely uninitialized new chain.
+   production_governance_fixture f(PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR, false, false, false,
+      false, 4, true, false, {}, false);
+   const auto policy = [&] { return f.chain.get_row_by_account("eosio"_n, "eosio"_n, "votepolicy"_n, "votepolicy"_n); };
+   const auto vote = [&] { return f.push({f.chain.get_action("eosio"_n, "voteproducer"_n, {{"alice"_n, "active"_n}},
+      fc::mutable_variant_object()("voter", "alice")("proxy", "")("producers", std::vector<account_name>{}))}, "alice"_n); };
+   const auto init = [&] { return f.push({f.chain.get_action("eosio"_n, "init"_n, {{"eosio"_n, "active"_n}},
+      fc::mutable_variant_object()("version", 0)("core", "4,SYS"))}, "eosio"_n); };
+   BOOST_REQUIRE(policy().empty());
+   BOOST_CHECK_EXCEPTION(vote(),
       fc::exception, [](const auto& e) { return single_choice_fixture::message(e, "requires fresh-chain initialization"); });
-   BOOST_CHECK_THROW(f.chain.push_action("eosio"_n, "init"_n, "eosio"_n,
-      fc::mutable_variant_object()("version", 0)("core", "4,SYS")), fc::exception);
+   BOOST_CHECK(policy().empty()); // failed voting must not silently initialize
+   BOOST_REQUIRE_NO_THROW(init());
+   BOOST_REQUIRE(!policy().empty());
+   const auto initialized = policy();
+   BOOST_REQUIRE_NO_THROW(vote());
+   BOOST_CHECK_EXCEPTION(init(), fc::exception, [](const auto& e) {
+      return single_choice_fixture::message(e, "system contract has already been initialized"); });
+   BOOST_CHECK(policy() == initialized); // new signed transaction, not a duplicate-ID rejection
 }
 
 BOOST_AUTO_TEST_CASE(integer_votes_do_not_grow_with_time_or_repeated_refresh) {
@@ -1026,11 +1105,9 @@ BOOST_AUTO_TEST_SUITE_END()
 #endif // PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR
 #ifdef PUREEOS_RESOURCE_SPLIT_CONTRACTS_DIR
 #include "pureeos_resource_split_tests.inc"
-#ifdef PUREEOS_SINGLE_CHOICE_CONTRACTS_DIR
-#include "pureeos_committee_boundary_tests.inc"
-#endif
 #ifdef PUREEOS_ROTATION_CONTRACTS_DIR
 #include "pureeos_sequential_rotation_tests.inc"
+#include "pureeos_committee_boundary_tests.inc"
 #include "pureeos_reward_halving_tests.inc"
 #include "pureeos_reward_activation_tests.inc"
 #endif

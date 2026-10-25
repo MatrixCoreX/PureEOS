@@ -6,6 +6,7 @@
 #include <eosio/chain/global_property_object.hpp>
 #include <eosio/chain/wast_to_wasm.hpp>
 #include <eosio/testing/tester.hpp>
+#include "parallel_test_runtime.hpp"
 #include <eosio/testing/bls_utils.hpp>
 #include <boost/test/unit_test.hpp>
 #include <fc/io/raw.hpp>
@@ -208,7 +209,7 @@ struct cf_corpus {
    }
    controller::config configuration(const fc::temp_directory& dir,uint16_t workers,bool production=false) const {
       auto cfg=eosio::testing::base_tester::default_config(dir).first;
-      cfg.wasm_runtime=wasm_interface::vm_type::eos_vm; cfg.parallel_validation_threads=workers;
+      eosio::testing::configure_parallel_test_runtime(cfg); cfg.parallel_validation_threads=workers;
       cfg.parallel_production_enabled=production && workers!=0; cfg.parallel_code_allowlist=reviewed;
       return cfg;
    }
@@ -428,6 +429,19 @@ BOOST_FIXTURE_TEST_CASE(ordinary_adjacent_null_output_rejects_the_whole_private_
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(parallel_context_free_adoption_tests)
+
+BOOST_AUTO_TEST_CASE(selected_context_free_profile_configures_canonical_and_private_engines) {
+   cf_corpus corpus;
+   const bool jit = eosio::testing::base_tester::arguments_contains("--eos-vm-jit");
+   for (uint16_t workers : {0, 1, 4}) for (bool production : {false, true}) {
+      fc::temp_directory directory;
+      const auto cfg = corpus.configuration(directory, workers, production);
+      BOOST_CHECK(cfg.wasm_runtime == (jit ? wasm_interface::vm_type::eos_vm_jit : wasm_interface::vm_type::eos_vm));
+      BOOST_CHECK(cfg.parallel_engine == (jit ? isolated_vm_engine::jit : isolated_vm_engine::interpreter));
+      BOOST_CHECK_EQUAL(cfg.parallel_validation_threads, workers);
+      BOOST_CHECK_EQUAL(cfg.parallel_production_enabled, production && workers != 0);
+   }
+}
 
 BOOST_FIXTURE_TEST_CASE(production_and_validation_adopt_both_queues_and_match_original_state,cf_corpus) {
    for(uint16_t workers:{0,1,2,4}) {
@@ -669,7 +683,7 @@ BOOST_AUTO_TEST_CASE(export_fresh_context_free_producer_fixture) {
    auto [key,pub,proof]=get_bls_key("eosio"_n);
    genesis.initial_savanna.emplace(); genesis.initial_savanna->finalizer_key=pub; genesis.initial_savanna->proof_of_possession=proof;
    BOOST_REQUIRE(fc::json::from_string(fc::json::to_string(genesis,fc::time_point::maximum())).as<genesis_state>().compute_chain_id()==genesis.compute_chain_id());
-   fc::temp_directory dir; auto cfg=base_tester::default_config(dir).first; cfg.wasm_runtime=wasm_interface::vm_type::eos_vm;
+   fc::temp_directory dir; auto cfg=base_tester::default_config(dir).first; eosio::testing::configure_parallel_test_runtime(cfg);
    cf_chain source(cfg,genesis); source.set_node_finalizers(std::array<name,1>{"eosio"_n});
    const auto code=cf_graph(cf_business_checks(),true); fc::variants checkpoints;
    auto seal=[&] {

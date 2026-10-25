@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "base_commit": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+  "patch_sha256": "873efa04cc5a7e9373037439015c4e39c0d454f9cc1e59ec66a3e52610ddb059",
+  "files": {
+    "include/eosio/vm/allocator.hpp": {
+      "base_sha256": "25055322fc473eb18e67d3b36cb44fe4d9de28736dc2d3239a5d687423f556a1",
+      "patched_sha256": "568b79d428a2ae12eaf64c4a89f74bb168044057f194308034f8b42207bb7cef"
+    },
+    "include/eosio/vm/parser.hpp": {
+      "base_sha256": "b91f791f0cc66dc3b31a7e0900bb87816c00468e93c7375281270855331cff55",
+      "patched_sha256": "9a33cfc5e1a9042df49e9a4e4a0d517fe6d9178d9739503883977ab959544d40"
+    },
+    "include/eosio/vm/x86_64.hpp": {
+      "base_sha256": "7f1a14685f74253f4e180cd27a88a50b14bd08fa147069782b1d3e5564c46d77",
+      "patched_sha256": "ccbd6877ed08f80e59057424823243ae5bf829adbba7cb1d57d16d117bc31fc5"
+    }
+  }
+}

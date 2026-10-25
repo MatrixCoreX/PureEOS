@@ -2,8 +2,9 @@
 // mutation, threshold override, or shortened production clock is used.
 namespace {
 struct positive_vote_reward_fixture : resource_split_fixture {
-   explicit positive_vote_reward_fixture(std::filesystem::path root = rotation_contracts_for_test())
-      : resource_split_fixture(true, 2, std::move(root), true, true, "10000.0000 SYS") {
+   explicit positive_vote_reward_fixture(std::filesystem::path root = rotation_contracts_for_test(),
+                                         std::string issued_supply = "10000.0000 SYS")
+      : resource_split_fixture(true, 2, std::move(root), true, true, std::move(issued_supply)) {
       register_node(nodes[1]);
       // Local signing keys are startup-only; preserve/commit the real chain
       // before enabling the ordinary producers' keys, as in rotation fixtures.
@@ -70,6 +71,67 @@ void reviewed_positive_vote_upgrade(resource_split_fixture& f) {
 }
 
 BOOST_AUTO_TEST_SUITE(pureeos_reward_activation_tests)
+
+BOOST_AUTO_TEST_CASE(zero_amount_claim_preserves_block_credits_cooldown_and_fractional_interval) {
+   positive_vote_reward_fixture f(rotation_contracts_for_test(), "1100.0000 SYS");
+   f.seal();
+   f.vote();
+   f.one_unit();
+   f.settle_single_producer();
+   const auto owner = f.nodes[0];
+   // Exercise the real fixed policy, never edit a table or shorten its period.
+   // Ten four-year eras fit the native block timestamp range and make a daily
+   // reward smaller than one SYS unit even with this fixture's bootstrap funds.
+   for (unsigned era = 1; era <= 10; ++era) {
+      f.chain.produce_block(fc::days(1461));
+      f.chain.produce_blocks(2);
+      const auto before = f.balance(owner);
+      f.call("claimrewards"_n, fc::mutable_variant_object()("owner", owner), owner);
+      BOOST_REQUIRE_GT(f.balance(owner), before);
+      BOOST_REQUIRE_EQUAL(f.global()["perblock_bucket"].as_int64(), 0);
+      BOOST_REQUIRE_EQUAL(f.global()["total_unpaid_blocks"].as_uint64(), 0u);
+      // Commit the claim before the next multi-year jump. The tester replays
+      // pending transactions when starting a later block; their short-lived
+      // headers must not be carried into the next era.
+      f.chain.produce_block();
+   }
+   BOOST_REQUIRE_EQUAL(f.rewards()["current_era"].as_uint64(), 10u);
+   f.chain.produce_block(fc::days(2));
+   f.chain.produce_blocks(2);
+   const auto global = resource_json(f.global());
+   const auto producer = resource_json(f.row("producersv2"_n, owner.to_uint64_t()));
+   const auto policy = resource_json(f.rewards());
+   const auto supply = f.supply(), balance = f.balance(owner), bucket_balance = f.balance("eosio.bpay"_n);
+   const auto unpaid = f.row("producersv2"_n, owner.to_uint64_t())["unpaid_blocks"].as_uint64();
+   BOOST_REQUIRE_GT(unpaid, 0u);
+   const auto from = reward_fixture::when(f.global()["last_pervote_bucket_fill"]);
+   const auto elapsed = (f.chain.control->pending_block_time() - from).count();
+   const long double accrued = static_cast<long double>(supply) * std::ldexp(
+      static_cast<long double>(reward_fixture::base_rate), -10) * elapsed / (364LL * reward_fixture::day_us);
+   BOOST_REQUIRE_GT(accrued, 0);
+   BOOST_REQUIRE_LT(accrued, 1);
+   BOOST_CHECK_EXCEPTION(f.call("claimrewards"_n, fc::mutable_variant_object()("owner", owner), owner),
+      fc::exception, [](const auto& e) { return resource_split_fixture::message(e, "no payable block rewards yet"); });
+   BOOST_CHECK_EQUAL(resource_json(f.global()), global);
+   BOOST_CHECK_EQUAL(resource_json(f.row("producersv2"_n, owner.to_uint64_t())), producer);
+   BOOST_CHECK_EQUAL(resource_json(f.rewards()), policy);
+   BOOST_CHECK_EQUAL(f.supply(), supply);
+   BOOST_CHECK_EQUAL(f.balance(owner), balance);
+   BOOST_CHECK_EQUAL(f.balance("eosio.bpay"_n), bucket_balance);
+   // The rejected claim must not reset the fill interval: four days accrue one
+   // whole unit, whereas two separate truncated two-day fills both accrue zero.
+   // The old-WASM negative control unexpectedly accepts the zero claim. Commit
+   // that transaction too, so its intended assertion failures cannot be hidden
+   // behind a later expired-transaction abort when advancing two more days.
+   f.chain.produce_block();
+   f.chain.produce_block(fc::days(2));
+   f.chain.produce_blocks(2);
+   f.call("claimrewards"_n, fc::mutable_variant_object()("owner", owner), owner);
+   BOOST_CHECK_EQUAL(f.supply() - supply, 1);
+   BOOST_CHECK_EQUAL(f.balance(owner) - balance, 1);
+   BOOST_CHECK_EQUAL(f.global()["total_unpaid_blocks"].as_uint64(), 0u);
+   BOOST_CHECK_EQUAL(f.row("producersv2"_n, owner.to_uint64_t())["unpaid_blocks"].as_uint64(), 0u);
+}
 
 BOOST_AUTO_TEST_CASE(liquid_balance_registration_empty_votes_and_unvoted_stake_do_not_activate) {
    positive_vote_reward_fixture f;

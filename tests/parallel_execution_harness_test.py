@@ -97,7 +97,15 @@ class HarnessTest(unittest.TestCase):
                                (["--token-fixture", "--sync-fixture"], "cannot be combined"),
                                (["--inline-fixture", "--sync-fixture"], "cannot be combined"),
                                (["--context-free-fixture", "--sync-fixture"], "cannot be combined"),
-                               (["--coded-notification-fixture", "--sync-fixture"], "cannot be combined")]:
+                               (["--coded-notification-fixture", "--sync-fixture"], "cannot be combined"),
+                               (["--sync-fixture", "--sync-multi-root-fixture"], "cannot be combined"),
+                               (["--token-fixture", "--sync-multi-root-fixture"], "cannot be combined"),
+                               (["--inline-fixture", "--sync-multi-root-fixture"], "cannot be combined"),
+                               (["--coded-notification-fixture", "--sync-multi-root-fixture"], "cannot be combined"),
+                               (["--context-free-fixture", "--sync-multi-root-fixture"], "cannot be combined"),
+                               *[(["--mixed-fixture", flag], "cannot be combined") for flag in
+                                 ("--token-fixture", "--coded-notification-fixture", "--inline-fixture",
+                                  "--context-free-fixture", "--sync-fixture", "--sync-multi-root-fixture")]]:
             with self.subTest(flags=flags):
                 result = subprocess.run([sys.executable, "-B", str(script), *required, *flags],
                                         capture_output=True, text=True, timeout=15)
@@ -118,6 +126,105 @@ class HarnessTest(unittest.TestCase):
                                 ((2, 3, 4, 4, 12), "counters"), ((2, 8, 3, 4, 12), "counters")):
             with self.subTest(counts=counts), self.assertRaisesRegex(RuntimeError, message):
                 check_sync_production_totals([list(map(str, counts))])
+
+    def test_mixed_production_totals_bind_two_shared_row_batches(self):
+        from parallel_producer_process_test import check_mixed_production_totals
+        valid = [["2", "160", "16", "2", "14"]]
+        check_mixed_production_totals(valid)
+        for totals in ([], valid + valid, [["2", "160"]]):
+            with self.subTest(totals=totals), self.assertRaisesRegex(RuntimeError, "totals"):
+                check_mixed_production_totals(totals)
+        for row in ((2, 160, 16, 4, 12), (1, 160, 16, 2, 14), (2, 160, 16, 2, 13),
+                    (2, 1, 16, 2, 14), (2, 160, 1, 2, 14)):
+            with self.subTest(row=row), self.assertRaises(RuntimeError):
+                check_mixed_production_totals([list(map(str, row))])
+
+    def test_mixed_submission_compares_each_nested_frame_and_original_execution_order(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_mixed_response
+        common = {"except": None, "error_code": None, "console": "", "console_markers": []}
+        expected, traces = [], []
+        order = [1, 3, 4, 6, 5, 2, 7, 8, 10, 9]
+        for ordinal in range(1, 11):
+            root = ordinal <= 2
+            pure = ordinal in (6, 10)
+            receiver = "test" if root else "bob" if ordinal in (5, 9) else "empty" if pure else "carol"
+            children = []
+            for index in range(3 if root else 1 if ordinal in (5, 9) else 0):
+                children.append({"call_ordinal": index + 1, "sender_ordinal": index, "receiver": "bob",
+                                 "read_only": False, "hex_data": "00" * (2 - index) if root else "",
+                                 "return_value_hex_data": "0b00000000000000000000000000000000"})
+            item = {"action_ordinal": ordinal, "creator_action_ordinal": 0 if root else 1 if ordinal < 7 else 2,
+                    "closest_unnotified_ancestor_action_ordinal": 0 if root else 1 if ordinal < 7 else 2,
+                    "receiver": receiver, "context_free": pure,
+                    "act": {"account": "test" if root else receiver, "name": "run" if root else "pure" if pure else "normal",
+                            "authorization": [{"actor": "test", "permission": "active"}] if root else [],
+                            "data": ordinal.to_bytes(8, "little").hex()},
+                    "return_value_hex_data": children[0]["return_value_hex_data"] if children else "",
+                    "calls": children}
+            expected.append(item)
+            trace = {**common, **{k: deepcopy(v) for k, v in item.items() if k not in ("calls", "receiver")},
+                     "receipt": {"receiver": receiver, "global_sequence": 100 + order.index(ordinal)},
+                     "account_ram_deltas": [],
+                     "call_traces": [{**common, **child, "error_id": None} for child in children]}
+            traces.append(trace)
+        entry = {"actions": 2, "expected": {"actions": expected, "execution_order": order}}
+        response = {"processed": {"action_traces": traces}}
+        original = deepcopy((entry, response))
+        check_mixed_response(entry, response)
+        self.assertEqual((entry, response), original)
+        nested = deepcopy(response)
+        nested["processed"]["action_traces"] = nested["processed"]["action_traces"][:2]
+        nested["processed"]["action_traces"][0]["inline_traces"] = deepcopy(traces[2:6])
+        nested["processed"]["action_traces"][1]["inline_traces"] = deepcopy(traces[6:])
+        for trace in nested["processed"]["action_traces"]:
+            trace["act"]["hex_data"] = trace["act"]["data"]
+            trace["act"]["data"] = {"abi_decoded": "not the original bytes"}
+        check_mixed_response(entry, nested)
+        for ordinal in range(10):
+            for field, value in (("action_ordinal", 99), ("creator_action_ordinal", 99),
+                                 ("closest_unnotified_ancestor_action_ordinal", 99),
+                                 ("context_free", not traces[ordinal]["context_free"]),
+                                 ("return_value_hex_data", "ffff"), ("account_ram_deltas", [{"account": "bob", "delta": 8}]),
+                                 ("except", {"code": 1}), ("error_code", 1), ("console", "bad"), ("console_markers", [1])):
+                altered = deepcopy(response)
+                altered["processed"]["action_traces"][ordinal][field] = value
+                with self.subTest(ordinal=ordinal, field=field), self.assertRaises(RuntimeError):
+                    check_mixed_response(entry, altered)
+        for ordinal in (0, 1, 4, 8):
+            for index in range(len(traces[ordinal]["call_traces"])):
+                for field, value in (("call_ordinal", 99), ("sender_ordinal", 99), ("receiver", "wrong"),
+                                     ("read_only", True), ("hex_data", "ffff"), ("return_value_hex_data", "ffff"),
+                                     ("except", {"code": 1}), ("error_code", 1), ("error_id", -1),
+                                     ("console", "bad"), ("console_markers", [1])):
+                    altered = deepcopy(response)
+                    altered["processed"]["action_traces"][ordinal]["call_traces"][index][field] = value
+                    with self.subTest(ordinal=ordinal, index=index, field=field), self.assertRaises(RuntimeError):
+                        check_mixed_response(entry, altered)
+        for fault in range(9):
+            altered_entry, altered = deepcopy((entry, response))
+            items = altered["processed"]["action_traces"]
+            if fault == 0:
+                items.pop()
+            elif fault == 1:
+                items.append(deepcopy(items[0]))
+            elif fault == 2:
+                items[0]["receipt"]["global_sequence"] = items[1]["receipt"]["global_sequence"]
+            elif fault == 3:
+                items[0]["receipt"]["global_sequence"], items[1]["receipt"]["global_sequence"] = \
+                    items[1]["receipt"]["global_sequence"], items[0]["receipt"]["global_sequence"]
+            elif fault == 4:
+                items[0]["call_traces"].pop()
+            elif fault == 5:
+                items[0]["receipt"]["receiver"] = "wrong"
+            elif fault == 6:
+                items[0]["act"]["data"] = "ffff"
+            elif fault == 7:
+                altered_entry["actions"] = 1
+            else:
+                altered_entry["expected"]["actions"][0]["calls"].pop()
+            with self.subTest(fault=fault), self.assertRaises(RuntimeError):
+                check_mixed_response(altered_entry, altered)
 
     def test_sync_submission_trace_checks_bind_root_child_payload_and_original_status(self):
         from copy import deepcopy
@@ -187,6 +294,75 @@ class HarnessTest(unittest.TestCase):
             target[key] = value
             with self.subTest(path=path, key=key), self.assertRaisesRegex(RuntimeError, message):
                 check_sync_response(changed_entry, changed)
+
+    def test_multi_sync_trace_checks_each_original_root_and_its_own_child_without_mutating_input(self):
+        from copy import deepcopy
+        from parallel_producer_process_test import check_multi_sync_response
+        data = (7).to_bytes(8, "little").hex()
+        returned = (22).to_bytes(8, "little").hex()
+        entry = {"actions": 2, "roots": []}
+        traces = []
+        for index in range(2):
+            root_data = data + (10000 + index).to_bytes(8, "little").hex()
+            entry["roots"].append({"root_data": root_data, "call_data": data, "return_data": returned})
+            common = {"except": None, "error_code": None, "console": "", "console_markers": []}
+            child = {**common, "call_ordinal": 1, "sender_ordinal": 0, "receiver": "bob",
+                     "read_only": False, "hex_data": data, "return_value_hex_data": returned, "error_id": None}
+            traces.append({**common, "action_ordinal": index + 1, "creator_action_ordinal": 0,
+                "closest_unnotified_ancestor_action_ordinal": 0, "context_free": False,
+                "receipt": {"receiver": "test", "global_sequence": 100 + index}, "account_ram_deltas": [],
+                "act": {"account": "test", "name": "run", "data": root_data,
+                        "authorization": [{"actor": "test", "permission": "active"}]},
+                "return_value_hex_data": returned, "call_traces": [child]})
+        response = {"processed": {"action_traces": traces}}
+        before = deepcopy((entry, response))
+        check_multi_sync_response(entry, response)
+        self.assertEqual((entry, response), before)
+        for index in range(2):
+            for fault in range(12):
+                altered_entry, altered = deepcopy((entry, response))
+                root = altered["processed"]["action_traces"][index]
+                call = root["call_traces"][0]
+                if fault == 0:
+                    root["action_ordinal"] = 3
+                elif fault == 1:
+                    root["creator_action_ordinal"] = 1
+                elif fault == 2:
+                    root["act"]["data"] = entry["roots"][1 - index]["root_data"]
+                elif fault == 3:
+                    root["call_traces"].append(deepcopy(call))
+                elif fault == 4:
+                    call["call_ordinal"] = 2
+                elif fault == 5:
+                    call["sender_ordinal"] = 1
+                elif fault == 6:
+                    call["read_only"] = True
+                elif fault == 7:
+                    call["return_value_hex_data"] = ""
+                elif fault == 8:
+                    root["except"] = {"code": 1}
+                elif fault == 9:
+                    call["error_id"] = -10000
+                elif fault == 10:
+                    root["console_markers"] = [0]
+                else:
+                    root["receipt"]["global_sequence"] = 100 + (1 - index)
+                with self.subTest(index=index, fault=fault), self.assertRaises(RuntimeError):
+                    check_multi_sync_response(altered_entry, altered)
+        for fault in range(5):
+            altered_entry, altered = deepcopy((entry, response))
+            if fault == 0:
+                altered_entry["actions"] = 1
+            elif fault == 1:
+                altered_entry["roots"].pop()
+            elif fault == 2:
+                altered["processed"]["action_traces"].pop()
+            elif fault == 3:
+                altered_entry["roots"][1]["root_data"] = altered_entry["roots"][0]["root_data"]
+            else:
+                altered_entry["roots"][1]["call_data"] = (9).to_bytes(8, "little").hex()
+            with self.subTest(fault=fault), self.assertRaises(RuntimeError):
+                check_multi_sync_response(altered_entry, altered)
 
     def test_context_free_trace_checks_bind_type_data_queues_and_original_receipts(self):
         from copy import deepcopy

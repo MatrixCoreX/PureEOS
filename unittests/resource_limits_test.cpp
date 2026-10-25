@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 
 #include <eosio/chain/config.hpp>
 #include <eosio/chain/resource_limits.hpp>
@@ -428,5 +429,115 @@ BOOST_AUTO_TEST_SUITE(resource_limits_test)
 
    } FC_LOG_AND_RETHROW()
 
+
+   BOOST_FIXTURE_TEST_CASE(pending_large_weights_remain_finite_and_enforce_block_caps, resource_limits_fixture) try {
+      const auto anchor = "anchor"_n, account = "large"_n;
+      constexpr int64_t weight = 9007199254740993LL;
+      constexpr int64_t finite_max = std::numeric_limits<int64_t>::max();
+      initialize_account(anchor, false);
+      initialize_account(account, false);
+      set_account_limits(anchor, -1, 1, 1, false);
+      set_account_limits(account, -1, 0, 0, false);
+      process_account_limit_updates();
+      BOOST_REQUIRE_EQUAL(get_total_cpu_weight(), 1u);
+      BOOST_REQUIRE_EQUAL(get_total_net_weight(), 1u);
+
+      // A real pending update is visible immediately, while aggregate weights
+      // are settled at the end of the block. Do not mutate database objects.
+      set_account_limits(account, -1, weight, weight, false);
+      for (const auto& result : {get_account_cpu_limit_ex(account).first, get_account_net_limit_ex(account).first}) {
+         BOOST_CHECK_EQUAL(result.max, finite_max);
+         BOOST_CHECK_EQUAL(result.available, finite_max);
+         BOOST_CHECK_EQUAL(result.used, 0);
+      }
+      BOOST_REQUIRE_NO_THROW(add_transaction_usage({account}, 100, 64, 1));
+      for (const auto& result : {get_account_cpu_limit_ex(account).first, get_account_net_limit_ex(account).first}) {
+         BOOST_CHECK_EQUAL(result.max, finite_max);
+         BOOST_CHECK_EQUAL(result.available, finite_max);
+         BOOST_CHECK_GT(result.used, 0);
+      }
+      const auto cpu_left = get_block_cpu_limit(), net_left = get_block_net_limit();
+      {
+         auto session = start_session();
+         BOOST_CHECK_THROW(add_transaction_usage({account}, config::default_max_block_cpu_usage, 0, 2), block_resource_exhausted);
+         session.undo();
+      }
+      {
+         auto session = start_session();
+         BOOST_CHECK_THROW(add_transaction_usage({account}, 0, config::default_max_block_net_usage, 2), block_resource_exhausted);
+         session.undo();
+      }
+      BOOST_CHECK_EQUAL(get_block_cpu_limit(), cpu_left);
+      BOOST_CHECK_EQUAL(get_block_net_limit(), net_left);
+      BOOST_CHECK_EQUAL(get_total_cpu_weight(), 1u);
+      BOOST_CHECK_EQUAL(get_total_net_weight(), 1u);
+
+      process_account_limit_updates();
+      BOOST_CHECK_EQUAL(get_total_cpu_weight(), uint64_t(weight) + 1);
+      BOOST_CHECK_EQUAL(get_total_net_weight(), uint64_t(weight) + 1);
+      const auto cpu = get_account_cpu_limit_ex(account).first;
+      const auto net = get_account_net_limit_ex(account).first;
+      const auto cpu_expected = int64_t(uint128_t(config::account_cpu_usage_average_window_ms / config::block_interval_ms)
+         * get_virtual_block_cpu_limit() * uint64_t(weight) / (uint64_t(weight) + 1));
+      const auto net_expected = int64_t(uint128_t(config::account_net_usage_average_window_ms / config::block_interval_ms)
+         * get_virtual_block_net_limit() * uint64_t(weight) / (uint64_t(weight) + 1));
+      BOOST_CHECK_EQUAL(cpu.max, cpu_expected);
+      BOOST_CHECK_EQUAL(net.max, net_expected);
+      BOOST_CHECK_EQUAL(cpu.available, cpu.max - cpu.used);
+      BOOST_CHECK_EQUAL(net.available, net.max - net.used);
+      set_account_limits(account, -1, 0, 0, false);
+      BOOST_CHECK_EQUAL(get_account_cpu_limit_ex(account).first.available, 0);
+      BOOST_CHECK_EQUAL(get_account_net_limit_ex(account).first.available, 0);
+      set_account_limits(account, -1, -1, -1, false);
+      BOOST_CHECK_EQUAL(get_account_cpu_limit_ex(account).first.max, -1);
+      BOOST_CHECK_EQUAL(get_account_net_limit_ex(account).first.max, -1);
+   } FC_LOG_AND_RETHROW()
+
+   BOOST_FIXTURE_TEST_CASE(pending_large_weight_query_undo_restores_finite_limits, resource_limits_fixture) try {
+      const auto anchor = "anchor"_n, account = "large"_n;
+      initialize_account(anchor, false);
+      initialize_account(account, false);
+      set_account_limits(anchor, -1, 1, 1, false);
+      set_account_limits(account, -1, 1, 1, false);
+      process_account_limit_updates();
+      const auto cpu_before = get_account_cpu_limit_ex(account).first;
+      const auto net_before = get_account_net_limit_ex(account).first;
+      {
+         auto session = start_session();
+         set_account_limits(account, -1, 9007199254740993LL, 9007199254740993LL, false);
+         BOOST_CHECK_EQUAL(get_account_cpu_limit_ex(account).first.max, std::numeric_limits<int64_t>::max());
+         BOOST_CHECK_EQUAL(get_account_net_limit_ex(account).first.max, std::numeric_limits<int64_t>::max());
+         session.undo();
+      }
+      BOOST_CHECK_EQUAL(get_account_cpu_limit_ex(account).first.max, cpu_before.max);
+      BOOST_CHECK_EQUAL(get_account_net_limit_ex(account).first.max, net_before.max);
+      BOOST_CHECK_EQUAL(get_account_cpu_limit_ex(account).first.available, cpu_before.available);
+      BOOST_CHECK_EQUAL(get_account_net_limit_ex(account).first.available, net_before.available);
+      BOOST_CHECK_EQUAL(get_total_cpu_weight(), 2u);
+      BOOST_CHECK_EQUAL(get_total_net_weight(), 2u);
+   } FC_LOG_AND_RETHROW()
+
+   BOOST_FIXTURE_TEST_CASE(representable_pending_limits_keep_original_exact_formula, resource_limits_fixture) try {
+      const auto anchor = "anchor"_n, account = "ordinary"_n;
+      initialize_account(anchor, false);
+      initialize_account(account, false);
+      constexpr uint64_t total = 1000000000;
+      set_account_limits(anchor, -1, total, total, false);
+      set_account_limits(account, -1, 0, 0, false);
+      process_account_limit_updates();
+      for (const int64_t weight : {0, 1, 23, 1000, 1000000}) {
+         set_account_limits(account, -1, weight, weight, false);
+         const auto cpu = get_account_cpu_limit_ex(account).first;
+         const auto net = get_account_net_limit_ex(account).first;
+         const auto expected_cpu = int64_t(uint128_t(config::account_cpu_usage_average_window_ms / config::block_interval_ms)
+            * get_virtual_block_cpu_limit() * uint64_t(weight) / total);
+         const auto expected_net = int64_t(uint128_t(config::account_net_usage_average_window_ms / config::block_interval_ms)
+            * get_virtual_block_net_limit() * uint64_t(weight) / total);
+         BOOST_CHECK_EQUAL(cpu.max, expected_cpu);
+         BOOST_CHECK_EQUAL(net.max, expected_net);
+         BOOST_CHECK_EQUAL(cpu.available, expected_cpu);
+         BOOST_CHECK_EQUAL(net.available, expected_net);
+      }
+   } FC_LOG_AND_RETHROW()
 
    BOOST_AUTO_TEST_SUITE_END()
