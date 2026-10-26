@@ -11,6 +11,7 @@
 #include <eosio/chain/controller.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/parallel_runtime_limits.hpp>
+#include <eosio/chain/parallel_auto_config.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/snapshot.hpp>
 #include <eosio/chain/subjective_billing.hpp>
@@ -31,6 +32,7 @@
 #include <fc/io/json.hpp>
 #include <fc/variant.hpp>
 #include <cstdlib>
+#include <stdexcept>
 
 const std::string deep_mind_logger_name("deep-mind");
 eosio::chain::deep_mind_handler _deep_mind_log;
@@ -301,14 +303,14 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Percentage of actual signature recovery cpu to bill. Whole number percentages, e.g. 50 for 50%")
          ("chain-threads", bpo::value<uint16_t>()->default_value(config::default_controller_thread_pool_size),
           "Number of worker threads in controller thread pool")
-         ("experimental-parallel-validation-threads", bpo::value<uint16_t>()->default_value(0),
+         ("experimental-parallel-validation-threads", bpo::value<string>()->default_value("0"),
           ("Restricted parallel block validation workers (0 disables, maximum " +
            std::to_string(chain::experimental::parallel_runtime_limits::max_workers) +
-           "). Requires matching wasm-runtime/parallel-engine, full validation and an explicit code-hash list. Does not enable parallel block production.").c_str())
-         ("experimental-parallel-validation-batch-size", bpo::value<uint16_t>()->default_value(8),
+           "). Accepts auto to size from allowed physical cores, CPU affinity and cgroup quota. Requires matching wasm-runtime/parallel-engine, full validation and an explicit code-hash list. Does not enable parallel block production.").c_str())
+         ("experimental-parallel-validation-batch-size", bpo::value<string>()->default_value("8"),
           ("Maximum transactions per restricted validation batch (1-" +
            std::to_string(chain::experimental::parallel_runtime_limits::max_batch_transactions) +
-           "). Unsupported work executes serially.").c_str())
+           "). Accepts auto for three transactions per worker up to the batch cap. An auto worker count also sizes a defaulted batch. Unsupported work executes serially.").c_str())
          ("experimental-parallel-production", bpo::bool_switch()->default_value(false),
           "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
          ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
@@ -998,8 +1000,24 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       chain_config->integrity_hash_on_start = options.at("integrity-hash-on-start").as<bool>();
       chain_config->integrity_hash_on_stop = options.at("integrity-hash-on-stop").as<bool>();
 
-      chain_config->parallel_validation_threads = options.at("experimental-parallel-validation-threads").as<uint16_t>();
-      chain_config->parallel_validation_batch_size = options.at("experimental-parallel-validation-batch-size").as<uint16_t>();
+      const auto worker_setting=options.at("experimental-parallel-validation-threads").as<string>();
+      const auto batch_setting=options.at("experimental-parallel-validation-batch-size").as<string>();
+      const bool auto_requested=worker_setting=="auto" || batch_setting=="auto";
+      const auto cpu=auto_requested ? chain::experimental::detect_parallel_cpu_info() : chain::experimental::parallel_cpu_info{};
+      try {
+         const auto sizing=chain::experimental::resolve_parallel_config(worker_setting,batch_setting,
+            !options.at("experimental-parallel-validation-batch-size").defaulted(),cpu);
+         chain_config->parallel_validation_threads=sizing.workers;
+         chain_config->parallel_validation_batch_size=sizing.batch;
+      } catch (const std::invalid_argument& error) {
+         EOS_THROW(plugin_config_exception,"${reason}",("reason",error.what()));
+      }
+      if (auto_requested) {
+         ilog("Automatic parallel sizing: allowed logical=${logical}, allowed physical=${physical}, usable cores=${usable}, quota known=${quota}; workers=${workers}, batch=${batch}",
+            ("logical",cpu.allowed_logical)("physical",cpu.allowed_physical)("usable",cpu.usable_cores())
+            ("quota",cpu.quota_known)("workers",chain_config->parallel_validation_threads)("batch",chain_config->parallel_validation_batch_size));
+         for (const auto& warning:cpu.warnings) wlog("Automatic parallel sizing: ${reason}",("reason",warning));
+      }
       chain_config->parallel_production_enabled = options.at("experimental-parallel-production").as<bool>();
       const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
       EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,

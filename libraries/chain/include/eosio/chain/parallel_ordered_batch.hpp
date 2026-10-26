@@ -194,7 +194,7 @@ private:
    };
    std::map<table_key, std::array<secondary_changes, 5>, table_key_less> secondary_dirty_;
    static constexpr size_t max_operations_per_result = 4096;
-   static constexpr size_t max_batch_write_operations = parallel_runtime_limits::max_batch_transactions * max_operations_per_result;
+   static constexpr size_t max_batch_write_operations = parallel_runtime_limits::max_batch_write_operations;
    size_t write_operations_ = 0;
    size_t next_ = 0;
    size_t refreshes_ = 0;

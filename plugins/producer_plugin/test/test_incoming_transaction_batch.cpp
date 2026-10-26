@@ -40,7 +40,10 @@ BOOST_AUTO_TEST_CASE(microbatch_flush_target_is_useful_and_fits_the_holding_area
    BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(12), 12u);
    BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(24), 24u);
    BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(64), 64u);
-   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(std::numeric_limits<size_t>::max()), 64u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(96), 96u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(128), 128u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(256), 256u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(std::numeric_limits<size_t>::max()), eosio::chain::experimental::parallel_runtime_limits::max_batch_transactions);
 }
 
 BOOST_AUTO_TEST_CASE(fifo_and_refusal_do_not_consume_or_reorder) {
@@ -87,6 +90,38 @@ BOOST_AUTO_TEST_CASE(byte_boundary_zero_and_overflow) {
    BOOST_REQUIRE(huge.push(std::move(large), std::numeric_limits<size_t>::max() - 1));
    BOOST_CHECK(!huge.can_fit(2));
    BOOST_CHECK(huge.can_fit(1));
+}
+
+BOOST_AUTO_TEST_CASE(full_runtime_batch_preserves_fifo_and_once_delivery) {
+   constexpr auto capacity = eosio::chain::experimental::parallel_runtime_limits::max_batch_transactions;
+   struct completion { unsigned id; std::function<void(const unsigned&)> callback; };
+   incoming_transaction_batch<completion> q(4 * 1024 * 1024);
+   std::vector<unsigned> delivered;
+   for (unsigned i = 0; i < capacity; ++i) {
+      completion value{i, incoming_once<unsigned>([&, i](unsigned id) {
+         BOOST_CHECK_EQUAL(id, i);
+         delivered.push_back(id);
+      })};
+      BOOST_REQUIRE(q.push(std::move(value), 128));
+   }
+   BOOST_CHECK_EQUAL(q.size(), capacity);
+   BOOST_CHECK_EQUAL(q.bytes(), capacity * 128);
+   completion extra{capacity, {}};
+   BOOST_CHECK(!q.push(std::move(extra), 0));
+   auto batch = q.take();
+   BOOST_REQUIRE_EQUAL(batch.size(), capacity);
+   BOOST_CHECK(q.empty());
+   BOOST_CHECK_EQUAL(q.bytes(), 0u);
+   for (unsigned i = 0; i < capacity; ++i) {
+      BOOST_CHECK_EQUAL(batch[i].id, i);
+      auto retry = batch[i].callback;
+      batch[i].callback(i);
+      retry(i);
+   }
+   BOOST_REQUIRE_EQUAL(delivered.size(), capacity);
+   for (unsigned i = 0; i < capacity; ++i) BOOST_CHECK_EQUAL(delivered[i], i);
+   BOOST_CHECK(q.push(std::move(extra), 4 * 1024 * 1024));
+   BOOST_CHECK(!q.can_fit(1));
 }
 
 BOOST_AUTO_TEST_CASE(detached_batch_is_stable_during_reentrant_use) {
@@ -163,5 +198,5 @@ BOOST_AUTO_TEST_CASE(single_item_recovery_probe_restores_parallel_admission_with
    BOOST_CHECK_EQUAL(queue::preparation_count(1, 4), 0u);
    BOOST_CHECK_EQUAL(queue::preparation_count(0, 4), 0u);
    BOOST_CHECK_EQUAL(queue::preparation_count(3, 32), 3u);
-   BOOST_CHECK_EQUAL(queue::preparation_count(100, 100), 64u);
+   BOOST_CHECK_EQUAL(queue::preparation_count(100, 100), 100u);
 }

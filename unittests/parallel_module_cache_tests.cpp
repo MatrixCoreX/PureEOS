@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(preparation_budget_cannot_be_debited_from_a_worker) {
 
 BOOST_AUTO_TEST_CASE(local_runtime_limits_keep_disabled_mode_and_reject_unsupported_shapes) {
    using bounds = parallel_runtime_limits;
-   BOOST_CHECK_EQUAL(bounds::max_workers, 16u); // this release targets 4--16 cores
+   BOOST_CHECK_EQUAL(bounds::max_workers, 128u);
    for (size_t workers = 0; workers <= bounds::max_workers + 1; ++workers)
       for (size_t batch = 0; batch <= bounds::max_batch_transactions + 1; ++batch)
          BOOST_CHECK_EQUAL(bounds::valid_configuration(workers, batch),
@@ -570,9 +570,11 @@ BOOST_FIXTURE_TEST_CASE(single_job_batches_keep_one_warm_cache_and_fresh_owned_s
 }
 
 BOOST_FIXTURE_TEST_CASE(sparse_discovery_waves_keep_original_slot_cache_owners, cache_fixture) {
-   // These are logical pool sizes, not a claim that the test host has 16 cores.
-   for (size_t workers : {1u, 2u, 4u, 8u, 12u, 16u}) BOOST_TEST_CONTEXT("workers=" << workers) {
-      isolated_worker_pool pool(workers);
+   // Logical pool sizes exercise scheduling even on a smaller test host.
+   for (auto engine : {isolated_vm_engine::interpreter, isolated_vm_engine::jit}) {
+   if (!isolated_vm_engine_supported(engine)) continue;
+   for (size_t workers : {1u, 2u, 4u, 8u, 12u, 16u, 32u, 64u, 128u}) BOOST_TEST_CONTEXT("engine=" << isolated_vm_engine_name(engine) << " workers=" << workers) {
+      isolated_worker_pool pool(workers, engine);
       cache_metrics metrics;
       isolated_wasm_limits limits;
       std::vector<ordered_attempt_batch::request> requests;
@@ -602,12 +604,15 @@ BOOST_FIXTURE_TEST_CASE(sparse_discovery_waves_keep_original_slot_cache_owners, 
          BOOST_CHECK_EQUAL(metrics.compilations(), workers);
       }
    }
+   }
 }
 
-BOOST_FIXTURE_TEST_CASE(four_to_sixteen_workers_preserve_all_modes_at_batch_limits_and_after_failures, shared_cache_fixture) {
+BOOST_FIXTURE_TEST_CASE(scalable_workers_preserve_all_modes_at_batch_limits_and_after_failures, shared_cache_fixture) {
    using bounds = parallel_runtime_limits;
-   for (size_t workers : {4u, 8u, 12u, 16u}) BOOST_TEST_CONTEXT("workers=" << workers) {
-      isolated_worker_pool pool(workers);
+   for (auto engine : {isolated_vm_engine::interpreter, isolated_vm_engine::jit}) {
+   if (!isolated_vm_engine_supported(engine)) continue;
+   for (size_t workers : {4u, 8u, 12u, 16u, 32u, 64u, 128u}) BOOST_TEST_CONTEXT("engine=" << isolated_vm_engine_name(engine) << " workers=" << workers) {
+      isolated_worker_pool pool(workers, engine);
       BOOST_CHECK_THROW(pool.run({}), primary_state_budget_exceeded);
       for (size_t count : {size_t{1}, workers, workers + 1, bounds::max_batch_transactions})
          for (unsigned phase = 0; phase < 4; ++phase) BOOST_TEST_CONTEXT("jobs=" << count << " phase=" << phase) {
@@ -674,6 +679,7 @@ BOOST_FIXTURE_TEST_CASE(four_to_sixteen_workers_preserve_all_modes_at_batch_limi
             const auto original = view.read_primary({cache_rows, primary_query_kind::find, 1}, 8);
             BOOST_REQUIRE(original.row); BOOST_CHECK_EQUAL(cache_value(original.row->value), 10u);
          }
+   }
    }
 }
 

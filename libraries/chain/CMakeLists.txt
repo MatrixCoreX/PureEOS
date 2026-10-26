@@ -122,6 +122,7 @@ add_library( eosio_chain
              qc.cpp
              finality_core.cpp
              controller.cpp
+             parallel_auto_config.cpp
              parallel_canonical_adoption.cpp
              authorization_manager.cpp
              resource_limits.cpp

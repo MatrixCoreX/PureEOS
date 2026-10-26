@@ -11,12 +11,12 @@ using namespace std::chrono_literals;
 
 BOOST_AUTO_TEST_CASE(cold_start_and_configuration_bounds) {
    model m;
-   for (size_t workers : {1u, 2u, 4u, 8u, 12u, 16u})
-      for (size_t cap : {1u, 4u, 8u, 32u, 64u})
+   for (size_t workers : {1u, 2u, 4u, 8u, 12u, 16u, 32u, 64u, 128u})
+      for (size_t cap : {1u, 4u, 8u, 32u, 64u, 96u, 128u, 256u})
          BOOST_CHECK_EQUAL(m.recommend(1, workers, cap, 50000), std::min(workers, cap));
    BOOST_CHECK_EQUAL(m.recommend(1, 0, 32, 50000), 0u);
-   BOOST_CHECK_EQUAL(m.recommend(1, 17, 32, 50000), 0u);
-   BOOST_CHECK_EQUAL(m.recommend(1, 4, 65, 50000), 0u);
+   BOOST_CHECK_EQUAL(m.recommend(1, 129, 32, 50000), 0u);
+   BOOST_CHECK_EQUAL(m.recommend(1, 4, 257, 50000), 0u);
    BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 0), 0u);
 }
 
@@ -32,6 +32,20 @@ BOOST_AUTO_TEST_CASE(deadlines_shrink_only_the_observed_workload) {
       BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 50000, now), 0u);
       BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 50000, now + 1s), 1u);
    }
+}
+
+BOOST_AUTO_TEST_CASE(large_pool_growth_and_deadlines_keep_the_batch_bounded) {
+   model m;
+   const auto now = test_clock::time_point{};
+   BOOST_CHECK_EQUAL(m.recommend(1, 128, 256, 50000, now), 128u);
+   for (unsigned i = 0; i < 4; ++i)
+      m.observe(1, 128, 256, 128, 1000, 50000, outcome::ready, now);
+   BOOST_CHECK_EQUAL(m.recommend(1, 128, 256, 50000, now), 256u);
+   m.observe(1, 128, 256, 256, 50000, 50000, outcome::deadline, now);
+   BOOST_CHECK_EQUAL(m.recommend(1, 128, 256, 50000, now), 128u);
+   m.observe(1, 128, 256, 128, 50000, 50000, outcome::deadline, now);
+   BOOST_CHECK_EQUAL(m.recommend(1, 128, 256, 50000, now), 64u);
+   BOOST_CHECK_EQUAL(m.recommend(2, 128, 256, 50000, now), 128u);
 }
 
 BOOST_AUTO_TEST_CASE(growth_requires_four_complete_fast_batches) {
@@ -148,7 +162,7 @@ BOOST_AUTO_TEST_CASE(receipt_observation_cannot_clear_deadline_backoff_or_learn_
       m.observe_receipt(key, 4, 32, 0, now);
       m.observe_receipt(key, 4, 32, std::numeric_limits<uint64_t>::max(), now);
       m.observe_receipt(key, 0, 32, 10000, now);
-      m.observe_receipt(key, 4, 65, 10000, now);
+      m.observe_receipt(key, 4, 257, 10000, now);
    }
    BOOST_CHECK_EQUAL(m.recommend_for_block(1, 4, 32, 50000, 200000, now + 1s), 1u);
 }

@@ -61,16 +61,39 @@ def main():
         if not workers_match or not batch_match:
             raise RuntimeError('parallel limits missing from CLI help')
         workers, batch = int(workers_match[1]), int(batch_match[1])
-        # The current architecture scope is 4--16 workers; larger-core releases
-        # should deliberately revise this release assertion and its test matrix.
-        if workers != 16 or batch != 64:
+        if workers != 128 or batch != 256:
             raise RuntimeError('unexpected release limits')
         report['reported_limits'] = {'workers': workers, 'batch_transactions': batch}
         bounds_error = f'experimental parallel validation requires threads 0-{workers} and batch size 1-{batch}'
         run('too-many-workers', ['--experimental-parallel-validation-threads', str(workers + 1)], bounds_error)
         run('empty-batch', ['--experimental-parallel-validation-batch-size', '0'], bounds_error)
         run('too-large-batch', ['--experimental-parallel-validation-batch-size', str(batch + 1)], bounds_error)
-        run('production-without-workers', ['--experimental-parallel-production'],
+        for value in ['-1', 'Auto', '32x', '18446744073709551616']:
+            run('invalid-workers-' + value, ['--experimental-parallel-validation-threads', value],
+                'parallel workers must be auto or an unsigned decimal integer')
+            run('invalid-batch-' + value, ['--experimental-parallel-validation-batch-size', value],
+                'parallel batch must be auto or an unsigned decimal integer')
+        # Stop at the unchanged allowlist guard after resolving valid settings.
+        # This proves parser integration without creating or executing a chain.
+        guard = 'experimental parallel validation requires full validation, a reviewed code hash'
+        common = ['--wasm-runtime', 'eos-vm', '--experimental-parallel-engine', 'interpreter']
+        for count in [32, 64, workers]:
+            run(f'manual-workers-{count}', common + ['--experimental-parallel-validation-threads', str(count),
+                '--experimental-parallel-validation-batch-size', str(batch)], guard)
+        for label, extra, expected_batch in [('auto-default-batch', [], None),
+                ('auto-explicit-batch', ['--experimental-parallel-validation-batch-size', '17'], 17),
+                ('auto-both', ['--experimental-parallel-validation-batch-size', 'auto'], None),
+                ('manual-auto-batch', ['--experimental-parallel-validation-batch-size', 'auto'], batch)]:
+            count = str(workers) if label == 'manual-auto-batch' else 'auto'
+            text = run(label, common + ['--experimental-parallel-validation-threads', count, *extra], guard)
+            resolved = re.search(r'usable cores=(\d+), quota known=\w+; workers=(\d+), batch=(\d+)', text)
+            if not resolved:
+                raise RuntimeError('automatic sizing diagnostic missing')
+            usable, chosen, actual_batch = map(int, resolved.groups())
+            expected_workers = workers if count != 'auto' else min(usable, workers)
+            if chosen != expected_workers or actual_batch != (expected_batch or min(3 * chosen, batch)):
+                raise RuntimeError('automatic sizing integration disagrees with policy')
+        run('production-without-workers', ['--experimental-parallel-production', '--experimental-parallel-validation-threads', '0'],
             'experimental parallel production requires nonzero parallel validation threads')
         run('invalid-engine', ['--experimental-parallel-engine', 'automatic'],
             'experimental parallel engine must be interpreter or jit')

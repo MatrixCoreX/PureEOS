@@ -1,4 +1,5 @@
 #include <eosio/chain/parallel_worker_signals.hpp>
+#include <eosio/chain/parallel_runtime_limits.hpp>
 #include <chrono>
 #include <iostream>
 #include <stdexcept>
@@ -14,7 +15,7 @@ static void require(bool ok) {
 }
 
 static void run(size_t count) {
-   parallel_worker_signals<16> signals;
+   parallel_worker_signals<eosio::chain::experimental::parallel_runtime_limits::max_workers> signals;
    std::mutex mutex;
    std::condition_variable done;
    std::vector<size_t> jobs(count), consumed(count);
@@ -55,13 +56,13 @@ static void run(size_t count) {
 
 int main() {
    try {
-      for (size_t count : {1u, 2u, 4u, 8u, 16u}) run(count);
+      for (size_t count : {1u, 2u, 4u, 8u, 16u, 32u, 64u, 128u}) run(count);
       // Partially constructed pools and shutdown before any work.
-      parallel_worker_signals<16> empty;
+      parallel_worker_signals<eosio::chain::experimental::parallel_runtime_limits::max_workers> empty;
       empty.notify_shutdown();
       require(empty.notify_ready(0, [](size_t) { return true; }) == 0);
       bool rejected = false;
-      try { empty.notify_ready(17, [](size_t) { return true; }); }
+      try { empty.notify_ready(eosio::chain::experimental::parallel_runtime_limits::max_workers+1, [](size_t) { return true; }); }
       catch (const std::out_of_range&) { rejected = true; }
       require(rejected);
       std::cout << "worker signal assertions=" << assertions << " passed\n";

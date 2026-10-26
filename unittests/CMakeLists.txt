@@ -199,6 +199,11 @@ target_link_libraries(parallel_access_hints_test PRIVATE Threads::Threads)
 add_test(NAME pureeos_parallel_access_hints COMMAND parallel_access_hints_test)
 set_tests_properties(pureeos_parallel_access_hints PROPERTIES TIMEOUT 30 LABELS "parallel-px7;standalone;prefetch")
 add_executable(parallel_worker_signals_test ../tests/parallel_worker_signals_test.cpp)
+add_executable(parallel_auto_config_test ../tests/parallel_auto_config_test.cpp ../libraries/chain/parallel_auto_config.cpp)
+target_include_directories(parallel_auto_config_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
+target_link_libraries(parallel_auto_config_test PRIVATE Threads::Threads)
+add_test(NAME pureeos_parallel_auto_config COMMAND parallel_auto_config_test)
+set_tests_properties(pureeos_parallel_auto_config PROPERTIES TIMEOUT 30 LABELS "parallel-px7;standalone;auto-config")
 target_include_directories(parallel_worker_signals_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
 target_link_libraries(parallel_worker_signals_test PRIVATE Threads::Threads)
 add_test(NAME pureeos_parallel_worker_signals COMMAND parallel_worker_signals_test)
@@ -277,7 +282,8 @@ set_tests_properties(pureeos_parallel_mixed_owner PROPERTIES TIMEOUT 180 LABELS 
 add_test(NAME pureeos_parallel_mixed_adoption COMMAND parallel_wasm_worker_test
   --run_test=parallel_mixed_tree_adoption_tests --report_level=detailed --color_output=no -- --eos-vm)
 set_tests_properties(pureeos_parallel_mixed_adoption PROPERTIES TIMEOUT 180 LABELS "parallel-px7;canonical;mixed-tree")
-set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
+# Larger pools and both engines expand the matrix; per-job deadlines remain unchanged.
+set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 600 LABELS "parallel-px2")
 
 add_executable(unapplied_queue_test EXCLUDE_FROM_ALL main.cpp unapplied_transaction_queue_tests.cpp)
 target_link_libraries(unapplied_queue_test PRIVATE eosio_chain_wrap eosio_testing

@@ -1685,7 +1685,7 @@ BOOST_AUTO_TEST_CASE(uneven_discovery_executes_only_unfinished_transactions_on_f
    genesis.initial_savanna.emplace(); genesis.initial_savanna->version = 2;
    genesis.initial_savanna->finalizer_key = public_key;
    genesis.initial_savanna->proof_of_possession = proof;
-   for (uint16_t workers : {1, 2, 4, 8, 12, 16}) {
+   for (uint16_t workers : {1, 2, 4, 8, 12, 16, 32, 64, 128}) {
       fc::temp_directory producer_dir, serial_dir, parallel_dir;
       auto cfg = base_tester::default_config(producer_dir).first;
       eosio::testing::configure_parallel_test_runtime(cfg);
@@ -1803,7 +1803,7 @@ BOOST_FIXTURE_TEST_CASE(nonexplicit_production_preserves_order_receipts_and_seri
 }
 
 BOOST_FIXTURE_TEST_CASE(adaptive_production_queue_keeps_unconsumed_tail_and_serial_window, validation_corpus) {
-   for (uint16_t workers : {1, 2, 4, 8, 16}) {
+   for (uint16_t workers : {1, 2, 4, 8, 16, 32, 64, 128}) {
       fc::temp_directory producer_dir, validator_dir;
       auto cfg = configuration(producer_dir, workers); cfg.parallel_production_enabled = true;
       production_chain producer(cfg, genesis);
