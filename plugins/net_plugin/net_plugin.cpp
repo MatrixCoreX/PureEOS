@@ -2987,7 +2987,7 @@ namespace eosio {
                            uint32_t message_length;
                            auto index = conn->pending_message_buffer.read_index();
                            conn->pending_message_buffer.peek(&message_length, sizeof(message_length), index);
-                           if(message_length > 32u*1024u*1024u || message_length == 0) {
+                           if(message_length > 64u*1024u*1024u || message_length == 0) {
                               peer_elog( p2p_conn_log, conn, "incoming message length unexpected (${i})", ("i", message_length) );
                               close_connection = true;
                               break;

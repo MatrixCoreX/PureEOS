@@ -67,6 +67,13 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
          control.expiration=fc::time_point_sec(fc::time_point::now()+fc::seconds(3300));
          control.set_reference_block(block_id_type(manifest["checkpoints"].get_array().back()["block_id"].as_string()));
          control.actions.emplace_back(std::vector<permission_level>{{"eosio"_n,"active"_n}},"eosio"_n,"setparams"_n,fc::raw::pack(params));
+         if (const char* ram_text=std::getenv("PUREEOS_CAPACITY_CONTROL_RAMRATE")) {
+            const auto ram_rate=std::stoul(ram_text);BOOST_REQUIRE_EQUAL(ram_rate,1024u);
+            control.actions.emplace_back(std::vector<permission_level>{{"eosio"_n,"active"_n}},"eosio"_n,"setramrate"_n,fc::raw::pack(uint16_t(ram_rate)));
+            signed_transaction probe=control;probe.signatures.clear();probe.actions.erase(probe.actions.begin());BOOST_REQUIRE_EQUAL(probe.actions.size(),1u);
+            probe.sign(base_tester::get_private_key("eosio"_n,"active"),chain);
+            BOOST_REQUIRE(fc::json::save_to_file(packed_transaction(probe,packed_transaction::compression_type::none),dir/"control-ramcheck.json"));
+         }
          control.sign(base_tester::get_private_key("eosio"_n,"active"),chain);
          BOOST_REQUIRE(fc::json::save_to_file(packed_transaction(control,packed_transaction::compression_type::none),dir/"control-setparams.json"));
       }
