@@ -3513,3 +3513,7 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "parallel_prefix_refresh_cases.hpp"
 #include "parallel_release_fixture.hpp"
 #include "parallel_mixed_stress_fixture.hpp"
+
+#include "parallel_multitoken_cases.hpp"
+
+#include "parallel_pipeline_optimization_cases.hpp"

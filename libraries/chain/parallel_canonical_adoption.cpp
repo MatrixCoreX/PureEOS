@@ -1,3 +1,4 @@
+#include <map>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
 #include <eosio/chain/parallel_mixed_tree_journal.hpp>
 #include <eosio/chain/parallel_pure_float.hpp>
@@ -425,8 +426,39 @@ std::optional<isolated_receiver_program> prepare_isolated_tree_program(const con
       const auto* code = control.db().find<code_object, by_code_hash>(boost::make_tuple(metadata->code_hash, 0, 0));
       if (!code || code->code.size() > result.limits.max_code_bytes || code->code.size() == 0 ||
           code->code.size() > owned_code_budget) return {};
-      result.code.assign(code->code.data(), code->code.data() + code->code.size());
-      if (fc::sha256::hash(result.code.data(), result.code.size()) != metadata->code_hash) return {};
+      // Code objects are content-addressed and their bytes are immutable.
+      // Cache only owned bytes, never database/controller/VM pointers. Current
+      // account privilege, VM version, code hash, size and limits are rechecked
+      // above on EVERY call, including after setcode, fork undo and snapshot.
+      struct byte_cache {
+         std::map<fc::sha256, experimental::immutable_code> values;
+         std::vector<fc::sha256> fifo;
+         size_t bytes=0;
+      };
+      static thread_local byte_cache cached;
+      const auto found=cached.values.find(metadata->code_hash);
+      if(found!=cached.values.end()) {
+         if(found->second.size()!=code->code.size()) return {};
+         result.code=found->second;
+      } else {
+         result.code.assign(code->code.data(),code->code.data()+code->code.size());
+         if(result.code.content_hash()!=metadata->code_hash) return {};
+         constexpr size_t max_cached_bytes=4*1024*1024,max_cached_entries=16;
+         if(result.code.size()<=max_cached_bytes) {
+            while(!cached.fifo.empty() && (cached.values.size()>=max_cached_entries ||
+                  result.code.size()>max_cached_bytes-cached.bytes)) {
+               const auto old=cached.values.find(cached.fifo.front());
+               cached.bytes-=old->second.size();cached.values.erase(old);
+               cached.fifo.erase(cached.fifo.begin());
+            }
+            // Reserve before publication; allocation failure is still a local
+            // preparation fallback and cannot corrupt the bounded cache.
+            cached.fifo.reserve(max_cached_entries);
+            cached.values.emplace(metadata->code_hash,result.code);
+            cached.fifo.push_back(metadata->code_hash);cached.bytes+=result.code.size();
+         }
+      }
+      if(result.code.content_hash()!=metadata->code_hash) return {};
    }
    return result;
 }

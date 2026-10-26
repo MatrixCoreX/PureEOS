@@ -266,12 +266,13 @@ namespace eosio::chain {
          // window. Re-query after each batch; zero means original serial path.
          // The no-argument overload above remains the configured upper bound.
          uint16_t get_parallel_production_batch_size(const transaction_metadata_ptr& head,
-            fc::time_point block_deadline) const;
+            fc::time_point block_deadline, fc::microseconds max_transaction_time = fc::microseconds::maximum()) const;
          // Synchronous owner-only scope. The callback retains original queue,
          // push/receipt/resource and RPC handling. False stops without calling
          // later entries; return value counts callbacks, never accepted trxs.
          size_t for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
-            fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback);
+            fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback,
+            fc::microseconds max_transaction_time = fc::microseconds::maximum());
 
          /**
           * Attempt to execute a specific transaction in our deferred trx database

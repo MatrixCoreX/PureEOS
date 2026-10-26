@@ -735,3 +735,6 @@ target_link_libraries(thread_cpu_billing_test PRIVATE ${PLATFORM_SPECIFIC_LIBS})
 target_include_directories(thread_cpu_billing_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
 add_test(NAME pureeos_thread_cpu_billing COMMAND thread_cpu_billing_test)
 set_tests_properties(pureeos_thread_cpu_billing PROPERTIES TIMEOUT 60 LABELS "parallel;cpu-billing")
+
+add_test(NAME pureeos_parallel_multitoken COMMAND parallel_validation_test --run_test=parallel_multitoken_tests --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_multitoken PROPERTIES TIMEOUT 300 LABELS "parallel;multitoken")

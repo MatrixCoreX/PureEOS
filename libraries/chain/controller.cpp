@@ -3,6 +3,7 @@
 #include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/parallel_access_hints.hpp>
 #include <eosio/chain/parallel_preparation_budget.hpp>
+#include <eosio/chain/parallel_production_budget.hpp>
 #include <eosio/chain/parallel_production_admission.hpp>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
 
@@ -3374,6 +3375,45 @@ struct controller_impl {
             if (x.table != y.table || bool(x.query) != bool(y.query)) return false;
             return !x.query || (!primary_query_less{}(*x.query, *y.query) && !primary_query_less{}(*y.query, *x.query));
          };
+         // Non-authoritative prefetch for the conventional token transfer
+         // layout. Wrong hints can only add bounded fresh reads: the VM still
+         // executes, authenticates and proves every actual read and mutation.
+         // One ordinary root keeps metadata bounded for arbitrary action trees.
+         for(auto& invocation:invocations) {
+            if(invocation.roots.size()!=1) continue;
+            const auto& root=invocation.roots.front();
+            if(root.action!="transfer"_n || root.data.size()<33) continue;
+            uint64_t from=0,to=0,raw_symbol=0;
+            std::memcpy(&from,root.data.data(),8);
+            std::memcpy(&to,root.data.data()+8,8);
+            std::memcpy(&raw_symbol,root.data.data()+24,8);
+            auto symbol_code=raw_symbol>>8,letters=symbol_code;
+            bool valid=from && to && symbol_code && (raw_symbol&255)<=18;
+            while(letters && valid) {
+               const auto letter=letters&255;
+               valid=letter>='A' && letter<='Z';letters>>=8;
+            }
+            if(!valid) continue;
+            extend_path(account_capture_request{name{from}});
+            extend_path(account_capture_request{name{to}});
+            const auto read=[&](name scope,name table) {
+               const table_key key{root.account,scope,table};
+               extend_path(primary_capture_request{key,primary_query{key,primary_query_kind::find,symbol_code}});
+            };
+            read(name{symbol_code},"stat"_n);
+            read(name{from},"accounts"_n);read(name{to},"accounts"_n);
+            // Empty-code notification candidates are owned metadata only.
+            // Unused entries cannot emit events. Actual receiver capability,
+            // code hash, native handlers and order are rechecked at adoption.
+            for(const auto receiver:{name{from},name{to}}) {
+               if(invocation.programs.size()>=isolated_action_tree_executor::max_programs ||
+                  std::any_of(invocation.programs.begin(),invocation.programs.end(),
+                     [&](const auto& p){return p.receiver==receiver;})) continue;
+               auto program=prepare_isolated_tree_program(self,receiver);
+               if(program && program->code.empty() && !program->serial_only)
+                  invocation.programs.push_back(std::move(*program));
+            }
+         }
          for (const auto& key : hint_keys)
             parallel_read_hints->visit(key, [&](const auto& path) { checkpoint(); extend_path(path); });
          // Every discovery wave is fully joined BEFORE the owner reads more
@@ -3541,7 +3581,7 @@ struct controller_impl {
                      auto found = hashes.find(root.receiver);
                      if (found == hashes.end())
                         found = hashes.emplace(root.receiver,
-                           fc::sha256::hash(program->code.data(), program->code.size())).first;
+                           program->code.content_hash()).first;
                      fingerprints.push_back(isolated_execution_fingerprint(found->second, program->limits, root));
                   }
                   requests[i].execution_fingerprint = isolated_action_tree_fingerprint(fingerprints, invocation.context);
@@ -3565,7 +3605,7 @@ struct controller_impl {
                         auto program=prepare_isolated_sync_program(self,prior.receiver);
                         if(!program || prior.serial_only) throw primary_state_unsupported();
                         if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
-                              fc::sha256::hash(program->program.code.data(),program->program.code.size())))
+                              program->program.code.content_hash()))
                            throw primary_state_unsupported();
                         input.programs.push_back(std::move(*program));
                      }
@@ -3589,7 +3629,7 @@ struct controller_impl {
                      auto program=prepare_isolated_sync_program(self,prior.receiver);
                      if(!program) throw primary_state_unsupported();
                      if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
-                           fc::sha256::hash(program->program.code.data(),program->program.code.size())))
+                           program->program.code.content_hash()))
                         throw primary_state_unsupported();
                      input.programs.push_back(std::move(*program));
                   }
@@ -3627,7 +3667,7 @@ struct controller_impl {
                         auto program=prepare_isolated_sync_program(self,receiver);
                         if(!program) program=isolated_sync_program{{receiver,{},programs.front().program.limits,true},false};
                         if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
-                              fc::sha256::hash(program->program.code.data(),program->program.code.size()))) {
+                              program->program.code.content_hash())) {
                            program->program.serial_only=true; program->program.code.clear(); program->sync_call_supported=false;
                         }
                         invalidate_catalogs(i);
@@ -3644,7 +3684,7 @@ struct controller_impl {
                      auto program = prepare_isolated_tree_program(self, receiver);
                      if (!program) program = isolated_receiver_program{receiver, {}, input.programs.front().limits, true};
                      if (!program->code.empty() && !conf.parallel_code_allowlist.contains(
-                           fc::sha256::hash(program->code.data(), program->code.size()))) {
+                           program->code.content_hash())) {
                         program->serial_only = true;
                         program->code.clear();
                      }
@@ -3736,15 +3776,11 @@ struct controller_impl {
       return prepare_isolated_attempts(inputs, {parallel_interrupts, parallel_interrupts->load(std::memory_order_relaxed)});
    }
 
-   int64_t production_preparation_us(fc::time_point block_deadline) const {
+   int64_t production_preparation_us(fc::time_point block_deadline, fc::microseconds max_transaction_time) const {
       const auto remaining = (block_deadline - fc::time_point::now()).count();
-      const auto original_cpu_budget = std::min<uint64_t>(
-         self.get_global_properties().configuration.max_transaction_cpu_usage, resource_limits.get_block_cpu_limit());
-      const auto reserved_wall_us = static_cast<int64_t>(original_cpu_budget) + 5'000;
-      if (remaining <= reserved_wall_us) return 0;
-      return std::min({remaining / 4,
-         std::chrono::duration_cast<std::chrono::microseconds>(experimental::parallel_runtime_limits::production_timeout).count(),
-         remaining - reserved_wall_us});
+      return experimental::production_preparation_budget_us(remaining,
+         self.get_global_properties().configuration.max_transaction_cpu_usage,
+         resource_limits.get_block_cpu_limit(),max_transaction_time.count());
    }
 
    std::optional<digest_type> production_workload_key(const transaction_metadata_ptr& meta) const {
@@ -3772,10 +3808,10 @@ struct controller_impl {
       return encoder.result();
    }
 
-   uint16_t recommended_production_batch(const transaction_metadata_ptr& head, fc::time_point block_deadline) const {
+   uint16_t recommended_production_batch(const transaction_metadata_ptr& head, fc::time_point block_deadline, fc::microseconds max_transaction_time) const {
       if (!conf.parallel_production_enabled || !pending ||
           pending->_block_status != controller::block_status::incomplete || !self.is_write_window()) return 0;
-      const auto budget_us = production_preparation_us(block_deadline);
+      const auto budget_us = production_preparation_us(block_deadline,max_transaction_time);
       if (!budget_us) return 0; // preserve the entire original serial rejection window
       const auto remaining_cpu = resource_limits.get_block_cpu_limit();
       // An already applied/requeued transaction has an ordinary CPU estimate.
@@ -3801,7 +3837,7 @@ struct controller_impl {
    }
 
    size_t for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
-         fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback) {
+         fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback, fc::microseconds max_transaction_time) {
       EOS_ASSERT(!parallel_production_scope && transactions.size() <= experimental::parallel_runtime_limits::max_batch_transactions, transaction_exception,
                  "invalid or reentrant parallel production batch");
       parallel_production_scope = true;
@@ -3819,7 +3855,7 @@ struct controller_impl {
          pending->_block_status == controller::block_status::incomplete && self.is_write_window();
       if (enabled) {
          if (block_deadline <= fc::time_point::now()) return 0;
-         const auto budget_us = production_preparation_us(block_deadline);
+         const auto budget_us = production_preparation_us(block_deadline,max_transaction_time);
          // If the window is already short, do not reduce the time available to
          // the original CPU-limit rejection path at all (including its setup).
          if (budget_us > 0) {
@@ -6561,13 +6597,13 @@ uint16_t controller::get_parallel_production_batch_size() const {
 }
 
 uint16_t controller::get_parallel_production_batch_size(const transaction_metadata_ptr& head,
-      fc::time_point block_deadline) const {
-   return my->recommended_production_batch(head, block_deadline);
+      fc::time_point block_deadline, fc::microseconds max_transaction_time) const {
+   return my->recommended_production_batch(head, block_deadline,max_transaction_time);
 }
 
 size_t controller::for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
-      fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback) {
-   return my->for_each_parallel_production_transaction(transactions, block_deadline, callback);
+      fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback, fc::microseconds max_transaction_time) {
+   return my->for_each_parallel_production_transaction(transactions, block_deadline, callback,max_transaction_time);
 }
 
 const flat_set<account_name>& controller::get_actor_whitelist() const {

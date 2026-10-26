@@ -1,4 +1,5 @@
 #pragma once
+#include <eosio/chain/parallel_immutable_code.hpp>
 
 #include <eosio/chain/parallel_state_overlay.hpp>
 #include <eosio/chain/parallel_secondary_journal.hpp>
@@ -254,7 +255,7 @@ private:
 // request an owned capture; serial_only marks native/privileged/unsupported code.
 struct isolated_receiver_program {
    name receiver;
-   std::vector<char> code;
+   immutable_code code;
    isolated_wasm_limits limits;
    bool serial_only = false;
 };
