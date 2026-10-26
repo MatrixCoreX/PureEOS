@@ -26,12 +26,12 @@ int main(int argc, char** argv) {
    try {
       if (argc == 2 && std::string_view(argv[1]) == "--help") {
          std::cout << "Loopback pre-signed P2P sender: --transactions FILE --evidence NEW_FILE"
-                      " --port N --rate N --count N (--origin-ns N | --start-stdin 1)\n";
+                      " --port N --rate N --count N (--origin-ns N | --start-stdin 1) [--hold-stdin 1]\n";
          return 0;
       }
-      const std::set<std::string> keys{"--transactions", "--evidence", "--port", "--rate", "--count", "--origin-ns", "--start-stdin"};
+      const std::set<std::string> keys{"--transactions", "--evidence", "--port", "--rate", "--count", "--origin-ns", "--start-stdin", "--hold-stdin"};
       std::map<std::string, std::string> options;
-      if (argc != 13) throw std::runtime_error("six explicit options required");
+      if (argc != 13 && argc != 15) throw std::runtime_error("six explicit options and optional hold required");
       for (int i = 1; i < argc; i += 2)
          if (!keys.contains(argv[i]) || !options.emplace(argv[i], argv[i + 1]).second)
             throw std::runtime_error("unknown or repeated option");
@@ -49,6 +49,11 @@ int main(int argc, char** argv) {
       if (controlled_start && options.contains("--origin-ns")) throw std::runtime_error("ambiguous start protocol");
       uint64_t origin = controlled_start ? 0 : number("--origin-ns", UINT64_MAX - 1000000000000ULL);
       if (controlled_start) number("--start-stdin", 1);
+      const bool controlled_hold = options.contains("--hold-stdin");
+      if (controlled_hold) {
+         number("--hold-stdin", 1);
+         if (!controlled_start) throw std::runtime_error("hold requires controlled start");
+      }
       if (count > rate * 600) throw std::runtime_error("duration exceeds fixture bound");
       phase = "load-fixture";
       if (std::filesystem::file_size(options.at("--transactions")) > 1024 * 1024 * 1024)
@@ -159,6 +164,32 @@ int main(int argc, char** argv) {
          for (auto& dispatcher : dispatchers) dispatcher.join();
          for (const auto& error : dispatch_errors) if (error) std::rethrow_exception(error);
          for (auto lag : dispatch_lag) max_lag_ns = std::max(max_lag_ns, lag);
+
+         if (controlled_hold) {
+            // Socket writes do not mean node acceptance. Keep every connection
+            // alive through the controller's independent drain observation.
+            // A bounded explicit release prevents an early close from discarding
+            // unread P2P frames; it never changes due times or transaction counts.
+            phase = "release-control";
+            std::cout << "{\"status\":\"sent-awaiting-release\",\"sent\":" << count << "}\n" << std::flush;
+            const auto release_deadline = et::benchmark_monotonic_ns() + 180000000000ULL;
+            std::string release;
+            while (true) {
+               const auto now = et::benchmark_monotonic_ns();
+               if (now >= release_deadline) throw std::runtime_error("release control timed out");
+               pollfd input{STDIN_FILENO, POLLIN, 0};
+               const auto timeout = static_cast<int>((release_deadline - now + 999999) / 1000000);
+               const int polled = ::poll(&input, 1, timeout);
+               if (polled < 0 && errno == EINTR) continue;
+               if (polled <= 0) throw std::runtime_error("release control unavailable");
+               char byte;
+               if (::read(STDIN_FILENO, &byte, 1) != 1) throw std::runtime_error("release control closed");
+               if (byte == '\n') break;
+               if (release.size() >= 7) throw std::runtime_error("invalid release control");
+               release.push_back(byte);
+            }
+            if (release != "release") throw std::runtime_error("invalid release control");
+         }
          phase = "drain";
          for (size_t i = 0; i < connection_count; ++i) {
             connected[i] = false; // cleanup may throw after joining;never repeat it
