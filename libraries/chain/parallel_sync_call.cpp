@@ -21,7 +21,7 @@ const isolated_receiver_program* pack_sync_catalog(fc::sha256::encoder& fingerpr
       fc::raw::pack(fingerprint, program.receiver);
       fc::raw::pack(fingerprint, program.serial_only);
       fc::raw::pack(fingerprint, item.sync_call_supported);
-      fc::raw::pack(fingerprint, fc::sha256::hash(program.code.data(), program.code.size()));
+      fc::raw::pack(fingerprint, program.code.byte_hash());
       const auto& l = program.limits;
       fc::raw::pack(fingerprint, l.max_pages); fc::raw::pack(fingerprint, l.max_call_depth);
       fc::raw::pack(fingerprint, uint64_t(l.max_code_bytes)); fc::raw::pack(fingerprint, uint64_t(l.max_action_bytes));
@@ -40,7 +40,7 @@ fc::sha256 isolated_sync_fingerprint(const isolated_action_input& root,
    const auto* root_program = pack_sync_catalog(fingerprint, programs, protocol, root.receiver);
    if (!root_program) throw isolated_receiver_missing(root.receiver);
    fc::raw::pack(fingerprint, isolated_execution_fingerprint(
-      fc::sha256::hash(root_program->code.data(), root_program->code.size()), root_program->limits, root));
+      root_program->code.byte_hash(), root_program->limits, root));
    return fingerprint.result();
 }
 
@@ -58,7 +58,7 @@ fc::sha256 isolated_sync_transaction_fingerprint(std::span<const isolated_action
          [&](const auto& candidate) { return candidate.program.receiver == root.receiver; });
       if (p == programs.end()) throw isolated_receiver_missing(root.receiver);
       fc::raw::pack(fingerprint, isolated_execution_fingerprint(
-         fc::sha256::hash(p->program.code.data(), p->program.code.size()), p->program.limits, root));
+         p->program.code.byte_hash(), p->program.limits, root));
    }
    return fingerprint.result();
 }
@@ -146,7 +146,7 @@ bool validate_sync_roots(const primary_overlay_result& state,
       if (root.data.size() > p.limits.max_action_bytes || root.authorizations.size() > p.limits.max_authorizations ||
           root.max_return_bytes > p.limits.max_return_bytes ||
           effects.execution_fingerprint != isolated_execution_fingerprint(
-             fc::sha256::hash(p.code.data(), p.code.size()), p.limits, root)) return false;
+             p.code.byte_hash(), p.limits, root)) return false;
    }
    const auto actual_fingerprint = single_root_fingerprint ? isolated_sync_fingerprint(roots.front(), programs, protocol) :
                                                            isolated_sync_transaction_fingerprint(roots, programs, protocol);
@@ -226,7 +226,7 @@ bool validate_sync_roots(const primary_overlay_result& state,
                input.max_return_bytes = std::min(protocol.max_data_bytes,captured->program.limits.max_return_bytes);
                if (child.data.size() > captured->program.limits.max_action_bytes || child.return_value.size() > input.max_return_bytes ||
                    child.execution_fingerprint != isolated_execution_fingerprint(
-                      fc::sha256::hash(captured->program.code.data(),captured->program.code.size()),captured->program.limits,input)) return false;
+                      captured->program.code.byte_hash(),captured->program.limits,input)) return false;
                if (!frame(child.receiver,child.call_ordinal,depth+1,child.read_only,child.events,child.console_markers,child.writes_end)) return false;
             } else {
                const auto& cursor_event = std::get<isolated_cursor_event>(event);

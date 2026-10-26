@@ -49,6 +49,13 @@ public:
    char operator[](size_t index) const {return view()[index];}
    byte_reference operator[](size_t index) {return byte_reference(*this,index);}
    const fc::sha256& content_hash() const noexcept {return digest_;}
+   // Exact SHA256(bytes), including SHA256(empty). content_hash() keeps its
+   // established all-zero no-code sentinel. Never substitute one for the other.
+   const fc::sha256& byte_hash() const {
+      if (!empty()) return digest_;
+      static const auto empty_digest=fc::sha256::hash("",0);
+      return empty_digest;
+   }
    template<typename Iterator> void assign(Iterator first,Iterator last) {replace(std::vector<char>(first,last));}
    void clear() noexcept {bytes_.reset();digest_=fc::sha256{};}
    void resize(size_t count,char value=0) {

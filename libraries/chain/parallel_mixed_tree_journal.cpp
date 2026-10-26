@@ -69,7 +69,7 @@ bool validate_isolated_mixed_tree_journal(const isolated_mixed_tree_result& resu
       if (!p.receiver || !valid_limits(p.limits) || p.code.size() > p.limits.max_code_bytes ||
           p.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes ||
           !catalog.emplace(p.receiver, entry{&captured,
-             p.code.empty() ? fc::sha256{} : fc::sha256::hash(p.code.data(), p.code.size())}).second) return false;
+             p.code.empty() ? fc::sha256{} : p.code.byte_hash()}).second) return false;
       code_bytes += p.code.size();
    }
    for (size_t i = 0; i < roots.size(); ++i) {
@@ -208,8 +208,7 @@ bool validate_isolated_mixed_tree_journal(const isolated_mixed_tree_result& resu
             input.environment = group.input.environment;
             input.max_return_bytes = std::min(protocol.max_data_bytes, captured->program.limits.max_return_bytes);
             if (child.data.size() > captured->program.limits.max_action_bytes || child.return_value.size() > input.max_return_bytes ||
-                child.execution_fingerprint != isolated_execution_fingerprint(fc::sha256::hash(captured->program.code.data(),
-                   captured->program.code.size()), captured->program.limits, input)) return false;
+                child.execution_fingerprint != isolated_execution_fingerprint(captured->program.code.byte_hash(), captured->program.limits, input)) return false;
             primary_overlay_cursor child_cursor(replay, child.receiver);
             secondary_cursor_group child_secondary(replay, child.receiver);
             size_t markers = 0;

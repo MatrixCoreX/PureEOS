@@ -73,7 +73,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
           program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
       code_bytes += program.code.size();
       if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
-            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+            program.code.empty() ? fc::sha256{} : program.code.byte_hash()}).second)
          return false;
    }
    std::vector<fc::sha256> fingerprints;

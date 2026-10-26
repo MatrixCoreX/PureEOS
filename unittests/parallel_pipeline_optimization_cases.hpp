@@ -76,4 +76,27 @@ BOOST_AUTO_TEST_CASE(transfer_prefetch_never_assumes_contract_semantics_or_creat
       BOOST_CHECK(producer.get_row_by_account("test"_n,owner,"accounts"_n,symbol_code).empty());
    BOOST_CHECK(producer.get_row_by_account("test"_n,symbol_code,"stat"_n,symbol_code).empty());
 }
+
+BOOST_AUTO_TEST_CASE(byte_digest_preserves_empty_raw_hash_and_frozen_copy_semantics) {
+   using eosio::chain::experimental::immutable_code;
+   const auto empty_hash=fc::sha256::hash("",0);
+   immutable_code code;
+   BOOST_CHECK(code.content_hash()==fc::sha256{});
+   BOOST_CHECK(code.byte_hash()==empty_hash);
+   BOOST_CHECK(code.byte_hash()!=code.content_hash());
+   for (size_t size : {size_t{0},size_t{1},size_t{63},size_t{64},size_t{65},size_t{4096}}) {
+      code.resize(size,static_cast<char>(0xa5));
+      const auto frozen=code;
+      const auto expected=fc::sha256::hash(code.data(),code.size());
+      BOOST_CHECK(code.byte_hash()==expected);
+      code.resize(size+1,'x');
+      BOOST_CHECK(frozen.byte_hash()==expected);
+      code[0]^=1;
+      BOOST_CHECK(code.byte_hash()==fc::sha256::hash(code.data(),code.size()));
+      BOOST_CHECK(frozen.byte_hash()==expected);
+      code.clear();
+      BOOST_CHECK(code.byte_hash()==empty_hash);
+      BOOST_CHECK(code.content_hash()==fc::sha256{});
+   }
+}
 BOOST_AUTO_TEST_SUITE_END()
