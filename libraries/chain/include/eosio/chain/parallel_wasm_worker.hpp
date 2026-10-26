@@ -51,7 +51,9 @@ struct isolated_cancel {
       return (generation && generation->load(std::memory_order_relaxed) != observed) ||
              (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline);
    }
-   void check(std::stop_token stop = {}) const {
+   // Borrow only for this check; the caller retains ownership of its token.
+   // Per-host-call copies contend on the shared stop-state reference count.
+   void check(const std::stop_token& stop = {}) const {
       if (stop.stop_requested() || (generation && generation->load(std::memory_order_relaxed) != observed))
          throw isolated_execution_interrupted(isolated_interrupt_reason::cancelled);
       if (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline)
