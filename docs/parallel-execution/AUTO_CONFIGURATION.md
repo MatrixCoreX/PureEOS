@@ -43,3 +43,8 @@ batch write-operation budget retain their previous values. Canonical adoption
 remains ordered and failed speculation falls back through the existing path.
 Larger batches can therefore reach a shared limit earlier. Automatic sizing is
 a starting point for local scheduling, not a measured throughput guarantee.
+
+Shared capture metadata now receives a bounded allowance of four entries per
+actual batch slot, with the previous table/account limits as floors and a maximum
+of 1024 each. Individual transaction read limits stay at 64 tables and 256 accounts;
+row/query counts, value bytes, environment bytes and deadlines retain their limits.

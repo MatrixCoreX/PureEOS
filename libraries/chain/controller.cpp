@@ -3389,7 +3389,7 @@ struct controller_impl {
          // ORIGINAL absolute batch/production deadline (never refresh it).
          // Captured only after an actual environment host call. The aggregate
          // WIRE budget is checked before allocating another snapshot; action
-         // range metadata is separately bounded by 64 jobs x 16 ordinary roots.
+         // range metadata is separately bounded by the batch size x 16 ordinary roots.
          // No extra retry rounds and no deadline refresh for this discovery.
          auto attempts = std::make_unique<validation_attempts>();
          attempts->cancel = cancel;
@@ -3430,7 +3430,15 @@ struct controller_impl {
             const std::vector<primary_query> reads(queries.begin(), queries.end());
             const std::vector<secondary_query> secondary_reads(secondary_queries.begin(), secondary_queries.end());
             const std::vector<name> account_reads(accounts.begin(), accounts.end());
-            auto base = capture.capture(tables, reads, secondary_reads, {}, checkpoint, account_reads);
+            // Metadata belongs to the shared batch, while each worker keeps
+            // its original per-transaction read limits. Bound aggregate table/
+            // account entries by four per slot (at most 1024 in a 256-TX batch).
+            // Row/query/value limits and the shared deadline remain unchanged.
+            primary_snapshot_limits capture_limits;
+            const size_t batch_metadata_entries = invocations.size() * 4;
+            capture_limits.max_tables = std::max(capture_limits.max_tables, batch_metadata_entries);
+            capture_limits.max_accounts = std::max(capture_limits.max_accounts, batch_metadata_entries);
+            auto base = capture.capture(tables, reads, secondary_reads, capture_limits, checkpoint, account_reads);
             if (refresh_parent) {
                // All earlier workers have joined. Each discovery wave captures
                // the current canonical prefix afresh, publishes a NEW ticket,
