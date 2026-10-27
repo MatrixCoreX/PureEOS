@@ -62,12 +62,18 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
             ("integrity_hash",std::string(64,'0'))("file","block-"+std::to_string(block->block_num())+".json"));
          ++setup_blocks;
       };
-      source.start();source.create_accounts({"tokenone"_n});seal();
-      source.push_action("eosio"_n,"buyrambytes"_n,"eosio"_n,fc::mutable_variant_object()
-         ("payer","eosio")("receiver","tokenone")("bytes",1048576u));
-      source.push_action("eosio"_n,"delegatebw"_n,"eosio"_n,fc::mutable_variant_object()
+      source.start();
+      signed_transaction account_setup;
+      account_setup.actions.emplace_back(std::vector<permission_level>{{"eosio"_n,"active"_n}},"eosio"_n,"newaccount"_n,
+         fc::raw::pack(std::make_tuple("eosio"_n,"tokenone"_n,authority(base_tester::get_public_key("tokenone"_n,"owner")),
+            authority(base_tester::get_public_key("tokenone"_n,"active")))));
+      account_setup.actions.push_back(source.get_action("eosio"_n,"buyrambytes"_n,{{"eosio"_n,"active"_n}},fc::mutable_variant_object()
+         ("payer","eosio")("receiver","tokenone")("bytes",1048576u)));
+      account_setup.actions.push_back(source.get_action("eosio"_n,"delegatebw"_n,{{"eosio"_n,"active"_n}},fc::mutable_variant_object()
          ("from","eosio")("receiver","tokenone")("stake_net_quantity","100.0000 SYS")
-         ("stake_cpu_quantity","100.0000 SYS")("transfer",false));seal();
+         ("stake_cpu_quantity","100.0000 SYS")("transfer",false)));
+      source.set_transaction_headers(account_setup);account_setup.sign(base_tester::get_private_key("eosio"_n,"active"),source.control->get_chain_id());
+      BOOST_REQUIRE(!source.push_transaction(account_setup)->except);seal();
       std::ifstream wasm(contracts/"eosio.token/eosio.token.wasm",std::ios::binary);
       BOOST_REQUIRE(wasm.good());std::vector<uint8_t> code{std::istreambuf_iterator<char>(wasm),std::istreambuf_iterator<char>()};
       std::ifstream abi_stream(contracts/"eosio.token/eosio.token.abi");BOOST_REQUIRE(abi_stream.good());
