@@ -242,6 +242,26 @@ void replay_original_secondary(host_context& context, const isolated_secondary_c
 }
 } // namespace
 
+// Immediate,synchronous owner-only hashing. No borrowed reference escapes.
+// The existing owned-input function remains the independent byte oracle.
+fc::sha256 isolated_execution_fingerprint_from_action(const fc::sha256& code,const isolated_wasm_limits& limits,
+      name receiver,const action& act,uint32_t max_return,
+      const std::shared_ptr<const isolated_transaction_environment>& environment) {
+   fc::sha256::encoder encoder;
+   constexpr char domain[]="pureeos/isolated-action/v1";
+   encoder.write(domain,sizeof(domain));
+   fc::raw::pack(encoder,code);fc::raw::pack(encoder,limits.max_pages);
+   fc::raw::pack(encoder,limits.max_call_depth);fc::raw::pack(encoder,receiver);
+   fc::raw::pack(encoder,act.account);fc::raw::pack(encoder,act.name);
+   fc::raw::pack(encoder,act.authorization);fc::raw::pack(encoder,act.data);
+   fc::raw::pack(encoder,max_return);
+   if(environment) {
+      constexpr char extension[]="pureeos/isolated-action-environment/v1";
+      encoder.write(extension,sizeof(extension));fc::raw::pack(encoder,environment->fingerprint());
+   }
+   return encoder.result();
+}
+
 std::optional<std::vector<prepared_isolated_root>> prepare_isolated_transaction_roots(
       const controller& control, const packed_transaction& packed, const std::function<void()>& checkpoint) {
    if (!isolated_numeric_environment_compatible()) return {};
@@ -1212,11 +1232,12 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
    try {
       if (!current_environment_matches(context.control, context.trx_context.packed_trx,
             context.trx_context.published, group.input.environment)) return false;
-      auto arguments = current_input(context.control, context.get_action(), group.input.environment);
-      arguments.receiver = context.get_receiver();
-      if (isolated_action_tree_step_fingerprint(isolated_execution_fingerprint(code_hash, limits, arguments),
+      const auto max_return_bytes=context.control.get_global_properties().configuration.max_action_return_value_size;
+      const auto action_fingerprint=isolated_execution_fingerprint_from_action(code_hash,limits,
+         context.get_receiver(),context.get_action(),max_return_bytes,group.input.environment);
+      if (isolated_action_tree_step_fingerprint(action_fingerprint,
              tree_context, group, step) != step.effects.execution_fingerprint ||
-          step.effects.return_value.size() > arguments.max_return_bytes) return false;
+          step.effects.return_value.size() > max_return_bytes) return false;
       if (step_index == 0) {
          const auto checkpoint = [&] { context.trx_context.checktime(); };
          // The result owns a const copy; verify against the ACTUAL packed input
@@ -1231,6 +1252,7 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
          roots.reserve(trx.actions.size());
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act, group.input.environment));
          std::vector<isolated_receiver_program> programs;
+         programs.reserve(std::min<size_t>(result.steps.size(),4));
          std::set<name> captured;
          size_t code_bytes = 0;
          fc::microseconds elapsed{};

@@ -3513,6 +3513,9 @@ struct controller_impl {
             }
             std::vector<isolated_worker_job> jobs;
             std::vector<size_t> job_indices;
+            const auto pending_job_count=std::count(retry.begin(),retry.end(),true);
+            jobs.reserve(pending_job_count);
+            job_indices.reserve(pending_job_count);
             for (size_t i = 0; i < invocations.size(); ++i) {
                if (!retry[i]) continue;
                job_indices.push_back(i);

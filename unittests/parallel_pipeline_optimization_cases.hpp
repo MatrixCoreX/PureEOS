@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+#include <random>
 #include <eosio/chain/parallel_immutable_code.hpp>
 #include <eosio/chain/parallel_production_budget.hpp>
 
@@ -99,4 +101,42 @@ BOOST_AUTO_TEST_CASE(byte_digest_preserves_empty_raw_hash_and_frozen_copy_semant
       BOOST_CHECK(code.content_hash()==fc::sha256{});
    }
 }
+BOOST_AUTO_TEST_CASE(borrowed_hash_matches_owned_bytes_and_preserves_all_bindings) {
+   using namespace eosio::chain::experimental;
+   std::mt19937_64 rng(0x681acb4295ULL);
+   transaction tx;tx.expiration=fc::time_point_sec(1000);
+   auto a=isolated_transaction_environment::capture(tx,1000000,900000,42);
+   auto b=isolated_transaction_environment::capture(tx,1000001,900000,43);
+   for(size_t auth_count:{0u,1u,2u,63u,64u,127u,128u})
+   for(size_t data_count:{0u,1u,32u,33u,127u,128u,255u,256u,65535u,65536u})
+   for(const auto& env:std::array<std::shared_ptr<const isolated_transaction_environment>,3>{{{},a,b}})
+   for(unsigned round=0;round<4;++round) {
+      action act;act.account=name{rng()};act.name=name{rng()};act.data.resize(data_count);
+      for(auto& c:act.data)c=char(rng());
+      for(size_t i=0;i<auth_count;++i)act.authorization.push_back({name{rng()},name{rng()}});
+      isolated_wasm_limits limits;limits.max_pages=uint32_t(rng());limits.max_call_depth=uint32_t(rng());
+      const auto receiver=name{rng()};const auto max_return=uint32_t(rng());
+      const auto code=fc::sha256::hash(std::to_string(rng()));
+      isolated_action_input owned;owned.receiver=receiver;owned.account=act.account;owned.action=act.name;
+      owned.data=act.data;owned.max_return_bytes=max_return;owned.environment=env;
+      for(const auto& permission:act.authorization)owned.authorizations.emplace_back(permission.actor,permission.permission);
+      const auto expected=isolated_execution_fingerprint(code,limits,owned);
+      BOOST_CHECK(eosio::chain::experimental::isolated_execution_fingerprint_from_action(code,limits,receiver,act,max_return,env)==expected);
+      BOOST_CHECK(eosio::chain::experimental::isolated_execution_fingerprint_from_action(code,limits,name{receiver.to_uint64_t()^1},act,max_return,env)!=expected);
+      BOOST_CHECK(eosio::chain::experimental::isolated_execution_fingerprint_from_action(code,limits,receiver,act,max_return^1,env)!=expected);
+      BOOST_CHECK(eosio::chain::experimental::isolated_execution_fingerprint_from_action(code,limits,receiver,act,max_return,env==a?b:a)!=expected);
+      if(!act.data.empty()) {
+         act.data[0]^=1;
+         BOOST_CHECK(eosio::chain::experimental::isolated_execution_fingerprint_from_action(code,limits,receiver,act,max_return,env)!=expected);
+         BOOST_CHECK(isolated_execution_fingerprint(code,limits,owned)==expected);
+         act.data[0]^=1;
+      }
+      if(!act.authorization.empty()) {
+         act.authorization[0].permission=name{act.authorization[0].permission.to_uint64_t()^1};
+         BOOST_CHECK(eosio::chain::experimental::isolated_execution_fingerprint_from_action(code,limits,receiver,act,max_return,env)!=expected);
+         BOOST_CHECK(isolated_execution_fingerprint(code,limits,owned)==expected);
+      }
+   }
+}
+
 BOOST_AUTO_TEST_SUITE_END()

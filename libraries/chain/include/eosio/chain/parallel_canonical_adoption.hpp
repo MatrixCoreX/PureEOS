@@ -9,12 +9,20 @@ class controller;
 class packed_transaction;
 class host_context;
 class sync_call_context;
+struct action;
 }
 
 namespace eosio::chain::experimental {
 
 struct isolated_mixed_tree_result;
 struct isolated_mixed_tree_job;
+
+// Pure synchronous owner-side fingerprinting of borrowed action fields.
+// No view/reference escapes;the original owned-input API remains unchanged.
+// This is neither authorization nor permission to skip any canonical check.
+fc::sha256 isolated_execution_fingerprint_from_action(const fc::sha256&,
+   const isolated_wasm_limits&,name receiver,const action&,uint32_t max_return,
+   const std::shared_ptr<const isolated_transaction_environment>& environment={});
 
 // Owner-only action metadata/input capture for a receiver-deduplicated tree.
 // Owns NO code bytes and is deliberately not a prepared_isolated_action.
