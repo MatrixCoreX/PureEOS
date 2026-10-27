@@ -72,47 +72,55 @@ struct throwing_session:small<46>{
 void actual_databases(){
  using typed=typename chainbase::generic_index<cache_index>::session;
  chainbase::detail::release_index_session_cache<typed>();
+ // The process-global mapped-region registry has a serialized lifetime.
+ // Construct/close mappings on the owner;publish independent DBs to workers
+ // only while that registry is stable. Each DB has exactly one mutation owner.
+ std::array<std::unique_ptr<temp_dir>,4> directories;
+ std::array<std::unique_ptr<database>,4> databases;
+ for(unsigned i=0;i<databases.size();++i){
+  directories[i]=std::make_unique<temp_dir>();
+  databases[i]=std::make_unique<database>(directories[i]->path,database::read_write,8*1024*1024);
+  databases[i]->add_index<cache_index>();
+  databases[i]->create<cache_object>([&](auto& row){row.value=i;});
+ }
  std::array<std::exception_ptr,4> failures;
  std::vector<std::thread> threads;
  for(unsigned thread=0;thread<failures.size();++thread)threads.emplace_back([&,thread]{
   try{
-   temp_dir temp;
-   {
-    database db(temp.path,database::read_write,8*1024*1024);db.add_index<cache_index>();
-    db.create<cache_object>([&](auto& row){row.value=thread;});
-    const auto get=[&]()->const cache_object&{return db.get<cache_object>(cache_object::id_type{0});};
-    auto parent=db.start_undo_session(true);
-    int64_t expected=thread;
-    for(unsigned i=0;i<2000;++i){
-     const auto before=expected;
+   auto& db=*databases[thread];
+   const auto get=[&]()->const cache_object&{return db.get<cache_object>(cache_object::id_type{0});};
+   auto parent=db.start_undo_session(true);
+   int64_t expected=thread;
+   for(unsigned i=0;i<2000;++i){
+    const auto before=expected;
+    {
+     auto transaction=db.start_undo_session(true);
+     db.modify(get(),[](auto& row){++row.value;});
      {
-      auto transaction=db.start_undo_session(true);
-      db.modify(get(),[](auto& row){++row.value;});
-      {
-       auto action=db.start_undo_session(true);
-       db.modify(get(),[](auto& row){row.value+=100;});
-       if(i%2==0)action.squash();
-      }
-      const auto current=before+1+(i%2==0?100:0);
-      require(get().value==current);
-      if(i%3==0){transaction.squash();expected=current;}
+      auto action=db.start_undo_session(true);
+      db.modify(get(),[](auto& row){row.value+=100;});
+      if(i%2==0)action.squash();
      }
-     require(get().value==expected && db.revision()==1);
-     if(i%199==0)chainbase::detail::release_index_session_cache<typed>();
+     const auto current=before+1+(i%2==0?100:0);
+     require(get().value==current);
+     if(i%3==0){transaction.squash();expected=current;}
     }
-    parent.undo();
-    require(get().value==thread && db.revision()==0);
-    {auto disabled=db.start_undo_session(false);db.modify(get(),[](auto& row){row.value+=7;});}
-    require(get().value==thread+7 && db.revision()==0);
+    require(get().value==expected && db.revision()==1);
+    if(i%199==0)chainbase::detail::release_index_session_cache<typed>();
    }
-   {
-    database db(temp.path,database::read_write,8*1024*1024);db.add_index<cache_index>();
-    require(db.get<cache_object>(cache_object::id_type{0}).value==thread+7);
-   }
+   parent.undo();require(get().value==thread && db.revision()==0);
+   {auto disabled=db.start_undo_session(false);db.modify(get(),[](auto& row){row.value+=7;});}
+   require(get().value==thread+7 && db.revision()==0);
   }catch(...){failures[thread]=std::current_exception();}
  });
  for(auto& thread:threads)thread.join();
  for(const auto& failure:failures)if(failure)std::rethrow_exception(failure);
+ for(unsigned i=0;i<databases.size();++i){
+  databases[i].reset();
+  database reopened(directories[i]->path,database::read_write,8*1024*1024);
+  reopened.add_index<cache_index>();
+  require(reopened.get<cache_object>(cache_object::id_type{0}).value==i+7);
+ }
  if constexpr(chainbase::detail::session_cache_supported<typed>)
   require(chainbase::detail::cached_session_impl<typed>::cached_bytes()==0);
 }
@@ -152,11 +160,12 @@ int main(){
  {
   throwing_session::fail=true;
   const auto before=c.start;
+  bool caught=false;
   try{
    auto value=chainbase::detail::make_index_session<throwing_session>([&]{return throwing_session(c);});
-   require(false);
-  }catch(const std::runtime_error&){}
+  }catch(const std::runtime_error&){caught=true;}
   throwing_session::fail=false;
+  require(caught);
   require(c.start==before+1 && c.start==c.push+c.squash+c.undo);
   chainbase::detail::release_index_session_cache<throwing_session>();
  }
