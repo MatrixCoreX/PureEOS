@@ -66,6 +66,14 @@ public:
       bytes_ = 0;
       return result;
    }
+   // Reuse only an empty,bounded allocation after its detached drain.
+   // Destroy callbacks first: their destructors may reenter the owner.
+   void recycle(std::vector<T>&& storage) noexcept {
+      storage.clear();
+      if (entries_.empty() && bytes_ == 0 && storage.capacity() <= Capacity &&
+          storage.capacity() > entries_.capacity())
+         entries_.swap(storage);
+   }
    void clear() noexcept { entries_.clear(); bytes_ = 0; }
 };
 

@@ -2611,6 +2611,11 @@ void producer_plugin_impl::drain_ready_incoming() {
    _incoming_batch_draining = true;
    auto reset = fc::make_scoped_exit([this] { _incoming_batch_draining = false; });
    auto entries = _incoming_batch.take();
+   // Keep the drain guard set while callbacks are destroyed. Only cleared,
+   // bounded storage is retained;reentrant arrivals keep original handling.
+   auto recycle = fc::make_scoped_exit([this,&entries] {
+      _incoming_batch.recycle(std::move(entries));
+   });
    ++_incoming_drains;
    auto& chain = chain_plug->chain();
    size_t cursor = 0;

@@ -200,3 +200,44 @@ BOOST_AUTO_TEST_CASE(single_item_recovery_probe_restores_parallel_admission_with
    BOOST_CHECK_EQUAL(queue::preparation_count(3, 32), 3u);
    BOOST_CHECK_EQUAL(queue::preparation_count(100, 100), 100u);
 }
+
+BOOST_AUTO_TEST_CASE(recycled_storage_has_no_live_payload_and_preserves_next_fifo) {
+   incoming_transaction_batch<entry,4> q(100);
+   for(unsigned i=0;i<4;++i) {
+      entry e{std::make_unique<unsigned>(i),bool(i%2)};
+      BOOST_REQUIRE(q.push(std::move(e),25));
+   }
+   auto detached=q.take();auto* allocation=detached.data();
+   q.recycle(std::move(detached));
+   BOOST_CHECK(q.empty());BOOST_CHECK_EQUAL(q.bytes(),0u);
+   for(unsigned i=4;i<8;++i) {
+      entry e{std::make_unique<unsigned>(i),bool(i%2)};
+      BOOST_REQUIRE(q.push(std::move(e),25));
+   }
+   BOOST_CHECK(!q.can_fit(1));auto next=q.take();
+   BOOST_CHECK(next.data()==allocation);
+   for(unsigned i=0;i<4;++i)BOOST_CHECK_EQUAL(*next[i].id,i+4);
+}
+BOOST_AUTO_TEST_CASE(recycle_releases_callbacks_without_consuming_once_alias) {
+   incoming_transaction_batch<std::function<void(const unsigned&)>,4> q(100);
+   auto owned=std::make_shared<unsigned>(0);std::weak_ptr<unsigned> weak=owned;
+   auto callback=incoming_once<unsigned>([owned](const auto&){++*owned;});
+   auto alias=callback;owned.reset();
+   BOOST_REQUIRE(q.push(std::move(callback),25));
+   auto detached=q.take();q.recycle(std::move(detached));
+   BOOST_CHECK(!weak.expired());alias(7);alias(8);alias={};
+   BOOST_CHECK(weak.expired());BOOST_CHECK(q.empty());BOOST_CHECK_EQUAL(q.bytes(),0u);
+}
+BOOST_AUTO_TEST_CASE(recycle_does_not_replace_reentrant_arrivals_or_keep_unbounded_capacity) {
+   incoming_transaction_batch<entry,4> q(100);
+   entry a{std::make_unique<unsigned>(1),true};BOOST_REQUIRE(q.push(std::move(a),20));
+   auto detached=q.take();
+   entry b{std::make_unique<unsigned>(2),false};BOOST_REQUIRE(q.push(std::move(b),30));
+   q.recycle(std::move(detached));
+   BOOST_REQUIRE_EQUAL(q.size(),1u);BOOST_CHECK_EQUAL(q.bytes(),30u);
+   BOOST_CHECK_EQUAL(*q.take().front().id,2u);
+   std::vector<entry> oversized;oversized.reserve(100);
+   q.recycle(std::move(oversized));
+   entry c{std::make_unique<unsigned>(3),true};BOOST_REQUIRE(q.push(std::move(c),100));
+   BOOST_CHECK(!q.can_fit(1));auto final=q.take();BOOST_CHECK_LE(final.capacity(),4u);
+}
