@@ -10,9 +10,9 @@
 #include <time.h>
 using namespace eosio::chain;
 thread_local int fail_after=-1;
-void* operator new(std::size_t n){if(fail_after>=0 && fail_after--==0){fail_after=-1;throw std::bad_alloc();}if(void* p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
-void operator delete(void* p)noexcept{std::free(p);}
-void operator delete(void* p,std::size_t)noexcept{std::free(p);}
+[[gnu::noinline]] void* operator new(std::size_t n){if(fail_after>=0 && fail_after--==0){fail_after=-1;throw std::bad_alloc();}if(void* p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
+[[gnu::noinline]] void operator delete(void* p)noexcept{std::free(p);}
+[[gnu::noinline]] void operator delete(void* p,std::size_t)noexcept{std::free(p);}
 void require(bool ok){if(!ok)throw std::runtime_error("action-digest-complete-input-oracle");}
 uint64_t cpu_ns(){timespec t{};require(clock_gettime(CLOCK_THREAD_CPUTIME_ID,&t)==0);return uint64_t(t.tv_sec)*1000000000+t.tv_nsec;}
 digest_type original(const action& a,const std::vector<char>& out,bool flag){return flag?generate_action_digest(a,out):digest_type::hash(a);}
@@ -53,7 +53,7 @@ int main(){
   const auto second_expected=original(second,second_out,true);
   fail_after=position;digest_type actual;
   try{actual=cache.digest(second,second_out,true);}catch(...){fail_after=-1;throw;}
-  fail_after=-1;require(actual==second_expected);
+  const bool allocation_failed=fail_after<0;fail_after=-1;require(allocation_failed);require(actual==second_expected);
   require(cache.digest(second,second_out,true)==second_expected);
   require(cache.digest(first,output,true)==expected);
  }
@@ -87,8 +87,10 @@ int main(){
    for(unsigned repeat=0;repeat<3;++repeat){auto d=caching?cache.digest(a,{},true):original(a,{},true);uint64_t word;std::memcpy(&word,d.data(),sizeof(word));checksum+=word;}
   }
   const auto elapsed=cpu_ns()-begin;
-  if(!comma)check_sum=checksum;require(checksum==check_sum);
-  if(comma)std::cout<<",";comma=true;
+  if(!comma)check_sum=checksum;
+  require(checksum==check_sum);
+  if(comma)std::cout<<",";
+  comma=true;
   std::cout<<"{\"cache\":"<<(caching?"true":"false")<<",\"cpu_ns\":"<<elapsed<<",\"checksum\":"<<checksum<<"}";
  }
  std::cout<<"]}\n";
