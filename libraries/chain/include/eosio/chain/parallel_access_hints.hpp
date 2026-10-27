@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <map>
+#include <deque>
 #include <thread>
 #include <vector>
 #include <stdexcept>
@@ -18,12 +19,20 @@ class parallel_access_hints {
    static_assert(Entries > 0 && Paths > 0);
    struct entry { std::vector<Request> paths; bool saturated = false; };
    const std::thread::id owner = std::this_thread::get_id();
-   std::map<Key, entry> values;
-   std::vector<Key> insertion_order;
+   using entry_map = std::map<Key, entry>;
+   entry_map values;
+   std::deque<typename entry_map::iterator> insertion_order;
    void check_owner() const {
       if (owner != std::this_thread::get_id()) throw std::logic_error("access hints used by non-owner");
    }
 public:
+   // The queue contains this map's stable iterators; owner-local caches must
+   // never be copied/moved to another map or execution thread.
+   parallel_access_hints() = default;
+   parallel_access_hints(const parallel_access_hints&) = delete;
+   parallel_access_hints& operator=(const parallel_access_hints&) = delete;
+   parallel_access_hints(parallel_access_hints&&) = delete;
+   parallel_access_hints& operator=(parallel_access_hints&&) = delete;
    // The visitor must finish before any learn/invalidate call. No worker may
    // retain these references. This deliberately returns no container pointer.
    template<typename Visitor> void visit(const Key& key, Visitor&& visitor) const {
@@ -36,15 +45,16 @@ public:
       check_owner();
       auto found = values.find(key);
       if (found == values.end()) {
-         // Reserve insertion bookkeeping first. Allocation failure cannot
-         // publish an entry absent from the bounded eviction queue.
-         insertion_order.reserve(Entries);
+         // FIFO churn must not shift every retained key for each new shape.
+         // If enqueue allocation fails below, remove the newly published map
+         // entry so the bounded eviction queue and map remain consistent.
          if (values.size() == Entries) {
-            values.erase(insertion_order.front());
-            insertion_order.erase(insertion_order.begin());
+            const auto oldest = insertion_order.front();
+            insertion_order.pop_front();
+            values.erase(oldest);
          }
          found = values.emplace(key, entry{}).first;
-         try { insertion_order.push_back(key); }
+         try { insertion_order.push_back(found); }
          catch (...) { values.erase(found); throw; }
       }
       auto& item = found->second;
@@ -61,13 +71,10 @@ public:
       check_owner();
       auto found = values.find(key);
       if (found == values.end()) return;
-      const auto compare = values.key_comp();
-      auto queued = std::find_if(insertion_order.begin(), insertion_order.end(), [&](const auto& item) {
-         return !compare(item, key) && !compare(key, item);
-      });
+      auto queued = std::find(insertion_order.begin(), insertion_order.end(), found);
       if (queued == insertion_order.end()) throw std::logic_error("access hint eviction queue mismatch");
-      values.erase(found);
       insertion_order.erase(queued);
+      values.erase(found);
       // A temporary preparation timeout must not permanently disable a hot
       // shape after cold JIT work. The NEXT batch may learn afresh; this grants
       // no extra retry/deadline to the batch which is already falling back.
