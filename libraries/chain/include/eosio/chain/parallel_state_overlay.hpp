@@ -3,6 +3,7 @@
 #include <eosio/chain/transaction_state_view.hpp>
 #include <eosio/chain/parallel_secondary_state.hpp>
 #include <map>
+#include <boost/container/flat_map.hpp>
 #include <array>
 #include <type_traits>
 #include <initializer_list>
@@ -180,8 +181,8 @@ private:
    };
    const table_snapshot& get_table(const table_key&) const;
    std::pair<const table_snapshot*, const primary_row_read*> locate(const primary_query&) const;
-   std::map<table_key, std::shared_ptr<const table_snapshot>, table_key_less> tables_;
-   std::map<name, std::optional<account_read>> accounts_;
+   boost::container::flat_map<table_key, std::shared_ptr<const table_snapshot>, table_key_less> tables_;
+   boost::container::flat_map<name, std::optional<account_read>> accounts_;
    size_t row_count_ = 0;
    size_t value_bytes_ = 0;
    size_t query_count_ = 0;

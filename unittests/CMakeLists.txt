@@ -753,3 +753,9 @@ set_tests_properties(pureeos_thread_cpu_billing PROPERTIES TIMEOUT 60 LABELS "pa
 
 add_test(NAME pureeos_parallel_multitoken COMMAND parallel_validation_test --run_test=parallel_multitoken_tests --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_parallel_multitoken PROPERTIES TIMEOUT 300 LABELS "parallel;multitoken")
+
+# Pure digest memoization keeps the original SHA implementation as its oracle.
+add_executable(action_digest_cache_test ../tests/action_digest_cache_test.cpp)
+target_link_libraries(action_digest_cache_test PRIVATE eosio_chain)
+add_test(NAME pureeos_action_digest_cache COMMAND action_digest_cache_test)
+set_tests_properties(pureeos_action_digest_cache PROPERTIES TIMEOUT 180 LABELS "parallel;digest;ownership")

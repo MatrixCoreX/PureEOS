@@ -496,6 +496,10 @@ namespace eosio::chain {
                                 block_timestamp_type(control.pending_block_time()).slot, is_transient() ); // Should never fail
    }
 
+   digest_type transaction_context::compute_action_digest(const action& actual,const vector<char>& output) {
+      return action_digest_cache_.digest(actual,output,true);
+   }
+
    void transaction_context::squash() {
       if (undo_session) undo_session->squash();
       control.apply_trx_block_context(trx_blk_context);

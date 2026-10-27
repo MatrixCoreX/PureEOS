@@ -3,6 +3,7 @@
 #include <eosio/chain/trace.hpp>
 #include <eosio/chain/platform_timer.hpp>
 #include <eosio/chain/thread_cpu_billing.hpp>
+#include <eosio/chain/action_digest_cache.hpp>
 
 namespace eosio::benchmark {
    struct interface_in_benchmark; // for benchmark testing
@@ -250,6 +251,8 @@ namespace eosio::chain {
          size_t parallel_next_receiver = 0;
          bool parallel_transaction_adopted = false;
 
+         digest_type compute_action_digest(const action&,const vector<char>& action_output);
+
          void add_ram_usage( account_name account, int64_t ram_delta );
          void apply_isolated_cpu_charge(fc::microseconds elapsed); // validated by the charge entry points
 
@@ -314,6 +317,7 @@ namespace eosio::chain {
          transaction_checktime_timer   transaction_timer;
 
    private:
+         bounded_action_digest_cache action_digest_cache_;
          bool                          is_initialized = false;
          transaction_metadata::trx_type trx_type;
 
