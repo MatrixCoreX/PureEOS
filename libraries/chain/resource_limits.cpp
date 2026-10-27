@@ -504,6 +504,115 @@ resource_limits_manager::get_account_cpu_limit_ex( const account_name& name, uin
    return {arl, greylisted};
 }
 
+// Keep the established _ex APIs unchanged as an independent equivalence
+// oracle. Canonical CPU/NET checks share one immutable set of fresh lookups;
+// the established calculations,finite clipping and greylist semantics follow.
+std::tuple<int64_t,int64_t,bool,bool>
+resource_limits_manager::get_account_net_cpu_limits(const account_name& name,uint32_t greylist_limit) const {
+   const auto& config = _db.get<resource_limits_config_object>();
+   const auto& state = _db.get<resource_limits_state_object>();
+   const auto& usage = _db.get<resource_usage_object,by_owner>(name);
+   int64_t ram,net_weight,cpu_weight;get_account_limits(name,ram,net_weight,cpu_weight);
+   const std::optional<block_timestamp_type> current_time{};
+   const auto net=[&]() -> std::pair<account_resource_limit,bool> {
+   if( net_weight < 0 || state.total_net_weight == 0) {
+      return {{ -1, -1, -1, block_timestamp_type(usage.net_usage.last_ordinal), -1 }, false};
+   }
+
+   account_resource_limit arl;
+
+   uint128_t window_size = config.account_net_usage_average_window;
+
+   bool greylisted = false;
+   uint128_t virtual_network_capacity_in_window = window_size;
+   if( greylist_limit < config::maximum_elastic_resource_multiplier ) {
+      uint64_t greylisted_virtual_net_limit = config.net_limit_parameters.max * greylist_limit;
+      if( greylisted_virtual_net_limit < state.virtual_net_limit ) {
+         virtual_network_capacity_in_window *= greylisted_virtual_net_limit;
+         greylisted = true;
+      } else {
+         virtual_network_capacity_in_window *= state.virtual_net_limit;
+      }
+   } else {
+      virtual_network_capacity_in_window *= state.virtual_net_limit;
+   }
+
+   uint128_t user_weight     = (uint128_t)net_weight;
+   uint128_t all_user_weight = (uint128_t)state.total_net_weight;
+
+   auto max_user_use_in_window = (virtual_network_capacity_in_window * user_weight) / all_user_weight;
+   auto net_used_in_window  = impl::integer_divide_ceil((uint128_t)usage.net_usage.value_ex * window_size, (uint128_t)config::rate_limiting_precision);
+
+   if( max_user_use_in_window <= net_used_in_window )
+      arl.available = 0;
+   else
+      arl.available = finite_account_limit(max_user_use_in_window - net_used_in_window);
+
+   arl.used = impl::downgrade_cast<int64_t>(net_used_in_window);
+   arl.max = finite_account_limit(max_user_use_in_window);
+   arl.last_usage_update_time = block_timestamp_type(usage.net_usage.last_ordinal);
+   arl.current_used = arl.used;
+   if ( current_time ) {
+      if (current_time->slot > usage.net_usage.last_ordinal) {
+         auto history_usage = usage.net_usage;
+         history_usage.add(0, current_time->slot, window_size);
+         arl.current_used = impl::downgrade_cast<int64_t>(impl::integer_divide_ceil((uint128_t)history_usage.value_ex * window_size, (uint128_t)config::rate_limiting_precision));
+      }
+   }
+   return {arl, greylisted};
+
+   }();
+   const auto cpu=[&]() -> std::pair<account_resource_limit,bool> {
+   if( cpu_weight < 0 || state.total_cpu_weight == 0 ) {
+      return {{ -1, -1, -1, block_timestamp_type(usage.cpu_usage.last_ordinal), -1 }, false};
+   }
+
+   account_resource_limit arl;
+
+   uint128_t window_size = config.account_cpu_usage_average_window;
+
+   bool greylisted = false;
+   uint128_t virtual_cpu_capacity_in_window = window_size;
+   if( greylist_limit < config::maximum_elastic_resource_multiplier ) {
+      uint64_t greylisted_virtual_cpu_limit = config.cpu_limit_parameters.max * greylist_limit;
+      if( greylisted_virtual_cpu_limit < state.virtual_cpu_limit ) {
+         virtual_cpu_capacity_in_window *= greylisted_virtual_cpu_limit;
+         greylisted = true;
+      } else {
+         virtual_cpu_capacity_in_window *= state.virtual_cpu_limit;
+      }
+   } else {
+      virtual_cpu_capacity_in_window *= state.virtual_cpu_limit;
+   }
+
+   uint128_t user_weight     = (uint128_t)cpu_weight;
+   uint128_t all_user_weight = (uint128_t)state.total_cpu_weight;
+
+   auto max_user_use_in_window = (virtual_cpu_capacity_in_window * user_weight) / all_user_weight;
+   auto cpu_used_in_window  = impl::integer_divide_ceil((uint128_t)usage.cpu_usage.value_ex * window_size, (uint128_t)config::rate_limiting_precision);
+
+   if( max_user_use_in_window <= cpu_used_in_window )
+      arl.available = 0;
+   else
+      arl.available = finite_account_limit(max_user_use_in_window - cpu_used_in_window);
+
+   arl.used = impl::downgrade_cast<int64_t>(cpu_used_in_window);
+   arl.max = finite_account_limit(max_user_use_in_window);
+   arl.last_usage_update_time = block_timestamp_type(usage.cpu_usage.last_ordinal);
+   arl.current_used = arl.used;
+   if ( current_time ) {
+      if (current_time->slot > usage.cpu_usage.last_ordinal) {
+         auto history_usage = usage.cpu_usage;
+         history_usage.add(0, current_time->slot, window_size);
+         arl.current_used = impl::downgrade_cast<int64_t>(impl::integer_divide_ceil((uint128_t)history_usage.value_ex * window_size, (uint128_t)config::rate_limiting_precision));
+      }
+   }
+   return {arl, greylisted};
+
+   }();
+   return {net.first.available,cpu.first.available,net.second,cpu.second};
+}
+
 std::pair<int64_t, bool> resource_limits_manager::get_account_net_limit( const account_name& name, uint32_t greylist_limit ) const {
    auto [arl, greylisted] = get_account_net_limit_ex(name, greylist_limit);
    return {arl.available, greylisted};

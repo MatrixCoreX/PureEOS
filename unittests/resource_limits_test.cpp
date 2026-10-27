@@ -540,4 +540,52 @@ BOOST_AUTO_TEST_SUITE(resource_limits_test)
       }
    } FC_LOG_AND_RETHROW()
 
-   BOOST_AUTO_TEST_SUITE_END()
+   
+   BOOST_FIXTURE_TEST_CASE(combined_resource_query_matches_established_apis_and_undo,resource_limits_fixture) try {
+      const std::vector<int64_t> weights{-1,0,1,7,123456,int64_t{1}<<30};
+      std::vector<account_name> owners;
+      for(int64_t net:weights)for(int64_t cpu:weights) {
+         const account_name owner{uint64_t(100+owners.size())};owners.push_back(owner);
+         initialize_account(owner,false);set_account_limits(owner,8192,net,cpu,false);
+      }
+      process_account_limit_updates();
+      const std::vector<uint32_t> greylists{0,1,2,10,999,1000,std::numeric_limits<uint32_t>::max()};
+      const auto equal=[&] {
+         for(const auto& owner:owners)for(auto grey:greylists) {
+            const auto expected_net=get_account_net_limit(owner,grey),expected_cpu=get_account_cpu_limit(owner,grey);
+            const auto [net,cpu,net_grey,cpu_grey]=get_account_net_cpu_limits(owner,grey);
+            BOOST_CHECK_EQUAL(net,expected_net.first);BOOST_CHECK_EQUAL(cpu,expected_cpu.first);
+            BOOST_CHECK_EQUAL(net_grey,expected_net.second);BOOST_CHECK_EQUAL(cpu_grey,expected_cpu.second);
+         }
+      };
+      equal();
+      for(uint32_t slot=1;slot<=16;++slot) {
+         for(const auto& owner:owners) {
+            const auto net=get_account_net_limit(owner).first,cpu=get_account_cpu_limit(owner).first;
+            if((net<0 || net>=128) && (cpu<0 || cpu>=100))add_transaction_usage({owner},100,128,slot);
+         }
+         equal();process_block_usage(slot);equal();
+      }
+      const auto owner=owners.back();const auto before=get_account_net_cpu_limits(owner);
+      {
+         auto session=start_session();
+         // Pending weights must be read freshly,including finite saturation
+         // before aggregate totals settle. Preserve the existing -1 sentinel.
+         const auto huge=std::numeric_limits<int64_t>::max()/4;
+         set_account_limits(owner,8192,huge,huge,false);equal();
+         const auto [net,cpu,ng,cg]=get_account_net_cpu_limits(owner);
+         BOOST_CHECK_EQUAL(net,std::numeric_limits<int64_t>::max());
+         BOOST_CHECK_EQUAL(cpu,std::numeric_limits<int64_t>::max());
+         process_account_limit_updates();equal();
+         set_account_limits(owner,-1,-1,0,false);equal();
+         process_account_limit_updates();equal();session.undo();
+      }
+      BOOST_CHECK(get_account_net_cpu_limits(owner)==before);equal();
+      {
+         auto session=start_session();set_account_limits(owner,-1,0,-1,false);equal();
+         process_account_limit_updates();equal();session.undo();
+      }
+      BOOST_CHECK(get_account_net_cpu_limits(owner)==before);equal();
+   } FC_LOG_AND_RETHROW();
+
+BOOST_AUTO_TEST_SUITE_END()

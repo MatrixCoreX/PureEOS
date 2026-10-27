@@ -883,12 +883,12 @@ namespace eosio::chain {
                greylist_limit = specified_greylist_limit;
             }
          }
-         auto [net_limit, net_was_greylisted] = rl.get_account_net_limit(a, greylist_limit);
+         auto [net_limit,cpu_limit,net_was_greylisted,cpu_was_greylisted] =
+            rl.get_account_net_cpu_limits(a,greylist_limit);
          if( net_limit >= 0 ) {
             account_net_limit = std::min( account_net_limit, net_limit );
             greylisted_net |= net_was_greylisted;
          }
-         auto [cpu_limit, cpu_was_greylisted] = rl.get_account_cpu_limit(a, greylist_limit);
          if( cpu_limit >= 0 ) {
             account_cpu_limit = std::min( account_cpu_limit, cpu_limit );
             greylisted_cpu |= cpu_was_greylisted;
