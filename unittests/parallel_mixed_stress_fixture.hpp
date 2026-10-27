@@ -161,6 +161,8 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
             ("setup_actions",setup_actions)("setup_blocks",setup_blocks)("setup_blocks_format","uint32 little endian size then native packed signed_block"));
       BOOST_REQUIRE(fc::json::save_to_file(manifest,output/"manifest.json"));
       BOOST_REQUIRE(fc::json::save_to_file(entries,output/"transactions.json"));
+      if(old_manifest.get_object().contains("resource_profile"))
+         BOOST_REQUIRE(fc::json::save_to_file(old_manifest["resource_profile"],output/"POWERUP_PROOF.json"));
       std::filesystem::copy_file(input/"genesis.json",output/"genesis.json");raw_blocks.flush();
       BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("contract","tokenone")("symbol","4,TKN")
          ("code_hash",token_hash)("funded_pairs",entries.size())("self_paid_rows",self_paid)("setup_actions",setup_actions)
@@ -239,6 +241,7 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
    const bool saturation = setting("PUREEOS_PARALLEL_STRESS_SATURATION", 0, 1);
    const bool unique_rows = setting("PUREEOS_PARALLEL_STRESS_UNIQUE_ROWS", 0, 1);
    const bool global_accounts = setting("PUREEOS_PARALLEL_STRESS_GLOBAL_ACCOUNTS", 0, 1);
+   const bool mixed_powerup = std::getenv("PUREEOS_CAPACITY_10_90_POWERUP") != nullptr;
    const unsigned transfer_pairs = setting("PUREEOS_PARALLEL_STRESS_TRANSFER_PAIRS", 64, 1048576);
    const unsigned cpu = setting("PUREEOS_PARALLEL_STRESS_TEST_CPU", config::default_max_block_cpu_usage,
                                 saturation ? 6000000 : 800000);
@@ -287,8 +290,12 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
    production_chain source(cfg, genesis);
    source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
    fc::variants checkpoints;
-   const auto seal = [&] {
-      const auto block = source.produce_block(); source.control->abort_block();
+   std::ofstream resource_blocks;
+   if(mixed_powerup) {resource_blocks.open(directory/"resource-setup-blocks.bin",std::ios::binary);BOOST_REQUIRE(resource_blocks.good());}
+   const auto seal = [&](fc::microseconds skip=fc::milliseconds(500)) {
+      const auto block = source.produce_block(skip); source.control->abort_block();
+      if(mixed_powerup) {const auto bytes=fc::raw::pack(*block);const uint32_t size=bytes.size();
+         resource_blocks.write(reinterpret_cast<const char*>(&size),sizeof(size));resource_blocks.write(bytes.data(),bytes.size());}
       const std::string file = "block-" + std::to_string(block->block_num()) + ".json";
       if (!std::getenv("PUREEOS_CAPACITY_SNAPSHOT_ONLY")) BOOST_REQUIRE(fc::json::save_to_file(*block, directory / file));
       if (checkpoints.size()%1000==0) std::cout << "Bootstrap blocks=" << checkpoints.size() << std::endl;
@@ -334,6 +341,15 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
       ("to", "eosio")("quantity", "1000000000.0000 SYS")("memo", "isolated stress fixture")); seal();
    std::vector<name> users{"alice"_n, "test"_n, "simple"_n};
    users.insert(users.end(), from.begin(), from.end()); users.insert(users.end(), to.begin(), to.end());
+   std::vector<name> rented_owners;
+   std::set<name> rented_accounts;
+   fc::mutable_variant_object powerup_profile;
+   if(mixed_powerup) {
+      BOOST_REQUIRE(global_accounts && mode=="token");
+      if(transfer_pairs>64)BOOST_REQUIRE_EQUAL(transfer_pairs%20,0u);
+      for(size_t i=0;i<from.size();++i)if(!(i/20<from.size()/20 && i%20<2))
+         for(name owner:{from[i],to[i]}) {BOOST_REQUIRE(rented_accounts.insert(owner).second);rented_owners.push_back(owner);}
+   }
    // Activate the real rotation host before installing the current fresh-chain
    // system profile; no native resource-manager mutation or fake system WASM.
    deploy("eosio"_n, contracts / "eosio.bios/eosio.bios");
@@ -371,12 +387,23 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
       trx.sign(base_tester::get_private_key(actor,"active"),source.control->get_chain_id());
       return source.push_transaction(trx);
    };
+   const auto provision_action=[&](name code,name action_name,name actor,const fc::variant_object& values,bool sponsor=false) {
+      const auto& abi=code=="eosio"_n?system_abi:token_abi;
+      std::vector<permission_level> auth;if(sponsor)auth.push_back({"eosio"_n,"active"_n});auth.push_back({actor,"active"_n});
+      return action(auth,code,action_name,abi.variant_to_binary(abi.get_action_type(action_name),values,
+         abi_serializer::create_yield_function(base_tester::abi_serializer_max_time)));
+   };
+   const auto provision_submit=[&](std::vector<action>& actions,const std::set<name>& signers) {
+      signed_transaction trx;trx.actions=std::move(actions);source.set_transaction_headers(trx);
+      for(name actor:signers)trx.sign(base_tester::get_private_key(actor,"active"),source.control->get_chain_id());
+      BOOST_REQUIRE(!source.push_transaction(trx)->except);actions.clear();
+   };
    fc::mutable_variant_object initial_stake_units;
    initial_stake_units.reserve(users.size());
    for (size_t i = 0; i < users.size(); ++i) {
       // Give the shared complex-job signer enough REAL stake for the longer
       // soak. Otherwise account quota, rather than execution, caps this test.
-      const int64_t grant = users[i] == "alice"_n ? 100000000 : (global_accounts && transfer_pairs > 262144 ? 100000 : 1000000);
+      const int64_t grant = rented_accounts.contains(users[i]) ? 0 : users[i] == "alice"_n ? 100000000 : (global_accounts && transfer_pairs > 262144 ? 100000 : 1000000);
       // A typed variant selects FC's append overload. The generic integer
       // overload calls set(), which linearly scans all prior account names.
       initial_stake_units(users[i].to_string(), fc::variant(grant));
@@ -387,12 +414,80 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
          setup_action("eosio"_n, "buyram"_n, "eosio"_n, fc::mutable_variant_object()
             ("payer", "eosio")("receiver", users[i])
             ("quant", unique_rows && users[i] == "simple"_n ? "50000.0000 SYS" : "10.0000 SYS"));
-      setup_action("eosio"_n, "delegatebw"_n, "eosio"_n, fc::mutable_variant_object()
+      if(mixed_powerup && i>=3 && grant) {
+         const name owner=users[i];std::vector<action> actions;
+         actions.push_back(provision_action("eosio.token"_n,"open"_n,owner,fc::mutable_variant_object()
+            ("owner",owner)("symbol","4,SYS")("ram_payer",owner),true));
+         actions.push_back(provision_action("eosio.token"_n,"transfer"_n,"eosio"_n,fc::mutable_variant_object()
+            ("from","eosio")("to",owner)("quantity",asset_text(2*grant))("memo","self-stake principal")));
+         actions.push_back(provision_action("eosio"_n,"delegatebw"_n,owner,fc::mutable_variant_object()
+            ("from",owner)("receiver",owner)("stake_net_quantity",asset_text(grant))
+            ("stake_cpu_quantity",asset_text(grant))("transfer",false)));
+         provision_submit(actions,{"eosio"_n,owner});
+         BOOST_REQUIRE(source.get_row_by_account("eosio"_n,"eosio"_n,"delband"_n,owner).empty());
+         BOOST_REQUIRE(!source.get_row_by_account("eosio"_n,owner,"delband"_n,owner).empty());
+      } else if(grant) setup_action("eosio"_n, "delegatebw"_n, "eosio"_n, fc::mutable_variant_object()
          ("from", "eosio")("receiver", users[i])("stake_net_quantity", asset_text(grant))
          ("stake_cpu_quantity", asset_text(grant))("transfer", false));
       if ((i + 1) % resource_batch == 0) seal();
    }
    seal();
+   if(mixed_powerup) {
+      // Rental is a real,prepaid setup action;never part of the transfer load.
+      // Advance before renting,leaving room for all later bootstrap blocks.
+      const auto recent=block_timestamp_type(fc::time_point::now()-fc::hours(14)).to_time_point();
+      if(recent>source.head().block_time()+fc::milliseconds(500))seal(recent-source.head().block_time());
+      const auto state=system_abi.binary_to_variant("powerup_state",
+         source.get_row_by_account("eosio"_n,name{},"powup.state"_n,"powup.state"_n),
+         abi_serializer::create_yield_function(base_tester::abi_serializer_max_time));
+      BOOST_REQUIRE_EQUAL(state["powerup_days"].as<uint32_t>(),1u);
+      BOOST_REQUIRE_EQUAL(state["net"]["utilization"].as<int64_t>(),0);
+      BOOST_REQUIRE_EQUAL(state["cpu"]["utilization"].as<int64_t>(),0);
+      constexpr int64_t scale=1000000000000000LL;
+      const int64_t frac=int64_t((__int128(scale)*9/10)/rented_owners.size());
+      const int64_t net_units=int64_t(__int128(frac)*state["net"]["weight"].as<int64_t>()/scale);
+      const int64_t cpu_units=int64_t(__int128(frac)*state["cpu"]["weight"].as<int64_t>()/scale);
+      BOOST_REQUIRE(frac>0 && net_units>0 && cpu_units>0);
+      std::vector<action> actions;std::set<name> signers{"eosio"_n};uint64_t tx_count=0;
+      const auto submit=[&] {
+         if(actions.empty())return;
+         provision_submit(actions,signers);signers={"eosio"_n};if(++tx_count%80==0)seal();
+      };
+      for(size_t i=0;i<rented_owners.size();++i) {
+         const name owner=rented_owners[i];signers.insert(owner);
+         actions.push_back(provision_action("eosio.token"_n,"open"_n,owner,fc::mutable_variant_object()
+            ("owner",owner)("symbol","4,SYS")("ram_payer",owner),true));
+         actions.push_back(provision_action("eosio.token"_n,"transfer"_n,"eosio"_n,fc::mutable_variant_object()
+            ("from","eosio")("to",owner)("quantity","100.0000 SYS")("memo","own PowerUp payment")));
+         actions.push_back(provision_action("eosio"_n,"powerup"_n,owner,fc::mutable_variant_object()
+            ("payer",owner)("receiver",owner)("days",1u)("net_frac",frac)("cpu_frac",frac)("max_payment","100.0000 SYS")));
+         if((i+1)%8==0)submit();
+         if((i+1)%65536==0)std::cout<<"PowerUp prepaid accounts="<<i+1<<std::endl;
+      }
+      submit();if(tx_count%80)seal();for(unsigned i=0;i<3;++i)seal();
+      uint32_t min_expiry=std::numeric_limits<uint32_t>::max();
+      for(size_t i=0;i<rented_owners.size();++i) {
+         const auto owner=rented_owners[i];
+         BOOST_REQUIRE(source.get_row_by_account("eosio"_n,"eosio"_n,"delband"_n,owner).empty());
+         const auto raw=source.get_row_by_account("eosio"_n,name{},"powup.order"_n,name{uint64_t(i)});
+         BOOST_REQUIRE_EQUAL(raw.size(),37u);
+         const auto row=fc::raw::unpack<std::tuple<uint8_t,uint64_t,name,int64_t,int64_t,fc::time_point_sec>>(raw);
+         BOOST_REQUIRE(std::get<0>(row)==0 && std::get<1>(row)==i && std::get<2>(row)==owner);
+         BOOST_REQUIRE(std::get<3>(row)==net_units && std::get<4>(row)==cpu_units);
+         min_expiry=std::min(min_expiry,std::get<5>(row).sec_since_epoch());
+         int64_t ram,net_weight,cpu_weight;source.control->get_resource_limits_manager().get_account_limits(owner,ram,net_weight,cpu_weight);
+         BOOST_REQUIRE(ram>0 && net_weight==net_units && cpu_weight==cpu_units);
+      }
+      BOOST_REQUIRE(fc::time_point_sec(min_expiry)>fc::time_point_sec(fc::time_point::now()+fc::hours(1)));
+      fc::variants owners;owners.reserve(rented_owners.size());for(name owner:rented_owners)owners.emplace_back(owner.to_string());
+      powerup_profile("model","10percent-stake-90percent-powerup")("participating_accounts",2*transfer_pairs)
+         ("staked_accounts",2*transfer_pairs-rented_owners.size())("powerup_accounts",rented_owners.size())
+         ("powerup_owners",owners)("net_units_per_rented_account",net_units)("cpu_units_per_rented_account",cpu_units)
+         ("minimum_expiry",min_expiry)("order_start",uint64_t{0})("days",1u)("fraction_per_account",frac)
+         ("setup_transactions",tx_count)("setup_actions",3*rented_owners.size())("payer","each receiver")
+         ("initialization_excluded_from_TPS",true)("first_positive_vote_rule_unchanged",true)("stake_owner","each participating staker")
+         ("bootstrap_coauthorization","eosio and owner;ordinary signatures and billing;before measurement");
+   }
    for (size_t i = 0; i < users.size(); ++i) {
       setup_action("eosio.token"_n, "open"_n, users[i], fc::mutable_variant_object()
          ("owner", users[i])("symbol", "4,SYS")("ram_payer", users[i]));
@@ -536,7 +631,7 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
       for (name n:input) values.emplace_back(n.to_string());
       return values;
    };
-   BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("format", 1)
+   auto result_manifest=fc::mutable_variant_object()("format", 1)
       ("fixture_kind", "real-system-mixed-stress")("chain_id", genesis.compute_chain_id())("code_hashes", hashes)
       ("checkpoints", checkpoints)("business_transactions", count)("mode", mode)("hot_percent", hot)
       ("loop_iterations", work)("complex_roots", roots)("scopes", scopes)("initial_row_value", 10)
@@ -554,6 +649,9 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
       ("bootstrap_snapshot", "bootstrap.snapshot")
       ("tool_overlay", "globally unique five-letter names, own RAM payer, sparse hash, snapshot, resign only")
       ("system_contract", "current integer voting/resource split/rotation profile; no voting load")
-      ("resource_policy", "real RAM purchases and staking, PowerUp configured; no native quota overrides"), directory / "manifest.json"));
+      ("resource_policy", "real RAM purchases and staking, PowerUp configured; no native quota overrides");
+   if(mixed_powerup) {result_manifest("resource_profile",powerup_profile);
+      BOOST_REQUIRE(fc::json::save_to_file(powerup_profile,directory/"POWERUP_PROOF.json"));resource_blocks.flush();}
+   BOOST_REQUIRE(fc::json::save_to_file(result_manifest,directory/"manifest.json"));
 }
 BOOST_AUTO_TEST_SUITE_END()
