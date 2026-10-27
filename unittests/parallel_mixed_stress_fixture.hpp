@@ -27,6 +27,141 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
       }
       BOOST_REQUIRE(fc::json::save_to_file(sizes,dir/"packed-block-sizes.json"));return;
    }
+
+   // Offline preparation only. Import the real funded system snapshot, then
+   // deploy and execute a distinct token contract through signed WASM actions.
+   if (const char* input_dir=std::getenv("PUREEOS_CAPACITY_CUSTOM_TOKEN_POOL")) {
+      const char* output_dir=std::getenv("PUREEOS_CAPACITY_CUSTOM_TOKEN_OUTPUT");
+      const char* contract_dir=std::getenv("PUREEOS_PARALLEL_STRESS_CONTRACTS");
+      BOOST_REQUIRE(output_dir && contract_dir);
+      const std::filesystem::path input(input_dir),output(output_dir),contracts(contract_dir);
+      BOOST_REQUIRE(std::filesystem::create_directory(output));
+      const auto old_manifest=fc::json::from_file(input/"manifest.json");
+      auto manifest=fc::mutable_variant_object(old_manifest.get_object());
+      auto entries=fc::json::from_file(input/"transactions.json").get_array();
+      const auto genesis=fc::json::from_file(input/"genesis.json").as<genesis_state>();
+      fc::temp_directory temporary;
+      auto cfg=base_tester::default_config(temporary).first;
+      cfg.state_size=uint64_t(16384)*1024*1024;cfg.wasm_runtime=wasm_interface::vm_type::eos_vm_jit;
+      production_chain source(cfg,genesis,call_startup_t::no);source.close();
+      std::ifstream snapshot(input/"bootstrap.snapshot",std::ios::binary);BOOST_REQUIRE(snapshot.good());
+      auto reader=std::make_shared<istream_snapshot_reader>(snapshot);source.init(cfg,reader);
+      source.control->abort_block();
+      BOOST_REQUIRE(source.head().id()==old_manifest["checkpoints"].get_array().back()["block_id"].as<block_id_type>());
+      source.set_node_finalizers(std::array<name,1>{"eosio"_n});
+      const auto system_hash=source.control->db().get<account_metadata_object,by_name>("eosio"_n).code_hash;
+      auto checkpoints=old_manifest["checkpoints"].get_array();
+      std::ofstream raw_blocks(output/"setup-blocks.bin",std::ios::binary);BOOST_REQUIRE(raw_blocks.good());
+      uint64_t setup_actions=0,setup_blocks=0;
+      const auto seal=[&] {
+         const auto block=source.produce_block();source.control->abort_block();
+         const auto bytes=fc::raw::pack(*block);const uint32_t size=bytes.size();
+         raw_blocks.write(reinterpret_cast<const char*>(&size),sizeof(size));raw_blocks.write(bytes.data(),bytes.size());
+         checkpoints.emplace_back(fc::mutable_variant_object()("block_num",block->block_num())
+            ("block_id",block->calculate_id())("lib",source.last_irreversible_block_num())
+            ("integrity_hash",std::string(64,'0'))("file","block-"+std::to_string(block->block_num())+".json"));
+         ++setup_blocks;
+      };
+      source.start();source.create_accounts({"tokenone"_n});seal();
+      source.push_action("eosio"_n,"buyrambytes"_n,"eosio"_n,fc::mutable_variant_object()
+         ("payer","eosio")("receiver","tokenone")("bytes",1048576u));
+      source.push_action("eosio"_n,"delegatebw"_n,"eosio"_n,fc::mutable_variant_object()
+         ("from","eosio")("receiver","tokenone")("stake_net_quantity","100.0000 SYS")
+         ("stake_cpu_quantity","100.0000 SYS")("transfer",false));seal();
+      std::ifstream wasm(contracts/"eosio.token/eosio.token.wasm",std::ios::binary);
+      BOOST_REQUIRE(wasm.good());std::vector<uint8_t> code{std::istreambuf_iterator<char>(wasm),std::istreambuf_iterator<char>()};
+      std::ifstream abi_stream(contracts/"eosio.token/eosio.token.abi");BOOST_REQUIRE(abi_stream.good());
+      const std::string abi_text{std::istreambuf_iterator<char>(abi_stream),std::istreambuf_iterator<char>()};
+      source.set_code("tokenone"_n,code);source.set_abi("tokenone"_n,abi_text);seal();
+      const auto token_hash=fc::sha256::hash(reinterpret_cast<const char*>(code.data()),code.size());
+      BOOST_REQUIRE((source.control->db().get<account_metadata_object,by_name>("tokenone"_n).code_hash==token_hash));
+      source.push_action("tokenone"_n,"create"_n,"tokenone"_n,fc::mutable_variant_object()
+         ("issuer","eosio")("maximum_supply","1000000000.0000 TKN"));
+      source.push_action("tokenone"_n,"issue"_n,"eosio"_n,fc::mutable_variant_object()
+         ("to","eosio")("quantity","1000000000.0000 TKN")("memo","custom token saturation setup"));seal();
+      const abi_serializer token_abi(source.control->get_account("tokenone"_n).get_abi(),
+         abi_serializer::create_yield_function(base_tester::abi_serializer_max_time));
+      std::set<name> senders,recipients;
+      const auto push=[&](name action_name,name actor,const fc::variant_object& values) {
+         action act(std::vector<permission_level>{{actor,"active"_n}},"tokenone"_n,action_name,
+            token_abi.variant_to_binary(token_abi.get_action_type(action_name),values,
+               abi_serializer::create_yield_function(base_tester::abi_serializer_max_time)));
+         signed_transaction trx;trx.actions.push_back(std::move(act));source.set_transaction_headers(trx);
+         trx.sign(base_tester::get_private_key(actor,"active"),source.control->get_chain_id());
+         BOOST_REQUIRE(!source.push_transaction(trx)->except);
+         if (++setup_actions%80==0)seal();
+      };
+      for (const auto& entry:entries) {
+         const auto from=entry["from"].as<name>(),to=entry["to"].as<name>();
+         BOOST_REQUIRE(senders.insert(from).second && recipients.insert(to).second);
+         push("open"_n,from,fc::mutable_variant_object()("owner",from)("symbol","4,TKN")("ram_payer",from));
+         push("open"_n,to,fc::mutable_variant_object()("owner",to)("symbol","4,TKN")("ram_payer",to));
+         push("transfer"_n,"eosio"_n,fc::mutable_variant_object()("from","eosio")("to",from)
+            ("quantity","1.0000 TKN")("memo","custom token funding"));
+         if (senders.size()%32768==0)std::cout<<"Custom token funded pairs="<<senders.size()<<std::endl;
+      }
+      for(name from:senders)BOOST_REQUIRE(recipients.find(from)==recipients.end());
+      if(setup_actions%80) seal();
+      for(unsigned i=0;i<5;++i) seal();
+      auto users=old_manifest["users"].get_array();users.emplace_back("tokenone");
+      auto accounts=old_manifest["balance_accounts"].get_array();accounts.emplace_back("tokenone");
+      auto stakes=fc::mutable_variant_object(old_manifest["initial_stake_units"].get_object());
+      stakes("tokenone",fc::variant(int64_t{1000000}));
+      fc::mutable_variant_object sys_balances,token_balances;
+      sys_balances.reserve(accounts.size());token_balances.reserve(accounts.size());
+      int64_t sys_total=0,token_total=0;
+      for(const auto& owner_variant:accounts) {
+         const auto owner=owner_variant.as<name>();
+         const auto amount=[&](name contract,const char* sym) {
+            const auto row=source.get_row_by_account(contract,owner,"accounts"_n,
+               name{symbol::from_string(sym).to_symbol_code().value});
+            return row.empty()?int64_t{0}:fc::raw::unpack<asset>(row).get_amount();
+         };
+         const auto sys=amount("eosio.token"_n,"4,SYS"),token=amount("tokenone"_n,"4,TKN");
+         sys_total+=sys;token_total+=token;
+         sys_balances(owner.to_string(),fc::variant(sys));token_balances(owner.to_string(),fc::variant(token));
+      }
+      BOOST_REQUIRE_EQUAL(sys_total,int64_t{10000000000000});BOOST_REQUIRE_EQUAL(token_total,int64_t{10000000000000});
+      uint64_t self_paid=0;
+      const auto& rows=source.control->db().get_index<key_value_index,by_scope_primary>();
+      for(const auto& entry:entries)for(name owner:{entry["from"].as<name>(),entry["to"].as<name>()}) {
+         const auto* table=source.find_table("tokenone"_n,owner,"accounts"_n);BOOST_REQUIRE(table);
+         const auto row=rows.lower_bound(boost::make_tuple(table->id,symbol::from_string("4,TKN").to_symbol_code().value));
+         BOOST_REQUIRE(row!=rows.end() && row->t_id==table->id && row->payer==owner);++self_paid;
+      }
+      BOOST_REQUIRE((source.control->db().get<account_metadata_object,by_name>("eosio"_n).code_hash==system_hash));
+      const auto integrity=source.control->calculate_integrity_hash();
+      auto last=fc::mutable_variant_object(checkpoints.back().get_object());last("integrity_hash",integrity);checkpoints.back()=std::move(last);
+      {std::ofstream out(output/"bootstrap.snapshot",std::ios::binary);auto writer=std::make_shared<ostream_snapshot_writer>(out);
+       source.control->write_snapshot(writer);writer->finalize();}
+      std::set<transaction_id_type> ids;
+      for(auto& entry:entries) {
+         auto trx=entry["packed"].as<packed_transaction>().get_signed_transaction();
+         BOOST_REQUIRE_EQUAL(trx.actions.size(),1u);auto& act=trx.actions.front();
+         BOOST_REQUIRE(act.account=="eosio.token"_n && act.name=="transfer"_n);
+         act.account="tokenone"_n;act.data=fc::raw::pack(std::make_tuple(entry["from"].as<name>(),entry["to"].as<name>(),
+            asset{1,symbol::from_string("4,TKN")},std::string{}));
+         BOOST_REQUIRE_EQUAL(act.data.size(),33u);trx.set_reference_block(source.head().id());
+         trx.expiration=fc::time_point_sec(fc::time_point::now()+fc::seconds(3300));trx.signatures.clear();
+         trx.sign(base_tester::get_private_key(entry["from"].as<name>(),"active"),source.control->get_chain_id());
+         packed_transaction packed(trx,packed_transaction::compression_type::none);BOOST_REQUIRE(ids.insert(packed.id()).second);
+         auto changed=fc::mutable_variant_object(entry.get_object());changed("id",packed.id())("packed",packed)
+            ("token_contract","tokenone")("token_symbol","TKN");entry=std::move(changed);
+      }
+      manifest("users",users)("balance_accounts",accounts)("initial_stake_units",stakes)("initial_balances",sys_balances)
+         ("checkpoints",checkpoints)("custom_token",fc::mutable_variant_object()("contract","tokenone")("symbol","4,TKN")
+            ("symbol_code","TKN")("WASM_sha256",token_hash)("supply_units",int64_t{10000000000000})
+            ("initial_balances",token_balances)("self_paid_rows_verified",self_paid)("funded_pairs",entries.size())
+            ("setup_actions",setup_actions)("setup_blocks",setup_blocks)("setup_blocks_format","uint32 little endian size then native packed signed_block"));
+      BOOST_REQUIRE(fc::json::save_to_file(manifest,output/"manifest.json"));
+      BOOST_REQUIRE(fc::json::save_to_file(entries,output/"transactions.json"));
+      std::filesystem::copy_file(input/"genesis.json",output/"genesis.json");raw_blocks.flush();
+      BOOST_REQUIRE(fc::json::save_to_file(fc::mutable_variant_object()("contract","tokenone")("symbol","4,TKN")
+         ("code_hash",token_hash)("funded_pairs",entries.size())("self_paid_rows",self_paid)("setup_actions",setup_actions)
+         ("snapshot_head",source.head().id())("integrity_hash",integrity)("system_code_hash_unchanged",system_hash),output/"CUSTOM_TOKEN_PROOF.json"));
+      return;
+   }
+
    // Refresh only test signatures/expiration against the SAME immutable bootstrap.
    if (const char* reuse = std::getenv("PUREEOS_CAPACITY_RESIGN_DIR")) {
       const std::filesystem::path dir(reuse);
@@ -39,11 +174,13 @@ BOOST_AUTO_TEST_CASE(export_system_application_mixed_fixture) {
          // Smallest real transfer payload: from,to,asset,empty memo.
          BOOST_REQUIRE_EQUAL(trx.actions.size(),1u);
          auto& action=trx.actions.front();
-         BOOST_REQUIRE(action.account=="eosio.token"_n && action.name=="transfer"_n);
+         const name contract=entry.get_object().contains("token_contract") ? entry["token_contract"].as<name>() : "eosio.token"_n;
+         BOOST_REQUIRE(action.account==contract && action.name=="transfer"_n);
          BOOST_REQUIRE(action.data.size()>=33u);
          BOOST_REQUIRE_EQUAL(action.data.size(),33u+static_cast<unsigned char>(action.data[32]));
          action.data.resize(33);action.data[32]=0;
          trx.expiration = fc::time_point_sec(fc::time_point::now() + fc::seconds(3300));
+         trx.set_reference_block(block_id_type(manifest["checkpoints"].get_array().back()["block_id"].as_string()));
          trx.signatures.clear();
          trx.sign(base_tester::get_private_key(entry["from"].as<name>(), "active"), chain);
          packed_transaction packed(trx, packed_transaction::compression_type::none);
