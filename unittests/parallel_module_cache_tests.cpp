@@ -9,6 +9,7 @@
 #include <eosio/chain/wast_to_wasm.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/container/small_vector.hpp>
 #include <fc/filesystem.hpp>
 #include <fc/scoped_exit.hpp>
 #include <algorithm>
@@ -1202,5 +1203,127 @@ BOOST_FIXTURE_TEST_CASE(reclamation_during_factory_is_rejected_and_shutdown_join
       BOOST_REQUIRE(pool.retire_outcomes(std::move(results)));
    }
    BOOST_CHECK(weak.expired());
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(owner_current_root_views_tests)
+BOOST_FIXTURE_TEST_CASE(borrowed_roots_match_owned_oracle_for_every_root_and_current_field,shared_cache_fixture) {
+   root.authorizations={{"test"_n,"active"_n},{"alice"_n,"owner"_n}};
+   transaction tx;tx.expiration=fc::time_point_sec(1000);
+   const auto captured=isolated_transaction_environment::capture(tx,1000000,900000,42);
+   for(auto engine:{isolated_vm_engine::interpreter,isolated_vm_engine::jit}) {
+      if(!isolated_vm_engine_supported(engine))continue;
+      isolated_worker_pool pool(2,engine);
+      for(size_t count:{1u,2u,4u})for(bool with_environment:{false,true}) {
+         const auto environment=with_environment?captured:std::shared_ptr<const isolated_transaction_environment>{};
+         std::vector<isolated_action_input> roots(count,root);
+         for(auto& r:roots)r.environment=environment;
+         const std::vector catalog{isolated_receiver_program{root.receiver,programs[0],{}}};
+         std::vector<fc::sha256> hashes;
+         for(const auto& r:roots)hashes.push_back(isolated_execution_fingerprint(catalog[0].code.content_hash(),{},r));
+         const std::array requests{ordered_attempt_batch::request{
+            fc::sha256::hash("all-current-roots-"+std::to_string(count)),isolated_action_tree_fingerprint(hashes,{})}};
+         ordered_attempt_batch order(base,requests);
+         auto job=isolated_worker_job(order.get_ticket(0),roots,catalog,isolated_action_tree_context{});
+         job.prevalidate_tree=true;auto outcomes=pool.run({std::move(job)});
+         BOOST_REQUIRE(outcomes.front().prevalidated_tree);const auto& proof=*outcomes.front().prevalidated_tree;
+         const auto& result=*outcomes.front().tree_attempt();
+         std::vector<action> actual;
+         for(const auto& r:roots) {
+            action a;a.account=r.account;a.name=r.action;a.data=r.data;
+            for(const auto& auth:r.authorizations)a.authorization.push_back({auth.first,auth.second});
+            actual.push_back(std::move(a));
+         }
+         const auto compare=[&](const auto& r,const auto& actions,uint32_t max_return,
+                                const std::shared_ptr<const isolated_transaction_environment>& env,
+                                const auto& programs,const isolated_action_tree_context& context) {
+            std::vector<isolated_action_input> copied;
+            for(const auto& a:actions) {
+               isolated_action_input input;input.receiver=input.account=a.account;input.action=a.name;input.data=a.data;
+               input.max_return_bytes=max_return;input.environment=env;
+               for(const auto& auth:a.authorization)input.authorizations.emplace_back(auth.actor,auth.permission);
+               copied.push_back(std::move(input));
+            }
+            const bool oracle=proof.matches(r,copied,programs,context,{});
+            const bool borrowed=proof.matches_current_roots(r,actions,max_return,env,programs,context);
+            BOOST_CHECK_EQUAL(borrowed,oracle);return borrowed;
+         };
+         BOOST_CHECK(compare(result,actual,root.max_return_bytes,environment,catalog,{}));
+         auto copy=result;BOOST_CHECK(!compare(copy,actual,root.max_return_bytes,environment,catalog,{}));
+         for(size_t index=0;index<count;++index)for(unsigned mutation=0;mutation<10;++mutation) {
+            auto changed=actual;auto& a=changed[index];
+            switch(mutation) {
+               case 0:a.account="other"_n;break;
+               case 1:a.name="other"_n;break;
+               case 2:a.data.front()^=1;break;
+               case 3:a.data.push_back(1);break;
+               case 4:a.data.clear();break;
+               case 5:a.authorization.front().actor="other"_n;break;
+               case 6:a.authorization.front().permission="other"_n;break;
+               case 7:a.authorization.pop_back();break;
+               case 8:a.authorization.push_back({"other"_n,"active"_n});break;
+               default:std::swap(a.authorization[0],a.authorization[1]);break;
+            }
+            BOOST_CHECK(!compare(result,changed,root.max_return_bytes,environment,catalog,{}));
+         }
+         auto shortened=actual;shortened.pop_back();
+         BOOST_CHECK(!compare(result,shortened,root.max_return_bytes,environment,catalog,{}));
+         auto extended=actual;extended.push_back(actual.front());
+         BOOST_CHECK(!compare(result,extended,root.max_return_bytes,environment,catalog,{}));
+         BOOST_CHECK(!compare(result,actual,root.max_return_bytes+1,environment,catalog,{}));
+         BOOST_CHECK(!compare(result,actual,root.max_return_bytes,
+            with_environment?std::shared_ptr<const isolated_transaction_environment>{}:captured,catalog,{}));
+         for(unsigned mutation=0;mutation<5;++mutation) {
+            auto changed=catalog;
+            if(mutation==0)changed[0].code=programs[1];
+            if(mutation==1)++changed[0].limits.max_pages;
+            if(mutation==2)changed[0].serial_only=true;
+            if(mutation==3)changed.push_back(changed.front());
+            if(mutation==4)changed.clear();
+            BOOST_CHECK(!compare(result,actual,root.max_return_bytes,environment,changed,{}));
+         }
+         for(unsigned mutation=0;mutation<4;++mutation) {
+            isolated_action_tree_context context;
+            if(mutation==0)++context.max_inline_action_size;
+            if(mutation==1)++context.max_inline_action_depth;
+            if(mutation==2)context.console_enabled=!context.console_enabled;
+            if(mutation==3)context.context_free_data=isolated_context_free_data::capture(std::vector<std::vector<char>>{{'x'}});
+            BOOST_CHECK(!compare(result,actual,root.max_return_bytes,environment,catalog,context));
+         }
+         BOOST_CHECK_THROW(proof.matches_current_roots(result,actual,root.max_return_bytes,environment,catalog,{},
+            []{throw std::runtime_error("borrowed-root-checkpoint");}),std::runtime_error);
+         BOOST_CHECK(compare(result,actual,root.max_return_bytes,environment,catalog,{}));
+      }
+   }
+}
+BOOST_FIXTURE_TEST_CASE(inline_catalogue_spills_and_checks_receivers_beyond_inline_capacity,shared_cache_fixture) {
+   for(auto engine:{isolated_vm_engine::interpreter,isolated_vm_engine::jit}) {
+      if(!isolated_vm_engine_supported(engine))continue;
+      isolated_worker_pool pool(2,engine);
+      const std::vector roots{root};
+      std::vector catalog{isolated_receiver_program{root.receiver,programs[0],{}}};
+      for(name receiver:{"prefone"_n,"preftwo"_n,"prefthree"_n,"preffour"_n,"preffive"_n})
+         catalog.push_back({receiver,{},{}});
+      const std::array hashes{isolated_execution_fingerprint(catalog[0].code.content_hash(),{},root)};
+      const std::array requests{ordered_attempt_batch::request{
+         fc::sha256::hash("spilled-current-catalogue"),isolated_action_tree_fingerprint(hashes,{})}};
+      ordered_attempt_batch order(base,requests);
+      auto job=isolated_worker_job(order.get_ticket(0),roots,catalog,isolated_action_tree_context{});
+      job.prevalidate_tree=true;auto outcomes=pool.run({std::move(job)});
+      BOOST_REQUIRE(outcomes.front().prevalidated_tree);const auto& proof=*outcomes.front().prevalidated_tree;
+      const auto& result=*outcomes.front().tree_attempt();
+      action actual;actual.account=root.account;actual.name=root.action;actual.data=root.data;
+      for(const auto& auth:root.authorizations)actual.authorization.push_back({auth.first,auth.second});
+      const std::array actions{actual};
+      boost::container::small_vector<isolated_receiver_program,4> current(catalog.begin(),catalog.end());
+      BOOST_REQUIRE_EQUAL(current.size(),6u);
+      const auto view=[&]{return std::span<const isolated_receiver_program>{current.data(),current.size()};};
+      BOOST_CHECK(proof.matches_current_roots(result,actions,root.max_return_bytes,root.environment,view(),{}));
+      current.back().serial_only=true;
+      BOOST_CHECK(!proof.matches_current_roots(result,actions,root.max_return_bytes,root.environment,view(),{}));
+      current.back().serial_only=false;
+      BOOST_CHECK(proof.matches_current_roots(result,actions,root.max_return_bytes,root.environment,view(),{}));
+   }
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -130,6 +130,12 @@ public:
    bool belongs_to(const ordered_attempt_batch::ticket& ticket)const noexcept {
       return ticket_.same_preparation(ticket);
    }
+   // All actual roots are checked before the first canonical event.
+   // Borrowed views and their references never survive this call.
+   bool matches_current_roots(const isolated_action_tree_result&,std::span<const action>,
+      uint32_t,const std::shared_ptr<const isolated_transaction_environment>&,
+      std::span<const isolated_receiver_program>,const isolated_action_tree_context&,
+      const std::function<void()>& checkpoint={})const;
    bool matches(const isolated_action_tree_result&,std::span<const isolated_action_input>,
       std::span<const isolated_receiver_program>,const isolated_action_tree_context&,
       const std::function<void()>& checkpoint)const;

@@ -12,6 +12,7 @@
 #include <eosio/chain/webassembly/interface.hpp>
 #include <fc/scoped_exit.hpp>
 #include <algorithm>
+#include <boost/container/small_vector.hpp>
 #include <utility>
 
 namespace eosio::chain::experimental {
@@ -1261,10 +1262,14 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             const auto actual = isolated_context_free_data::capture(context.trx_context.packed_trx.get_context_free_data());
             if (actual->fingerprint() != result.context_free_data->fingerprint()) return false;
          }
+         const auto* preflight=context.trx_context.isolated_tree_preflight();
          std::vector<isolated_action_input> roots;
-         roots.reserve(trx.actions.size());
-         for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act, group.input.environment));
-         std::vector<isolated_receiver_program> programs;
+         if(!preflight) {
+            roots.reserve(trx.actions.size());
+            for(const auto& act:trx.actions)roots.push_back(current_input(context.control,act,group.input.environment));
+         }
+         // General catalogues spill normally;no receiver/fresh check is omitted.
+         boost::container::small_vector<isolated_receiver_program,4> programs;
          programs.reserve(std::min<size_t>(result.steps.size(),4));
          small_seen_keys<name> captured;
          size_t code_bytes = 0;
@@ -1287,11 +1292,13 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             programs.push_back(std::move(*program));
          }
          if (production_elapsed && *production_elapsed != elapsed) return false;
-         if(const auto* preflight=context.trx_context.isolated_tree_preflight()) {
-            if(!preflight->matches(result,roots,programs,tree_context,checkpoint))return false;
+         const std::span<const isolated_receiver_program> current_programs{programs.data(),programs.size()};
+         if(preflight) {
+            if(!preflight->matches_current_roots(result,trx.actions,max_return_bytes,
+                  group.input.environment,current_programs,tree_context,checkpoint))return false;
             if(!context.trx_context.explicit_billed_cpu_time)
                context.trx_context.charge_isolated_preflight_cpu(preflight->cpu());
-         } else if (!validate_isolated_action_tree_journal(result, roots, programs, tree_context, checkpoint)) return false;
+         } else if(!validate_isolated_action_tree_journal(result,roots,current_programs,tree_context,checkpoint))return false;
          chainbase_transaction_state_view live(context.db);
          if (!result.state.matches_base_reads(live, checkpoint)) return false;
       }

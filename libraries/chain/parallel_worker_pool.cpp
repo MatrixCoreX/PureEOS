@@ -143,6 +143,31 @@ bool isolated_prevalidated_tree::matches(const isolated_action_tree_result& resu
 }
 
 
+bool isolated_prevalidated_tree::matches_current_roots(const isolated_action_tree_result& result,
+      std::span<const action> roots,uint32_t max_return_bytes,
+      const std::shared_ptr<const isolated_transaction_environment>& environment,
+      std::span<const isolated_receiver_program> programs,const isolated_action_tree_context& context,
+      const std::function<void()>& checkpoint)const {
+   const auto check=[&]{if(checkpoint)checkpoint();};check();
+   if(!result_ || &result!=&*result_ || !input_ || roots.empty() ||
+      roots.size()!=input_->roots.size())return false;
+   for(size_t i=0;i<roots.size();++i) {
+      check();const auto& actual=roots[i];const auto& expected=input_->roots[i];
+      if(expected.receiver!=actual.account || expected.account!=actual.account ||
+         expected.action!=actual.name || expected.data!=actual.data ||
+         expected.authorizations.size()!=actual.authorization.size() ||
+         expected.max_return_bytes!=max_return_bytes ||
+         !same_isolated_environment(expected.environment,environment))return false;
+      for(size_t j=0;j<actual.authorization.size();++j) {
+         check();if(expected.authorizations[j].first!=actual.authorization[j].actor ||
+                    expected.authorizations[j].second!=actual.authorization[j].permission)return false;
+      }
+   }
+   // Preserve the original identity,context and fresh program-catalogue
+   // matcher. Its owned-root comparison remains a differential oracle.
+   return matches(result,input_->roots,programs,context,checkpoint);
+}
+
 bool isolated_prevalidated_tree::binds_current_step(const isolated_action_tree_result& result,size_t index,
       name receiver,const fc::sha256& code_hash,const action& actual,const isolated_wasm_limits& limits,
       uint32_t max_return_bytes,const isolated_action_tree_context& context,
