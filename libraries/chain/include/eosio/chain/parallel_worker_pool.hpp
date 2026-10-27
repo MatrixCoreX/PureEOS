@@ -2,6 +2,8 @@
 #include <eosio/chain/parallel_ordered_batch.hpp>
 #include <eosio/chain/parallel_immutable_input.hpp>
 
+#include <thread>
+namespace eosio::chain {struct action;}
 namespace eosio::chain::experimental {
 
 struct isolated_notification_job {
@@ -121,6 +123,10 @@ public:
    isolated_prevalidated_tree& operator=(const isolated_prevalidated_tree&)=delete;
    const std::optional<isolated_action_tree_result>& result()const {return result_;}
    std::chrono::nanoseconds cpu()const {return cpu_;}
+   // All frozen digests were checked on the pool's exact immutable object.
+   bool binds_current_step(const isolated_action_tree_result&,size_t,name,const fc::sha256&,
+      const action&,const isolated_wasm_limits&,uint32_t,const isolated_action_tree_context&,
+      const std::function<void()>& checkpoint={})const;
    bool belongs_to(const ordered_attempt_batch::ticket& ticket)const noexcept {
       return ticket_.same_preparation(ticket);
    }
@@ -150,14 +156,21 @@ struct isolated_worker_outcome {
    std::chrono::microseconds attempt_wall{};
 };
 
-// Bounded synchronous batches on a persistent pool. The serial owner waits for
-// every worker before returning to canonical execution. Jobs own all inputs;
+// Bounded execution batches on a persistent pool. The serial owner joins all
+// execution jobs before canonical mutation. Separately,one immutable-only
+// reclamation batch may overlap owner work and drains before the next capture.
+// Execution jobs own all inputs;
 // workers never receive controller/database pointers. Switching execution modes
 // destroys the previous executor but retains ONE shared nine-slot module cache
 // on that worker thread; modules never migrate between worker threads.
 // Sync/mixed frames exclusively lease distinct LIVE modules from the bounded
 // cache; no child can reset or evict an ancestor's module.
 // Neither a missing-state nor missing-program outcome can contain a prefix.
+struct isolated_retirement_diagnostics {
+   uint64_t accepted_batches=0,completed_batches=0;
+   size_t peak_outcomes=0;
+   std::thread::id last_thread;
+};
 class isolated_worker_pool {
 public:
    explicit isolated_worker_pool(size_t threads, isolated_vm_engine engine = isolated_vm_engine::interpreter);
@@ -170,6 +183,12 @@ public:
    std::vector<isolated_worker_outcome> run_streamed(std::span<const ordered_attempt_batch::ticket>,
       const std::function<isolated_worker_job(size_t)>&);
    size_t active_started_jobs()const; // owner-only local diagnostic, not a bill
+   // At most ONE pending/in-flight bounded immutable outcome batch;no live DB,
+   // coordinator,VM,resource manager or user callback can be submitted.
+   bool retire_outcomes(std::vector<isolated_worker_outcome>&&);
+   // MUST finish before the controller constructs its next frozen snapshot.
+   void drain_retired(const std::function<void()>& checkpoint={});
+   isolated_retirement_diagnostics retirement_diagnostics()const;
 private:
    struct impl;
    std::unique_ptr<impl> impl_;

@@ -188,8 +188,11 @@ private:
 };
 
 // One synchronous discovery invocation, on ONE unchanged canonical prefix.
-// The owner must join all workers before extending, and MUST NOT mutate/undo
-// canonical state during this scope. Never retain this across adoption, a
+// Capture and extension remain owner-only;workers may concurrently read an
+// already published immutable version. Execution jobs join before canonical
+// mutation;immutable-only reclamation drains before the next batch capture.
+// Reclamation holds no DB capability and may overlap ordinary owner work.
+// Canonical state MUST NOT mutate/undo during this capture-session scope. Never retain this across adoption, a
 // prefix refresh, block abort, or another batch. Each returned version remains
 // immutable: table maps use copy-on-write and row payloads have const ownership.
 // This is not a cross-batch cache, MVCC, or permission for concurrent DB reads.

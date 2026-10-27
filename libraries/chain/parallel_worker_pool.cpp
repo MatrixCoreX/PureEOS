@@ -3,6 +3,7 @@
 #include <eosio/chain/parallel_worker_signals.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/thread_cpu_billing.hpp>
+#include <eosio/chain/action.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <array>
 #include <condition_variable>
@@ -141,6 +142,35 @@ bool isolated_prevalidated_tree::matches(const isolated_action_tree_result& resu
    return true;
 }
 
+
+bool isolated_prevalidated_tree::binds_current_step(const isolated_action_tree_result& result,size_t index,
+      name receiver,const fc::sha256& code_hash,const action& actual,const isolated_wasm_limits& limits,
+      uint32_t max_return_bytes,const isolated_action_tree_context& context,
+      const std::function<void()>& checkpoint)const {
+   const auto check=[&]{if(checkpoint)checkpoint();};check();
+   if(!result_ || &result!=&*result_ || !input_ || index>=result.steps.size() ||
+      context.max_inline_action_size!=input_->context.max_inline_action_size ||
+      context.max_inline_action_depth!=input_->context.max_inline_action_depth ||
+      context.console_enabled!=input_->context.console_enabled ||
+      bool(context.context_free_data)!=bool(input_->context.context_free_data) ||
+      (context.context_free_data && context.context_free_data->fingerprint()!=
+                                      input_->context.context_free_data->fingerprint()))return false;
+   const auto& step=result.steps[index];
+   if(step.group_index>=result.groups.size() || step.receiver!=receiver || step.code_hash!=code_hash)return false;
+   const auto& expected=result.groups[step.group_index].input;
+   if(actual.account!=expected.account || actual.name!=expected.action ||
+      actual.data!=expected.data || actual.authorization.size()!=expected.authorizations.size() ||
+      max_return_bytes!=expected.max_return_bytes)return false;
+   for(size_t i=0;i<actual.authorization.size();++i) {
+      check();if(actual.authorization[i].actor!=expected.authorizations[i].first ||
+                 actual.authorization[i].permission!=expected.authorizations[i].second)return false;
+   }
+   const auto program=std::find_if(input_->programs.begin(),input_->programs.end(),
+      [&](const auto& p){return p.receiver==receiver;});
+   return program!=input_->programs.end() && program->limits==limits &&
+      !program->serial_only && program->code.content_hash()==code_hash;
+}
+
 struct isolated_worker_pool::impl {
    static constexpr size_t max_threads = parallel_runtime_limits::max_workers;
    const std::thread::id owner = std::this_thread::get_id();
@@ -208,6 +238,9 @@ struct isolated_worker_pool::impl {
    parallel_worker_signals<max_threads> work;
    std::condition_variable done;
    std::shared_ptr<batch> active;
+   std::optional<std::vector<isolated_worker_outcome>> retired;
+   bool retiring=false;
+   isolated_retirement_diagnostics retirement;
    bool stopping = false;
    // Outlives joined workers and their caches/active frames. No timer callback
    // can observe a released VM or borrowed stack after a worker returns.
@@ -242,16 +275,34 @@ struct isolated_worker_pool::impl {
       std::unique_ptr<isolated_mixed_tree_executor> mixed_executor;
       while (true) {
          std::shared_ptr<batch> current;
-         size_t index;
+         std::optional<std::vector<isolated_worker_outcome>> reclaim;
+         size_t index=0;
          {
             std::unique_lock lock(mutex);
             // A small joined batch can give every job a distinct cache owner.
             // The same slot stays on that logical worker across discovery
             // waves, including sparse retries. Never move
             // a VM or pin an OS CPU. Larger batches keep the shared queue.
-            work.wait(worker_index, lock, [&] { return stopping || (active && active->has_job(worker_index)); });
-            if (stopping) return;
-            current = active; index = current->take_job(worker_index); ++current->started;
+            work.wait(worker_index, lock, [&] {
+               return stopping || (worker_index==0 && retired) || (active && active->has_job(worker_index));
+            });
+            if(worker_index==0 && retired) {
+               reclaim.emplace(std::move(*retired));retired.reset();retiring=true;
+            } else {
+               if(stopping)return;
+               current=active;index=current->take_job(worker_index);++current->started;
+            }
+         }
+         if(reclaim) {
+            // Only immutable owned bytes/state;no live DB,VM or callback.
+            reclaim.reset();
+            {
+               std::lock_guard lock(mutex);
+               retiring=false;++retirement.completed_batches;
+               retirement.last_thread=std::this_thread::get_id();
+            }
+            done.notify_all();
+            continue;
          }
          const auto& job = current->get_job(index);
          auto& outcome = current->outcomes[index];
@@ -507,6 +558,34 @@ size_t isolated_worker_pool::active_started_jobs()const {
    if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
    std::lock_guard lock(impl_->mutex);
    return impl_->active ? impl_->active->started : 0;
+}
+
+
+bool isolated_worker_pool::retire_outcomes(std::vector<isolated_worker_outcome>&& outcomes) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(outcomes.empty())return true;
+   if(outcomes.size()>parallel_runtime_limits::max_batch_transactions)throw primary_state_budget_exceeded();
+   std::lock_guard lock(impl_->mutex);
+   if(impl_->stopping || impl_->active || impl_->retired || impl_->retiring)return false;
+   const auto count=outcomes.size();
+   impl_->retired.emplace(std::move(outcomes));
+   ++impl_->retirement.accepted_batches;
+   impl_->retirement.peak_outcomes=std::max(impl_->retirement.peak_outcomes,count);
+   impl_->work.notify_ready(impl_->threads.size(),[](size_t worker){return worker==0;});
+   return true;
+}
+void isolated_worker_pool::drain_retired(const std::function<void()>& checkpoint) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(checkpoint)checkpoint();
+   std::unique_lock lock(impl_->mutex);
+   while(impl_->retired || impl_->retiring) {
+      impl_->done.wait_for(lock,std::chrono::microseconds(100));
+      lock.unlock();if(checkpoint)checkpoint();lock.lock();
+   }
+}
+isolated_retirement_diagnostics isolated_worker_pool::retirement_diagnostics()const {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   std::lock_guard lock(impl_->mutex);return impl_->retirement;
 }
 
 } // namespace eosio::chain::experimental
