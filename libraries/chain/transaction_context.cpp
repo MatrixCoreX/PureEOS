@@ -1,6 +1,7 @@
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
+#include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/parallel_action_tree.hpp>
 #include <eosio/chain/parallel_sync_call.hpp>
 #include <eosio/chain/parallel_mixed_tree.hpp>
@@ -74,6 +75,8 @@ namespace eosio::chain {
       parallel_transaction_result = nullptr;
       parallel_notification_result = nullptr;
       parallel_tree_result = nullptr;
+      parallel_tree_preflight.reset();
+      isolated_preflight_charged=false;
       parallel_sync_result = nullptr;
       parallel_sync_input = nullptr;
       parallel_sync_replay_guard = nullptr;
@@ -504,6 +507,8 @@ namespace eosio::chain {
       parallel_transaction_result = nullptr;
       parallel_notification_result = nullptr;
       parallel_tree_result = nullptr;
+      parallel_tree_preflight.reset();
+      isolated_preflight_charged=false;
       parallel_sync_result = nullptr;
       parallel_sync_input = nullptr;
       parallel_sync_replay_guard = nullptr;
@@ -647,6 +652,29 @@ namespace eosio::chain {
       checktime();
       ++isolated_cpu_notification_steps;
       apply_isolated_cpu_charge(elapsed);
+   }
+
+
+   void transaction_context::charge_isolated_preflight_cpu(std::chrono::nanoseconds cpu) {
+      const auto us=std::chrono::duration_cast<std::chrono::microseconds>(cpu);
+      EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
+                 parallel_tree_preflight && parallel_tree_result && !isolated_preflight_charged &&
+                 !parallel_notification_result && !parallel_transaction_result &&
+                 !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
+                 parallel_next_receiver==0 && isolated_cpu_notification_steps==0 && isolated_cpu_last_action_ordinal==0 &&
+                 &*parallel_tree_preflight->result()==parallel_tree_result && parallel_tree_preflight->cpu()==cpu &&
+                 cpu.count()>=0 && cpu<=experimental::isolated_transaction_executor::max_attempt_time &&
+                 us.count()<= (fc::seconds(1)-isolated_cpu_charge).count() &&
+                 pseudo_start.time_since_epoch()>=fc::microseconds(us.count()),
+                 transaction_exception,"invalid isolated preflight CPU charge");
+      checktime();
+      isolated_preflight_charged=true;
+      // Preserve fractional microseconds in the original owner's nanosecond
+      // accumulator; apply the whole-us part through the existing private CPU
+      // charge/watchdog path. Waiting/descheduling is never billed as CPU.
+      cpu_billing.add_external_cpu(cpu-us);
+      apply_isolated_cpu_charge(fc::microseconds(us.count()));
    }
 
    void transaction_context::charge_isolated_tree_cpu(fc::microseconds elapsed, size_t step_index,
@@ -845,7 +873,7 @@ namespace eosio::chain {
 
       const auto& cfg = control.get_global_properties().configuration;
       // Scheduling, sleeping and compilation pauses do not consume the
-      // account's CPU. Add only the adopted private VM CPU, exactly once;
+      // account's CPU. Add adopted VM and frozen-preflight CPU exactly once;
       // wall-clock watchdogs above still protect transaction/block deadlines.
       const auto owner_cpu = cpu_billing.elapsed().count();
       EOS_ASSERT(owner_cpu >= 0 && isolated_cpu_charge.count() >= 0 &&

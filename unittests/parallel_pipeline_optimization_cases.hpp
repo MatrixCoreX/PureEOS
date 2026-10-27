@@ -139,4 +139,50 @@ BOOST_AUTO_TEST_CASE(borrowed_hash_matches_owned_bytes_and_preserves_all_binding
    }
 }
 
+BOOST_AUTO_TEST_CASE(streamed_preflight_preserves_actual_controller_serial_replay_and_empty_tables) {
+   using parallel_production_tests::production_chain;
+   using parallel_production_tests::metadata;
+   using parallel_production_tests::production_push;
+   const auto code=compile("(module (func (export \"apply\") (param i64 i64 i64)))");
+   const auto hash=fc::sha256::hash(reinterpret_cast<const char*>(code.data()),code.size());
+   const auto genesis=parallel_multitoken_tests::genesis();
+   fc::temp_directory producer_directory,validator_directory;
+   auto cfg=base_tester::default_config(producer_directory).first;
+   auto oracle=base_tester::default_config(validator_directory).first;
+   eosio::testing::configure_parallel_test_runtime(cfg);
+   eosio::testing::configure_parallel_test_runtime(oracle);
+   cfg.parallel_validation_threads=2;cfg.parallel_validation_batch_size=24;
+   cfg.parallel_production_enabled=true;cfg.parallel_code_allowlist={hash};
+   production_chain producer(cfg,genesis);tester validator(oracle,genesis);
+   producer.set_node_finalizers(std::array<name,1>{"eosio"_n});
+   producer.create_accounts({"test"_n,"alice"_n,"bob"_n});producer.set_code("test"_n,code);
+   auto setup=producer.produce_block();producer.control->abort_block();
+   validator.push_block(setup);validator.control->abort_block();producer.start();
+   signed_transaction trx;action call;
+   call.account="test"_n;call.name="transfer"_n;call.authorization={{"alice"_n,"active"_n}};
+   const uint64_t symbol=uint64_t{4}|(uint64_t{'T'}<<8)|(uint64_t{'K'}<<16)|(uint64_t{'N'}<<24);
+   const std::array<uint64_t,4> fields{"alice"_n.to_uint64_t(),"bob"_n.to_uint64_t(),1,symbol};
+   call.data.assign(reinterpret_cast<const char*>(fields.data()),reinterpret_cast<const char*>(fields.data())+sizeof(fields));
+   call.data.push_back(0);trx.actions.push_back(call);producer.set_transaction_headers(trx);
+   trx.sign(producer.get_private_key("alice"_n,"active"),producer.control->get_chain_id());
+   std::vector<transaction_metadata_ptr> batch;
+   for(unsigned i=0;i<24;++i) {
+      auto item=trx;item.signatures.clear();item.actions.front().data.back()=char(i);
+      item.sign(producer.get_private_key("alice"_n,"active"),producer.control->get_chain_id());
+      batch.push_back(metadata(producer,item));
+   }
+   BOOST_CHECK_EQUAL(producer.control->for_each_parallel_production_transaction(batch,fc::time_point::maximum(),[&](const auto& m){
+      auto trace=production_push(producer,m);BOOST_REQUIRE(!trace->except);return true;
+   }),24u);
+   const auto stats=producer.control->get_parallel_production_stats();
+   BOOST_CHECK_GT(stats.prevalidated_adopted,0u);
+   BOOST_CHECK_GT(stats.streamed_capture_extensions,0u);
+   auto block=producer.finish_block();validator.push_block(block);validator.control->abort_block();
+   BOOST_CHECK(producer.control->calculate_integrity_hash()==validator.control->calculate_integrity_hash());
+   const name symbol_code{symbol>>8};
+   for(const auto owner:{"alice"_n,"bob"_n})
+      BOOST_CHECK(producer.get_row_by_account("test"_n,owner,"accounts"_n,symbol_code).empty());
+   BOOST_CHECK(producer.get_row_by_account("test"_n,symbol_code,"stat"_n,symbol_code).empty());
+}
+
 BOOST_AUTO_TEST_SUITE_END()

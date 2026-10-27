@@ -19,6 +19,7 @@ struct isolated_worker_job {
    ordered_attempt_batch::ticket ticket;
    std::vector<isolated_action_invocation> actions;
    isolated_cancel cancel;
+   bool prevalidate_tree=false; // trusted pool freezes and preflights before publishing
    // Mutually exclusive with actions. Code/input bytes have owned immutable
    // lifetime, possibly shared across joined waves; never VM/overlay/DB state.
    // The worker may only request another owned receiver NAME.
@@ -96,6 +97,38 @@ constexpr const char* isolated_worker_failure_name(isolated_worker_failure failu
    return "unknown";
 }
 
+
+class isolated_worker_pool;
+
+// Created only inside the trusted pool, before any outcome is published. The
+// result and copied-input handle have immutable ownership and no mutable alias.
+// This proves frozen journal consistency, NEVER current state or authorization.
+class isolated_prevalidated_tree {
+   friend class isolated_worker_pool;
+   immutable_worker_input<isolated_action_tree_job> input_;
+   std::optional<isolated_action_tree_result> result_;
+   ordered_attempt_batch::ticket ticket_;
+   std::chrono::nanoseconds cpu_{};
+   isolated_prevalidated_tree(immutable_worker_input<isolated_action_tree_job> input,
+      isolated_action_tree_result result,ordered_attempt_batch::ticket ticket,
+      std::chrono::nanoseconds cpu)
+      :input_(std::move(input)),result_(std::move(result)),ticket_(std::move(ticket)),cpu_(cpu) {}
+   static std::shared_ptr<const isolated_prevalidated_tree> make(
+      const immutable_worker_input<isolated_action_tree_job>&,isolated_action_tree_result&&,
+      const ordered_attempt_batch::ticket&,const isolated_cancel&);
+public:
+   isolated_prevalidated_tree(const isolated_prevalidated_tree&)=delete;
+   isolated_prevalidated_tree& operator=(const isolated_prevalidated_tree&)=delete;
+   const std::optional<isolated_action_tree_result>& result()const {return result_;}
+   std::chrono::nanoseconds cpu()const {return cpu_;}
+   bool belongs_to(const ordered_attempt_batch::ticket& ticket)const noexcept {
+      return ticket_.same_preparation(ticket);
+   }
+   bool matches(const isolated_action_tree_result&,std::span<const isolated_action_input>,
+      std::span<const isolated_receiver_program>,const isolated_action_tree_context&,
+      const std::function<void()>& checkpoint)const;
+};
+
 struct isolated_worker_outcome {
    std::optional<isolated_transaction_result> result; // legacy root-only mode
    std::optional<isolated_notification_result> notification_result; // requires whole-tree canonical preflight
@@ -103,6 +136,10 @@ struct isolated_worker_outcome {
    std::optional<isolated_sync_result> sync_result; // whole-root preflight and original sync contexts required; never a prefix
    std::optional<isolated_sync_transaction_result> sync_transaction_result; // whole-transaction proof, then original per-root replay
    std::optional<isolated_mixed_tree_result> mixed_result; // independent whole-tree proof/replay required
+   std::shared_ptr<const isolated_prevalidated_tree> prevalidated_tree;
+   const std::optional<isolated_action_tree_result>& tree_attempt()const noexcept {
+      return prevalidated_tree ? prevalidated_tree->result() : tree_result;
+   }
    std::chrono::steady_clock::time_point began, ended; // local diagnostics only
    std::chrono::microseconds elapsed{}; // successful step sum; excludes compilation and queueing
    std::optional<state_capture_request> request; // discovery only; no partial result is adoptable
@@ -128,6 +165,11 @@ public:
    isolated_worker_pool(const isolated_worker_pool&) = delete;
    isolated_worker_pool& operator=(const isolated_worker_pool&) = delete;
    std::vector<isolated_worker_outcome> run(std::vector<isolated_worker_job> jobs);
+   // Owner-side factory may freeze the next segment while earlier immutable
+   // jobs execute. Every published job is joined even if the factory throws.
+   std::vector<isolated_worker_outcome> run_streamed(std::span<const ordered_attempt_batch::ticket>,
+      const std::function<isolated_worker_job(size_t)>&);
+   size_t active_started_jobs()const; // owner-only local diagnostic, not a bill
 private:
    struct impl;
    std::unique_ptr<impl> impl_;

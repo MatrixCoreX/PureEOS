@@ -945,3 +945,145 @@ BOOST_FIXTURE_TEST_CASE(cached_failures_and_invalid_limits_do_not_escape_or_pois
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(owner_pipeline_tests)
+BOOST_FIXTURE_TEST_CASE(proof_is_immutable_and_bound_to_input_result_and_preparation,shared_cache_fixture) {
+   static_assert(!std::is_copy_constructible_v<isolated_prevalidated_tree>);
+   static_assert(!std::is_default_constructible_v<isolated_prevalidated_tree>);
+   for(auto engine:{isolated_vm_engine::interpreter,isolated_vm_engine::jit}) {
+      if(!isolated_vm_engine_supported(engine))continue;
+      isolated_worker_pool pool(2,engine);
+      const std::vector roots{root};
+      const std::vector catalog{isolated_receiver_program{root.receiver,programs[0],{}}};
+      const std::array hashes{isolated_execution_fingerprint(fc::sha256::hash(programs[0].data(),programs[0].size()),{},root)};
+      const std::array requests{ordered_attempt_batch::request{fc::sha256::hash("proof"),isolated_action_tree_fingerprint(hashes,{})}};
+      ordered_attempt_batch order(base,requests),foreign(base,requests);
+      auto tag=order.get_ticket(0);
+      auto job=isolated_worker_job(tag,roots,catalog,isolated_action_tree_context{});job.prevalidate_tree=true;
+      auto results=pool.run({std::move(job)});
+      BOOST_REQUIRE_EQUAL(results.size(),1u);const auto& outcome=results[0];
+      BOOST_REQUIRE(outcome.failure==isolated_worker_failure::none);
+      BOOST_REQUIRE(outcome.prevalidated_tree);BOOST_CHECK(!outcome.tree_result);
+      BOOST_REQUIRE(outcome.tree_attempt());const auto& result=*outcome.tree_attempt();
+      const auto& proof=*outcome.prevalidated_tree;
+      BOOST_CHECK(proof.belongs_to(tag));BOOST_CHECK(!proof.belongs_to(foreign.get_ticket(0)));
+      BOOST_CHECK(proof.cpu().count()>=0);
+      BOOST_CHECK(validate_isolated_action_tree_journal(result,roots,catalog,{}));
+      BOOST_CHECK(proof.matches(result,roots,catalog,{},{}));
+      auto copy=result;BOOST_CHECK(!proof.matches(copy,roots,catalog,{},{}));
+      for(unsigned mutation=0;mutation<6;++mutation) {
+         auto altered=roots;
+         switch(mutation) {
+            case 0:altered[0].data.push_back(1);break;
+            case 1:altered[0].authorizations.emplace_back("test"_n,"active"_n);break;
+            case 2:++altered[0].max_return_bytes;break;
+            case 3:altered[0].action="other"_n;break;
+            case 4:altered[0].receiver="other"_n;break;
+            default:altered[0].account="other"_n;break;
+         }
+         BOOST_CHECK(!proof.matches(result,altered,catalog,{},{}));
+      }
+      for(unsigned mutation=0;mutation<4;++mutation) {
+         auto altered=catalog;
+         switch(mutation) {
+            case 0:altered[0].code=programs[1];break;
+            case 1:++altered[0].limits.max_pages;break;
+            case 2:altered[0].serial_only=true;break;
+            default:altered.push_back(altered[0]);break;
+         }
+         BOOST_CHECK(!proof.matches(result,roots,altered,{},{}));
+      }
+      for(unsigned mutation=0;mutation<4;++mutation) {
+         isolated_action_tree_context context;
+         if(mutation==0)++context.max_inline_action_size;
+         if(mutation==1)++context.max_inline_action_depth;
+         if(mutation==2)context.console_enabled=!context.console_enabled;
+         if(mutation==3)context.context_free_data=isolated_context_free_data::capture(std::vector<std::vector<char>>{{'x'}});
+         BOOST_CHECK(!proof.matches(result,roots,catalog,context,{}));
+      }
+      check(result.state,result.steps.front().effects.return_value,0);
+      const std::array changes{ordered_attempt_batch::retry_request{0,requests[0]}};
+      order.prepare_retries(base,changes);
+      BOOST_CHECK(!proof.belongs_to(order.get_ticket(0)));BOOST_CHECK(proof.belongs_to(tag));
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(streamed_publication_overlaps_owned_capture_and_joins_factory_failures,shared_cache_fixture) {
+   for(auto engine:{isolated_vm_engine::interpreter,isolated_vm_engine::jit}) {
+      if(!isolated_vm_engine_supported(engine))continue;
+      isolated_worker_pool pool(8,engine);
+      const std::vector roots{root};
+      const std::vector catalog{isolated_receiver_program{root.receiver,programs[0],{}}};
+      const std::array hashes{isolated_execution_fingerprint(fc::sha256::hash(programs[0].data(),programs[0].size()),{},root)};
+      std::vector<ordered_attempt_batch::request> requests;
+      for(size_t i=0;i<24;++i)requests.push_back({fc::sha256::hash(std::to_string(i)),isolated_action_tree_fingerprint(hashes,{})});
+      ordered_attempt_batch order(base,requests),foreign(base,requests);
+      std::vector<ordered_attempt_batch::ticket> tags;for(size_t i=0;i<24;++i)tags.push_back(order.get_ticket(i));
+      const auto owner=std::this_thread::get_id();bool overlapped=false,reentrant_rejected=false;
+      auto make=[&](size_t i) {
+         BOOST_REQUIRE(std::this_thread::get_id()==owner);
+         if(i==8) {
+            const auto until=std::chrono::steady_clock::now()+std::chrono::seconds(2);
+            while(pool.active_started_jobs()<8 && std::chrono::steady_clock::now()<until)std::this_thread::yield();
+            overlapped=pool.active_started_jobs()>=8;BOOST_REQUIRE(overlapped);
+            // Owner may capture canonical state while old workers hold copies.
+            const std::array keys{cache_rows};const auto next=frozen_primary_state::capture(view,keys);
+            BOOST_REQUIRE(next);BOOST_CHECK_EQUAL(cache_value(view.read_primary({cache_rows,primary_query_kind::find,1},8).row->value),10u);
+            std::vector<ordered_attempt_batch::retry_request> pending;
+            for(size_t k=i;k<tags.size();++k)pending.push_back({k,requests[k]});
+            order.prepare_retries(next,pending);
+            for(size_t k=i;k<tags.size();++k)tags[k]=order.get_ticket(k);
+            try {pool.run({isolated_worker_job(tags[0],roots,catalog,isolated_action_tree_context{})});}
+            catch(const primary_state_invalid_attempt&){reentrant_rejected=true;}
+         }
+         auto job=isolated_worker_job(tags[i],roots,catalog,isolated_action_tree_context{});job.prevalidate_tree=true;return job;
+      };
+      const auto results=pool.run_streamed(tags,make);
+      BOOST_CHECK(overlapped);BOOST_CHECK(reentrant_rejected);BOOST_CHECK_EQUAL(pool.active_started_jobs(),0u);
+      BOOST_REQUIRE_EQUAL(results.size(),24u);
+      for(size_t i=0;i<results.size();++i) {
+         BOOST_REQUIRE(results[i].prevalidated_tree);BOOST_REQUIRE(results[i].tree_attempt());
+         BOOST_CHECK(results[i].prevalidated_tree->belongs_to(tags[i]));
+         BOOST_CHECK(validate_isolated_action_tree_journal(*results[i].tree_attempt(),roots,catalog,{}));
+         check(results[i].tree_attempt()->state,results[i].tree_attempt()->steps.front().effects.return_value,0);
+      }
+      bool original_failure=false;
+      try {pool.run_streamed(tags,[&](size_t i) {
+         if(i==8)throw std::runtime_error("factory-test-owned-failure");
+         return isolated_worker_job(tags[i],roots,catalog,isolated_action_tree_context{});
+      });}catch(const std::runtime_error& error){original_failure=std::string(error.what())=="factory-test-owned-failure";}
+      BOOST_CHECK(original_failure);BOOST_CHECK_EQUAL(pool.active_started_jobs(),0u);
+      BOOST_CHECK_THROW(pool.run_streamed(tags,[&](size_t){return isolated_worker_job(foreign.get_ticket(0),roots,catalog,isolated_action_tree_context{});}),primary_state_invalid_attempt);
+      auto again=pool.run({isolated_worker_job(tags[0],roots,catalog,isolated_action_tree_context{})});
+      BOOST_REQUIRE(again.front().tree_result);BOOST_CHECK(!again.front().prevalidated_tree);
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(streamed_tail_sizes_cancellation_and_deadline_clear_proofs,shared_cache_fixture) {
+   const std::vector roots{root};const std::vector catalog{isolated_receiver_program{root.receiver,programs[0],{}}};
+   const std::array hashes{isolated_execution_fingerprint(fc::sha256::hash(programs[0].data(),programs[0].size()),{},root)};
+   for(size_t workers:{1u,2u,8u})for(size_t count:{1u,2u,8u,9u,24u}) {
+      isolated_worker_pool pool(workers,isolated_vm_engine::interpreter);
+      std::vector<ordered_attempt_batch::request> requests;
+      for(size_t i=0;i<count;++i)requests.push_back({fc::sha256::hash(std::to_string(i)),isolated_action_tree_fingerprint(hashes,{})});
+      ordered_attempt_batch order(base,requests);std::vector<ordered_attempt_batch::ticket> tags;
+      for(size_t i=0;i<count;++i)tags.push_back(order.get_ticket(i));
+      for(unsigned phase=0;phase<3;++phase) {
+         auto generation=std::make_shared<std::atomic<uint64_t>>(1);
+         isolated_cancel cancel;
+         if(phase==1)cancel={generation,0};
+         if(phase==2)cancel={{},0,std::chrono::steady_clock::now()-std::chrono::seconds(1)};
+         const auto results=pool.run_streamed(tags,[&](size_t i){
+            auto job=isolated_worker_job(tags[i],roots,catalog,isolated_action_tree_context{},cancel);job.prevalidate_tree=true;return job;
+         });
+         BOOST_REQUIRE_EQUAL(results.size(),count);
+         for(const auto& outcome:results) {
+            if(phase==0){BOOST_REQUIRE(outcome.prevalidated_tree);BOOST_REQUIRE(outcome.tree_attempt());}
+            else {BOOST_CHECK(!outcome.prevalidated_tree);BOOST_CHECK(!outcome.tree_attempt());
+               BOOST_CHECK(outcome.failure==(phase==1?isolated_worker_failure::cancelled:isolated_worker_failure::deadline));}
+         }
+      }
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()

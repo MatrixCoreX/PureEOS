@@ -17,6 +17,7 @@ namespace eosio::chain {
    namespace experimental {
       struct isolated_transaction_result; struct isolated_notification_result; struct isolated_action_tree_result;
       struct isolated_wasm_limits; struct isolated_sync_transaction_result; struct isolated_sync_transaction_job; class isolated_sync_replay;
+      class isolated_prevalidated_tree;
       struct isolated_mixed_tree_result; struct isolated_mixed_tree_job; class isolated_mixed_replay;
    }
 
@@ -198,6 +199,10 @@ namespace eosio::chain {
          // to the controller-owned receiver step and consume that step once.
          void charge_isolated_notification_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          void charge_isolated_tree_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
+         const experimental::isolated_prevalidated_tree* isolated_tree_preflight()const {
+            return parallel_tree_preflight.get();
+         }
+         void charge_isolated_preflight_cpu(std::chrono::nanoseconds);
          void charge_isolated_mixed_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
 
@@ -229,6 +234,8 @@ namespace eosio::chain {
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_notification_result* parallel_notification_result = nullptr;
          const experimental::isolated_action_tree_result* parallel_tree_result = nullptr;
+         std::shared_ptr<const experimental::isolated_prevalidated_tree> parallel_tree_preflight;
+         bool isolated_preflight_charged=false;
          const experimental::isolated_sync_transaction_result* parallel_sync_result = nullptr;
          const experimental::isolated_sync_transaction_job* parallel_sync_input = nullptr;
          // Only a successfully preflighted, stack-owned root replay can arm

@@ -1,5 +1,6 @@
 #include <map>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
+#include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/parallel_mixed_tree_journal.hpp>
 #include <eosio/chain/parallel_pure_float.hpp>
 #include <eosio/chain/apply_context.hpp>
@@ -1276,7 +1277,11 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             programs.push_back(std::move(*program));
          }
          if (production_elapsed && *production_elapsed != elapsed) return false;
-         if (!validate_isolated_action_tree_journal(result, roots, programs, tree_context, checkpoint)) return false;
+         if(const auto* preflight=context.trx_context.isolated_tree_preflight()) {
+            if(!preflight->matches(result,roots,programs,tree_context,checkpoint))return false;
+            if(!context.trx_context.explicit_billed_cpu_time)
+               context.trx_context.charge_isolated_preflight_cpu(preflight->cpu());
+         } else if (!validate_isolated_action_tree_journal(result, roots, programs, tree_context, checkpoint)) return false;
          chainbase_transaction_state_view live(context.db);
          if (!result.state.matches_base_reads(live, checkpoint)) return false;
       }

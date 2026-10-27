@@ -152,8 +152,11 @@ void apply_context::exec_one()
                   }
                   return adopted;
                };
-               if (trx_context.parallel_tree_result)
-                  return adopt(trx_context.parallel_tree_result, experimental::try_adopt_action_tree_result);
+               if (trx_context.parallel_tree_result) {
+                  const bool adopted=adopt(trx_context.parallel_tree_result,experimental::try_adopt_action_tree_result);
+                  if(!trx_context.parallel_tree_result)trx_context.parallel_tree_preflight.reset();
+                  return adopted;
+               }
                return adopt(trx_context.parallel_notification_result, experimental::try_adopt_notification_result);
             };
 

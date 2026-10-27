@@ -1296,6 +1296,8 @@ void chain_plugin::plugin_shutdown() {
               ("b", production.batches)("a", production.attempts)("s", production.succeeded)
               ("d", production.adopted)("f", production.serial_fallbacks));
          diagnostics("production", production);
+         ilog("Experimental parallel prevalidation: adopted=${a}, capture_extensions=${c}; local diagnostics only",
+              ("a",production.prevalidated_adopted)("c",production.streamed_capture_extensions));
       }
    }
 }

@@ -94,6 +94,27 @@ int main() {
          require(bill.elapsed() < 10ms, "scheduler wait or another thread was charged");
          require(result.load() != 0, "other-thread computation missing");
       }},
+
+      {"external_fractional_cpu_is_rounded_only_after_aggregation", [] {
+         fake_cpu_clock::value=0ns;fake_billing bill;bill.reset();
+         fake_cpu_clock::value=500ns;bill.add_external_cpu(900ns);
+         require(bill.elapsed()==1us,"external fractional CPU lost or duplicated");
+         bill.pause();fake_cpu_clock::value=1ms;bill.add_external_cpu(700ns);
+         require(bill.elapsed()==2us,"paused external CPU lost");
+         bill.resume();fake_cpu_clock::value+=900ns;
+         require(bill.elapsed()==3us,"resume external remainder duplicated");
+      }},
+      {"external_cpu_rejects_negative_overflow_and_wrong_owner", [] {
+         fake_cpu_clock::value=0ns;fake_billing bill;bill.reset();bill.pause();
+         logic_error_required([&]{bill.add_external_cpu(-1ns);});
+         require(bill.elapsed()==0us,"negative external charge mutated state");
+         bool rejected=false;std::thread other([&]{try{bill.add_external_cpu(1000ns);}catch(const std::logic_error&){rejected=true;}});other.join();
+         require(rejected && bill.elapsed()==0us,"external CPU accepted a foreign owner");
+         bill.add_external_cpu(fake_cpu_clock::duration::max());
+         bool overflow=false;try{bill.add_external_cpu(1ns);}catch(const std::overflow_error&){overflow=true;}
+         require(overflow,"external CPU overflow accepted");
+         require(bill.elapsed()==std::chrono::duration_cast<std::chrono::microseconds>(fake_cpu_clock::duration::max()),"overflow changed state");
+      }},
       {"real_computation_is_charged", [] {
          thread_cpu_billing bill; bill.reset();
          const auto until = thread_cpu_clock::now() + 5ms;

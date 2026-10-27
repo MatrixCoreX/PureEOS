@@ -1034,6 +1034,7 @@ struct controller_impl {
       experimental::ordered_attempt_batch& order;
       experimental::isolated_cancel cancel;
       uint64_t pending_generation;
+      std::shared_ptr<const experimental::isolated_prevalidated_tree> preflight;
    };
    production_adoption_slot* production_slot = nullptr; // stack-owned, synchronous callback only
    experimental::ordered_attempt_batch* production_callback_order = nullptr; // guards extra public pushes after slot consumption
@@ -3395,10 +3396,14 @@ struct controller_impl {
          // layout. Wrong hints can only add bounded fresh reads: the VM still
          // executes, authenticates and proves every actual read and mutation.
          // One ordinary root keeps metadata bounded for arbitrary action trees.
-         for(auto& invocation:invocations) {
-            if(invocation.roots.size()!=1) continue;
+         bool pipeline_layout=true;
+         std::vector<std::pair<name,size_t>> pipeline_owners;
+         pipeline_owners.reserve(invocations.size()*2);
+         for(size_t owner_slot=0;owner_slot<invocations.size();++owner_slot) {
+            auto& invocation=invocations[owner_slot];
+            if(invocation.roots.size()!=1) {pipeline_layout=false;continue;}
             const auto& root=invocation.roots.front();
-            if(root.action!="transfer"_n || root.data.size()<33) continue;
+            if(root.action!="transfer"_n || root.data.size()<33) {pipeline_layout=false;continue;}
             uint64_t from=0,to=0,raw_symbol=0;
             std::memcpy(&from,root.data.data(),8);
             std::memcpy(&to,root.data.data()+8,8);
@@ -3409,7 +3414,9 @@ struct controller_impl {
                const auto letter=letters&255;
                valid=letter>='A' && letter<='Z';letters>>=8;
             }
-            if(!valid) continue;
+            if(!valid) {pipeline_layout=false;continue;}
+            pipeline_owners.emplace_back(name{from},owner_slot);
+            pipeline_owners.emplace_back(name{to},owner_slot);
             extend_path(account_capture_request{name{from}});
             extend_path(account_capture_request{name{to}});
             const auto read=[&](name scope,name table) {
@@ -3430,10 +3437,14 @@ struct controller_impl {
                   invocation.programs.push_back(std::move(*program));
             }
          }
+         std::sort(pipeline_owners.begin(),pipeline_owners.end());
          for (const auto& key : hint_keys)
             parallel_read_hints->visit(key, [&](const auto& path) { checkpoint(); extend_path(path); });
-         // Every discovery wave is fully joined BEFORE the owner reads more
-         // canonical state. Completed transactions keep their immutable base
+         // Every discovery retry joins all prior jobs before recapture. Within
+         // the first wave, only unpublished future slots may receive a new
+         // immutable capture while earlier jobs read their own frozen values.
+         // Canonical callbacks always wait for the complete wave to join.
+         // Completed transactions keep their immutable base
          // and descriptor; only unresolved slots receive a fresh preparation.
          // No failed transaction's partial result survives a discovery wave.
          // A sparse base only answers captured queries, never guesses absence or
@@ -3495,7 +3506,29 @@ struct controller_impl {
             const size_t batch_metadata_entries = invocations.size() * 4;
             capture_limits.max_tables = std::max(capture_limits.max_tables, batch_metadata_entries);
             capture_limits.max_accounts = std::max(capture_limits.max_accounts, batch_metadata_entries);
-            auto base = capture.capture(tables, reads, secondary_reads, capture_limits, checkpoint, account_reads);
+            const bool staged_capture=production && round==0 && !refresh_parent && pipeline_layout &&
+               invocations.size()>conf.parallel_validation_threads;
+            const auto capture_until=[&](size_t end) {
+               if(!staged_capture || end>=invocations.size())
+                  return capture.capture(tables,reads,secondary_reads,capture_limits,checkpoint,account_reads);
+               const auto deferred=[&](name account) {
+                  const auto it=std::lower_bound(pipeline_owners.begin(),pipeline_owners.end(),account,
+                     [](const auto& item,name key){return item.first<key;});
+                  return it!=pipeline_owners.end() && it->first==account && it->second>=end;
+               };
+               const auto included=[&](const table_key& key) {
+                  return key.table!="accounts"_n || !deferred(key.scope);
+               };
+               std::vector<table_key> tk;std::vector<primary_query> pq;
+               std::vector<secondary_query> sq;std::vector<name> ac;
+               tk.reserve(tables.size());pq.reserve(reads.size());sq.reserve(secondary_reads.size());ac.reserve(account_reads.size());
+               for(const auto& key:tables)if(included(key))tk.push_back(key);
+               for(const auto& q:reads)if(included(q.table))pq.push_back(q);
+               for(const auto& q:secondary_reads)if(included(q.table))sq.push_back(q);
+               for(const auto account:account_reads)if(!deferred(account))ac.push_back(account);
+               return capture.capture(tk,pq,sq,capture_limits,checkpoint,ac);
+            };
+            auto base=capture_until(staged_capture ? size_t(conf.parallel_validation_threads) : invocations.size());
             if (refresh_parent) {
                // All earlier workers have joined. Each discovery wave captures
                // the current canonical prefix afresh, publishes a NEW ticket,
@@ -3513,28 +3546,44 @@ struct controller_impl {
                   if (retry[i]) replacements.push_back({i, requests[i]});
                order->prepare_retries(base, replacements);
             }
-            std::vector<isolated_worker_job> jobs;
+
             std::vector<size_t> job_indices;
+            std::vector<ordered_attempt_batch::ticket> tags;
             const auto pending_job_count=std::count(retry.begin(),retry.end(),true);
-            jobs.reserve(pending_job_count);
-            job_indices.reserve(pending_job_count);
-            for (size_t i = 0; i < invocations.size(); ++i) {
-               if (!retry[i]) continue;
+            job_indices.reserve(pending_job_count);tags.reserve(pending_job_count);
+            for(size_t i=0;i<invocations.size();++i)if(retry[i]) {
                job_indices.push_back(i);
-               const auto& input = invocations[i];
-               const auto tag = order->get_ticket(refresh_parent ? refresh_index : i);
-               if(mixed_inputs[i]) {
-                  jobs.emplace_back(tag,mixed_catalogs[i].get(*mixed_inputs[i]),private_cancel);
-               } else if(sync_inputs[i]) {
-                  jobs.emplace_back(tag,sync_catalogs[i].get(*sync_inputs[i]),private_cancel);
-               } else jobs.emplace_back(tag, tree_catalogs[i].get(input), private_cancel);
+               tags.push_back(order->get_ticket(refresh_parent ? refresh_index : i));
             }
-            performance::since(performance::stage::parallel_capture, capture_started);
-            if (round == 0 && !refresh_parent) ++stats.batches;
+            const auto make_job=[&](size_t slot) {
+               checkpoint();
+               if(staged_capture && slot && slot%conf.parallel_validation_threads==0) {
+                  const auto next_base=capture_until(std::min(invocations.size(),slot+size_t(conf.parallel_validation_threads)));
+                  std::vector<ordered_attempt_batch::retry_request> pending;
+                  pending.reserve(tags.size()-slot);
+                  for(size_t k=slot;k<tags.size();++k)pending.push_back({job_indices[k],requests[job_indices[k]]});
+                  order->prepare_retries(next_base,pending);
+                  for(size_t k=slot;k<tags.size();++k)tags[k]=order->get_ticket(job_indices[k]);
+                  ++stats.streamed_capture_extensions;
+               }
+               const auto i=job_indices[slot];const auto& input=invocations[i];
+               if(mixed_inputs[i])return isolated_worker_job(tags[slot],mixed_catalogs[i].get(*mixed_inputs[i]),private_cancel);
+               if(sync_inputs[i])return isolated_worker_job(tags[slot],sync_catalogs[i].get(*sync_inputs[i]),private_cancel);
+               auto job=isolated_worker_job(tags[slot],tree_catalogs[i].get(input),private_cancel);
+               job.prevalidate_tree=production;
+               return job;
+            };
+            performance::since(performance::stage::parallel_capture,capture_started);
+            if(round==0 && !refresh_parent)++stats.batches;
             std::vector<isolated_worker_outcome> completed;
             {
                performance::scope wait_timer(performance::stage::parallel_batch_wait);
-               completed = parallel_workers->run(std::move(jobs));
+               if(production)completed=parallel_workers->run_streamed(tags,make_job);
+               else {
+                  std::vector<isolated_worker_job> jobs;jobs.reserve(tags.size());
+                  for(size_t slot=0;slot<tags.size();++slot)jobs.push_back(make_job(slot));
+                  completed=parallel_workers->run(std::move(jobs));
+               }
             }
             if (completed.size() != job_indices.size()) throw primary_state_invalid_attempt();
             // Count real executions, not successful results retained across
@@ -3543,7 +3592,9 @@ struct controller_impl {
             stats.attempts += completed.size();
             for (size_t job = 0; job < completed.size(); ++job) {
                const auto& result = completed[job];
-               stats.succeeded += bool(result.tree_result) || bool(result.sync_transaction_result) || bool(result.mixed_result);
+               if(result.prevalidated_tree && !result.prevalidated_tree->belongs_to(tags[job]))
+                  throw primary_state_invalid_attempt();
+               stats.succeeded += bool(result.tree_attempt()) || bool(result.sync_transaction_result) || bool(result.mixed_result);
                if (result.failure == isolated_worker_failure::deadline) ++stats.worker_deadlines;
                else if (result.failure == isolated_worker_failure::vm_timeout) ++stats.worker_vm_timeouts;
                else if (result.failure != isolated_worker_failure::none &&
@@ -3720,7 +3771,7 @@ struct controller_impl {
                // to deadlines, eligibility or ordered-adoption decisions.
                if (!refresh_parent)
                   for (const auto& result : attempts->outcomes)
-                     stats.prepared_successes += bool(result.tree_result) ||
+                     stats.prepared_successes += bool(result.tree_attempt()) ||
                         bool(result.sync_transaction_result) || bool(result.mixed_result);
                // Workers have joined. Transfer the final owned catalogs once;
                // copying all code bytes on every discovery wave is unnecessary.
@@ -3759,7 +3810,7 @@ struct controller_impl {
             ? order.inspect_next(tag, packed.id(), batch.outcomes[index].mixed_result, checkpoint)
             : batch.sync_inputs[index]
                ? order.inspect_next(tag, packed.id(), batch.outcomes[index].sync_transaction_result, checkpoint)
-               : order.inspect_next(tag, packed.id(), batch.outcomes[index].tree_result, checkpoint);
+               : order.inspect_next(tag, packed.id(), batch.outcomes[index].tree_attempt(), checkpoint);
       }(); // do not retain an obsolete ticket/base throughout reexecution
       if (status != ordered_attempt_batch::candidate_status::dependency_conflict) return;
       auto& stats = production ? parallel_production_stats : parallel_stats;
@@ -3777,7 +3828,7 @@ struct controller_impl {
       auto fresh = prepare_isolated_attempts(inputs, batch.cancel, production, &batch, index);
       if (!fresh) return;
       auto& result = fresh->outcomes.front();
-      if (!result.tree_result && !result.sync_transaction_result && !result.mixed_result) return;
+      if (!result.tree_attempt() && !result.sync_transaction_result && !result.mixed_result) return;
       batch.outcomes[index] = std::move(result);
       batch.limits[index] = std::move(fresh->limits.front());
       batch.sync_inputs[index] = std::move(fresh->sync_inputs.front());
@@ -3909,7 +3960,7 @@ struct controller_impl {
                      result = admission::outcome::deadline;
                   else if (attempts && attempts->outcomes.size() == inputs.size() &&
                         std::all_of(attempts->outcomes.begin(), attempts->outcomes.end(), [](const auto& o) {
-                           return o.tree_result || o.sync_transaction_result || o.mixed_result;
+                           return o.tree_attempt() || o.sync_transaction_result || o.mixed_result;
                         })) result = admission::outcome::ready;
                   const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::steady_clock::now() - preparation_started).count();
@@ -3992,7 +4043,10 @@ struct controller_impl {
                      slot.sync_result=&result; slot.sync_input=&*attempts->sync_inputs[i];
                   } else if constexpr(std::is_same_v<std::remove_cvref_t<decltype(result)>,experimental::isolated_mixed_tree_result>) {
                      slot.mixed_result=&result; slot.mixed_input=&*attempts->mixed_inputs[i];
-                  } else slot.tree_result=&result;
+                  } else {
+                     slot.tree_result=&result;
+                     slot.preflight=attempts->outcomes[i].prevalidated_tree;
+                  }
                   production_slot = &slot;
                   production_callback_order = &order;
                   auto clear = fc::make_scoped_exit([&] {
@@ -4031,7 +4085,7 @@ struct controller_impl {
                   proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].mixed_result,adopt,fallback,checkpoint);
                else if(attempts->sync_inputs[i])
                   proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].sync_transaction_result,adopt,fallback,checkpoint);
-               else proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].tree_result,adopt,fallback,checkpoint);
+               else proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].tree_attempt(),adopt,fallback,checkpoint);
             } catch (const production_bookkeeping_interrupted&) { break; }
          } else proceed = serial();
          ++called;
@@ -4039,7 +4093,7 @@ struct controller_impl {
       }
       if (attempts) for (size_t i = 0; i < attempts->outcomes.size(); ++i) {
          const auto& o = attempts->outcomes[i];
-         if (o.tree_result || o.sync_transaction_result || o.mixed_result) {
+         if (o.tree_attempt() || o.sync_transaction_result || o.mixed_result) {
             if (i >= called) ++production_ready_unconsumed;
             else if (!committed[i]) ++production_ready_no_receipt;
          }
@@ -4086,7 +4140,8 @@ struct controller_impl {
                                            const experimental::isolated_sync_transaction_result* parallel_sync_result = nullptr,
                                            const experimental::isolated_sync_transaction_job* parallel_sync_input = nullptr,
                                            const experimental::isolated_mixed_tree_result* parallel_mixed_result = nullptr,
-                                           const experimental::isolated_mixed_tree_job* parallel_mixed_input = nullptr )
+                                           const experimental::isolated_mixed_tree_job* parallel_mixed_input = nullptr,
+                                           std::shared_ptr<const experimental::isolated_prevalidated_tree> parallel_preflight = {} )
    {
       EOS_ASSERT(block_deadline != fc::time_point(), transaction_exception, "deadline cannot be uninitialized");
       performance::scope execution_timer(performance::stage::transaction_execute, !trx->implicit());
@@ -4125,6 +4180,7 @@ struct controller_impl {
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
          trx_context.parallel_tree_result = parallel_result;
+         trx_context.parallel_tree_preflight=std::move(parallel_preflight);
          trx_context.parallel_sync_result = parallel_sync_result;
          trx_context.parallel_sync_input = parallel_sync_input;
          trx_context.parallel_mixed_result = parallel_mixed_result;
@@ -4967,7 +5023,7 @@ struct controller_impl {
                         trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].mixed_result,adopt,serial,checkpoint);
                      else if(parallel_batch->sync_inputs[index])
                         trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].sync_transaction_result,adopt,serial,checkpoint);
-                     else trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].tree_result,adopt,serial,checkpoint);
+                     else trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].tree_attempt(),adopt,serial,checkpoint);
                      if (order.complete()) parallel_batch.reset();
                   } else trace = serial();
                   ++packed_idx;
@@ -6589,9 +6645,12 @@ transaction_trace_ptr controller::push_transaction( const transaction_metadata_p
          });
          auto trace = my->push_transaction(trx, block_deadline, max_transaction_time, billed_cpu_time_us,
             false, subjective_cpu_bill_us, slot->tree_result, &slot->limits, &adopted, slot->elapsed,slot->sync_result,slot->sync_input,
-            slot->mixed_result,slot->mixed_input);
+            slot->mixed_result,slot->mixed_input,slot->preflight);
          returned = true;
-         if (adopted) ++my->parallel_production_stats.adopted;
+         if (adopted) {
+            ++my->parallel_production_stats.adopted;
+            if(slot->preflight)++my->parallel_production_stats.prevalidated_adopted;
+         }
          else { ++my->parallel_production_stats.serial_fallbacks; slot->order.discard_remaining(); }
          if (trace->except) slot->order.discard_remaining();
          return trace;
