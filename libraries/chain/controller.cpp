@@ -3282,6 +3282,14 @@ struct controller_impl {
          std::vector<std::optional<isolated_sync_transaction_job>> sync_inputs;
          std::vector<std::optional<isolated_mixed_tree_job>> mixed_inputs;
          std::vector<ordered_attempt_batch::request> requests;
+         // Reserve only the already bounded local batch. No live state or
+         // execution outcome is cached across canonical mutation/undo.
+         const auto batch_slots = std::min(packed_inputs.size(), size_t(conf.parallel_validation_batch_size));
+         hint_keys.reserve(batch_slots);
+         invocations.reserve(batch_slots);
+         sync_inputs.reserve(batch_slots);
+         mixed_inputs.reserve(batch_slots);
+         requests.reserve(batch_slots);
          for (const auto* packed : packed_inputs) {
             checkpoint();
             if (!packed || invocations.size() >= conf.parallel_validation_batch_size) break;
@@ -3294,7 +3302,10 @@ struct controller_impl {
             isolated_action_tree_job invocation;
             invocation.context = current_action_tree_context(self);
             invocation.context.context_free_data = isolated_context_free_data::capture(packed->get_context_free_data());
-            for (const auto& action : *transaction) {
+            fingerprints.reserve(transaction->size());
+            hint_fingerprints.reserve(transaction->size());
+            invocation.roots.reserve(transaction->size());
+            for (auto& action : *transaction) {
                checkpoint();
                fingerprints.push_back(isolated_execution_fingerprint(action.code_hash, action.limits, action.input));
                // Paths are hints, NOT the execution fingerprint below. Bind
@@ -3314,7 +3325,9 @@ struct controller_impl {
                fc::raw::pack(shape, action.input.data.size());
                fc::raw::pack(shape, action.input.max_return_bytes);
                hint_fingerprints.push_back(shape.result());
-               invocation.roots.push_back(action.input);
+               // Fingerprints above bind the original bytes before the owned
+               // temporary is moved. Nothing subsequently reads transaction.
+               invocation.roots.push_back(std::move(action.input));
             }
             std::set<name> seeded;
             bool eligible = true;
@@ -3442,6 +3455,7 @@ struct controller_impl {
          }
          auto* order = refresh_parent ? refresh_parent->order.get() : nullptr;
          attempts->outcomes.resize(invocations.size());
+         attempts->limits.reserve(invocations.size());
          for (const auto& input : invocations) attempts->limits.push_back(input.programs.front().limits);
          std::vector<bool> retry(invocations.size(), true);
          // State discovery changes tickets/snapshots, not necessarily input

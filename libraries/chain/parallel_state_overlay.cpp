@@ -688,13 +688,27 @@ bool primary_overlay_result::matches_base_reads(const transaction_state_view& li
    for (const auto& query : queries_) {
       checkpoint();
       const auto expected = base_->locate_primary(query);
-      if (live.locate_primary(query) != expected) return false;
-      // Distinct range/point queries can select the same large row. Selection
-      // is checked for each query, but compare its payload once per object ID
-      // while the serial owner holds this unchanged canonical state.
-      if (expected.row && checked_values.insert(expected.row->object_id).second &&
-          live.read_primary(query, expected.row->value_size) !=
-                          base_->read_primary(query, expected.row->value_size)) return false;
+      // Only the final native Chainbase adapter has the reviewed combined
+      // metadata/full-prefix semantics. Preserve the original selection and
+      // payload call protocol for every other state-view adapter.
+      if (dynamic_cast<const chainbase_transaction_state_view*>(&live) == nullptr) {
+         if (live.locate_primary(query) != expected) return false;
+         // Distinct range/point queries can select the same large row. Selection
+         // is checked for each query, but compare its payload once per object ID
+         // while the serial owner holds this unchanged canonical state.
+         if (expected.row && checked_values.insert(expected.row->object_id).second &&
+             live.read_primary(query, expected.row->value_size) !=
+                             base_->read_primary(query, expected.row->value_size)) return false;
+         continue;
+      }
+      // A full-sized prefix returns the same complete table/row metadata AND
+      // every payload byte in one live lookup. Metadata includes value_size:
+      // growth/truncation, identity, payer and range selection still mismatch.
+      // This is a fresh read on every query, never a cache across mutations.
+      if (expected.row && checked_values.insert(expected.row->object_id).second) {
+         if (live.read_primary_prefix(query, expected.row->value_size) !=
+                          base_->read_primary_prefix(query, expected.row->value_size)) return false;
+      } else if (live.locate_primary(query) != expected) return false;
    }
    for (const auto& query : secondary_queries_) {
       checkpoint();

@@ -1523,3 +1523,68 @@ BOOST_FIXTURE_TEST_CASE(derived_primary_point_observes_private_update_remove_and
    BOOST_CHECK(base->read_primary(point, 3) == original);
 }
 BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_primary_validation_optimization_tests)
+BOOST_FIXTURE_TEST_CASE(full_payload_single_lookup_matches_prior_validation_and_rejects_stale_state, view_fixture) {
+   put(7, std::string("a\0b\xff", 4)); put(9, ""); put(11, "tail");
+   constexpr table_key absent{"token"_n, "carol"_n, "accounts"_n};
+   const std::array queries{
+      primary_query{accounts, primary_query_kind::find, 7},
+      primary_query{accounts, primary_query_kind::lower_bound, 5},
+      primary_query{accounts, primary_query_kind::upper_bound, 7},
+      primary_query{accounts, primary_query_kind::last, 0},
+      primary_query{accounts, primary_query_kind::previous, 11},
+      primary_query{accounts, primary_query_kind::find, max_key},
+      primary_query{absent, primary_query_kind::find, 7}};
+   const auto base = frozen_primary_state::capture_queries(view, {}, queries, {});
+   primary_state_overlay overlay(base);
+   for (const auto& query : queries) overlay.locate_primary(query);
+   const auto result = overlay.seal();
+   // Preserve the former two-lookup algorithm as an independent equivalence
+   // oracle. Mutate the live database and undo after EVERY case, using the
+   // SAME view/result to catch accidental cache lifetime extension as well.
+   const auto previous = [&] {
+      std::set<int64_t> checked;
+      for (const auto& key : result.read_tables())
+         if (view.read_table(key) != base->read_table(key)) return false;
+      for (const auto& query : result.read_queries()) {
+         const auto expected = base->locate_primary(query);
+         if (view.locate_primary(query) != expected) return false;
+         if (expected.row && checked.insert(expected.row->object_id).second &&
+             view.read_primary(query, expected.row->value_size) !=
+             base->read_primary(query, expected.row->value_size)) return false;
+      }
+      return true;
+   };
+   BOOST_REQUIRE(previous());
+   BOOST_REQUIRE(result.matches_base_reads(view, [] {}));
+   for (unsigned mutation = 0; mutation < 12; ++mutation) {
+      {
+         auto undo = db.start_undo_session(true);
+         switch (mutation) {
+            case 0: put(7, "abcd"); break; // same-size content
+            case 1: put(7, "a"); break; // truncated
+            case 2: put(7, "abcdef"); break; // grew beyond requested prefix
+            case 3: put(9, "x"); break; // empty row grew
+            case 4: put(7, ""); break; // became empty
+            case 5: erase(7); put(7, std::string("a\0b\xff", 4)); break; // generation
+            case 6: db.modify(table(), [](auto& t) { t.payer = "bob"_n; }); break;
+            case 7: {
+               const auto& t = table();
+               const auto& row = db.get<key_value_object, by_scope_primary>(boost::make_tuple(t.id, 7));
+               db.modify(row, [](auto& r) { r.payer = "carol"_n; }); break;
+            }
+            case 8: put(max_key, "new"); break; // former absence
+            case 9: put(7, "new", absent); break; // former missing table
+            case 10: erase(9); break; // range selection and empty row
+            case 11: put(6, "new"); break; // lower-bound phantom
+         }
+         BOOST_CHECK(!previous());
+         BOOST_CHECK(result.matches_base_reads(view, [] {}) == previous());
+      }
+      BOOST_CHECK(previous());
+      BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()

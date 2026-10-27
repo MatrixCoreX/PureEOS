@@ -1096,6 +1096,7 @@ bool try_adopt_notification_result(apply_context& context, const fc::sha256& cod
       if (step_index == 0) {
          const auto checkpoint = [&] { context.trx_context.checktime(); };
          std::vector<isolated_action_input> roots;
+         roots.reserve(trx.actions.size());
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act));
          std::vector<isolated_receiver_program> programs;
          std::set<name> captured;
@@ -1227,6 +1228,7 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             if (actual->fingerprint() != result.context_free_data->fingerprint()) return false;
          }
          std::vector<isolated_action_input> roots;
+         roots.reserve(trx.actions.size());
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act, group.input.environment));
          std::vector<isolated_receiver_program> programs;
          std::set<name> captured;
