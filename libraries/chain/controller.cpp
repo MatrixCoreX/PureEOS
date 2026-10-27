@@ -3330,10 +3330,12 @@ struct controller_impl {
                // temporary is moved. Nothing subsequently reads transaction.
                invocation.roots.push_back(std::move(action.input));
             }
-            std::set<name> seeded;
+            small_seen_keys<name> seeded;
+            // Small initial catalog only; discovery keeps its old hard limits.
+            invocation.programs.reserve(std::min<size_t>(4,invocation.roots.size()+2));
             bool eligible = true;
             size_t owned_code_bytes = 0;
-            for (const auto& root : invocation.roots) if (seeded.insert(root.receiver).second) {
+            for (const auto& root : invocation.roots) if (seeded.insert(root.receiver)) {
                checkpoint();
                auto program = prepare_isolated_tree_program(self, root.receiver,
                   isolated_transaction_executor::max_total_code_bytes - owned_code_bytes);

@@ -162,25 +162,28 @@ std::shared_ptr<const frozen_primary_state> frozen_primary_state::capture_querie
       if (captured.queries.contains(query)) continue;
       if (result->query_count_ == limits.max_queries) throw primary_state_budget_exceeded();
       auto& table = writable_table(query.table);
-      const auto found = source.locate_primary(query);
+      // Selection, metadata validation, duplicate handling, budget checks and
+      // owned payload copy share one fresh native lookup with no callback gap.
+      auto read=source.read_primary_for_capture(query,table.metadata,table.rows,
+         result->row_count_<limits.max_rows,limits.max_value_bytes-result->value_bytes_);
       if (stats) ++stats->primary_queries_read;
-      if (found.table != table.metadata) throw primary_state_invalid_attempt();
+      const auto& found=read.metadata;
+      if(read.changed || found.table!=table.metadata)throw primary_state_invalid_attempt();
+      if(read.budget_exceeded)throw primary_state_budget_exceeded();
       std::optional<uint64_t> selected;
-      if (found.row) {
-         selected = found.row->primary_key;
-         if (auto existing = table.rows.find(*selected); existing != table.rows.end()) {
-            if (metadata(*existing->second) != *found.row) throw primary_state_invalid_attempt();
+      if(found.row) {
+         selected=found.row->primary_key;
+         if(auto existing=table.rows.find(*selected);existing!=table.rows.end()) {
+            if(metadata(*existing->second)!=*found.row || read.owned_row)throw primary_state_invalid_attempt();
          } else {
-            if (result->row_count_ == limits.max_rows ||
-                found.row->value_size > limits.max_value_bytes - result->value_bytes_)
+            if(result->row_count_==limits.max_rows ||
+               found.row->value_size>limits.max_value_bytes-result->value_bytes_)
                throw primary_state_budget_exceeded();
-            auto read = source.read_primary(query, limits.max_value_bytes - result->value_bytes_);
-            if (!read.row || read.table != found.table || metadata(*read.row) != *found.row)
-               throw primary_state_invalid_attempt();
-            result->value_bytes_ += read.row->value.size();
+            if(!read.owned_row || metadata(*read.owned_row)!=*found.row)throw primary_state_invalid_attempt();
+            result->value_bytes_+=read.owned_row->value.size();
             ++result->row_count_;
-            table.rows.emplace(*selected, std::make_shared<const primary_row_read>(std::move(*read.row)));
-            if (stats) ++stats->primary_rows_copied;
+            table.rows.emplace(*selected,std::make_shared<const primary_row_read>(std::move(*read.owned_row)));
+            if(stats)++stats->primary_rows_copied;
          }
       }
       table.queries.emplace(query, selected);
@@ -679,14 +682,8 @@ bool primary_overlay_result::matches_base_reads(const transaction_state_view& li
                                                const std::function<void()>& checkpoint) const {
    // Small read sets need no per-ID heap nodes; larger sets retain logarithmic
    // tree storage after a bounded eight-element scan. Lifetime is this call.
-   std::array<int64_t,8> inline_values{};
-   size_t inline_count=0;
-   std::set<int64_t> overflow_values;
-   const auto first_value=[&](int64_t id) {
-      for (size_t i=0;i<inline_count;++i) if(inline_values[i]==id) return false;
-      if(inline_count<inline_values.size()) {inline_values[inline_count++]=id;return true;}
-      return overflow_values.insert(id).second;
-   };
+   small_seen_keys<int64_t> checked_values;
+   const auto first_value=[&](int64_t id) {return checked_values.insert(id);};
    const auto* native=dynamic_cast<const chainbase_transaction_state_view*>(&live);
    for (const auto account : accounts_) {
       checkpoint();

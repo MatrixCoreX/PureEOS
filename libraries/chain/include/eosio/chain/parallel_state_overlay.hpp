@@ -3,6 +3,11 @@
 #include <eosio/chain/transaction_state_view.hpp>
 #include <eosio/chain/parallel_secondary_state.hpp>
 #include <map>
+#include <array>
+#include <type_traits>
+#include <initializer_list>
+#include <optional>
+#include <utility>
 #include <functional>
 #include <memory>
 #include <set>
@@ -11,6 +16,49 @@
 #include <variant>
 
 namespace eosio::chain::experimental {
+
+// Invocation-local membership/catalog helpers. Only the first eight keys
+// are scanned; larger inputs keep the original ordered-tree overflow behavior.
+// No iterator/order API, canonical cache or cross-callback state is introduced.
+template<typename Key,size_t Inline=8>
+class small_seen_keys {
+   static_assert(Inline>0 && Inline<=64);
+   static_assert(std::is_same_v<Key,name> || std::is_same_v<Key,int64_t>);
+   std::array<Key,Inline> inline_{};
+   size_t used_=0;
+   std::set<Key> overflow_;
+public:
+   small_seen_keys()=default;
+   small_seen_keys(std::initializer_list<Key> keys) {for(const auto& key:keys)insert(key);}
+   bool insert(const Key& key) {
+      for(size_t i=0;i<used_;++i)if(inline_[i]==key)return false;
+      if(used_<Inline) {inline_[used_++]=key;return true;}
+      return overflow_.insert(key).second;
+   }
+   size_t size()const {return used_+overflow_.size();}
+};
+
+template<typename Value,size_t Inline=8>
+class small_name_map {
+   static_assert(Inline>0 && Inline<=64);
+   std::array<std::optional<std::pair<name,Value>>,Inline> inline_{};
+   size_t used_=0;
+   std::map<name,Value> overflow_;
+public:
+   const Value* find(name key)const {
+      for(size_t i=0;i<used_;++i)if(inline_[i]->first==key)return &inline_[i]->second;
+      const auto it=overflow_.find(key);
+      return it==overflow_.end()?nullptr:&it->second;
+   }
+   bool emplace(name key,Value value) {
+      if(find(key))return false;
+      if(used_<Inline) {
+         inline_[used_].emplace(key,std::move(value));++used_;return true;
+      }
+      return overflow_.emplace(key,std::move(value)).second;
+   }
+   size_t size()const {return used_+overflow_.size();}
+};
 
 struct table_key_less {
    bool operator()(const table_key& a, const table_key& b) const {

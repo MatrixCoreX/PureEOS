@@ -346,6 +346,7 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
       // scheduling a trace. Empty-code notifications still run exec_one and
       // produce original receipts, sequences and resource checks.
       std::vector<fc::sha256> fingerprints;
+      fingerprints.reserve(trx.actions.size());
       size_t next_write = 0;
       fc::microseconds elapsed{};
       for (size_t i = 0; i < trx.actions.size(); ++i) {
@@ -361,14 +362,14 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
          if (step.execution_fingerprint != fingerprint) return false;
          fingerprints.push_back(fingerprint);
          if (step.recipients.size() > isolated_action_result::max_recipients) return false;
-         std::set<name> notified{act.account};
+         small_seen_keys<name> notified{act.account};
          size_t previous_write_count = step.writes_begin;
          for (const auto& notification : step.recipients) {
             context.trx_context.checktime();
             if (notification.after_writes < previous_write_count || notification.after_writes > step.writes_end) return false;
             previous_write_count = notification.after_writes;
             const auto recipient = notification.recipient;
-            if (!notified.insert(recipient).second || !live.read_account(recipient) ||
+            if (!notified.insert(recipient) || !live.read_account(recipient) ||
                 recipient == "eosio.msig"_n || recipient == "eosio.wrap"_n) return false;
             const auto* metadata = context.db.find<account_metadata_object, by_name>(recipient);
             if (!metadata || metadata->code_hash != fc::sha256{} ||
@@ -512,12 +513,12 @@ namespace {
 bool sync_catalog_matches_current(const controller& control, std::span<const isolated_sync_program> programs,
       const std::function<void()>& check) {
    if (programs.empty() || programs.size() > isolated_sync_executor::max_programs) return false;
-   std::set<name> seen;
+   small_seen_keys<name> seen;
    size_t code_bytes = 0;
    for (const auto& captured : programs) {
       check();
       const auto& program = captured.program;
-      if (program.serial_only || !seen.insert(program.receiver).second ||
+      if (program.serial_only || !seen.insert(program.receiver) ||
           program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes) return false;
       code_bytes += program.code.size();
       // Never recapture only executed children: the execution fingerprint also
@@ -1119,7 +1120,8 @@ bool try_adopt_notification_result(apply_context& context, const fc::sha256& cod
          roots.reserve(trx.actions.size());
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act));
          std::vector<isolated_receiver_program> programs;
-         std::set<name> captured;
+         programs.reserve(std::min<size_t>(result.steps.size(),4));
+         small_seen_keys<name> captured;
          size_t code_bytes = 0;
          fc::microseconds elapsed{};
          for (const auto& receiver : result.steps) {
@@ -1127,7 +1129,7 @@ bool try_adopt_notification_result(apply_context& context, const fc::sha256& cod
             if (receiver.effects.elapsed.count() < 0 ||
                 receiver.effects.elapsed.count() > (fc::milliseconds(500) - elapsed).count()) return false;
             elapsed += fc::microseconds(receiver.effects.elapsed.count());
-            if (!captured.insert(receiver.receiver).second) continue;
+            if (!captured.insert(receiver.receiver)) continue;
             auto program = prepare_isolated_receiver_program(context.control, receiver.receiver, roots);
             if (!program || program->code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
             code_bytes += program->code.size();
@@ -1253,7 +1255,7 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act, group.input.environment));
          std::vector<isolated_receiver_program> programs;
          programs.reserve(std::min<size_t>(result.steps.size(),4));
-         std::set<name> captured;
+         small_seen_keys<name> captured;
          size_t code_bytes = 0;
          fc::microseconds elapsed{};
          for (const auto& receiver : result.steps) {
@@ -1267,7 +1269,7 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             if (receiver.effects.elapsed.count() < 0 ||
                 receiver.effects.elapsed.count() > (fc::milliseconds(500) - elapsed).count()) return false;
             elapsed += fc::microseconds(receiver.effects.elapsed.count());
-            if (!captured.insert(receiver.receiver).second) continue;
+            if (!captured.insert(receiver.receiver)) continue;
             auto program = prepare_isolated_tree_program(context.control, receiver.receiver);
             if (!program || program->code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
             code_bytes += program->code.size();

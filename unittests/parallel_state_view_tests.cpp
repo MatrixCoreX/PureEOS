@@ -1628,6 +1628,112 @@ BOOST_FIXTURE_TEST_CASE(inline_and_overflow_dedup_preserve_old_validation_and_ge
 }
 BOOST_AUTO_TEST_SUITE_END()
 
+
+BOOST_AUTO_TEST_SUITE(parallel_single_capture_read_tests)
+BOOST_FIXTURE_TEST_CASE(single_read_capture_matches_physical_oracle_across_budgets,view_fixture) {
+   constexpr table_key absent{"token"_n,"absent"_n,"accounts"_n};
+   constexpr table_key empty{"token"_n,"empty"_n,"accounts"_n};
+   table(empty);
+   for(unsigned i=0;i<16;++i)put(3*i+1,std::string(std::array<size_t,5>{0,1,31,32,33}[i%5],char(i)));
+   put(max_key,std::string(65536,'z'));
+   const std::array keys{accounts,empty,absent};
+   std::vector<primary_query> queries;
+   for(const auto& key:keys)
+      for(auto kind:{primary_query_kind::find,primary_query_kind::lower_bound,
+                    primary_query_kind::upper_bound,primary_query_kind::previous,primary_query_kind::last})
+         for(uint64_t value:{uint64_t{0},uint64_t{1},uint64_t{5},uint64_t{46},max_key-1,max_key})
+            queries.push_back({key,kind,value});
+   // Duplicate selections must remain legal at an exhausted byte/row budget.
+   for(unsigned i=0;i<10;++i)queries.push_back({accounts,primary_query_kind::lower_bound,0});
+   BOOST_REQUIRE_EQUAL(queries.size(),100u);
+   for(size_t tables:{size_t{2},size_t{3}})
+   for(size_t rows:{size_t{0},size_t{1},size_t{8},size_t{17},size_t{32}})
+   for(size_t bytes:{size_t{0},size_t{1},size_t{32},size_t{128},size_t{65536},size_t{1048576}})
+   for(size_t count:{size_t{0},size_t{99},size_t{100},size_t{256}}) {
+      primary_snapshot_limits limits;limits.max_tables=tables;limits.max_rows=rows;
+      limits.max_value_bytes=bytes;limits.max_queries=count;
+      bool allowed=keys.size()<=tables && queries.size()<=count;
+      size_t expected_bytes=0;std::set<int64_t> selected_rows;
+      std::set<primary_query,primary_query_less> selected_queries;
+      if(allowed)for(auto query:queries) {
+         if(query.kind==primary_query_kind::last)query.primary_key=0;
+         if(!selected_queries.insert(query).second)continue;
+         const auto expected=reference_read(db,query); // physical by_id walk
+         if(expected.row && !selected_rows.contains(expected.row->object_id)) {
+            if(selected_rows.size()==rows || expected.row->value.size()>bytes-expected_bytes) {
+               allowed=false;break;
+            }
+            selected_rows.insert(expected.row->object_id);expected_bytes+=expected.row->value.size();
+         }
+      }
+      if(!allowed) {
+         BOOST_CHECK_THROW(frozen_primary_state::capture_queries(view,keys,queries,limits),primary_state_budget_exceeded);
+         continue;
+      }
+      auto captured=frozen_primary_state::capture_queries(view,keys,queries,limits);
+      BOOST_CHECK_EQUAL(captured->row_count(),selected_rows.size());
+      BOOST_CHECK_EQUAL(captured->value_bytes(),expected_bytes);
+      for(const auto& query:queries)BOOST_CHECK(captured->read_primary(query,65536)==reference_read(db,query));
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(single_capture_duplicate_reuse_keeps_stats_and_exhausted_budget,view_fixture) {
+   put(1,"");
+   frozen_primary_capture_session session(view);
+   primary_snapshot_limits limits;limits.max_tables=1;limits.max_rows=1;
+   limits.max_value_bytes=0;limits.max_queries=3;
+   const primary_query first{accounts,primary_query_kind::find,1};
+   const std::array more{primary_query{accounts,primary_query_kind::lower_bound,0},
+                         primary_query{accounts,primary_query_kind::upper_bound,0}};
+   auto a=session.capture({},std::array{first},{},limits,[]{});
+   auto b=session.capture({},more,{},limits,[]{});
+   BOOST_CHECK_EQUAL(a->row_count(),1u);BOOST_CHECK_EQUAL(b->row_count(),1u);
+   BOOST_CHECK_EQUAL(b->value_bytes(),0u);
+   for(const auto& q:more)BOOST_CHECK(b->read_primary(q,0)==reference_read(db,q));
+   BOOST_CHECK(a->read_primary(first,0)==reference_read(db,first));
+   BOOST_CHECK_EQUAL(session.stats().tables_read,1u);
+   BOOST_CHECK_EQUAL(session.stats().primary_rows_copied,1u);
+   BOOST_CHECK_EQUAL(session.stats().primary_queries_read,3u);
+   BOOST_CHECK_THROW(a->locate_primary(more.front()),primary_state_missing);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_small_local_container_tests)
+BOOST_AUTO_TEST_CASE(inline_name_membership_and_catalog_match_ordered_oracles) {
+   const auto check=[]<size_t N>() {
+      small_seen_keys<name,N> seen;std::set<name> expected;
+      small_name_map<int64_t,N> values;std::map<name,int64_t> oracle;
+      BOOST_CHECK(seen.insert(name{}));expected.insert(name{});
+      BOOST_CHECK(values.emplace(name{},-1));oracle.emplace(name{},-1);
+      const auto* stable=values.find(name{});BOOST_REQUIRE(stable);
+      std::mt19937_64 random(0x9767a11+N);
+      for(unsigned i=0;i<10000;++i) {
+         const name key{random()%257};const int64_t value=static_cast<int64_t>(random());
+         BOOST_CHECK(seen.insert(key)==expected.insert(key).second);
+         BOOST_CHECK_EQUAL(seen.size(),expected.size());
+         BOOST_CHECK(values.emplace(key,value)==oracle.emplace(key,value).second);
+         const auto* found=values.find(key);BOOST_REQUIRE(found);
+         BOOST_CHECK_EQUAL(*found,oracle.at(key));BOOST_CHECK_EQUAL(values.size(),oracle.size());
+         BOOST_CHECK(values.find(name{})==stable);BOOST_CHECK_EQUAL(*stable,-1);
+      }
+      BOOST_CHECK(!values.find(name{std::numeric_limits<uint64_t>::max()}));
+   };
+   check.template operator()<1>();check.template operator()<8>();
+}
+BOOST_AUTO_TEST_CASE(inline_signed_identity_membership_matches_tree_for_all_boundaries) {
+   small_seen_keys<int64_t> seen;std::set<int64_t> expected;
+   for(int64_t value:{int64_t{0},int64_t{-1},int64_t{1},std::numeric_limits<int64_t>::min(),std::numeric_limits<int64_t>::max()})
+      BOOST_CHECK(seen.insert(value)==expected.insert(value).second);
+   std::mt19937_64 random(0x899112);
+   for(unsigned i=0;i<10000;++i) {
+      const auto value=static_cast<int64_t>(random()%1024)-512;
+      BOOST_CHECK(seen.insert(value)==expected.insert(value).second);
+      BOOST_CHECK_EQUAL(seen.size(),expected.size());
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE(parallel_primary_validation_optimization_tests)
 BOOST_FIXTURE_TEST_CASE(full_payload_single_lookup_matches_prior_validation_and_rejects_stale_state, view_fixture) {
    put(7, std::string("a\0b\xff", 4)); put(9, ""); put(11, "tail");

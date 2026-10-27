@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <map>
+#include <memory>
 #include <span>
 #include <stdexcept>
 #include <thread>
@@ -139,6 +141,19 @@ public:
    secondary_read_result read_secondary(const secondary_query&) const override;
 
 private:
+   friend class frozen_primary_state;
+   // Restricted to the immutable snapshot builder. All supplied rows are owned
+   // immutable values. No callback, live pointer or iterator crosses this call.
+   struct capture_primary_result {
+      primary_metadata_result metadata;
+      std::optional<primary_row_read> owned_row;
+      bool changed = false;
+      bool budget_exceeded = false;
+   };
+   capture_primary_result read_primary_for_capture(const primary_query&,
+      const std::optional<table_read>& expected_table,
+      const std::map<uint64_t,std::shared_ptr<const primary_row_read>>& existing_rows,
+      bool can_copy_row,size_t remaining_value_bytes) const;
    friend class chainbase_secondary_state_view; // owner-affine same-database read adapter only
    void require_owner_thread() const;
    const chainbase::database& db_;
