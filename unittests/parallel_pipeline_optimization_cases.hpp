@@ -177,6 +177,7 @@ BOOST_AUTO_TEST_CASE(streamed_preflight_preserves_actual_controller_serial_repla
    const auto stats=producer.control->get_parallel_production_stats();
    BOOST_CHECK_GT(stats.prevalidated_adopted,0u);
    BOOST_CHECK_GT(stats.streamed_capture_extensions,0u);
+   BOOST_CHECK_GT(stats.retired_batches,0u);
    auto block=producer.finish_block();validator.push_block(block);validator.control->abort_block();
    BOOST_CHECK(producer.control->calculate_integrity_hash()==validator.control->calculate_integrity_hash());
    const name symbol_code{symbol>>8};

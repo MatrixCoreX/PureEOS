@@ -3352,8 +3352,12 @@ struct controller_impl {
             mixed_inputs.emplace_back();
          }
          if (invocations.empty()) return {};
+         // Old cleanup overlaps root/catalog preparation only. Drain BEFORE
+         // any next snapshot;no extra4MiB allowance or renewed private budget.
+         if(parallel_workers)parallel_workers->drain_retired(checkpoint);
+         checkpoint();
          chainbase_transaction_state_view view(db);
-         // Only this joined discovery invocation shares captured values.
+         // Only this unchanged-prefix discovery invocation shares captured values.
          // No canonical adoption/undo occurs until it returns. Prefix refresh
          // calls construct a NEW session and therefore re-read current state.
          frozen_primary_capture_session capture(view);
@@ -4097,6 +4101,14 @@ struct controller_impl {
             if (i >= called) ++production_ready_unconsumed;
             else if (!committed[i]) ++production_ready_no_receipt;
          }
+      }
+      if(attempts && parallel_workers && !attempts->outcomes.empty()) {
+         // Canonical callbacks and bookkeeping have finished. Destroy the
+         // owner-only coordinator here,then release only immutable outcomes
+         // on a worker. The next capture drains them within its old budget.
+         attempts->order.reset();
+         if(parallel_workers->retire_outcomes(std::move(attempts->outcomes)))
+            ++parallel_production_stats.retired_batches;
       }
       return called;
    }

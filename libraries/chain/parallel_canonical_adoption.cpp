@@ -1236,11 +1236,21 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
       if (!current_environment_matches(context.control, context.trx_context.packed_trx,
             context.trx_context.published, group.input.environment)) return false;
       const auto max_return_bytes=context.control.get_global_properties().configuration.max_action_return_value_size;
-      const auto action_fingerprint=isolated_execution_fingerprint_from_action(code_hash,limits,
-         context.get_receiver(),context.get_action(),max_return_bytes,group.input.environment);
-      if (isolated_action_tree_step_fingerprint(action_fingerprint,
-             tree_context, group, step) != step.effects.execution_fingerprint ||
-          step.effects.return_value.size() > max_return_bytes) return false;
+      if(const auto* proof=context.trx_context.isolated_tree_preflight()) {
+         // The worker checked every frozen digest. Exact object identity and
+         // current full action bytes/protocol/code/limits bind that same proof.
+         // Original fresh environment,ordinals,native handlers,state and
+         // authority checks remain before any canonical event.
+         if(!proof->binds_current_step(result,step_index,context.get_receiver(),code_hash,
+               context.get_action(),limits,max_return_bytes,tree_context,
+               [&]{context.trx_context.checktime();}))return false;
+      } else {
+         const auto action_fingerprint=isolated_execution_fingerprint_from_action(code_hash,limits,
+            context.get_receiver(),context.get_action(),max_return_bytes,group.input.environment);
+         if(isolated_action_tree_step_fingerprint(action_fingerprint,tree_context,group,step)!=
+               step.effects.execution_fingerprint)return false;
+      }
+      if(step.effects.return_value.size()>max_return_bytes)return false;
       if (step_index == 0) {
          const auto checkpoint = [&] { context.trx_context.checktime(); };
          // The result owns a const copy; verify against the ACTUAL packed input

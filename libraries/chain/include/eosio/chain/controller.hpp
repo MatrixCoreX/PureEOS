@@ -241,7 +241,7 @@ namespace eosio::chain {
 
          struct parallel_execution_stats {
             uint64_t batches = 0, attempts = 0, succeeded = 0, adopted = 0, serial_fallbacks = 0;
-            uint64_t prevalidated_adopted=0,streamed_capture_extensions=0;
+            uint64_t prevalidated_adopted=0,streamed_capture_extensions=0,retired_batches=0;
             // Local preparation diagnostics only. A preparation deadline is
             // also included in budget_fallbacks; none changes serial_fallbacks,
             // which counts transactions routed by an already prepared batch.
