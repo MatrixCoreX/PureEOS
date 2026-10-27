@@ -180,4 +180,81 @@ BOOST_AUTO_TEST_CASE(receipt_capacity_alternation_preserves_configured_bounds_an
       }
    }
 }
+
+using mixed_model=eosio::chain::experimental::parallel_mixed_head_admission<unsigned,3>;
+using mixed_outcome=mixed_model::outcome;
+static constexpr auto unlimited_cpu=std::numeric_limits<uint64_t>::max();
+
+BOOST_AUTO_TEST_CASE(mixed_hints_are_separate_and_require_complete_fast_observations) {
+   mixed_model m;model original;const auto now=test_clock::time_point{};
+   BOOST_CHECK(!m.recommend_for_block(1,8,24,50000,unlimited_cpu,now));
+   for(unsigned i=0;i<8;++i)m.observe(1,false,8,24,8,1000,50000,mixed_outcome::ready,now);
+   BOOST_CHECK(!m.recommend_for_block(1,8,24,50000,unlimited_cpu,now));
+   for(unsigned i=0;i<3;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+   BOOST_REQUIRE((m.recommend_for_block(1,8,24,50000,unlimited_cpu,now)).has_value());
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,unlimited_cpu,now),8u);
+   m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,unlimited_cpu,now),16u);
+   for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,16,1000,50000,mixed_outcome::ready,now);
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,unlimited_cpu,now),24u);
+   BOOST_CHECK_EQUAL(original.recommend(1,8,24,50000,now),8u);
+   BOOST_CHECK(!m.recommend_for_block(2,8,24,50000,unlimited_cpu,now));
+}
+BOOST_AUTO_TEST_CASE(mixed_deadline_receipts_and_ttl_cannot_inflate_admission) {
+   mixed_model m;const auto now=test_clock::time_point{};
+   for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+   m.observe(1,true,8,24,16,50000,50000,mixed_outcome::deadline,now);
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,unlimited_cpu,now),8u);
+   m.observe_receipt(1,8,24,10000,now+100ms);
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,24999,now+100ms),1u);
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,12499,now+100ms),0u);
+   BOOST_CHECK(!m.recommend_for_block(1,8,24,50000,unlimited_cpu,now+1s));
+   m.observe_receipt(1,8,24,1,now+2s);
+   BOOST_CHECK(!m.recommend_for_block(1,8,24,50000,unlimited_cpu,now+2s));
+   m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now+2s);
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,8,24,50000,unlimited_cpu,now+2s),8u);
+   m.forget(1);BOOST_CHECK(!m.recommend_for_block(1,8,24,50000,unlimited_cpu,now+2s));
+}
+BOOST_AUTO_TEST_CASE(mixed_selection_preserves_original_backoff_and_receipt_ceiling) {
+   using eosio::chain::experimental::recommend_parallel_production_admission;
+   mixed_model m;model original;const auto now=test_clock::time_point{};
+   for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+   for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,16,1000,50000,mixed_outcome::ready,now);
+   BOOST_CHECK_EQUAL(recommend_parallel_production_admission(original,m,1u,8,24,50000,unlimited_cpu,now).second,24u);
+   original.observe_receipt(1,8,24,10000,now);
+   BOOST_CHECK_EQUAL(recommend_parallel_production_admission(original,m,1u,8,24,50000,24999,now).second,1u);
+   BOOST_CHECK_EQUAL(recommend_parallel_production_admission(original,m,1u,8,24,50000,12499,now).second,0u);
+   original.observe(1,8,24,1,50000,50000,outcome::deadline,now);
+   BOOST_CHECK_EQUAL(recommend_parallel_production_admission(original,m,1u,8,24,50000,unlimited_cpu,now).second,0u);
+   BOOST_CHECK_EQUAL(recommend_parallel_production_admission(original,m,1u,8,24,0,unlimited_cpu,now).second,0u);
+}
+BOOST_AUTO_TEST_CASE(mixed_invalid_or_unsupported_samples_do_not_evict_or_refresh_hints) {
+   mixed_model m;const auto now=test_clock::time_point{};
+   m.observe(1,true,4,32,4,50000,50000,mixed_outcome::deadline,now);
+   for(unsigned i=2;i<100;++i) {
+      m.observe(i,true,4,32,4,50000,50000,mixed_outcome::other_failure,now);
+      m.observe(i,true,0,32,4,1,50000,mixed_outcome::ready,now);
+      m.observe(i,true,4,257,4,1,50000,mixed_outcome::ready,now);
+      m.observe(i,true,4,32,0,1,50000,mixed_outcome::ready,now);
+      m.observe(i,true,4,32,33,1,50000,mixed_outcome::ready,now);
+   }
+   BOOST_CHECK_EQUAL(*m.recommend_for_block(1,4,32,50000,unlimited_cpu,now),2u);
+   for(unsigned key:{2,3,1,4})m.observe(key,true,4,32,4,50000,50000,mixed_outcome::deadline,now);
+   BOOST_CHECK(!m.recommend_for_block(2,4,32,50000,unlimited_cpu,now));
+   BOOST_CHECK((m.recommend_for_block(1,4,32,50000,unlimited_cpu,now)).has_value());
+}
+BOOST_AUTO_TEST_CASE(mixed_alternation_and_clock_extremes_keep_all_configured_bounds) {
+   mixed_model m;
+   for(unsigned i=0;i<1000;++i) {
+      const auto now=test_clock::time_point{}+2s*i;
+      for(unsigned j=0;j<4;++j)m.observe(i%5,true,128,256,128,1000,50000,mixed_outcome::ready,now);
+      const auto n=m.recommend_for_block(i%5,128,256,50000,unlimited_cpu,now);
+      BOOST_REQUIRE(n.has_value());BOOST_CHECK_GE(*n,1u);BOOST_CHECK_LE(*n,256u);
+      m.observe(i%5,true,128,256,*n,50000,50000,mixed_outcome::deadline,now);
+      BOOST_CHECK_LE(*m.recommend_for_block(i%5,128,256,50000,unlimited_cpu,now),128u);
+   }
+   m.observe(9,true,8,24,8,1000,50000,mixed_outcome::ready,test_clock::time_point::max());
+   BOOST_CHECK(!m.recommend_for_block(9,8,24,50000,unlimited_cpu,test_clock::time_point::max()));
+}
+
 #endif // PUREEOS_PARALLEL_PRODUCTION_ADMISSION_FIXTURE

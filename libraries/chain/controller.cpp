@@ -1013,6 +1013,7 @@ struct controller_impl {
    controller::parallel_execution_stats parallel_stats;
    controller::parallel_execution_stats parallel_production_stats;
    experimental::parallel_production_admission<digest_type> production_admission;
+   experimental::parallel_mixed_head_admission<digest_type> production_mixed_admission;
    // Owner-local diagnostics, not receipts or unique/finalized transaction counts.
    mutable uint64_t production_capacity_reductions = 0;
    mutable uint64_t production_capacity_bypasses = 0;
@@ -3839,10 +3840,9 @@ struct controller_impl {
       if (!key) return experimental::parallel_production_admission<digest_type>::cold_batch(
          conf.parallel_validation_threads, conf.parallel_validation_batch_size);
       const auto now = std::chrono::steady_clock::now();
-      const auto time_limited = production_admission.recommend(*key, conf.parallel_validation_threads,
-         conf.parallel_validation_batch_size, budget_us, now);
-      const auto capacity_limited = production_admission.recommend_for_block(*key, conf.parallel_validation_threads,
-         conf.parallel_validation_batch_size, budget_us, remaining_cpu, now);
+      const auto [time_limited,capacity_limited] = experimental::recommend_parallel_production_admission(
+         production_admission,production_mixed_admission,*key,conf.parallel_validation_threads,
+         conf.parallel_validation_batch_size,budget_us,remaining_cpu,now);
       if (capacity_limited < time_limited) {
          ++production_capacity_reductions;
          if (!capacity_limited) ++production_capacity_bypasses;
@@ -3881,6 +3881,7 @@ struct controller_impl {
             const auto preparation_started = std::chrono::steady_clock::now();
             cancel.deadline = preparation_started + std::chrono::microseconds(budget_us);
             std::vector<const packed_transaction*> inputs;
+            inputs.reserve(transactions.size()); // already checked against the existing hard batch bound
             for (const auto& trx : transactions) {
                if (!trx || trx->is_transient() || trx->implicit() || trx->scheduled()) break;
                if (homogeneous) {
@@ -3895,7 +3896,7 @@ struct controller_impl {
             const auto worker_deadlines_before = parallel_production_stats.worker_deadlines;
             try {
                attempts = prepare_isolated_attempts(inputs, cancel, true);
-               if (homogeneous && workload) {
+               if (workload) {
                   using admission = experimental::parallel_production_admission<digest_type>;
                   auto result = admission::outcome::other_failure;
                   if (parallel_production_stats.preparation_deadlines != deadlines_before ||
@@ -3907,13 +3908,24 @@ struct controller_impl {
                         })) result = admission::outcome::ready;
                   const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::steady_clock::now() - preparation_started).count();
-                  production_admission.observe(*workload, conf.parallel_validation_threads,
-                     conf.parallel_validation_batch_size, inputs.size(), elapsed, budget_us, result);
+                  if(homogeneous) {
+                     if(result!=admission::outcome::ready)production_mixed_admission.forget(*workload);
+                     production_admission.observe(*workload,conf.parallel_validation_threads,
+                        conf.parallel_validation_batch_size,inputs.size(),elapsed,budget_us,result);
+                  } else {
+                     production_mixed_admission.observe(*workload,true,conf.parallel_validation_threads,
+                        conf.parallel_validation_batch_size,inputs.size(),elapsed,budget_us,result);
+                  }
                }
             }
             catch (const interrupt_exception&) {
                if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
                    fc::time_point::now() >= block_deadline) return 0; // queue entries were not consumed
+               if(homogeneous && workload)production_mixed_admission.forget(*workload);
+               if(!homogeneous && workload)
+                  production_mixed_admission.observe(*workload,true,conf.parallel_validation_threads,
+                     conf.parallel_validation_batch_size,inputs.size(),budget_us,budget_us,
+                     experimental::parallel_production_admission<digest_type>::outcome::deadline);
                // A local private-phase cap is NOT a transaction rejection. If the
                // real block still has time, consume the original serial path.
             }
@@ -3949,6 +3961,9 @@ struct controller_impl {
                            production_admission.observe_receipt(*workload, conf.parallel_validation_threads,
                               conf.parallel_validation_batch_size, receipt.cpu_usage_us);
                            ++production_receipt_observations;
+                        } else if(!homogeneous && workload && i==0 && i<workload_size) {
+                           production_mixed_admission.observe_receipt(*workload,conf.parallel_validation_threads,
+                              conf.parallel_validation_batch_size,receipt.cpu_usage_us);
                         }
                      }
                   }
