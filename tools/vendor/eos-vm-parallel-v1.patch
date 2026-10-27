@@ -1,0 +1,195 @@
+diff --git a/include/eosio/vm/allocator.hpp b/include/eosio/vm/allocator.hpp
+index d61f0ec..452f71d 100644
+--- a/include/eosio/vm/allocator.hpp
++++ b/include/eosio/vm/allocator.hpp
+@@ -351,12 +351,18 @@ namespace eosio { namespace vm {
+          if constexpr (IsJit) {
+             auto & jit_alloc = jit_allocator::instance();
+             void * executable_code = jit_alloc.alloc(_code_size);
++            bool published = false;
++            scope_guard release_failed_code{[&] {
++               if (!published) jit_alloc.free(executable_code);
++            }};
+             int err = mprotect(executable_code, _code_size, PROT_READ | PROT_WRITE);
+             EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "mprotect failed");
+             std::memcpy(executable_code, _code_base, _code_size);
++            err = mprotect(executable_code, _code_size, PROT_EXEC);
++            EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "executable mprotect failed");
+             _code_base = (char*)executable_code;
+-            enable_code(IsJit);
+             _is_jit = true;
++            published = true;
+             _offset = (char*)code_base - _base;
+          }
+       }
+diff --git a/include/eosio/vm/execution_context.hpp b/include/eosio/vm/execution_context.hpp
+index 4bd583e..c77a700 100644
+--- a/include/eosio/vm/execution_context.hpp
++++ b/include/eosio/vm/execution_context.hpp
+@@ -312,6 +312,8 @@ namespace eosio { namespace vm {
+ 
+       template <typename... Args>
+       inline std::optional<operand_stack_elem> execute(host_type* host, jit_visitor, uint32_t func_index, Args&&... args) {
++         EOS_VM_ASSERT(uint64_t(func_index) < uint64_t(_mod->jit_mod->get_imported_functions_size()) + _mod->jit_mod->functions.size(),
++                       wasm_interpreter_exception, "cannot execute function, function index out of range");
+          auto saved_host = _host;
+          auto saved_os_size = get_operand_stack().size();
+          auto g = scope_guard([&](){ _host = saved_host; get_operand_stack().eat(saved_os_size); });
+@@ -769,8 +771,8 @@ namespace eosio { namespace vm {
+ 
+       template <typename Visitor, typename... Args>
+       inline std::optional<operand_stack_elem> execute(host_type* host, Visitor&& visitor, uint32_t func_index, Args&&... args) {
+-         EOS_VM_ASSERT(func_index < std::numeric_limits<uint32_t>::max(), wasm_interpreter_exception,
+-                       "cannot execute function, function not found");
++         EOS_VM_ASSERT(uint64_t(func_index) < uint64_t(_mod->get_imported_functions_size()) + _mod->functions.size(),
++                       wasm_interpreter_exception, "cannot execute function, function index out of range");
+ 
+          auto last_last_op_index = _last_op_index;
+ 
+diff --git a/include/eosio/vm/parser.hpp b/include/eosio/vm/parser.hpp
+index 9dc35be..fde9649 100644
+--- a/include/eosio/vm/parser.hpp
++++ b/include/eosio/vm/parser.hpp
+@@ -1331,6 +1331,8 @@ namespace eosio { namespace vm {
+             code_writer.finalize(fb);
+          }
+          imap.on_code_end(code_writer.get_addr(), code.raw());
++         if constexpr (requires { code_writer.finish_code(); })
++            code_writer.finish_code();
+       }
+ 
+       template <uint8_t id>
+diff --git a/include/eosio/vm/x86_64.hpp b/include/eosio/vm/x86_64.hpp
+index 23ddf0a..5604675 100644
+--- a/include/eosio/vm/x86_64.hpp
++++ b/include/eosio/vm/x86_64.hpp
+@@ -96,14 +96,30 @@ namespace eosio { namespace vm {
+             assert(code == _code_end);
+          }
+       }
+-      ~machine_code_writer() { _allocator.end_code<true>(_code_segment_base); }
+-
+-      static constexpr std::size_t max_prologue_size = 21;
++      // Finalization allocates and changes code permissions. It must be a
++      // normal throwing parser operation, never run from a noexcept destructor
++      // or while unwinding an invalid body.
++      ~machine_code_writer() = default;
++      void finish_code() { _allocator.end_code<true>(_code_segment_base); }
++
++      // Context-specific private execution hook. Ordinary JIT contexts have
++      // no hook and retain their exact existing code generation.
++      static constexpr bool has_execution_budget_checkpoint = requires(Context& context) {
++         context.check_execution_budget();
++      };
++      static constexpr bool has_execution_budget_flag = has_execution_budget_checkpoint && requires {
++         Context::execution_budget_flag_offset();
++      };
++      static constexpr std::size_t checkpoint_fast_path_size = has_execution_budget_flag ? 13 : 0;
++      static constexpr std::size_t max_checkpoint_size =
++         has_execution_budget_checkpoint ? 48 + checkpoint_fast_path_size : 0;
++      static constexpr std::size_t max_prologue_size = 21 + max_checkpoint_size;
+       static constexpr std::size_t max_epilogue_size = 10;
+       void emit_prologue(const func_type& /*ft*/, const guarded_vector<local_entry>& locals, uint32_t funcnum) {
+          _ft = &_mod.types[_mod.functions[funcnum]];
+          // FIXME: This is not a tight upper bound
+-         const std::size_t instruction_size_ratio_upper_bound = use_softfloat?(Context::async_backtrace()?63:49):79;
++         const std::size_t instruction_size_ratio_upper_bound =
++            (use_softfloat?(Context::async_backtrace()?63:49):79) + max_checkpoint_size;
+          std::size_t code_size = max_prologue_size + _mod.code[funcnum].size * instruction_size_ratio_upper_bound + max_epilogue_size;
+          _code_start = _allocator.alloc<unsigned char>(code_size);
+          _code_end = _code_start + code_size;
+@@ -143,6 +159,7 @@ namespace eosio { namespace vm {
+                }
+             }
+          }
++         emit_execution_budget_checkpoint();
+          assert((char*)code <= (char*)_code_start + max_prologue_size);
+       }
+       void emit_epilogue(const func_type& ft, const guarded_vector<local_entry>& locals, uint32_t /*funcnum*/) {
+@@ -173,7 +190,11 @@ namespace eosio { namespace vm {
+          return emit_br(depth_change);
+       }
+       void emit_block() {}
+-      void* emit_loop() { return code; }
++      void* emit_loop() {
++         void* target = code;
++         emit_execution_budget_checkpoint();
++         return target; // every back edge must execute the checkpoint too
++      }
+       void* emit_if() {
+          auto icount = fixed_size_instr(9);
+          // pop RAX
+@@ -643,6 +664,34 @@ namespace eosio { namespace vm {
+          emit_store_impl(offset, 0x89, 0x08);
+       }
+ 
++      void emit_execution_budget_checkpoint() {
++         if constexpr (has_execution_budget_checkpoint) {
++            auto icount = variable_size_instr(29 + checkpoint_fast_path_size, 47 + checkpoint_fast_path_size);
++            void* healthy = nullptr;
++            if constexpr (has_execution_budget_flag) {
++               // Opt-in x86 ABI: an inline lock-free byte at [RDI + disp32].
++               // It is set while unbound and on interruption, so both enter
++               // the existing exception bridge. Keep EVERY entry/backedge.
++               emit_bytes(0x80, 0xbf); // cmpb $0, disp32(%rdi), acquire on x86
++               emit_operand32(Context::execution_budget_flag_offset());
++               emit_bytes(0x00);
++               emit_bytes(0x0f, 0x84); // healthy -> skip the entire helper call
++               healthy = emit_branch_target32();
++            }
++            emit_setup_backtrace();
++            // Preserve context/linear memory; all WASM operands stay on stack.
++            emit_bytes(0x57, 0x56); // push %rdi; push %rsi
++            emit_align_stack();
++            emit_bytes(0x48, 0xb8); // movabsq helper, %rax
++            emit_operand_ptr(&check_execution_budget);
++            emit_bytes(0xff, 0xd0); // call *%rax
++            emit_restore_stack();
++            emit_bytes(0x5e, 0x5f); // pop %rsi; pop %rdi
++            emit_restore_backtrace();
++            if constexpr (has_execution_budget_flag) fix_branch(healthy, code);
++         }
++      }
++
+       void emit_current_memory() {
+          auto icount = variable_size_instr(17, 35);
+          emit_setup_backtrace();
+@@ -664,7 +713,11 @@ namespace eosio { namespace vm {
+          emit_bytes(0x50);
+       }
+       void emit_grow_memory() {
+-         auto icount = variable_size_instr(21, 39);
++         // Private contexts may throw from their budget guard. Even with an
++         // exception bridge, the native helper must enter with the SysV stack
++         // alignment: WASM locals/operands can leave either stack parity.
++         constexpr uint32_t alignment_size = has_execution_budget_checkpoint ? 13 : 0;
++         auto icount = variable_size_instr(21 + alignment_size, 39 + alignment_size);
+          // popq %rax
+          emit_bytes(0x58);
+          emit_setup_backtrace();
+@@ -674,11 +727,13 @@ namespace eosio { namespace vm {
+          emit_bytes(0x56);
+          // movq %rax, %rsi
+          emit_bytes(0x48, 0x89, 0xc6);
++         if constexpr (has_execution_budget_checkpoint) emit_align_stack();
+          // movabsq $grow_memory, %rax
+          emit_bytes(0x48, 0xb8);
+          emit_operand_ptr(&grow_memory);
+          // call *%rax
+          emit_bytes(0xff, 0xd0);
++         if constexpr (has_execution_budget_checkpoint) emit_restore_stack();
+          // pop %rsi
+          emit_bytes(0x5e);
+          // pop %rdi
+@@ -2705,6 +2760,11 @@ namespace eosio { namespace vm {
+          return result;
+       }
+ 
++      static void check_execution_budget(Context* context /*rdi*/) {
++         if constexpr (has_execution_budget_checkpoint)
++            vm::longjmp_on_exception([&] { context->check_execution_budget(); });
++      }
++
+       static int32_t current_memory(Context* context /*rdi*/) {
+          return context->current_linear_memory();
+       }

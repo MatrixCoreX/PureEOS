@@ -1,0 +1,621 @@
+#!/usr/bin/env python3
+"""Live isolated producers with original serial and new restricted validators.
+
+Creates NEW loopback-only chains and deterministic TEST credentials. Never
+opens an existing wallet, data/config directory or nonlocal peer. Does not
+claim hardware capacity or physical power-loss safety. Retains all evidence.
+"""
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import tempfile
+import time
+
+from parallel_execution_test import Node, checked_manifest, require, sha256
+sys.path.insert(0, str(Path(__file__).resolve().parent / "PerformanceHarness"))
+from finality_benchmark import Journal, Observer
+from finality_tps import analyze, read_events
+from parallel_replay_benchmark import proc_usage, scrape_stages
+from stage_report import compare as compare_stages
+
+
+def wait_for(predicate, description, timeout=60):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        value = predicate()
+        if value:
+            return value
+        time.sleep(0.1)
+    raise RuntimeError("Timed out: " + description)
+
+
+def check_multi_action_response(entry, response, first):
+    roots = [trace for trace in response["processed"]["action_traces"]
+             if trace["creator_action_ordinal"] == 0]
+    require(len(roots) == entry["actions"], "Lost a top-level action in submission traces")
+    if not first:
+        return {}
+    require([trace["act"]["name"] for trace in roots] == ["transfer", "transfer", "close"],
+            "First transaction did not preserve the dependent action sequence")
+    initial_ram = {delta["account"]: delta["delta"] for delta in roots[0]["account_ram_deltas"]}
+    require(initial_ram.get("alice", 0) > 0, "First action did not create and pay for the temporary balance")
+    ram = {}
+    for trace in roots:
+        for delta in trace["account_ram_deltas"]:
+            ram[delta["account"]] = ram.get(delta["account"], 0) + delta["delta"]
+    require(all(value == 0 for value in ram.values()),
+            "Creating, spending and closing the temporary balance did not refund all RAM")
+    return ram
+
+
+def check_coded_notification_response(entry, response):
+    # push_transaction exposes the legacy tree (notifications also appear in
+    # inline_traces), while internal controller traces are a flat ordinal list.
+    # Bound traversal to this exact fixture so malformed trees cannot loop.
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 8:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending, "Coded notification trace tree exceeds fixture bounds")
+    require(entry["actions"] == 2 and len(traces) == 8, "Coded notification fixture lost a receiver or root")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 9)), "Coded notification ordinals are missing or repeated")
+    receivers = ["test", "test", "alice", "bob", "carol", "alice", "bob", "carol"]
+    creators = [0, 0, 1, 1, 3, 2, 2, 6]
+    ancestors = [0, 0, 1, 1, 1, 2, 2, 2]
+    for ordinal, receiver, creator, ancestor in zip(range(1, 9), receivers, creators, ancestors):
+        trace = by_ordinal[ordinal]
+        require(trace["receipt"]["receiver"] == receiver, "Coded notification receiver changed")
+        require(trace["creator_action_ordinal"] == creator and
+                trace["closest_unnotified_ancestor_action_ordinal"] == ancestor, "Coded notification ancestry changed")
+        require(trace["act"] == by_ordinal[ancestor or ordinal]["act"], "Notification did not preserve the original action")
+        require(trace["act"]["account"] == "test" and trace["act"]["name"] == "run", "Unexpected notification action")
+    sequences = [int(by_ordinal[ordinal]["receipt"]["global_sequence"]) for ordinal in (1, 3, 4, 5, 2, 6, 7, 8)]
+    require(all(a < b for a, b in zip(sequences, sequences[1:])), "Notification receipt execution order changed")
+
+
+def check_inline_response(entry, response):
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 16:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending, "Inline trace tree exceeds fixture bounds")
+    require(entry["actions"] == 2 and len(traces) == 16, "Inline fixture lost a receiver or root")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 17)), "Inline ordinals are missing or repeated")
+    execution = []
+    for index in range(2):
+        root, base = index + 1, 2 + index * 7
+        # ordinal, receiver, creator, closest unnotified ancestor, action, permission actor
+        specs = [(root, "test", 0, 0, "run", "alice"),
+                 (base + 1, "carol", root, root, "run", "alice"),
+                 (base + 2, "bob", root, root, "child", "bob"),
+                 (base + 3, "blank", root, root, "run", "alice"),
+                 (base + 4, "bob", root, root, "sibling", "bob"),
+                 (base + 5, "carol", base + 2, base + 2, "child", "bob"),
+                 (base + 6, "carol", base + 2, base + 2, "grand", "carol"),
+                 (base + 7, "blank", base + 6, base + 6, "grand", "carol")]
+        for ordinal, receiver, creator, ancestor, action, actor in specs:
+            trace = by_ordinal[ordinal]
+            require(trace["receipt"]["receiver"] == receiver, "Inline receiver changed")
+            require(trace["creator_action_ordinal"] == creator and
+                    trace["closest_unnotified_ancestor_action_ordinal"] == ancestor, "Inline ancestry changed")
+            account = "test" if action == "run" else "carol" if action == "grand" else "bob"
+            require(trace["act"]["account"] == account and trace["act"]["name"] == action,
+                    "Inline action target changed")
+            require(trace["act"]["authorization"] == [{"actor": actor, "permission": "active"}],
+                    "Inline authorization declaration changed")
+            require(trace["act"]["data"] == by_ordinal[root]["act"]["data"], "Inline action payload changed")
+        execution.extend((root, base + 1, base + 3, base + 2, base + 5, base + 6, base + 7, base + 4))
+    sequences = [int(by_ordinal[ordinal]["receipt"]["global_sequence"]) for ordinal in execution]
+    require(all(a < b for a, b in zip(sequences, sequences[1:])), "Inline receipt execution order changed")
+
+
+def check_context_free_response(entry, response):
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 18:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending, "Context-free trace tree exceeds fixture bounds")
+    require(entry["actions"] == 2 and len(traces) == 18, "Context-free fixture lost a receiver or root")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 19)), "Context-free ordinals are missing or repeated")
+    execution = []
+    for index in range(2):
+        root, base = index + 1, 2 + index * 8
+        # ordinal, receiver, creator, first receiver ancestor, method, CF flag
+        specs = [(root, "test", 0, 0, "run", False),
+                 (base + 1, "bob", root, root, "normal", False),
+                 (base + 2, "carol", root, root, "pure", True),
+                 (base + 3, "dave", root, root, "run", False),
+                 (base + 4, "dave", root, root, "normal", False),
+                 (base + 5, "bob", root, root, "pure", True),
+                 (base + 6, "carol", base + 3, root, "pure", True),
+                 (base + 7, "dave", base + 1, base + 1, "pure", True),
+                 (base + 8, "carol", base + 1, base + 1, "normal", False)]
+        for ordinal, receiver, creator, ancestor, method, pure in specs:
+            trace = by_ordinal[ordinal]
+            require(trace["receipt"]["receiver"] == receiver, "Context-free receiver changed")
+            require(trace["creator_action_ordinal"] == creator and
+                    trace["closest_unnotified_ancestor_action_ordinal"] == ancestor, "Context-free ancestry changed")
+            require(trace.get("context_free") is pure, "Context-free action type changed")
+            account = "test" if method == "run" else receiver
+            require(trace["act"]["account"] == account and trace["act"]["name"] == method,
+                    "Context-free action target changed")
+            auth = [{"actor": "test", "permission": "active"}] if method == "run" else []
+            require(trace["act"]["authorization"] == auth, "Context-free authorization changed")
+            data = by_ordinal[root]["act"]["data"] if method == "run" else "78797a"
+            require(trace["act"]["data"] == data, "Context-free payload changed")
+            if pure:
+                require(not trace.get("account_ram_deltas"), "Context-free child changed RAM")
+        execution.extend((root, base + 3, base + 2, base + 5, base + 6, base + 1, base + 7, base + 8, base + 4))
+    sequences = [int(by_ordinal[ordinal]["receipt"]["global_sequence"]) for ordinal in execution]
+    require(all(a < b for a, b in zip(sequences, sequences[1:])), "Context-free receipt execution order changed")
+
+
+def check_sync_response(entry, response):
+    # This is the HTTP submission trace, possibly speculative. Production
+    # adoption is checked separately; SHiP does not serialize call_traces.
+    traces = response["processed"]["action_traces"]
+    require(entry["actions"] == 1 and len(traces) == 1, "Sync fixture lost its sole root")
+    root = traces[0]
+    require(root["action_ordinal"] == 1 and root["creator_action_ordinal"] == 0 and
+            root["closest_unnotified_ancestor_action_ordinal"] == 0, "Sync root ancestry changed")
+    require(root["receipt"]["receiver"] == "test" and root.get("context_free") is False,
+            "Sync root receiver or type changed")
+    require(root["act"]["account"] == "test" and root["act"]["name"] == "run" and
+            root["act"]["authorization"] == [{"actor": "test", "permission": "active"}],
+            "Sync root target or authorization changed")
+    require(root["act"].get("hex_data", root["act"].get("data")) == entry["root_data"],
+            "Sync root payload changed")
+    require(not root.get("inline_traces") and not root.get("account_ram_deltas"),
+            "Sync fixture acquired an inline action or RAM delta")
+    returned = (22).to_bytes(8, "little").hex()
+    require(entry["return_data"] == returned and root["return_value_hex_data"] == returned,
+            "Sync root return changed")
+    calls = root["call_traces"]
+    require(len(calls) == 1, "Sync fixture lost or duplicated its child")
+    call = calls[0]
+    require(len(entry["root_data"]) == 32 and entry["root_data"][:16] == entry["call_data"],
+            "Sync child input is not the original root payload prefix")
+    require(call["call_ordinal"] == 1 and call["sender_ordinal"] == 0 and
+            call["receiver"] == "bob" and call["read_only"] is False,
+            "Sync child identity or read-only flag changed")
+    require(entry["call_data"] in ((7).to_bytes(8, "little").hex(), (9).to_bytes(8, "little").hex()) and
+            call["hex_data"] == entry["call_data"] and call["return_value_hex_data"] == returned,
+            "Sync child input or return changed")
+    for trace in (root, call):
+        require(trace["except"] is None and trace["error_code"] is None,
+                "Successful sync trace contains an exception")
+        require(trace["console"] == "" and trace["console_markers"] == [],
+                "Console-disabled sync trace contains output")
+    require(call["error_id"] is None, "Successful sync child contains an error status")
+
+
+def check_multi_sync_response(entry, response):
+    traces = response["processed"]["action_traces"]
+    require(entry["actions"] == 2 and len(entry["roots"]) == 2 and len(traces) == 2,
+            "Multi-root sync fixture lost or duplicated a root")
+    require(entry["roots"][0]["call_data"] == entry["roots"][1]["call_data"] and
+            entry["roots"][0]["root_data"] != entry["roots"][1]["root_data"],
+            "Multi-root sync fixture must use one row with distinct root nonces")
+    for ordinal, (expected, root) in enumerate(zip(entry["roots"], traces), 1):
+        require(root["action_ordinal"] == ordinal, "Multi-root sync execution order changed")
+        # Reuse every original child/status/payload check without mutating the
+        # submitted trace. Actual root ordinals are checked above, not erased.
+        check_sync_response({"actions": 1, **expected},
+                            {"processed": {"action_traces": [{**root, "action_ordinal": 1}]}})
+    sequences = [int(root["receipt"]["global_sequence"]) for root in traces]
+    require(sequences[0] < sequences[1], "Multi-root sync receipt order changed")
+
+
+def check_sync_production_totals(totals):
+    require(len(totals) == 1 and len(totals[0]) == 5, "Missing or duplicate sync production totals")
+    batches, attempts, succeeded, adopted, fallbacks = map(int, totals[0])
+    # This fixture queues exactly sixteen transactions in two batches of eight.
+    # The first two write distinct rows; the third conflicts and disables its
+    # batch tail. Discovery attempt counts may improve without changing this.
+    require(batches == 2 and adopted == 4 and fallbacks == 12,
+            "Expected four sync adoptions and twelve conflict fallbacks in two fixed batches")
+    require(attempts >= succeeded >= adopted, "Inconsistent sync attempt counters")
+
+
+def check_mixed_response(entry, response):
+    """Compare HTTP submission to exported ORIGINAL serial execution, not speculation.
+
+    Canonical controller tests compare actually adopted traces. SHiP currently
+    omits synchronous call_traces; this check does not claim otherwise.
+    """
+    expected = entry["expected"]["actions"]
+    require(entry["actions"] == 2 and len(expected) == 10, "Mixed fixture root/receiver count changed")
+    require([item["action_ordinal"] for item in expected] == list(range(1, 11)),
+            "Mixed expectation ordinals changed")
+    require(sum(len(item["calls"]) for item in expected) == 8, "Mixed fixture lost nested calls")
+    pending = list(response["processed"]["action_traces"])
+    traces = []
+    while pending and len(traces) <= 10:
+        trace = pending.pop()
+        traces.append(trace)
+        pending.extend(trace.get("inline_traces", []))
+    require(not pending and len(traces) == 10, "Mixed response lost or duplicated a receiver")
+    by_ordinal = {trace["action_ordinal"]: trace for trace in traces}
+    require(set(by_ordinal) == set(range(1, 11)), "Mixed response has duplicate or invalid ordinals")
+    actual_order = []
+    for item in expected:
+        trace = by_ordinal[item["action_ordinal"]]
+        for field in ("action_ordinal", "creator_action_ordinal", "closest_unnotified_ancestor_action_ordinal", "context_free"):
+            require(trace[field] == item[field], "Mixed action ancestry/type changed: " + field)
+        require(trace["receipt"]["receiver"] == item["receiver"], "Mixed receiver changed")
+        for field in ("account", "name", "authorization"):
+            require(trace["act"][field] == item["act"][field], "Mixed original action changed: " + field)
+        require(trace["act"].get("hex_data", trace["act"]["data"]) == item["act"]["data"],
+                "Mixed original action payload changed")
+        require(trace["return_value_hex_data"] == item["return_value_hex_data"],
+                f"Mixed action return changed at ordinal {item['action_ordinal']}: "
+                f"expected={item['return_value_hex_data']}, actual={trace['return_value_hex_data']}")
+        require(not trace.get("account_ram_deltas"), "Mixed sync-only writes acquired ordinary RAM deltas")
+        require(trace["except"] is None and trace["error_code"] is None and trace["console"] == "" and
+                trace["console_markers"] == [], "Mixed action contains an error or console output")
+        calls = trace["call_traces"]
+        require(len(calls) == len(item["calls"]), "Mixed synchronous call count changed")
+        for call, child in zip(calls, item["calls"]):
+            require(all(call[field] == child[field] for field in
+                        ("call_ordinal", "sender_ordinal", "receiver", "read_only", "hex_data", "return_value_hex_data")),
+                    "Mixed synchronous identity, payload or return changed")
+            require(call["except"] is None and call["error_code"] is None and call["error_id"] is None and
+                    call["console"] == "" and call["console_markers"] == [], "Mixed child contains an error or output")
+        actual_order.append((int(trace["receipt"]["global_sequence"]), item["action_ordinal"]))
+    require(len({sequence for sequence, _ in actual_order}) == 10 and
+            [ordinal for _, ordinal in sorted(actual_order)] == entry["expected"]["execution_order"],
+            "Mixed notification/CF/ordinary inline execution order changed")
+
+
+def check_mixed_production_totals(totals):
+    require(len(totals) == 1 and len(totals[0]) == 5, "Missing or duplicate mixed production totals")
+    batches, attempts, succeeded, adopted, fallbacks = map(int, totals[0])
+    # All sixteen transactions write the SAME row. Only the first of each
+    # fixed batch of eight can be adopted; the rest execute the original path.
+    require(batches == 2 and adopted == 2 and fallbacks == 14,
+            "Expected two mixed adoptions and fourteen conflict fallbacks in two fixed batches")
+    require(attempts >= succeeded >= adopted, "Inconsistent mixed attempt counters")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--old-nodeos", type=Path, required=True)
+    parser.add_argument("--new-nodeos", type=Path, required=True)
+    parser.add_argument("--fixture-exporter", type=Path, required=True)
+    parser.add_argument("--old-sha256", required=True)
+    parser.add_argument("--output-parent", type=Path, required=True)
+    parser.add_argument("--token-fixture", action="store_true", help="Exercise unchanged real token transfers and notification receipts")
+    parser.add_argument("--ram-fixture", action="store_true", help="With --token-fixture, first transfer changes the sender row RAM payer")
+    parser.add_argument("--lifecycle-fixture", action="store_true", help="With --token-fixture, first transfer creates the recipient balance and table")
+    parser.add_argument("--multi-action-fixture", action="store_true", help="With --token-fixture, execute dependent transfers and close in one transaction")
+    parser.add_argument("--coded-notification-fixture", action="store_true", help="Two roots with shared-cursor coded notifications and child-owned writes")
+    parser.add_argument("--inline-fixture", action="store_true", help="Two roots with ordinary inline children, coded notifications, lifecycle writes and original authorization")
+    parser.add_argument("--context-free-fixture", action="store_true", help="Two roots with parent writes, notifications, both inline queues and immutable context-free data")
+    parser.add_argument("--sync-fixture", action="store_true", help="One ordinary root calling a synchronous child that updates primary rows")
+    parser.add_argument("--sync-multi-root-fixture", action="store_true", help="Two ordered ordinary roots each calling a synchronous child on the same row")
+    parser.add_argument("--mixed-fixture", action="store_true", help="Two roots mixing recursive sync calls, coded notifications, both inline queues and CF data")
+    args = parser.parse_args()
+    if args.ram_fixture and not args.token_fixture:
+        parser.error("--ram-fixture requires --token-fixture")
+    if args.lifecycle_fixture and (not args.token_fixture or args.ram_fixture):
+        parser.error("--lifecycle-fixture requires --token-fixture and cannot be combined with --ram-fixture")
+    if args.multi_action_fixture and (not args.token_fixture or args.ram_fixture or args.lifecycle_fixture):
+        parser.error("--multi-action-fixture requires --token-fixture and cannot be combined with RAM/lifecycle flags")
+    if args.coded_notification_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture):
+        parser.error("--coded-notification-fixture cannot be combined with token/RAM/lifecycle/multi-action flags")
+    if args.inline_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture):
+        parser.error("--inline-fixture cannot be combined with other fixture flags")
+    if args.context_free_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture or args.inline_fixture):
+        parser.error("--context-free-fixture cannot be combined with other fixture flags")
+    if args.sync_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture or args.inline_fixture or args.context_free_fixture):
+        parser.error("--sync-fixture cannot be combined with other fixture flags")
+    if args.sync_multi_root_fixture and (args.token_fixture or args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture or args.coded_notification_fixture or args.inline_fixture or args.context_free_fixture or args.sync_fixture):
+        parser.error("--sync-multi-root-fixture cannot be combined with other fixture flags")
+    if args.mixed_fixture and any((args.token_fixture, args.ram_fixture, args.lifecycle_fixture, args.multi_action_fixture,
+                                 args.coded_notification_fixture, args.inline_fixture, args.context_free_fixture,
+                                 args.sync_fixture, args.sync_multi_root_fixture)):
+        parser.error("--mixed-fixture cannot be combined with other fixture flags")
+    sync_fixture = args.sync_fixture or args.sync_multi_root_fixture
+    old, new, exporter = args.old_nodeos.resolve(), args.new_nodeos.resolve(), args.fixture_exporter.resolve()
+    require(old != new and all(path.is_file() for path in (old, new, exporter)), "Distinct valid binaries required")
+    require(sha256(old) == args.old_sha256, "Original binary hash changed")
+    require(args.output_parent.is_dir(), "Output parent must exist")
+    os.umask(0o077)
+    root = Path(tempfile.mkdtemp(prefix="parallel-producer-", dir=args.output_parent.resolve()))
+    report = {"status": "running", "root": str(root), "script_sha256": sha256(Path(__file__)),
+              "fixture_kind": "mixed-sync-notification-inline-primary" if args.mixed_fixture else
+                              "ordinary-sync-multi-root-primary" if args.sync_multi_root_fixture else
+                              "ordinary-sync-primary" if args.sync_fixture else
+                              "context-free-inline-multiple-actions" if args.context_free_fixture else
+                              "ordinary-inline-multiple-actions" if args.inline_fixture else
+                              "coded-notification-multiple-actions" if args.coded_notification_fixture else
+                              "real-token-multiple-actions" if args.multi_action_fixture else
+                              "real-token-first-balance" if args.lifecycle_fixture else
+                              "real-token-payer-change" if args.ram_fixture else "real-token" if args.token_fixture else "existing-row-wat",
+              "old_sha256": sha256(old), "new_sha256": sha256(new), "exporter_sha256": sha256(exporter), "phases": []}
+    nodes = []
+    journals = []
+    print("Evidence: " + str(root), flush=True)
+    try:
+        for workers in (0, 1, 2, 4, None):
+            require(sha256(exporter) == report["exporter_sha256"], "Fixture exporter changed during test")
+            label = "old-producer" if workers is None else f"new-producer-{workers}"
+            group = root / label
+            group.mkdir()
+            corpus = group / "corpus"
+            env = {**os.environ, "PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR": str(corpus)}
+            env.pop("PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR", None)
+            env.pop("PUREEOS_PARALLEL_PRODUCER_CF_EXPORT_DIR", None)
+            env.pop("PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR", None)
+            env.pop("PUREEOS_PARALLEL_PRODUCER_SYNC_MULTI_EXPORT_DIR", None)
+            env.pop("PUREEOS_PARALLEL_PRODUCER_MIXED_EXPORT_DIR", None)
+            export_test = "parallel_production_tests/export_fresh_live_producer_fixture"
+            if args.inline_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_INLINE_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_inline_adoption_tests/export_fresh_inline_producer_fixture"
+            if args.context_free_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_CF_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_context_free_adoption_tests/export_fresh_context_free_producer_fixture"
+            if args.sync_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_SYNC_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_sync_adoption_tests/export_fresh_sync_producer_fixture"
+            if args.sync_multi_root_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_SYNC_MULTI_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_sync_adoption_tests/export_fresh_multi_root_sync_producer_fixture"
+            if args.mixed_fixture:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_EXPORT_DIR", None)
+                env["PUREEOS_PARALLEL_PRODUCER_MIXED_EXPORT_DIR"] = str(corpus)
+                export_test = "parallel_mixed_tree_adoption_tests/export_fresh_mixed_producer_fixture"
+            if args.token_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_TOKEN"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_TOKEN", None)
+            if args.ram_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_RAM"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_RAM", None)
+            if args.lifecycle_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_LIFECYCLE"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_LIFECYCLE", None)
+            if args.multi_action_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_MULTI_ACTION"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_MULTI_ACTION", None)
+            if args.coded_notification_fixture:
+                env["PUREEOS_PARALLEL_PRODUCER_CODED_NOTIFICATIONS"] = "1"
+            else:
+                env.pop("PUREEOS_PARALLEL_PRODUCER_CODED_NOTIFICATIONS", None)
+            with (group / "export.log").open("x") as log:
+                result = subprocess.run([str(exporter), "--run_test=" + export_test,
+                    "--report_level=detailed", "--color_output=no"], env=env, cwd=group,
+                    stdout=log, stderr=subprocess.STDOUT, timeout=120)
+            require(result.returncode == 0, "Fresh fixture export failed: " + str(group))
+            manifest = checked_manifest(corpus)
+            require(manifest.get("fixture_kind") == report["fixture_kind"], "Exporter returned wrong fixture kind")
+            # A new serial observer feeds bootstrap blocks to an OLD producer
+            # over P2P, bypassing the documented pre-existing HTTP cache bug.
+            feeder = Node(new, group / "new-observer", corpus, manifest, 2, peer="listen", history=True)
+            nodes.append(feeder)
+            producer = Node(old if workers is None else new, group / "producer", corpus, manifest,
+                            workers, peer=feeder.endpoint, history=True)
+            nodes.append(producer)
+            observer = Node(old, group / "old-observer", corpus, manifest, None, peer=producer.endpoint, history=True)
+            nodes.append(observer)
+            config_path = producer.root / "config/config.ini"
+            lines = ["producer-name = eosio", "enable-stale-production = true", "pause-on-startup = true",
+                     "read-mode = head", "max-transaction-time = 100", "contracts-console = false",
+                     "performance-metrics = true", "plugin = eosio::prometheus_plugin"]
+            if workers:
+                lines.append("experimental-parallel-production = true")
+            keys = json.loads((corpus / "TEST-ONLY-keys.json").read_text())
+            lines.extend("signature-provider = " + key for key in keys)
+            config_path.write_text(config_path.read_text() + "\n".join(lines) + "\n")
+            for node in (feeder, producer, observer):
+                node.start("live", ["--genesis-json", str(corpus / "genesis.json")])
+            for point in manifest["checkpoints"]:
+                feeder.feed(point)
+                producer.check(point)
+                observer.check(point)
+            entries = json.loads((corpus / "transactions.json").read_text())
+            if args.sync_fixture:
+                require(len(entries) == 16 and all(entry["actions"] == 1 for entry in entries),
+                        "Sync fixture must contain 16 single-root transactions")
+            if args.sync_multi_root_fixture:
+                require(len(entries) == 16 and all(entry["actions"] == 2 for entry in entries),
+                        "Multi-root sync fixture must contain 16 two-root transactions")
+            if args.mixed_fixture:
+                require(len(entries) == 16 and all(entry["actions"] == 2 for entry in entries),
+                        "Mixed fixture must contain 16 two-root transactions")
+            if args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture:
+                require(len(entries) == 16, "RAM/lifecycle fixtures require the fixed 16-transaction corpus")
+            if args.multi_action_fixture:
+                require([entry["actions"] for entry in entries] == [3] + [2] * 15,
+                        "Multi-action fixture must contain 33 root actions in 16 transactions")
+            if args.coded_notification_fixture:
+                require(len(entries) == 16 and all(entry["actions"] == 2 for entry in entries),
+                        "Coded notification fixture must contain 32 root actions in 16 transactions")
+            metrics_before = scrape_stages(producer)
+            (group / "metrics-before.txt").write_text(metrics_before)
+            journal = Journal(group / "finality-evidence.jsonl")
+            journals.append(journal)
+            finality = Observer(f"http://127.0.0.1:{producer.port}", manifest["chain_id"], journal, 10)
+            finality.initialize()
+            started = time.monotonic_ns()
+            ended = started + 14_000_000_000
+            journal.emit("window", version=1, clock="monotonic_ns", start_ns=started, end_ns=ended,
+                         scope="Finite queued 16-transaction compatibility load; NOT saturation or capacity")
+            responses = []
+            sync_submission_traces = []
+            payer_change = {}
+            for entry in entries:
+                journal.emit("sent", id=entry["id"], actions=entry["actions"])
+                response = producer.rpc("push_transaction", entry["packed"])
+                if args.mixed_fixture:
+                    # Retain even a failing submission BEFORE any assertion;
+                    # the aggregate below is only reached after all succeed.
+                    with (group / f"mixed-submission-{len(responses):02}.json").open("x") as log:
+                        json.dump(response, log, indent=2)
+                        log.write("\n")
+                require(response["transaction_id"] == entry["id"], "Submission ID changed")
+                require(response["processed"]["receipt"]["status"] == "executed", "Speculative submission failed")
+                if args.coded_notification_fixture:
+                    check_coded_notification_response(entry, response)
+                if args.inline_fixture:
+                    check_inline_response(entry, response)
+                if args.context_free_fixture:
+                    check_context_free_response(entry, response)
+                if sync_fixture:
+                    (check_multi_sync_response if args.sync_multi_root_fixture else check_sync_response)(entry, response)
+                    sync_submission_traces.append(response["processed"]["action_traces"])
+                if args.mixed_fixture:
+                    check_mixed_response(entry, response)
+                    sync_submission_traces.append(response["processed"]["action_traces"])
+                if args.multi_action_fixture:
+                    ram = check_multi_action_response(entry, response, not responses)
+                    if not responses:
+                        payer_change = ram
+                if (args.ram_fixture or args.lifecycle_fixture) and not responses:
+                    payer_change = {item["account"]: item["delta"] for item in
+                                    response["processed"]["action_traces"][0]["account_ram_deltas"]}
+                    if args.ram_fixture:
+                        require(payer_change.get("alice", 0) < 0 and payer_change.get("sponsor", 0) > 0 and
+                                sum(payer_change.values()) == 0, "First token transfer did not move the sender RAM payer")
+                    else:
+                        require(payer_change.get("alice", 0) > 0 and sum(payer_change.values()) > 0,
+                                "First token transfer did not charge for the new balance/table")
+                responses.append(response["transaction_id"])
+                journal.emit("ack", id=entry["id"], accepted=True)
+            before = producer.rpc("get_info")
+            if sync_fixture or args.mixed_fixture:
+                (group / "sync-submission-traces.json").write_text(json.dumps(sync_submission_traces, indent=2) + "\n")
+            # Default produce-block-offset accumulates across all 12 slots;
+            # a 500ms boundary is NOT necessarily a full production window.
+            # Resume just after the preceding slot of a six-second round so
+            # pending slot index=0 gets its original full local CPU effort.
+            # Up to six seconds waiting is included in the fixed 14s window.
+            # No consensus or local production limits are relaxed.
+            time.sleep((5.53 - time.time() % 6) % 6)
+            producer.rpc("resume", namespace="producer")
+            target = before["head_block_num"] + 10
+            producer.rpc("pause_at_block", {"block_num": target}, namespace="producer")
+            def reached_target():
+                finality.sample()
+                return producer.rpc("get_info")["head_block_num"] >= target
+            wait_for(reached_target, "live producer advances to pause point")
+            producer.rpc("pause", namespace="producer")
+            while time.monotonic_ns() < ended:
+                finality.sample()
+                time.sleep(0.1)
+            finality.sample()
+            journal.emit("end")
+            journal.close()
+            journals.remove(journal)
+            finalized = analyze(read_events(group / "finality-evidence.jsonl"))
+            require(finalized["finalized_success_unique"] == len(entries) and
+                    not finalized["cohort_unresolved_at_end"] and
+                    finalized["measurement_complete_without_sampling_or_sender_errors"], "Finality accounting incomplete")
+            info = producer.rpc("get_info")
+            require(info["head_block_num"] == target, "Producer did not honor the fixed stop height")
+            require(info["last_irreversible_block_num"] >= target - 2, "Native Savanna finality stalled")
+            state = producer.rpc("get_integrity_hash", namespace="producer")
+            metrics_after = scrape_stages(producer)
+            (group / "metrics-after.txt").write_text(metrics_after)
+            stages = compare_stages(metrics_before, metrics_after)
+            usage = proc_usage(producer.process.pid)
+            point = {"block_num": target, "block_id": info["head_block_id"], "lib": info["last_irreversible_block_num"],
+                     "integrity_hash": state["integrity_hash"]}
+            for node in (feeder, observer):
+                node.check(point)
+            receipts, timestamps = [], []
+            for number in range(before["head_block_num"] + 1, target + 1):
+                block = producer.rpc("get_block", {"block_num_or_id": number})
+                other = observer.rpc("get_block", {"block_num_or_id": number})
+                require(block == other, f"Old full validator disagrees on block {number}")
+                timestamps.append(block["timestamp"])
+                for trx in block["transactions"]:
+                    require(trx["status"] == "executed", "Nonexecuted production receipt")
+                    require(trx["cpu_usage_us"] >= 100, "Missing original minimum CPU charge")
+                    receipts.append(trx["trx"]["id"])
+            require(receipts == responses, "Missing, duplicate or reordered production receipt")
+            # After the first catch-up slot, empty/full blocks must maintain the
+            # normal 500 ms schedule in this explicitly bounded local scenario.
+            from datetime import datetime
+            gaps = [(datetime.fromisoformat(b) - datetime.fromisoformat(a)).total_seconds()
+                    for a, b in zip(timestamps, timestamps[1:])]
+            require(all(gap == 0.5 for gap in gaps), "Missed slot in the local producer test")
+            for node in (producer, feeder, observer):
+                node.stop()
+            text = producer.log.read_text(errors="replace")
+            totals = re.findall(r"Experimental parallel production totals: batches=(\d+), attempts=(\d+), "
+                                r"succeeded=(\d+), adopted=(\d+), serial_fallbacks=(\d+)", text)
+            if workers:
+                require(len(totals) == 1 and int(totals[0][3]) > 0, "Live producer never adopted a private result")
+                if args.ram_fixture or args.lifecycle_fixture or args.multi_action_fixture:
+                    require(int(totals[0][3]) == 6, "Expected six independent transactions to be adopted in the fixed two-batch corpus")
+                if args.coded_notification_fixture:
+                    require(int(totals[0][3]) == 4, "Expected four coded-notification transactions adopted in the fixed two-batch corpus")
+                if sync_fixture:
+                    check_sync_production_totals(totals)
+                if args.mixed_fixture:
+                    check_mixed_production_totals(totals)
+            else:
+                require(not totals, "Serial mode unexpectedly ran a production batch")
+            histories = [node.history_digests() for node in (producer, feeder, observer)]
+            require(histories[0] == histories[1] == histories[2], "Live SHiP trace/state output differs")
+            # The immutable old program also reconstructs these NEW produced
+            # blocks from disk with full checks, not merely from cached traces.
+            observer.start("checked-production-replay", ["--replay-blockchain", "--force-all-checks",
+                                                         "--disable-replay-opts"])
+            observer.check(point)
+            observer.stop()
+            require(observer.history_digests() == histories[2], "Old checked replay changed finalized history output")
+            item = {"phase": label, "head": target, "lib": info["last_irreversible_block_num"],
+                    "code_hashes": manifest["code_hashes"],
+                    "first_transfer_ram_deltas": payer_change,
+                    "state": state["integrity_hash"], "transactions": len(receipts), "slot_gaps_seconds": gaps,
+                    "root_actions": sum(entry["actions"] for entry in entries),
+                    "production_totals": totals, "history_sha256": histories[0], "old_checked_replay": True}
+            item["bounded_load_finality"] = finalized
+            if sync_fixture or args.mixed_fixture:
+                item["sync_trace_scope"] = "HTTP submission only; actual adoption traces are checked by chain-level differential tests"
+                item["submission_sync_call_traces"] = len(sync_submission_traces)
+            item["stages"] = stages
+            item["process_usage"] = usage
+            report["phases"].append(item)
+            print(json.dumps({key: value for key, value in item.items() if key != "stages"}), flush=True)
+        require(sha256(old) == args.old_sha256 and sha256(new) == report["new_sha256"] and
+                sha256(exporter) == report["exporter_sha256"], "Binary or fixture exporter changed during test")
+        report["status"] = "passed"
+    except BaseException as error:
+        report["status"] = "failed"
+        report["error"] = str(error)
+        raise
+    finally:
+        for journal in journals:
+            journal.close()
+        for node in reversed(nodes):
+            node.stop(check=False)
+        (root / "report.json").write_text(json.dumps(report, indent=2) + "\n")
+        print("Report: " + str(root / "report.json"), flush=True)
+
+
+if __name__ == "__main__":
+    main()

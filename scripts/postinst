@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+Python_SITELIB=$(python3 -c "from sysconfig import get_path; print(get_path('platlib', 'deb_system'))")
+mkdir -p $Python_SITELIB
+ln -sf @CMAKE_INSTALL_FULL_DATAROOTDIR@/helios_testing/tests/TestHarness $Python_SITELIB/TestHarness
+
+
+# helios_testing is part of the package so should already exist by the time postinst runs
+if [ ! -L @CMAKE_INSTALL_FULL_DATAROOTDIR@/helios_testing/bin ]; then
+    ln -s ../../bin @CMAKE_INSTALL_FULL_DATAROOTDIR@/helios_testing/bin
+fi

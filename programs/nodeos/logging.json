@@ -1,0 +1,191 @@
+{
+  "includes": [],
+  "appenders": [{
+      "name": "stderr",
+      "type": "console",
+      "args": {
+        "stream": "std_error",
+        "level_colors": [{
+            "level": "debug",
+            "color": "green"
+          },{
+            "level": "warn",
+            "color": "brown"
+          },{
+            "level": "error",
+            "color": "red"
+          },{
+            "level": "info",
+            "color": "console_default"
+          }
+        ],
+        "flush": true
+      }
+    },{
+      "name": "stdout",
+      "type": "console",
+      "args": {
+        "stream": "std_out",
+        "level_colors": [{
+            "level": "debug",
+            "color": "blue"
+          },{
+            "level": "warn",
+            "color": "magenta"
+          },{
+            "level": "error",
+            "color": "cyan"
+          },{
+            "level": "info",
+            "color": "white"
+          }
+        ],
+        "flush": false
+      }
+    },{
+      "name": "net",
+      "type": "gelf",
+      "args": {
+        "endpoint": "my_server.example.invalid:12201",
+        "host": "host_name",
+        "_network": "jungle"
+      }
+    }
+  ],
+  "loggers": [{
+      "name": "default",
+      "level": "debug",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "net_plugin_impl",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "p2p_log",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "p2p_trx",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "p2p_block",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "p2p_message",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "p2p_connection",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "http_plugin",
+      "level": "debug",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "producer_plugin",
+      "level": "debug",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "transaction_success_tracing",
+      "level": "debug",
+      "enabled": false,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "transaction_failure_tracing",
+      "level": "debug",
+      "enabled": false,
+      "appenders": [
+        "stderr",
+        "net"
+      ]
+    },{
+      "name": "trace_api",
+      "level": "debug",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "transaction_trace_success",
+      "level": "debug",
+      "enabled": false,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "transaction_trace_failure",
+      "level": "debug",
+      "enabled": false,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "transient_trx_success_tracing",
+      "level": "debug",
+      "enabled": false,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+      "name": "transient_trx_failure_tracing",
+      "level": "debug",
+      "enabled": false,
+      "appenders": [
+        "stderr"
+      ]
+    },{
+    "name": "state_history",
+    "level": "info",
+    "enabled": true,
+    "appenders": [
+      "stderr"
+      ]
+    },{
+    "name": "vote",
+    "level": "info",
+    "enabled": true,
+    "appenders": [
+      "stderr"
+      ]
+    },{
+      "name": "transaction",
+      "level": "info",
+      "enabled": true,
+      "appenders": [
+        "stderr"
+      ]
+    }
+  ]
+}

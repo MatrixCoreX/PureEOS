@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "base_commit": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+  "patch_sha256": "4bc6c2240d6628c5da2cc67ae43bb4cb025a0611f075802617bdefe56da5e493",
+  "files": {
+    "include/eosio/vm/allocator.hpp": {
+      "base_sha256": "25055322fc473eb18e67d3b36cb44fe4d9de28736dc2d3239a5d687423f556a1",
+      "patched_sha256": "568b79d428a2ae12eaf64c4a89f74bb168044057f194308034f8b42207bb7cef"
+    },
+    "include/eosio/vm/parser.hpp": {
+      "base_sha256": "b91f791f0cc66dc3b31a7e0900bb87816c00468e93c7375281270855331cff55",
+      "patched_sha256": "9a33cfc5e1a9042df49e9a4e4a0d517fe6d9178d9739503883977ab959544d40"
+    },
+    "include/eosio/vm/x86_64.hpp": {
+      "base_sha256": "7f1a14685f74253f4e180cd27a88a50b14bd08fa147069782b1d3e5564c46d77",
+      "patched_sha256": "ccbd6877ed08f80e59057424823243ae5bf829adbba7cb1d57d16d117bc31fc5"
+    },
+    "include/eosio/vm/execution_context.hpp": {
+      "base_sha256": "61a86ba8b621ccb9fc9977fa4f5c28ebd7b0d502777ae688f3e4dda71cb774f3",
+      "patched_sha256": "54d895c8a257d02b757980a6b366fb6774debe2862661aed76a07ccb645f052d"
+    }
+  }
+}
