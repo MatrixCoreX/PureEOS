@@ -1,6 +1,7 @@
 #include <eosio/chain/parallel_state_overlay.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <algorithm>
+#include <array>
 #include <limits>
 
 namespace eosio::chain::experimental {
@@ -676,7 +677,17 @@ primary_overlay_result primary_state_overlay::seal() {
 
 bool primary_overlay_result::matches_base_reads(const transaction_state_view& live,
                                                const std::function<void()>& checkpoint) const {
-   std::set<int64_t> checked_values;
+   // Small read sets need no per-ID heap nodes; larger sets retain logarithmic
+   // tree storage after a bounded eight-element scan. Lifetime is this call.
+   std::array<int64_t,8> inline_values{};
+   size_t inline_count=0;
+   std::set<int64_t> overflow_values;
+   const auto first_value=[&](int64_t id) {
+      for (size_t i=0;i<inline_count;++i) if(inline_values[i]==id) return false;
+      if(inline_count<inline_values.size()) {inline_values[inline_count++]=id;return true;}
+      return overflow_values.insert(id).second;
+   };
+   const auto* native=dynamic_cast<const chainbase_transaction_state_view*>(&live);
    for (const auto account : accounts_) {
       checkpoint();
       if (live.read_account(account) != base_->read_account(account)) return false;
@@ -691,23 +702,22 @@ bool primary_overlay_result::matches_base_reads(const transaction_state_view& li
       // Only the final native Chainbase adapter has the reviewed combined
       // metadata/full-prefix semantics. Preserve the original selection and
       // payload call protocol for every other state-view adapter.
-      if (dynamic_cast<const chainbase_transaction_state_view*>(&live) == nullptr) {
+      if (!native) {
          if (live.locate_primary(query) != expected) return false;
          // Distinct range/point queries can select the same large row. Selection
          // is checked for each query, but compare its payload once per object ID
          // while the serial owner holds this unchanged canonical state.
-         if (expected.row && checked_values.insert(expected.row->object_id).second &&
+         if (expected.row && first_value(expected.row->object_id) &&
              live.read_primary(query, expected.row->value_size) !=
                              base_->read_primary(query, expected.row->value_size)) return false;
          continue;
       }
-      // A full-sized prefix returns the same complete table/row metadata AND
-      // every payload byte in one live lookup. Metadata includes value_size:
-      // growth/truncation, identity, payer and range selection still mismatch.
-      // This is a fresh read on every query, never a cache across mutations.
-      if (expected.row && checked_values.insert(expected.row->object_id).second) {
-         if (live.read_primary_prefix(query, expected.row->value_size) !=
-                          base_->read_primary_prefix(query, expected.row->value_size)) return false;
+      // The frozen base owns these bytes for the complete sealed-result lifetime.
+      // Compare all bytes plus fresh table/row metadata without copying either
+      // payload. No canonical reference survives matches_primary or a callback.
+      if (expected.row && first_value(expected.row->object_id)) {
+         const auto& value=base_->get_table(query.table).rows.at(expected.row->primary_key)->value;
+         if (!native->matches_primary(query,expected,value)) return false;
       } else if (live.locate_primary(query) != expected) return false;
    }
    for (const auto& query : secondary_queries_) {

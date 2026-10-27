@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <stdexcept>
 #include <thread>
 #include <vector>
@@ -131,6 +132,10 @@ public:
    primary_metadata_result locate_primary(const primary_query&) const override;
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
+   // Synchronous complete-byte comparison against an immutable owned snapshot.
+   // Never caches canonical pointers or retains the borrowed expected bytes.
+   bool matches_primary(const primary_query&,const primary_metadata_result&,
+                        std::span<const char> expected_value) const;
    secondary_read_result read_secondary(const secondary_query&) const override;
 
 private:

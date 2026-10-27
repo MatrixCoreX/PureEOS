@@ -115,6 +115,7 @@ public:
 
 private:
    friend class frozen_primary_capture_session;
+   friend class primary_overlay_result; // immediate immutable row-byte comparison only
    frozen_primary_state() = default;
    static std::shared_ptr<const frozen_primary_state> capture_queries_impl(
       const chainbase_transaction_state_view&, const chainbase_secondary_state_view*, std::span<const table_key>,

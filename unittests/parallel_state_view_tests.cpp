@@ -1525,6 +1525,109 @@ BOOST_FIXTURE_TEST_CASE(derived_primary_point_observes_private_update_remove_and
 BOOST_AUTO_TEST_SUITE_END()
 
 
+
+BOOST_AUTO_TEST_SUITE(parallel_borrowed_primary_validation_tests)
+BOOST_FIXTURE_TEST_CASE(borrowed_compare_matches_owned_metadata_and_complete_bytes, view_fixture) {
+   const std::array queries{
+      primary_query{accounts, primary_query_kind::find, 0},
+      primary_query{accounts, primary_query_kind::find, 7},
+      primary_query{accounts, primary_query_kind::find, 9},
+      primary_query{accounts, primary_query_kind::lower_bound, 5},
+      primary_query{accounts, primary_query_kind::upper_bound, 7},
+      primary_query{accounts, primary_query_kind::previous, 9},
+      primary_query{accounts, primary_query_kind::last, max_key},
+      primary_query{accounts, primary_query_kind::find, max_key},
+      primary_query{table_key{"token"_n,"absent"_n,"accounts"_n},primary_query_kind::find,7}};
+   for (const size_t size : {size_t{0},size_t{1},size_t{32},size_t{33},size_t{65536}}) {
+      put(7,std::string(size,'x')); put(9,"");
+      for (const auto& query : queries) {
+         const auto expected=view.locate_primary(query);
+         const auto bytes=view.read_primary(query,65536);
+         const auto payload=bytes.row ? std::span<const char>{bytes.row->value} : std::span<const char>{};
+         BOOST_REQUIRE(view.matches_primary(query,expected,payload));
+         auto bad=expected;
+         if (bad.table) {
+            ++bad.table->count; BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            bad.table->payer="carol"_n;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.table->object_id;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+         }
+         if (bad.row) {
+            ++bad.row->object_id;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.row->table_object_id;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.row->primary_key;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            bad.row->payer="carol"_n;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.row->value_size;BOOST_CHECK(!view.matches_primary(query,bad,payload));
+            auto wrong=bytes.row->value;wrong.push_back('x');
+            BOOST_CHECK(!view.matches_primary(query,expected,wrong));
+            if (!payload.empty()) {
+               wrong=bytes.row->value;wrong.back()^=1;
+               BOOST_CHECK(!view.matches_primary(query,expected,wrong));
+               BOOST_CHECK(!view.matches_primary(query,expected,payload.first(payload.size()-1)));
+            }
+         }
+         auto forbidden=std::async(std::launch::async,[&] {
+            try {view.matches_primary(query,expected,payload);return false;}
+            catch(const state_view_wrong_thread&) {return true;}
+         });
+         BOOST_CHECK(forbidden.get());
+         // Fresh same-view checks across actual canonical mutations and undo.
+         {
+            auto undo=db.start_undo_session(true);
+            put(7,"changed");
+            const auto actual=view.read_primary(query,65536);
+            BOOST_CHECK(view.matches_primary(query,expected,payload)==(actual==bytes));
+         }
+         BOOST_CHECK(view.matches_primary(query,expected,payload));
+      }
+   }
+   primary_query unsupported{accounts,static_cast<primary_query_kind>(255),0};
+   BOOST_CHECK_THROW(view.matches_primary(unsupported,{},{}),state_view_unsupported_query);
+}
+
+BOOST_FIXTURE_TEST_CASE(inline_and_overflow_dedup_preserve_old_validation_and_generic_protocol, view_fixture) {
+   // Cross both sides of the eight-ID inline boundary and exercise repeated
+   // selections for IDs stored inline AND in the unbounded tree fallback.
+   for (const unsigned rows : {0u,1u,8u,9u,32u}) {
+      for (unsigned i=0;i<rows;++i) put(2*i+1,std::string(33,char(i)));
+      const std::array tables{accounts};
+      primary_state_overlay overlay(frozen_primary_state::capture(view,tables));
+      overlay.read_table(accounts);
+      for (unsigned i=0;i<rows;++i) {
+         overlay.locate_primary({accounts,primary_query_kind::find,2*i+1});
+         overlay.locate_primary({accounts,primary_query_kind::lower_bound,2*i});
+      }
+      const auto result=overlay.seal();
+      struct counted_view final:transaction_state_view {
+         const transaction_state_view& source;mutable unsigned payloads=0,selections=0;
+         explicit counted_view(const transaction_state_view& s):source(s){}
+         std::optional<account_read> read_account(name a)const override{return source.read_account(a);}
+         std::optional<table_read> read_table(const table_key& k)const override{return source.read_table(k);}
+         primary_metadata_result locate_primary(const primary_query& q)const override{
+            ++selections;return source.locate_primary(q);}
+         primary_prefix_result read_primary_prefix(const primary_query& q,size_t n)const override{
+            return source.read_primary_prefix(q,n);}
+         primary_read_result read_primary(const primary_query& q,size_t n)const override{
+            ++payloads;return source.read_primary(q,n);}
+      } counted(view);
+      unsigned checkpoints=0;
+      BOOST_CHECK(result.matches_base_reads(view,[&]{++checkpoints;}));
+      BOOST_CHECK_EQUAL(checkpoints,1+rows*2);
+      BOOST_CHECK(result.matches_base_reads(counted,[]{}));
+      BOOST_CHECK_EQUAL(counted.selections,rows*2);BOOST_CHECK_EQUAL(counted.payloads,rows);
+      for (unsigned i=0;i<rows;++i) {
+         {
+            auto undo=db.start_undo_session(true);put(2*i+1,"mutated");
+            BOOST_CHECK(!result.matches_base_reads(view,[]{}));
+            BOOST_CHECK(!result.matches_base_reads(counted,[]{}));
+         }
+         BOOST_CHECK(result.matches_base_reads(view,[]{}));
+      }
+      BOOST_CHECK_THROW(result.matches_base_reads(view,[]{throw std::runtime_error("deadline");}),std::runtime_error);
+      for(unsigned i=0;i<rows;++i)erase(2*i+1);
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE(parallel_primary_validation_optimization_tests)
 BOOST_FIXTURE_TEST_CASE(full_payload_single_lookup_matches_prior_validation_and_rejects_stale_state, view_fixture) {
    put(7, std::string("a\0b\xff", 4)); put(9, ""); put(11, "tail");

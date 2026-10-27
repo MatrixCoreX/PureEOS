@@ -107,6 +107,23 @@ std::optional<table_read> chainbase_transaction_state_view::read_table(const tab
    return copy_table(*table);
 }
 
+bool chainbase_transaction_state_view::matches_primary(
+      const primary_query& query, const primary_metadata_result& expected,
+      std::span<const char> expected_value) const {
+   require_owner_thread();
+   // One fresh, owner-affine lookup. No callback or pointer escapes this call.
+   const auto [table, row] = locate(db_, query);
+   if ((table ? std::optional{copy_table(*table)} : std::nullopt) != expected.table)
+      return false;
+   if ((row ? std::optional{row_metadata(*row)} : std::nullopt) != expected.row)
+      return false;
+   if (!row) return expected_value.empty();
+   if (row->value.size() != expected_value.size()) return false;
+   // Empty shared_blob may have a null data pointer; do not do pointer arithmetic.
+   return expected_value.empty() ||
+      std::equal(expected_value.begin(), expected_value.end(), row->value.data());
+}
+
 primary_metadata_result chainbase_transaction_state_view::locate_primary(const primary_query& query) const {
    require_owner_thread();
    const auto [table, row] = locate(db_, query);
