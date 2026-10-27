@@ -95,6 +95,21 @@ add_test(NAME pureeos_resource_limits_boundary COMMAND resource_limits_boundary_
   --run_test=resource_limits_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_resource_limits_boundary PROPERTIES TIMEOUT 120 LABELS "resources;integer-boundary")
 
+# Preserve original Undo behavior and mapped layout while testing wrapper reuse.
+add_executable(chainbase_session_cache_test ../tests/chainbase_session_cache_test.cpp)
+target_link_libraries(chainbase_session_cache_test PRIVATE chainbase)
+add_test(NAME pureeos_chainbase_session_cache COMMAND chainbase_session_cache_test)
+set_tests_properties(pureeos_chainbase_session_cache PROPERTIES TIMEOUT 120 LABELS "chainbase;undo;session-cache")
+
+add_executable(chainbase_session_controller_test main.cpp database_tests.cpp)
+target_link_libraries(chainbase_session_controller_test PRIVATE eosio_chain_wrap state_history chainbase
+  eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(chainbase_session_controller_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+target_include_directories(chainbase_session_controller_test PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
+add_test(NAME pureeos_chainbase_session_controller COMMAND chainbase_session_controller_test
+  --run_test=database_tests --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_chainbase_session_controller PROPERTIES TIMEOUT 300 LABELS "chainbase;undo;controller;block-log")
+
 target_link_libraries( unit_test eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS} )
 target_link_libraries(unit_test pureeos_state_view_experimental pureeos_wasm_worker_experimental
   pureeos_secondary_state_experimental)
