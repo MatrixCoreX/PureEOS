@@ -140,6 +140,21 @@ namespace eosio { namespace chain {
     */
    template<typename NamePrefixTag>
    class named_thread_pool {
+      struct startup_state {
+         explicit startup_state(size_t count):remaining(count){}
+         std::promise<void> complete;
+         size_t remaining;
+         std::exception_ptr pending;
+         std::mutex mutex;
+         void arrive(std::exception_ptr error={}) {
+            std::lock_guard lock(mutex);
+            if(error)pending=std::move(error);
+            if(--remaining==0) {
+               if(pending)complete.set_exception(pending);
+               else complete.set_value();
+            }
+         }
+      };
    public:
       using on_except_t = std::function<void(const fc::exception& e)>;
       using init_t = std::function<void(size_t)>; // init is passed the thread pool index
@@ -167,19 +182,16 @@ namespace eosio { namespace chain {
          FC_ASSERT( !_ioc_work, "Thread pool already started" );
          if (num_threads == 0)
             return;
-         _ioc_work.emplace( boost::asio::make_work_guard( _ioc ) );
+         // Prepare allocations before publishing a started work guard.
+         _thread_pool.reserve(num_threads);
+         auto startup=std::make_shared<startup_state>(num_threads);
+         auto complete=startup->complete.get_future();
+         _ioc_work.emplace(boost::asio::make_work_guard(_ioc));
          _ioc.restart();
-         _thread_pool.reserve( num_threads );
-
-         std::promise<void> start_complete;
-         std::atomic<uint32_t> threads_remaining = num_threads;
-         std::exception_ptr pending_exception;
-         std::mutex pending_exception_mutex;
 
          try {
             for( size_t i = 0; i < num_threads; ++i ) {
-               _thread_pool.emplace_back( std::thread( &named_thread_pool::run_thread, this, i, on_except, init, std::ref(start_complete),
-                                                       std::ref(threads_remaining), std::ref(pending_exception), std::ref(pending_exception_mutex) ) );
+               _thread_pool.emplace_back( std::thread( &named_thread_pool::run_thread, this, i, on_except, init, startup ) );
             }
          }
          catch( ... ) {
@@ -188,13 +200,13 @@ namespace eosio { namespace chain {
             stop();
             throw;
          }
-         start_complete.get_future().get();
+         complete.get();
       }
 
       /// destroy work guard, stop io_context, join thread_pool
       /// not thread safe, expected to only be called from thread that called start()
       void stop() {
-         if (_thread_pool.size() > 0) {
+         if (_ioc_work || !_thread_pool.empty()) {
             tlog("stoping ${i}", ("i", boost::core::demangle(typeid(this).name())));
             _ioc_work.reset();
             _ioc.stop();
@@ -214,19 +226,9 @@ namespace eosio { namespace chain {
       }
 
    private:
-      void run_thread( size_t i, const on_except_t& on_except, const init_t& init, std::promise<void>& start_complete,
-                       std::atomic<uint32_t>& threads_remaining, std::exception_ptr& pending_exception, std::mutex& pending_exception_mutex ) {
-
+      void run_thread(size_t i,const on_except_t& on_except,const init_t& init,
+                      std::shared_ptr<startup_state> startup) {
          std::string tn;
-
-         auto decrement_remaining = [&]() {
-            if( !--threads_remaining ) {
-               if( pending_exception )
-                  start_complete.set_exception( pending_exception );
-               else
-                  start_complete.set_value();
-            }
-         };
 
          try {
             try {
@@ -236,13 +238,12 @@ namespace eosio { namespace chain {
             } FC_LOG_AND_RETHROW()
          }
          catch( ... ) {
-            std::lock_guard<std::mutex> l( pending_exception_mutex );
-            pending_exception = std::current_exception();
-            decrement_remaining();
+            startup->arrive(std::current_exception());
             return;
          }
 
-         decrement_remaining();
+         startup->arrive();
+         startup.reset();
 
          try {
             _ioc.run();
@@ -280,6 +281,7 @@ namespace eosio { namespace chain {
       std::vector<std::thread>       _thread_pool;
       std::optional<ioc_work_t>      _ioc_work;
    };
+
 
    /// Submit work to be done in a thread pool, and then wait for that work to complete (or until a thread throws an exception
    /// which will be rethrown on the thread waiting for completion)
