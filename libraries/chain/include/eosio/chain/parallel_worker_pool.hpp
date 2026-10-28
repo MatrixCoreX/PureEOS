@@ -188,6 +188,14 @@ public:
    // jobs execute. Every published job is joined even if the factory throws.
    std::vector<isolated_worker_outcome> run_streamed(std::span<const ordered_attempt_batch::ticket>,
       const std::function<isolated_worker_job(size_t)>&);
+   // Experimental owner-side processing of completed immutable results, in input order.
+   // All producer calls finish first; consumer runs without the pool mutex.
+   // Every published job is joined before return or rethrow. This API does not
+   // authorize canonical adoption, skip fresh checks, or extend a private deadline.
+   std::vector<isolated_worker_outcome> run_ready(
+      std::span<const ordered_attempt_batch::ticket>,
+      const std::function<isolated_worker_job(size_t)>&,
+      const std::function<void(size_t,const isolated_worker_outcome&)>&);
    size_t active_started_jobs()const; // owner-only local diagnostic, not a bill
    // At most ONE pending/in-flight bounded immutable outcome batch;no live DB,
    // coordinator,VM,resource manager or user callback can be submitted.

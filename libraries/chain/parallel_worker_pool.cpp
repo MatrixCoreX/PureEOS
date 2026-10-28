@@ -205,6 +205,8 @@ struct isolated_worker_pool::impl {
       size_t published=0,started=0;
       std::vector<isolated_worker_outcome> outcomes;
       size_t next = 0, remaining = 0;
+      bool report_ready=false;
+      std::array<bool,parallel_runtime_limits::max_batch_transactions> finished{};
       const bool stable_small_batch;
       const bool streaming=false;
       std::array<bool, max_threads> claimed{}; // read/write only under pool mutex
@@ -512,7 +514,9 @@ struct isolated_worker_pool::impl {
             std::chrono::steady_clock::now() - attempt_began);
          {
             std::lock_guard lock(mutex);
-            if (--current->remaining == 0) done.notify_one();
+            current->finished[index]=true;
+            --current->remaining;
+            if(current->report_ready || current->remaining==0)done.notify_one();
          }
       }
    }
@@ -612,5 +616,57 @@ isolated_retirement_diagnostics isolated_worker_pool::retirement_diagnostics()co
    if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
    std::lock_guard lock(impl_->mutex);return impl_->retirement;
 }
+
+
+std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready(
+      std::span<const ordered_attempt_batch::ticket> tickets,
+      const std::function<isolated_worker_job(size_t)>& produce,
+      const std::function<void(size_t,const isolated_worker_outcome&)>& consume) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(!parallel_runtime_limits::valid_batch(tickets.size()))throw primary_state_budget_exceeded();
+   if(!produce || !consume)throw primary_state_invalid_attempt();
+   auto batch=std::make_shared<impl::batch>(tickets,impl_->threads.size());
+   batch->report_ready=true;
+   {
+      std::lock_guard lock(impl_->mutex);
+      if(impl_->stopping || impl_->active)throw primary_state_invalid_attempt();
+      impl_->active=batch;
+   }
+   std::exception_ptr failed;
+   try {
+      for(size_t i=0;i<tickets.size();++i) {
+         auto job=produce(i);
+         if(!job.ticket.same_preparation(tickets[i]))throw primary_state_invalid_attempt();
+         validate_worker_job(job);
+         std::lock_guard lock(impl_->mutex);
+         batch->streamed_jobs[i].emplace(std::move(job));
+         ++batch->published;
+         if(batch->published%impl_->threads.size()==0 || batch->published==tickets.size())
+            impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
+      }
+      // No producer callback can read a live source after consumption begins.
+      // The prototype consumer only processes owned values; canonical adoption
+      // is deliberately NOT wired here.
+      for(size_t i=0;i<tickets.size();++i) {
+         {
+            std::unique_lock lock(impl_->mutex);
+            impl_->done.wait(lock,[&]{return batch->finished[i];});
+         }
+         consume(i,batch->outcomes[i]); // owner, no pool lock, immutable completed slot
+      }
+   } catch(...) {failed=std::current_exception();}
+   {
+      std::unique_lock lock(impl_->mutex);
+      if(failed) {
+         batch->remaining-=tickets.size()-batch->published;
+         impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
+      }
+      impl_->done.wait(lock,[&]{return batch->remaining==0;});
+      impl_->active.reset();
+   }
+   if(failed)std::rethrow_exception(failed);
+   return std::move(batch->outcomes);
+}
+
 
 } // namespace eosio::chain::experimental
