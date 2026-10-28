@@ -3,6 +3,7 @@
 #include <boost/test/included/unit_test.hpp>
 #include <eosio/chain/parallel_production_admission.hpp>
 #include <limits>
+#include <eosio/chain/parallel_production_budget.hpp>
 
 using model = eosio::chain::experimental::parallel_production_admission<unsigned, 3>;
 using outcome = model::outcome;
@@ -68,7 +69,8 @@ BOOST_AUTO_TEST_CASE(remaining_budget_limits_waves_and_keeps_recovery_probe) {
    for (unsigned i = 0; i < 4; ++i) m.observe(1, 4, 32, 4, 15000, 50000, outcome::ready);
    BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 50000), 8u);
    BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 30000), 4u);
-   BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 10000), 1u);
+   BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 10000), 0u);
+   BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 50000), 8u);
    BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, 0), 0u);
    BOOST_CHECK_EQUAL(m.recommend(1, 4, 32, std::numeric_limits<uint64_t>::max()), 8u);
 }
@@ -255,6 +257,97 @@ BOOST_AUTO_TEST_CASE(mixed_alternation_and_clock_extremes_keep_all_configured_bo
    }
    m.observe(9,true,8,24,8,1000,50000,mixed_outcome::ready,test_clock::time_point::max());
    BOOST_CHECK(!m.recommend_for_block(9,8,24,50000,unlimited_cpu,test_clock::time_point::max()));
+}
+
+
+static model warm_model() {
+ model m;const auto now=test_clock::time_point{};
+ for(unsigned i=0;i<4;++i)m.observe(1,8,24,8,800,50000,outcome::ready,now);
+ for(unsigned i=0;i<4;++i)m.observe(1,8,24,16,1600,50000,outcome::ready,now);
+ return m;
+}
+BOOST_AUTO_TEST_CASE(block_tail_unknown_shapes_wait_for_real_discovery_window) {
+ model m;const auto now=test_clock::time_point{};
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,1,now),1u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,49999,now),1u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now+500ms),8u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_cannot_fit_skips_attempt_and_keeps_learned_target) {
+ const auto tiny=eosio::chain::experimental::production_preparation_budget_us(105001,200000,6400000,100000);
+ const auto healthy=eosio::chain::experimental::production_preparation_budget_us(500000,200000,6400000,100000);
+ BOOST_REQUIRE_EQUAL(tiny,1);BOOST_REQUIRE_EQUAL(healthy,50000);
+ auto m=warm_model();const auto now=test_clock::time_point{};
+ BOOST_REQUIRE_EQUAL(m.recommend(1,8,24,50000,now),24u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,1,now),0u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now+500ms),24u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_censored_deadline_does_not_downgrade_next_block) {
+ auto m=warm_model();const auto now=test_clock::time_point{};
+ m.observe(1,8,24,1,1,1,outcome::deadline,now+1ms);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now+500ms),24u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_censored_observations_cannot_evict_or_refresh_cost_history) {
+ auto m=warm_model();const auto now=test_clock::time_point{};
+ for(unsigned key=2;key<100;++key)m.observe(key,8,24,1,1,1,outcome::deadline,now);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now),24u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_receipts_still_limit_cpu_and_do_not_clear_real_backoff) {
+ auto m=warm_model();const auto now=test_clock::time_point{};
+ m.observe_receipt(1,8,24,100,now);
+ BOOST_CHECK_EQUAL(m.recommend_for_block(1,8,24,50000,124,now),0u);
+ BOOST_CHECK_EQUAL(m.recommend_for_block(1,8,24,50000,125,now),1u);
+ m.observe(1,8,24,1,50000,50000,outcome::deadline,now+1ms);
+ m.observe(1,8,24,1,1,1,outcome::deadline,now+2ms);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now+500ms),0u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now+1002ms),1u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_full_budget_never_loses_slow_shape_recovery_probe) {
+ model m;const auto now=test_clock::time_point{};
+ m.observe(1,8,24,8,1000000,50000,outcome::ready,now);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,50000,now),1u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,49999,now),0u);
+ for(unsigned i=0;i<64;++i)m.observe(1,8,24,1,100,50000,outcome::ready,now);
+ BOOST_CHECK_GE(m.recommend(1,8,24,50000,now),1u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_known_fast_wave_can_still_use_sufficient_short_window) {
+ auto m=warm_model();const auto now=test_clock::time_point{};
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,2000,now),8u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,4000,now),24u);
+ BOOST_CHECK_EQUAL(m.recommend(1,8,24,0,now),0u);
+}
+BOOST_AUTO_TEST_CASE(block_tail_mixed_deadline_does_not_renew_a_success_hint) {
+ mixed_model m;const auto now=test_clock::time_point{};
+ for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+ m.observe(1,true,8,24,16,1,1,mixed_outcome::deadline,now+900ms);
+ BOOST_CHECK(!m.recommend_for_block(1,8,24,50000,unlimited_cpu,now+1s).has_value());
+}
+BOOST_AUTO_TEST_CASE(block_tail_mixed_hints_cannot_override_homogeneous_budget_deferral) {
+ using eosio::chain::experimental::recommend_parallel_production_admission;
+ auto h=warm_model();mixed_model m;const auto now=test_clock::time_point{};
+ for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+ auto n=recommend_parallel_production_admission(h,m,1u,8,24,1,unlimited_cpu,now);
+ BOOST_CHECK_EQUAL(n.first,0u);BOOST_CHECK_EQUAL(n.second,0u);
+ BOOST_CHECK_GT((recommend_parallel_production_admission(h,m,1u,8,24,50000,unlimited_cpu,now+500ms)).second,0u);
+}
+
+
+BOOST_AUTO_TEST_CASE(known_mixture_can_admit_a_short_window_without_homogeneous_cost_samples) {
+ using eosio::chain::experimental::recommend_parallel_production_admission;
+ model h;mixed_model m;const auto now=test_clock::time_point{};
+ h.observe_receipt(1,8,24,100,now);
+ for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+ auto n=recommend_parallel_production_admission(h,m,1u,8,24,10000,unlimited_cpu,now);
+ BOOST_CHECK_EQUAL(n.first,16u);BOOST_CHECK_EQUAL(n.second,16u);
+}
+BOOST_AUTO_TEST_CASE(known_mixture_short_window_cannot_bypass_a_real_backoff_or_receipt_ceiling) {
+ using eosio::chain::experimental::recommend_parallel_production_admission;
+ model h;mixed_model m;const auto now=test_clock::time_point{};
+ h.observe_receipt(1,8,24,100,now);
+ for(unsigned i=0;i<4;++i)m.observe(1,true,8,24,8,1000,50000,mixed_outcome::ready,now);
+ BOOST_CHECK_EQUAL((recommend_parallel_production_admission(h,m,1u,8,24,10000,124,now)).second,0u);
+ h.observe(1,8,24,1,50000,50000,outcome::deadline,now+1ms);
+ BOOST_CHECK_EQUAL((recommend_parallel_production_admission(h,m,1u,8,24,10000,unlimited_cpu,now+500ms)).second,0u);
+ BOOST_CHECK_EQUAL((recommend_parallel_production_admission(h,m,1u,8,24,50000,unlimited_cpu,now+500ms)).second,0u);
 }
 
 #endif // PUREEOS_PARALLEL_PRODUCTION_ADMISSION_FIXTURE

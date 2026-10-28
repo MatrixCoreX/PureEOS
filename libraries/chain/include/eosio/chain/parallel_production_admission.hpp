@@ -43,6 +43,12 @@ class parallel_production_admission {
 public:
    enum class outcome { ready, deadline, other_failure };
 
+   // This is a property of the current block window,not a transaction class.
+   static constexpr bool has_full_preparation_budget(uint64_t budget_us) noexcept {
+      return budget_us >= static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(
+         parallel_runtime_limits::production_timeout).count());
+   }
+
    static size_t cold_batch(size_t workers, size_t configured) noexcept {
       return parallel_runtime_limits::valid_workers(workers) &&
              parallel_runtime_limits::valid_batch(configured) ? std::min(workers, configured) : 0;
@@ -66,8 +72,13 @@ public:
             // transient load spike would permanently disable this workload.
             const auto safe_us = budget_us - budget_us / 4;
             const auto waves = std::min<uint64_t>(configured, safe_us / e.wave_us);
+            if (!waves && !has_full_preparation_budget(budget_us)) return 0;
             target = std::min(target, std::max<size_t>(1, waves * workers));
          }
+         // No homogeneous cost sample is not proof of insufficient time.
+         // Retain one bounded probe,so a valid measured mixture may still
+         // supply the batch estimate. Receipt CPU ceilings below remain binding.
+         else if (!has_full_preparation_budget(budget_us)) target=std::min<size_t>(target,1);
          // Predict capacity only from successful canonical receipts, never
          // speculative elapsed time. Leave 25% headroom without changing a
          // bill or block limit. Zero means original serial handling, not wait.
@@ -79,7 +90,7 @@ public:
          }
          return target;
       }
-      return cold_batch(workers, configured);
+      return has_full_preparation_budget(budget_us) ? cold_batch(workers, configured) : 1;
    }
 
    // Expose the existing conservative receipt estimate without changing the
@@ -109,6 +120,9 @@ public:
       // Unsupported imports, traps, memory/capture limits, cancellation and
       // heterogeneous batches are not evidence that a smaller batch fits.
       if (result == outcome::other_failure) return;
+      // A shortened-window timeout is a censored observation. Do not evict,
+      // shrink or cool down a class that may fit a healthy next block.
+      if (result == outcome::deadline && !has_full_preparation_budget(budget_us)) return;
       auto& e = observe_key(key, workers, configured);
       if (result == outcome::deadline) {
          e.target = std::max<size_t>(1, std::min(e.target, count) / 2);
@@ -189,7 +203,8 @@ public:
    void observe(const Key& key,bool heterogeneous,size_t workers,size_t configured,size_t count,
          uint64_t elapsed_us,uint64_t budget_us,outcome result,clock::time_point now=clock::now()) {
       if(!heterogeneous || !inner_model::cold_batch(workers,configured) || count<2 || count>configured ||
-            !budget_us || result==outcome::other_failure)return;
+            !budget_us || result==outcome::other_failure ||
+            (result==outcome::deadline && !inner_model::has_full_preparation_budget(budget_us)))return;
       auto& e=observe_key(key,now);
       using inner_outcome=typename inner_model::outcome;
       e.estimates.observe(key,workers,configured,count,elapsed_us,budget_us,

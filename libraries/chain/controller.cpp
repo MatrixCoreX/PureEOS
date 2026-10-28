@@ -3897,8 +3897,9 @@ struct controller_impl {
          return 0;
       }
       const auto key = production_workload_key(head);
-      if (!key) return experimental::parallel_production_admission<digest_type>::cold_batch(
-         conf.parallel_validation_threads, conf.parallel_validation_batch_size);
+      if (!key) return experimental::parallel_production_admission<digest_type>::has_full_preparation_budget(budget_us) ?
+         experimental::parallel_production_admission<digest_type>::cold_batch(
+            conf.parallel_validation_threads, conf.parallel_validation_batch_size) : 0;
       const auto now = std::chrono::steady_clock::now();
       const auto [time_limited,capacity_limited] = experimental::recommend_parallel_production_admission(
          production_admission,production_mixed_admission,*key,conf.parallel_validation_threads,
@@ -3969,7 +3970,11 @@ struct controller_impl {
                   const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                      std::chrono::steady_clock::now() - preparation_started).count();
                   if(homogeneous) {
-                     if(result!=admission::outcome::ready)production_mixed_admission.forget(*workload);
+                     // A shortened-window deadline says nothing about a healthy next block.
+                     // Keep independently learned mixture hints;all real block/epoch checks stay original.
+                     if(result!=admission::outcome::ready &&
+                           (result!=admission::outcome::deadline || admission::has_full_preparation_budget(budget_us)))
+                        production_mixed_admission.forget(*workload);
                      production_admission.observe(*workload,conf.parallel_validation_threads,
                         conf.parallel_validation_batch_size,inputs.size(),elapsed,budget_us,result);
                   } else {
@@ -3981,7 +3986,9 @@ struct controller_impl {
             catch (const interrupt_exception&) {
                if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
                    fc::time_point::now() >= block_deadline) return 0; // queue entries were not consumed
-               if(homogeneous && workload)production_mixed_admission.forget(*workload);
+               if(homogeneous && workload &&
+                     experimental::parallel_production_admission<digest_type>::has_full_preparation_budget(budget_us))
+                  production_mixed_admission.forget(*workload);
                if(!homogeneous && workload)
                   production_mixed_admission.observe(*workload,true,conf.parallel_validation_threads,
                      conf.parallel_validation_batch_size,inputs.size(),budget_us,budget_us,
