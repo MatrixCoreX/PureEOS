@@ -436,3 +436,10 @@ if(ENABLE_COVERAGE_TESTING)
     COMMENT "Open ./${Coverage_NAME}/index.html in your browser to view the coverage report."
     )
 endif()
+
+
+# Independent callback order and ownership checks for the production scheduler.
+add_executable(exec_pri_queue_safety_test exec_pri_queue_safety_test.cpp)
+target_include_directories(exec_pri_queue_safety_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/custom_appbase/include)
+target_link_libraries(exec_pri_queue_safety_test appbase fc Boost::heap ${CMAKE_DL_LIBS} ${PLATFORM_SPECIFIC_LIBS})
+add_test(NAME exec_pri_queue_safety_test COMMAND exec_pri_queue_safety_test)

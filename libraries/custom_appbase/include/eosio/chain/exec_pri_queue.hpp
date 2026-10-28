@@ -83,11 +83,13 @@ public:
       std::unique_ptr<queued_handler_base> handler(new queued_handler<Function>(handler_id::unique, priority, order, std::forward<Function>(function)));
       if (lock_enabled_ || q == exec_queue::read_exclusive) { // called directly from any thread for read_exclusive
          std::lock_guard g( mtx_ );
-         que.push( handler.release() );
+         que.push( handler.get() );
+         handler.release();
          if (num_waiting_)
             cond_.notify_one();
       } else {
-         que.push( handler.release() );
+         que.push( handler.get() );
+         handler.release();
       }
    }
 
@@ -117,16 +119,18 @@ public:
                return;
          }
       }
-      que.push( new queued_handler<Function>(id, priority, order, std::forward<Function>(function)) );
+      std::unique_ptr<queued_handler_base> handler(new queued_handler<Function>(id, priority, order, std::forward<Function>(function)));
+      que.push(handler.get());
+      handler.release();
       if (g.owns_lock() && num_waiting_)
          cond_.notify_one();
    }
 
    // only call when no lock required
    void clear() {
-      read_only_handlers_ = prio_queue();
-      read_write_handlers_ = prio_queue();
-      read_exclusive_handlers_ = prio_queue();
+      clear(read_only_handlers_);
+      clear(read_write_handlers_);
+      clear(read_exclusive_handlers_);
    }
 
    bool execute_highest_locked(exec_queue q) {
