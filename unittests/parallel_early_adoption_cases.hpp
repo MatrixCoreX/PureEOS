@@ -11,7 +11,8 @@ enum class scenario { independent, dependency, wrong_authority, stop_prefix, cal
 void check_scenario(scenario which) {
    const auto code=token_fixture_code();
    const auto hash=fc::sha256::hash(reinterpret_cast<const char*>(code.data()),code.size());
-   for(bool enabled:{false,true}) {
+   for(bool enabled:{false,true})
+   for(uint32_t ready_group:{1u,4u,8u}) {
       fc::temp_directory source_dir,reference_dir;
       auto cfg=base_tester::default_config(source_dir).first;
       auto oracle=base_tester::default_config(reference_dir).first;
@@ -19,6 +20,7 @@ void check_scenario(scenario which) {
       eosio::testing::configure_parallel_test_runtime(oracle);
       cfg.parallel_validation_threads=2;cfg.parallel_validation_batch_size=24;
       cfg.parallel_production_enabled=true;cfg.parallel_production_early_adoption=enabled;
+      cfg.parallel_early_adoption_group_size=ready_group;
       cfg.parallel_code_allowlist={hash};
       production_chain source(cfg,parallel_multitoken_tests::genesis());
       tester reference(oracle,parallel_multitoken_tests::genesis());

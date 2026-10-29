@@ -315,6 +315,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
          ("experimental-parallel-early-adoption", bpo::bool_switch()->default_value(false),
           "Experimental ordered adoption of completed owned results while remaining private jobs finish. Requires parallel production; original freshness, authorization, rollback and CPU rules remain in force.")
+         ("experimental-parallel-early-adoption-group", bpo::value<unsigned>()->default_value(1),
+          "Maximum already-ready contiguous result handoff: 1, 4 or 8. Never waits to fill a group. Requires early adoption when greater than 1.")
          ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
           "Local restricted worker engine: interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
@@ -1024,6 +1026,14 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       chain_config->parallel_production_early_adoption = options.at("experimental-parallel-early-adoption").as<bool>();
       EOS_ASSERT(!chain_config->parallel_production_early_adoption || chain_config->parallel_production_enabled,
                  plugin_config_exception, "experimental early adoption requires parallel production");
+      chain_config->parallel_early_adoption_group_size = options.at("experimental-parallel-early-adoption-group").as<unsigned>();
+      EOS_ASSERT(chain_config->parallel_early_adoption_group_size == 1 ||
+                 chain_config->parallel_early_adoption_group_size == 4 ||
+                 chain_config->parallel_early_adoption_group_size == 8,
+                 plugin_config_exception, "experimental early adoption group must be 1, 4 or 8");
+      EOS_ASSERT(chain_config->parallel_early_adoption_group_size == 1 ||
+                 chain_config->parallel_production_early_adoption,
+                 plugin_config_exception, "grouped early adoption requires early adoption");
       const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
       EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,
                  "experimental parallel engine must be interpreter or jit");

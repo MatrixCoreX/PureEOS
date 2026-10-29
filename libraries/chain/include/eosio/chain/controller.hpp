@@ -150,6 +150,7 @@ namespace eosio::chain {
             uint16_t                 parallel_validation_batch_size = 8;
             bool                     parallel_production_enabled = false;
             bool                     parallel_production_early_adoption = false; // local experiment, disabled by default
+            uint32_t                 parallel_early_adoption_group_size = 1; // local, only 1/4/8; no wait to fill
             experimental::isolated_vm_engine parallel_engine = experimental::isolated_vm_engine::interpreter;
             flat_set<digest_type>    parallel_code_allowlist;
             bool                     read_only              =  false;

@@ -3599,7 +3599,7 @@ struct controller_impl {
                 attempts->sync_inputs.resize(invocations.size());
                 attempts->mixed_inputs.resize(invocations.size());
                 ++stats.early_ready_batches;
-                parallel_workers->run_ready(tags,make_job,[&](size_t slot,isolated_worker_outcome&& result) {
+                parallel_workers->run_ready_grouped(tags,make_job,[&](size_t slot,isolated_worker_outcome&& result) {
                    capture.reset();
                    if(result.prevalidated_tree && !result.prevalidated_tree->belongs_to(tags[slot]))
                       throw primary_state_invalid_attempt();
@@ -3619,7 +3619,7 @@ struct controller_impl {
                    attempts->outcomes[index]=std::move(result);
                    owner_callback_started=true;
                    on_ready(*attempts,index);
-                });
+                }, conf.parallel_early_adoption_group_size);
                 // run_ready has joined every job, including exceptional exits.
                 // No private checkpoint may erase a committed owner prefix.
                 return attempts;
