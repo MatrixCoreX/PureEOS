@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(contracts)
 
+option(PUREEOS_BP_PEERING "Enable authenticated BP peer-key registry and bounded PureEOS peering roster" ON)
+
 option(PUREEOS_UPGRADE_GOVERNANCE "Build for PureEOS native Savanna genesis profile 2 (not deployable on legacy hosts)" ON)
 option(PUREEOS_SINGLE_CHOICE_VOTING "PureEOS smallest-unit single-choice voting with proxy voting disabled" ON)
 option(PUREEOS_RESOURCE_SPLIT "Fresh-chain dynamic 10% staking/REX and 90% PowerUp resource weights" ON)

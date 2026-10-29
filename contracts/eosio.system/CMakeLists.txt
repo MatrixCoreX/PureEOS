@@ -15,6 +15,10 @@ add_contract(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/limit_auth_changes.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/block_info.cpp)
 
+if(PUREEOS_BP_PEERING)
+  target_sources(eosio.system PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/peer_keys.cpp)
+endif()
+
 if(PUREEOS_UPGRADE_GOVERNANCE)
   target_sources(eosio.system PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/upgrade_governance.cpp)
   target_compile_definitions(eosio.system PUBLIC PUREEOS_UPGRADE_GOVERNANCE)
