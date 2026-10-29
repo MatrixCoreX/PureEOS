@@ -762,3 +762,7 @@ set_tests_properties(pureeos_action_digest_cache PROPERTIES TIMEOUT 180 LABELS "
 
 add_executable(node_hardware_requirements_test node_hardware_requirements_test.cpp)
 add_test(NAME node_hardware_requirements_test COMMAND node_hardware_requirements_test)
+
+add_executable(bp_peer_keys_db_test bp_peer_keys_db_test.cpp)
+target_link_libraries(bp_peer_keys_db_test PRIVATE eosio_chain)
+add_test(NAME bp_peer_keys_db_test COMMAND bp_peer_keys_db_test)
