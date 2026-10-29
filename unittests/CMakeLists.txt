@@ -759,3 +759,6 @@ add_executable(action_digest_cache_test ../tests/action_digest_cache_test.cpp)
 target_link_libraries(action_digest_cache_test PRIVATE eosio_chain)
 add_test(NAME pureeos_action_digest_cache COMMAND action_digest_cache_test)
 set_tests_properties(pureeos_action_digest_cache PROPERTIES TIMEOUT 180 LABELS "parallel;digest;ownership")
+
+add_executable(node_hardware_requirements_test node_hardware_requirements_test.cpp)
+add_test(NAME node_hardware_requirements_test COMMAND node_hardware_requirements_test)
