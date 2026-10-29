@@ -4135,6 +4135,7 @@ namespace eosio {
          update_bp_producer_peers();
          connection::send_gossip_bp_peers_message_to_bp_peers();
       }
+      connect_to_active_bp_peers();
       fc_dlog( p2p_log, "expire run time ${n}us", ("n", time_point::now() - now) );
 
       start_expire_timer();

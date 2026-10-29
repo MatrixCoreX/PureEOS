@@ -61,6 +61,8 @@ class bp_connection_manager {
    gossip_buffer_initial_factory initial_gossip_msg_factory GUARDED_BY(mtx);
    name_set_t                    active_bps GUARDED_BY(mtx);
    name_set_t                    active_schedule GUARDED_BY(mtx);
+   name_set_t                    pending_schedule_accounts GUARDED_BY(mtx);
+   address_set_t                 dialed_bp_addresses GUARDED_BY(mtx);
 
    Derived*       self() { return static_cast<Derived*>(this); }
    const Derived* self() const { return static_cast<const Derived*>(this); }
@@ -515,21 +517,36 @@ public:
 
    // thread-safe
    void connect_to_active_bp_peers() {
-      // do not hold mutexes when calling resolve_and_connect which acquires connections mutex since other threads
-      // can be holding connections mutex when trying to acquire these mutexes
-      address_set_t addresses;
+      if (!auto_bp_peering_enabled()) return;
+      address_set_t addresses, removed, added;
       {
          fc::lock_guard gm(mtx);
          active_bps = active_bp_accounts(active_schedule);
-         fc_dlog(p2p_conn_log, "active_bps: ${a}", ("a", to_string(active_bps)));
-
-         addresses = find_gossip_bp_addresses(active_bps, "connect");
-         fc_dlog(p2p_conn_log, "active addresses: ${a}", ("a", to_string(addresses)));
+         auto desired_accounts = active_schedule;
+         desired_accounts.insert(pending_schedule_accounts.begin(), pending_schedule_accounts.end());
+         // Standby BPs keep their configured bootstrap connections and learn
+         // endpoints, without opening the full active mesh until scheduled.
+         const bool scheduled = config.my_bp_gossip_accounts.empty() ||
+            std::ranges::any_of(config.my_bp_gossip_accounts, [&](const auto& own) {
+               return desired_accounts.contains(own.first);
+            });
+         const bool gossip_ready = bp_gossip_enabled() && scheduled &&
+            !!initial_gossip_msg_factory.get_initial_send_buffer();
+         if (gossip_ready) addresses = find_gossip_bp_addresses(desired_accounts, "connect");
+         else for (auto account : desired_accounts)
+            if (auto it = config.auto_bp_addresses.find(account); it != config.auto_bp_addresses.end())
+               addresses.insert(it->second.address());
+         for (const auto& old : dialed_bp_addresses)
+            if (!addresses.contains(old)) removed.insert(old);
+         for (const auto& address : addresses)
+            if (!dialed_bp_addresses.contains(address)) added.insert(address);
+         dialed_bp_addresses = addresses;
       }
-
-      for (const auto& add : addresses) {
-         self()->connections.resolve_and_connect(add, self()->get_first_p2p_address());
-      }
+      // Connection manager protects explicitly configured p2p-peer-address seeds.
+      // Reconcile outside BP/gossip locks to preserve the existing lock order.
+      for (const auto& address : removed) self()->connections.disconnect_gossip_connection(address);
+      for (const auto& address : added)
+         self()->connections.resolve_and_connect(address, self()->get_first_p2p_address());
    }
 
    // Only called from main thread
@@ -548,18 +565,22 @@ public:
 
                // do not hold mutexes when calling resolve_and_connect which acquires connections mutex since other threads
                // can be holding connections mutex when trying to acquire these mutexes
-               address_set_t addresses = find_gossip_bp_addresses(pending_connections, "connect");
-               for (const auto& add : addresses) {
-                  self()->connections.resolve_and_connect(add, self()->get_first_p2p_address());
+               {
+                  fc::lock_guard gm(mtx);
+                  pending_schedule_accounts.clear();
+                  for (const auto& authority : schedule.producers)
+                     pending_schedule_accounts.insert(authority.producer_name);
                }
-
                pending_bps = std::move(pending_connections);
+               connect_to_active_bp_peers();
 
                pending_schedule_version = schedule.version;
             }
          } else {
             fc_dlog(p2p_conn_log, "pending producer schedule version ${v} is being cleared", ("v", schedule.version));
             pending_bps.clear();
+            fc::lock_guard gm(mtx);
+            pending_schedule_accounts.clear();
          }
       }
    }
@@ -610,6 +631,7 @@ public:
          }
 
          active_schedule_version = schedule.version;
+         connect_to_active_bp_peers();
       }
    }
 
