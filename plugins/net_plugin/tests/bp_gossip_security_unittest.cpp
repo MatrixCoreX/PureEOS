@@ -15,7 +15,7 @@ struct auth_net : eosio::auto_bp_peering::bp_connection_manager<auth_net,auth_co
    auth_chain_plugin plugin;
    auth_chain_plugin* chain_plug=&plugin;
    chain_id_type chain_id=chain_id_type::empty_chain_id();
-   std::atomic<block_timestamp_type> head_block_time{block_timestamp_type{10000}};
+   std::atomic<fc::time_point> head_block_time{block_timestamp_type{10000}.to_time_point()};
    fc::logger get_logger() const {return fc::logger::get(DEFAULT_LOGGER);}
 };
 using message=eosio::gossip_bp_peers_message;
