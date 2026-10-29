@@ -119,6 +119,9 @@ class bp_connection_manager {
    // for testing
    void set_active_bps(name_set_t bps) {
       fc::lock_guard g(mtx);
+      // A fixture must model both the authoritative schedule and its
+      // reachable subset, just as on_active_schedule does in production.
+      active_schedule = bps;
       active_bps = std::move(bps);
    }
 
@@ -583,8 +586,11 @@ public:
          } else {
             fc_dlog(p2p_conn_log, "pending producer schedule version ${v} is being cleared", ("v", schedule.version));
             pending_bps.clear();
-            fc::lock_guard gm(mtx);
-            pending_schedule_accounts.clear();
+            {
+               fc::lock_guard gm(mtx);
+               pending_schedule_accounts.clear();
+            }
+            connect_to_active_bp_peers();
          }
       }
    }
@@ -592,49 +598,18 @@ public:
    // Only called from main thread
    void on_active_schedule(const chain::producer_authority_schedule& schedule) {
       if (auto_bp_peering_enabled() && active_schedule_version != schedule.version && !self()->is_lib_catchup()) {
-         /// drops any BP connection which is no longer within our scheduling proximity
          fc_dlog(p2p_conn_log, "active producer schedule switches from version ${old} to ${new}",
                  ("old", active_schedule_version)("new", schedule.version));
-
-         fc::unique_lock gm(mtx);
-         auto old_bps = std::move(active_bps);
-
-         set_active_schedule(schedule.producers);
-         if (active_schedule_version == 0) { // first call since node was launched, connect to active
-            gm.unlock();
-            connect_to_active_bp_peers();
-            gm.lock();
+         {
+            fc::lock_guard gm(mtx);
+            set_active_schedule(schedule.producers);
+            active_bps = active_bp_accounts(schedule.producers);
+            active_schedule_version = schedule.version;
          }
-
-         active_bps = active_bp_accounts(schedule.producers);
-
-         fc_dlog(p2p_conn_log, "active_bps: ${a}", ("a", to_string(active_bps)));
-
-         name_set_t peers_to_stay;
-         std::set_union(active_bps.begin(), active_bps.end(), pending_bps.begin(), pending_bps.end(),
-                        std::inserter(peers_to_stay, peers_to_stay.begin()));
-         gm.unlock();
-
-         fc_dlog(p2p_conn_log, "peers_to_stay: ${p}", ("p", to_string(peers_to_stay)));
-
-         name_set_t peers_to_drop;
-         std::set_difference(old_bps.begin(), old_bps.end(), peers_to_stay.begin(), peers_to_stay.end(),
-                             std::inserter(peers_to_drop, peers_to_drop.end()));
-         fc_dlog(p2p_conn_log, "peers to drop: ${p}", ("p", to_string(peers_to_drop)));
-
-         // if we dropped out of active schedule then disconnect from all
-         bool disconnect_from_all = !config.my_bp_gossip_accounts.empty() &&
-                                    std::all_of(config.my_bp_gossip_accounts.begin(), config.my_bp_gossip_accounts.end(),
-                                                [&](const auto& e) { return peers_to_drop.contains(e.first); });
-
-         address_set_t addresses = disconnect_from_all
-                                   ? all_gossip_bp_addresses("disconnect")
-                                   : find_gossip_bp_addresses(peers_to_drop, "disconnect");
-         for (const auto& add : addresses) {
-            self()->connections.disconnect_gossip_connection(add);
-         }
-
-         active_schedule_version = schedule.version;
+         // One serialized reconcile owns every dial and retirement. Mixing an
+         // older account-difference cleanup with this endpoint plan can close
+         // the same endpoint twice or retire a newly retained pending peer.
+         // Standby/identity loss and seed protection use the same policy.
          connect_to_active_bp_peers();
       }
    }
