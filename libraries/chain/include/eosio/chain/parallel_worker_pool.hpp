@@ -199,6 +199,14 @@ public:
       std::span<const ordered_attempt_batch::ticket>,
       const std::function<isolated_worker_job(size_t)>&,
       const std::function<void(size_t,isolated_worker_outcome&&)>&);
+   // Consume an already-ready contiguous prefix of up to 1, 4 or 8 slots.
+   // Never wait to fill a group. Ordering, exclusive ownership and join rules
+   // are identical to run_ready; the original API retains one-slot handoff.
+   std::vector<isolated_worker_outcome> run_ready_grouped(
+      std::span<const ordered_attempt_batch::ticket>,
+      const std::function<isolated_worker_job(size_t)>&,
+      const std::function<void(size_t,isolated_worker_outcome&&)>&,
+      size_t max_ready_group);
    bool has_active_batch()const; // owner-only capture/reentry guard
    size_t active_started_jobs()const; // owner-only local diagnostic, not a bill
    // At most ONE pending/in-flight bounded immutable outcome batch;no live DB,

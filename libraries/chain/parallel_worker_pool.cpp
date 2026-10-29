@@ -6,6 +6,7 @@
 #include <eosio/chain/action.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <array>
+#include <algorithm>
 #include <condition_variable>
 #include <mutex>
 
@@ -206,6 +207,7 @@ struct isolated_worker_pool::impl {
       std::vector<isolated_worker_outcome> outcomes;
       size_t next = 0, remaining = 0;
       bool report_ready=false;
+      size_t ready_group_limit=1, ready_next=0;
       std::array<bool,parallel_runtime_limits::max_batch_transactions> finished{};
       const bool stable_small_batch;
       const bool streaming=false;
@@ -517,7 +519,10 @@ struct isolated_worker_pool::impl {
             std::lock_guard lock(mutex);
             current->finished[index]=true;
             --current->remaining;
-            if(current->report_ready || current->remaining==0)done.notify_one();
+            if(current->remaining==0 ||
+               (current->report_ready &&
+                (current->ready_group_limit==1 || index==current->ready_next)))
+               done.notify_one();
          }
       }
    }
@@ -629,11 +634,22 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready(
       std::span<const ordered_attempt_batch::ticket> tickets,
       const std::function<isolated_worker_job(size_t)>& produce,
       const std::function<void(size_t,isolated_worker_outcome&&)>& consume) {
+   return run_ready_grouped(tickets,produce,consume,1);
+}
+
+std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready_grouped(
+      std::span<const ordered_attempt_batch::ticket> tickets,
+      const std::function<isolated_worker_job(size_t)>& produce,
+      const std::function<void(size_t,isolated_worker_outcome&&)>& consume,
+      size_t max_ready_group) {
    if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
    if(!parallel_runtime_limits::valid_batch(tickets.size()))throw primary_state_budget_exceeded();
    if(!produce || !consume)throw primary_state_invalid_attempt();
+   if(max_ready_group!=1 && max_ready_group!=4 && max_ready_group!=8)
+      throw primary_state_budget_exceeded();
    auto batch=std::make_shared<impl::batch>(tickets,impl_->threads.size());
    batch->report_ready=true;
+   batch->ready_group_limit=max_ready_group;
    {
       std::lock_guard lock(impl_->mutex);
       if(impl_->stopping || impl_->active)throw primary_state_invalid_attempt();
@@ -651,15 +667,23 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready(
          if(batch->published%impl_->threads.size()==0 || batch->published==tickets.size())
             impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
       }
-      // No producer callback can read a live source after consumption begins.
-      // The prototype consumer only processes owned values; canonical adoption
-      // is deliberately NOT wired here.
-      for(size_t i=0;i<tickets.size();++i) {
+      // All publications finish before any owner consumption. One lock may
+      // cover several already-complete slots, never a wait for a fuller group.
+      // Each callback still receives its exclusive completed slot in order.
+      for(size_t i=0;i<tickets.size();) {
+         size_t ready_end=i+1;
          {
             std::unique_lock lock(impl_->mutex);
             impl_->done.wait(lock,[&]{return batch->finished[i];});
+            const auto end=std::min(tickets.size(),i+max_ready_group);
+            while(ready_end<end && batch->finished[ready_end])++ready_end;
+            // Protected by the same mutex as worker completion publication.
+            // Already-ready slots are observed by the next wait predicate,
+            // even if their earlier notifications were unnecessary.
+            batch->ready_next=ready_end;
          }
-         consume(i,std::move(batch->outcomes[i])); // owner, no pool lock, exclusive completed slot
+         for(;i<ready_end;++i)
+            consume(i,std::move(batch->outcomes[i]));
       }
    } catch(...) {failed=std::current_exception();}
    {
