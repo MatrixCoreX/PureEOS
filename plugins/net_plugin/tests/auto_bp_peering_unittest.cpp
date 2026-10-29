@@ -409,7 +409,11 @@ BOOST_AUTO_TEST_CASE(test_gossip_concurrent_reconciliation_cannot_leave_a_stale_
       std::lock_guard lock(state);live.erase(address);
    };
    auto first=std::async(std::launch::async,[&]{plugin.connect_to_active_bp_peers();});
-   {std::unique_lock lock(state);BOOST_REQUIRE(cv.wait_for(lock,std::chrono::seconds(5),[&]{return entered;}));}
+   bool observed_entry;
+   {std::unique_lock lock(state);observed_entry=cv.wait_for(lock,std::chrono::seconds(5),[&]{return entered;});
+      if (!observed_entry) release=true;}
+   if (!observed_entry) {cv.notify_all();first.get();}
+   BOOST_REQUIRE(observed_entry);
    std::promise<void> desired_changed;auto changed=desired_changed.get_future();
    auto second=std::async(std::launch::async,[&] {
       {fc::lock_guard lock(plugin.mtx);plugin.pending_schedule_accounts.clear();}
