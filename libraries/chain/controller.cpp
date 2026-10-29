@@ -3323,8 +3323,10 @@ struct controller_impl {
             isolated_action_tree_job invocation;
             invocation.context = current_action_tree_context(self);
             invocation.context.context_free_data = isolated_context_free_data::capture(packed->get_context_free_data());
-            fingerprints.reserve(transaction->size());
-            hint_fingerprints.reserve(transaction->size());
+            if(!parallel_fingerprints) {
+               fingerprints.reserve(transaction->size());
+               hint_fingerprints.reserve(transaction->size());
+            }
             invocation.roots.reserve(transaction->size());
             for (auto& action : *transaction) {
                checkpoint();
