@@ -3519,3 +3519,5 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "parallel_pipeline_optimization_cases.hpp"
 
 #include "parallel_early_adoption_cases.hpp"
+
+#include "parallel_input_fingerprint_cases.hpp"

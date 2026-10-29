@@ -395,6 +395,10 @@ namespace eosio::chain {
    void transaction_context::exec() {
       EOS_ASSERT( is_initialized, transaction_exception, "must first initialize" );
 
+      if(parallel_trace_reserve && parallel_tree_result && trace->action_traces.empty()) {
+         const auto steps=parallel_tree_result->steps.size();
+         if(steps>=2 && steps<=4)trace->action_traces.reserve(steps==2 ? 2 : 4);
+      }
       for (int i = 0; i < 2; ++i) { // interrupt_oc_exception can only happen once
          try {
             const transaction& trx = packed_trx.get_transaction();

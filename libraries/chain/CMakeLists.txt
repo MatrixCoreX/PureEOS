@@ -102,7 +102,7 @@ target_compile_definitions(pureeos_numeric_builtins_experimental PRIVATE ${PUREE
 target_compile_options(pureeos_numeric_builtins_experimental PRIVATE -Wall)
 
 add_library(pureeos_wasm_worker_experimental STATIC EXCLUDE_FROM_ALL
-  parallel_wasm_worker.cpp parallel_ordered_batch.cpp parallel_worker_pool.cpp parallel_inline_action.cpp
+  parallel_wasm_worker.cpp parallel_ordered_batch.cpp parallel_worker_pool.cpp parallel_inline_action.cpp parallel_input_fingerprint.cpp
   parallel_action_tree.cpp parallel_sync_call.cpp parallel_mixed_tree_journal.cpp parallel_transaction_environment.cpp)
 target_link_libraries(pureeos_wasm_worker_experimental PUBLIC pureeos_state_view_experimental eos-vm pureeos_numeric_builtins_experimental)
 

@@ -317,6 +317,10 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Experimental ordered adoption of completed owned results while remaining private jobs finish. Requires parallel production; original freshness, authorization, rollback and CPU rules remain in force.")
          ("experimental-parallel-early-adoption-group", bpo::value<unsigned>()->default_value(1),
           "Maximum already-ready contiguous result handoff: 1, 4 or 8. Never waits to fill a group. Requires early adoption when greater than 1.")
+         ("experimental-parallel-input-fingerprints", bpo::bool_switch()->default_value(false),
+          "Experimental owned input fingerprints on a bounded joined pool; current canonical checks are unchanged.")
+         ("experimental-parallel-trace-reserve", bpo::bool_switch()->default_value(false),
+          "Experimental bounded trace capacity hint before scheduling; no cross-transaction reuse.")
          ("experimental-parallel-native-capture", bpo::bool_switch()->default_value(false),
           "Experimental bounded native reads inside the exclusive owner write window. Joins before canonical writes; requires parallel production and at least two workers.")
          ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
@@ -1036,6 +1040,11 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       EOS_ASSERT(chain_config->parallel_early_adoption_group_size == 1 ||
                  chain_config->parallel_production_early_adoption,
                  plugin_config_exception, "grouped early adoption requires early adoption");
+      chain_config->parallel_input_fingerprints = options.at("experimental-parallel-input-fingerprints").as<bool>();
+      chain_config->parallel_trace_reserve = options.at("experimental-parallel-trace-reserve").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_input_fingerprints ||
+                    (chain_config->parallel_production_enabled && chain_config->parallel_validation_threads>=2),
+                 plugin_config_exception, "input fingerprints require parallel production and at least two workers");
       chain_config->parallel_native_capture = options.at("experimental-parallel-native-capture").as<bool>();
       EOS_ASSERT(!chain_config->parallel_native_capture ||
                     (chain_config->parallel_production_enabled && chain_config->parallel_validation_threads>=2),
@@ -1323,6 +1332,8 @@ void chain_plugin::plugin_shutdown() {
               ("b",production.early_ready_batches)("c",production.early_ready_callbacks));
          ilog("Experimental native capture: joined_batches=${n}; local diagnostics only",
               ("n",production.native_capture_batches));
+         ilog("Experimental input fingerprints: joined_batches=${n}; local diagnostics only",
+              ("n",production.input_fingerprint_batches));
       }
    }
 }

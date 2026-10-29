@@ -7,6 +7,7 @@
 #include <eosio/chain/parallel_production_admission.hpp>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
 #include <eosio/chain/parallel_native_capture.hpp>
+#include <eosio/chain/parallel_input_fingerprint.hpp>
 #include <bit>
 
 #include <eosio/chain/block_log.hpp>
@@ -1010,6 +1011,7 @@ struct controller_impl {
    controller::config              conf;
    std::unique_ptr<experimental::isolated_worker_pool> parallel_workers;
    std::unique_ptr<experimental::bounded_native_capture_pool> native_capture_workers;
+   std::unique_ptr<experimental::owned_fingerprint_pool> input_fingerprint_workers;
    // Like the worker pool, construct on the execution owner, not whichever
    // thread happened to construct controller_impl during plugin startup.
    std::unique_ptr<experimental::parallel_access_hints<digest_type, experimental::state_capture_request>> parallel_read_hints;
@@ -2311,6 +2313,7 @@ struct controller_impl {
    ~controller_impl() {
       // Module/thread destruction must precede runtime/controller teardown.
       // run() waits for every copied-state job; no canonical DB refs can escape.
+      input_fingerprint_workers.reset();
       native_capture_workers.reset();
       parallel_workers.reset();
       if (conf.parallel_production_enabled && (production_receipt_observations ||
@@ -3290,6 +3293,9 @@ struct controller_impl {
          checkpoint();
          if (!parallel_read_hints)
             parallel_read_hints = std::make_unique<parallel_access_hints<digest_type, state_capture_request>>();
+         const bool parallel_fingerprints=conf.parallel_input_fingerprints && production &&
+            !refresh_parent && packed_inputs.size()>=2 && conf.parallel_validation_threads>=2;
+         std::vector<std::vector<root_fingerprint_binding>> fingerprint_bindings;
          std::vector<isolated_action_tree_job> invocations;
          std::vector<std::optional<isolated_sync_transaction_job>> sync_inputs;
          std::vector<std::optional<isolated_mixed_tree_job>> mixed_inputs;
@@ -3299,6 +3305,7 @@ struct controller_impl {
          const auto batch_slots = std::min(packed_inputs.size(), size_t(conf.parallel_validation_batch_size));
          hint_keys.reserve(batch_slots);
          invocations.reserve(batch_slots);
+         if(parallel_fingerprints)fingerprint_bindings.reserve(batch_slots);
          sync_inputs.reserve(batch_slots);
          mixed_inputs.reserve(batch_slots);
          requests.reserve(batch_slots);
@@ -3309,6 +3316,8 @@ struct controller_impl {
             if (!transaction || std::any_of(transaction->begin(), transaction->end(), [&](const auto& action) {
                   return !conf.parallel_code_allowlist.contains(action.code_hash);
                })) break;
+            std::vector<root_fingerprint_binding> bindings;
+            if(parallel_fingerprints)bindings.reserve(transaction->size());
             std::vector<fc::sha256> fingerprints;
             std::vector<fc::sha256> hint_fingerprints;
             isolated_action_tree_job invocation;
@@ -3319,6 +3328,8 @@ struct controller_impl {
             invocation.roots.reserve(transaction->size());
             for (auto& action : *transaction) {
                checkpoint();
+               if(parallel_fingerprints)bindings.push_back({action.code_hash,action.limits});
+               else {
                fingerprints.push_back(isolated_execution_fingerprint(action.code_hash, action.limits, action.input));
                // Paths are hints, NOT the execution fingerprint below. Bind
                // code/action/actors/limits and length, but not varying payload
@@ -3337,6 +3348,7 @@ struct controller_impl {
                fc::raw::pack(shape, action.input.data.size());
                fc::raw::pack(shape, action.input.max_return_bytes);
                hint_fingerprints.push_back(shape.result());
+               }
                // Fingerprints above bind the original bytes before the owned
                // temporary is moved. Nothing subsequently reads transaction.
                invocation.roots.push_back(std::move(action.input));
@@ -3355,13 +3367,34 @@ struct controller_impl {
                invocation.programs.push_back(std::move(*program));
             }
             if (!eligible) break;
-            requests.push_back({packed->id(), isolated_action_tree_fingerprint(fingerprints, invocation.context)});
-            hint_keys.push_back(isolated_action_tree_fingerprint(hint_fingerprints, invocation.context));
+            requests.push_back({packed->id(), parallel_fingerprints ? fc::sha256{} : isolated_action_tree_fingerprint(fingerprints, invocation.context)});
+            hint_keys.push_back(parallel_fingerprints ? fc::sha256{} : isolated_action_tree_fingerprint(hint_fingerprints, invocation.context));
             invocations.push_back(std::move(invocation));
+            if(parallel_fingerprints)fingerprint_bindings.push_back(std::move(bindings));
             sync_inputs.emplace_back();
             mixed_inputs.emplace_back();
          }
          if (invocations.empty()) return {};
+         if(parallel_fingerprints) {
+            checkpoint();
+            if(!input_fingerprint_workers)input_fingerprint_workers=std::make_unique<owned_fingerprint_pool>(
+               std::bit_floor(std::min<unsigned>(4,conf.parallel_validation_threads)));
+            std::vector<owned_fingerprint_input> inputs;inputs.reserve(invocations.size());
+            for(size_t i=0;i<invocations.size();++i)
+               inputs.push_back({std::move(invocations[i].roots),std::move(fingerprint_bindings[i]),invocations[i].context});
+            try {
+               auto prepared=input_fingerprint_workers->prepare(std::move(inputs),private_cancel);
+               if(prepared.size()!=invocations.size())throw primary_state_invalid_attempt();
+               for(size_t i=0;i<prepared.size();++i) {
+                  invocations[i].roots=std::move(prepared[i].roots);
+                  requests[i].execution_fingerprint=prepared[i].execution_fingerprint;
+                  hint_keys[i]=prepared[i].hint_fingerprint;
+               }
+               ++stats.input_fingerprint_batches;
+            } catch(const isolated_execution_interrupted&) {
+               checkpoint();throw;
+            }
+         }
          // Old cleanup overlaps root/catalog preparation only. Drain BEFORE
          // any next snapshot;no extra4MiB allowance or renewed private budget.
          if(parallel_workers)parallel_workers->drain_retired(checkpoint);
@@ -4294,6 +4327,7 @@ struct controller_impl {
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
          trx_context.parallel_tree_result = parallel_result;
+         trx_context.parallel_trace_reserve = conf.parallel_trace_reserve;
          trx_context.parallel_tree_preflight=std::move(parallel_preflight);
          trx_context.parallel_sync_result = parallel_sync_result;
          trx_context.parallel_sync_input = parallel_sync_input;

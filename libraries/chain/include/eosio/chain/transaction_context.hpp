@@ -235,6 +235,7 @@ namespace eosio::chain {
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_notification_result* parallel_notification_result = nullptr;
          const experimental::isolated_action_tree_result* parallel_tree_result = nullptr;
+         bool parallel_trace_reserve = false; // bounded local capacity hint
          std::shared_ptr<const experimental::isolated_prevalidated_tree> parallel_tree_preflight;
          bool isolated_preflight_charged=false;
          const experimental::isolated_sync_transaction_result* parallel_sync_result = nullptr;
