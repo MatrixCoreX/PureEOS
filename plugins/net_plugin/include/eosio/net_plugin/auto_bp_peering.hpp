@@ -224,7 +224,7 @@ public:
       initial_gossip_msg_factory.reset_initial_send_buffer();
       bool initial_updated = false;
       // normally only one bp peer account except in testing scenarios or test chains
-      const controller& cc = self()->chain_plug->chain();
+      const auto& cc = self()->chain_plug->chain();
       block_timestamp_type expire = self()->head_block_time.load() + bp_gossip_peer_expiration;
       fc_dlog(p2p_log, "Updating BP gossip_bp_peers_message with expiration ${e}", ("e", expire));
       for (const auto& my_bp_account : config.my_bp_gossip_accounts) { // my_bp_gossip_accounts not modified after plugin startup
@@ -358,7 +358,7 @@ public:
          }
       }
 
-      const controller& cc = self()->chain_plug->chain();
+      const auto& cc = self()->chain_plug->chain();
       bool invalid_message = false;
       auto is_peer_key_valid = [&](const gossip_bp_peers_message::signed_bp_peer& peer) -> bool {
          try {
@@ -460,7 +460,7 @@ public:
    bool expire_gossip_bp_peers() {
       if (!bp_gossip_enabled()) return false;
       const auto head_block_time = self()->head_block_time.load();
-      const controller& cc = self()->chain_plug->chain();
+      const auto& cc = self()->chain_plug->chain();
       fc::lock_guard g(gossip_bps.mtx);
       auto& idx = gossip_bps.index.get<by_expiry>();
       bool changed = false;

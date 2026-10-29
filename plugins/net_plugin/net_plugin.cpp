@@ -3949,6 +3949,7 @@ namespace eosio {
       assert(my_impl->bp_gossip_enabled());
       gossip_buffer_factory factory;
       const send_buffer_type& sb = my_impl->get_gossip_bp_send_buffer(factory);
+      if (!sb) return;
       peer_dlog(p2p_msg_log, this, "sending gossip_bp_peers_message");
       enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
    }
