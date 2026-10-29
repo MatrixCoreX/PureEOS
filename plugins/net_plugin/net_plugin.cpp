@@ -3960,6 +3960,7 @@ namespace eosio {
          if (c->protocol_version >= proto_version_t::gossip_bp_peers && c->socket_is_open()) {
             if (c->bp_connection == bp_connection_type::bp_gossip) {
                const send_buffer_type& sb = my_impl->get_gossip_bp_send_buffer(factory);
+               if (!sb) return;
                boost::asio::post(c->strand, [sb, c]() {
                   peer_dlog(p2p_msg_log, c, "sending gossip_bp_peers_message");
                   c->enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);

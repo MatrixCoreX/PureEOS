@@ -219,6 +219,7 @@ public:
       assert(!config.my_bp_gossip_accounts.empty());
       fc::lock_guard gm(mtx);
       fc::lock_guard g(gossip_bps.mtx);
+      initial_gossip_msg_factory.reset_initial_send_buffer();
       bool initial_updated = false;
       // normally only one bp peer account except in testing scenarios or test chains
       const controller& cc = self()->chain_plug->chain();
@@ -326,7 +327,7 @@ public:
          };
          try {
             const gossip_bp_peers_message::signed_bp_peer* prev = nullptr;
-            size_t num_per_producer = 0;
+            size_t num_per_producer = 1;
             for (auto& peer : msg.peers) {
                if (peer.producer_name.empty())
                   return false; // invalid bp_peer data
@@ -344,7 +345,7 @@ public:
                   } else if (prev->producer_name > peer.producer_name) {
                      return false; // required to be sorted
                   } else {
-                     num_per_producer = 0;
+                     num_per_producer = 1;
                   }
                }
                prev = &peer;
@@ -395,11 +396,11 @@ public:
       };
 
       fc::lock_guard g(gossip_bps.mtx);
-      auto& sig_idx = gossip_bps.index.get<by_sig>();
       for (auto i = msg.peers.begin(); i != msg.peers.end();) {
          const auto& peer = *i;
-         bool have_sig = sig_idx.contains(peer.sig); // we already have it, already verified
-         if (!have_sig && (!is_peer_key_valid(peer) || !is_expiration_valid(peer))) {
+         // A cached signature alone does not bind the supplied payload or the
+         // currently registered key. Revalidate both, including on replay.
+         if (!is_peer_key_valid(peer) || !is_expiration_valid(peer)) {
             if (invalid_message)
                return false;
             // peer key may have changed or been removed on-chain, do not consider that a fatal error, just remove it
@@ -455,26 +456,32 @@ public:
    // thread-safe
    // return true if my bp accounts will expire "soon"
    bool expire_gossip_bp_peers() {
-      if (!bp_gossip_enabled())
-         return false;
-
-      auto head_block_time = self()->head_block_time.load();
-
+      if (!bp_gossip_enabled()) return false;
+      const auto head_block_time = self()->head_block_time.load();
+      const controller& cc = self()->chain_plug->chain();
       fc::lock_guard g(gossip_bps.mtx);
       auto& idx = gossip_bps.index.get<by_expiry>();
-      auto ex_lo = idx.lower_bound(block_timestamp_type{});
-      auto ex_up = idx.upper_bound(head_block_time);
-      idx.erase(ex_lo, ex_up);
-      if (ex_up != idx.end()) {
-         ex_lo = ex_up;
-         ex_up = idx.upper_bound(head_block_time + my_bp_gossip_peer_expiration);
-         auto my_bp_account_will_expire = std::ranges::any_of(ex_lo, ex_up, [&](const auto& i) {
-            return config.my_bp_gossip_accounts.contains(i.producer_name);
-         });
-         return my_bp_account_will_expire;
+      bool changed = false;
+      for (auto it = idx.begin(); it != idx.end();) {
+         bool keep = it->expiration() > head_block_time;
+         if (keep) {
+            const auto identity = cc.get_peer_info(it->producer_name);
+            keep = identity && identity->key;
+            if (keep) {
+               try {
+                  keep = !it->sig.is_webauthn() &&
+                     public_key_type(it->sig, it->digest(self()->chain_id), false) == *identity->key;
+               } catch (const fc::exception&) { keep = false; }
+            }
+         }
+         if (!keep) { it = idx.erase(it); changed = true; }
+         else ++it;
       }
-
-      return false;
+      const auto soon = idx.upper_bound(head_block_time + my_bp_gossip_peer_expiration);
+      const bool own_expiring = std::ranges::any_of(idx.begin(), soon, [&](const auto& peer) {
+         return config.my_bp_gossip_accounts.contains(peer.producer_name);
+      });
+      return changed || own_expiring;
    }
 
    address_set_t find_gossip_bp_addresses(const name_set_t& accounts, const char* desc) const {
