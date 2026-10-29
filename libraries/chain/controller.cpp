@@ -6,6 +6,8 @@
 #include <eosio/chain/parallel_production_budget.hpp>
 #include <eosio/chain/parallel_production_admission.hpp>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
+#include <eosio/chain/parallel_native_capture.hpp>
+#include <bit>
 
 #include <eosio/chain/block_log.hpp>
 #include <eosio/chain/fork_database.hpp>
@@ -1007,6 +1009,7 @@ struct controller_impl {
    protocol_feature_manager        protocol_features;
    controller::config              conf;
    std::unique_ptr<experimental::isolated_worker_pool> parallel_workers;
+   std::unique_ptr<experimental::bounded_native_capture_pool> native_capture_workers;
    // Like the worker pool, construct on the execution owner, not whichever
    // thread happened to construct controller_impl during plugin startup.
    std::unique_ptr<experimental::parallel_access_hints<digest_type, experimental::state_capture_request>> parallel_read_hints;
@@ -2308,6 +2311,7 @@ struct controller_impl {
    ~controller_impl() {
       // Module/thread destruction must precede runtime/controller teardown.
       // run() waits for every copied-state job; no canonical DB refs can escape.
+      native_capture_workers.reset();
       parallel_workers.reset();
       if (conf.parallel_production_enabled && (production_receipt_observations ||
           production_capacity_reductions || production_capacity_bypasses))
@@ -3519,9 +3523,28 @@ struct controller_impl {
             const size_t batch_metadata_entries = invocations.size() * 4;
             capture_limits.max_tables = std::max(capture_limits.max_tables, batch_metadata_entries);
             capture_limits.max_accounts = std::max(capture_limits.max_accounts, batch_metadata_entries);
-            const bool staged_capture=production && round==0 && !refresh_parent && pipeline_layout &&
+            // A separate synchronous native-read capability, not a WASM host.
+            // No application callbacks/writes are pumped before every reader joins.
+            const bool native_capture=conf.parallel_native_capture && production &&
+               round==0 && !refresh_parent && pipeline_layout && secondary_reads.empty() &&
+               self.is_write_window() && conf.parallel_validation_threads>=2;
+            const bool staged_capture=!native_capture && production && round==0 && !refresh_parent && pipeline_layout &&
                invocations.size()>conf.parallel_validation_threads;
             const auto capture_until=[&](size_t end) {
+               if(native_capture) {
+                  if(!native_capture_workers)
+                     native_capture_workers=std::make_unique<bounded_native_capture_pool>(
+                        std::bit_floor(std::min<unsigned>(4,conf.parallel_validation_threads)));
+                  try {
+                     auto next=capture->capture_parallel(db,*native_capture_workers,tables,reads,
+                        capture_limits,private_cancel,account_reads,checkpoint);
+                     ++stats.native_capture_batches;
+                     return next;
+                  } catch(const isolated_execution_interrupted&) {
+                     checkpoint(); // translate ORIGINAL cancellation/deadline
+                     throw;
+                  }
+               }
                if(!staged_capture || end>=invocations.size())
                   return capture->capture(tables,reads,secondary_reads,capture_limits,checkpoint,account_reads);
                const auto deferred=[&](name account) {

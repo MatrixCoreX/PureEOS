@@ -89,6 +89,8 @@ struct primary_snapshot_capture_stats {
 };
 
 class frozen_primary_capture_session;
+class bounded_native_capture_pool;
+struct isolated_cancel;
 
 struct primary_overlay_limits {
    size_t max_read_tables = 64;
@@ -164,6 +166,7 @@ public:
 
 private:
    friend class frozen_primary_capture_session;
+   friend class bounded_native_capture_pool;
    friend class primary_overlay_result; // immediate immutable row-byte comparison only
    frozen_primary_state() = default;
    static std::shared_ptr<const frozen_primary_state> capture_queries_impl(
@@ -205,6 +208,13 @@ public:
    std::shared_ptr<const frozen_primary_state> capture(std::span<const table_key>, std::span<const primary_query>,
       std::span<const secondary_query>, primary_snapshot_limits = {},
       const std::function<void()>& checkpoint = {}, std::span<const name> accounts = {});
+   // First capture only, on the current exclusive owner/write window.
+   // The pool joins all native readers before restoring DB writes or throwing.
+   std::shared_ptr<const frozen_primary_state> capture_parallel(
+      chainbase::database&, bounded_native_capture_pool&,
+      std::span<const table_key>, std::span<const primary_query>,
+      primary_snapshot_limits, const isolated_cancel&, std::span<const name> accounts = {},
+      const std::function<void()>& owner_checkpoint = {});
    const primary_snapshot_capture_stats& stats() const { check_owner(); return stats_; }
 private:
    void check_owner() const {

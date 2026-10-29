@@ -317,6 +317,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Experimental ordered adoption of completed owned results while remaining private jobs finish. Requires parallel production; original freshness, authorization, rollback and CPU rules remain in force.")
          ("experimental-parallel-early-adoption-group", bpo::value<unsigned>()->default_value(1),
           "Maximum already-ready contiguous result handoff: 1, 4 or 8. Never waits to fill a group. Requires early adoption when greater than 1.")
+         ("experimental-parallel-native-capture", bpo::bool_switch()->default_value(false),
+          "Experimental bounded native reads inside the exclusive owner write window. Joins before canonical writes; requires parallel production and at least two workers.")
          ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
           "Local restricted worker engine: interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
@@ -1034,6 +1036,10 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       EOS_ASSERT(chain_config->parallel_early_adoption_group_size == 1 ||
                  chain_config->parallel_production_early_adoption,
                  plugin_config_exception, "grouped early adoption requires early adoption");
+      chain_config->parallel_native_capture = options.at("experimental-parallel-native-capture").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_native_capture ||
+                    (chain_config->parallel_production_enabled && chain_config->parallel_validation_threads>=2),
+                 plugin_config_exception, "native capture requires parallel production and at least two workers");
       const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
       EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,
                  "experimental parallel engine must be interpreter or jit");
@@ -1315,6 +1321,8 @@ void chain_plugin::plugin_shutdown() {
               ("a",production.prevalidated_adopted)("c",production.streamed_capture_extensions)("r",production.retired_batches));
          ilog("Experimental parallel ready processing: batches=${b}, callbacks=${c}; local diagnostics only",
               ("b",production.early_ready_batches)("c",production.early_ready_callbacks));
+         ilog("Experimental native capture: joined_batches=${n}; local diagnostics only",
+              ("n",production.native_capture_batches));
       }
    }
 }

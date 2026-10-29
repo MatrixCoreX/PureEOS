@@ -151,6 +151,7 @@ namespace eosio::chain {
             bool                     parallel_production_enabled = false;
             bool                     parallel_production_early_adoption = false; // local experiment, disabled by default
             uint32_t                 parallel_early_adoption_group_size = 1; // local, only 1/4/8; no wait to fill
+            bool                     parallel_native_capture = false; // bounded native-read phase; default off
             experimental::isolated_vm_engine parallel_engine = experimental::isolated_vm_engine::interpreter;
             flat_set<digest_type>    parallel_code_allowlist;
             bool                     read_only              =  false;
@@ -245,6 +246,7 @@ namespace eosio::chain {
             uint64_t batches = 0, attempts = 0, succeeded = 0, adopted = 0, serial_fallbacks = 0;
             uint64_t prevalidated_adopted=0,streamed_capture_extensions=0,retired_batches=0;
             uint64_t early_ready_batches=0,early_ready_callbacks=0;
+            uint64_t native_capture_batches=0; // local phase count, not canonical transactions
             // Local preparation diagnostics only. A preparation deadline is
             // also included in budget_fallbacks; none changes serial_fallbacks,
             // which counts transactions routed by an already prepared batch.

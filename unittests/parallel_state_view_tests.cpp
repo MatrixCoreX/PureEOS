@@ -1,5 +1,6 @@
 #include <eosio/chain/transaction_state_view.hpp>
 #include <eosio/chain/parallel_state_overlay.hpp>
+#include <eosio/chain/parallel_native_capture.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/chain/account_object.hpp>
@@ -1795,5 +1796,114 @@ BOOST_FIXTURE_TEST_CASE(full_payload_single_lookup_matches_prior_validation_and_
       BOOST_CHECK(previous());
       BOOST_CHECK(result.matches_base_reads(view, [] {}));
    }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_native_capture_tests)
+BOOST_FIXTURE_TEST_CASE(all_query_shapes_accounts_and_negatives_match_serial,view_fixture) {
+   const std::array<table_key,4> keys{accounts,table_key{"token"_n,"bob"_n,"accounts"_n},
+      table_key{"other"_n,"alice"_n,"accounts"_n},table_key{"token"_n,"missing"_n,"accounts"_n}};
+   for(size_t t=0;t<3;++t)for(uint64_t k:{0u,5u,9u})put(k,std::string(t+3,char('a'+k)),keys[t]);
+   db.create<account_object>([](auto& obj){obj.name="bob"_n;});
+   db.create<account_metadata_object>([](auto& obj){obj.name="bob"_n;});
+   std::vector<primary_query> queries;
+   for(auto key:keys)for(auto kind:{primary_query_kind::find,primary_query_kind::lower_bound,
+         primary_query_kind::upper_bound,primary_query_kind::previous,primary_query_kind::last})
+      for(uint64_t k:{0u,1u,5u,10u})queries.push_back({key,kind,k});
+   const std::array names{"alice"_n,"bob"_n};
+   const auto expected=frozen_primary_state::capture_queries(view,keys,queries,{},[]{},names);
+   for(size_t n:{1u,2u,4u,8u}) {
+      bounded_native_capture_pool pool(n);frozen_primary_capture_session session(view);
+      const auto actual=session.capture_parallel(db,pool,keys,queries,{}, {},names);
+      BOOST_CHECK(!pool.active());
+      BOOST_CHECK_EQUAL(actual->row_count(),expected->row_count());
+      BOOST_CHECK_EQUAL(actual->value_bytes(),expected->value_bytes());
+      for(const auto& q:queries)BOOST_CHECK(actual->read_primary(q,1024)==reference_read(db,q));
+      for(auto name:names)BOOST_CHECK(actual->read_account(name)==expected->read_account(name));
+      BOOST_CHECK_THROW(actual->read_account("unasked"_n),primary_state_missing);
+      BOOST_CHECK_NO_THROW(db.get_mutable_index<table_id_multi_index>());
+   }
+}
+BOOST_FIXTURE_TEST_CASE(imbalanced_partition_retries_original_global_caps,view_fixture) {
+   put(1,"1234567");put(9,"abcdefgh");
+   const std::array queries{primary_query{accounts,primary_query_kind::find,1},
+      primary_query{accounts,primary_query_kind::find,9}};
+   bounded_native_capture_pool pool(4);
+   primary_snapshot_limits exact;exact.max_rows=2;exact.max_value_bytes=15;
+   frozen_primary_capture_session session(view);
+   const auto saved=session.capture_parallel(db,pool,{},queries,exact,{});
+   BOOST_CHECK_EQUAL(saved->row_count(),2u);BOOST_CHECK_EQUAL(saved->value_bytes(),15u);
+   for(const auto& q:queries)BOOST_CHECK(saved->read_primary(q,8)==reference_read(db,q));
+   for(auto fail:{0,1,2}) {
+      auto limit=exact;
+      if(fail==0)limit.max_rows=1;
+      if(fail==1)limit.max_value_bytes=14;
+      if(fail==2)limit.max_queries=1;
+      frozen_primary_capture_session rejected(view);
+      BOOST_CHECK_THROW(rejected.capture_parallel(db,pool,{},queries,limit,{}),primary_state_budget_exceeded);
+      BOOST_CHECK(!pool.active());
+      BOOST_CHECK_NO_THROW(db.get_mutable_index<table_id_multi_index>());
+   }
+}
+BOOST_FIXTURE_TEST_CASE(extension_preserves_union_caps_and_first_capture_identity,view_fixture) {
+   put(1,"abc");put(9,"def");
+   const primary_query first{accounts,primary_query_kind::find,1},second{accounts,primary_query_kind::find,9};
+   bounded_native_capture_pool pool(2);frozen_primary_capture_session session(view);
+   primary_snapshot_limits exact;exact.max_rows=2;exact.max_value_bytes=6;
+   auto a=session.capture_parallel(db,pool,{},std::array{first},exact,{});
+   auto b=session.capture({},std::array{second},{},exact);
+   BOOST_CHECK_EQUAL(b->row_count(),2u);BOOST_CHECK_EQUAL(b->value_bytes(),6u);
+   BOOST_CHECK_THROW(a->read_primary(second,3),primary_state_missing);
+   BOOST_CHECK_THROW(session.capture_parallel(db,pool,{},std::array{first},exact,{}),primary_state_invalid_attempt);
+   BOOST_CHECK(a->read_primary(first,3)==b->read_primary(first,3));
+}
+BOOST_FIXTURE_TEST_CASE(owner_database_and_prior_read_mode_fail_closed,view_fixture) {
+   bounded_native_capture_pool pool(2);frozen_primary_capture_session session(view);view_fixture other;
+   BOOST_CHECK_THROW(session.capture_parallel(other.db,pool,{}, {}, {}, {}),primary_state_invalid_attempt);
+   auto result=std::async(std::launch::async,[&] {
+      try{session.capture_parallel(db,pool,{}, {}, {}, {});}
+      catch(const state_view_wrong_thread&){return true;}return false;
+   });
+   BOOST_CHECK(result.get());
+   auto wrong_pool=std::async(std::launch::async,[&] {
+      try{pool.capture(db,{}, {}, {}, {}, {});}
+      catch(const state_view_wrong_thread&){return true;}return false;
+   });
+   BOOST_CHECK(wrong_pool.get());
+   db.set_read_only_mode();
+   BOOST_CHECK_THROW(pool.capture(db,{}, {}, {}, {}, {}),std::logic_error);
+   BOOST_CHECK_THROW(db.get_mutable_index<table_id_multi_index>(),std::logic_error);
+   db.unset_read_only_mode();
+   BOOST_CHECK_NO_THROW(pool.capture(db,{}, {}, {}, {}, {}));
+}
+BOOST_FIXTURE_TEST_CASE(cancel_deadline_throw_and_healthy_retry_restore_write_mode,view_fixture) {
+   put(1,"abc");const std::array query{primary_query{accounts,primary_query_kind::find,1}};
+   bounded_native_capture_pool pool(4);auto generation=std::make_shared<std::atomic<uint64_t>>(1);
+   isolated_cancel cancel;cancel.generation=generation;cancel.observed=0;
+   frozen_primary_capture_session session(view);
+   BOOST_CHECK_THROW(session.capture_parallel(db,pool,{},query,{},cancel),isolated_execution_interrupted);
+   cancel.observed=1;cancel.deadline=std::chrono::steady_clock::now();
+   BOOST_CHECK_THROW(session.capture_parallel(db,pool,{},query,{},cancel),isolated_execution_interrupted);
+   cancel.deadline=std::chrono::steady_clock::time_point::max();
+   BOOST_CHECK_NO_THROW(session.capture_parallel(db,pool,{},query,{},cancel));
+   BOOST_CHECK(!pool.active());BOOST_CHECK_NO_THROW(put(1,"new"));
+}
+BOOST_AUTO_TEST_CASE(results_outlive_database_and_pool_and_fresh_undo_recaptures) {
+   const primary_query query{accounts,primary_query_kind::find,1};
+   std::shared_ptr<const frozen_primary_state> old;
+   {
+      view_fixture f;bounded_native_capture_pool pool(4);f.put(1,"old");
+      {frozen_primary_capture_session session(f.view);old=session.capture_parallel(f.db,pool,{},std::array{query},{},{});}
+      auto undo=f.db.start_undo_session(true);f.put(1,"new");
+      std::shared_ptr<const frozen_primary_state> changed;
+      {frozen_primary_capture_session session(f.view);changed=session.capture_parallel(f.db,pool,{},std::array{query},{},{});}
+      BOOST_CHECK(old->read_primary(query,3)!=changed->read_primary(query,3));
+      undo.undo();
+      frozen_primary_capture_session restored(f.view);
+      BOOST_CHECK(restored.capture_parallel(f.db,pool,{},std::array{query},{},{})->read_primary(query,3)==old->read_primary(query,3));
+   }
+   BOOST_REQUIRE(old->read_primary(query,3).row);
+   BOOST_CHECK(old->read_primary(query,3).row->value==std::vector<char>({'o','l','d'}));
 }
 BOOST_AUTO_TEST_SUITE_END()

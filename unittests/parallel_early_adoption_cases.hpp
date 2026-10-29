@@ -11,6 +11,7 @@ enum class scenario { independent, dependency, wrong_authority, stop_prefix, cal
 void check_scenario(scenario which) {
    const auto code=token_fixture_code();
    const auto hash=fc::sha256::hash(reinterpret_cast<const char*>(code.data()),code.size());
+   for(bool native_capture:{false,true})
    for(bool enabled:{false,true})
    for(uint32_t ready_group:{1u,4u,8u}) {
       fc::temp_directory source_dir,reference_dir;
@@ -21,6 +22,7 @@ void check_scenario(scenario which) {
       cfg.parallel_validation_threads=2;cfg.parallel_validation_batch_size=24;
       cfg.parallel_production_enabled=true;cfg.parallel_production_early_adoption=enabled;
       cfg.parallel_early_adoption_group_size=ready_group;
+      cfg.parallel_native_capture=native_capture;
       cfg.parallel_code_allowlist={hash};
       production_chain source(cfg,parallel_multitoken_tests::genesis());
       tester reference(oracle,parallel_multitoken_tests::genesis());
@@ -72,6 +74,8 @@ void check_scenario(scenario which) {
          BOOST_CHECK_EQUAL(callbacks,expected);
       }
       const auto after=source.control->get_parallel_production_stats();
+      if(native_capture)BOOST_CHECK_GT(after.native_capture_batches,before.native_capture_batches);
+      else BOOST_CHECK_EQUAL(after.native_capture_batches,before.native_capture_batches);
       if(enabled)BOOST_CHECK_GT(after.early_ready_batches,before.early_ready_batches);
       else BOOST_CHECK_EQUAL(after.early_ready_batches,before.early_ready_batches);
       if(which==scenario::abort_prefix) {

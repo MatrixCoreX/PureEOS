@@ -142,6 +142,7 @@ public:
 
 private:
    friend class frozen_primary_state;
+   friend class frozen_primary_capture_session; // source/owner identity only
    // Restricted to the immutable snapshot builder. All supplied rows are owned
    // immutable values. No callback, live pointer or iterator crosses this call.
    struct capture_primary_result {

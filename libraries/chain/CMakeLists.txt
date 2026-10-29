@@ -76,7 +76,8 @@ target_include_directories(eosio_rapidjson INTERFACE ../rapidjson/include)
 
 # Owned read boundary used by the default-off restricted validation experiment.
 add_library(pureeos_state_view_experimental STATIC EXCLUDE_FROM_ALL
-  transaction_state_view.cpp parallel_state_overlay.cpp parallel_secondary_state.cpp parallel_secondary_journal.cpp)
+  transaction_state_view.cpp parallel_state_overlay.cpp
+        parallel_native_capture.cpp parallel_secondary_state.cpp parallel_secondary_journal.cpp)
 target_link_libraries(pureeos_state_view_experimental PUBLIC chainbase fc softfloat)
 target_include_directories(pureeos_state_view_experimental PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
