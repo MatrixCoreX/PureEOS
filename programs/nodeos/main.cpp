@@ -23,6 +23,7 @@
 #include <iterator>
 
 #include "config.hpp"
+#include "node_hardware_requirements.hpp"
 
 using namespace appbase;
 using namespace eosio;
@@ -139,6 +140,11 @@ void initialize_logging()
    fc::log_config::initialize_appenders();
 
    app().set_sighup_callback(logging_conf_handler);
+   const auto hardware = eosio::nodeos::detect_hardware();
+   if (const auto error = eosio::nodeos::hardware_requirement_error(hardware); !error.empty())
+      throw std::runtime_error(error);
+   ilog("nodeos hardware requirements satisfied: ${detected}", ("detected", eosio::nodeos::hardware_description(hardware)));
+
 }
 
 enum return_codes {
@@ -155,7 +161,7 @@ enum return_codes {
 int main(int argc, char** argv)
 {
 
-   ilog("nodeos started");
+   ilog("nodeos initializing");
 
    try {
       appbase::scoped_app app;
@@ -207,6 +213,7 @@ int main(int argc, char** argv)
       ilog("${name} data directory is ${d}", ("name", nodeos::config::node_executable_name)("d", app->data_dir().string()));
       ::detail::log_non_default_options(app->get_parsed_options());
       app->startup();
+      ilog("nodeos started with mandatory parallel execution");
       app->set_thread_priority_max();
       app->exec();
    } catch( const extract_genesis_state_exception& e ) {

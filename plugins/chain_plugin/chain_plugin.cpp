@@ -303,16 +303,16 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Percentage of actual signature recovery cpu to bill. Whole number percentages, e.g. 50 for 50%")
          ("chain-threads", bpo::value<uint16_t>()->default_value(config::default_controller_thread_pool_size),
           "Number of worker threads in controller thread pool")
-         ("experimental-parallel-validation-threads", bpo::value<string>()->default_value("0"),
-          ("Restricted parallel block validation workers (0 disables, maximum " +
+         ("experimental-parallel-validation-threads", bpo::value<string>()->default_value("auto"),
+          ("Required parallel block validation workers (minimum 2, maximum " +
            std::to_string(chain::experimental::parallel_runtime_limits::max_workers) +
            "). Accepts auto to size from allowed physical cores, CPU affinity and cgroup quota. Requires matching wasm-runtime/parallel-engine, full validation and an explicit code-hash list. Does not enable parallel block production.").c_str())
-         ("experimental-parallel-validation-batch-size", bpo::value<string>()->default_value("8"),
+         ("experimental-parallel-validation-batch-size", bpo::value<string>()->default_value("auto"),
           ("Maximum transactions per restricted validation batch (1-" +
            std::to_string(chain::experimental::parallel_runtime_limits::max_batch_transactions) +
            "). Accepts auto for three transactions per worker up to the batch cap. An auto worker count also sizes a defaulted batch. Unsupported work executes serially.").c_str())
-         ("experimental-parallel-production", bpo::bool_switch()->default_value(false),
-          "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
+         ("experimental-parallel-production", bpo::value<bool>()->default_value(true)->implicit_value(true),
+          "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Required for nodeos; cannot be disabled.")
          ("experimental-parallel-early-adoption", bpo::bool_switch()->default_value(false),
           "Experimental ordered adoption of completed owned results while remaining private jobs finish. Requires parallel production; original freshness, authorization, rollback and CPU rules remain in force.")
          ("experimental-parallel-early-adoption-group", bpo::value<unsigned>()->default_value(1),
@@ -325,8 +325,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Experimental bounded trace capacity hint before scheduling; no cross-transaction reuse.")
          ("experimental-parallel-native-capture", bpo::bool_switch()->default_value(false),
           "Experimental bounded native reads inside the exclusive owner write window. Joins before canonical writes; requires parallel production and at least two workers.")
-         ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
-          "Local restricted worker engine: interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
+         ("experimental-parallel-engine", bpo::value<string>()->default_value("auto"),
+          "Local restricted worker engine: auto (match wasm-runtime), interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
           "Reviewed WASM SHA-256 eligible for the local restricted parallel experiment. Repeat for additional hashes. No chain-level contract allowlist is introduced.")
          ("performance-metrics", bpo::bool_switch()->default_value(false),
@@ -1031,6 +1031,12 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
          for (const auto& warning:cpu.warnings) wlog("Automatic parallel sizing: ${reason}",("reason",warning));
       }
       chain_config->parallel_production_enabled = options.at("experimental-parallel-production").as<bool>();
+      EOS_ASSERT(chain_config->parallel_production_enabled &&
+                 chain_config->parallel_validation_threads >= 2 &&
+                 chain_config->parallel_validation_batch_size >= 2,
+                 plugin_config_exception,
+                 "nodeos requires parallel execution: production=true, at least 2 validation workers, and batch size at least 2; serial-only operation is not permitted");
+
       chain_config->parallel_production_early_adoption = options.at("experimental-parallel-early-adoption").as<bool>();
       EOS_ASSERT(!chain_config->parallel_production_early_adoption || chain_config->parallel_production_enabled,
                  plugin_config_exception, "experimental early adoption requires parallel production");
@@ -1054,9 +1060,11 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       EOS_ASSERT(!chain_config->parallel_native_capture ||
                     (chain_config->parallel_production_enabled && chain_config->parallel_validation_threads>=2),
                  plugin_config_exception, "native capture requires parallel production and at least two workers");
-      const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
+      auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
+      if (parallel_engine == "auto")
+         parallel_engine = chain_config->wasm_runtime == eosio::chain::wasm_interface::vm_type::eos_vm_jit ? "jit" : "interpreter";
       EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,
-                 "experimental parallel engine must be interpreter or jit");
+                 "experimental parallel engine must be auto, interpreter or jit");
       chain_config->parallel_engine = parallel_engine == "jit" ? chain::experimental::isolated_vm_engine::jit :
                                                                chain::experimental::isolated_vm_engine::interpreter;
       EOS_ASSERT(chain::experimental::isolated_vm_engine_supported(chain_config->parallel_engine), plugin_config_exception,
