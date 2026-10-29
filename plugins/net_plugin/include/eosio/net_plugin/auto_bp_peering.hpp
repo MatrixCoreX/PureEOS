@@ -57,6 +57,9 @@ class bp_connection_manager {
    uint32_t               pending_schedule_version = 0;
    uint32_t               active_schedule_version  = 0;
 
+   // Serialize complete reconcile plans, including connection-manager calls.
+   // This mutex is never acquired while holding BP, gossip, or connection locks.
+   fc::mutex                     reconcile_mtx;
    fc::mutex                     mtx;
    gossip_buffer_initial_factory initial_gossip_msg_factory GUARDED_BY(mtx);
    name_set_t                    active_bps GUARDED_BY(mtx);
@@ -518,6 +521,7 @@ public:
    // thread-safe
    void connect_to_active_bp_peers() {
       if (!auto_bp_peering_enabled()) return;
+      fc::lock_guard reconciliation(reconcile_mtx);
       address_set_t addresses, removed, added;
       {
          fc::lock_guard gm(mtx);

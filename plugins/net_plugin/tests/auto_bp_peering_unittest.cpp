@@ -1,5 +1,9 @@
 #include <boost/test/unit_test.hpp>
 #include <eosio/net_plugin/auto_bp_peering.hpp>
+#include <future>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 using namespace eosio::net_utils;
 
@@ -383,4 +387,40 @@ BOOST_AUTO_TEST_CASE(test_gossip_standby_and_local_identity_loss_keep_mesh_bound
    BOOST_CHECK(live.empty());
    plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);plugin.connect_to_active_bp_peers();
    BOOST_CHECK(live.contains("127.0.0.1:8002"));
+}
+
+BOOST_AUTO_TEST_CASE(test_gossip_concurrent_reconciliation_cannot_leave_a_stale_connection) {
+   mock_net_plugin plugin;plugin.lib_catchup=false;
+   plugin.set_bp_producer_peers({"proda,127.0.0.1:8001,127.0.0.1"});
+   eosio::gossip_bp_peers_message::signed_bp_peer identity{{.producer_name="proda"_n}};
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);
+   plugin.active_schedule={"proda"_n};
+   plugin.pending_schedule_accounts={"proda"_n,"prodb"_n};
+   eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name="prodb"_n}};
+   entry.cached_bp_peer_info.emplace("127.0.0.1:8002","127.0.0.1",eosio::block_timestamp_type{1000});
+   plugin.gossip_bps.index.insert(entry);
+   std::mutex state;std::condition_variable cv;bool entered=false,release=false;
+   std::set<std::string> live;
+   plugin.connections.resolve_and_connect=[&](std::string address,std::string) {
+      std::unique_lock lock(state);entered=true;cv.notify_all();
+      cv.wait(lock,[&]{return release;});live.insert(address);
+   };
+   plugin.connections.disconnect_gossip_connection=[&](std::string address) {
+      std::lock_guard lock(state);live.erase(address);
+   };
+   auto first=std::async(std::launch::async,[&]{plugin.connect_to_active_bp_peers();});
+   {std::unique_lock lock(state);BOOST_REQUIRE(cv.wait_for(lock,std::chrono::seconds(5),[&]{return entered;}));}
+   std::promise<void> desired_changed;auto changed=desired_changed.get_future();
+   auto second=std::async(std::launch::async,[&] {
+      {fc::lock_guard lock(plugin.mtx);plugin.pending_schedule_accounts.clear();}
+      desired_changed.set_value();plugin.connect_to_active_bp_peers();
+   });
+   changed.wait();
+   // Give the unprotected implementation time to remove the not-yet-dialed peer.
+   // A serialized implementation waits until the first connection plan finishes.
+   second.wait_for(std::chrono::milliseconds(100));
+   {std::lock_guard lock(state);release=true;}cv.notify_all();
+   first.get();second.get();
+   BOOST_CHECK(live.empty());
+   BOOST_CHECK(plugin.dialed_bp_addresses.empty());
 }
