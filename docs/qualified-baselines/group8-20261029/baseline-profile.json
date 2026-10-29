@@ -16,10 +16,12 @@
   "development_chain_caps": {
     "max_block_cpu_usage": 3200000,
     "CPU_multiplier": 16,
-    "max_block_net_usage": 33554432,
+    "max_block_net_usage": 16777216,
     "P2P_message_limit_bytes": 67108864,
     "queue_bytes": 1073741824,
-    "per_transaction_caps_and_billing": "unchanged"
+    "per_transaction_caps_and_billing": "unchanged",
+    "NET_MiB_per_block": 16,
+    "chain_parameters_file": "development-chain-parameters.json"
   },
   "benchmark_scope": {
     "CPU_multiplier": 32,
@@ -43,5 +45,11 @@
   "RAM_growth_initialization": "Existing eosio::setramrate(1024); released system WASM and all other modes unchanged",
   "multi_node_qualified": false,
   "source_code_changed_by_this_checkpoint": false,
-  "UTC": "2026-10-29T11:58:29.130256+00:00"
+  "UTC": "2026-10-29T11:58:29.130256+00:00",
+  "development_profile_revision": {
+    "user_selected_utc": "2026-10-29T15:28:27.709702+00:00",
+    "status": "CPU16 NET16MiB configuration defaults; benchmark_scope remains historical CPU32 NET32MiB",
+    "live_chain_changed": false,
+    "target_40k_50k_not_yet_qualified": true
+  }
 }
