@@ -29,6 +29,7 @@ int main(){try{
  require(!empty.should_update(121),"empty startup must not retry on every block");
  std::atomic<bool> done=false;std::atomic<unsigned> reads=0;
  std::thread reader([&]{while(!done.load()){cache.get_peer_info(a);cache.get_peer_info(b);++reads;}});
+ while(reads.load()==0)std::this_thread::yield();
  for(unsigned i=0;i<5000;++i)cache.update_peer_keys(600+i,i%2?getpeerkeys_res_t{}:getpeerkeys_res_t{{a,k1},{b,k2}});
  done=true;reader.join();require(reads>0,"concurrent readers ran");
  cache.update_peer_keys(6000,{});require(!cache.get_peer_info(a)&&!cache.get_peer_info(b),"final concurrent revocation");
