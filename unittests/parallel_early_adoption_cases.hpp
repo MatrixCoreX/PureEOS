@@ -13,9 +13,10 @@ void check_scenario(scenario which) {
    const auto hash=fc::sha256::hash(reinterpret_cast<const char*>(code.data()),code.size());
    for(bool fingerprints:{false,true})
    for(bool trace_reserve:{false,true})
-   for(bool native_capture:{false,true})
+   for(unsigned native_mode:{0u,1u,2u})
    for(bool enabled:{false,true})
    for(uint32_t ready_group:{1u,4u,8u}) {
+      const bool native_capture=native_mode!=0;
       fc::temp_directory source_dir,reference_dir;
       auto cfg=base_tester::default_config(source_dir).first;
       auto oracle=base_tester::default_config(reference_dir).first;
@@ -24,7 +25,7 @@ void check_scenario(scenario which) {
       cfg.parallel_validation_threads=2;cfg.parallel_validation_batch_size=24;
       cfg.parallel_production_enabled=true;cfg.parallel_production_early_adoption=enabled;
       cfg.parallel_early_adoption_group_size=ready_group;
-      cfg.parallel_native_capture=native_capture;
+      cfg.parallel_native_capture=native_capture;cfg.parallel_native_capture_staged=native_mode==2;
       cfg.parallel_input_fingerprints=fingerprints;cfg.parallel_trace_reserve=trace_reserve;
       cfg.parallel_code_allowlist={hash};
       production_chain source(cfg,parallel_multitoken_tests::genesis());
@@ -42,7 +43,11 @@ void check_scenario(scenario which) {
          second.signatures.clear();
          second.sign(source.get_private_key("alice"_n,"active"),source.control->get_chain_id());
       }
-      const std::vector<transaction_metadata_ptr> batch{metadata(source,first),metadata(source,second)};
+      std::vector<transaction_metadata_ptr> batch{metadata(source,first),metadata(source,second)};
+      if(which==scenario::independent) {
+         batch.push_back(metadata(source,parallel_multitoken_tests::transfer(source,"tokenone"_n,"carol"_n,"dave"_n,11,890003)));
+         batch.push_back(metadata(source,parallel_multitoken_tests::transfer(source,"tokentwo"_n,"alice"_n,"bob"_n,13,890004)));
+      }
       size_t callbacks=0,successful=0,rejected=0;
       const auto before=source.control->get_parallel_production_stats();
       const auto callback=[&](const transaction_metadata_ptr& item) {
@@ -71,12 +76,15 @@ void check_scenario(scenario which) {
             fc::time_point::maximum(),callback,fc::milliseconds(100)),std::runtime_error);
       } else {
          const size_t expected=(which==scenario::stop_prefix || which==scenario::abort_prefix ||
-            which==scenario::network_interrupt)?1:2;
+            which==scenario::network_interrupt)?1:batch.size();
          BOOST_CHECK_EQUAL(source.control->for_each_parallel_production_transaction(batch,
             fc::time_point::maximum(),callback,fc::milliseconds(100)),expected);
          BOOST_CHECK_EQUAL(callbacks,expected);
       }
       const auto after=source.control->get_parallel_production_stats();
+      if(native_mode==2)BOOST_CHECK_GT(after.native_staged_capture_batches,before.native_staged_capture_batches);
+      else BOOST_CHECK_EQUAL(after.native_staged_capture_batches,before.native_staged_capture_batches);
+      if(native_mode==2 && which==scenario::independent)BOOST_CHECK_GT(after.streamed_capture_extensions,before.streamed_capture_extensions);
       if(fingerprints)BOOST_CHECK_GT(after.input_fingerprint_batches,before.input_fingerprint_batches);
       else BOOST_CHECK_EQUAL(after.input_fingerprint_batches,before.input_fingerprint_batches);
       if(native_capture)BOOST_CHECK_GT(after.native_capture_batches,before.native_capture_batches);

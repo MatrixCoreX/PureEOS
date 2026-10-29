@@ -3563,25 +3563,33 @@ struct controller_impl {
             const bool native_capture=conf.parallel_native_capture && production &&
                round==0 && !refresh_parent && pipeline_layout && secondary_reads.empty() &&
                self.is_write_window() && conf.parallel_validation_threads>=2;
-            const bool staged_capture=!native_capture && production && round==0 && !refresh_parent && pipeline_layout &&
-               invocations.size()>conf.parallel_validation_threads;
-            const auto capture_until=[&](size_t end) {
-               if(native_capture) {
+            const bool native_staged=native_capture && conf.parallel_native_capture_staged;
+            const bool staged_capture=(!native_capture || native_staged) && production &&
+               round==0 && !refresh_parent && pipeline_layout && invocations.size()>conf.parallel_validation_threads;
+            bool native_used=false;
+            const auto capture_now=[&](std::span<const table_key> table_keys,std::span<const primary_query> primary_reads,
+                  std::span<const secondary_query> secondary,std::span<const name> names) {
+               if(native_capture && !native_used) {
+                  native_used=true;
                   if(!native_capture_workers)
                      native_capture_workers=std::make_unique<bounded_native_capture_pool>(
-                        std::bit_floor(std::min<unsigned>(4,conf.parallel_validation_threads)));
+                        std::bit_floor(std::min<unsigned>(native_staged ? 2 : 4,conf.parallel_validation_threads)));
                   try {
-                     auto next=capture->capture_parallel(db,*native_capture_workers,tables,reads,
-                        capture_limits,private_cancel,account_reads,checkpoint);
+                     auto next=capture->capture_parallel(db,*native_capture_workers,table_keys,primary_reads,
+                        capture_limits,private_cancel,names,checkpoint);
                      ++stats.native_capture_batches;
+                     if(native_staged)++stats.native_staged_capture_batches;
                      return next;
                   } catch(const isolated_execution_interrupted&) {
                      checkpoint(); // translate ORIGINAL cancellation/deadline
                      throw;
                   }
                }
+               return capture->capture(table_keys,primary_reads,secondary,capture_limits,checkpoint,names);
+            };
+            const auto capture_until=[&](size_t end) {
                if(!staged_capture || end>=invocations.size())
-                  return capture->capture(tables,reads,secondary_reads,capture_limits,checkpoint,account_reads);
+                  return capture_now(tables,reads,secondary_reads,account_reads);
                const auto deferred=[&](name account) {
                   const auto it=std::lower_bound(pipeline_owners.begin(),pipeline_owners.end(),account,
                      [](const auto& item,name key){return item.first<key;});
@@ -3597,7 +3605,7 @@ struct controller_impl {
                for(const auto& q:reads)if(included(q.table))pq.push_back(q);
                for(const auto& q:secondary_reads)if(included(q.table))sq.push_back(q);
                for(const auto account:account_reads)if(!deferred(account))ac.push_back(account);
-               return capture->capture(tk,pq,sq,capture_limits,checkpoint,ac);
+               return capture_now(tk,pq,sq,ac);
             };
             auto base=capture_until(staged_capture ? size_t(conf.parallel_validation_threads) : invocations.size());
             if (refresh_parent) {
