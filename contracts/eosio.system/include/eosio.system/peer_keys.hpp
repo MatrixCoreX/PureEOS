@@ -29,8 +29,8 @@ class [[eosio::contract("eosio.system")]] peer_keys : public eosio::contract {
       EOSLIB_SERIALIZE(peerkeys_t, (producer_name)(peer_key))
    };
    using getpeerkeys_res_t = std::vector<peerkeys_t>;
-   [[eosio::action]] void regpeerkey(const eosio::name& account, const eosio::public_key& key);
-   [[eosio::action]] void delpeerkey(const eosio::name& account);
+   [[eosio::action]] void regpeerkey(const eosio::name& proposer_finalizer_name, const eosio::public_key& key);
+   [[eosio::action]] void delpeerkey(const eosio::name& proposer_finalizer_name, const eosio::public_key& key);
    [[eosio::action]] getpeerkeys_res_t getpeerkeys();
 };
 }

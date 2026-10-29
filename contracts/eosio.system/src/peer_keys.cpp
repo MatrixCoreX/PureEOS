@@ -18,7 +18,8 @@ bool current_producer(eosio::name account, const rotation_context_v1& context) {
                       [&](const auto& p) { return p.producer_name == account; });
 }
 }
-void peer_keys::regpeerkey(const eosio::name& account, const eosio::public_key& key) {
+void peer_keys::regpeerkey(const eosio::name& proposer_finalizer_name, const eosio::public_key& key) {
+   const auto account = proposer_finalizer_name;
    require_auth(account);
    eosio::check(key.index() < 2, "WebAuthn keys are not supported for BP peer authentication");
    const auto nonzero = [](const auto& bytes) {
@@ -41,11 +42,14 @@ void peer_keys::regpeerkey(const eosio::name& account, const eosio::public_key& 
       keys.modify(existing, eosio::same_payer, [&](auto& row) { row.data = peer_key::v0_data{key}; });
    }
 }
-void peer_keys::delpeerkey(const eosio::name& account) {
+void peer_keys::delpeerkey(const eosio::name& proposer_finalizer_name, const eosio::public_key& key) {
+   const auto account = proposer_finalizer_name;
    require_auth(account);
    peer_keys_table keys(get_self(), get_self().value);
    const auto existing = keys.find(account.value);
    eosio::check(existing != keys.end(), "peer key not found");
+   eosio::check(existing->get_public_key() == std::optional<eosio::public_key>{key},
+                "current peer key does not match the key to delete");
    keys.erase(existing);
 }
 peer_keys::getpeerkeys_res_t peer_keys::getpeerkeys() {
