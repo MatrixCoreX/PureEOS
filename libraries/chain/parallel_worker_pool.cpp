@@ -510,8 +510,9 @@ struct isolated_worker_pool::impl {
             outcome.elapsed = {};
             outcome.ended = std::chrono::steady_clock::now();
          }
-         outcome.attempt_wall = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now() - attempt_began);
+         outcome.ready_at = std::chrono::steady_clock::now();
+          outcome.attempt_wall = std::chrono::duration_cast<std::chrono::microseconds>(
+             outcome.ready_at - attempt_began);
          {
             std::lock_guard lock(mutex);
             current->finished[index]=true;
@@ -618,10 +619,16 @@ isolated_retirement_diagnostics isolated_worker_pool::retirement_diagnostics()co
 }
 
 
+bool isolated_worker_pool::has_active_batch()const {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   std::lock_guard lock(impl_->mutex);
+   return bool(impl_->active);
+}
+
 std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready(
       std::span<const ordered_attempt_batch::ticket> tickets,
       const std::function<isolated_worker_job(size_t)>& produce,
-      const std::function<void(size_t,const isolated_worker_outcome&)>& consume) {
+      const std::function<void(size_t,isolated_worker_outcome&&)>& consume) {
    if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
    if(!parallel_runtime_limits::valid_batch(tickets.size()))throw primary_state_budget_exceeded();
    if(!produce || !consume)throw primary_state_invalid_attempt();
@@ -652,7 +659,7 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready(
             std::unique_lock lock(impl_->mutex);
             impl_->done.wait(lock,[&]{return batch->finished[i];});
          }
-         consume(i,batch->outcomes[i]); // owner, no pool lock, immutable completed slot
+         consume(i,std::move(batch->outcomes[i])); // owner, no pool lock, exclusive completed slot
       }
    } catch(...) {failed=std::current_exception();}
    {

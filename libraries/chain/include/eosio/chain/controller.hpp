@@ -149,6 +149,7 @@ namespace eosio::chain {
             uint16_t                 parallel_validation_threads = 0;
             uint16_t                 parallel_validation_batch_size = 8;
             bool                     parallel_production_enabled = false;
+            bool                     parallel_production_early_adoption = false; // local experiment, disabled by default
             experimental::isolated_vm_engine parallel_engine = experimental::isolated_vm_engine::interpreter;
             flat_set<digest_type>    parallel_code_allowlist;
             bool                     read_only              =  false;
@@ -242,6 +243,7 @@ namespace eosio::chain {
          struct parallel_execution_stats {
             uint64_t batches = 0, attempts = 0, succeeded = 0, adopted = 0, serial_fallbacks = 0;
             uint64_t prevalidated_adopted=0,streamed_capture_extensions=0,retired_batches=0;
+            uint64_t early_ready_batches=0,early_ready_callbacks=0;
             // Local preparation diagnostics only. A preparation deadline is
             // also included in budget_fallbacks; none changes serial_fallbacks,
             // which counts transactions routed by an already prepared batch.

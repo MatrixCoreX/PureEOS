@@ -313,6 +313,8 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
            "). Accepts auto for three transactions per worker up to the batch cap. An auto worker count also sizes a defaulted batch. Unsupported work executes serially.").c_str())
          ("experimental-parallel-production", bpo::bool_switch()->default_value(false),
           "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
+         ("experimental-parallel-early-adoption", bpo::bool_switch()->default_value(false),
+          "Experimental ordered adoption of completed owned results while remaining private jobs finish. Requires parallel production; original freshness, authorization, rollback and CPU rules remain in force.")
          ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
           "Local restricted worker engine: interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
@@ -1019,6 +1021,9 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
          for (const auto& warning:cpu.warnings) wlog("Automatic parallel sizing: ${reason}",("reason",warning));
       }
       chain_config->parallel_production_enabled = options.at("experimental-parallel-production").as<bool>();
+      chain_config->parallel_production_early_adoption = options.at("experimental-parallel-early-adoption").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_production_early_adoption || chain_config->parallel_production_enabled,
+                 plugin_config_exception, "experimental early adoption requires parallel production");
       const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
       EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,
                  "experimental parallel engine must be interpreter or jit");
@@ -1298,6 +1303,8 @@ void chain_plugin::plugin_shutdown() {
          diagnostics("production", production);
          ilog("Experimental parallel prevalidation: adopted=${a}, capture_extensions=${c}, retired_batches=${r}; local diagnostics only",
               ("a",production.prevalidated_adopted)("c",production.streamed_capture_extensions)("r",production.retired_batches));
+         ilog("Experimental parallel ready processing: batches=${b}, callbacks=${c}; local diagnostics only",
+              ("b",production.early_ready_batches)("c",production.early_ready_callbacks));
       }
    }
 }

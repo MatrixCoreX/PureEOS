@@ -152,7 +152,7 @@ struct isolated_worker_outcome {
    const std::optional<isolated_action_tree_result>& tree_attempt()const noexcept {
       return prevalidated_tree ? prevalidated_tree->result() : tree_result;
    }
-   std::chrono::steady_clock::time_point began, ended; // local diagnostics only
+   std::chrono::steady_clock::time_point began, ended, ready_at; // local diagnostics only
    std::chrono::microseconds elapsed{}; // successful step sum; excludes compilation and queueing
    std::optional<state_capture_request> request; // discovery only; no partial result is adoptable
    std::optional<name> receiver_request;
@@ -162,8 +162,10 @@ struct isolated_worker_outcome {
    std::chrono::microseconds attempt_wall{};
 };
 
-// Bounded execution batches on a persistent pool. The serial owner joins all
-// execution jobs before canonical mutation. Separately,one immutable-only
+// Bounded execution batches on a persistent pool. Legacy run/run_streamed join
+// before return. run_ready first publishes all owned inputs, then lets the owner
+// consume completed slots in order; it joins every job before return/rethrow.
+// Separately,one immutable-only
 // reclamation batch may overlap owner work and drains before the next capture.
 // Execution jobs own all inputs;
 // workers never receive controller/database pointers. Switching execution modes
@@ -192,10 +194,12 @@ public:
    // All producer calls finish first; consumer runs without the pool mutex.
    // Every published job is joined before return or rethrow. This API does not
    // authorize canonical adoption, skip fresh checks, or extend a private deadline.
+   // Consumer may move its completed slot; returned slots then remain moved-from.
    std::vector<isolated_worker_outcome> run_ready(
       std::span<const ordered_attempt_batch::ticket>,
       const std::function<isolated_worker_job(size_t)>&,
-      const std::function<void(size_t,const isolated_worker_outcome&)>&);
+      const std::function<void(size_t,isolated_worker_outcome&&)>&);
+   bool has_active_batch()const; // owner-only capture/reentry guard
    size_t active_started_jobs()const; // owner-only local diagnostic, not a bill
    // At most ONE pending/in-flight bounded immutable outcome batch;no live DB,
    // coordinator,VM,resource manager or user callback can be submitted.
