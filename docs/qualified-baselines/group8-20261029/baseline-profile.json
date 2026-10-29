@@ -1,0 +1,47 @@
+{
+  "qualified_code_source_commit": "3a3f9361bdfb49a3be355dff2f5b3fb249bfd191",
+  "qualified_code_tree": "c3dc5f46c64f5e881ca0a5d869634eec2fbed126",
+  "qualified_remote_nodeos_sha256": "051989ea0dec7049c253c782bc5adfa9c83772862592173b26936042c4eb98ea",
+  "runtime_options_sha256": "4de0dec36a4b70bab42032a6dfcfe57d6b64c0e52208d945b88874b61a0dfeb2",
+  "feature_configuration": {
+    "group": 8,
+    "early": true,
+    "features": {
+      "experimental-parallel-native-capture": true,
+      "experimental-parallel-native-capture-staged": false,
+      "experimental-parallel-input-fingerprints": true,
+      "experimental-parallel-trace-reserve": true
+    }
+  },
+  "development_chain_caps": {
+    "max_block_cpu_usage": 3200000,
+    "CPU_multiplier": 16,
+    "max_block_net_usage": 33554432,
+    "P2P_message_limit_bytes": 67108864,
+    "queue_bytes": 1073741824,
+    "per_transaction_caps_and_billing": "unchanged"
+  },
+  "benchmark_scope": {
+    "CPU_multiplier": 32,
+    "max_block_cpu_usage": 6400000,
+    "NET_bytes": 33554432,
+    "hardware": "EPYC4345P8physical16hardware64GiB",
+    "workers": 8,
+    "batch": 24,
+    "chain_threads": 6,
+    "window_TPS": 39215.666666666664,
+    "whole_corpus_TPS": 38168.72608983302,
+    "owner_CPU_us_per_TX": 24.053969394938836,
+    "mixed_120s_rate": 8000,
+    "mixed_all_finalized": 984000,
+    "security_cases": 2280,
+    "serial_blocks": 1591,
+    "serial_receipts": 985002
+  },
+  "system_contract_WASM": "fc639b60009090cb66424a58b9112fdb87309391a286905a0669ae3397289186",
+  "RAM_initial_bytes": 68719476736,
+  "RAM_growth_initialization": "Existing eosio::setramrate(1024); released system WASM and all other modes unchanged",
+  "multi_node_qualified": false,
+  "source_code_changed_by_this_checkpoint": false,
+  "UTC": "2026-10-29T11:58:29.130256+00:00"
+}
