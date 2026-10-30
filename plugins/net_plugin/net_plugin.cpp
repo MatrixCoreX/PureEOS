@@ -870,6 +870,8 @@ namespace eosio {
       // bp_gossip_validating = only used when connection received before peer keys available
       enum class bp_connection_type { non_bp, bp_config, bp_gossip, bp_gossip_validating };
       std::atomic<bp_connection_type> bp_connection = bp_connection_type::non_bp;
+      // Retry only the local initial-send negotiation; this grants no BP identity.
+      std::atomic<bool> gossip_initial_pending{false};
       block_status_monitor    block_status_monitor_;
       std::atomic<time_point> last_vote_received;
 
@@ -1469,6 +1471,7 @@ namespace eosio {
       consecutive_blocks_nacks = 0;
       last_block_nack = block_id_type{};
       bp_connection = bp_connection_type::non_bp;
+      gossip_initial_pending.store(false, std::memory_order_relaxed);
 
       uint32_t head_num = my_impl->get_chain_head_num();
       if (last_received_block_num >= head_num) {
@@ -3917,6 +3920,7 @@ namespace eosio {
       if (bp_connection != bp_connection_type::bp_gossip) {
          peer_dlog(p2p_msg_log, this, "bp gossip connection");
          bp_connection = bp_connection_type::bp_gossip;
+         gossip_initial_pending.store(false, std::memory_order_relaxed);
       }
 
       if (first_msg) {
@@ -3933,14 +3937,15 @@ namespace eosio {
 
    // called from connection strand
    void connection::send_gossip_bp_peers_initial_message() {
-      if (protocol_version < proto_version_t::gossip_bp_peers || !my_impl->bp_gossip_enabled())
+      if (closed() || protocol_version < proto_version_t::gossip_bp_peers || !my_impl->bp_gossip_enabled())
          return;
       peer_dlog(p2p_msg_log, this, "sending initial gossip_bp_peers_message");
       const auto& sb = my_impl->get_gossip_bp_initial_send_buffer();
       if (sb) {
+         gossip_initial_pending.store(false, std::memory_order_relaxed);
          enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
-      } else {
-         peer_ilog(p2p_msg_log, this, "no initial gossip_bp_peers_message to send");
+      } else if (!gossip_initial_pending.exchange(true, std::memory_order_relaxed)) {
+         peer_ilog(p2p_msg_log, this, "initial BP gossip waiting for local peer key; retry scheduled");
       }
    }
 
@@ -3966,7 +3971,9 @@ namespace eosio {
                   peer_dlog(p2p_msg_log, c, "sending gossip_bp_peers_message");
                   c->enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
                });
-            } else if (c->bp_connection == bp_connection_type::bp_config || c->bp_connection == bp_connection_type::bp_gossip_validating) {
+            } else if (c->bp_connection == bp_connection_type::bp_config ||
+                       c->bp_connection == bp_connection_type::bp_gossip_validating ||
+                       c->gossip_initial_pending.load(std::memory_order_relaxed)) {
                boost::asio::post(c->strand, [c]() {
                   c->send_gossip_bp_peers_initial_message();
                });
