@@ -1949,7 +1949,7 @@ namespace eosiosystem {
          bool execute_next_schedule();
 #ifdef PUREEOS_SINGLE_CHOICE_VOTING
          void sync_reward_policy();
-         double accrue_halving_rewards(int64_t supply, time_point from, time_point to) const;
+         int64_t accrue_halving_rewards(int64_t supply, time_point from, time_point to) const;
 #endif
 
          // defined in rex.cpp

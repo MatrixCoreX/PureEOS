@@ -35,7 +35,7 @@ void system_contract::sync_reward_policy() {
    _gstate4.votepay_factor = rewards::block_pay_factor; // compatibility view: 100% block pay
 }
 
-double system_contract::accrue_halving_rewards(int64_t supply, time_point from, time_point to) const {
+int64_t system_contract::accrue_halving_rewards(int64_t supply, time_point from, time_point to) const {
    reward_policy_singleton policy(get_self(), get_self().value);
    const auto state = policy.get();
    check(state.version == 1 && state.start_time != time_point(), "rewards are not activated");

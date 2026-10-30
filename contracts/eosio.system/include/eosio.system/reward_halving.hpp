@@ -25,16 +25,30 @@ inline double rate_at(uint32_t era) {
 // retroactively halve the pre-boundary interval. Work is bounded even after
 // a long pause; after 64 eras the remaining lifetime amount is below one core
 // token smallest unit for any legal asset supply (including compounding).
-inline double accrued(int64_t supply, uint64_t origin, uint64_t from, uint64_t to) {
-   if (to <= from || to <= origin || supply <= 0) return 0.0;
+// Exact integer token units: 1/100 of supply per contract year, halved by era.
+// Each segment contributes a quotient and remainder. Align remainders when
+// crossing eras and round only once at the end of this accrual interval.
+inline int64_t accrued(int64_t supply, uint64_t origin, uint64_t from, uint64_t to) {
+   if (to <= from || to <= origin || supply <= 0) return 0;
    uint64_t cursor = std::max(from, origin) - origin;
    const uint64_t end = to - origin;
-   double weighted_usecs = 0.0;
-   for (auto era = cursor / halving_usecs; cursor < end && era < max_eras; ++era) {
+   uint64_t era = cursor / halving_usecs;
+   if (era >= max_eras) return 0;
+   using wide = unsigned __int128;
+   const wide base_denominator = wide(year_usecs) * 100;
+   wide whole = 0, remainder = 0;
+   for (; cursor < end && era < max_eras; ++era) {
       const uint64_t boundary = std::min(end, (era + 1) * halving_usecs);
-      weighted_usecs += double(boundary - cursor) / double(uint64_t{1} << era);
+      const wide denominator = base_denominator << era;
+      const wide numerator = wide(uint64_t(supply)) * (boundary - cursor);
+      whole += numerator / denominator;
+      remainder += numerator % denominator;
+      whole += remainder / denominator;
+      remainder %= denominator;
       cursor = boundary;
+      // The next denominator doubles. Remainder remains below its denominator.
+      remainder <<= 1;
    }
-   return double(supply) * initial_continuous_rate * (weighted_usecs / double(year_usecs));
+   return int64_t(whole);
 }
 } // namespace eosiosystem::rewards

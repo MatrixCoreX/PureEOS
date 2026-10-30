@@ -145,13 +145,13 @@ namespace eosiosystem {
 
       if( usecs_since_last_fill > 0 && _gstate.last_pervote_bucket_fill > time_point() ) {
 #ifdef PUREEOS_SINGLE_CHOICE_VOTING
-         double additional_inflation = accrue_halving_rewards(token_supply.amount, _gstate.last_pervote_bucket_fill, ct);
+         const int64_t new_tokens = accrue_halving_rewards(token_supply.amount, _gstate.last_pervote_bucket_fill, ct);
 #else
          double additional_inflation = (_gstate4.continuous_rate * double(token_supply.amount) * double(usecs_since_last_fill)) / double(useconds_per_year);
-#endif
          check( additional_inflation <= double(std::numeric_limits<int64_t>::max() - ((1ll << 10) - 1)),
                 "overflow in calculating new tokens to be issued; inflation rate is too high" );
-         int64_t new_tokens = (additional_inflation < 0.0) ? 0 : static_cast<int64_t>(additional_inflation);
+         const int64_t new_tokens = (additional_inflation < 0.0) ? 0 : static_cast<int64_t>(additional_inflation);
+#endif
          check(new_tokens <= asset::max_amount, "new reward amount exceeds asset limit");
 
 #ifdef PUREEOS_SINGLE_CHOICE_VOTING
