@@ -1,0 +1,308 @@
+[
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/activate_three_nodes.py",
+    "relative": "common/activate_three_nodes.py",
+    "sha256": "413f85be37b6687493ab9d6f59becb4337deb0052dbe5682692c87ee23a16716",
+    "bytes": 12351
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/build_signing_helper.py",
+    "relative": "common/build_signing_helper.py",
+    "sha256": "62a1ce18fef4e03a1256f1e9fa4ee8fe450a5fdd21da199705a68618cb928e7c",
+    "bytes": 2397
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/build_signing_helper_v4.py",
+    "relative": "common/build_signing_helper_v4.py",
+    "sha256": "28cc91b7432a4d7e45c0e0ca8e85b7c35f17b7b8575283171b7e3080c6bd841c",
+    "bytes": 2591
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/build_third_party_guest.py",
+    "relative": "common/build_third_party_guest.py",
+    "sha256": "907c58bdaf7df4bda3fbcd862b92422f376fa3b1a2325248723fc4e6ac1f22c8",
+    "bytes": 2120
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/chain-parameters.json",
+    "relative": "common/chain-parameters.json",
+    "sha256": "a3aec701951c5c677de0d2dedeecfe217aa43f23160729e2f61e524d2c7656d7",
+    "bytes": 629
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/deploy_runtime.py",
+    "relative": "common/deploy_runtime.py",
+    "sha256": "2bf7ea208159e37900c77e769a144848849e6bb17ff05d41ce1393129011f76c",
+    "bytes": 3129
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/fetch_third_party_sources.py",
+    "relative": "common/fetch_third_party_sources.py",
+    "sha256": "29a2f541dc2f818fea5976dff0a4ec47466958c240a4a0237c39504a1c00e4a7",
+    "bytes": 1823
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/functional_common.py",
+    "relative": "common/functional_common.py",
+    "sha256": "1c7aa8d55b7ab64b30e331fc6f1ecd56c1ddcd5aedd2f7647b05fdaed318334d",
+    "bytes": 13945
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/functional_signing_daemon.cpp",
+    "relative": "common/functional_signing_daemon.cpp",
+    "sha256": "ec4f3ddbdef5bcf95a91aea14352f30d9dfc181f8914da1d49a66ca63452bafe",
+    "bytes": 6166
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/functional_signing_daemon_v4.cpp",
+    "relative": "common/functional_signing_daemon_v4.cpp",
+    "sha256": "bc11dbf69385fade095d8c09f4e6210a5a4091937f3ab4fb8572259232346ea6",
+    "bytes": 6681
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/native_fixture.cpp",
+    "relative": "common/native_fixture.cpp",
+    "sha256": "ed7113030280d8f3a8f005a81f84a37cccfc0d3025a86dc23bbbb75b83ab9bef",
+    "bytes": 16725
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/prepare_native_guest.py",
+    "relative": "common/prepare_native_guest.py",
+    "sha256": "9ffd3517aad1060f7fd9d2f8acc2c863b8b0d45b11b0432c881a77bac26debec",
+    "bytes": 2686
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/run_environment_round.py",
+    "relative": "common/run_environment_round.py",
+    "sha256": "1546997ae141f2bc32f9222a2633abb3d8f483b4cba2fde885644b939712a40c",
+    "bytes": 6125
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/run_low_frequency_rounds.py",
+    "relative": "common/run_low_frequency_rounds.py",
+    "sha256": "fc8b203e4210c0a2248a7257b8f7a53f6f701b37bf04da755c91dd24fd6b42c7",
+    "bytes": 11634
+  },
+  {
+    "source": "/opt/aic-bp-discovery-live-20261030/input/run_wire_security_round.py",
+    "relative": "common/run_wire_security_round.py",
+    "sha256": "e4bd466d9ccaad371b0beca4441ae9b82bba34817c3d9cfd7c752af75eb42003",
+    "bytes": 9739
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/activate_thirty_nodes.py",
+    "relative": "application/activate_thirty_nodes.py",
+    "sha256": "59dc77d1de5cc7925e79e617184302ca6d00452bd3965ed4bbc43294c60d146a",
+    "bytes": 15807
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/activate_thirty_nodes_retry.py",
+    "relative": "application/activate_thirty_nodes_retry.py",
+    "sha256": "f94378f455aed0c8d9e3848dac2c37a42eae60199b970410f42a41bea8af6fda",
+    "bytes": 13092
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/chain-parameters.json",
+    "relative": "application/chain-parameters.json",
+    "sha256": "a3aec701951c5c677de0d2dedeecfe217aa43f23160729e2f61e524d2c7656d7",
+    "bytes": 629
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/complete_thirty_activation.py",
+    "relative": "application/complete_thirty_activation.py",
+    "sha256": "080d0d967700ff9ad0f74789940dd3903d92789e015ab4a4a290e33b37985643",
+    "bytes": 5235
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/complete_thirty_business.py",
+    "relative": "application/complete_thirty_business.py",
+    "sha256": "e0c13854e0b3fa4ec2f205d16c3bb7fcba36c898d6e99a3c83470a1833dbae19",
+    "bytes": 3869
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/complete_thirty_transfers.py",
+    "relative": "application/complete_thirty_transfers.py",
+    "sha256": "a93bb410907c04c827afd70a81047d4e5916b0d7a204a5406e25cc3771d7a04d",
+    "bytes": 2520
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/defi_base_round.py",
+    "relative": "application/defi_base_round.py",
+    "sha256": "0cb372124b7a82d2db043f19754329d7576bf89f28aa0532c4ec58d11a746f26",
+    "bytes": 7643
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/deploy_third_party_round.py",
+    "relative": "application/deploy_third_party_round.py",
+    "sha256": "c443f971b061622b5299f1a892db161fe9d657bcde3b59df06cdca7799f5f885",
+    "bytes": 6157
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/fix_worker_affinity.py",
+    "relative": "application/fix_worker_affinity.py",
+    "sha256": "ce210cc6edaaab2e6b744d52c318fce0b505681a0eae10e495aebdec9fa89d84",
+    "bytes": 1984
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/functional_30_common.py",
+    "relative": "application/functional_30_common.py",
+    "sha256": "ed1388c812cf64eeb33e1a59d4b0d87eb95832210e37522d88ef89581cd91e6b",
+    "bytes": 5719
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/native_fixture.cpp",
+    "relative": "application/native_fixture.cpp",
+    "sha256": "46a53944f39f0b22a3b0740f0e86fc8813f811ef5524dc16313ac230cac1330e",
+    "bytes": 16980
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/network_functional_round.py",
+    "relative": "application/network_functional_round.py",
+    "sha256": "27fa5583e8ac81f937c6ef64e5da07a9bd79e07e96d27856cf86716811c9d84f",
+    "bytes": 18239
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/nft_base_round.py",
+    "relative": "application/nft_base_round.py",
+    "sha256": "e85e270ddbbfdcbc544a20852571e85b8cde048ed43b41131be34738026beafd",
+    "bytes": 7734
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/prepare_native_guest.py",
+    "relative": "application/prepare_native_guest.py",
+    "sha256": "89d29fbfa2d470949537ed6f68236a08135ec4608f2545b1ace62350ee2a67c2",
+    "bytes": 2868
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/prepare_thirty_nodes.py",
+    "relative": "application/prepare_thirty_nodes.py",
+    "sha256": "32ff482b5b331e8b315d6a3e520909bb770e952e493b56bfedff50ee7aee85e1",
+    "bytes": 9675
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/role_and_rolling_round.py",
+    "relative": "application/role_and_rolling_round.py",
+    "sha256": "b94a04d71f4e985209036ea4e6eb8d6da5ac78397b4304b7f7502a0c3f1d874d",
+    "bytes": 8934
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/role_lifecycle_only.py",
+    "relative": "application/role_lifecycle_only.py",
+    "sha256": "94ff8cee454882bfca5be272da6f36cc572a19ea21b7cc5f5fc2d0c04e2973c8",
+    "bytes": 3823
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/standby_upgrade_and_regression.py",
+    "relative": "application/standby_upgrade_and_regression.py",
+    "sha256": "a582e2ca250594796e8af8e84b9ebc491aff6e4d703cb77b88ad7ae2079ef099",
+    "bytes": 7378
+  },
+  {
+    "source": "/opt/aic-bp-discovery-30nodes-20261030/input/write_progress_report.py",
+    "relative": "application/write_progress_report.py",
+    "sha256": "96aef9cbff958b247943bf8da33a39e52f9a5640a9128dfb8f84682e1497440e",
+    "bytes": 9173
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/activate_live30.py",
+    "relative": "maintenance/activate_live30.py",
+    "sha256": "571233cfd98cf9840a790fa2236779bc9a36922d420f9972a907b8a51547bef6",
+    "bytes": 4181
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/chain-parameters.json",
+    "relative": "maintenance/chain-parameters.json",
+    "sha256": "a3aec701951c5c677de0d2dedeecfe217aa43f23160729e2f61e524d2c7656d7",
+    "bytes": 629
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/exact_quorum_round.py",
+    "relative": "maintenance/exact_quorum_round.py",
+    "sha256": "a7239929e03ff7d8350b99f142136848b52e263a8fc018b96ae1093f887466d0",
+    "bytes": 4317
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/maintenance_30_common.py",
+    "relative": "maintenance/maintenance_30_common.py",
+    "sha256": "f818b87ceea9c9177fb9ed4a3997af407ed6137b4aa196f8cd5e2b5d2aee247e",
+    "bytes": 5778
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/maintenance_live_round.py",
+    "relative": "maintenance/maintenance_live_round.py",
+    "sha256": "a3fe3b24b770eb42177664d17d3ea2ed49289b22a4af248c58161b8d54abaab3",
+    "bytes": 10675
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/maintenance_live_round_resume08.py",
+    "relative": "maintenance/maintenance_live_round_resume08.py",
+    "sha256": "79c314f871e022b97f8af06096cbd3b306d55433ec7ff70f9543b6f204b45de1",
+    "bytes": 7672
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/maintenance_live_round_resume17.py",
+    "relative": "maintenance/maintenance_live_round_resume17.py",
+    "sha256": "0875c8d693bb433368bacdcfd025f4f95fa7871eb14c64f1abaaecd988b905bb",
+    "bytes": 6316
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/prepare_thirty_nodes.py",
+    "relative": "maintenance/prepare_thirty_nodes.py",
+    "sha256": "768e03b69eae6f8b08f4896f0b283be8946511999e442ce4838ebf0e4de9c792",
+    "bytes": 9694
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-30nodes-20261030/input/refresh_candidate_live30.py",
+    "relative": "maintenance/refresh_candidate_live30.py",
+    "sha256": "2ccf0cf0b7ade95d23b46d24192f18c13546c4ee91d7e1b9407ae7acc03257bd",
+    "bytes": 5879
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/input/build_contract.py",
+    "relative": "maintenance-build/build_contract.py",
+    "sha256": "8a55c8837a020fbe3593b8e443cccb64edc984dff0ac6c013991e985b2ccc33c",
+    "bytes": 3387
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/input/merge_reward_evidence.py",
+    "relative": "maintenance-build/merge_reward_evidence.py",
+    "sha256": "13dc382b698f36bd7598a5fc969bfe6b8b5bfa85a870e257ae0f4c40cba96c7e",
+    "bytes": 1653
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/native-tests/input/chain-parameters.json",
+    "relative": "maintenance-native/chain-parameters.json",
+    "sha256": "a3aec701951c5c677de0d2dedeecfe217aa43f23160729e2f61e524d2c7656d7",
+    "bytes": 629
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/native-tests/input/native_fixture.cpp",
+    "relative": "maintenance-native/native_fixture.cpp",
+    "sha256": "41cd0dc6ba2c8bde51c914dcfc1581501b0e06eb7277279ef560c11d82f07a09",
+    "bytes": 27221
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/native-tests/input/prepare_native_guest.py",
+    "relative": "maintenance-native/prepare_native_guest.py",
+    "sha256": "89d29fbfa2d470949537ed6f68236a08135ec4608f2545b1ace62350ee2a67c2",
+    "bytes": 2868
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/reward-maturity-native-lab/input/chain-parameters.json",
+    "relative": "reward-native/chain-parameters.json",
+    "sha256": "a3aec701951c5c677de0d2dedeecfe217aa43f23160729e2f61e524d2c7656d7",
+    "bytes": 629
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/reward-maturity-native-lab/input/native_fixture.cpp",
+    "relative": "reward-native/native_fixture.cpp",
+    "sha256": "27e040ccb7682274c8721c0e15eb87107352b1042a6e241629ff08113b5fd7b6",
+    "bytes": 28941
+  },
+  {
+    "source": "/opt/aic-bp-maintenance-feature-20261030/reward-maturity-native-lab/input/prepare_native_guest.py",
+    "relative": "reward-native/prepare_native_guest.py",
+    "sha256": "89d29fbfa2d470949537ed6f68236a08135ec4608f2545b1ace62350ee2a67c2",
+    "bytes": 2868
+  }
+]
