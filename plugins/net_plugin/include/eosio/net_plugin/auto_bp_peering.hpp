@@ -13,6 +13,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
+#include <chrono>
 
 namespace eosio::auto_bp_peering {
 
@@ -66,6 +67,46 @@ class bp_connection_manager {
    name_set_t                    active_schedule GUARDED_BY(mtx);
    name_set_t                    pending_schedule_accounts GUARDED_BY(mtx);
    address_set_t                 dialed_bp_addresses GUARDED_BY(mtx);
+
+
+   static constexpr size_t standby_peer_limit = 3;
+   address_set_t standby_targets GUARDED_BY(mtx);
+   size_t standby_cursor GUARDED_BY(mtx) = 0;
+   std::chrono::steady_clock::time_point standby_retry_at GUARDED_BY(mtx);
+
+   address_set_t choose_standby_peers(const address_set_t& options,
+                                     const address_set_t& connected,
+                                     std::chrono::steady_clock::time_point now) REQUIRES(mtx) {
+      if (options.empty()) {
+         standby_targets.clear();
+         return {};
+      }
+      std::vector<std::string> candidates(options.begin(), options.end());
+      std::ranges::sort(candidates);
+      const size_t limit = std::min(standby_peer_limit, candidates.size());
+      address_set_t retained;
+      for (const auto& address : standby_targets)
+         if (options.contains(address)) retained.insert(address);
+      const bool initial = retained.empty();
+      const bool healthy = std::ranges::any_of(retained, [&](const auto& a) { return connected.contains(a); });
+      const bool retry = !initial && !healthy && now >= standby_retry_at;
+      if (initial || retry) {
+         if (retry) standby_cursor = (standby_cursor + limit) % candidates.size();
+         else if (standby_retry_at == std::chrono::steady_clock::time_point{}) {
+            if (!config.my_bp_gossip_accounts.empty())
+               standby_cursor = config.my_bp_gossip_accounts.begin()->first.to_uint64_t() % candidates.size();
+         }
+         retained.clear();
+         standby_retry_at = now + std::chrono::seconds(10);
+      }
+      // Keep already useful paths while filling only the bounded missing slots.
+      for (const auto& address : candidates)
+         if (retained.size() < limit && connected.contains(address)) retained.insert(address);
+      for (size_t i = 0; i < candidates.size() && retained.size() < limit; ++i)
+         retained.insert(candidates[(standby_cursor + i) % candidates.size()]);
+      standby_targets = retained;
+      return retained;
+   }
 
    Derived*       self() { return static_cast<Derived*>(this); }
    const Derived* self() const { return static_cast<const Derived*>(this); }
@@ -525,22 +566,35 @@ public:
    void connect_to_active_bp_peers() {
       if (!auto_bp_peering_enabled()) return;
       fc::lock_guard reconciliation(reconcile_mtx);
+      // Snapshot transport health before taking BP/gossip locks.
+      address_set_t connected;
+      if constexpr (requires { self()->connected_bp_peer_addresses(); })
+         for (const auto& address : self()->connected_bp_peer_addresses()) connected.insert(address);
+      auto now = std::chrono::steady_clock::now();
+      if constexpr (requires { self()->bp_peering_now(); }) now = self()->bp_peering_now();
       address_set_t addresses, removed, added;
       {
          fc::lock_guard gm(mtx);
          active_bps = active_bp_accounts(active_schedule);
          auto desired_accounts = active_schedule;
          desired_accounts.insert(pending_schedule_accounts.begin(), pending_schedule_accounts.end());
-         // Standby BPs keep their configured bootstrap connections and learn
-         // endpoints, without opening the full active mesh until scheduled.
+         // Eligible standbys keep a bounded learned reserve mesh, so losing
+         // their static seeds does not strand them before a schedule handoff.
          const bool scheduled = config.my_bp_gossip_accounts.empty() ||
             std::ranges::any_of(config.my_bp_gossip_accounts, [&](const auto& own) {
                return desired_accounts.contains(own.first);
             });
-         const bool gossip_ready = bp_gossip_enabled() && scheduled &&
+         const bool gossip_ready = bp_gossip_enabled() &&
             !!initial_gossip_msg_factory.get_initial_send_buffer();
-         if (gossip_ready) addresses = find_gossip_bp_addresses(desired_accounts, "connect");
-         else for (auto account : desired_accounts)
+         if (gossip_ready) {
+            addresses = find_gossip_bp_addresses(desired_accounts, "connect");
+            if (!scheduled) addresses = choose_standby_peers(addresses, connected, now);
+            else standby_targets.clear();
+         } else {
+            standby_targets.clear();
+            standby_retry_at = {};
+         }
+         if (!gossip_ready) for (auto account : desired_accounts)
             if (auto it = config.auto_bp_addresses.find(account); it != config.auto_bp_addresses.end())
                addresses.insert(it->second.address());
          for (const auto& old : dialed_bp_addresses)

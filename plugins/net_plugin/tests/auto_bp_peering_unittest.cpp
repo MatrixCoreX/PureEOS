@@ -51,6 +51,10 @@ struct mock_net_plugin : eosio::auto_bp_peering::bp_connection_manager<mock_net_
    std::vector<std::string>     p2p_addresses{"0.0.0.0:9876"};
    const std::string&           get_first_p2p_address() const { return *p2p_addresses.begin(); }
 
+   std::vector<std::string> mock_connected_addresses;
+   std::chrono::steady_clock::time_point mock_bp_now{};
+   std::vector<std::string> connected_bp_peer_addresses() { return mock_connected_addresses; }
+   std::chrono::steady_clock::time_point bp_peering_now() const { return mock_bp_now; }
    bool is_lib_catchup() { return lib_catchup; }
 
    void setup_test_peers() {
@@ -380,7 +384,7 @@ BOOST_AUTO_TEST_CASE(test_gossip_standby_and_local_identity_loss_keep_mesh_bound
    entry.cached_bp_peer_info.emplace("127.0.0.1:8002","127.0.0.1",eosio::block_timestamp_type{1000});
    plugin.gossip_bps.index.insert(entry);
    plugin.on_active_schedule({1,{{"prodb"_n,{}}}});
-   BOOST_CHECK(live.empty()); // Unsheduled local BP uses its separately managed static bootstrap.
+   BOOST_CHECK(live.contains("127.0.0.1:8002")); // Eligible standby also keeps learned reserve paths.
    plugin.on_pending_schedule({2,{{"proda"_n,{}},{"prodb"_n,{}}}});
    BOOST_CHECK(live.contains("127.0.0.1:8002"));
    plugin.initial_gossip_msg_factory.reset_initial_send_buffer();plugin.connect_to_active_bp_peers();
@@ -427,4 +431,42 @@ BOOST_AUTO_TEST_CASE(test_gossip_concurrent_reconciliation_cannot_leave_a_stale_
    first.get();second.get();
    BOOST_CHECK(live.empty());
    BOOST_CHECK(plugin.dialed_bp_addresses.empty());
+}
+
+BOOST_AUTO_TEST_CASE(test_gossip_standby_bounded_discovery_and_unreachable_target_retry) {
+   mock_net_plugin plugin; plugin.lib_catchup=false;
+   plugin.set_bp_producer_peers({"proda,127.0.0.1:8001,127.0.0.1"});
+   eosio::gossip_bp_peers_message::signed_bp_peer identity{{.producer_name="proda"_n}};
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);
+   std::set<std::string> live;
+   plugin.connections.resolve_and_connect=[&](std::string a,std::string){live.insert(a);};
+   plugin.connections.disconnect_gossip_connection=[&](std::string a){live.erase(a);};
+   eosio::chain::producer_authority_schedule schedule;
+   schedule.version=1;
+   const std::vector<eosio::name> peers={"prodb"_n,"prodc"_n,"prodd"_n,"prode"_n,"prodf"_n,"prodg"_n,"prodh"_n};
+   for(size_t i=0;i<peers.size();++i) {
+      schedule.producers.push_back({peers[i],{}});
+      eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name=peers[i]}};
+      entry.cached_bp_peer_info.emplace("127.0.0.1:"+std::to_string(8100+i),"127.0.0.1",eosio::block_timestamp_type{1000});
+      plugin.gossip_bps.index.insert(entry);
+   }
+   plugin.on_active_schedule(schedule);
+   BOOST_REQUIRE_MESSAGE(live.size()==3,"Eligible standby must dial three learned active peers, even when static seeds fail");
+   const auto first=live;
+   plugin.mock_bp_now+=std::chrono::seconds(9);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK(live==first);
+   plugin.mock_bp_now+=std::chrono::seconds(1);plugin.connect_to_active_bp_peers();
+   BOOST_REQUIRE_EQUAL(live.size(),3u);
+   size_t overlap=0;for(const auto& a:live)overlap+=first.contains(a);
+   BOOST_CHECK_MESSAGE(overlap==0,"Unreachable standby targets must rotate after bounded retry, without a schedule change");
+   const auto second=live;
+   plugin.mock_connected_addresses={*live.begin()};
+   plugin.mock_bp_now+=std::chrono::hours(1);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK_MESSAGE(live==second,"A useful standby path must remain stable");
+   plugin.mock_connected_addresses.clear();
+   plugin.mock_bp_now+=std::chrono::seconds(1);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK_EQUAL(live.size(),3u);
+   BOOST_CHECK(live!=second);
+   plugin.initial_gossip_msg_factory.reset_initial_send_buffer();plugin.connect_to_active_bp_peers();
+   BOOST_CHECK_MESSAGE(live.empty(),"Loss of eligible local identity must retire discovered standby paths");
 }

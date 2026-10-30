@@ -474,6 +474,7 @@ namespace eosio {
       chain_info_t                  chain_info GUARDED_BY(chain_info_mtx);
 
    public:
+      std::vector<std::string> connected_bp_peer_addresses();
       void update_chain_info();
       void update_chain_info(const block_id_type& fork_db_root_id);
       chain_info_t get_chain_info() const;
@@ -3989,6 +3990,18 @@ namespace eosio {
             }
          }
       });
+   }
+
+   std::vector<std::string> net_plugin_impl::connected_bp_peer_addresses() {
+      std::vector<std::string> result;
+      connections.for_each_connection([&](const connection_ptr& c) {
+         if (c->socket_is_open()) {
+            auto address = c->peer_address();
+            if (!address.empty()) result.push_back(std::move(address));
+         }
+         return true;
+      });
+      return result;
    }
 
    size_t calc_trx_size( const packed_transaction_ptr& trx ) {
