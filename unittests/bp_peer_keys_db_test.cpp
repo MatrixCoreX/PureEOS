@@ -27,6 +27,16 @@ int main(){try{
  require(!cache.get_peer_info(a)&&cache.get_peer_info(b)->key==k1,"removed producer invalidation");
  peer_keys_db_t empty;empty.set_active({});empty.update_peer_keys(120,{});
  require(!empty.should_update(121),"empty startup must not retry on every block");
+ // A BP that keeps its own key must still reconcile changed remote identities.
+ peer_keys_db_t remote;remote.set_active({a});
+ remote.update_peer_keys(1,{{a,k1},{b,k2}});require(remote.configured_peer_keys_updated(),"remote fixture initial update");
+ remote.update_peer_keys(120,{{a,k1},{b,k2}});require(!remote.configured_peer_keys_updated(),"unchanged roster must not trigger gossip");
+ remote.update_peer_keys(240,{{a,k1},{b,k1}});require(remote.configured_peer_keys_updated(),"remote-only key rotation must notify gossip");
+ require(remote.get_peer_info(a)->key==k1,"own signer unchanged by remote rotation");
+ remote.update_peer_keys(360,{{a,k1},{b,std::nullopt}});require(remote.configured_peer_keys_updated(),"remote-only key deletion must notify gossip");
+ remote.update_peer_keys(480,{{a,k1},{b,k2}});require(remote.configured_peer_keys_updated(),"remote-only key restoration must notify gossip");
+ remote.update_peer_keys(600,{{a,k1}});require(remote.configured_peer_keys_updated(),"remote-only membership removal must notify gossip");
+ remote.update_peer_keys(720,{{a,k1}});require(!remote.configured_peer_keys_updated(),"stable roster after removal must not trigger gossip");
  std::atomic<bool> done=false;std::atomic<unsigned> reads=0;
  std::thread reader([&]{while(!done.load()){cache.get_peer_info(a);cache.get_peer_info(b);++reads;}});
  while(reads.load()==0)std::this_thread::yield();

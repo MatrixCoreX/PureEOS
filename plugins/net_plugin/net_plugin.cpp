@@ -939,7 +939,7 @@ namespace eosio {
       void send_gossip_bp_peers_initial_message();
       void send_gossip_bp_peers_message();
    public:
-      static void send_gossip_bp_peers_message_to_bp_peers();
+      static void send_gossip_bp_peers_message_to_bp_peers(bool request_current_records = false);
 
       bool populate_handshake( handshake_message& hello ) const;
 
@@ -3961,12 +3961,19 @@ namespace eosio {
       enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
    }
 
-   void connection::send_gossip_bp_peers_message_to_bp_peers() {
+   void connection::send_gossip_bp_peers_message_to_bp_peers(bool request_current_records) {
       assert(my_impl->bp_gossip_enabled());
-      my_impl->connections.for_each_connection([](const connection_ptr& c) {
+      my_impl->connections.for_each_connection([request_current_records](const connection_ptr& c) {
          gossip_buffer_factory factory;
          if (c->protocol_version >= proto_version_t::gossip_bp_peers && c->socket_is_open()) {
             if (c->bp_connection == bp_connection_type::bp_gossip) {
+               if (request_current_records) {
+                  // A new remote key may previously have arrived before our
+                  // chain cache. Request its current signed record explicitly.
+                  // Still publish our own fresh records below, so peers whose
+                  // requests arrived before our local key was ready can recover.
+                  boost::asio::post(c->strand, [c]() { c->send_gossip_bp_peers_initial_message(); });
+               }
                const send_buffer_type& sb = my_impl->get_gossip_bp_send_buffer(factory);
                if (!sb) return;
                boost::asio::post(c->strand, [sb, c]() {
@@ -4186,8 +4193,9 @@ namespace eosio {
          boost::asio::post(thread_pool.get_executor(), [this]() {
             try {
                update_bp_producer_peers();
+               expire_gossip_bp_peers();
                my_impl->connect_to_active_bp_peers();
-               connection::send_gossip_bp_peers_message_to_bp_peers();
+               connection::send_gossip_bp_peers_message_to_bp_peers(true);
             } catch (fc::exception& e) {
                fc_elog( p2p_log, "Unable to update bp producer peers, error: ${e}", ("e", e.to_detail_string()));
             }

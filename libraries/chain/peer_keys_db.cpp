@@ -27,6 +27,8 @@ void peer_keys_db_t::update_peer_keys(block_num_type block_num, const getpeerkey
    for (size_t i=0; i<v.size(); ++i)
       current[v[i].producer_name] = peer_info_t{static_cast<uint32_t>(i), v[i].peer_key};
 
+   // Any roster/key/rank change requires gossip reconciliation. A remote
+   // key can change while our own signing credential stays unchanged.
    bool configured_bp_peers_updated = false;
    fc::lock_guard g(_m);
 
@@ -34,8 +36,7 @@ void peer_keys_db_t::update_peer_keys(block_num_type block_num, const getpeerkey
    // --------------------------------------------------------
    for (auto it = _peer_info_map.begin(); it != _peer_info_map.end(); ) {
       if (!current.contains(it->first)) {
-         if (_configured_bp_peers.contains(it->first))
-            configured_bp_peers_updated = true;
+         configured_bp_peers_updated = true;
          it = _peer_info_map.erase(it);
       } else {
          ++it;
@@ -47,8 +48,7 @@ void peer_keys_db_t::update_peer_keys(block_num_type block_num, const getpeerkey
    for (auto& pi : current) {
       if (!_peer_info_map.contains(pi.first) || _peer_info_map[pi.first] != pi.second) {
          _peer_info_map[pi.first] = pi.second;
-         if (_configured_bp_peers.contains(pi.first))
-            configured_bp_peers_updated = true;
+         configured_bp_peers_updated = true;
       }
    }
 
