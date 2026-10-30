@@ -1,5 +1,6 @@
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.system/maintenance.hpp>
+#include <eosio.system/rotation.hpp>
 #include <eosio.system/upgrade_governance.hpp>
 #include <algorithm>
 #include <limits>
