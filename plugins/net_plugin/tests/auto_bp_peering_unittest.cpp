@@ -444,10 +444,13 @@ BOOST_AUTO_TEST_CASE(test_gossip_standby_bounded_discovery_and_unreachable_targe
    eosio::chain::producer_authority_schedule schedule;
    schedule.version=1;
    const std::vector<eosio::name> peers={"prodb"_n,"prodc"_n,"prodd"_n,"prode"_n,"prodf"_n,"prodg"_n,"prodh"_n};
+   const auto signer=fc::crypto::private_key::generate();
    for(size_t i=0;i<peers.size();++i) {
       schedule.producers.push_back({peers[i],{}});
       eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name=peers[i]}};
       entry.cached_bp_peer_info.emplace("127.0.0.1:"+std::to_string(8100+i),"127.0.0.1",eosio::block_timestamp_type{1000});
+      entry.bp_peer_info=fc::raw::pack(*entry.cached_bp_peer_info);
+      entry.sig=signer.sign(entry.digest(eosio::chain::chain_id_type{}));
       plugin.gossip_bps.index.insert(entry);
    }
    plugin.on_active_schedule(schedule);
