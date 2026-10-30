@@ -1,0 +1,120 @@
+{
+  "status": "PASS",
+  "all_published_assets_downloaded_and_SHA256_verified": true,
+  "download_checks": 14,
+  "checked_UTC": "2026-10-30T14:37:49Z",
+  "assets": [
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "RELEASE_MANIFEST.json",
+      "bytes": 8477,
+      "sha256": "f62891d3a1f312e9430df5848fb960ea0e83c11282afbb7d86f6c1f8bae50048",
+      "asset_id": 692377915
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "SHA256SUMS",
+      "bytes": 913,
+      "sha256": "2f95852296d8739bb112671b19c40f72088c33d46837478c297b081340e4ab58",
+      "asset_id": 692377742
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-baseline-2026.10.30-acceptance-evidence.tar.gz",
+      "bytes": 49543,
+      "sha256": "167d2731681e9e36f1295598f143911742870234f0f3ff8cecff957f2957cda0",
+      "asset_id": 692378185
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-baseline-2026.10.30-linux-x86_64.tar.gz",
+      "bytes": 42990244,
+      "sha256": "970e58b453bb3151e8b8fabb29512bdc11f92bd91fa106e512cac31c32822b68",
+      "asset_id": 692378943
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-baseline-2026.10.30-runtime-source.tar.gz",
+      "bytes": 141069271,
+      "sha256": "2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe",
+      "asset_id": 692379307
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-baseline-2026.10.30-source.tar.gz",
+      "bytes": 235289903,
+      "sha256": "33deea578e6007d74bf45e32179f7141879591efafd10fb90667c89b297de2f9",
+      "asset_id": 692381300
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-baseline-2026.10.30-system-contracts.tar.gz",
+      "bytes": 1312985,
+      "sha256": "9941f9f7477fc6132605b183f95255bfbf96124a74df0b5d0a7c3e7c43ce7b71",
+      "asset_id": 692378443
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-cdt-1.0.0-baseline-2026.10.30-source.tar.gz",
+      "bytes": 5173097,
+      "sha256": "dc43168171eeca1688def2fe3400aa9ba28eab37497afcef9eb929d7ba5b0f1a",
+      "asset_id": 692378671
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS",
+      "name": "pureeos-cdt-1.0.0-baseline-2026.10.30-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 220081790,
+      "sha256": "1562873a37f28296efae0d2366211984bd2541f3601bf031099fefa4b9f11e4c",
+      "asset_id": 692380074
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS-CDT",
+      "name": "RELEASE_MANIFEST.json",
+      "bytes": 8477,
+      "sha256": "f62891d3a1f312e9430df5848fb960ea0e83c11282afbb7d86f6c1f8bae50048",
+      "asset_id": 692382726
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS-CDT",
+      "name": "SHA256SUMS",
+      "bytes": 913,
+      "sha256": "2f95852296d8739bb112671b19c40f72088c33d46837478c297b081340e4ab58",
+      "asset_id": 692382562
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS-CDT",
+      "name": "pureeos-baseline-2026.10.30-acceptance-evidence.tar.gz",
+      "bytes": 49543,
+      "sha256": "167d2731681e9e36f1295598f143911742870234f0f3ff8cecff957f2957cda0",
+      "asset_id": 692382950
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS-CDT",
+      "name": "pureeos-cdt-1.0.0-baseline-2026.10.30-source.tar.gz",
+      "bytes": 5173097,
+      "sha256": "dc43168171eeca1688def2fe3400aa9ba28eab37497afcef9eb929d7ba5b0f1a",
+      "asset_id": 692383130
+    },
+    {
+      "repository": "MatrixCoreX/PureEOS-CDT",
+      "name": "pureeos-cdt-1.0.0-baseline-2026.10.30-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 220081790,
+      "sha256": "1562873a37f28296efae0d2366211984bd2541f3601bf031099fefa4b9f11e4c",
+      "asset_id": 692383359
+    }
+  ],
+  "releases": {
+    "MatrixCoreX/PureEOS": {
+      "url": "https://github.com/MatrixCoreX/PureEOS/releases/tag/baseline-2026.10.30",
+      "tag": "baseline-2026.10.30",
+      "head": "0b78fb08a5ca808b7caf4c0d4ecadda9ea4921d9",
+      "published_at": "2026-10-30T14:35:51Z"
+    },
+    "MatrixCoreX/PureEOS-CDT": {
+      "url": "https://github.com/MatrixCoreX/PureEOS-CDT/releases/tag/baseline-2026.10.30",
+      "tag": "baseline-2026.10.30",
+      "head": "b83d664ad5c05029bd509065e699436138fb98dd",
+      "published_at": "2026-10-30T14:35:55Z"
+    }
+  }
+}

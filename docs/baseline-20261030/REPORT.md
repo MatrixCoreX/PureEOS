@@ -1,6 +1,6 @@
 # 最终关闭状态 / Final closure
 
-154/154用例已通过，包括BAN-07/BAN-10三机补测及归档、逐笔、源码基线、本地MD同步和服务器清理。额外两台已删除且API确认不存在，原主服务器保留。新发行尚待上传和下载摘要核验。
+154/154用例已通过，包括BAN-07/BAN-10三机补测及归档、逐笔、源码基线、本地MD同步和服务器清理。额外两台已删除且API确认不存在，原主服务器保留。新发行已发布，14个发行资产下载检查SHA256均一致，见PUBLICATION_VERIFIED.json。
 
 # PureEOS 三机功能验收 / Three-host functional qualification
 
