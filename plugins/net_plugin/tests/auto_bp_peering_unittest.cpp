@@ -450,7 +450,7 @@ BOOST_AUTO_TEST_CASE(test_gossip_standby_bounded_discovery_and_unreachable_targe
       eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name=peers[i]}};
       entry.cached_bp_peer_info.emplace("127.0.0.1:"+std::to_string(8100+i),"127.0.0.1",eosio::block_timestamp_type{1000});
       entry.bp_peer_info=fc::raw::pack(*entry.cached_bp_peer_info);
-      entry.sig=signer.sign(entry.digest(eosio::chain::chain_id_type{}));
+      entry.sig=signer.sign(entry.digest(eosio::chain::chain_id_type{fc::sha256::hash(std::string("standby-component-chain"))}));
       plugin.gossip_bps.index.insert(entry);
    }
    plugin.on_active_schedule(schedule);
