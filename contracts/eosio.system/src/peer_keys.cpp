@@ -72,6 +72,9 @@ peer_keys::getpeerkeys_res_t peer_keys::getpeerkeys() {
    // when votes have moved. This action never changes either consensus policy.
    const auto context = peer_rotation_context();
    for (const auto& producer : context.producers) append(producer.producer_name);
+   // Proposer and finalizer policies can be at different handoff stages.
+   // A finalizer that still has native duty retains discovery until released.
+   for (const auto& finalizer : context.finalizers) append(eosio::name{finalizer.description});
    uint32_t ranked_limit = 210;
    if (rotation.exists()) {
       const auto state = rotation.get();
