@@ -4,9 +4,9 @@
 #include <cstdint>
 
 namespace eosiosystem::rewards {
-// Preserve the old NODE funding rate, not the old total inflation:
-// ln(1.05) * 20%. The cancelled 80% is never issued or sent to savings.
-inline constexpr double initial_continuous_rate = 0.04879016416943201 / 5.0;
+// Accrue block rewards at exactly 1% of issued supply per contract year.
+// No additional savings issuance; future eras halve this coefficient.
+inline constexpr double initial_continuous_rate = 0.01;
 inline constexpr int64_t block_pay_factor = 10000; // 100% block pay; no vote pay
 inline constexpr uint64_t year_usecs = uint64_t(364) * 86400 * 1000000;
 // Same definition of four years as the candidate-capacity growth policy.
