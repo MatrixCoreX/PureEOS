@@ -51,10 +51,9 @@ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
 }
 
 void pause_penalties(rotation_info& s) {
-   if (!s.penalty_paused) {
-      check(s.penalty_epoch != uint64_t(-1), "penalty epoch exhausted");
-      ++s.penalty_epoch;
-   }
+   // Pause new observations, not already settled personal evidence. Changing
+   // penalty_epoch here would silently forgive prior valid one/two-window
+   // streaks. Permanent bans and their evidence remain untouched as well.
    s.penalty_paused = true;
    s.window_start = 0;
    s.window_members.clear();
@@ -64,9 +63,9 @@ void pause_penalties(rotation_info& s) {
 
 void observe_windows(rotation_info& s, rotation_candidates& candidates,
                      const rotation_context_v1& ctx, name producer, bool full_size, bool coherent) {
-   const bool gap = s.last_slot && uint64_t(ctx.slot) - s.last_slot > rotation::pause_guard_slots;
+   const bool gap = s.last_slot && uint64_t(ctx.slot) - s.last_slot >= rotation::pause_guard_slots;
    s.last_slot = ctx.slot;
-   if (!full_size || gap || uint64_t(ctx.slot) - ctx.final_slot > rotation::pause_guard_slots) {
+   if (!full_size || gap || uint64_t(ctx.slot) - ctx.final_slot >= rotation::pause_guard_slots) {
       pause_penalties(s);
       return;
    }
@@ -243,7 +242,7 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
    check(ctx.slot == timestamp.slot, "onblock must describe executed parent block");
    s.capacity = rotation::candidate_capacity(s.growth_start_slot, ctx.slot);
    rotation_candidates candidates(get_self(), get_self().value);
-   const bool observation_gap = s.last_slot && uint64_t(ctx.slot) - s.last_slot > rotation::pause_guard_slots;
+   const bool observation_gap = s.last_slot && uint64_t(ctx.slot) - s.last_slot >= rotation::pause_guard_slots;
    // Outside a snapshot, user mutations update both indexes directly and do
    // not add dirty rows. Thus this drain has a finite, monotonically shrinking
    // workload even under continuous voting; policy handoffs need not wait.
@@ -295,7 +294,7 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
             begin_observation(s, ctx.slot);
          }
       } else if (s.stage == 2) {
-         if (observation_gap || uint64_t(ctx.slot) - ctx.final_slot > rotation::pause_guard_slots) {
+         if (observation_gap || uint64_t(ctx.slot) - ctx.final_slot >= rotation::pause_guard_slots) {
             // A whole-chain/finality pause is not evidence against the entrant.
             begin_observation(s, ctx.slot);
             s.blocked = 1;

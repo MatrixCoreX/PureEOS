@@ -7,7 +7,9 @@ constexpr uint64_t growth_period_slots = uint64_t(1461) * 86400 * 2;
 constexpr uint32_t rank_work_budget = 16;
 constexpr uint32_t queue_work_budget = 16;
 constexpr uint32_t window_settle_budget = 8;
-constexpr uint32_t pause_guard_slots = 4 * 21 * 12;
+// A full 21-member schedule round without chain/finality progress is a
+// global interruption, before three synthetic personal misses could accrue.
+constexpr uint32_t pause_guard_slots = 21 * 12;
 constexpr uint32_t pending_window_limit = 192;
 inline uint32_t candidate_capacity(uint64_t origin, uint64_t slot) {
    const auto elapsed = slot > origin ? slot - origin : 0;
