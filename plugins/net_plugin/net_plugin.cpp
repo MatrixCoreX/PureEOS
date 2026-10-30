@@ -3900,8 +3900,10 @@ namespace eosio {
          return;
 
       if (!my_impl->bp_gossip_initialized()) {
-         bp_connection = bp_connection_type::bp_gossip_validating;
-         peer_dlog(p2p_msg_log, this, "received gossip_bp_peers_message before bp gossip initialized");
+         // No peer signature has been verified yet. Keep ordinary connections
+         // subject to ordinary client limits while waiting for local keys.
+         gossip_initial_pending.store(true, std::memory_order_relaxed);
+         peer_dlog(p2p_msg_log, this, "received BP gossip before local keys; retry remains unprivileged");
          return;
       }
 
