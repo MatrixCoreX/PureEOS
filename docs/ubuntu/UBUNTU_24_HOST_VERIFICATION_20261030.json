@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-30",
+  "scope": "Verified physical Ubuntu 24.04.5 host execution with matching Ubuntu 26.10 runtime; expanded feature campaign in progress",
+  "physical_servers": 3,
+  "BP_instances": 30,
+  "minimum_hardware": {
+    "physical_cores": 8,
+    "logical_threads": 16,
+    "system_visible_memory_bytes": 64000000000
+  },
+  "node_source": "4ede04b47318fdff90389a0450098bc94dd9d3c0",
+  "node_sha256": "6e9c668586dfae11f82a461028a734704e853b32f7acc1232559ffbf4de68cf7",
+  "system_wasm_sha256": "5f25a25816fc6db145dbd811d9c24dd99c9b9b1fd260b8e16a045476d0c3c11a",
+  "baseline_promoted": false,
+  "TPS": "unmeasured",
+  "hosts": [
+    {
+      "host": "A",
+      "os": "Ubuntu 24.04.5 LTS",
+      "architecture": "x86_64",
+      "kernel": "6.8.0-146-generic",
+      "host_glibc": "glibc 2.39",
+      "node_runtime_scope": "isolated rootfs userland on this Ubuntu host",
+      "node_runtime_glibc": "glibc 2.44"
+    },
+    {
+      "host": "B",
+      "os": "Ubuntu 24.04.5 LTS",
+      "architecture": "x86_64",
+      "kernel": "6.8.0-146-generic",
+      "host_glibc": "glibc 2.39",
+      "node_runtime_scope": "matching loader and shared libraries bundled with this functional test binary",
+      "node_runtime_glibc": "GNU C Library (Ubuntu GLIBC 2.44-1ubuntu2) stable release version 2.44."
+    },
+    {
+      "host": "C",
+      "os": "Ubuntu 24.04.5 LTS",
+      "architecture": "x86_64",
+      "kernel": "6.8.0-146-generic",
+      "host_glibc": "glibc 2.39",
+      "node_runtime_scope": "matching loader and shared libraries bundled with this functional test binary",
+      "node_runtime_glibc": "GNU C Library (Ubuntu GLIBC 2.44-1ubuntu2) stable release version 2.44."
+    }
+  ]
+}
