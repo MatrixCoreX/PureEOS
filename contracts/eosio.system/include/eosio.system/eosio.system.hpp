@@ -1617,6 +1617,9 @@ namespace eosiosystem {
           */
          [[eosio::action]]
          void setramrate( uint16_t bytes_per_block );
+#ifdef PUREEOS_BP_MAINTENANCE
+         [[eosio::action]] void setmaint(const name& producer, bool maintenance);
+#endif
 
          /**
           * Vote producer action, votes for a set of producers. This action updates the list of `producers` voted for,
@@ -2007,6 +2010,9 @@ namespace eosiosystem {
          void update_elected_producers( const block_timestamp& timestamp );
 #ifdef PUREEOS_SEQUENTIAL_ROTATION
          void advance_rotation(const block_timestamp& timestamp, name producer);
+#ifdef PUREEOS_BP_MAINTENANCE
+         void advance_maintenance();
+#endif
          void refresh_rotation_candidate(name producer, bool reserve = false);
 #endif
          void update_votes( const name& voter, const name& proxy, const std::vector<name>& producers, bool voting );

@@ -1,3 +1,6 @@
+#ifdef PUREEOS_BP_MAINTENANCE
+#include <eosio.system/maintenance.hpp>
+#endif
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.system/rotation.hpp>
 #include <eosio.system/upgrade_governance.hpp>
@@ -376,7 +379,11 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
    name incoming, outgoing;
    const auto eligible = [&](name n) {
       auto c = candidates.find(n.value);
-      return c != candidates.end() && !c->banned && c->seen_epoch == s.published_epoch && c->rank < invalid_rank_floor;
+      return c != candidates.end() && !c->banned && c->seen_epoch == s.published_epoch && c->rank < invalid_rank_floor
+#ifdef PUREEOS_BP_MAINTENANCE
+         && !maintenance_excludes(get_self(),n)
+#endif
+         ;
    };
    for (auto n : s.active) if (banned(n)) { outgoing = n; break; }
    const auto retry = s.retry_outgoing.value_or(name{});

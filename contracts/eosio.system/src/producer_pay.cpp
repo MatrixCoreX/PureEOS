@@ -1,3 +1,6 @@
+#ifdef PUREEOS_BP_MAINTENANCE
+#include <eosio.system/maintenance.hpp>
+#endif
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.token/eosio.token.hpp>
 
@@ -44,6 +47,9 @@ namespace eosiosystem {
 #ifdef PUREEOS_SEQUENTIAL_ROTATION
       // Consensus rotation does not depend on the reward activation clock.
       advance_rotation(timestamp, producer);
+#ifdef PUREEOS_BP_MAINTENANCE
+      advance_maintenance();
+#endif
 #endif
 #ifdef PUREEOS_SINGLE_CHOICE_VOTING
       if (_rammarket.begin() != _rammarket.end()) sync_reward_policy();
@@ -62,7 +68,11 @@ namespace eosiosystem {
        * and therefore there may be no producer object for them.
        */
       auto prod = _producers.find( producer.value );
-      if ( prod != _producers.end() ) {
+      if ( prod != _producers.end()
+#ifdef PUREEOS_BP_MAINTENANCE
+           && !maintenance_paused(get_self(),producer)
+#endif
+         ) {
          _gstate.total_unpaid_blocks++;
          _producers.modify( prod, same_payer, [&](auto& p ) {
                p.unpaid_blocks++;

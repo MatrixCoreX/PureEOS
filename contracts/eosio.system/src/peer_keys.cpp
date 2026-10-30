@@ -1,3 +1,6 @@
+#ifdef PUREEOS_BP_MAINTENANCE
+#include <eosio.system/maintenance.hpp>
+#endif
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.system/peer_keys.hpp>
 #include <algorithm>
@@ -93,6 +96,9 @@ peer_keys::getpeerkeys_res_t peer_keys::getpeerkeys() {
    for (auto it = ranked.begin(); it != ranked.end() && inspected < ranked_limit &&
         it->rank < invalid_rank_floor; ++it, ++inspected) {
       if (it->banned) continue;
+#ifdef PUREEOS_BP_MAINTENANCE
+      if(maintenance_excludes(get_self(),it->owner))continue;
+#endif
       const auto producer = producers.find(it->owner.value);
       const auto finalizer = finalizers.find(it->owner.value);
       if (producer != producers.end() && producer->active() &&

@@ -1,3 +1,8 @@
+option(PUREEOS_BP_MAINTENANCE "Enable planned BP maintenance through normal rotation handoff" OFF)
+if(PUREEOS_BP_MAINTENANCE AND NOT PUREEOS_SEQUENTIAL_ROTATION)
+  message(FATAL_ERROR "BP maintenance requires sequential rotation")
+endif()
+
 add_contract(
   eosio.system
   eosio.system
@@ -14,6 +19,11 @@ add_contract(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/voting.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/limit_auth_changes.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/block_info.cpp)
+
+if(PUREEOS_BP_MAINTENANCE)
+  target_sources(eosio.system PRIVATE src/maintenance.cpp)
+  target_compile_definitions(eosio.system PUBLIC PUREEOS_BP_MAINTENANCE)
+endif()
 
 if(PUREEOS_BP_PEERING)
   target_sources(eosio.system PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/peer_keys.cpp)
