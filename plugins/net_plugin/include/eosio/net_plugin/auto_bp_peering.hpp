@@ -35,6 +35,8 @@ class bp_connection_manager {
    using address_set_t = boost::unordered_flat_set<std::string>;
 
    gossip_bp_index_t      gossip_bps;
+   // Protected by gossip_bps.mtx; retries must not repeatedly flood the log.
+   flat_set<account_name> unavailable_gossip_signers;
 
    struct bp_gossip_endpoint_t {
       std::string server_endpoint;      // externally known inbound endpoint host:port
@@ -270,45 +272,54 @@ public:
       fc::lock_guard g(gossip_bps.mtx);
       initial_gossip_msg_factory.reset_initial_send_buffer();
       bool initial_updated = false;
-      // normally only one bp peer account except in testing scenarios or test chains
       const auto& cc = self()->chain_plug->chain();
       block_timestamp_type expire = self()->head_block_time.load() + bp_gossip_peer_expiration;
-      fc_dlog(p2p_log, "Updating BP gossip_bp_peers_message with expiration ${e}", ("e", expire));
-      for (const auto& my_bp_account : config.my_bp_gossip_accounts) { // my_bp_gossip_accounts not modified after plugin startup
-         const auto& bp_account = my_bp_account.first;
-         std::optional<peer_info_t> peer_info = cc.get_peer_info(bp_account);
-         if (peer_info && peer_info->key) {
-            for (const auto& le : my_bp_account.second) {
-               fc_dlog(p2p_log, "Updating BP gossip_bp_peers_message for ${a} address ${s}", ("a", bp_account)("s", le.server_endpoint));
-               if (!initial_updated) {
-                  // update initial so always an active one
-                  gossip_bp_peers_message::signed_bp_peer signed_empty{{.producer_name = bp_account}}; // .server_endpoint not set for initial message
-                  signed_empty.sig = self()->sign_compact(*peer_info->key, signed_empty.digest(self()->chain_id));
-                  EOS_ASSERT(signed_empty.sig != signature_type{}, chain::plugin_config_exception,
-                             "Unable to sign empty gossip bp peer of ${a}, private key not found for ${k}", ("a", bp_account)("k", peer_info->key->to_string({})));
-                  initial_gossip_msg_factory.set_initial_send_buffer(signed_empty);
-                  initial_updated = true;
-               }
-               // update gossip_bps
-               auto& prod_idx = gossip_bps.index.get<by_producer>();
+      auto& prod_idx = gossip_bps.index.get<by_producer>();
+      const auto forget_own_proofs = [&](account_name account) {
+         auto range = prod_idx.equal_range(account);
+         prod_idx.erase(range.first, range.second);
+      };
+      for (const auto& [bp_account, endpoints] : config.my_bp_gossip_accounts) {
+         const auto peer_info = cc.get_peer_info(bp_account);
+         if (!peer_info || !peer_info->key) {
+            forget_own_proofs(bp_account);
+            if (unavailable_gossip_signers.insert(bp_account).second)
+               fc_wlog(p2p_log, "On-chain peer-key not found for configured BP ${a}; continuing ordinary P2P without a local BP proof", ("a", bp_account));
+            continue;
+         }
+         try {
+            // Prepare all proofs before publishing any. A missing/temporarily
+            // unavailable signer must not expose a partial or stale identity.
+            gossip_bp_peers_message::signed_bp_peer initial{{.producer_name = bp_account}};
+            initial.sig = self()->sign_compact(*peer_info->key, initial.digest(self()->chain_id));
+            EOS_ASSERT(initial.sig != signature_type{}, chain::plugin_config_exception, "Empty BP gossip signature");
+            std::vector<gossip_bp_peers_message::signed_bp_peer> prepared;
+            for (const auto& endpoint : endpoints) {
                gossip_bp_peers_message::signed_bp_peer peer{{.producer_name = bp_account}};
-               peer.cached_bp_peer_info.emplace(le.server_endpoint, le.outbound_ip_address, expire);
-               peer.bp_peer_info = fc::raw::pack<gossip_bp_peers_message::bp_peer_info_v1>(*peer.cached_bp_peer_info);
+               peer.cached_bp_peer_info.emplace(endpoint.server_endpoint, endpoint.outbound_ip_address, expire);
+               peer.bp_peer_info = fc::raw::pack(*peer.cached_bp_peer_info);
                peer.sig = self()->sign_compact(*peer_info->key, peer.digest(self()->chain_id));
-               EOS_ASSERT(peer.sig != signature_type{}, chain::plugin_config_exception, "Unable to sign bp peer ${p}, private key not found for ${k}",
-                          ("p", peer.producer_name)("k", peer_info->key->to_string({})));
-               if (auto i = prod_idx.find(std::forward_as_tuple(bp_account, le.server_endpoint, le.outbound_ip_address)); i != prod_idx.end()) {
-                  gossip_bps.index.modify(i, [&peer](auto& v) {
-                     v.bp_peer_info        = peer.bp_peer_info;
-                     v.cached_bp_peer_info = peer.cached_bp_peer_info;
-                     v.sig                 = peer.sig;
-                  });
-               } else {
-                  gossip_bps.index.emplace(peer);
-               }
+               EOS_ASSERT(peer.sig != signature_type{}, chain::plugin_config_exception, "Empty BP gossip endpoint signature");
+               prepared.emplace_back(std::move(peer));
             }
-         } else {
-            fc_wlog(p2p_log, "On-chain peer-key not found for configured BP ${a}", ("a", bp_account));
+            if (!initial_updated) {
+               initial_gossip_msg_factory.set_initial_send_buffer(initial);
+               initial_updated = true;
+            }
+            for (auto& peer : prepared) {
+               if (auto it = prod_idx.find(std::forward_as_tuple(bp_account, peer.server_endpoint(), peer.outbound_ip_address())); it != prod_idx.end())
+                  prod_idx.modify(it, [&peer](auto& value) {
+                     value.bp_peer_info = peer.bp_peer_info;
+                     value.cached_bp_peer_info = peer.cached_bp_peer_info;
+                     value.sig = peer.sig;
+                  });
+               else gossip_bps.index.emplace(std::move(peer));
+            }
+            unavailable_gossip_signers.erase(bp_account);
+         } catch (const fc::exception& error) {
+            forget_own_proofs(bp_account);
+            if (unavailable_gossip_signers.insert(bp_account).second)
+               fc_wlog(p2p_log, "BP gossip signing unavailable for ${a} using current peer key ${k} (error ${c}); continuing ordinary P2P without a local BP proof", ("a", bp_account)("k", *peer_info->key)("c", error.code()));
          }
       }
    }
@@ -530,7 +541,7 @@ public:
       const bool own_expiring = std::ranges::any_of(idx.begin(), soon, [&](const auto& peer) {
          return config.my_bp_gossip_accounts.contains(peer.producer_name);
       });
-      return changed || own_expiring;
+      return changed || own_expiring || !unavailable_gossip_signers.empty();
    }
 
    address_set_t find_gossip_bp_addresses(const name_set_t& accounts, const char* desc) const {

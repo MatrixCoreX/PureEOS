@@ -16,6 +16,17 @@ struct auth_net : eosio::auto_bp_peering::bp_connection_manager<auth_net,auth_co
    auth_chain_plugin* chain_plug=&plugin;
    chain_id_type chain_id=chain_id_type::empty_chain_id();
    std::atomic<fc::time_point> head_block_time{block_timestamp_type{10000}.to_time_point()};
+   std::map<public_key_type, private_key_type> local_signers;
+   unsigned sign_calls = 0, fail_on_call = 0;
+   bool return_empty = false;
+   signature_type sign_compact(const public_key_type& key, const fc::sha256& digest) {
+      ++sign_calls;
+      if (return_empty) return {};
+      auto it = local_signers.find(key);
+      EOS_ASSERT(it != local_signers.end() && sign_calls != fail_on_call,
+                 producer_priv_key_not_found, "Test signer unavailable");
+      return it->second.sign(digest);
+   }
    fc::logger get_logger() const {return fc::logger::get(DEFAULT_LOGGER);}
 };
 using message=eosio::gossip_bp_peers_message;
@@ -81,4 +92,40 @@ BOOST_AUTO_TEST_CASE(gossip_endpoint_count_is_eight_and_malformed_data_is_reject
    BOOST_CHECK(!accepts(net,malformed));
    auto duplicate=eight;duplicate.peers[1]=duplicate.peers[0];
    BOOST_CHECK(!accepts(net,duplicate));
+}
+
+BOOST_AUTO_TEST_CASE(gossip_missing_local_signer_fails_closed_without_stopping_ordinary_network) {
+   auth_net net;const auto key=private_key_type::generate(),fresh=private_key_type::generate(),other=private_key_type::generate();
+   auto& cache=net.plugin.database.keys;
+   cache.update_peer_keys(120,{{"alice"_n,key.get_public_key()},{"bob"_n,other.get_public_key()}});
+   net.set_bp_producer_peers({"alice,127.0.0.1:8001,127.0.0.1"});
+   remember(net,signed_endpoint(net,"alice"_n,key));remember(net,signed_endpoint(net,"bob"_n,other,"127.0.0.1:8002"));
+   BOOST_CHECK_NO_THROW(net.update_bp_producer_peers());
+   BOOST_CHECK(!net.initial_gossip_msg_factory.get_initial_send_buffer());
+   BOOST_CHECK(net.find_gossip_bp_addresses({"alice"_n},"test").empty());
+   BOOST_CHECK_EQUAL(net.find_gossip_bp_addresses({"bob"_n},"test").size(),1u);
+   BOOST_CHECK(net.expire_gossip_bp_peers()); // a signer outage remains retryable
+   net.local_signers.emplace(key.get_public_key(),key);
+   BOOST_CHECK_NO_THROW(net.update_bp_producer_peers());
+   BOOST_CHECK(!!net.initial_gossip_msg_factory.get_initial_send_buffer());
+   BOOST_CHECK_EQUAL(net.find_gossip_bp_addresses({"alice"_n},"test").size(),1u);
+   net.return_empty=true;BOOST_CHECK_NO_THROW(net.update_bp_producer_peers());
+   BOOST_CHECK(!net.initial_gossip_msg_factory.get_initial_send_buffer());
+   BOOST_CHECK(net.find_gossip_bp_addresses({"alice"_n},"test").empty());
+   net.return_empty=false;net.sign_calls=0;net.fail_on_call=2;
+   BOOST_CHECK_NO_THROW(net.update_bp_producer_peers()); // initial signed, endpoint failed
+   BOOST_CHECK(!net.initial_gossip_msg_factory.get_initial_send_buffer());
+   BOOST_CHECK(net.find_gossip_bp_addresses({"alice"_n},"test").empty());
+   net.fail_on_call=0;BOOST_CHECK_NO_THROW(net.update_bp_producer_peers());
+   cache.update_peer_keys(240,{{"alice"_n,fresh.get_public_key()},{"bob"_n,other.get_public_key()}});
+   BOOST_CHECK_NO_THROW(net.update_bp_producer_peers());
+   BOOST_CHECK(!net.initial_gossip_msg_factory.get_initial_send_buffer());
+   BOOST_CHECK(net.find_gossip_bp_addresses({"alice"_n},"test").empty());
+   net.local_signers.emplace(fresh.get_public_key(),fresh);
+   BOOST_CHECK_NO_THROW(net.update_bp_producer_peers());
+   BOOST_CHECK(!!net.initial_gossip_msg_factory.get_initial_send_buffer());
+   BOOST_CHECK_EQUAL(net.find_gossip_bp_addresses({"alice"_n},"test").size(),1u);
+   const auto signed_now=signed_endpoint(net,"alice"_n,fresh);
+   BOOST_CHECK(accepts(net,message{{signed_now}}));
+   BOOST_CHECK(!accepts(net,message{{signed_endpoint(net,"alice"_n,key)}}));
 }
