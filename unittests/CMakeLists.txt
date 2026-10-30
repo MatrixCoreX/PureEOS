@@ -95,6 +95,21 @@ add_test(NAME pureeos_resource_limits_boundary COMMAND resource_limits_boundary_
   --run_test=resource_limits_test --report_level=detailed --color_output=no)
 set_tests_properties(pureeos_resource_limits_boundary PROPERTIES TIMEOUT 120 LABELS "resources;integer-boundary")
 
+# Preserve original Undo behavior and mapped layout while testing wrapper reuse.
+add_executable(chainbase_session_cache_test ../tests/chainbase_session_cache_test.cpp)
+target_link_libraries(chainbase_session_cache_test PRIVATE chainbase)
+add_test(NAME pureeos_chainbase_session_cache COMMAND chainbase_session_cache_test)
+set_tests_properties(pureeos_chainbase_session_cache PROPERTIES TIMEOUT 120 LABELS "chainbase;undo;session-cache")
+
+add_executable(chainbase_session_controller_test main.cpp database_tests.cpp)
+target_link_libraries(chainbase_session_controller_test PRIVATE eosio_chain_wrap state_history chainbase
+  eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS})
+target_compile_options(chainbase_session_controller_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+target_include_directories(chainbase_session_controller_test PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
+add_test(NAME pureeos_chainbase_session_controller COMMAND chainbase_session_controller_test
+  --run_test=database_tests --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_chainbase_session_controller PROPERTIES TIMEOUT 300 LABELS "chainbase;undo;controller;block-log")
+
 target_link_libraries( unit_test eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase ${PLATFORM_SPECIFIC_LIBS} )
 target_link_libraries(unit_test pureeos_state_view_experimental pureeos_wasm_worker_experimental
   pureeos_secondary_state_experimental)
@@ -199,6 +214,11 @@ target_link_libraries(parallel_access_hints_test PRIVATE Threads::Threads)
 add_test(NAME pureeos_parallel_access_hints COMMAND parallel_access_hints_test)
 set_tests_properties(pureeos_parallel_access_hints PROPERTIES TIMEOUT 30 LABELS "parallel-px7;standalone;prefetch")
 add_executable(parallel_worker_signals_test ../tests/parallel_worker_signals_test.cpp)
+add_executable(parallel_auto_config_test ../tests/parallel_auto_config_test.cpp ../libraries/chain/parallel_auto_config.cpp)
+target_include_directories(parallel_auto_config_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
+target_link_libraries(parallel_auto_config_test PRIVATE Threads::Threads)
+add_test(NAME pureeos_parallel_auto_config COMMAND parallel_auto_config_test)
+set_tests_properties(pureeos_parallel_auto_config PROPERTIES TIMEOUT 30 LABELS "parallel-px7;standalone;auto-config")
 target_include_directories(parallel_worker_signals_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
 target_link_libraries(parallel_worker_signals_test PRIVATE Threads::Threads)
 add_test(NAME pureeos_parallel_worker_signals COMMAND parallel_worker_signals_test)
@@ -277,7 +297,8 @@ set_tests_properties(pureeos_parallel_mixed_owner PROPERTIES TIMEOUT 180 LABELS 
 add_test(NAME pureeos_parallel_mixed_adoption COMMAND parallel_wasm_worker_test
   --run_test=parallel_mixed_tree_adoption_tests --report_level=detailed --color_output=no -- --eos-vm)
 set_tests_properties(pureeos_parallel_mixed_adoption PROPERTIES TIMEOUT 180 LABELS "parallel-px7;canonical;mixed-tree")
-set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 180 LABELS "parallel-px2")
+# Larger pools and both engines expand the matrix; per-job deadlines remain unchanged.
+set_tests_properties(pureeos_parallel_wasm_worker PROPERTIES TIMEOUT 600 LABELS "parallel-px2")
 
 add_executable(unapplied_queue_test EXCLUDE_FROM_ALL main.cpp unapplied_transaction_queue_tests.cpp)
 target_link_libraries(unapplied_queue_test PRIVATE eosio_chain_wrap eosio_testing
@@ -729,3 +750,19 @@ target_link_libraries(thread_cpu_billing_test PRIVATE ${PLATFORM_SPECIFIC_LIBS})
 target_include_directories(thread_cpu_billing_test PRIVATE ${CMAKE_SOURCE_DIR}/libraries/chain/include)
 add_test(NAME pureeos_thread_cpu_billing COMMAND thread_cpu_billing_test)
 set_tests_properties(pureeos_thread_cpu_billing PROPERTIES TIMEOUT 60 LABELS "parallel;cpu-billing")
+
+add_test(NAME pureeos_parallel_multitoken COMMAND parallel_validation_test --run_test=parallel_multitoken_tests --report_level=detailed --color_output=no)
+set_tests_properties(pureeos_parallel_multitoken PROPERTIES TIMEOUT 300 LABELS "parallel;multitoken")
+
+# Pure digest memoization keeps the original SHA implementation as its oracle.
+add_executable(action_digest_cache_test ../tests/action_digest_cache_test.cpp)
+target_link_libraries(action_digest_cache_test PRIVATE eosio_chain)
+add_test(NAME pureeos_action_digest_cache COMMAND action_digest_cache_test)
+set_tests_properties(pureeos_action_digest_cache PROPERTIES TIMEOUT 180 LABELS "parallel;digest;ownership")
+
+add_executable(node_hardware_requirements_test node_hardware_requirements_test.cpp)
+add_test(NAME node_hardware_requirements_test COMMAND node_hardware_requirements_test)
+
+add_executable(bp_peer_keys_db_test bp_peer_keys_db_test.cpp)
+target_link_libraries(bp_peer_keys_db_test PRIVATE eosio_chain)
+add_test(NAME bp_peer_keys_db_test COMMAND bp_peer_keys_db_test)

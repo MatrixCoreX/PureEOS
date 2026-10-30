@@ -596,7 +596,11 @@ public:
    uint64_t _incoming_timed_arms = 0, _incoming_timer_drains = 0,
             _incoming_target_drains = 0, _incoming_immediate_posts = 0, _incoming_cancel_failures = 0;
    void receive_ready_incoming(ready_incoming entry);
-   void schedule_ready_incoming(const transaction_metadata_ptr& head);
+   bool schedule_ready_incoming(const transaction_metadata_ptr& head);
+   fc::microseconds parallel_transaction_time_limit() const {
+      const auto limit=_max_transaction_time_ms.load();
+      return limit<0 ? fc::microseconds::maximum() : fc::milliseconds(limit);
+   }
    void cancel_ready_incoming() noexcept;
    bool dispatch_ready_incoming(ready_incoming& entry);
    void drain_ready_incoming();
@@ -2507,14 +2511,15 @@ void producer_plugin_impl::cancel_ready_incoming() noexcept {
    catch (...) { ++_incoming_cancel_failures; }
 }
 
-void producer_plugin_impl::schedule_ready_incoming(const transaction_metadata_ptr& head) {
-   if (_incoming_batch_posted) return; // oldest arrival owns the deadline
+bool producer_plugin_impl::schedule_ready_incoming(const transaction_metadata_ptr& head) {
+   if (_incoming_batch_posted) return true; // oldest arrival owns the deadline
    const auto cid = _incoming_batch_timer_guard.next();
    // Do not spend coalescing latency in the original serial rejection reserve,
    // a preparation backoff or an exhausted resource window. This is only an
    // optimization hint; the drain rechecks the real deadline/admission policy.
    const bool parallel_available = chain_plug->chain().get_parallel_production_batch_size(
-      head, _pending_block_deadline) > 0;
+      head, _pending_block_deadline, parallel_transaction_time_limit()) > 0;
+   if (!parallel_available) return false; // no holding/post/drain for an ineligible empty batch
    const auto delay = eosio::detail::incoming_microbatch_policy::delay_us(
       (_pending_block_deadline - fc::time_point::now()).count(), parallel_available);
    auto weak = weak_from_this();
@@ -2542,6 +2547,7 @@ void producer_plugin_impl::schedule_ready_incoming(const transaction_metadata_pt
       ++_incoming_timed_arms;
    }
    _incoming_batch_posted = true;
+   return true;
 }
 
 void producer_plugin_impl::receive_ready_incoming(ready_incoming entry) {
@@ -2569,8 +2575,7 @@ void producer_plugin_impl::receive_ready_incoming(ready_incoming entry) {
          entry.next = eosio::detail::incoming_once<next_function_variant<transaction_trace_ptr>>(entry.next);
          // Arm before ownership transfer, so allocation/registration failure
          // leaves the original entry available to normal dispatch.
-         schedule_ready_incoming(entry.trx);
-         if (_incoming_batch.push(std::move(entry), bytes)) {
+         if (schedule_ready_incoming(entry.trx) && _incoming_batch.push(std::move(entry), bytes)) {
             ++_incoming_staged;
             _incoming_peak_count = std::max(_incoming_peak_count, _incoming_batch.size());
             _incoming_peak_bytes = std::max(_incoming_peak_bytes, _incoming_batch.bytes());
@@ -2606,6 +2611,11 @@ void producer_plugin_impl::drain_ready_incoming() {
    _incoming_batch_draining = true;
    auto reset = fc::make_scoped_exit([this] { _incoming_batch_draining = false; });
    auto entries = _incoming_batch.take();
+   // Keep the drain guard set while callbacks are destroyed. Only cleared,
+   // bounded storage is retained;reentrant arrivals keep original handling.
+   auto recycle = fc::make_scoped_exit([this,&entries] {
+      _incoming_batch.recycle(std::move(entries));
+   });
    ++_incoming_drains;
    auto& chain = chain_plug->chain();
    size_t cursor = 0;
@@ -2617,7 +2627,7 @@ void producer_plugin_impl::drain_ready_incoming() {
          try {
             const auto deadline = _pending_block_deadline;
             const auto amount = _incoming_batch.preparation_count(entries.size() - cursor,
-               chain.get_parallel_production_batch_size(entries[cursor].trx, deadline));
+               chain.get_parallel_production_batch_size(entries[cursor].trx, deadline, parallel_transaction_time_limit()));
             if (amount) {
                std::vector<transaction_metadata_ptr> batch;
                batch.reserve(amount);
@@ -2633,7 +2643,7 @@ void producer_plugin_impl::drain_ready_incoming() {
                   auto& current = entries[cursor++];
                   if (!dispatch_ready_incoming(current)) allow_parallel = false;
                   return allow_parallel;
-               });
+               }, parallel_transaction_time_limit());
             }
          } catch (const guard_exception& e) {
             chain_plugin::handle_guard_exception(e);
@@ -2973,7 +2983,7 @@ bool producer_plugin_impl::process_unapplied_trxs(const fc::time_point& deadline
       };
       while (itr != end_itr) {
          const size_t batch_size = in_producing_mode() ?
-            chain.get_parallel_production_batch_size(itr->trx_meta, deadline) : 0;
+            chain.get_parallel_production_batch_size(itr->trx_meta, deadline, parallel_transaction_time_limit()) : 0;
          if (!batch_size) {
             if (!process_one(itr->trx_meta)) break;
          } else {
@@ -2981,7 +2991,7 @@ bool producer_plugin_impl::process_unapplied_trxs(const fc::time_point& deadline
             batch.reserve(batch_size);
             for (auto next = itr; next != end_itr && batch.size() < batch_size; ++next)
                batch.push_back(next->trx_meta);
-            if (!chain.for_each_parallel_production_transaction(batch, deadline, process_one)) exhausted = true;
+            if (!chain.for_each_parallel_production_transaction(batch, deadline, process_one, parallel_transaction_time_limit())) exhausted = true;
             if (exhausted) break;
          }
       }
@@ -3027,7 +3037,7 @@ bool producer_plugin_impl::process_incoming_trxs(const fc::time_point& deadline,
       };
       while (itr != end) {
          const size_t batch_size = in_producing_mode() ?
-            chain.get_parallel_production_batch_size(itr->trx_meta, deadline) : 0;
+            chain.get_parallel_production_batch_size(itr->trx_meta, deadline, parallel_transaction_time_limit()) : 0;
          if (!batch_size) {
             if (!process_one(itr->trx_meta)) break;
          } else {
@@ -3035,7 +3045,7 @@ bool producer_plugin_impl::process_incoming_trxs(const fc::time_point& deadline,
             batch.reserve(batch_size);
             for (auto next = itr; next != end && batch.size() < batch_size; ++next)
                batch.push_back(next->trx_meta);
-            if (!chain.for_each_parallel_production_transaction(batch, deadline, process_one)) exhausted = true;
+            if (!chain.for_each_parallel_production_transaction(batch, deadline, process_one, parallel_transaction_time_limit())) exhausted = true;
             if (exhausted) break;
          }
       }

@@ -1,0 +1,46 @@
+{
+  "release_identifier": "baseline-2026.10.30",
+  "product": "PureEOS",
+  "compiled_node_source": "00443330a0d29673700a4eebee78de3b0234c281",
+  "nodeos_sha256": "e7776703f09bec15e8476279e76075ac8e2af3cd94e44ece16c3607859ba2f32",
+  "system_source": "6f3160ed23b725e8cd97790f7a0e9042afbfdc9a",
+  "system_WASM_sha256": "5f25a25816fc6db145dbd811d9c24dd99c9b9b1fd260b8e16a045476d0c3c11a",
+  "system_ABI_sha256": "6809814cb91cdfb55e9cf9bfb926343b9a8be02f82b8996796e11173eec40a9c",
+  "compiler_product": "PureEOS CDT",
+  "compiler_code_source": "d5816c442dd03db13413645f99c61a01c82fdda6",
+  "compiler_version": "1.0.0",
+  "mandatory_parallel": true,
+  "workers": 8,
+  "batch_size": 24,
+  "early_adoption_group": 8,
+  "min_physical_cores": 8,
+  "min_logical_threads": 16,
+  "min_system_visible_RAM_bytes": 64000000000,
+  "CPU_block_us": 3200000,
+  "NET_block_bytes": 16777216,
+  "P2P_message_bytes": 67108864,
+  "producer_queue_bytes": 1073741824,
+  "transaction_CPU_us": 150000,
+  "transaction_NET_bytes": 524288,
+  "minimum_transaction_CPU_us": 100,
+  "RAM_initial_bytes": 68719476736,
+  "RAM_growth_action": {
+    "account": "eosio",
+    "action": "setramrate",
+    "data": {
+      "bytes_per_block": 1024
+    }
+  },
+  "disabled_deferred_stages": [
+    1,
+    2
+  ],
+  "case_counts": {
+    "PASS": 154
+  },
+  "sub21_live_scope": "effective20/quorum14;13votes halt;short/long recovery",
+  "physical_hosts": 3,
+  "independent_processes": 30,
+  "TPS": "unmeasured",
+  "original_released_artifacts_preserved": true
+}

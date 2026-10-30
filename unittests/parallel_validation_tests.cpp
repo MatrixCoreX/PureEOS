@@ -1541,6 +1541,48 @@ void check_row(tester& chain, name scope, uint64_t expected) {
    uint64_t value; std::memcpy(&value, bytes.data(), 8); BOOST_CHECK_EQUAL(value, expected);
 }
 
+BOOST_FIXTURE_TEST_CASE(large_disjoint_table_batches_use_aggregate_capture_limits, validation_corpus) {
+   constexpr size_t count = 96;
+   fc::temp_directory producer_dir;
+   production_chain producer(configuration(producer_dir, 0), genesis);
+   prefix(producer, 2);
+   producer.set_node_finalizers(std::array<name, 1>{"eosio"_n});
+   std::vector<name> scopes;
+   producer.start();
+   for (size_t i = 0; i < count; ++i) {
+      const name scope{uint64_t(1000 + i) << 4};
+      scopes.push_back(scope);
+      push(producer, scope, 10, 800000 + i);
+   }
+   const auto seeded = producer.produce_block();
+   producer.control->abort_block(); producer.start();
+   producer.set_code("test"_n, code);
+   const auto deployed = producer.produce_block();
+   producer.control->abort_block(); producer.start();
+   for (size_t i = 0; i < count; ++i) push(producer, scopes[i], 7, 810000 + i);
+   const auto business = producer.produce_block();
+   producer.control->abort_block();
+   BOOST_REQUIRE_EQUAL(business->transactions.size(), count);
+   for (uint16_t workers : {32, 64, 128}) BOOST_TEST_CONTEXT("workers=" << workers) {
+      fc::temp_directory directory;
+      auto cfg = configuration(directory, workers);
+      cfg.parallel_validation_batch_size = count;
+      tester observed(cfg, genesis);
+      prefix(observed, 2);
+      observed.push_block(seeded); observed.control->abort_block();
+      observed.push_block(deployed); observed.control->abort_block();
+      const auto before = observed.control->get_parallel_execution_stats();
+      observed.push_block(business); observed.control->abort_block();
+      const auto after = observed.control->get_parallel_execution_stats();
+      BOOST_TEST_MESSAGE(experimental::parallel_attempt_diagnostics(before, after));
+      BOOST_CHECK_EQUAL(after.adopted - before.adopted, count);
+      BOOST_CHECK_EQUAL(after.preparation_budget_fallbacks - before.preparation_budget_fallbacks, 0u);
+      BOOST_CHECK_EQUAL(after.preparation_deadlines - before.preparation_deadlines, 0u);
+      BOOST_CHECK(observed.control->calculate_integrity_hash() == producer.control->calculate_integrity_hash());
+      for (auto scope : scopes) check_row(observed, scope, 17);
+   }
+}
+
 BOOST_AUTO_TEST_CASE(sparse_discovery_uses_global_cap_and_preserves_exact_exhaustion_and_reuse) {
    // One new exact query per attempt, followed by one successful execution.
    // The table exists: unknown keys cannot be inferred absent from copied rows.
@@ -1685,7 +1727,7 @@ BOOST_AUTO_TEST_CASE(uneven_discovery_executes_only_unfinished_transactions_on_f
    genesis.initial_savanna.emplace(); genesis.initial_savanna->version = 2;
    genesis.initial_savanna->finalizer_key = public_key;
    genesis.initial_savanna->proof_of_possession = proof;
-   for (uint16_t workers : {1, 2, 4, 8, 12, 16}) {
+   for (uint16_t workers : {1, 2, 4, 8, 12, 16, 32, 64, 128}) {
       fc::temp_directory producer_dir, serial_dir, parallel_dir;
       auto cfg = base_tester::default_config(producer_dir).first;
       eosio::testing::configure_parallel_test_runtime(cfg);
@@ -1803,7 +1845,7 @@ BOOST_FIXTURE_TEST_CASE(nonexplicit_production_preserves_order_receipts_and_seri
 }
 
 BOOST_FIXTURE_TEST_CASE(adaptive_production_queue_keeps_unconsumed_tail_and_serial_window, validation_corpus) {
-   for (uint16_t workers : {1, 2, 4, 8, 16}) {
+   for (uint16_t workers : {1, 2, 4, 8, 16, 32, 64, 128}) {
       fc::temp_directory producer_dir, validator_dir;
       auto cfg = configuration(producer_dir, workers); cfg.parallel_production_enabled = true;
       production_chain producer(cfg, genesis);
@@ -3471,3 +3513,11 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "parallel_prefix_refresh_cases.hpp"
 #include "parallel_release_fixture.hpp"
 #include "parallel_mixed_stress_fixture.hpp"
+
+#include "parallel_multitoken_cases.hpp"
+
+#include "parallel_pipeline_optimization_cases.hpp"
+
+#include "parallel_early_adoption_cases.hpp"
+
+#include "parallel_input_fingerprint_cases.hpp"

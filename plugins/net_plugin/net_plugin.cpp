@@ -474,6 +474,7 @@ namespace eosio {
       chain_info_t                  chain_info GUARDED_BY(chain_info_mtx);
 
    public:
+      std::vector<std::string> connected_bp_peer_addresses();
       void update_chain_info();
       void update_chain_info(const block_id_type& fork_db_root_id);
       chain_info_t get_chain_info() const;
@@ -870,6 +871,8 @@ namespace eosio {
       // bp_gossip_validating = only used when connection received before peer keys available
       enum class bp_connection_type { non_bp, bp_config, bp_gossip, bp_gossip_validating };
       std::atomic<bp_connection_type> bp_connection = bp_connection_type::non_bp;
+      // Retry only the local initial-send negotiation; this grants no BP identity.
+      std::atomic<bool> gossip_initial_pending{false};
       block_status_monitor    block_status_monitor_;
       std::atomic<time_point> last_vote_received;
 
@@ -937,7 +940,7 @@ namespace eosio {
       void send_gossip_bp_peers_initial_message();
       void send_gossip_bp_peers_message();
    public:
-      static void send_gossip_bp_peers_message_to_bp_peers();
+      static void send_gossip_bp_peers_message_to_bp_peers(bool request_current_records = false);
 
       bool populate_handshake( handshake_message& hello ) const;
 
@@ -1469,6 +1472,7 @@ namespace eosio {
       consecutive_blocks_nacks = 0;
       last_block_nack = block_id_type{};
       bp_connection = bp_connection_type::non_bp;
+      gossip_initial_pending.store(false, std::memory_order_relaxed);
 
       uint32_t head_num = my_impl->get_chain_head_num();
       if (last_received_block_num >= head_num) {
@@ -2987,7 +2991,7 @@ namespace eosio {
                            uint32_t message_length;
                            auto index = conn->pending_message_buffer.read_index();
                            conn->pending_message_buffer.peek(&message_length, sizeof(message_length), index);
-                           if(message_length > def_send_buffer_size*2 || message_length == 0) {
+                           if(message_length > 64u*1024u*1024u || message_length == 0) {
                               peer_elog( p2p_conn_log, conn, "incoming message length unexpected (${i})", ("i", message_length) );
                               close_connection = true;
                               break;
@@ -3897,8 +3901,10 @@ namespace eosio {
          return;
 
       if (!my_impl->bp_gossip_initialized()) {
-         bp_connection = bp_connection_type::bp_gossip_validating;
-         peer_dlog(p2p_msg_log, this, "received gossip_bp_peers_message before bp gossip initialized");
+         // No peer signature has been verified yet. Keep ordinary connections
+         // subject to ordinary client limits while waiting for local keys.
+         gossip_initial_pending.store(true, std::memory_order_relaxed);
+         peer_dlog(p2p_msg_log, this, "received BP gossip before local keys; retry remains unprivileged");
          return;
       }
 
@@ -3917,6 +3923,7 @@ namespace eosio {
       if (bp_connection != bp_connection_type::bp_gossip) {
          peer_dlog(p2p_msg_log, this, "bp gossip connection");
          bp_connection = bp_connection_type::bp_gossip;
+         gossip_initial_pending.store(false, std::memory_order_relaxed);
       }
 
       if (first_msg) {
@@ -3933,14 +3940,15 @@ namespace eosio {
 
    // called from connection strand
    void connection::send_gossip_bp_peers_initial_message() {
-      if (protocol_version < proto_version_t::gossip_bp_peers || !my_impl->bp_gossip_enabled())
+      if (closed() || protocol_version < proto_version_t::gossip_bp_peers || !my_impl->bp_gossip_enabled())
          return;
       peer_dlog(p2p_msg_log, this, "sending initial gossip_bp_peers_message");
       const auto& sb = my_impl->get_gossip_bp_initial_send_buffer();
       if (sb) {
+         gossip_initial_pending.store(false, std::memory_order_relaxed);
          enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
-      } else {
-         peer_ilog(p2p_msg_log, this, "no initial gossip_bp_peers_message to send");
+      } else if (!gossip_initial_pending.exchange(true, std::memory_order_relaxed)) {
+         peer_ilog(p2p_msg_log, this, "initial BP gossip waiting for local peer key; retry scheduled");
       }
    }
 
@@ -3949,28 +3957,51 @@ namespace eosio {
       assert(my_impl->bp_gossip_enabled());
       gossip_buffer_factory factory;
       const send_buffer_type& sb = my_impl->get_gossip_bp_send_buffer(factory);
+      if (!sb) return;
       peer_dlog(p2p_msg_log, this, "sending gossip_bp_peers_message");
       enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
    }
 
-   void connection::send_gossip_bp_peers_message_to_bp_peers() {
+   void connection::send_gossip_bp_peers_message_to_bp_peers(bool request_current_records) {
       assert(my_impl->bp_gossip_enabled());
-      my_impl->connections.for_each_connection([](const connection_ptr& c) {
+      my_impl->connections.for_each_connection([request_current_records](const connection_ptr& c) {
          gossip_buffer_factory factory;
          if (c->protocol_version >= proto_version_t::gossip_bp_peers && c->socket_is_open()) {
             if (c->bp_connection == bp_connection_type::bp_gossip) {
+               if (request_current_records) {
+                  // A new remote key may previously have arrived before our
+                  // chain cache. Request its current signed record explicitly.
+                  // Still publish our own fresh records below, so peers whose
+                  // requests arrived before our local key was ready can recover.
+                  boost::asio::post(c->strand, [c]() { c->send_gossip_bp_peers_initial_message(); });
+               }
                const send_buffer_type& sb = my_impl->get_gossip_bp_send_buffer(factory);
+               if (!sb) return;
                boost::asio::post(c->strand, [sb, c]() {
                   peer_dlog(p2p_msg_log, c, "sending gossip_bp_peers_message");
                   c->enqueue_buffer(msg_type_t::gossip_bp_peers_message, {}, queued_buffer::queue_t::general, sb, go_away_reason::no_reason);
                });
-            } else if (c->bp_connection == bp_connection_type::bp_config || c->bp_connection == bp_connection_type::bp_gossip_validating) {
+            } else if (c->bp_connection == bp_connection_type::bp_config ||
+                       c->bp_connection == bp_connection_type::bp_gossip_validating ||
+                       c->gossip_initial_pending.load(std::memory_order_relaxed)) {
                boost::asio::post(c->strand, [c]() {
                   c->send_gossip_bp_peers_initial_message();
                });
             }
          }
       });
+   }
+
+   std::vector<std::string> net_plugin_impl::connected_bp_peer_addresses() {
+      std::vector<std::string> result;
+      connections.for_each_connection([&](const connection_ptr& c) {
+         if (c->socket_is_open()) {
+            auto address = c->peer_address();
+            if (!address.empty()) result.push_back(std::move(address));
+         }
+         return true;
+      });
+      return result;
    }
 
    size_t calc_trx_size( const packed_transaction_ptr& trx ) {
@@ -4134,6 +4165,7 @@ namespace eosio {
          update_bp_producer_peers();
          connection::send_gossip_bp_peers_message_to_bp_peers();
       }
+      connect_to_active_bp_peers();
       fc_dlog( p2p_log, "expire run time ${n}us", ("n", time_point::now() - now) );
 
       start_expire_timer();
@@ -4174,8 +4206,9 @@ namespace eosio {
          boost::asio::post(thread_pool.get_executor(), [this]() {
             try {
                update_bp_producer_peers();
+               expire_gossip_bp_peers();
                my_impl->connect_to_active_bp_peers();
-               connection::send_gossip_bp_peers_message_to_bp_peers();
+               connection::send_gossip_bp_peers_message_to_bp_peers(true);
             } catch (fc::exception& e) {
                fc_elog( p2p_log, "Unable to update bp producer peers, error: ${e}", ("e", e.to_detail_string()));
             }

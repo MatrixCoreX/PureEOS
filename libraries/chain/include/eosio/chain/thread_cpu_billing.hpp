@@ -88,6 +88,14 @@ public:
          running = true;
       }
    }
+   // A trusted adopted worker contributes only measured CPU, never queue or
+   // wall time. Keep fractional microseconds until the original final rounding.
+   void add_external_cpu(duration additional) {
+      check_owner();
+      if(additional<duration::zero())throw std::logic_error("negative external CPU");
+      if(additional>duration::max()-consumed)throw std::overflow_error("external CPU overflow");
+      consumed+=additional;
+   }
    std::chrono::microseconds elapsed() const {
       return std::chrono::duration_cast<std::chrono::microseconds>(current());
    }

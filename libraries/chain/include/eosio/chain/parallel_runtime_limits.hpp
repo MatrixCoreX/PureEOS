@@ -11,8 +11,12 @@ namespace eosio::chain::experimental {
 // make an otherwise valid block invalid. A later larger-core implementation
 // must review these budgets together, not just increase a CLI thread count.
 struct parallel_runtime_limits {
-   static constexpr size_t max_workers = 16;
-   static constexpr size_t max_batch_transactions = 64;
+   static constexpr size_t max_workers = 128;
+   static constexpr size_t max_batch_transactions = 256;
+   // Keep the former64-transaction aggregate journal bound even when a larger
+   // batch contains more small transactions. Higher concurrency grants no
+   // extra retained-state, discovery, environment, or time budget.
+   static constexpr size_t max_batch_write_operations = 64 * 4096;
    static constexpr size_t max_discovery_rounds = 64; // independent of batch size
    static constexpr size_t max_retained_snapshot_bytes = 4 * 1024 * 1024;
    static constexpr size_t max_environment_wire_bytes = 4 * 1024 * 1024;

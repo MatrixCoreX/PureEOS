@@ -13,6 +13,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
+#include <chrono>
 
 namespace eosio::auto_bp_peering {
 
@@ -34,6 +35,8 @@ class bp_connection_manager {
    using address_set_t = boost::unordered_flat_set<std::string>;
 
    gossip_bp_index_t      gossip_bps;
+   // Protected by gossip_bps.mtx; retries must not repeatedly flood the log.
+   flat_set<account_name> unavailable_gossip_signers;
 
    struct bp_gossip_endpoint_t {
       std::string server_endpoint;      // externally known inbound endpoint host:port
@@ -57,10 +60,55 @@ class bp_connection_manager {
    uint32_t               pending_schedule_version = 0;
    uint32_t               active_schedule_version  = 0;
 
+   // Serialize complete reconcile plans, including connection-manager calls.
+   // This mutex is never acquired while holding BP, gossip, or connection locks.
+   fc::mutex                     reconcile_mtx;
    fc::mutex                     mtx;
    gossip_buffer_initial_factory initial_gossip_msg_factory GUARDED_BY(mtx);
    name_set_t                    active_bps GUARDED_BY(mtx);
    name_set_t                    active_schedule GUARDED_BY(mtx);
+   name_set_t                    pending_schedule_accounts GUARDED_BY(mtx);
+   address_set_t                 dialed_bp_addresses GUARDED_BY(mtx);
+
+
+   static constexpr size_t standby_peer_limit = 3;
+   address_set_t standby_targets GUARDED_BY(mtx);
+   size_t standby_cursor GUARDED_BY(mtx) = 0;
+   std::chrono::steady_clock::time_point standby_retry_at GUARDED_BY(mtx);
+
+   address_set_t choose_standby_peers(const address_set_t& options,
+                                     const address_set_t& connected,
+                                     std::chrono::steady_clock::time_point now) REQUIRES(mtx) {
+      if (options.empty()) {
+         standby_targets.clear();
+         return {};
+      }
+      std::vector<std::string> candidates(options.begin(), options.end());
+      std::ranges::sort(candidates);
+      const size_t limit = std::min(standby_peer_limit, candidates.size());
+      address_set_t retained;
+      for (const auto& address : standby_targets)
+         if (options.contains(address)) retained.insert(address);
+      const bool initial = retained.empty();
+      const bool healthy = std::ranges::any_of(retained, [&](const auto& a) { return connected.contains(a); });
+      const bool retry = !initial && !healthy && now >= standby_retry_at;
+      if (initial || retry) {
+         if (retry) standby_cursor = (standby_cursor + limit) % candidates.size();
+         else if (standby_retry_at == std::chrono::steady_clock::time_point{}) {
+            if (!config.my_bp_gossip_accounts.empty())
+               standby_cursor = config.my_bp_gossip_accounts.begin()->first.to_uint64_t() % candidates.size();
+         }
+         retained.clear();
+         standby_retry_at = now + std::chrono::seconds(10);
+      }
+      // Keep already useful paths while filling only the bounded missing slots.
+      for (const auto& address : candidates)
+         if (retained.size() < limit && connected.contains(address)) retained.insert(address);
+      for (size_t i = 0; i < candidates.size() && retained.size() < limit; ++i)
+         retained.insert(candidates[(standby_cursor + i) % candidates.size()]);
+      standby_targets = retained;
+      return retained;
+   }
 
    Derived*       self() { return static_cast<Derived*>(this); }
    const Derived* self() const { return static_cast<const Derived*>(this); }
@@ -114,6 +162,9 @@ class bp_connection_manager {
    // for testing
    void set_active_bps(name_set_t bps) {
       fc::lock_guard g(mtx);
+      // A fixture must model both the authoritative schedule and its
+      // reachable subset, just as on_active_schedule does in production.
+      active_schedule = bps;
       active_bps = std::move(bps);
    }
 
@@ -219,46 +270,56 @@ public:
       assert(!config.my_bp_gossip_accounts.empty());
       fc::lock_guard gm(mtx);
       fc::lock_guard g(gossip_bps.mtx);
+      initial_gossip_msg_factory.reset_initial_send_buffer();
       bool initial_updated = false;
-      // normally only one bp peer account except in testing scenarios or test chains
-      const controller& cc = self()->chain_plug->chain();
+      const auto& cc = self()->chain_plug->chain();
       block_timestamp_type expire = self()->head_block_time.load() + bp_gossip_peer_expiration;
-      fc_dlog(p2p_log, "Updating BP gossip_bp_peers_message with expiration ${e}", ("e", expire));
-      for (const auto& my_bp_account : config.my_bp_gossip_accounts) { // my_bp_gossip_accounts not modified after plugin startup
-         const auto& bp_account = my_bp_account.first;
-         std::optional<peer_info_t> peer_info = cc.get_peer_info(bp_account);
-         if (peer_info && peer_info->key) {
-            for (const auto& le : my_bp_account.second) {
-               fc_dlog(p2p_log, "Updating BP gossip_bp_peers_message for ${a} address ${s}", ("a", bp_account)("s", le.server_endpoint));
-               if (!initial_updated) {
-                  // update initial so always an active one
-                  gossip_bp_peers_message::signed_bp_peer signed_empty{{.producer_name = bp_account}}; // .server_endpoint not set for initial message
-                  signed_empty.sig = self()->sign_compact(*peer_info->key, signed_empty.digest(self()->chain_id));
-                  EOS_ASSERT(signed_empty.sig != signature_type{}, chain::plugin_config_exception,
-                             "Unable to sign empty gossip bp peer of ${a}, private key not found for ${k}", ("a", bp_account)("k", peer_info->key->to_string({})));
-                  initial_gossip_msg_factory.set_initial_send_buffer(signed_empty);
-                  initial_updated = true;
-               }
-               // update gossip_bps
-               auto& prod_idx = gossip_bps.index.get<by_producer>();
+      auto& prod_idx = gossip_bps.index.get<by_producer>();
+      const auto forget_own_proofs = [&](account_name account) {
+         auto range = prod_idx.equal_range(account);
+         prod_idx.erase(range.first, range.second);
+      };
+      for (const auto& [bp_account, endpoints] : config.my_bp_gossip_accounts) {
+         const auto peer_info = cc.get_peer_info(bp_account);
+         if (!peer_info || !peer_info->key) {
+            forget_own_proofs(bp_account);
+            if (unavailable_gossip_signers.insert(bp_account).second)
+               fc_wlog(p2p_log, "On-chain peer-key not found for configured BP ${a}; continuing ordinary P2P without a local BP proof", ("a", bp_account));
+            continue;
+         }
+         try {
+            // Prepare all proofs before publishing any. A missing/temporarily
+            // unavailable signer must not expose a partial or stale identity.
+            gossip_bp_peers_message::signed_bp_peer initial{{.producer_name = bp_account}};
+            initial.sig = self()->sign_compact(*peer_info->key, initial.digest(self()->chain_id));
+            EOS_ASSERT(initial.sig != signature_type{}, chain::plugin_config_exception, "Empty BP gossip signature");
+            std::vector<gossip_bp_peers_message::signed_bp_peer> prepared;
+            for (const auto& endpoint : endpoints) {
                gossip_bp_peers_message::signed_bp_peer peer{{.producer_name = bp_account}};
-               peer.cached_bp_peer_info.emplace(le.server_endpoint, le.outbound_ip_address, expire);
-               peer.bp_peer_info = fc::raw::pack<gossip_bp_peers_message::bp_peer_info_v1>(*peer.cached_bp_peer_info);
+               peer.cached_bp_peer_info.emplace(endpoint.server_endpoint, endpoint.outbound_ip_address, expire);
+               peer.bp_peer_info = fc::raw::pack(*peer.cached_bp_peer_info);
                peer.sig = self()->sign_compact(*peer_info->key, peer.digest(self()->chain_id));
-               EOS_ASSERT(peer.sig != signature_type{}, chain::plugin_config_exception, "Unable to sign bp peer ${p}, private key not found for ${k}",
-                          ("p", peer.producer_name)("k", peer_info->key->to_string({})));
-               if (auto i = prod_idx.find(std::forward_as_tuple(bp_account, le.server_endpoint, le.outbound_ip_address)); i != prod_idx.end()) {
-                  gossip_bps.index.modify(i, [&peer](auto& v) {
-                     v.bp_peer_info        = peer.bp_peer_info;
-                     v.cached_bp_peer_info = peer.cached_bp_peer_info;
-                     v.sig                 = peer.sig;
-                  });
-               } else {
-                  gossip_bps.index.emplace(peer);
-               }
+               EOS_ASSERT(peer.sig != signature_type{}, chain::plugin_config_exception, "Empty BP gossip endpoint signature");
+               prepared.emplace_back(std::move(peer));
             }
-         } else {
-            fc_wlog(p2p_log, "On-chain peer-key not found for configured BP ${a}", ("a", bp_account));
+            if (!initial_updated) {
+               initial_gossip_msg_factory.set_initial_send_buffer(initial);
+               initial_updated = true;
+            }
+            for (auto& peer : prepared) {
+               if (auto it = prod_idx.find(std::forward_as_tuple(bp_account, peer.server_endpoint(), peer.outbound_ip_address())); it != prod_idx.end())
+                  prod_idx.modify(it, [&peer](auto& value) {
+                     value.bp_peer_info = peer.bp_peer_info;
+                     value.cached_bp_peer_info = peer.cached_bp_peer_info;
+                     value.sig = peer.sig;
+                  });
+               else gossip_bps.index.emplace(std::move(peer));
+            }
+            unavailable_gossip_signers.erase(bp_account);
+         } catch (const fc::exception& error) {
+            forget_own_proofs(bp_account);
+            if (unavailable_gossip_signers.insert(bp_account).second)
+               fc_wlog(p2p_log, "BP gossip signing unavailable for ${a} using current peer key ${k} (error ${c}); continuing ordinary P2P without a local BP proof", ("a", bp_account)("k", *peer_info->key)("c", error.code()));
          }
       }
    }
@@ -326,7 +387,7 @@ public:
          };
          try {
             const gossip_bp_peers_message::signed_bp_peer* prev = nullptr;
-            size_t num_per_producer = 0;
+            size_t num_per_producer = 1;
             for (auto& peer : msg.peers) {
                if (peer.producer_name.empty())
                   return false; // invalid bp_peer data
@@ -344,7 +405,7 @@ public:
                   } else if (prev->producer_name > peer.producer_name) {
                      return false; // required to be sorted
                   } else {
-                     num_per_producer = 0;
+                     num_per_producer = 1;
                   }
                }
                prev = &peer;
@@ -355,7 +416,7 @@ public:
          }
       }
 
-      const controller& cc = self()->chain_plug->chain();
+      const auto& cc = self()->chain_plug->chain();
       bool invalid_message = false;
       auto is_peer_key_valid = [&](const gossip_bp_peers_message::signed_bp_peer& peer) -> bool {
          try {
@@ -395,11 +456,11 @@ public:
       };
 
       fc::lock_guard g(gossip_bps.mtx);
-      auto& sig_idx = gossip_bps.index.get<by_sig>();
       for (auto i = msg.peers.begin(); i != msg.peers.end();) {
          const auto& peer = *i;
-         bool have_sig = sig_idx.contains(peer.sig); // we already have it, already verified
-         if (!have_sig && (!is_peer_key_valid(peer) || !is_expiration_valid(peer))) {
+         // A cached signature alone does not bind the supplied payload or the
+         // currently registered key. Revalidate both, including on replay.
+         if (!is_peer_key_valid(peer) || !is_expiration_valid(peer)) {
             if (invalid_message)
                return false;
             // peer key may have changed or been removed on-chain, do not consider that a fatal error, just remove it
@@ -455,26 +516,32 @@ public:
    // thread-safe
    // return true if my bp accounts will expire "soon"
    bool expire_gossip_bp_peers() {
-      if (!bp_gossip_enabled())
-         return false;
-
-      auto head_block_time = self()->head_block_time.load();
-
+      if (!bp_gossip_enabled()) return false;
+      const auto head_block_time = self()->head_block_time.load();
+      const auto& cc = self()->chain_plug->chain();
       fc::lock_guard g(gossip_bps.mtx);
       auto& idx = gossip_bps.index.get<by_expiry>();
-      auto ex_lo = idx.lower_bound(block_timestamp_type{});
-      auto ex_up = idx.upper_bound(head_block_time);
-      idx.erase(ex_lo, ex_up);
-      if (ex_up != idx.end()) {
-         ex_lo = ex_up;
-         ex_up = idx.upper_bound(head_block_time + my_bp_gossip_peer_expiration);
-         auto my_bp_account_will_expire = std::ranges::any_of(ex_lo, ex_up, [&](const auto& i) {
-            return config.my_bp_gossip_accounts.contains(i.producer_name);
-         });
-         return my_bp_account_will_expire;
+      bool changed = false;
+      for (auto it = idx.begin(); it != idx.end();) {
+         bool keep = it->expiration() > head_block_time;
+         if (keep) {
+            const auto identity = cc.get_peer_info(it->producer_name);
+            keep = identity && identity->key;
+            if (keep) {
+               try {
+                  keep = !it->sig.is_webauthn() &&
+                     public_key_type(it->sig, it->digest(self()->chain_id), false) == *identity->key;
+               } catch (const fc::exception&) { keep = false; }
+            }
+         }
+         if (!keep) { it = idx.erase(it); changed = true; }
+         else ++it;
       }
-
-      return false;
+      const auto soon = idx.upper_bound(head_block_time + my_bp_gossip_peer_expiration);
+      const bool own_expiring = std::ranges::any_of(idx.begin(), soon, [&](const auto& peer) {
+         return config.my_bp_gossip_accounts.contains(peer.producer_name);
+      });
+      return changed || own_expiring || !unavailable_gossip_signers.empty();
    }
 
    address_set_t find_gossip_bp_addresses(const name_set_t& accounts, const char* desc) const {
@@ -508,21 +575,50 @@ public:
 
    // thread-safe
    void connect_to_active_bp_peers() {
-      // do not hold mutexes when calling resolve_and_connect which acquires connections mutex since other threads
-      // can be holding connections mutex when trying to acquire these mutexes
-      address_set_t addresses;
+      if (!auto_bp_peering_enabled()) return;
+      fc::lock_guard reconciliation(reconcile_mtx);
+      // Snapshot transport health before taking BP/gossip locks.
+      address_set_t connected;
+      if constexpr (requires { self()->connected_bp_peer_addresses(); })
+         for (const auto& address : self()->connected_bp_peer_addresses()) connected.insert(address);
+      auto now = std::chrono::steady_clock::now();
+      if constexpr (requires { self()->bp_peering_now(); }) now = self()->bp_peering_now();
+      address_set_t addresses, removed, added;
       {
          fc::lock_guard gm(mtx);
          active_bps = active_bp_accounts(active_schedule);
-         fc_dlog(p2p_conn_log, "active_bps: ${a}", ("a", to_string(active_bps)));
-
-         addresses = find_gossip_bp_addresses(active_bps, "connect");
-         fc_dlog(p2p_conn_log, "active addresses: ${a}", ("a", to_string(addresses)));
+         auto desired_accounts = active_schedule;
+         desired_accounts.insert(pending_schedule_accounts.begin(), pending_schedule_accounts.end());
+         // Eligible standbys keep a bounded learned reserve mesh, so losing
+         // their static seeds does not strand them before a schedule handoff.
+         const bool scheduled = config.my_bp_gossip_accounts.empty() ||
+            std::ranges::any_of(config.my_bp_gossip_accounts, [&](const auto& own) {
+               return desired_accounts.contains(own.first);
+            });
+         const bool gossip_ready = bp_gossip_enabled() &&
+            !!initial_gossip_msg_factory.get_initial_send_buffer();
+         if (gossip_ready) {
+            addresses = find_gossip_bp_addresses(desired_accounts, "connect");
+            if (!scheduled) addresses = choose_standby_peers(addresses, connected, now);
+            else standby_targets.clear();
+         } else {
+            standby_targets.clear();
+            standby_retry_at = {};
+         }
+         if (!gossip_ready) for (auto account : desired_accounts)
+            if (auto it = config.auto_bp_addresses.find(account); it != config.auto_bp_addresses.end())
+               addresses.insert(it->second.address());
+         for (const auto& old : dialed_bp_addresses)
+            if (!addresses.contains(old)) removed.insert(old);
+         for (const auto& address : addresses)
+            if (!dialed_bp_addresses.contains(address)) added.insert(address);
+         dialed_bp_addresses = addresses;
       }
-
-      for (const auto& add : addresses) {
-         self()->connections.resolve_and_connect(add, self()->get_first_p2p_address());
-      }
+      // Connection manager protects explicitly configured p2p-peer-address seeds.
+      // Reconcile outside BP/gossip locks to preserve the existing lock order.
+      for (const auto& address : removed) self()->connections.disconnect_gossip_connection(address);
+      for (const auto& address : added)
+         self()->connections.resolve_and_connect(address, self()->get_first_p2p_address());
    }
 
    // Only called from main thread
@@ -541,18 +637,25 @@ public:
 
                // do not hold mutexes when calling resolve_and_connect which acquires connections mutex since other threads
                // can be holding connections mutex when trying to acquire these mutexes
-               address_set_t addresses = find_gossip_bp_addresses(pending_connections, "connect");
-               for (const auto& add : addresses) {
-                  self()->connections.resolve_and_connect(add, self()->get_first_p2p_address());
+               {
+                  fc::lock_guard gm(mtx);
+                  pending_schedule_accounts.clear();
+                  for (const auto& authority : schedule.producers)
+                     pending_schedule_accounts.insert(authority.producer_name);
                }
-
                pending_bps = std::move(pending_connections);
+               connect_to_active_bp_peers();
 
                pending_schedule_version = schedule.version;
             }
          } else {
             fc_dlog(p2p_conn_log, "pending producer schedule version ${v} is being cleared", ("v", schedule.version));
             pending_bps.clear();
+            {
+               fc::lock_guard gm(mtx);
+               pending_schedule_accounts.clear();
+            }
+            connect_to_active_bp_peers();
          }
       }
    }
@@ -560,49 +663,19 @@ public:
    // Only called from main thread
    void on_active_schedule(const chain::producer_authority_schedule& schedule) {
       if (auto_bp_peering_enabled() && active_schedule_version != schedule.version && !self()->is_lib_catchup()) {
-         /// drops any BP connection which is no longer within our scheduling proximity
          fc_dlog(p2p_conn_log, "active producer schedule switches from version ${old} to ${new}",
                  ("old", active_schedule_version)("new", schedule.version));
-
-         fc::unique_lock gm(mtx);
-         auto old_bps = std::move(active_bps);
-
-         set_active_schedule(schedule.producers);
-         if (active_schedule_version == 0) { // first call since node was launched, connect to active
-            gm.unlock();
-            connect_to_active_bp_peers();
-            gm.lock();
+         {
+            fc::lock_guard gm(mtx);
+            set_active_schedule(schedule.producers);
+            active_bps = active_bp_accounts(schedule.producers);
+            active_schedule_version = schedule.version;
          }
-
-         active_bps = active_bp_accounts(schedule.producers);
-
-         fc_dlog(p2p_conn_log, "active_bps: ${a}", ("a", to_string(active_bps)));
-
-         name_set_t peers_to_stay;
-         std::set_union(active_bps.begin(), active_bps.end(), pending_bps.begin(), pending_bps.end(),
-                        std::inserter(peers_to_stay, peers_to_stay.begin()));
-         gm.unlock();
-
-         fc_dlog(p2p_conn_log, "peers_to_stay: ${p}", ("p", to_string(peers_to_stay)));
-
-         name_set_t peers_to_drop;
-         std::set_difference(old_bps.begin(), old_bps.end(), peers_to_stay.begin(), peers_to_stay.end(),
-                             std::inserter(peers_to_drop, peers_to_drop.end()));
-         fc_dlog(p2p_conn_log, "peers to drop: ${p}", ("p", to_string(peers_to_drop)));
-
-         // if we dropped out of active schedule then disconnect from all
-         bool disconnect_from_all = !config.my_bp_gossip_accounts.empty() &&
-                                    std::all_of(config.my_bp_gossip_accounts.begin(), config.my_bp_gossip_accounts.end(),
-                                                [&](const auto& e) { return peers_to_drop.contains(e.first); });
-
-         address_set_t addresses = disconnect_from_all
-                                   ? all_gossip_bp_addresses("disconnect")
-                                   : find_gossip_bp_addresses(peers_to_drop, "disconnect");
-         for (const auto& add : addresses) {
-            self()->connections.disconnect_gossip_connection(add);
-         }
-
-         active_schedule_version = schedule.version;
+         // One serialized reconcile owns every dial and retirement. Mixing an
+         // older account-difference cleanup with this endpoint plan can close
+         // the same endpoint twice or retire a newly retained pending peer.
+         // Standby/identity loss and seed protection use the same policy.
+         connect_to_active_bp_peers();
       }
    }
 

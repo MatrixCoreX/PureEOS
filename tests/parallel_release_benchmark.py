@@ -147,7 +147,7 @@ def parallel_diagnostics(log, mode="production"):
 
 
 def validator_workers(producer_workers, fixed_workers):
-    require(fixed_workers is None or 0 <= fixed_workers <= 16, "Invalid fixed validator worker count")
+    require(fixed_workers is None or 0 <= fixed_workers <= 128, "Invalid fixed validator worker count")
     return producer_workers if fixed_workers is None else fixed_workers
 
 
@@ -234,7 +234,7 @@ def intake_diagnostics(log):
         require(match is not None, "Malformed live intake diagnostic field: " + expected)
         result[expected] = int(match.group(1))
     require(0 < result["drains"] <= result["staged"] and
-            0 < result["peak_transactions"] <= min(64, result["staged"]) and
+            0 < result["peak_transactions"] <= min(256, result["staged"]) and
             0 < result["peak_bytes"] <= 4 * 1024 * 1024 and
             result.get("single_probe_offers", 0) <= result["batch_calls"] and
             result["batch_offered"] >= 2 * result["batch_calls"] - result.get("single_probe_offers", 0),
@@ -550,9 +550,9 @@ def main():
     workers = [int(v) for v in args.workers.split(",")]
     validator_workers(0, args.validator_workers)
     require(len(set(workers)) == len(workers) and 0 in workers and len(workers) > 1
-            and all(0 <= w <= 16 for w in workers), "Need serial plus unique supported worker counts")
+            and all(0 <= w <= 128 for w in workers), "Need serial plus unique supported worker counts")
     require(1 <= args.rounds <= 10 and args.rate > 0 and args.seconds > 0 and args.warmup >= 0
-            and args.drain > 0 and 1 <= args.batch_size <= 64 and 0 <= args.iterations <= 10000000
+            and args.drain > 0 and 1 <= args.batch_size <= 256 and 0 <= args.iterations <= 10000000
             and 0 <= args.hot_percent <= 100 and 1 <= args.actions_per_transaction <= 100, "Invalid limits")
     count = max(64, (args.seconds + args.warmup) * args.rate)
     require(count <= 262144, "Fixture transaction bound exceeded")

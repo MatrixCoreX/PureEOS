@@ -221,8 +221,9 @@ BOOST_FIXTURE_TEST_CASE(sync_export_reads_owned_metadata_and_nested_frames_have_
 BOOST_AUTO_TEST_CASE(runtime_policy_rejects_invalid_engines_and_frame_capacities) {
    BOOST_CHECK_THROW(isolated_execution_runtime(static_cast<isolated_vm_engine>(99), 1), primary_state_unsupported);
    BOOST_CHECK_THROW(isolated_execution_runtime(isolated_vm_engine::jit, 0), primary_state_unsupported);
-   BOOST_CHECK_THROW(isolated_execution_runtime(isolated_vm_engine::jit, 145), primary_state_unsupported);
-   BOOST_CHECK_THROW(isolated_worker_pool(17, isolated_vm_engine::jit), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(isolated_execution_runtime(isolated_vm_engine::jit,
+      parallel_runtime_limits::max_workers * (isolated_sync_executor::max_depth + 1) + 1), primary_state_unsupported);
+   BOOST_CHECK_THROW(isolated_worker_pool(parallel_runtime_limits::max_workers + 1, isolated_vm_engine::jit), primary_state_budget_exceeded);
    isolated_execution_runtime interpreted(isolated_vm_engine::interpreter, 1);
    BOOST_CHECK_THROW(interpreted.deadlines(), primary_state_invalid_attempt);
 }

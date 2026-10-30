@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <eosio/chain/parallel_runtime_limits.hpp>
 
 namespace eosio::detail {
 
@@ -22,7 +23,7 @@ struct incoming_microbatch_policy {
          std::min(max_wait_us, remaining_us - deadline_reserve_us);
    }
    static constexpr size_t target(size_t configured) noexcept {
-      return std::clamp<size_t>(configured, 2, 64);
+      return std::clamp<size_t>(configured, 2, chain::experimental::parallel_runtime_limits::max_batch_transactions);
    }
 };
 
@@ -30,7 +31,7 @@ struct incoming_microbatch_policy {
 // A refusal means flush/bypass the optimization, never reject the transaction.
 // No timer, lock, chain state, deduplication or API/P2P reordering lives in the
 // buffer. The owner may bound a short coalescing wait using the policy above.
-template<typename T, size_t Capacity = 64>
+template<typename T, size_t Capacity = chain::experimental::parallel_runtime_limits::max_batch_transactions>
 class incoming_transaction_batch {
    static_assert(Capacity > 0 && std::is_nothrow_move_constructible_v<T>);
    std::vector<T> entries_;
@@ -64,6 +65,14 @@ public:
       result.swap(entries_);
       bytes_ = 0;
       return result;
+   }
+   // Reuse only an empty,bounded allocation after its detached drain.
+   // Destroy callbacks first: their destructors may reenter the owner.
+   void recycle(std::vector<T>&& storage) noexcept {
+      storage.clear();
+      if (entries_.empty() && bytes_ == 0 && storage.capacity() <= Capacity &&
+          storage.capacity() > entries_.capacity())
+         entries_.swap(storage);
    }
    void clear() noexcept { entries_.clear(); bytes_ = 0; }
 };

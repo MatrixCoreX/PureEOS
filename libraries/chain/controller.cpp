@@ -3,8 +3,12 @@
 #include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/parallel_access_hints.hpp>
 #include <eosio/chain/parallel_preparation_budget.hpp>
+#include <eosio/chain/parallel_production_budget.hpp>
 #include <eosio/chain/parallel_production_admission.hpp>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
+#include <eosio/chain/parallel_native_capture.hpp>
+#include <eosio/chain/parallel_input_fingerprint.hpp>
+#include <bit>
 
 #include <eosio/chain/block_log.hpp>
 #include <eosio/chain/fork_database.hpp>
@@ -1006,12 +1010,15 @@ struct controller_impl {
    protocol_feature_manager        protocol_features;
    controller::config              conf;
    std::unique_ptr<experimental::isolated_worker_pool> parallel_workers;
+   std::unique_ptr<experimental::bounded_native_capture_pool> native_capture_workers;
+   std::unique_ptr<experimental::owned_fingerprint_pool> input_fingerprint_workers;
    // Like the worker pool, construct on the execution owner, not whichever
    // thread happened to construct controller_impl during plugin startup.
    std::unique_ptr<experimental::parallel_access_hints<digest_type, experimental::state_capture_request>> parallel_read_hints;
    controller::parallel_execution_stats parallel_stats;
    controller::parallel_execution_stats parallel_production_stats;
    experimental::parallel_production_admission<digest_type> production_admission;
+   experimental::parallel_mixed_head_admission<digest_type> production_mixed_admission;
    // Owner-local diagnostics, not receipts or unique/finalized transaction counts.
    mutable uint64_t production_capacity_reductions = 0;
    mutable uint64_t production_capacity_bypasses = 0;
@@ -1032,6 +1039,7 @@ struct controller_impl {
       experimental::ordered_attempt_batch& order;
       experimental::isolated_cancel cancel;
       uint64_t pending_generation;
+      std::shared_ptr<const experimental::isolated_prevalidated_tree> preflight;
    };
    production_adoption_slot* production_slot = nullptr; // stack-owned, synchronous callback only
    experimental::ordered_attempt_batch* production_callback_order = nullptr; // guards extra public pushes after slot consumption
@@ -2305,6 +2313,8 @@ struct controller_impl {
    ~controller_impl() {
       // Module/thread destruction must precede runtime/controller teardown.
       // run() waits for every copied-state job; no canonical DB refs can escape.
+      input_fingerprint_workers.reset();
+      native_capture_workers.reset();
       parallel_workers.reset();
       if (conf.parallel_production_enabled && (production_receipt_observations ||
           production_capacity_reductions || production_capacity_bypasses))
@@ -3233,12 +3243,17 @@ struct controller_impl {
       std::vector<std::optional<experimental::isolated_sync_transaction_job>> sync_inputs; // final owned catalog, not moved worker jobs
       std::vector<std::optional<experimental::isolated_mixed_tree_job>> mixed_inputs;
       experimental::isolated_cancel cancel;
-   };
+      std::chrono::steady_clock::time_point private_prepared_at{}; // local admission observation only
+    };
 
    std::unique_ptr<validation_attempts> prepare_isolated_attempts(std::span<const packed_transaction* const> packed_inputs,
          experimental::isolated_cancel cancel, bool production = false,
-         validation_attempts* refresh_parent = nullptr, size_t refresh_index = 0) {
+         validation_attempts* refresh_parent = nullptr, size_t refresh_index = 0,
+          const std::function<void(validation_attempts&,size_t)>& on_ready = {}) {
       using namespace experimental;
+      // A formal callback can reenter other controller preparation paths. Never
+      // allocate/capture a second live prefix while the owned batch is active.
+      if (parallel_workers && parallel_workers->has_active_batch()) return {};
       if (!conf.parallel_validation_threads || conf.parallel_code_allowlist.empty() ||
           !conf.parallel_vm_matches() || !conf.profile_accounts.empty() ||
           skip_db_sessions() || skip_auth_check() || get_deep_mind_logger(false)) return {};
@@ -3273,14 +3288,27 @@ struct controller_impl {
          if (parallel_read_hints)
             for (const auto& key : hint_keys) parallel_read_hints->invalidate(key);
       };
+      bool owner_callback_started = false;
       try {
          checkpoint();
          if (!parallel_read_hints)
             parallel_read_hints = std::make_unique<parallel_access_hints<digest_type, state_capture_request>>();
+         const bool parallel_fingerprints=conf.parallel_input_fingerprints && production &&
+            !refresh_parent && packed_inputs.size()>=2 && conf.parallel_validation_threads>=2;
+         std::vector<std::vector<root_fingerprint_binding>> fingerprint_bindings;
          std::vector<isolated_action_tree_job> invocations;
          std::vector<std::optional<isolated_sync_transaction_job>> sync_inputs;
          std::vector<std::optional<isolated_mixed_tree_job>> mixed_inputs;
          std::vector<ordered_attempt_batch::request> requests;
+         // Reserve only the already bounded local batch. No live state or
+         // execution outcome is cached across canonical mutation/undo.
+         const auto batch_slots = std::min(packed_inputs.size(), size_t(conf.parallel_validation_batch_size));
+         hint_keys.reserve(batch_slots);
+         invocations.reserve(batch_slots);
+         if(parallel_fingerprints)fingerprint_bindings.reserve(batch_slots);
+         sync_inputs.reserve(batch_slots);
+         mixed_inputs.reserve(batch_slots);
+         requests.reserve(batch_slots);
          for (const auto* packed : packed_inputs) {
             checkpoint();
             if (!packed || invocations.size() >= conf.parallel_validation_batch_size) break;
@@ -3288,13 +3316,22 @@ struct controller_impl {
             if (!transaction || std::any_of(transaction->begin(), transaction->end(), [&](const auto& action) {
                   return !conf.parallel_code_allowlist.contains(action.code_hash);
                })) break;
+            std::vector<root_fingerprint_binding> bindings;
+            if(parallel_fingerprints)bindings.reserve(transaction->size());
             std::vector<fc::sha256> fingerprints;
             std::vector<fc::sha256> hint_fingerprints;
             isolated_action_tree_job invocation;
             invocation.context = current_action_tree_context(self);
             invocation.context.context_free_data = isolated_context_free_data::capture(packed->get_context_free_data());
-            for (const auto& action : *transaction) {
+            if(!parallel_fingerprints) {
+               fingerprints.reserve(transaction->size());
+               hint_fingerprints.reserve(transaction->size());
+            }
+            invocation.roots.reserve(transaction->size());
+            for (auto& action : *transaction) {
                checkpoint();
+               if(parallel_fingerprints)bindings.push_back({action.code_hash,action.limits});
+               else {
                fingerprints.push_back(isolated_execution_fingerprint(action.code_hash, action.limits, action.input));
                // Paths are hints, NOT the execution fingerprint below. Bind
                // code/action/actors/limits and length, but not varying payload
@@ -3313,12 +3350,17 @@ struct controller_impl {
                fc::raw::pack(shape, action.input.data.size());
                fc::raw::pack(shape, action.input.max_return_bytes);
                hint_fingerprints.push_back(shape.result());
-               invocation.roots.push_back(action.input);
+               }
+               // Fingerprints above bind the original bytes before the owned
+               // temporary is moved. Nothing subsequently reads transaction.
+               invocation.roots.push_back(std::move(action.input));
             }
-            std::set<name> seeded;
+            small_seen_keys<name> seeded;
+            // Small initial catalog only; discovery keeps its old hard limits.
+            invocation.programs.reserve(std::min<size_t>(4,invocation.roots.size()+2));
             bool eligible = true;
             size_t owned_code_bytes = 0;
-            for (const auto& root : invocation.roots) if (seeded.insert(root.receiver).second) {
+            for (const auto& root : invocation.roots) if (seeded.insert(root.receiver)) {
                checkpoint();
                auto program = prepare_isolated_tree_program(self, root.receiver,
                   isolated_transaction_executor::max_total_code_bytes - owned_code_bytes);
@@ -3327,18 +3369,45 @@ struct controller_impl {
                invocation.programs.push_back(std::move(*program));
             }
             if (!eligible) break;
-            requests.push_back({packed->id(), isolated_action_tree_fingerprint(fingerprints, invocation.context)});
-            hint_keys.push_back(isolated_action_tree_fingerprint(hint_fingerprints, invocation.context));
+            requests.push_back({packed->id(), parallel_fingerprints ? fc::sha256{} : isolated_action_tree_fingerprint(fingerprints, invocation.context)});
+            hint_keys.push_back(parallel_fingerprints ? fc::sha256{} : isolated_action_tree_fingerprint(hint_fingerprints, invocation.context));
             invocations.push_back(std::move(invocation));
+            if(parallel_fingerprints)fingerprint_bindings.push_back(std::move(bindings));
             sync_inputs.emplace_back();
             mixed_inputs.emplace_back();
          }
          if (invocations.empty()) return {};
+         if(parallel_fingerprints) {
+            checkpoint();
+            if(!input_fingerprint_workers)input_fingerprint_workers=std::make_unique<owned_fingerprint_pool>(
+               std::bit_floor(std::min<unsigned>(4,conf.parallel_validation_threads)));
+            std::vector<owned_fingerprint_input> inputs;inputs.reserve(invocations.size());
+            for(size_t i=0;i<invocations.size();++i)
+               inputs.push_back({std::move(invocations[i].roots),std::move(fingerprint_bindings[i]),invocations[i].context});
+            try {
+               auto prepared=input_fingerprint_workers->prepare(std::move(inputs),private_cancel);
+               if(prepared.size()!=invocations.size())throw primary_state_invalid_attempt();
+               for(size_t i=0;i<prepared.size();++i) {
+                  invocations[i].roots=std::move(prepared[i].roots);
+                  requests[i].execution_fingerprint=prepared[i].execution_fingerprint;
+                  hint_keys[i]=prepared[i].hint_fingerprint;
+               }
+               ++stats.input_fingerprint_batches;
+            } catch(const isolated_execution_interrupted&) {
+               checkpoint();throw;
+            }
+         }
+         // Old cleanup overlaps root/catalog preparation only. Drain BEFORE
+         // any next snapshot;no extra4MiB allowance or renewed private budget.
+         if(parallel_workers)parallel_workers->drain_retired(checkpoint);
+         checkpoint();
          chainbase_transaction_state_view view(db);
-         // Only this joined discovery invocation shares captured values.
-         // No canonical adoption/undo occurs until it returns. Prefix refresh
+         // Only this unchanged-prefix discovery invocation shares captured values.
+         // Legacy discovery has no canonical mutation. The ready path destroys
+          // this cache before its first owner callback. Prefix refresh
          // calls construct a NEW session and therefore re-read current state.
-         frozen_primary_capture_session capture(view);
+          std::optional<frozen_primary_capture_session> capture;
+          capture.emplace(view);
          if (!parallel_workers) parallel_workers = std::make_unique<isolated_worker_pool>(conf.parallel_validation_threads, conf.parallel_engine);
          std::set<table_key, table_key_less> keys;
          std::set<primary_query, primary_query_less> queries;
@@ -3374,10 +3443,60 @@ struct controller_impl {
             if (x.table != y.table || bool(x.query) != bool(y.query)) return false;
             return !x.query || (!primary_query_less{}(*x.query, *y.query) && !primary_query_less{}(*y.query, *x.query));
          };
+         // Non-authoritative prefetch for the conventional token transfer
+         // layout. Wrong hints can only add bounded fresh reads: the VM still
+         // executes, authenticates and proves every actual read and mutation.
+         // One ordinary root keeps metadata bounded for arbitrary action trees.
+         bool pipeline_layout=true;
+         std::vector<std::pair<name,size_t>> pipeline_owners;
+         pipeline_owners.reserve(invocations.size()*2);
+         for(size_t owner_slot=0;owner_slot<invocations.size();++owner_slot) {
+            auto& invocation=invocations[owner_slot];
+            if(invocation.roots.size()!=1) {pipeline_layout=false;continue;}
+            const auto& root=invocation.roots.front();
+            if(root.action!="transfer"_n || root.data.size()<33) {pipeline_layout=false;continue;}
+            uint64_t from=0,to=0,raw_symbol=0;
+            std::memcpy(&from,root.data.data(),8);
+            std::memcpy(&to,root.data.data()+8,8);
+            std::memcpy(&raw_symbol,root.data.data()+24,8);
+            auto symbol_code=raw_symbol>>8,letters=symbol_code;
+            bool valid=from && to && symbol_code && (raw_symbol&255)<=18;
+            while(letters && valid) {
+               const auto letter=letters&255;
+               valid=letter>='A' && letter<='Z';letters>>=8;
+            }
+            if(!valid) {pipeline_layout=false;continue;}
+            pipeline_owners.emplace_back(name{from},owner_slot);
+            pipeline_owners.emplace_back(name{to},owner_slot);
+            extend_path(account_capture_request{name{from}});
+            extend_path(account_capture_request{name{to}});
+            const auto read=[&](name scope,name table) {
+               const table_key key{root.account,scope,table};
+               extend_path(primary_capture_request{key,primary_query{key,primary_query_kind::find,symbol_code}});
+            };
+            read(name{symbol_code},"stat"_n);
+            read(name{from},"accounts"_n);read(name{to},"accounts"_n);
+            // Empty-code notification candidates are owned metadata only.
+            // Unused entries cannot emit events. Actual receiver capability,
+            // code hash, native handlers and order are rechecked at adoption.
+            for(const auto receiver:{name{from},name{to}}) {
+               if(invocation.programs.size()>=isolated_action_tree_executor::max_programs ||
+                  std::any_of(invocation.programs.begin(),invocation.programs.end(),
+                     [&](const auto& p){return p.receiver==receiver;})) continue;
+               auto program=prepare_isolated_tree_program(self,receiver);
+               if(program && program->code.empty() && !program->serial_only)
+                  invocation.programs.push_back(std::move(*program));
+            }
+         }
+         std::sort(pipeline_owners.begin(),pipeline_owners.end());
          for (const auto& key : hint_keys)
             parallel_read_hints->visit(key, [&](const auto& path) { checkpoint(); extend_path(path); });
-         // Every discovery wave is fully joined BEFORE the owner reads more
-         // canonical state. Completed transactions keep their immutable base
+         // Every discovery retry joins all prior jobs before recapture. Within
+         // the first wave, only unpublished future slots may receive a new
+         // immutable capture while earlier jobs read their own frozen values.
+         // Legacy callbacks wait for the complete wave. The opt-in first-wave
+          // path below finishes all captures before consuming any owned result.
+         // Completed transactions keep their immutable base
          // and descriptor; only unresolved slots receive a fresh preparation.
          // No failed transaction's partial result survives a discovery wave.
          // A sparse base only answers captured queries, never guesses absence or
@@ -3389,7 +3508,7 @@ struct controller_impl {
          // ORIGINAL absolute batch/production deadline (never refresh it).
          // Captured only after an actual environment host call. The aggregate
          // WIRE budget is checked before allocating another snapshot; action
-         // range metadata is separately bounded by 64 jobs x 16 ordinary roots.
+         // range metadata is separately bounded by the batch size x 16 ordinary roots.
          // No extra retry rounds and no deadline refresh for this discovery.
          auto attempts = std::make_unique<validation_attempts>();
          attempts->cancel = cancel;
@@ -3402,6 +3521,7 @@ struct controller_impl {
          }
          auto* order = refresh_parent ? refresh_parent->order.get() : nullptr;
          attempts->outcomes.resize(invocations.size());
+         attempts->limits.reserve(invocations.size());
          for (const auto& input : invocations) attempts->limits.push_back(input.programs.front().limits);
          std::vector<bool> retry(invocations.size(), true);
          // State discovery changes tickets/snapshots, not necessarily input
@@ -3430,7 +3550,64 @@ struct controller_impl {
             const std::vector<primary_query> reads(queries.begin(), queries.end());
             const std::vector<secondary_query> secondary_reads(secondary_queries.begin(), secondary_queries.end());
             const std::vector<name> account_reads(accounts.begin(), accounts.end());
-            auto base = capture.capture(tables, reads, secondary_reads, {}, checkpoint, account_reads);
+            // Metadata belongs to the shared batch, while each worker keeps
+            // its original per-transaction read limits. Bound aggregate table/
+            // account entries by four per slot (at most 1024 in a 256-TX batch).
+            // Row/query/value limits and the shared deadline remain unchanged.
+            primary_snapshot_limits capture_limits;
+            const size_t batch_metadata_entries = invocations.size() * 4;
+            capture_limits.max_tables = std::max(capture_limits.max_tables, batch_metadata_entries);
+            capture_limits.max_accounts = std::max(capture_limits.max_accounts, batch_metadata_entries);
+            // A separate synchronous native-read capability, not a WASM host.
+            // No application callbacks/writes are pumped before every reader joins.
+            const bool native_capture=conf.parallel_native_capture && production &&
+               round==0 && !refresh_parent && pipeline_layout && secondary_reads.empty() &&
+               self.is_write_window() && conf.parallel_validation_threads>=2;
+            const bool native_staged=native_capture && conf.parallel_native_capture_staged;
+            const bool staged_capture=(!native_capture || native_staged) && production &&
+               round==0 && !refresh_parent && pipeline_layout && invocations.size()>conf.parallel_validation_threads;
+            bool native_used=false;
+            const auto capture_now=[&](std::span<const table_key> table_keys,std::span<const primary_query> primary_reads,
+                  std::span<const secondary_query> secondary,std::span<const name> names) {
+               if(native_capture && !native_used) {
+                  native_used=true;
+                  if(!native_capture_workers)
+                     native_capture_workers=std::make_unique<bounded_native_capture_pool>(
+                        std::bit_floor(std::min<unsigned>(native_staged ? 2 : 4,conf.parallel_validation_threads)));
+                  try {
+                     auto next=capture->capture_parallel(db,*native_capture_workers,table_keys,primary_reads,
+                        capture_limits,private_cancel,names,checkpoint);
+                     ++stats.native_capture_batches;
+                     if(native_staged)++stats.native_staged_capture_batches;
+                     return next;
+                  } catch(const isolated_execution_interrupted&) {
+                     checkpoint(); // translate ORIGINAL cancellation/deadline
+                     throw;
+                  }
+               }
+               return capture->capture(table_keys,primary_reads,secondary,capture_limits,checkpoint,names);
+            };
+            const auto capture_until=[&](size_t end) {
+               if(!staged_capture || end>=invocations.size())
+                  return capture_now(tables,reads,secondary_reads,account_reads);
+               const auto deferred=[&](name account) {
+                  const auto it=std::lower_bound(pipeline_owners.begin(),pipeline_owners.end(),account,
+                     [](const auto& item,name key){return item.first<key;});
+                  return it!=pipeline_owners.end() && it->first==account && it->second>=end;
+               };
+               const auto included=[&](const table_key& key) {
+                  return key.table!="accounts"_n || !deferred(key.scope);
+               };
+               std::vector<table_key> tk;std::vector<primary_query> pq;
+               std::vector<secondary_query> sq;std::vector<name> ac;
+               tk.reserve(tables.size());pq.reserve(reads.size());sq.reserve(secondary_reads.size());ac.reserve(account_reads.size());
+               for(const auto& key:tables)if(included(key))tk.push_back(key);
+               for(const auto& q:reads)if(included(q.table))pq.push_back(q);
+               for(const auto& q:secondary_reads)if(included(q.table))sq.push_back(q);
+               for(const auto account:account_reads)if(!deferred(account))ac.push_back(account);
+               return capture_now(tk,pq,sq,ac);
+            };
+            auto base=capture_until(staged_capture ? size_t(conf.parallel_validation_threads) : invocations.size());
             if (refresh_parent) {
                // All earlier workers have joined. Each discovery wave captures
                // the current canonical prefix afresh, publishes a NEW ticket,
@@ -3448,25 +3625,80 @@ struct controller_impl {
                   if (retry[i]) replacements.push_back({i, requests[i]});
                order->prepare_retries(base, replacements);
             }
-            std::vector<isolated_worker_job> jobs;
+
             std::vector<size_t> job_indices;
-            for (size_t i = 0; i < invocations.size(); ++i) {
-               if (!retry[i]) continue;
+            std::vector<ordered_attempt_batch::ticket> tags;
+            const auto pending_job_count=std::count(retry.begin(),retry.end(),true);
+            job_indices.reserve(pending_job_count);tags.reserve(pending_job_count);
+            for(size_t i=0;i<invocations.size();++i)if(retry[i]) {
                job_indices.push_back(i);
-               const auto& input = invocations[i];
-               const auto tag = order->get_ticket(refresh_parent ? refresh_index : i);
-               if(mixed_inputs[i]) {
-                  jobs.emplace_back(tag,mixed_catalogs[i].get(*mixed_inputs[i]),private_cancel);
-               } else if(sync_inputs[i]) {
-                  jobs.emplace_back(tag,sync_catalogs[i].get(*sync_inputs[i]),private_cancel);
-               } else jobs.emplace_back(tag, tree_catalogs[i].get(input), private_cancel);
+               tags.push_back(order->get_ticket(refresh_parent ? refresh_index : i));
             }
-            performance::since(performance::stage::parallel_capture, capture_started);
-            if (round == 0 && !refresh_parent) ++stats.batches;
-            std::vector<isolated_worker_outcome> completed;
-            {
+            const auto make_job=[&](size_t slot) {
+               checkpoint();
+               if(staged_capture && slot && slot%conf.parallel_validation_threads==0) {
+                  const auto next_base=capture_until(std::min(invocations.size(),slot+size_t(conf.parallel_validation_threads)));
+                  std::vector<ordered_attempt_batch::retry_request> pending;
+                  pending.reserve(tags.size()-slot);
+                  for(size_t k=slot;k<tags.size();++k)pending.push_back({job_indices[k],requests[job_indices[k]]});
+                  order->prepare_retries(next_base,pending);
+                  for(size_t k=slot;k<tags.size();++k)tags[k]=order->get_ticket(job_indices[k]);
+                  ++stats.streamed_capture_extensions;
+               }
+               const auto i=job_indices[slot];const auto& input=invocations[i];
+               if(mixed_inputs[i])return isolated_worker_job(tags[slot],mixed_catalogs[i].get(*mixed_inputs[i]),private_cancel);
+               if(sync_inputs[i])return isolated_worker_job(tags[slot],sync_catalogs[i].get(*sync_inputs[i]),private_cancel);
+               auto job=isolated_worker_job(tags[slot],tree_catalogs[i].get(input),private_cancel);
+               job.prevalidate_tree=production;
+               return job;
+            };
+            performance::since(performance::stage::parallel_capture,capture_started);
+            if(round==0 && !refresh_parent)++stats.batches;
+             const bool ordered_ready = on_ready && round==0 && !refresh_parent && pipeline_layout &&
+                std::none_of(sync_inputs.begin(),sync_inputs.end(),[](const auto& v){return bool(v);}) &&
+                std::none_of(mixed_inputs.begin(),mixed_inputs.end(),[](const auto& v){return bool(v);});
+             if(ordered_ready) {
+                // All captures/publish callbacks finish before the first owner
+                // callback. Destroy the native-prefix cache before any mutation.
+                // Workers retain only owned immutable inputs; native DB remains
+                // owner-only. This branch never recaptures after consumption.
+                attempts->sync_inputs.resize(invocations.size());
+                attempts->mixed_inputs.resize(invocations.size());
+                ++stats.early_ready_batches;
+                parallel_workers->run_ready_grouped(tags,make_job,[&](size_t slot,isolated_worker_outcome&& result) {
+                   capture.reset();
+                   if(result.prevalidated_tree && !result.prevalidated_tree->belongs_to(tags[slot]))
+                      throw primary_state_invalid_attempt();
+                   ++stats.attempts;
+                   const bool success=bool(result.tree_attempt()) || bool(result.sync_transaction_result) || bool(result.mixed_result);
+                   stats.succeeded+=success;stats.prepared_successes+=success;
+                   if(result.failure==isolated_worker_failure::deadline)++stats.worker_deadlines;
+                   else if(result.failure==isolated_worker_failure::vm_timeout)++stats.worker_vm_timeouts;
+                   else if(result.failure!=isolated_worker_failure::none &&
+                         result.failure!=isolated_worker_failure::missing_state &&
+                         result.failure!=isolated_worker_failure::sync_required &&
+                         result.failure!=isolated_worker_failure::mixed_required &&
+                         result.failure!=isolated_worker_failure::environment_required &&
+                         result.failure!=isolated_worker_failure::missing_receiver)++stats.worker_other_failures;
+                   attempts->private_prepared_at=std::max(attempts->private_prepared_at,result.ready_at);
+                   const auto index=job_indices[slot];
+                   attempts->outcomes[index]=std::move(result);
+                   owner_callback_started=true;
+                   on_ready(*attempts,index);
+                }, conf.parallel_early_adoption_group_size);
+                // run_ready has joined every job, including exceptional exits.
+                // No private checkpoint may erase a committed owner prefix.
+                return attempts;
+             }
+             std::vector<isolated_worker_outcome> completed;
+             {
                performance::scope wait_timer(performance::stage::parallel_batch_wait);
-               completed = parallel_workers->run(std::move(jobs));
+               if(production)completed=parallel_workers->run_streamed(tags,make_job);
+               else {
+                  std::vector<isolated_worker_job> jobs;jobs.reserve(tags.size());
+                  for(size_t slot=0;slot<tags.size();++slot)jobs.push_back(make_job(slot));
+                  completed=parallel_workers->run(std::move(jobs));
+               }
             }
             if (completed.size() != job_indices.size()) throw primary_state_invalid_attempt();
             // Count real executions, not successful results retained across
@@ -3475,7 +3707,9 @@ struct controller_impl {
             stats.attempts += completed.size();
             for (size_t job = 0; job < completed.size(); ++job) {
                const auto& result = completed[job];
-               stats.succeeded += bool(result.tree_result) || bool(result.sync_transaction_result) || bool(result.mixed_result);
+               if(result.prevalidated_tree && !result.prevalidated_tree->belongs_to(tags[job]))
+                  throw primary_state_invalid_attempt();
+               stats.succeeded += bool(result.tree_attempt()) || bool(result.sync_transaction_result) || bool(result.mixed_result);
                if (result.failure == isolated_worker_failure::deadline) ++stats.worker_deadlines;
                else if (result.failure == isolated_worker_failure::vm_timeout) ++stats.worker_vm_timeouts;
                else if (result.failure != isolated_worker_failure::none &&
@@ -3533,7 +3767,7 @@ struct controller_impl {
                      auto found = hashes.find(root.receiver);
                      if (found == hashes.end())
                         found = hashes.emplace(root.receiver,
-                           fc::sha256::hash(program->code.data(), program->code.size())).first;
+                           program->code.content_hash()).first;
                      fingerprints.push_back(isolated_execution_fingerprint(found->second, program->limits, root));
                   }
                   requests[i].execution_fingerprint = isolated_action_tree_fingerprint(fingerprints, invocation.context);
@@ -3557,7 +3791,7 @@ struct controller_impl {
                         auto program=prepare_isolated_sync_program(self,prior.receiver);
                         if(!program || prior.serial_only) throw primary_state_unsupported();
                         if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
-                              fc::sha256::hash(program->program.code.data(),program->program.code.size())))
+                              program->program.code.content_hash()))
                            throw primary_state_unsupported();
                         input.programs.push_back(std::move(*program));
                      }
@@ -3581,7 +3815,7 @@ struct controller_impl {
                      auto program=prepare_isolated_sync_program(self,prior.receiver);
                      if(!program) throw primary_state_unsupported();
                      if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
-                           fc::sha256::hash(program->program.code.data(),program->program.code.size())))
+                           program->program.code.content_hash()))
                         throw primary_state_unsupported();
                      input.programs.push_back(std::move(*program));
                   }
@@ -3619,7 +3853,7 @@ struct controller_impl {
                         auto program=prepare_isolated_sync_program(self,receiver);
                         if(!program) program=isolated_sync_program{{receiver,{},programs.front().program.limits,true},false};
                         if(!program->program.code.empty() && !conf.parallel_code_allowlist.contains(
-                              fc::sha256::hash(program->program.code.data(),program->program.code.size()))) {
+                              program->program.code.content_hash())) {
                            program->program.serial_only=true; program->program.code.clear(); program->sync_call_supported=false;
                         }
                         invalidate_catalogs(i);
@@ -3636,7 +3870,7 @@ struct controller_impl {
                      auto program = prepare_isolated_tree_program(self, receiver);
                      if (!program) program = isolated_receiver_program{receiver, {}, input.programs.front().limits, true};
                      if (!program->code.empty() && !conf.parallel_code_allowlist.contains(
-                           fc::sha256::hash(program->code.data(), program->code.size()))) {
+                           program->code.content_hash())) {
                         program->serial_only = true;
                         program->code.clear();
                      }
@@ -3652,7 +3886,7 @@ struct controller_impl {
                // to deadlines, eligibility or ordered-adoption decisions.
                if (!refresh_parent)
                   for (const auto& result : attempts->outcomes)
-                     stats.prepared_successes += bool(result.tree_result) ||
+                     stats.prepared_successes += bool(result.tree_attempt()) ||
                         bool(result.sync_transaction_result) || bool(result.mixed_result);
                // Workers have joined. Transfer the final owned catalogs once;
                // copying all code bytes on every discovery wave is unnecessary.
@@ -3667,12 +3901,14 @@ struct controller_impl {
          invalidate_hints();
          return {}; // bounded discovery exhaustion is serial, NOT rejection
       } catch (const interrupt_exception&) { throw; }
-      catch (const primary_state_budget_exceeded&) {
-         invalidate_hints();
+       catch (const primary_state_budget_exceeded&) {
+          if(owner_callback_started)throw;
+          invalidate_hints();
          ++stats.preparation_budget_fallbacks;
          return {};
-      } catch (const std::exception&) {
-         invalidate_hints();
+       } catch (const std::exception&) {
+          if(owner_callback_started)throw;
+          invalidate_hints();
          // Only local pre-execution work was done. Preserve canonical acceptance
          // by routing unsupported capabilities/budgets/allocation to serial.
          ++stats.preparation_other_fallbacks;
@@ -3691,7 +3927,7 @@ struct controller_impl {
             ? order.inspect_next(tag, packed.id(), batch.outcomes[index].mixed_result, checkpoint)
             : batch.sync_inputs[index]
                ? order.inspect_next(tag, packed.id(), batch.outcomes[index].sync_transaction_result, checkpoint)
-               : order.inspect_next(tag, packed.id(), batch.outcomes[index].tree_result, checkpoint);
+               : order.inspect_next(tag, packed.id(), batch.outcomes[index].tree_attempt(), checkpoint);
       }(); // do not retain an obsolete ticket/base throughout reexecution
       if (status != ordered_attempt_batch::candidate_status::dependency_conflict) return;
       auto& stats = production ? parallel_production_stats : parallel_stats;
@@ -3709,7 +3945,7 @@ struct controller_impl {
       auto fresh = prepare_isolated_attempts(inputs, batch.cancel, production, &batch, index);
       if (!fresh) return;
       auto& result = fresh->outcomes.front();
-      if (!result.tree_result && !result.sync_transaction_result && !result.mixed_result) return;
+      if (!result.tree_attempt() && !result.sync_transaction_result && !result.mixed_result) return;
       batch.outcomes[index] = std::move(result);
       batch.limits[index] = std::move(fresh->limits.front());
       batch.sync_inputs[index] = std::move(fresh->sync_inputs.front());
@@ -3728,15 +3964,11 @@ struct controller_impl {
       return prepare_isolated_attempts(inputs, {parallel_interrupts, parallel_interrupts->load(std::memory_order_relaxed)});
    }
 
-   int64_t production_preparation_us(fc::time_point block_deadline) const {
+   int64_t production_preparation_us(fc::time_point block_deadline, fc::microseconds max_transaction_time) const {
       const auto remaining = (block_deadline - fc::time_point::now()).count();
-      const auto original_cpu_budget = std::min<uint64_t>(
-         self.get_global_properties().configuration.max_transaction_cpu_usage, resource_limits.get_block_cpu_limit());
-      const auto reserved_wall_us = static_cast<int64_t>(original_cpu_budget) + 5'000;
-      if (remaining <= reserved_wall_us) return 0;
-      return std::min({remaining / 4,
-         std::chrono::duration_cast<std::chrono::microseconds>(experimental::parallel_runtime_limits::production_timeout).count(),
-         remaining - reserved_wall_us});
+      return experimental::production_preparation_budget_us(remaining,
+         self.get_global_properties().configuration.max_transaction_cpu_usage,
+         resource_limits.get_block_cpu_limit(),max_transaction_time.count());
    }
 
    std::optional<digest_type> production_workload_key(const transaction_metadata_ptr& meta) const {
@@ -3764,10 +3996,10 @@ struct controller_impl {
       return encoder.result();
    }
 
-   uint16_t recommended_production_batch(const transaction_metadata_ptr& head, fc::time_point block_deadline) const {
+   uint16_t recommended_production_batch(const transaction_metadata_ptr& head, fc::time_point block_deadline, fc::microseconds max_transaction_time) const {
       if (!conf.parallel_production_enabled || !pending ||
           pending->_block_status != controller::block_status::incomplete || !self.is_write_window()) return 0;
-      const auto budget_us = production_preparation_us(block_deadline);
+      const auto budget_us = production_preparation_us(block_deadline,max_transaction_time);
       if (!budget_us) return 0; // preserve the entire original serial rejection window
       const auto remaining_cpu = resource_limits.get_block_cpu_limit();
       // An already applied/requeued transaction has an ordinary CPU estimate.
@@ -3778,13 +4010,13 @@ struct controller_impl {
          return 0;
       }
       const auto key = production_workload_key(head);
-      if (!key) return experimental::parallel_production_admission<digest_type>::cold_batch(
-         conf.parallel_validation_threads, conf.parallel_validation_batch_size);
+      if (!key) return experimental::parallel_production_admission<digest_type>::has_full_preparation_budget(budget_us) ?
+         experimental::parallel_production_admission<digest_type>::cold_batch(
+            conf.parallel_validation_threads, conf.parallel_validation_batch_size) : 0;
       const auto now = std::chrono::steady_clock::now();
-      const auto time_limited = production_admission.recommend(*key, conf.parallel_validation_threads,
-         conf.parallel_validation_batch_size, budget_us, now);
-      const auto capacity_limited = production_admission.recommend_for_block(*key, conf.parallel_validation_threads,
-         conf.parallel_validation_batch_size, budget_us, remaining_cpu, now);
+      const auto [time_limited,capacity_limited] = experimental::recommend_parallel_production_admission(
+         production_admission,production_mixed_admission,*key,conf.parallel_validation_threads,
+         conf.parallel_validation_batch_size,budget_us,remaining_cpu,now);
       if (capacity_limited < time_limited) {
          ++production_capacity_reductions;
          if (!capacity_limited) ++production_capacity_bypasses;
@@ -3793,7 +4025,7 @@ struct controller_impl {
    }
 
    size_t for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
-         fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback) {
+         fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback, fc::microseconds max_transaction_time) {
       EOS_ASSERT(!parallel_production_scope && transactions.size() <= experimental::parallel_runtime_limits::max_batch_transactions, transaction_exception,
                  "invalid or reentrant parallel production batch");
       parallel_production_scope = true;
@@ -3809,64 +4041,14 @@ struct controller_impl {
       std::array<bool, experimental::parallel_runtime_limits::max_batch_transactions> committed{};
       const bool enabled = conf.parallel_production_enabled && pending &&
          pending->_block_status == controller::block_status::incomplete && self.is_write_window();
-      if (enabled) {
-         if (block_deadline <= fc::time_point::now()) return 0;
-         const auto budget_us = production_preparation_us(block_deadline);
-         // If the window is already short, do not reduce the time available to
-         // the original CPU-limit rejection path at all (including its setup).
-         if (budget_us > 0) {
-            // Reserve at least 3/4 of the real wall window for original serial
-            // authorization/failure handling. Spending the entire window on an
-            // infinite/private-slow queue head would retry it every block without
-            // ever applying the ordinary transaction CPU limit or removing it.
-            // This is one absolute cap for the whole batch, including queued jobs.
-            const auto preparation_started = std::chrono::steady_clock::now();
-            cancel.deadline = preparation_started + std::chrono::microseconds(budget_us);
-            std::vector<const packed_transaction*> inputs;
-            for (const auto& trx : transactions) {
-               if (!trx || trx->is_transient() || trx->implicit() || trx->scheduled()) break;
-               if (homogeneous) {
-                  const auto key = production_workload_key(trx);
-                  if (inputs.empty()) workload = key;
-                  homogeneous = key && key == workload;
-               }
-               inputs.push_back(trx->packed_trx().get());
-            }
-            workload_size = inputs.size();
-            const auto deadlines_before = parallel_production_stats.preparation_deadlines;
-            const auto worker_deadlines_before = parallel_production_stats.worker_deadlines;
-            try {
-               attempts = prepare_isolated_attempts(inputs, cancel, true);
-               if (homogeneous && workload) {
-                  using admission = experimental::parallel_production_admission<digest_type>;
-                  auto result = admission::outcome::other_failure;
-                  if (parallel_production_stats.preparation_deadlines != deadlines_before ||
-                      parallel_production_stats.worker_deadlines != worker_deadlines_before)
-                     result = admission::outcome::deadline;
-                  else if (attempts && attempts->outcomes.size() == inputs.size() &&
-                        std::all_of(attempts->outcomes.begin(), attempts->outcomes.end(), [](const auto& o) {
-                           return o.tree_result || o.sync_transaction_result || o.mixed_result;
-                        })) result = admission::outcome::ready;
-                  const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
-                     std::chrono::steady_clock::now() - preparation_started).count();
-                  production_admission.observe(*workload, conf.parallel_validation_threads,
-                     conf.parallel_validation_batch_size, inputs.size(), elapsed, budget_us, result);
-               }
-            }
-            catch (const interrupt_exception&) {
-               if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
-                   fc::time_point::now() >= block_deadline) return 0; // queue entries were not consumed
-               // A local private-phase cap is NOT a transaction rejection. If the
-               // real block still has time, consume the original serial path.
-            }
-         }
-      }
-      size_t called = 0;
-      for (size_t i = 0; i < transactions.size(); ++i) {
+       size_t called = 0;
+       bool stopped = false, early_blocked = false;
+       std::exception_ptr formal_callback_failure;
+       auto process_slot = [&](size_t i,validation_attempts* prepared,bool allow_refresh)->std::optional<bool> {
          if (enabled && (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
                          parallel_pending_generation != generation ||
                          !pending || pending->_block_status != controller::block_status::incomplete ||
-                         fc::time_point::now() >= block_deadline)) break;
+                         fc::time_point::now() >= block_deadline)) return std::nullopt;
          auto serial = [&] {
             std::optional<size_t> before;
             if (enabled && pending && parallel_pending_generation == generation)
@@ -3891,6 +4073,9 @@ struct controller_impl {
                            production_admission.observe_receipt(*workload, conf.parallel_validation_threads,
                               conf.parallel_validation_batch_size, receipt.cpu_usage_us);
                            ++production_receipt_observations;
+                        } else if(!homogeneous && workload && i==0 && i<workload_size) {
+                           production_mixed_admission.observe_receipt(*workload,conf.parallel_validation_threads,
+                              conf.parallel_validation_batch_size,receipt.cpu_usage_us);
                         }
                      }
                   }
@@ -3899,22 +4084,25 @@ struct controller_impl {
             return proceed;
          };
          bool proceed;
-         if (attempts && i < attempts->outcomes.size()) {
-            auto& order = *attempts->order;
+         if (prepared && i < prepared->outcomes.size()) {
+            auto& order = *prepared->order;
             auto adopt = [&](const auto& result) {
-                  // Preparation already joined every worker and checked its
-                  // absolute private-phase cap. Ordered adoption uses the REAL
+                  // The completed slot owns every input and proof. Other private
+                  // jobs can only read their own copies. Adoption uses the REAL
                   // block deadline and original transaction CPU checks. Do not
                   // expire completed results while earlier owner callbacks run;
                   // keep the observed external-interrupt generation unchanged.
                   const experimental::isolated_cancel adoption_interrupt{cancel.generation, cancel.observed};
-                  production_adoption_slot slot{transactions[i], nullptr, nullptr, nullptr, nullptr, nullptr, attempts->limits[i],
-                     fc::microseconds(attempts->outcomes[i].elapsed.count()), order, adoption_interrupt, generation};
+                  production_adoption_slot slot{transactions[i], nullptr, nullptr, nullptr, nullptr, nullptr, prepared->limits[i],
+                     fc::microseconds(prepared->outcomes[i].elapsed.count()), order, adoption_interrupt, generation};
                   if constexpr(std::is_same_v<std::remove_cvref_t<decltype(result)>,experimental::isolated_sync_transaction_result>) {
-                     slot.sync_result=&result; slot.sync_input=&*attempts->sync_inputs[i];
+                     slot.sync_result=&result; slot.sync_input=&*prepared->sync_inputs[i];
                   } else if constexpr(std::is_same_v<std::remove_cvref_t<decltype(result)>,experimental::isolated_mixed_tree_result>) {
-                     slot.mixed_result=&result; slot.mixed_input=&*attempts->mixed_inputs[i];
-                  } else slot.tree_result=&result;
+                     slot.mixed_result=&result; slot.mixed_input=&*prepared->mixed_inputs[i];
+                  } else {
+                     slot.tree_result=&result;
+                     slot.preflight=prepared->outcomes[i].prevalidated_tree;
+                  }
                   production_slot = &slot;
                   production_callback_order = &order;
                   auto clear = fc::make_scoped_exit([&] {
@@ -3943,28 +4131,129 @@ struct controller_impl {
                // queue entry. Never swallow an interrupt thrown by a formal
                // callback: it may already have committed or changed the queue.
                try {
-                  refresh_conflicting_attempt(*attempts, i, *transactions[i]->packed_trx(), true, checkpoint);
+                   if(allow_refresh)
+                      refresh_conflicting_attempt(*prepared,i,*transactions[i]->packed_trx(),true,checkpoint);
+                   else if(order.inspect_next(order.get_ticket(i),transactions[i]->id(),
+                              prepared->outcomes[i].tree_attempt(),checkpoint)!=
+                           experimental::ordered_attempt_batch::candidate_status::reusable)
+                      return std::nullopt; // join before unavailable/conflicting fallback or recapture
                } catch (const interrupt_exception&) {
-                  if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed) break;
+                  if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed) return std::nullopt;
                   throw;
                }
                checkpoint();
-               if(attempts->mixed_inputs[i])
-                  proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].mixed_result,adopt,fallback,checkpoint);
-               else if(attempts->sync_inputs[i])
-                  proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].sync_transaction_result,adopt,fallback,checkpoint);
-               else proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),attempts->outcomes[i].tree_result,adopt,fallback,checkpoint);
-            } catch (const production_bookkeeping_interrupted&) { break; }
+               if(prepared->mixed_inputs[i])
+                  proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),prepared->outcomes[i].mixed_result,adopt,fallback,checkpoint);
+               else if(prepared->sync_inputs[i])
+                  proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),prepared->outcomes[i].sync_transaction_result,adopt,fallback,checkpoint);
+               else proceed=order.run_next(order.get_ticket(i),transactions[i]->id(),prepared->outcomes[i].tree_attempt(),adopt,fallback,checkpoint);
+            } catch (const production_bookkeeping_interrupted&) { return std::nullopt; }
          } else proceed = serial();
-         ++called;
-         if (!proceed) break;
+          return proceed;
+       };
+      if (enabled) {
+         if (block_deadline <= fc::time_point::now()) return 0;
+         const auto budget_us = production_preparation_us(block_deadline,max_transaction_time);
+         // If the window is already short, do not reduce the time available to
+         // the original CPU-limit rejection path at all (including its setup).
+         if (budget_us > 0) {
+            // Reserve at least 3/4 of the real wall window for original serial
+            // authorization/failure handling. Spending the entire window on an
+            // infinite/private-slow queue head would retry it every block without
+            // ever applying the ordinary transaction CPU limit or removing it.
+            // This is one absolute cap for the whole batch, including queued jobs.
+            const auto preparation_started = std::chrono::steady_clock::now();
+            cancel.deadline = preparation_started + std::chrono::microseconds(budget_us);
+            std::vector<const packed_transaction*> inputs;
+            inputs.reserve(transactions.size()); // already checked against the existing hard batch bound
+            for (const auto& trx : transactions) {
+               if (!trx || trx->is_transient() || trx->implicit() || trx->scheduled()) break;
+               if (homogeneous) {
+                  const auto key = production_workload_key(trx);
+                  if (inputs.empty()) workload = key;
+                  homogeneous = key && key == workload;
+               }
+               inputs.push_back(trx->packed_trx().get());
+            }
+            workload_size = inputs.size();
+            const auto deadlines_before = parallel_production_stats.preparation_deadlines;
+            const auto worker_deadlines_before = parallel_production_stats.worker_deadlines;
+            try {
+                std::function<void(validation_attempts&,size_t)> consume_ready;
+                if(conf.parallel_production_early_adoption)consume_ready=[&](validation_attempts& prepared,size_t i) {
+                   if(stopped || early_blocked || i!=called)return;
+                   try {
+                      const auto proceed=process_slot(i,&prepared,false);
+                      if(!proceed){early_blocked=true;return;}
+                      ++called;++parallel_production_stats.early_ready_callbacks;
+                      if(!*proceed)stopped=true;
+                   } catch(...) {formal_callback_failure=std::current_exception();throw;}
+                };
+                attempts = prepare_isolated_attempts(inputs,cancel,true,nullptr,0,consume_ready);
+                if (workload && pending && parallel_pending_generation==generation &&
+                      parallel_interrupts->load(std::memory_order_relaxed)==cancel.observed) {
+                  using admission = experimental::parallel_production_admission<digest_type>;
+                  auto result = admission::outcome::other_failure;
+                  if (parallel_production_stats.preparation_deadlines != deadlines_before ||
+                      parallel_production_stats.worker_deadlines != worker_deadlines_before)
+                     result = admission::outcome::deadline;
+                  else if (attempts && attempts->outcomes.size() == inputs.size() &&
+                        std::all_of(attempts->outcomes.begin(), attempts->outcomes.end(), [](const auto& o) {
+                           return o.tree_attempt() || o.sync_transaction_result || o.mixed_result;
+                        })) result = admission::outcome::ready;
+                  const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
+                      (attempts && attempts->private_prepared_at!=std::chrono::steady_clock::time_point{} ?
+                         attempts->private_prepared_at : std::chrono::steady_clock::now()) - preparation_started).count();
+                  if(homogeneous) {
+                     // A shortened-window deadline says nothing about a healthy next block.
+                     // Keep independently learned mixture hints;all real block/epoch checks stay original.
+                     if(result!=admission::outcome::ready &&
+                           (result!=admission::outcome::deadline || admission::has_full_preparation_budget(budget_us)))
+                        production_mixed_admission.forget(*workload);
+                     production_admission.observe(*workload,conf.parallel_validation_threads,
+                        conf.parallel_validation_batch_size,inputs.size(),elapsed,budget_us,result);
+                  } else {
+                     production_mixed_admission.observe(*workload,true,conf.parallel_validation_threads,
+                        conf.parallel_validation_batch_size,inputs.size(),elapsed,budget_us,result);
+                  }
+               }
+            }
+             catch (const interrupt_exception&) {
+                if(formal_callback_failure)std::rethrow_exception(formal_callback_failure);
+               if (parallel_interrupts->load(std::memory_order_relaxed) != cancel.observed ||
+                   fc::time_point::now() >= block_deadline) return called; // preserve any consumed owner prefix; every worker is joined
+               if(homogeneous && workload &&
+                     experimental::parallel_production_admission<digest_type>::has_full_preparation_budget(budget_us))
+                  production_mixed_admission.forget(*workload);
+               if(!homogeneous && workload)
+                  production_mixed_admission.observe(*workload,true,conf.parallel_validation_threads,
+                     conf.parallel_validation_batch_size,inputs.size(),budget_us,budget_us,
+                     experimental::parallel_production_admission<digest_type>::outcome::deadline);
+               // A local private-phase cap is NOT a transaction rejection. If the
+               // real block still has time, consume the original serial path.
+            }
+         }
       }
+       for(size_t i=called;!stopped && i<transactions.size();++i) {
+          const auto proceed=process_slot(i,attempts.get(),true);
+          if(!proceed)break;
+          ++called;
+          if(!*proceed)break;
+       }
       if (attempts) for (size_t i = 0; i < attempts->outcomes.size(); ++i) {
          const auto& o = attempts->outcomes[i];
-         if (o.tree_result || o.sync_transaction_result || o.mixed_result) {
+         if (o.tree_attempt() || o.sync_transaction_result || o.mixed_result) {
             if (i >= called) ++production_ready_unconsumed;
             else if (!committed[i]) ++production_ready_no_receipt;
          }
+      }
+      if(attempts && parallel_workers && !attempts->outcomes.empty()) {
+         // Canonical callbacks and bookkeeping have finished. Destroy the
+         // owner-only coordinator here,then release only immutable outcomes
+         // on a worker. The next capture drains them within its old budget.
+         attempts->order.reset();
+         if(parallel_workers->retire_outcomes(std::move(attempts->outcomes)))
+            ++parallel_production_stats.retired_batches;
       }
       return called;
    }
@@ -4008,7 +4297,8 @@ struct controller_impl {
                                            const experimental::isolated_sync_transaction_result* parallel_sync_result = nullptr,
                                            const experimental::isolated_sync_transaction_job* parallel_sync_input = nullptr,
                                            const experimental::isolated_mixed_tree_result* parallel_mixed_result = nullptr,
-                                           const experimental::isolated_mixed_tree_job* parallel_mixed_input = nullptr )
+                                           const experimental::isolated_mixed_tree_job* parallel_mixed_input = nullptr,
+                                           std::shared_ptr<const experimental::isolated_prevalidated_tree> parallel_preflight = {} )
    {
       EOS_ASSERT(block_deadline != fc::time_point(), transaction_exception, "deadline cannot be uninitialized");
       performance::scope execution_timer(performance::stage::transaction_execute, !trx->implicit());
@@ -4047,6 +4337,8 @@ struct controller_impl {
          trx_context.subjective_cpu_bill_us = subjective_cpu_bill_us;
          trace = trx_context.trace;
          trx_context.parallel_tree_result = parallel_result;
+         trx_context.parallel_trace_reserve = conf.parallel_trace_reserve;
+         trx_context.parallel_tree_preflight=std::move(parallel_preflight);
          trx_context.parallel_sync_result = parallel_sync_result;
          trx_context.parallel_sync_input = parallel_sync_input;
          trx_context.parallel_mixed_result = parallel_mixed_result;
@@ -4889,7 +5181,7 @@ struct controller_impl {
                         trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].mixed_result,adopt,serial,checkpoint);
                      else if(parallel_batch->sync_inputs[index])
                         trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].sync_transaction_result,adopt,serial,checkpoint);
-                     else trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].tree_result,adopt,serial,checkpoint);
+                     else trace=order.run_next(order.get_ticket(index),trx_meta->id(),parallel_batch->outcomes[index].tree_attempt(),adopt,serial,checkpoint);
                      if (order.complete()) parallel_batch.reset();
                   } else trace = serial();
                   ++packed_idx;
@@ -6511,9 +6803,12 @@ transaction_trace_ptr controller::push_transaction( const transaction_metadata_p
          });
          auto trace = my->push_transaction(trx, block_deadline, max_transaction_time, billed_cpu_time_us,
             false, subjective_cpu_bill_us, slot->tree_result, &slot->limits, &adopted, slot->elapsed,slot->sync_result,slot->sync_input,
-            slot->mixed_result,slot->mixed_input);
+            slot->mixed_result,slot->mixed_input,slot->preflight);
          returned = true;
-         if (adopted) ++my->parallel_production_stats.adopted;
+         if (adopted) {
+            ++my->parallel_production_stats.adopted;
+            if(slot->preflight)++my->parallel_production_stats.prevalidated_adopted;
+         }
          else { ++my->parallel_production_stats.serial_fallbacks; slot->order.discard_remaining(); }
          if (trace->except) slot->order.discard_remaining();
          return trace;
@@ -6553,13 +6848,13 @@ uint16_t controller::get_parallel_production_batch_size() const {
 }
 
 uint16_t controller::get_parallel_production_batch_size(const transaction_metadata_ptr& head,
-      fc::time_point block_deadline) const {
-   return my->recommended_production_batch(head, block_deadline);
+      fc::time_point block_deadline, fc::microseconds max_transaction_time) const {
+   return my->recommended_production_batch(head, block_deadline,max_transaction_time);
 }
 
 size_t controller::for_each_parallel_production_transaction(const std::vector<transaction_metadata_ptr>& transactions,
-      fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback) {
-   return my->for_each_parallel_production_transaction(transactions, block_deadline, callback);
+      fc::time_point block_deadline, const std::function<bool(const transaction_metadata_ptr&)>& callback, fc::microseconds max_transaction_time) {
+   return my->for_each_parallel_production_transaction(transactions, block_deadline, callback,max_transaction_time);
 }
 
 const flat_set<account_name>& controller::get_actor_whitelist() const {

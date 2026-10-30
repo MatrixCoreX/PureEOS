@@ -68,7 +68,7 @@ def main():
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--round", type=int, default=1)
     args = parser.parse_args()
-    require(1 <= args.workers <= 16 and args.round > 0, "Unsupported worker/round")
+    require(1 <= args.workers <= 128 and args.round > 0, "Unsupported worker/round")
     source_report = args.report.resolve(strict=True)
     document = json.loads(source_report.read_text())
     selected = select_sample(document, args.workers, args.round)

@@ -188,6 +188,9 @@ namespace eosio {
 
    struct gossip_buffer_initial_factory : public buffer_factory {
 
+      // Called under the BP manager mutex when the local identity changes.
+      void reset_initial_send_buffer() { send_buffer.reset(); }
+
       // called on startup
       void set_initial_send_buffer(const gossip_bp_peers_message::signed_bp_peer& signed_empty) {
          send_buffer = create_initial_send_buffer(signed_empty);

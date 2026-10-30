@@ -15,8 +15,6 @@ private:
    class iterator_cache {
       public:
          iterator_cache(host_context& c) : _context(c) {
-            _end_iterator_to_table.reserve(8);
-            _iterator_to_object.reserve(32);
          }
 
          /// Returns end iterator of the table.
@@ -26,6 +24,7 @@ private:
                return itr->second.second;
 
             auto ei = index_to_end_iterator(_end_iterator_to_table.size());
+            if(_end_iterator_to_table.empty())_end_iterator_to_table.reserve(8);
             _end_iterator_to_table.push_back( &tobj );
             _table_cache.emplace( tobj.id, make_pair(&tobj, ei) );
             return ei;
@@ -81,6 +80,7 @@ private:
             if( itr != _object_to_iterator.end() )
                  return itr->second;
 
+            if(_iterator_to_object.empty())_iterator_to_object.reserve(32);
             _iterator_to_object.push_back( &obj );
             _object_to_iterator[&obj] = _iterator_to_object.size() - 1;
 

@@ -65,7 +65,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
        result.state.secondary_read_queries().size() > bounds.max_read_queries - result.state.read_queries().size() ||
        result.state.read_accounts().size() > bounds.max_read_accounts) return false;
    struct entry { const isolated_receiver_program* program; fc::sha256 hash; };
-   std::map<name, entry> catalog;
+   small_name_map<entry> catalog;
    size_t code_bytes = 0, data_bytes = 0, write_bytes = 0;
    for (const auto& program : programs) {
       check();
@@ -73,10 +73,11 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
           program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
       code_bytes += program.code.size();
       if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
-            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+            program.code.empty() ? fc::sha256{} : program.code.byte_hash()}))
          return false;
    }
    std::vector<fc::sha256> fingerprints;
+   fingerprints.reserve(roots.size()); // already checked against max_actions
    for (size_t i = 0; i < roots.size(); ++i) {
       check();
       const auto& root = roots[i]; const auto& group = result.groups[i];
@@ -88,9 +89,9 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
           group.closest_unnotified_ancestor != 0 || group.depth != 0 || group.sender || group.context_free ||
           !same_input(group.input, root)) return false;
       data_bytes += root.data.size();
-      const auto entry = catalog.find(root.receiver);
-      if (entry == catalog.end() || entry->second.program->serial_only || entry->second.program->code.empty()) return false;
-      fingerprints.push_back(isolated_execution_fingerprint(entry->second.hash, entry->second.program->limits, root));
+      const auto* entry = catalog.find(root.receiver);
+      if (!entry || entry->program->serial_only || entry->program->code.empty()) return false;
+      fingerprints.push_back(isolated_execution_fingerprint(entry->hash, entry->program->limits, root));
    }
    if (isolated_action_tree_fingerprint(fingerprints, context) != result.root_fingerprint) return false;
    for (const auto& mutation : result.state.writes()) {
@@ -110,9 +111,11 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
       const auto& group = result.groups[group_index];
       primary_overlay_cursor cursor(replay, group.input.receiver);
       secondary_cursor_group secondary(replay, group.input.receiver);
-      std::set<name> notified{group.input.receiver};
-      std::vector<pending_receiver> pending{{group.input.receiver, group.action_ordinal,
-         group.creator_action_ordinal, group.closest_unnotified_ancestor, group.sender}};
+      small_seen_keys<name> notified{group.input.receiver};
+      std::vector<pending_receiver> pending;
+      pending.reserve(std::min<size_t>(4,result.steps.size()));
+      pending.push_back({group.input.receiver, group.action_ordinal,
+         group.creator_action_ordinal, group.closest_unnotified_ancestor, group.sender});
       std::vector<size_t> children, context_free_children;
       for (size_t i = 0; i < pending.size(); ++i) {
          check();
@@ -129,12 +132,12 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
              effects.elapsed > isolated_transaction_executor::max_attempt_time - elapsed ||
              step.events.size() > executor::max_events - event_count) return false;
          elapsed += effects.elapsed; event_count += step.events.size();
-         const auto found = catalog.find(step.receiver);
-         if (found == catalog.end()) return false;
-         const auto& program = *found->second.program;
-         if (program.serial_only || step.code_hash != found->second.hash || step.has_code != !program.code.empty()) return false;
+         const auto* found = catalog.find(step.receiver);
+         if (!found) return false;
+         const auto& program = *found->program;
+         if (program.serial_only || step.code_hash != found->hash || step.has_code != !program.code.empty()) return false;
          auto arguments = group.input; arguments.receiver = step.receiver;
-         const auto action_fingerprint = isolated_execution_fingerprint(found->second.hash, program.limits, arguments);
+         const auto action_fingerprint = isolated_execution_fingerprint(found->hash, program.limits, arguments);
          if (effects.execution_fingerprint != isolated_action_tree_step_fingerprint(action_fingerprint, context, group, step))
             return false;
          if (!step.has_code && (!step.events.empty() || !effects.recipients.empty() || !effects.return_value.empty() ||
@@ -203,7 +206,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
                      const auto& recipient = effects.recipients[next_notification++];
                      if (recipient.after_writes != next_write || !recipient.recipient ||
                          notified.size() >= isolated_action_result::max_recipients + 1 ||
-                         !notified.insert(recipient.recipient).second || next_ordinal > executor::max_steps) return false;
+                         !notified.insert(recipient.recipient) || next_ordinal > executor::max_steps) return false;
                      pending.push_back({recipient.recipient, next_ordinal++, step.action_ordinal, group.action_ordinal, step.receiver});
                   } else return false;
                } else if (const auto* send = std::get_if<isolated_tree_inline_event>(&event)) {

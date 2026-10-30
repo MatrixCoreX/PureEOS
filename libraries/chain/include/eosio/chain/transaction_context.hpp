@@ -3,6 +3,7 @@
 #include <eosio/chain/trace.hpp>
 #include <eosio/chain/platform_timer.hpp>
 #include <eosio/chain/thread_cpu_billing.hpp>
+#include <eosio/chain/action_digest_cache.hpp>
 
 namespace eosio::benchmark {
    struct interface_in_benchmark; // for benchmark testing
@@ -17,6 +18,7 @@ namespace eosio::chain {
    namespace experimental {
       struct isolated_transaction_result; struct isolated_notification_result; struct isolated_action_tree_result;
       struct isolated_wasm_limits; struct isolated_sync_transaction_result; struct isolated_sync_transaction_job; class isolated_sync_replay;
+      class isolated_prevalidated_tree;
       struct isolated_mixed_tree_result; struct isolated_mixed_tree_job; class isolated_mixed_replay;
    }
 
@@ -198,6 +200,10 @@ namespace eosio::chain {
          // to the controller-owned receiver step and consume that step once.
          void charge_isolated_notification_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          void charge_isolated_tree_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
+         const experimental::isolated_prevalidated_tree* isolated_tree_preflight()const {
+            return parallel_tree_preflight.get();
+         }
+         void charge_isolated_preflight_cpu(std::chrono::nanoseconds);
          void charge_isolated_mixed_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
 
@@ -229,6 +235,9 @@ namespace eosio::chain {
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_notification_result* parallel_notification_result = nullptr;
          const experimental::isolated_action_tree_result* parallel_tree_result = nullptr;
+         bool parallel_trace_reserve = false; // bounded local capacity hint
+         std::shared_ptr<const experimental::isolated_prevalidated_tree> parallel_tree_preflight;
+         bool isolated_preflight_charged=false;
          const experimental::isolated_sync_transaction_result* parallel_sync_result = nullptr;
          const experimental::isolated_sync_transaction_job* parallel_sync_input = nullptr;
          // Only a successfully preflighted, stack-owned root replay can arm
@@ -242,6 +251,8 @@ namespace eosio::chain {
          size_t parallel_next_action = 0;
          size_t parallel_next_receiver = 0;
          bool parallel_transaction_adopted = false;
+
+         digest_type compute_action_digest(const action&,const vector<char>& action_output);
 
          void add_ram_usage( account_name account, int64_t ram_delta );
          void apply_isolated_cpu_charge(fc::microseconds elapsed); // validated by the charge entry points
@@ -307,6 +318,7 @@ namespace eosio::chain {
          transaction_checktime_timer   transaction_timer;
 
    private:
+         bounded_action_digest_cache action_digest_cache_;
          bool                          is_initialized = false;
          transaction_metadata::trx_type trx_type;
 

@@ -107,6 +107,50 @@ std::optional<table_read> chainbase_transaction_state_view::read_table(const tab
    return copy_table(*table);
 }
 
+bool chainbase_transaction_state_view::matches_primary(
+      const primary_query& query, const primary_metadata_result& expected,
+      std::span<const char> expected_value) const {
+   require_owner_thread();
+   // One fresh, owner-affine lookup. No callback or pointer escapes this call.
+   const auto [table, row] = locate(db_, query);
+   if ((table ? std::optional{copy_table(*table)} : std::nullopt) != expected.table)
+      return false;
+   if ((row ? std::optional{row_metadata(*row)} : std::nullopt) != expected.row)
+      return false;
+   if (!row) return expected_value.empty();
+   if (row->value.size() != expected_value.size()) return false;
+   // Empty shared_blob may have a null data pointer; do not do pointer arithmetic.
+   return expected_value.empty() ||
+      std::equal(expected_value.begin(), expected_value.end(), row->value.data());
+}
+
+chainbase_transaction_state_view::capture_primary_result
+chainbase_transaction_state_view::read_primary_for_capture(const primary_query& query,
+      const std::optional<table_read>& expected_table,
+      const std::map<uint64_t,std::shared_ptr<const primary_row_read>>& existing_rows,
+      bool can_copy_row,size_t remaining_value_bytes) const {
+   require_owner_thread();
+   const auto [table,row]=locate(db_,query);
+   capture_primary_result result;
+   if(table)result.metadata.table=copy_table(*table);
+   if(result.metadata.table!=expected_table) {result.changed=true;return result;}
+   if(!row)return result;
+   result.metadata.row=row_metadata(*row);
+   if(const auto old=existing_rows.find(row->primary_key);old!=existing_rows.end()) {
+      // Match the former metadata check before considering copy budgets.
+      if(!old->second) {result.changed=true;return result;}
+      const auto& owned=*old->second;
+      result.changed=primary_row_metadata{owned.object_id,owned.table_object_id,
+         owned.primary_key,owned.payer,owned.value.size()}!=*result.metadata.row;
+      return result;
+   }
+   if(!can_copy_row || row->value.size()>remaining_value_bytes) {
+      result.budget_exceeded=true;return result;
+   }
+   result.owned_row=copy_row(*row,remaining_value_bytes);
+   return result;
+}
+
 primary_metadata_result chainbase_transaction_state_view::locate_primary(const primary_query& query) const {
    require_owner_thread();
    const auto [table, row] = locate(db_, query);

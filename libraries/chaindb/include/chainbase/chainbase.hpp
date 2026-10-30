@@ -20,6 +20,10 @@
 #include <boost/throw_exception.hpp>
 
 #include <array>
+#include <cstddef>
+#include <memory>
+#include <new>
+#include <utility>
 #include <atomic>
 #include <fstream>
 #include <iostream>
@@ -148,6 +152,56 @@ namespace chainbase {
          SessionType _session;
    };
 
+   namespace detail {
+
+template<typename Session>
+inline constexpr bool session_cache_supported =
+ sizeof(session_impl<Session>)<=64 &&
+ alignof(session_impl<Session>)<=__STDCPP_DEFAULT_NEW_ALIGNMENT__ &&
+ std::atomic<void*>::is_always_lock_free;
+
+// Only raw, fully destroyed wrapper storage is cached. One block per session
+// type, at most64bytes. No live session or Undo state is retained.
+// Atomic ownership permits separate databases to allocate/free on different
+// threads. The original typed RAII session is constructed/destructed each time.
+template<typename Session>
+class cached_session_impl final:public session_impl<Session> {
+ static_assert(session_cache_supported<Session>);
+ alignas(64) static inline std::atomic<void*> cached_{nullptr};
+public:
+ explicit cached_session_impl(Session&& s):session_impl<Session>(std::move(s)){}
+ static void* operator new(std::size_t size) {
+  static_assert(sizeof(cached_session_impl)<=64);
+  static_assert(alignof(cached_session_impl)<=__STDCPP_DEFAULT_NEW_ALIGNMENT__);
+  if(size!=sizeof(cached_session_impl))throw std::bad_alloc();
+  if(void* p=cached_.exchange(nullptr,std::memory_order_acquire))return p;
+  return ::operator new(size);
+ }
+ static void operator delete(void* p) noexcept {
+  if(!p)return;
+  void* empty=nullptr;
+  if(!cached_.compare_exchange_strong(empty,p,std::memory_order_release,std::memory_order_relaxed))
+   ::operator delete(p);
+ }
+ static std::size_t cached_bytes() noexcept {
+  return cached_.load(std::memory_order_acquire)?sizeof(cached_session_impl):0;
+ }
+ static void release_cache()noexcept {
+  ::operator delete(cached_.exchange(nullptr,std::memory_order_acq_rel));
+ }
+};
+template<typename Session,typename Factory>
+std::unique_ptr<abstract_session> make_index_session(Factory&& factory) {
+ if constexpr(session_cache_supported<Session>)
+  return std::unique_ptr<abstract_session>(new cached_session_impl<Session>(std::forward<Factory>(factory)()));
+ else
+  return std::unique_ptr<abstract_session>(new session_impl<Session>(std::forward<Factory>(factory)()));
+}
+template<typename Session>void release_index_session_cache()noexcept {
+ if constexpr(session_cache_supported<Session>)cached_session_impl<Session>::release_cache();
+}
+   } // namespace detail
+
    class abstract_index
    {
       public:
@@ -178,9 +232,16 @@ namespace chainbase {
    class index_impl : public abstract_index {
       public:
          index_impl( BaseIndex& base ):abstract_index( &base ),_base(base){}
+         ~index_impl() override {
+            detail::release_index_session_cache<typename BaseIndex::session>();
+         }
 
          virtual unique_ptr<abstract_session> start_undo_session( bool enabled ) override {
-            return unique_ptr<abstract_session>(new session_impl<typename BaseIndex::session>( _base.start_undo_session( enabled ) ) );
+            // Allocate before starting the original typed session,as before.
+            // Its RAII and Undo methods are unchanged;only fully destroyed
+            // wrapper storage can enter the bounded raw cache.
+            return detail::make_index_session<typename BaseIndex::session>(
+               [&] { return _base.start_undo_session(enabled); });
          }
 
          virtual void     set_revision( uint64_t revision ) override { _base.set_revision( revision ); }

@@ -1,4 +1,6 @@
+#include <map>
 #include <eosio/chain/parallel_canonical_adoption.hpp>
+#include <eosio/chain/parallel_worker_pool.hpp>
 #include <eosio/chain/parallel_mixed_tree_journal.hpp>
 #include <eosio/chain/parallel_pure_float.hpp>
 #include <eosio/chain/apply_context.hpp>
@@ -10,6 +12,7 @@
 #include <eosio/chain/webassembly/interface.hpp>
 #include <fc/scoped_exit.hpp>
 #include <algorithm>
+#include <boost/container/small_vector.hpp>
 #include <utility>
 
 namespace eosio::chain::experimental {
@@ -241,6 +244,26 @@ void replay_original_secondary(host_context& context, const isolated_secondary_c
 }
 } // namespace
 
+// Immediate,synchronous owner-only hashing. No borrowed reference escapes.
+// The existing owned-input function remains the independent byte oracle.
+fc::sha256 isolated_execution_fingerprint_from_action(const fc::sha256& code,const isolated_wasm_limits& limits,
+      name receiver,const action& act,uint32_t max_return,
+      const std::shared_ptr<const isolated_transaction_environment>& environment) {
+   fc::sha256::encoder encoder;
+   constexpr char domain[]="pureeos/isolated-action/v1";
+   encoder.write(domain,sizeof(domain));
+   fc::raw::pack(encoder,code);fc::raw::pack(encoder,limits.max_pages);
+   fc::raw::pack(encoder,limits.max_call_depth);fc::raw::pack(encoder,receiver);
+   fc::raw::pack(encoder,act.account);fc::raw::pack(encoder,act.name);
+   fc::raw::pack(encoder,act.authorization);fc::raw::pack(encoder,act.data);
+   fc::raw::pack(encoder,max_return);
+   if(environment) {
+      constexpr char extension[]="pureeos/isolated-action-environment/v1";
+      encoder.write(extension,sizeof(extension));fc::raw::pack(encoder,environment->fingerprint());
+   }
+   return encoder.result();
+}
+
 std::optional<std::vector<prepared_isolated_root>> prepare_isolated_transaction_roots(
       const controller& control, const packed_transaction& packed, const std::function<void()>& checkpoint) {
    if (!isolated_numeric_environment_compatible()) return {};
@@ -325,6 +348,7 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
       // scheduling a trace. Empty-code notifications still run exec_one and
       // produce original receipts, sequences and resource checks.
       std::vector<fc::sha256> fingerprints;
+      fingerprints.reserve(trx.actions.size());
       size_t next_write = 0;
       fc::microseconds elapsed{};
       for (size_t i = 0; i < trx.actions.size(); ++i) {
@@ -340,14 +364,14 @@ bool try_adopt_primary_result(apply_context& context, const fc::sha256& code_has
          if (step.execution_fingerprint != fingerprint) return false;
          fingerprints.push_back(fingerprint);
          if (step.recipients.size() > isolated_action_result::max_recipients) return false;
-         std::set<name> notified{act.account};
+         small_seen_keys<name> notified{act.account};
          size_t previous_write_count = step.writes_begin;
          for (const auto& notification : step.recipients) {
             context.trx_context.checktime();
             if (notification.after_writes < previous_write_count || notification.after_writes > step.writes_end) return false;
             previous_write_count = notification.after_writes;
             const auto recipient = notification.recipient;
-            if (!notified.insert(recipient).second || !live.read_account(recipient) ||
+            if (!notified.insert(recipient) || !live.read_account(recipient) ||
                 recipient == "eosio.msig"_n || recipient == "eosio.wrap"_n) return false;
             const auto* metadata = context.db.find<account_metadata_object, by_name>(recipient);
             if (!metadata || metadata->code_hash != fc::sha256{} ||
@@ -425,8 +449,39 @@ std::optional<isolated_receiver_program> prepare_isolated_tree_program(const con
       const auto* code = control.db().find<code_object, by_code_hash>(boost::make_tuple(metadata->code_hash, 0, 0));
       if (!code || code->code.size() > result.limits.max_code_bytes || code->code.size() == 0 ||
           code->code.size() > owned_code_budget) return {};
-      result.code.assign(code->code.data(), code->code.data() + code->code.size());
-      if (fc::sha256::hash(result.code.data(), result.code.size()) != metadata->code_hash) return {};
+      // Code objects are content-addressed and their bytes are immutable.
+      // Cache only owned bytes, never database/controller/VM pointers. Current
+      // account privilege, VM version, code hash, size and limits are rechecked
+      // above on EVERY call, including after setcode, fork undo and snapshot.
+      struct byte_cache {
+         std::map<fc::sha256, experimental::immutable_code> values;
+         std::vector<fc::sha256> fifo;
+         size_t bytes=0;
+      };
+      static thread_local byte_cache cached;
+      const auto found=cached.values.find(metadata->code_hash);
+      if(found!=cached.values.end()) {
+         if(found->second.size()!=code->code.size()) return {};
+         result.code=found->second;
+      } else {
+         result.code.assign(code->code.data(),code->code.data()+code->code.size());
+         if(result.code.content_hash()!=metadata->code_hash) return {};
+         constexpr size_t max_cached_bytes=4*1024*1024,max_cached_entries=16;
+         if(result.code.size()<=max_cached_bytes) {
+            while(!cached.fifo.empty() && (cached.values.size()>=max_cached_entries ||
+                  result.code.size()>max_cached_bytes-cached.bytes)) {
+               const auto old=cached.values.find(cached.fifo.front());
+               cached.bytes-=old->second.size();cached.values.erase(old);
+               cached.fifo.erase(cached.fifo.begin());
+            }
+            // Reserve before publication; allocation failure is still a local
+            // preparation fallback and cannot corrupt the bounded cache.
+            cached.fifo.reserve(max_cached_entries);
+            cached.values.emplace(metadata->code_hash,result.code);
+            cached.fifo.push_back(metadata->code_hash);cached.bytes+=result.code.size();
+         }
+      }
+      if(result.code.content_hash()!=metadata->code_hash) return {};
    }
    return result;
 }
@@ -460,12 +515,12 @@ namespace {
 bool sync_catalog_matches_current(const controller& control, std::span<const isolated_sync_program> programs,
       const std::function<void()>& check) {
    if (programs.empty() || programs.size() > isolated_sync_executor::max_programs) return false;
-   std::set<name> seen;
+   small_seen_keys<name> seen;
    size_t code_bytes = 0;
    for (const auto& captured : programs) {
       check();
       const auto& program = captured.program;
-      if (program.serial_only || !seen.insert(program.receiver).second ||
+      if (program.serial_only || !seen.insert(program.receiver) ||
           program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes) return false;
       code_bytes += program.code.size();
       // Never recapture only executed children: the execution fingerprint also
@@ -1064,9 +1119,11 @@ bool try_adopt_notification_result(apply_context& context, const fc::sha256& cod
       if (step_index == 0) {
          const auto checkpoint = [&] { context.trx_context.checktime(); };
          std::vector<isolated_action_input> roots;
+         roots.reserve(trx.actions.size());
          for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act));
          std::vector<isolated_receiver_program> programs;
-         std::set<name> captured;
+         programs.reserve(std::min<size_t>(result.steps.size(),4));
+         small_seen_keys<name> captured;
          size_t code_bytes = 0;
          fc::microseconds elapsed{};
          for (const auto& receiver : result.steps) {
@@ -1074,7 +1131,7 @@ bool try_adopt_notification_result(apply_context& context, const fc::sha256& cod
             if (receiver.effects.elapsed.count() < 0 ||
                 receiver.effects.elapsed.count() > (fc::milliseconds(500) - elapsed).count()) return false;
             elapsed += fc::microseconds(receiver.effects.elapsed.count());
-            if (!captured.insert(receiver.receiver).second) continue;
+            if (!captured.insert(receiver.receiver)) continue;
             auto program = prepare_isolated_receiver_program(context.control, receiver.receiver, roots);
             if (!program || program->code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
             code_bytes += program->code.size();
@@ -1179,11 +1236,22 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
    try {
       if (!current_environment_matches(context.control, context.trx_context.packed_trx,
             context.trx_context.published, group.input.environment)) return false;
-      auto arguments = current_input(context.control, context.get_action(), group.input.environment);
-      arguments.receiver = context.get_receiver();
-      if (isolated_action_tree_step_fingerprint(isolated_execution_fingerprint(code_hash, limits, arguments),
-             tree_context, group, step) != step.effects.execution_fingerprint ||
-          step.effects.return_value.size() > arguments.max_return_bytes) return false;
+      const auto max_return_bytes=context.control.get_global_properties().configuration.max_action_return_value_size;
+      if(const auto* proof=context.trx_context.isolated_tree_preflight()) {
+         // The worker checked every frozen digest. Exact object identity and
+         // current full action bytes/protocol/code/limits bind that same proof.
+         // Original fresh environment,ordinals,native handlers,state and
+         // authority checks remain before any canonical event.
+         if(!proof->binds_current_step(result,step_index,context.get_receiver(),code_hash,
+               context.get_action(),limits,max_return_bytes,tree_context,
+               [&]{context.trx_context.checktime();}))return false;
+      } else {
+         const auto action_fingerprint=isolated_execution_fingerprint_from_action(code_hash,limits,
+            context.get_receiver(),context.get_action(),max_return_bytes,group.input.environment);
+         if(isolated_action_tree_step_fingerprint(action_fingerprint,tree_context,group,step)!=
+               step.effects.execution_fingerprint)return false;
+      }
+      if(step.effects.return_value.size()>max_return_bytes)return false;
       if (step_index == 0) {
          const auto checkpoint = [&] { context.trx_context.checktime(); };
          // The result owns a const copy; verify against the ACTUAL packed input
@@ -1194,10 +1262,16 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             const auto actual = isolated_context_free_data::capture(context.trx_context.packed_trx.get_context_free_data());
             if (actual->fingerprint() != result.context_free_data->fingerprint()) return false;
          }
+         const auto* preflight=context.trx_context.isolated_tree_preflight();
          std::vector<isolated_action_input> roots;
-         for (const auto& act : trx.actions) roots.push_back(current_input(context.control, act, group.input.environment));
-         std::vector<isolated_receiver_program> programs;
-         std::set<name> captured;
+         if(!preflight) {
+            roots.reserve(trx.actions.size());
+            for(const auto& act:trx.actions)roots.push_back(current_input(context.control,act,group.input.environment));
+         }
+         // General catalogues spill normally;no receiver/fresh check is omitted.
+         boost::container::small_vector<isolated_receiver_program,4> programs;
+         programs.reserve(std::min<size_t>(result.steps.size(),4));
+         small_seen_keys<name> captured;
          size_t code_bytes = 0;
          fc::microseconds elapsed{};
          for (const auto& receiver : result.steps) {
@@ -1211,14 +1285,20 @@ bool try_adopt_action_tree_result(apply_context& context, const fc::sha256& code
             if (receiver.effects.elapsed.count() < 0 ||
                 receiver.effects.elapsed.count() > (fc::milliseconds(500) - elapsed).count()) return false;
             elapsed += fc::microseconds(receiver.effects.elapsed.count());
-            if (!captured.insert(receiver.receiver).second) continue;
+            if (!captured.insert(receiver.receiver)) continue;
             auto program = prepare_isolated_tree_program(context.control, receiver.receiver);
             if (!program || program->code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
             code_bytes += program->code.size();
             programs.push_back(std::move(*program));
          }
          if (production_elapsed && *production_elapsed != elapsed) return false;
-         if (!validate_isolated_action_tree_journal(result, roots, programs, tree_context, checkpoint)) return false;
+         const std::span<const isolated_receiver_program> current_programs{programs.data(),programs.size()};
+         if(preflight) {
+            if(!preflight->matches_current_roots(result,trx.actions,max_return_bytes,
+                  group.input.environment,current_programs,tree_context,checkpoint))return false;
+            if(!context.trx_context.explicit_billed_cpu_time)
+               context.trx_context.charge_isolated_preflight_cpu(preflight->cpu());
+         } else if(!validate_isolated_action_tree_journal(result,roots,current_programs,tree_context,checkpoint))return false;
          chainbase_transaction_state_view live(context.db);
          if (!result.state.matches_base_reads(live, checkpoint)) return false;
       }

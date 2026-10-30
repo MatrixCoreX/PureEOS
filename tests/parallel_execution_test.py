@@ -53,7 +53,7 @@ class Node:
     def __init__(self, binary, root, corpus, manifest, workers=None, peer=None, history=False,
                  engine="interpreter", batch_size=8):
         require(engine in ("interpreter", "jit"), "Unsupported fixture engine")
-        require(1 <= batch_size <= 64, "Unsupported fixture batch size")
+        require(batch_size == "auto" or 1 <= batch_size <= 256, "Unsupported fixture batch size")
         self.binary, self.root, self.corpus, self.manifest = binary, root, corpus, manifest
         self.workers, self.process, self.output = workers, None, None
         root.mkdir()
@@ -224,9 +224,9 @@ def main():
     print("Evidence: " + str(root), flush=True)
     try:
         rejection_cases = [
-            ("threads-17", ["--experimental-parallel-validation-threads", "17"], manifest),
+            ("threads-129", ["--experimental-parallel-validation-threads", "129"], manifest),
             ("batch-zero", ["--experimental-parallel-validation-batch-size", "0"], manifest),
-            ("batch-65", ["--experimental-parallel-validation-batch-size", "65"], manifest),
+            ("batch-257", ["--experimental-parallel-validation-batch-size", "257"], manifest),
             ("bad-code-hash", ["--experimental-parallel-code-hash", "not-a-digest"], manifest),
             ("missing-code-hash", [], {**manifest, "code_hashes": []}),
             ("light-validation", ["--validation-mode", "light"], manifest),

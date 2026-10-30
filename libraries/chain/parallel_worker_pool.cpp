@@ -2,26 +2,221 @@
 #include <eosio/chain/parallel_sync_discovery.hpp>
 #include <eosio/chain/parallel_worker_signals.hpp>
 #include <eosio/chain/performance_metrics.hpp>
+#include <eosio/chain/thread_cpu_billing.hpp>
+#include <eosio/chain/action.hpp>
 #include <eosio/vm/exceptions.hpp>
 #include <array>
+#include <algorithm>
 #include <condition_variable>
 #include <mutex>
 
 namespace eosio::chain::experimental {
+
+namespace {
+void validate_worker_job(const isolated_worker_job& job) {
+   if(job.prevalidate_tree && !job.tree)throw primary_state_budget_exceeded();
+      if (unsigned(!job.actions.empty()) + unsigned(bool(job.notifications)) + unsigned(bool(job.tree)) +
+          unsigned(bool(job.sync)) + unsigned(bool(job.sync_transaction)) + unsigned(bool(job.mixed)) != 1)
+         throw primary_state_budget_exceeded();
+      if (job.sync_transaction || job.mixed) {
+         const auto& roots = job.mixed ? job.mixed->roots : job.sync_transaction->roots;
+         const auto& programs = job.mixed ? job.mixed->programs : job.sync_transaction->programs;
+         const auto max_roots = job.mixed ? isolated_mixed_tree_executor::max_roots : isolated_sync_executor::max_roots;
+         const auto max_programs = job.mixed ? isolated_mixed_tree_executor::max_programs : isolated_sync_executor::max_programs;
+         const auto max_code = job.mixed ? isolated_mixed_tree_executor::max_code_bytes : isolated_sync_executor::max_total_code_bytes;
+         const auto max_data = job.mixed ? isolated_mixed_tree_executor::max_data_bytes : isolated_sync_executor::max_total_data_bytes;
+         if (roots.empty() || roots.size() > max_roots || programs.empty() || programs.size() > max_programs)
+            throw primary_state_budget_exceeded();
+         size_t code_bytes = 0, data_bytes = 0;
+         for (const auto& item : programs) {
+            if (item.program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
+                item.program.code.size() > max_code - code_bytes)
+               throw primary_state_budget_exceeded();
+            code_bytes += item.program.code.size();
+         }
+         for (const auto& root : roots) {
+            if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
+                root.data.size() > max_data - data_bytes)
+               throw primary_state_budget_exceeded();
+            data_bytes += root.data.size();
+         }
+         return;
+      }
+      if (job.sync) {
+         const auto& input = *job.sync;
+         if (input.programs.empty() || input.programs.size() > isolated_sync_executor::max_programs ||
+             input.root.data.size() > 64 * 1024 || input.root.authorizations.size() > 64 || input.root.max_return_bytes > 4096)
+            throw primary_state_budget_exceeded();
+         size_t code_bytes = 0;
+         for (const auto& item : input.programs) {
+            if (item.program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
+                item.program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes)
+               throw primary_state_budget_exceeded();
+            code_bytes += item.program.code.size();
+         }
+         return;
+      }
+      if (job.notifications || job.tree) {
+         if ((job.notifications && job.tree) || !job.actions.empty()) throw primary_state_budget_exceeded();
+         const auto& roots = job.tree ? job.tree->roots : job.notifications->roots;
+         const auto& programs = job.tree ? job.tree->programs : job.notifications->programs;
+         const auto max_programs = job.tree ? isolated_action_tree_executor::max_programs : isolated_notification_executor::max_programs;
+         if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
+             programs.empty() || programs.size() > max_programs)
+            throw primary_state_budget_exceeded();
+         size_t code_bytes = 0, data_bytes = 0;
+         for (const auto& program : programs) {
+            if (program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
+                program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
+               throw primary_state_budget_exceeded();
+            code_bytes += program.code.size();
+         }
+         for (const auto& root : roots) {
+            if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
+                root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
+               throw primary_state_budget_exceeded();
+            data_bytes += root.data.size();
+         }
+         return;
+      }
+      if (job.actions.empty() || job.actions.size() > isolated_transaction_executor::max_actions)
+         throw primary_state_budget_exceeded();
+      size_t code_bytes = 0, data_bytes = 0;
+      for (const auto& action : job.actions) {
+         if (action.code.size() > isolated_wasm_limits::max_module_code_bytes || action.input.data.size() > 64 * 1024 ||
+             action.input.authorizations.size() > 64 ||
+             action.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes ||
+             action.input.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
+            throw primary_state_budget_exceeded();
+         code_bytes += action.code.size(); data_bytes += action.input.data.size();
+      }
+}
+}
+
+
+std::shared_ptr<const isolated_prevalidated_tree> isolated_prevalidated_tree::make(
+      const immutable_worker_input<isolated_action_tree_job>& input,isolated_action_tree_result&& result,
+      const ordered_attempt_batch::ticket& ticket,const isolated_cancel& cancel) {
+   if(!input)throw primary_state_invalid_attempt();
+   const auto check=[&]{cancel.check(ticket.stop_token());};
+   check();
+   const auto began=thread_cpu_clock::now();
+   if(!validate_isolated_action_tree_journal(result,input->roots,input->programs,input->context,check))
+      throw primary_state_invalid_attempt();
+   const auto cpu=thread_cpu_clock::now()-began;
+   check();
+   if(cpu.count()<0 || cpu>isolated_transaction_executor::max_attempt_time)
+      throw primary_state_invalid_attempt();
+   return std::shared_ptr<const isolated_prevalidated_tree>(
+      new isolated_prevalidated_tree(input,std::move(result),ticket,cpu));
+}
+
+bool isolated_prevalidated_tree::matches(const isolated_action_tree_result& result,
+      std::span<const isolated_action_input> roots,std::span<const isolated_receiver_program> programs,
+      const isolated_action_tree_context& context,const std::function<void()>& checkpoint)const {
+   const auto check=[&]{if(checkpoint)checkpoint();};
+   check();
+   if(!result_ || &result!=&*result_ || !input_ || roots.empty() || programs.empty() ||
+      roots.size()!=input_->roots.size() || programs.size()>isolated_action_tree_executor::max_programs ||
+      context.max_inline_action_size!=input_->context.max_inline_action_size ||
+      context.max_inline_action_depth!=input_->context.max_inline_action_depth ||
+      context.console_enabled!=input_->context.console_enabled ||
+      bool(context.context_free_data)!=bool(input_->context.context_free_data) ||
+      (context.context_free_data && context.context_free_data->fingerprint()!=
+                                    input_->context.context_free_data->fingerprint()))return false;
+   for(size_t i=0;i<roots.size();++i) {
+      check();const auto& a=roots[i];const auto& b=input_->roots[i];
+      if(a.receiver!=b.receiver || a.account!=b.account || a.action!=b.action ||
+         a.authorizations!=b.authorizations || a.data!=b.data || a.max_return_bytes!=b.max_return_bytes ||
+         !same_isolated_environment(a.environment,b.environment))return false;
+   }
+   // The owner recaptures EVERY actually executed receiver and native pair.
+   // Unused frozen prefetch entries grant no capability and need not be live.
+   small_seen_keys<name> seen;
+   for(const auto& current:programs) {
+      check();if(!seen.insert(current.receiver))return false;
+      const auto found=std::find_if(input_->programs.begin(),input_->programs.end(),
+         [&](const auto& p){return p.receiver==current.receiver;});
+      if(found==input_->programs.end() || found->limits!=current.limits ||
+         found->serial_only!=current.serial_only || found->code!=current.code)return false;
+   }
+   return true;
+}
+
+
+bool isolated_prevalidated_tree::matches_current_roots(const isolated_action_tree_result& result,
+      std::span<const action> roots,uint32_t max_return_bytes,
+      const std::shared_ptr<const isolated_transaction_environment>& environment,
+      std::span<const isolated_receiver_program> programs,const isolated_action_tree_context& context,
+      const std::function<void()>& checkpoint)const {
+   const auto check=[&]{if(checkpoint)checkpoint();};check();
+   if(!result_ || &result!=&*result_ || !input_ || roots.empty() ||
+      roots.size()!=input_->roots.size())return false;
+   for(size_t i=0;i<roots.size();++i) {
+      check();const auto& actual=roots[i];const auto& expected=input_->roots[i];
+      if(expected.receiver!=actual.account || expected.account!=actual.account ||
+         expected.action!=actual.name || expected.data!=actual.data ||
+         expected.authorizations.size()!=actual.authorization.size() ||
+         expected.max_return_bytes!=max_return_bytes ||
+         !same_isolated_environment(expected.environment,environment))return false;
+      for(size_t j=0;j<actual.authorization.size();++j) {
+         check();if(expected.authorizations[j].first!=actual.authorization[j].actor ||
+                    expected.authorizations[j].second!=actual.authorization[j].permission)return false;
+      }
+   }
+   // Preserve the original identity,context and fresh program-catalogue
+   // matcher. Its owned-root comparison remains a differential oracle.
+   return matches(result,input_->roots,programs,context,checkpoint);
+}
+
+bool isolated_prevalidated_tree::binds_current_step(const isolated_action_tree_result& result,size_t index,
+      name receiver,const fc::sha256& code_hash,const action& actual,const isolated_wasm_limits& limits,
+      uint32_t max_return_bytes,const isolated_action_tree_context& context,
+      const std::function<void()>& checkpoint)const {
+   const auto check=[&]{if(checkpoint)checkpoint();};check();
+   if(!result_ || &result!=&*result_ || !input_ || index>=result.steps.size() ||
+      context.max_inline_action_size!=input_->context.max_inline_action_size ||
+      context.max_inline_action_depth!=input_->context.max_inline_action_depth ||
+      context.console_enabled!=input_->context.console_enabled ||
+      bool(context.context_free_data)!=bool(input_->context.context_free_data) ||
+      (context.context_free_data && context.context_free_data->fingerprint()!=
+                                      input_->context.context_free_data->fingerprint()))return false;
+   const auto& step=result.steps[index];
+   if(step.group_index>=result.groups.size() || step.receiver!=receiver || step.code_hash!=code_hash)return false;
+   const auto& expected=result.groups[step.group_index].input;
+   if(actual.account!=expected.account || actual.name!=expected.action ||
+      actual.data!=expected.data || actual.authorization.size()!=expected.authorizations.size() ||
+      max_return_bytes!=expected.max_return_bytes)return false;
+   for(size_t i=0;i<actual.authorization.size();++i) {
+      check();if(actual.authorization[i].actor!=expected.authorizations[i].first ||
+                 actual.authorization[i].permission!=expected.authorizations[i].second)return false;
+   }
+   const auto program=std::find_if(input_->programs.begin(),input_->programs.end(),
+      [&](const auto& p){return p.receiver==receiver;});
+   return program!=input_->programs.end() && program->limits==limits &&
+      !program->serial_only && program->code.content_hash()==code_hash;
+}
 
 struct isolated_worker_pool::impl {
    static constexpr size_t max_threads = parallel_runtime_limits::max_workers;
    const std::thread::id owner = std::this_thread::get_id();
    struct batch {
       std::vector<isolated_worker_job> jobs;
+      std::vector<std::optional<isolated_worker_job>> streamed_jobs;
+      size_t published=0,started=0;
       std::vector<isolated_worker_outcome> outcomes;
       size_t next = 0, remaining = 0;
+      bool report_ready=false;
+      size_t ready_group_limit=1, ready_next=0;
+      std::array<bool,parallel_runtime_limits::max_batch_transactions> finished{};
       const bool stable_small_batch;
+      const bool streaming=false;
       std::array<bool, max_threads> claimed{}; // read/write only under pool mutex
       std::array<size_t, max_threads> assigned{};
       batch(std::vector<isolated_worker_job> input, size_t worker_count)
          : jobs(std::move(input)), outcomes(jobs.size()), remaining(jobs.size()),
            stable_small_batch(jobs.size() <= worker_count) {
+         published=jobs.size();
          assigned.fill(jobs.size());
          if (!stable_small_batch) return;
          // A discovery retry is a sparse subset of the original slots. Keep
@@ -39,8 +234,28 @@ struct isolated_worker_pool::impl {
             for (size_t i = 0; i < jobs.size(); ++i) assigned[i] = i;
          }
       }
+
+      batch(std::span<const ordered_attempt_batch::ticket> tags,size_t worker_count)
+         :streamed_jobs(tags.size()),outcomes(tags.size()),remaining(tags.size()),
+          stable_small_batch(tags.size()<=worker_count),streaming(true) {
+         assigned.fill(tags.size());
+         if(!stable_small_batch)return;
+         bool unique=true;
+         for(size_t i=0;i<tags.size();++i) {
+            const auto slot=tags[i].index();
+            if(slot>=worker_count || assigned[slot]!=tags.size()) {unique=false;break;}
+            assigned[slot]=i;
+         }
+         if(!unique) {
+            assigned.fill(tags.size());
+            for(size_t i=0;i<tags.size();++i)assigned[i]=i;
+         }
+      }
+      const isolated_worker_job& get_job(size_t index)const {
+         return streaming ? *streamed_jobs[index] : jobs[index];
+      }
       bool has_job(size_t worker_index) const noexcept {
-         return stable_small_batch ? assigned[worker_index] < jobs.size() && !claimed[worker_index] : next < jobs.size();
+         return stable_small_batch ? assigned[worker_index] < published && !claimed[worker_index] : next < published;
       }
       size_t take_job(size_t worker_index) noexcept {
          if (!stable_small_batch) return next++;
@@ -52,6 +267,9 @@ struct isolated_worker_pool::impl {
    parallel_worker_signals<max_threads> work;
    std::condition_variable done;
    std::shared_ptr<batch> active;
+   std::optional<std::vector<isolated_worker_outcome>> retired;
+   bool retiring=false;
+   isolated_retirement_diagnostics retirement;
    bool stopping = false;
    // Outlives joined workers and their caches/active frames. No timer callback
    // can observe a released VM or borrowed stack after a worker returns.
@@ -86,18 +304,36 @@ struct isolated_worker_pool::impl {
       std::unique_ptr<isolated_mixed_tree_executor> mixed_executor;
       while (true) {
          std::shared_ptr<batch> current;
-         size_t index;
+         std::optional<std::vector<isolated_worker_outcome>> reclaim;
+         size_t index=0;
          {
             std::unique_lock lock(mutex);
             // A small joined batch can give every job a distinct cache owner.
             // The same slot stays on that logical worker across discovery
             // waves, including sparse retries. Never move
             // a VM or pin an OS CPU. Larger batches keep the shared queue.
-            work.wait(worker_index, lock, [&] { return stopping || (active && active->has_job(worker_index)); });
-            if (stopping) return;
-            current = active; index = current->take_job(worker_index);
+            work.wait(worker_index, lock, [&] {
+               return stopping || (worker_index==0 && retired) || (active && active->has_job(worker_index));
+            });
+            if(worker_index==0 && retired) {
+               reclaim.emplace(std::move(*retired));retired.reset();retiring=true;
+            } else {
+               if(stopping)return;
+               current=active;index=current->take_job(worker_index);++current->started;
+            }
          }
-         const auto& job = current->jobs[index];
+         if(reclaim) {
+            // Only immutable owned bytes/state;no live DB,VM or callback.
+            reclaim.reset();
+            {
+               std::lock_guard lock(mutex);
+               retiring=false;++retirement.completed_batches;
+               retirement.last_thread=std::this_thread::get_id();
+            }
+            done.notify_all();
+            continue;
+         }
+         const auto& job = current->get_job(index);
          auto& outcome = current->outcomes[index];
          const auto attempt_began = std::chrono::steady_clock::now();
          try {
@@ -188,6 +424,11 @@ struct isolated_worker_pool::impl {
                      outcome.ended = step.effects.ended;
                      outcome.elapsed += step.effects.elapsed;
                   }
+                  if(job.prevalidate_tree) {
+                     outcome.prevalidated_tree=isolated_prevalidated_tree::make(
+                        job.tree,std::move(*outcome.tree_result),job.ticket,job.cancel);
+                     outcome.tree_result.reset();
+                  }
                } else if (job.notifications) {
                   mixed_executor.reset();
                   executor.reset();
@@ -261,20 +502,27 @@ struct isolated_worker_pool::impl {
             outcome.result.reset();
             outcome.notification_result.reset();
             outcome.tree_result.reset();
+            outcome.prevalidated_tree.reset();
             outcome.sync_result.reset();
             outcome.sync_transaction_result.reset();
             outcome.mixed_result.reset();
          }
-         if (!outcome.result && !outcome.notification_result && !outcome.tree_result && !outcome.sync_result &&
+         if (!outcome.result && !outcome.notification_result && !outcome.tree_attempt() && !outcome.sync_result &&
              !outcome.sync_transaction_result && !outcome.mixed_result) {
             outcome.elapsed = {};
             outcome.ended = std::chrono::steady_clock::now();
          }
-         outcome.attempt_wall = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now() - attempt_began);
+         outcome.ready_at = std::chrono::steady_clock::now();
+          outcome.attempt_wall = std::chrono::duration_cast<std::chrono::microseconds>(
+             outcome.ready_at - attempt_began);
          {
             std::lock_guard lock(mutex);
-            if (--current->remaining == 0) done.notify_one();
+            current->finished[index]=true;
+            --current->remaining;
+            if(current->remaining==0 ||
+               (current->report_ready &&
+                (current->ready_group_limit==1 || index==current->ready_next)))
+               done.notify_one();
          }
       }
    }
@@ -287,84 +535,7 @@ isolated_worker_pool::~isolated_worker_pool() = default;
 std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isolated_worker_job> jobs) {
    if (std::this_thread::get_id() != impl_->owner) throw state_view_wrong_thread();
    if (!parallel_runtime_limits::valid_batch(jobs.size())) throw primary_state_budget_exceeded();
-   // Bound all copied inputs too, including jobs that later fail linking.
-   for (const auto& job : jobs) {
-      if (unsigned(!job.actions.empty()) + unsigned(bool(job.notifications)) + unsigned(bool(job.tree)) +
-          unsigned(bool(job.sync)) + unsigned(bool(job.sync_transaction)) + unsigned(bool(job.mixed)) != 1)
-         throw primary_state_budget_exceeded();
-      if (job.sync_transaction || job.mixed) {
-         const auto& roots = job.mixed ? job.mixed->roots : job.sync_transaction->roots;
-         const auto& programs = job.mixed ? job.mixed->programs : job.sync_transaction->programs;
-         const auto max_roots = job.mixed ? isolated_mixed_tree_executor::max_roots : isolated_sync_executor::max_roots;
-         const auto max_programs = job.mixed ? isolated_mixed_tree_executor::max_programs : isolated_sync_executor::max_programs;
-         const auto max_code = job.mixed ? isolated_mixed_tree_executor::max_code_bytes : isolated_sync_executor::max_total_code_bytes;
-         const auto max_data = job.mixed ? isolated_mixed_tree_executor::max_data_bytes : isolated_sync_executor::max_total_data_bytes;
-         if (roots.empty() || roots.size() > max_roots || programs.empty() || programs.size() > max_programs)
-            throw primary_state_budget_exceeded();
-         size_t code_bytes = 0, data_bytes = 0;
-         for (const auto& item : programs) {
-            if (item.program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
-                item.program.code.size() > max_code - code_bytes)
-               throw primary_state_budget_exceeded();
-            code_bytes += item.program.code.size();
-         }
-         for (const auto& root : roots) {
-            if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
-                root.data.size() > max_data - data_bytes)
-               throw primary_state_budget_exceeded();
-            data_bytes += root.data.size();
-         }
-         continue;
-      }
-      if (job.sync) {
-         const auto& input = *job.sync;
-         if (input.programs.empty() || input.programs.size() > isolated_sync_executor::max_programs ||
-             input.root.data.size() > 64 * 1024 || input.root.authorizations.size() > 64 || input.root.max_return_bytes > 4096)
-            throw primary_state_budget_exceeded();
-         size_t code_bytes = 0;
-         for (const auto& item : input.programs) {
-            if (item.program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
-                item.program.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes)
-               throw primary_state_budget_exceeded();
-            code_bytes += item.program.code.size();
-         }
-         continue;
-      }
-      if (job.notifications || job.tree) {
-         if ((job.notifications && job.tree) || !job.actions.empty()) throw primary_state_budget_exceeded();
-         const auto& roots = job.tree ? job.tree->roots : job.notifications->roots;
-         const auto& programs = job.tree ? job.tree->programs : job.notifications->programs;
-         const auto max_programs = job.tree ? isolated_action_tree_executor::max_programs : isolated_notification_executor::max_programs;
-         if (roots.empty() || roots.size() > isolated_transaction_executor::max_actions ||
-             programs.empty() || programs.size() > max_programs)
-            throw primary_state_budget_exceeded();
-         size_t code_bytes = 0, data_bytes = 0;
-         for (const auto& program : programs) {
-            if (program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
-                program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes)
-               throw primary_state_budget_exceeded();
-            code_bytes += program.code.size();
-         }
-         for (const auto& root : roots) {
-            if (root.data.size() > 64 * 1024 || root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
-                root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
-               throw primary_state_budget_exceeded();
-            data_bytes += root.data.size();
-         }
-         continue;
-      }
-      if (job.actions.empty() || job.actions.size() > isolated_transaction_executor::max_actions)
-         throw primary_state_budget_exceeded();
-      size_t code_bytes = 0, data_bytes = 0;
-      for (const auto& action : job.actions) {
-         if (action.code.size() > isolated_wasm_limits::max_module_code_bytes || action.input.data.size() > 64 * 1024 ||
-             action.input.authorizations.size() > 64 ||
-             action.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes ||
-             action.input.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes)
-            throw primary_state_budget_exceeded();
-         code_bytes += action.code.size(); data_bytes += action.input.data.size();
-      }
-   }
+   for(const auto& job:jobs)validate_worker_job(job);
    auto batch = std::make_shared<impl::batch>(std::move(jobs), impl_->threads.size());
    std::unique_lock lock(impl_->mutex);
    if (impl_->stopping || impl_->active) throw primary_state_invalid_attempt();
@@ -374,5 +545,159 @@ std::vector<isolated_worker_outcome> isolated_worker_pool::run(std::vector<isola
    impl_->active.reset();
    return std::move(batch->outcomes);
 }
+
+
+// The owner constructs bounded immutable inputs while earlier chunks execute.
+// Storage is fixed before publication; only distinct optional slots are filled.
+// Failure joins every published job before rethrowing, so no work/result can
+// escape into a later snapshot, canonical callback, undo or pool destruction.
+std::vector<isolated_worker_outcome> isolated_worker_pool::run_streamed(
+      std::span<const ordered_attempt_batch::ticket> tickets,
+      const std::function<isolated_worker_job(size_t)>& produce) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(!parallel_runtime_limits::valid_batch(tickets.size()))throw primary_state_budget_exceeded();
+   if(!produce)throw primary_state_invalid_attempt();
+   auto batch=std::make_shared<impl::batch>(tickets,impl_->threads.size());
+   {
+      std::lock_guard lock(impl_->mutex);
+      if(impl_->stopping || impl_->active)throw primary_state_invalid_attempt();
+      impl_->active=batch;
+   }
+   std::exception_ptr failed;
+   try {
+      for(size_t i=0;i<tickets.size();++i) {
+         auto job=produce(i); // owner only, with no pool lock held
+         if(!job.ticket.same_preparation(tickets[i]))throw primary_state_invalid_attempt();
+         validate_worker_job(job);
+         std::lock_guard lock(impl_->mutex);
+         batch->streamed_jobs[i].emplace(std::move(job));
+         ++batch->published;
+         if(batch->published%impl_->threads.size()==0 || batch->published==tickets.size())
+            impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
+      }
+   } catch(...) {failed=std::current_exception();}
+   {
+      std::unique_lock lock(impl_->mutex);
+      if(failed) {
+         batch->remaining-=tickets.size()-batch->published;
+         impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
+      }
+      impl_->done.wait(lock,[&]{return batch->remaining==0;});
+      impl_->active.reset();
+   }
+   if(failed)std::rethrow_exception(failed);
+   return std::move(batch->outcomes);
+}
+
+size_t isolated_worker_pool::active_started_jobs()const {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   std::lock_guard lock(impl_->mutex);
+   return impl_->active ? impl_->active->started : 0;
+}
+
+
+bool isolated_worker_pool::retire_outcomes(std::vector<isolated_worker_outcome>&& outcomes) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(outcomes.empty())return true;
+   if(outcomes.size()>parallel_runtime_limits::max_batch_transactions)throw primary_state_budget_exceeded();
+   std::lock_guard lock(impl_->mutex);
+   if(impl_->stopping || impl_->active || impl_->retired || impl_->retiring)return false;
+   const auto count=outcomes.size();
+   impl_->retired.emplace(std::move(outcomes));
+   ++impl_->retirement.accepted_batches;
+   impl_->retirement.peak_outcomes=std::max(impl_->retirement.peak_outcomes,count);
+   impl_->work.notify_ready(impl_->threads.size(),[](size_t worker){return worker==0;});
+   return true;
+}
+void isolated_worker_pool::drain_retired(const std::function<void()>& checkpoint) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(checkpoint)checkpoint();
+   std::unique_lock lock(impl_->mutex);
+   while(impl_->retired || impl_->retiring) {
+      impl_->done.wait_for(lock,std::chrono::microseconds(100));
+      lock.unlock();if(checkpoint)checkpoint();lock.lock();
+   }
+}
+isolated_retirement_diagnostics isolated_worker_pool::retirement_diagnostics()const {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   std::lock_guard lock(impl_->mutex);return impl_->retirement;
+}
+
+
+bool isolated_worker_pool::has_active_batch()const {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   std::lock_guard lock(impl_->mutex);
+   return bool(impl_->active);
+}
+
+std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready(
+      std::span<const ordered_attempt_batch::ticket> tickets,
+      const std::function<isolated_worker_job(size_t)>& produce,
+      const std::function<void(size_t,isolated_worker_outcome&&)>& consume) {
+   return run_ready_grouped(tickets,produce,consume,1);
+}
+
+std::vector<isolated_worker_outcome> isolated_worker_pool::run_ready_grouped(
+      std::span<const ordered_attempt_batch::ticket> tickets,
+      const std::function<isolated_worker_job(size_t)>& produce,
+      const std::function<void(size_t,isolated_worker_outcome&&)>& consume,
+      size_t max_ready_group) {
+   if(std::this_thread::get_id()!=impl_->owner)throw state_view_wrong_thread();
+   if(!parallel_runtime_limits::valid_batch(tickets.size()))throw primary_state_budget_exceeded();
+   if(!produce || !consume)throw primary_state_invalid_attempt();
+   if(max_ready_group!=1 && max_ready_group!=4 && max_ready_group!=8)
+      throw primary_state_budget_exceeded();
+   auto batch=std::make_shared<impl::batch>(tickets,impl_->threads.size());
+   batch->report_ready=true;
+   batch->ready_group_limit=max_ready_group;
+   {
+      std::lock_guard lock(impl_->mutex);
+      if(impl_->stopping || impl_->active)throw primary_state_invalid_attempt();
+      impl_->active=batch;
+   }
+   std::exception_ptr failed;
+   try {
+      for(size_t i=0;i<tickets.size();++i) {
+         auto job=produce(i);
+         if(!job.ticket.same_preparation(tickets[i]))throw primary_state_invalid_attempt();
+         validate_worker_job(job);
+         std::lock_guard lock(impl_->mutex);
+         batch->streamed_jobs[i].emplace(std::move(job));
+         ++batch->published;
+         if(batch->published%impl_->threads.size()==0 || batch->published==tickets.size())
+            impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
+      }
+      // All publications finish before any owner consumption. One lock may
+      // cover several already-complete slots, never a wait for a fuller group.
+      // Each callback still receives its exclusive completed slot in order.
+      for(size_t i=0;i<tickets.size();) {
+         size_t ready_end=i+1;
+         {
+            std::unique_lock lock(impl_->mutex);
+            impl_->done.wait(lock,[&]{return batch->finished[i];});
+            const auto end=std::min(tickets.size(),i+max_ready_group);
+            while(ready_end<end && batch->finished[ready_end])++ready_end;
+            // Protected by the same mutex as worker completion publication.
+            // Already-ready slots are observed by the next wait predicate,
+            // even if their earlier notifications were unnecessary.
+            batch->ready_next=ready_end;
+         }
+         for(;i<ready_end;++i)
+            consume(i,std::move(batch->outcomes[i]));
+      }
+   } catch(...) {failed=std::current_exception();}
+   {
+      std::unique_lock lock(impl_->mutex);
+      if(failed) {
+         batch->remaining-=tickets.size()-batch->published;
+         impl_->work.notify_ready(impl_->threads.size(),[&](size_t worker){return batch->has_job(worker);});
+      }
+      impl_->done.wait(lock,[&]{return batch->remaining==0;});
+      impl_->active.reset();
+   }
+   if(failed)std::rethrow_exception(failed);
+   return std::move(batch->outcomes);
+}
+
 
 } // namespace eosio::chain::experimental

@@ -1275,6 +1275,7 @@ struct leased_modules {
    static constexpr size_t capacity = isolated_sync_executor::max_depth + 1;
    struct entry {
       std::vector<char> code;
+      fc::sha256 code_hash;
       isolated_wasm_limits limits;
       std::unique_ptr<isolated_wasm_module> module;
       // Only deterministic construction-time link failures are remembered.
@@ -1322,18 +1323,19 @@ struct leased_modules {
    };
 
    lease acquire(size_t depth, const isolated_receiver_program& program) {
-      return acquire(depth, program.code, program.limits);
+      return acquire(depth, program.code.view(), program.limits, &program.code.content_hash());
    }
-   lease acquire(size_t depth, const std::vector<char>& code, const isolated_wasm_limits& limits) {
+   lease acquire(size_t depth, const std::vector<char>& code, const isolated_wasm_limits& limits, const fc::sha256* identity=nullptr) {
       check_owner(); // before any slot access, including a cache miss
       if (depth >= limit) throw primary_state_budget_exceeded();
       if (active_depth[depth]) throw primary_state_invalid_attempt();
+      const auto same_code=[&](const entry& slot) { return identity ? slot.code_hash==*identity : slot.code==code; };
       size_t selected = fixed_depth ? depth : capacity;
       if (!fixed_depth) {
          for (const auto i : recency) {
             if (i >= limit) continue;
             const auto& slot = modules[i];
-            if (!slot.leased && (slot.module || slot.link_failed) && slot.code == code && slot.limits == limits) {
+            if (!slot.leased && (slot.module || slot.link_failed) && same_code(slot) && slot.limits == limits) {
                selected = i;
                break;
             }
@@ -1353,11 +1355,11 @@ struct leased_modules {
       if (selected == capacity) throw primary_state_budget_exceeded();
       auto& slot = modules[selected];
       if (slot.leased) throw primary_state_invalid_attempt();
-      if (slot.link_failed && slot.code == code && slot.limits == limits) {
+      if (slot.link_failed && same_code(slot) && slot.limits == limits) {
          touch(selected);
          throw eosio::vm::wasm_link_exception{"cached isolated module link failure"};
       }
-      if (!slot.module || slot.code != code || slot.limits != limits) {
+      if (!slot.module || !same_code(slot) || slot.limits != limits) {
          // Never create a transient tenth module. A throwing copy/compiler
          // cannot publish a usable old key. Negative entries share the SAME
          // bounded LRU; they never retain a backend, exception or VM state.
@@ -1365,11 +1367,12 @@ struct leased_modules {
          slot.link_failed = false;
          performance::scope compile_timer(performance::stage::parallel_compile);
          auto owned_code = code;
+         const auto owned_hash=identity ? *identity : fc::sha256::hash(owned_code.data(),owned_code.size());
          std::unique_ptr<isolated_wasm_module> module;
          try {
             module = std::make_unique<isolated_wasm_module>(owned_code, limits, runtime);
          } catch (const eosio::vm::wasm_link_exception&) {
-            slot.code = std::move(owned_code);
+            slot.code = std::move(owned_code); slot.code_hash=owned_hash;
             slot.limits = limits;
             slot.link_failed = true;
             touch(selected);
@@ -1377,7 +1380,7 @@ struct leased_modules {
          }
          // Parse/budget/allocation/cancellation failures are NOT cached. Nor
          // are any failures from execute_step, including missing state/hosts.
-         slot.code = std::move(owned_code);
+         slot.code = std::move(owned_code); slot.code_hash=owned_hash;
          slot.limits = limits;
          slot.module = std::move(module);
       }
@@ -1675,7 +1678,7 @@ isolated_notification_result isolated_notification_executor::execute(std::shared
          throw primary_state_budget_exceeded();
       code_bytes += program.code.size();
       if (!program.receiver || !catalog.emplace(program.receiver, program_entry{&program,
-            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+            program.code.empty() ? fc::sha256{} : program.code.content_hash()}).second)
          throw primary_state_unsupported();
    }
    auto lookup = [&](name receiver) -> const program_entry& {
@@ -1823,7 +1826,7 @@ isolated_action_tree_result isolated_action_tree_executor::execute(std::shared_p
          throw primary_state_budget_exceeded();
       code_bytes += program.code.size();
       if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
-            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+            program.code.empty() ? fc::sha256{} : program.code.content_hash()}).second)
          throw primary_state_unsupported();
    }
    const auto lookup = [&](name receiver) -> const entry& {
@@ -2019,7 +2022,7 @@ isolated_mixed_tree_result isolated_mixed_tree_executor::execute(std::shared_ptr
       if (p.code.size() > isolated_wasm_limits::max_module_code_bytes || p.code.size() > isolated_sync_executor::max_total_code_bytes - code_bytes)
          throw primary_state_budget_exceeded();
       if (!p.receiver || !catalog.emplace(p.receiver, entry{&captured,
-            p.code.empty() ? fc::sha256{} : fc::sha256::hash(p.code.data(), p.code.size())}).second)
+            p.code.empty() ? fc::sha256{} : p.code.content_hash()}).second)
          throw primary_state_unsupported();
       code_bytes += p.code.size();
    }
@@ -2239,7 +2242,7 @@ bool validate_isolated_notification_journal(const isolated_notification_result& 
           program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
       code_bytes += program.code.size();
       if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
-            program.code.empty() ? fc::sha256{} : fc::sha256::hash(program.code.data(), program.code.size())}).second)
+            program.code.empty() ? fc::sha256{} : program.code.content_hash()}).second)
          return false;
    }
    std::vector<fc::sha256> fingerprints;

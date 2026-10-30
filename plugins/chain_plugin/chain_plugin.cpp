@@ -11,6 +11,7 @@
 #include <eosio/chain/controller.hpp>
 #include <eosio/chain/performance_metrics.hpp>
 #include <eosio/chain/parallel_runtime_limits.hpp>
+#include <eosio/chain/parallel_auto_config.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/snapshot.hpp>
 #include <eosio/chain/subjective_billing.hpp>
@@ -31,6 +32,7 @@
 #include <fc/io/json.hpp>
 #include <fc/variant.hpp>
 #include <cstdlib>
+#include <stdexcept>
 
 const std::string deep_mind_logger_name("deep-mind");
 eosio::chain::deep_mind_handler _deep_mind_log;
@@ -301,18 +303,30 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
           "Percentage of actual signature recovery cpu to bill. Whole number percentages, e.g. 50 for 50%")
          ("chain-threads", bpo::value<uint16_t>()->default_value(config::default_controller_thread_pool_size),
           "Number of worker threads in controller thread pool")
-         ("experimental-parallel-validation-threads", bpo::value<uint16_t>()->default_value(0),
-          ("Restricted parallel block validation workers (0 disables, maximum " +
+         ("experimental-parallel-validation-threads", bpo::value<string>()->default_value("auto"),
+          ("Required parallel block validation workers (minimum 2, maximum " +
            std::to_string(chain::experimental::parallel_runtime_limits::max_workers) +
-           "). Requires matching wasm-runtime/parallel-engine, full validation and an explicit code-hash list. Does not enable parallel block production.").c_str())
-         ("experimental-parallel-validation-batch-size", bpo::value<uint16_t>()->default_value(8),
+           "). Accepts auto to size from allowed physical cores, CPU affinity and cgroup quota. Requires matching wasm-runtime/parallel-engine, full validation and an explicit code-hash list. Does not enable parallel block production.").c_str())
+         ("experimental-parallel-validation-batch-size", bpo::value<string>()->default_value("auto"),
           ("Maximum transactions per restricted validation batch (1-" +
            std::to_string(chain::experimental::parallel_runtime_limits::max_batch_transactions) +
-           "). Unsupported work executes serially.").c_str())
-         ("experimental-parallel-production", bpo::bool_switch()->default_value(false),
-          "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
-         ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
-          "Local restricted worker engine: interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
+           "). Accepts auto for three transactions per worker up to the batch cap. An auto worker count also sizes a defaulted batch. Unsupported work executes serially.").c_str())
+         ("experimental-parallel-production", bpo::value<bool>()->default_value(true)->implicit_value(true),
+          "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Required for nodeos; cannot be disabled.")
+         ("experimental-parallel-early-adoption", bpo::bool_switch()->default_value(false),
+          "Experimental ordered adoption of completed owned results while remaining private jobs finish. Requires parallel production; original freshness, authorization, rollback and CPU rules remain in force.")
+         ("experimental-parallel-early-adoption-group", bpo::value<unsigned>()->default_value(1),
+          "Maximum already-ready contiguous result handoff: 1, 4 or 8. Never waits to fill a group. Requires early adoption when greater than 1.")
+         ("experimental-parallel-native-capture-staged", bpo::bool_switch()->default_value(false),
+          "Use two joined native participants only for the initial subset, then retain original immutable publication overlap. Requires native capture.")
+         ("experimental-parallel-input-fingerprints", bpo::bool_switch()->default_value(false),
+          "Experimental owned input fingerprints on a bounded joined pool; current canonical checks are unchanged.")
+         ("experimental-parallel-trace-reserve", bpo::bool_switch()->default_value(false),
+          "Experimental bounded trace capacity hint before scheduling; no cross-transaction reuse.")
+         ("experimental-parallel-native-capture", bpo::bool_switch()->default_value(false),
+          "Experimental bounded native reads inside the exclusive owner write window. Joins before canonical writes; requires parallel production and at least two workers.")
+         ("experimental-parallel-engine", bpo::value<string>()->default_value("auto"),
+          "Local restricted worker engine: auto (match wasm-runtime), interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
           "Reviewed WASM SHA-256 eligible for the local restricted parallel experiment. Repeat for additional hashes. No chain-level contract allowlist is introduced.")
          ("performance-metrics", bpo::bool_switch()->default_value(false),
@@ -998,12 +1012,59 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       chain_config->integrity_hash_on_start = options.at("integrity-hash-on-start").as<bool>();
       chain_config->integrity_hash_on_stop = options.at("integrity-hash-on-stop").as<bool>();
 
-      chain_config->parallel_validation_threads = options.at("experimental-parallel-validation-threads").as<uint16_t>();
-      chain_config->parallel_validation_batch_size = options.at("experimental-parallel-validation-batch-size").as<uint16_t>();
+      const auto worker_setting=options.at("experimental-parallel-validation-threads").as<string>();
+      const auto batch_setting=options.at("experimental-parallel-validation-batch-size").as<string>();
+      const bool auto_requested=worker_setting=="auto" || batch_setting=="auto";
+      const auto cpu=auto_requested ? chain::experimental::detect_parallel_cpu_info() : chain::experimental::parallel_cpu_info{};
+      try {
+         const auto sizing=chain::experimental::resolve_parallel_config(worker_setting,batch_setting,
+            !options.at("experimental-parallel-validation-batch-size").defaulted(),cpu);
+         chain_config->parallel_validation_threads=sizing.workers;
+         chain_config->parallel_validation_batch_size=sizing.batch;
+      } catch (const std::invalid_argument& error) {
+         EOS_THROW(plugin_config_exception,"${reason}",("reason",error.what()));
+      }
+      if (auto_requested) {
+         ilog("Automatic parallel sizing: allowed logical=${logical}, allowed physical=${physical}, usable cores=${usable}, quota known=${quota}; workers=${workers}, batch=${batch}",
+            ("logical",cpu.allowed_logical)("physical",cpu.allowed_physical)("usable",cpu.usable_cores())
+            ("quota",cpu.quota_known)("workers",chain_config->parallel_validation_threads)("batch",chain_config->parallel_validation_batch_size));
+         for (const auto& warning:cpu.warnings) wlog("Automatic parallel sizing: ${reason}",("reason",warning));
+      }
       chain_config->parallel_production_enabled = options.at("experimental-parallel-production").as<bool>();
-      const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
+      EOS_ASSERT(chain_config->parallel_production_enabled &&
+                 chain_config->parallel_validation_threads >= 2 &&
+                 chain_config->parallel_validation_batch_size >= 2,
+                 plugin_config_exception,
+                 "nodeos requires parallel execution: production=true, at least 2 validation workers, and batch size at least 2; serial-only operation is not permitted");
+
+      chain_config->parallel_production_early_adoption = options.at("experimental-parallel-early-adoption").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_production_early_adoption || chain_config->parallel_production_enabled,
+                 plugin_config_exception, "experimental early adoption requires parallel production");
+      chain_config->parallel_early_adoption_group_size = options.at("experimental-parallel-early-adoption-group").as<unsigned>();
+      EOS_ASSERT(chain_config->parallel_early_adoption_group_size == 1 ||
+                 chain_config->parallel_early_adoption_group_size == 4 ||
+                 chain_config->parallel_early_adoption_group_size == 8,
+                 plugin_config_exception, "experimental early adoption group must be 1, 4 or 8");
+      EOS_ASSERT(chain_config->parallel_early_adoption_group_size == 1 ||
+                 chain_config->parallel_production_early_adoption,
+                 plugin_config_exception, "grouped early adoption requires early adoption");
+      chain_config->parallel_native_capture_staged = options.at("experimental-parallel-native-capture-staged").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_native_capture_staged || options.at("experimental-parallel-native-capture").as<bool>(),
+                 plugin_config_exception, "staged native capture requires native capture");
+      chain_config->parallel_input_fingerprints = options.at("experimental-parallel-input-fingerprints").as<bool>();
+      chain_config->parallel_trace_reserve = options.at("experimental-parallel-trace-reserve").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_input_fingerprints ||
+                    (chain_config->parallel_production_enabled && chain_config->parallel_validation_threads>=2),
+                 plugin_config_exception, "input fingerprints require parallel production and at least two workers");
+      chain_config->parallel_native_capture = options.at("experimental-parallel-native-capture").as<bool>();
+      EOS_ASSERT(!chain_config->parallel_native_capture ||
+                    (chain_config->parallel_production_enabled && chain_config->parallel_validation_threads>=2),
+                 plugin_config_exception, "native capture requires parallel production and at least two workers");
+      auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
+      if (parallel_engine == "auto")
+         parallel_engine = chain_config->wasm_runtime == eosio::chain::wasm_interface::vm_type::eos_vm_jit ? "jit" : "interpreter";
       EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,
-                 "experimental parallel engine must be interpreter or jit");
+                 "experimental parallel engine must be auto, interpreter or jit");
       chain_config->parallel_engine = parallel_engine == "jit" ? chain::experimental::isolated_vm_engine::jit :
                                                                chain::experimental::isolated_vm_engine::interpreter;
       EOS_ASSERT(chain::experimental::isolated_vm_engine_supported(chain_config->parallel_engine), plugin_config_exception,
@@ -1278,6 +1339,16 @@ void chain_plugin::plugin_shutdown() {
               ("b", production.batches)("a", production.attempts)("s", production.succeeded)
               ("d", production.adopted)("f", production.serial_fallbacks));
          diagnostics("production", production);
+         ilog("Experimental parallel prevalidation: adopted=${a}, capture_extensions=${c}, retired_batches=${r}; local diagnostics only",
+              ("a",production.prevalidated_adopted)("c",production.streamed_capture_extensions)("r",production.retired_batches));
+         ilog("Experimental parallel ready processing: batches=${b}, callbacks=${c}; local diagnostics only",
+              ("b",production.early_ready_batches)("c",production.early_ready_callbacks));
+         ilog("Experimental native capture: joined_batches=${n}; local diagnostics only",
+              ("n",production.native_capture_batches));
+         ilog("Experimental native staged capture: joined_initial_subsets=${n}; local diagnostics only",
+              ("n",production.native_staged_capture_batches));
+         ilog("Experimental input fingerprints: joined_batches=${n}; local diagnostics only",
+              ("n",production.input_fingerprint_batches));
       }
    }
 }

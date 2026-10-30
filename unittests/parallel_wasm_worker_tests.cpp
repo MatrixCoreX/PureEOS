@@ -2538,13 +2538,13 @@ BOOST_FIXTURE_TEST_CASE(real_wasm_results_pass_ordered_coordinator_for_independe
 
 BOOST_FIXTURE_TEST_CASE(pool_bounds_and_thread_affinity, wasm_fixture) {
    BOOST_CHECK_THROW(isolated_worker_pool{0}, primary_state_budget_exceeded);
-   BOOST_CHECK_THROW(isolated_worker_pool{17}, primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(isolated_worker_pool{parallel_runtime_limits::max_workers + 1}, primary_state_budget_exceeded);
    isolated_worker_pool pool(1);
    BOOST_CHECK_THROW(pool.run({}), primary_state_budget_exceeded);
    const std::array<ordered_attempt_batch::request, 1> requests{{{fc::sha256::hash("a"), fc::sha256::hash("b")}}};
    ordered_attempt_batch batch(base, requests);
    isolated_worker_job job{batch.get_ticket(0), increment_wasm(), input(), {}};
-   BOOST_CHECK_THROW(pool.run(std::vector<isolated_worker_job>(65, job)), primary_state_budget_exceeded);
+   BOOST_CHECK_THROW(pool.run(std::vector<isolated_worker_job>(parallel_runtime_limits::max_batch_transactions + 1, job)), primary_state_budget_exceeded);
    job.actions.front().code.resize(isolated_wasm_limits::max_module_code_bytes + 1);
    BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
    auto worker = std::async(std::launch::async, [&] {

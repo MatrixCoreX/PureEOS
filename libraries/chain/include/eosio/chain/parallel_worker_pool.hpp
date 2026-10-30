@@ -2,6 +2,8 @@
 #include <eosio/chain/parallel_ordered_batch.hpp>
 #include <eosio/chain/parallel_immutable_input.hpp>
 
+#include <thread>
+namespace eosio::chain {struct action;}
 namespace eosio::chain::experimental {
 
 struct isolated_notification_job {
@@ -19,6 +21,7 @@ struct isolated_worker_job {
    ordered_attempt_batch::ticket ticket;
    std::vector<isolated_action_invocation> actions;
    isolated_cancel cancel;
+   bool prevalidate_tree=false; // trusted pool freezes and preflights before publishing
    // Mutually exclusive with actions. Code/input bytes have owned immutable
    // lifetime, possibly shared across joined waves; never VM/overlay/DB state.
    // The worker may only request another owned receiver NAME.
@@ -96,6 +99,48 @@ constexpr const char* isolated_worker_failure_name(isolated_worker_failure failu
    return "unknown";
 }
 
+
+class isolated_worker_pool;
+
+// Created only inside the trusted pool, before any outcome is published. The
+// result and copied-input handle have immutable ownership and no mutable alias.
+// This proves frozen journal consistency, NEVER current state or authorization.
+class isolated_prevalidated_tree {
+   friend class isolated_worker_pool;
+   immutable_worker_input<isolated_action_tree_job> input_;
+   std::optional<isolated_action_tree_result> result_;
+   ordered_attempt_batch::ticket ticket_;
+   std::chrono::nanoseconds cpu_{};
+   isolated_prevalidated_tree(immutable_worker_input<isolated_action_tree_job> input,
+      isolated_action_tree_result result,ordered_attempt_batch::ticket ticket,
+      std::chrono::nanoseconds cpu)
+      :input_(std::move(input)),result_(std::move(result)),ticket_(std::move(ticket)),cpu_(cpu) {}
+   static std::shared_ptr<const isolated_prevalidated_tree> make(
+      const immutable_worker_input<isolated_action_tree_job>&,isolated_action_tree_result&&,
+      const ordered_attempt_batch::ticket&,const isolated_cancel&);
+public:
+   isolated_prevalidated_tree(const isolated_prevalidated_tree&)=delete;
+   isolated_prevalidated_tree& operator=(const isolated_prevalidated_tree&)=delete;
+   const std::optional<isolated_action_tree_result>& result()const {return result_;}
+   std::chrono::nanoseconds cpu()const {return cpu_;}
+   // All frozen digests were checked on the pool's exact immutable object.
+   bool binds_current_step(const isolated_action_tree_result&,size_t,name,const fc::sha256&,
+      const action&,const isolated_wasm_limits&,uint32_t,const isolated_action_tree_context&,
+      const std::function<void()>& checkpoint={})const;
+   bool belongs_to(const ordered_attempt_batch::ticket& ticket)const noexcept {
+      return ticket_.same_preparation(ticket);
+   }
+   // All actual roots are checked before the first canonical event.
+   // Borrowed views and their references never survive this call.
+   bool matches_current_roots(const isolated_action_tree_result&,std::span<const action>,
+      uint32_t,const std::shared_ptr<const isolated_transaction_environment>&,
+      std::span<const isolated_receiver_program>,const isolated_action_tree_context&,
+      const std::function<void()>& checkpoint={})const;
+   bool matches(const isolated_action_tree_result&,std::span<const isolated_action_input>,
+      std::span<const isolated_receiver_program>,const isolated_action_tree_context&,
+      const std::function<void()>& checkpoint)const;
+};
+
 struct isolated_worker_outcome {
    std::optional<isolated_transaction_result> result; // legacy root-only mode
    std::optional<isolated_notification_result> notification_result; // requires whole-tree canonical preflight
@@ -103,7 +148,11 @@ struct isolated_worker_outcome {
    std::optional<isolated_sync_result> sync_result; // whole-root preflight and original sync contexts required; never a prefix
    std::optional<isolated_sync_transaction_result> sync_transaction_result; // whole-transaction proof, then original per-root replay
    std::optional<isolated_mixed_tree_result> mixed_result; // independent whole-tree proof/replay required
-   std::chrono::steady_clock::time_point began, ended; // local diagnostics only
+   std::shared_ptr<const isolated_prevalidated_tree> prevalidated_tree;
+   const std::optional<isolated_action_tree_result>& tree_attempt()const noexcept {
+      return prevalidated_tree ? prevalidated_tree->result() : tree_result;
+   }
+   std::chrono::steady_clock::time_point began, ended, ready_at; // local diagnostics only
    std::chrono::microseconds elapsed{}; // successful step sum; excludes compilation and queueing
    std::optional<state_capture_request> request; // discovery only; no partial result is adoptable
    std::optional<name> receiver_request;
@@ -113,14 +162,23 @@ struct isolated_worker_outcome {
    std::chrono::microseconds attempt_wall{};
 };
 
-// Bounded synchronous batches on a persistent pool. The serial owner waits for
-// every worker before returning to canonical execution. Jobs own all inputs;
+// Bounded execution batches on a persistent pool. Legacy run/run_streamed join
+// before return. run_ready first publishes all owned inputs, then lets the owner
+// consume completed slots in order; it joins every job before return/rethrow.
+// Separately,one immutable-only
+// reclamation batch may overlap owner work and drains before the next capture.
+// Execution jobs own all inputs;
 // workers never receive controller/database pointers. Switching execution modes
 // destroys the previous executor but retains ONE shared nine-slot module cache
 // on that worker thread; modules never migrate between worker threads.
 // Sync/mixed frames exclusively lease distinct LIVE modules from the bounded
 // cache; no child can reset or evict an ancestor's module.
 // Neither a missing-state nor missing-program outcome can contain a prefix.
+struct isolated_retirement_diagnostics {
+   uint64_t accepted_batches=0,completed_batches=0;
+   size_t peak_outcomes=0;
+   std::thread::id last_thread;
+};
 class isolated_worker_pool {
 public:
    explicit isolated_worker_pool(size_t threads, isolated_vm_engine engine = isolated_vm_engine::interpreter);
@@ -128,6 +186,35 @@ public:
    isolated_worker_pool(const isolated_worker_pool&) = delete;
    isolated_worker_pool& operator=(const isolated_worker_pool&) = delete;
    std::vector<isolated_worker_outcome> run(std::vector<isolated_worker_job> jobs);
+   // Owner-side factory may freeze the next segment while earlier immutable
+   // jobs execute. Every published job is joined even if the factory throws.
+   std::vector<isolated_worker_outcome> run_streamed(std::span<const ordered_attempt_batch::ticket>,
+      const std::function<isolated_worker_job(size_t)>&);
+   // Experimental owner-side processing of completed immutable results, in input order.
+   // All producer calls finish first; consumer runs without the pool mutex.
+   // Every published job is joined before return or rethrow. This API does not
+   // authorize canonical adoption, skip fresh checks, or extend a private deadline.
+   // Consumer may move its completed slot; returned slots then remain moved-from.
+   std::vector<isolated_worker_outcome> run_ready(
+      std::span<const ordered_attempt_batch::ticket>,
+      const std::function<isolated_worker_job(size_t)>&,
+      const std::function<void(size_t,isolated_worker_outcome&&)>&);
+   // Consume an already-ready contiguous prefix of up to 1, 4 or 8 slots.
+   // Never wait to fill a group. Ordering, exclusive ownership and join rules
+   // are identical to run_ready; the original API retains one-slot handoff.
+   std::vector<isolated_worker_outcome> run_ready_grouped(
+      std::span<const ordered_attempt_batch::ticket>,
+      const std::function<isolated_worker_job(size_t)>&,
+      const std::function<void(size_t,isolated_worker_outcome&&)>&,
+      size_t max_ready_group);
+   bool has_active_batch()const; // owner-only capture/reentry guard
+   size_t active_started_jobs()const; // owner-only local diagnostic, not a bill
+   // At most ONE pending/in-flight bounded immutable outcome batch;no live DB,
+   // coordinator,VM,resource manager or user callback can be submitted.
+   bool retire_outcomes(std::vector<isolated_worker_outcome>&&);
+   // MUST finish before the controller constructs its next frozen snapshot.
+   void drain_retired(const std::function<void()>& checkpoint={});
+   isolated_retirement_diagnostics retirement_diagnostics()const;
 private:
    struct impl;
    std::unique_ptr<impl> impl_;

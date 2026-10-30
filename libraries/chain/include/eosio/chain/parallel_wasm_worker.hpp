@@ -1,4 +1,5 @@
 #pragma once
+#include <eosio/chain/parallel_immutable_code.hpp>
 
 #include <eosio/chain/parallel_state_overlay.hpp>
 #include <eosio/chain/parallel_secondary_journal.hpp>
@@ -51,7 +52,9 @@ struct isolated_cancel {
       return (generation && generation->load(std::memory_order_relaxed) != observed) ||
              (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline);
    }
-   void check(std::stop_token stop = {}) const {
+   // Borrow only for this check; the caller retains ownership of its token.
+   // Per-host-call copies contend on the shared stop-state reference count.
+   void check(const std::stop_token& stop = {}) const {
       if (stop.stop_requested() || (generation && generation->load(std::memory_order_relaxed) != observed))
          throw isolated_execution_interrupted(isolated_interrupt_reason::cancelled);
       if (deadline != std::chrono::steady_clock::time_point::max() && std::chrono::steady_clock::now() >= deadline)
@@ -252,7 +255,7 @@ private:
 // request an owned capture; serial_only marks native/privileged/unsupported code.
 struct isolated_receiver_program {
    name receiver;
-   std::vector<char> code;
+   immutable_code code;
    isolated_wasm_limits limits;
    bool serial_only = false;
 };

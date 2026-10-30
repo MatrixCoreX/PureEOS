@@ -40,7 +40,10 @@ BOOST_AUTO_TEST_CASE(microbatch_flush_target_is_useful_and_fits_the_holding_area
    BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(12), 12u);
    BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(24), 24u);
    BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(64), 64u);
-   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(std::numeric_limits<size_t>::max()), 64u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(96), 96u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(128), 128u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(256), 256u);
+   BOOST_CHECK_EQUAL(incoming_microbatch_policy::target(std::numeric_limits<size_t>::max()), eosio::chain::experimental::parallel_runtime_limits::max_batch_transactions);
 }
 
 BOOST_AUTO_TEST_CASE(fifo_and_refusal_do_not_consume_or_reorder) {
@@ -87,6 +90,38 @@ BOOST_AUTO_TEST_CASE(byte_boundary_zero_and_overflow) {
    BOOST_REQUIRE(huge.push(std::move(large), std::numeric_limits<size_t>::max() - 1));
    BOOST_CHECK(!huge.can_fit(2));
    BOOST_CHECK(huge.can_fit(1));
+}
+
+BOOST_AUTO_TEST_CASE(full_runtime_batch_preserves_fifo_and_once_delivery) {
+   constexpr auto capacity = eosio::chain::experimental::parallel_runtime_limits::max_batch_transactions;
+   struct completion { unsigned id; std::function<void(const unsigned&)> callback; };
+   incoming_transaction_batch<completion> q(4 * 1024 * 1024);
+   std::vector<unsigned> delivered;
+   for (unsigned i = 0; i < capacity; ++i) {
+      completion value{i, incoming_once<unsigned>([&, i](unsigned id) {
+         BOOST_CHECK_EQUAL(id, i);
+         delivered.push_back(id);
+      })};
+      BOOST_REQUIRE(q.push(std::move(value), 128));
+   }
+   BOOST_CHECK_EQUAL(q.size(), capacity);
+   BOOST_CHECK_EQUAL(q.bytes(), capacity * 128);
+   completion extra{capacity, {}};
+   BOOST_CHECK(!q.push(std::move(extra), 0));
+   auto batch = q.take();
+   BOOST_REQUIRE_EQUAL(batch.size(), capacity);
+   BOOST_CHECK(q.empty());
+   BOOST_CHECK_EQUAL(q.bytes(), 0u);
+   for (unsigned i = 0; i < capacity; ++i) {
+      BOOST_CHECK_EQUAL(batch[i].id, i);
+      auto retry = batch[i].callback;
+      batch[i].callback(i);
+      retry(i);
+   }
+   BOOST_REQUIRE_EQUAL(delivered.size(), capacity);
+   for (unsigned i = 0; i < capacity; ++i) BOOST_CHECK_EQUAL(delivered[i], i);
+   BOOST_CHECK(q.push(std::move(extra), 4 * 1024 * 1024));
+   BOOST_CHECK(!q.can_fit(1));
 }
 
 BOOST_AUTO_TEST_CASE(detached_batch_is_stable_during_reentrant_use) {
@@ -163,5 +198,46 @@ BOOST_AUTO_TEST_CASE(single_item_recovery_probe_restores_parallel_admission_with
    BOOST_CHECK_EQUAL(queue::preparation_count(1, 4), 0u);
    BOOST_CHECK_EQUAL(queue::preparation_count(0, 4), 0u);
    BOOST_CHECK_EQUAL(queue::preparation_count(3, 32), 3u);
-   BOOST_CHECK_EQUAL(queue::preparation_count(100, 100), 64u);
+   BOOST_CHECK_EQUAL(queue::preparation_count(100, 100), 100u);
+}
+
+BOOST_AUTO_TEST_CASE(recycled_storage_has_no_live_payload_and_preserves_next_fifo) {
+   incoming_transaction_batch<entry,4> q(100);
+   for(unsigned i=0;i<4;++i) {
+      entry e{std::make_unique<unsigned>(i),bool(i%2)};
+      BOOST_REQUIRE(q.push(std::move(e),25));
+   }
+   auto detached=q.take();auto* allocation=detached.data();
+   q.recycle(std::move(detached));
+   BOOST_CHECK(q.empty());BOOST_CHECK_EQUAL(q.bytes(),0u);
+   for(unsigned i=4;i<8;++i) {
+      entry e{std::make_unique<unsigned>(i),bool(i%2)};
+      BOOST_REQUIRE(q.push(std::move(e),25));
+   }
+   BOOST_CHECK(!q.can_fit(1));auto next=q.take();
+   BOOST_CHECK(next.data()==allocation);
+   for(unsigned i=0;i<4;++i)BOOST_CHECK_EQUAL(*next[i].id,i+4);
+}
+BOOST_AUTO_TEST_CASE(recycle_releases_callbacks_without_consuming_once_alias) {
+   incoming_transaction_batch<std::function<void(const unsigned&)>,4> q(100);
+   auto owned=std::make_shared<unsigned>(0);std::weak_ptr<unsigned> weak=owned;
+   auto callback=incoming_once<unsigned>([owned](const auto&){++*owned;});
+   auto alias=callback;owned.reset();
+   BOOST_REQUIRE(q.push(std::move(callback),25));
+   auto detached=q.take();q.recycle(std::move(detached));
+   BOOST_CHECK(!weak.expired());alias(7);alias(8);alias={};
+   BOOST_CHECK(weak.expired());BOOST_CHECK(q.empty());BOOST_CHECK_EQUAL(q.bytes(),0u);
+}
+BOOST_AUTO_TEST_CASE(recycle_does_not_replace_reentrant_arrivals_or_keep_unbounded_capacity) {
+   incoming_transaction_batch<entry,4> q(100);
+   entry a{std::make_unique<unsigned>(1),true};BOOST_REQUIRE(q.push(std::move(a),20));
+   auto detached=q.take();
+   entry b{std::make_unique<unsigned>(2),false};BOOST_REQUIRE(q.push(std::move(b),30));
+   q.recycle(std::move(detached));
+   BOOST_REQUIRE_EQUAL(q.size(),1u);BOOST_CHECK_EQUAL(q.bytes(),30u);
+   BOOST_CHECK_EQUAL(*q.take().front().id,2u);
+   std::vector<entry> oversized;oversized.reserve(100);
+   q.recycle(std::move(oversized));
+   entry c{std::make_unique<unsigned>(3),true};BOOST_REQUIRE(q.push(std::move(c),100));
+   BOOST_CHECK(!q.can_fit(1));auto final=q.take();BOOST_CHECK_LE(final.capacity(),4u);
 }

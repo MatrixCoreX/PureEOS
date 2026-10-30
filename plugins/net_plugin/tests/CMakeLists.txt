@@ -1,4 +1,5 @@
 add_executable( test_net_plugin
+        bp_gossip_security_unittest.cpp
         auto_bp_peering_unittest.cpp
         rate_limit_parse_unittest.cpp
         main.cpp

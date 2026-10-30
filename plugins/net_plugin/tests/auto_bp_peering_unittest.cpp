@@ -1,5 +1,9 @@
 #include <boost/test/unit_test.hpp>
 #include <eosio/net_plugin/auto_bp_peering.hpp>
+#include <future>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 using namespace eosio::net_utils;
 
@@ -27,7 +31,7 @@ struct mock_connections_manager {
    std::vector<std::shared_ptr<mock_connection>> connections;
 
    std::function<void(std::string, std::string)> resolve_and_connect;
-   std::function<void(std::string)> disconnect_gossip_connection;
+   std::function<void(std::string)> disconnect_gossip_connection = [](std::string) {};
 
    uint32_t get_max_client_count() const { return max_client_count; }
 
@@ -47,6 +51,10 @@ struct mock_net_plugin : eosio::auto_bp_peering::bp_connection_manager<mock_net_
    std::vector<std::string>     p2p_addresses{"0.0.0.0:9876"};
    const std::string&           get_first_p2p_address() const { return *p2p_addresses.begin(); }
 
+   std::vector<std::string> mock_connected_addresses;
+   std::chrono::steady_clock::time_point mock_bp_now{};
+   std::vector<std::string> connected_bp_peer_addresses() { return mock_connected_addresses; }
+   std::chrono::steady_clock::time_point bp_peering_now() const { return mock_bp_now; }
    bool is_lib_catchup() { return lib_catchup; }
 
    void setup_test_peers() {
@@ -335,4 +343,133 @@ BOOST_AUTO_TEST_CASE(test_bp_peer_info_v2) {
    BOOST_TEST(v2b.expiration == eosio::block_timestamp_type{7});
    BOOST_TEST(v2b.expiration == eosio::block_timestamp_type{7});
    BOOST_TEST(v2b.extra == "extra");
+}
+
+BOOST_AUTO_TEST_CASE(test_gossip_late_pending_and_endpoint_reconciliation) {
+   mock_net_plugin plugin;plugin.lib_catchup=false;
+   plugin.set_bp_producer_peers({"proda,127.0.0.1:8001,127.0.0.1"});
+   eosio::gossip_bp_peers_message::signed_bp_peer identity{{.producer_name="proda"_n}};
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);
+   std::set<std::string> live, dropped;
+   plugin.connections.resolve_and_connect=[&](std::string a,std::string){live.insert(a);};
+   plugin.connections.disconnect_gossip_connection=[&](std::string a){live.erase(a);dropped.insert(a);};
+   const auto publish=[&](const std::string& address) {
+      fc::lock_guard lock(plugin.gossip_bps.mtx);
+      plugin.gossip_bps.index.clear();
+      eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name="prodb"_n}};
+      entry.cached_bp_peer_info.emplace(address,"127.0.0.1",eosio::block_timestamp_type{1000});
+      plugin.gossip_bps.index.insert(entry);
+   };
+   plugin.on_active_schedule({1,{{"proda"_n,{}}}});
+   plugin.on_pending_schedule({2,{{"proda"_n,{}},{"prodb"_n,{}}}});
+   publish("127.0.0.1:8002");plugin.connect_to_active_bp_peers();
+   BOOST_CHECK(live.contains("127.0.0.1:8002")); // Endpoint arrived after pending-schedule notification.
+   for(int i=0;i<100;++i) {
+      publish("127.0.0.1:"+std::to_string(8100+i));plugin.connect_to_active_bp_peers();
+      BOOST_CHECK_EQUAL(live.size(),1u); // Old discovered addresses must not accumulate.
+   }
+   BOOST_CHECK(dropped.contains("127.0.0.1:8002"));
+   plugin.on_pending_schedule({2,{}});plugin.connect_to_active_bp_peers();
+   BOOST_CHECK(live.empty());
+}
+BOOST_AUTO_TEST_CASE(test_gossip_standby_and_local_identity_loss_keep_mesh_bounded) {
+   mock_net_plugin plugin;plugin.lib_catchup=false;
+   plugin.set_bp_producer_peers({"proda,127.0.0.1:8001,127.0.0.1"});
+   eosio::gossip_bp_peers_message::signed_bp_peer identity{{.producer_name="proda"_n}};
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);
+   std::set<std::string> live;
+   plugin.connections.resolve_and_connect=[&](std::string a,std::string){live.insert(a);};
+   plugin.connections.disconnect_gossip_connection=[&](std::string a){live.erase(a);};
+   eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name="prodb"_n}};
+   entry.cached_bp_peer_info.emplace("127.0.0.1:8002","127.0.0.1",eosio::block_timestamp_type{1000});
+   plugin.gossip_bps.index.insert(entry);
+   plugin.on_active_schedule({1,{{"prodb"_n,{}}}});
+   BOOST_CHECK(live.contains("127.0.0.1:8002")); // Eligible standby also keeps learned reserve paths.
+   plugin.on_pending_schedule({2,{{"proda"_n,{}},{"prodb"_n,{}}}});
+   BOOST_CHECK(live.contains("127.0.0.1:8002"));
+   plugin.initial_gossip_msg_factory.reset_initial_send_buffer();plugin.connect_to_active_bp_peers();
+   BOOST_CHECK(live.empty());
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK(live.contains("127.0.0.1:8002"));
+}
+
+BOOST_AUTO_TEST_CASE(test_gossip_concurrent_reconciliation_cannot_leave_a_stale_connection) {
+   mock_net_plugin plugin;plugin.lib_catchup=false;
+   plugin.set_bp_producer_peers({"proda,127.0.0.1:8001,127.0.0.1"});
+   eosio::gossip_bp_peers_message::signed_bp_peer identity{{.producer_name="proda"_n}};
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);
+   plugin.active_schedule={"proda"_n};
+   plugin.pending_schedule_accounts={"proda"_n,"prodb"_n};
+   eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name="prodb"_n}};
+   entry.cached_bp_peer_info.emplace("127.0.0.1:8002","127.0.0.1",eosio::block_timestamp_type{1000});
+   plugin.gossip_bps.index.insert(entry);
+   std::mutex state;std::condition_variable cv;bool entered=false,release=false;
+   std::set<std::string> live;
+   plugin.connections.resolve_and_connect=[&](std::string address,std::string) {
+      std::unique_lock lock(state);entered=true;cv.notify_all();
+      cv.wait(lock,[&]{return release;});live.insert(address);
+   };
+   plugin.connections.disconnect_gossip_connection=[&](std::string address) {
+      std::lock_guard lock(state);live.erase(address);
+   };
+   auto first=std::async(std::launch::async,[&]{plugin.connect_to_active_bp_peers();});
+   bool observed_entry;
+   {std::unique_lock lock(state);observed_entry=cv.wait_for(lock,std::chrono::seconds(5),[&]{return entered;});
+      if (!observed_entry) release=true;}
+   if (!observed_entry) {cv.notify_all();first.get();}
+   BOOST_REQUIRE(observed_entry);
+   std::promise<void> desired_changed;auto changed=desired_changed.get_future();
+   auto second=std::async(std::launch::async,[&] {
+      {fc::lock_guard lock(plugin.mtx);plugin.pending_schedule_accounts.clear();}
+      desired_changed.set_value();plugin.connect_to_active_bp_peers();
+   });
+   changed.wait();
+   // Give the unprotected implementation time to remove the not-yet-dialed peer.
+   // A serialized implementation waits until the first connection plan finishes.
+   second.wait_for(std::chrono::milliseconds(100));
+   {std::lock_guard lock(state);release=true;}cv.notify_all();
+   first.get();second.get();
+   BOOST_CHECK(live.empty());
+   BOOST_CHECK(plugin.dialed_bp_addresses.empty());
+}
+
+BOOST_AUTO_TEST_CASE(test_gossip_standby_bounded_discovery_and_unreachable_target_retry) {
+   mock_net_plugin plugin; plugin.lib_catchup=false;
+   plugin.set_bp_producer_peers({"proda,127.0.0.1:8001,127.0.0.1"});
+   eosio::gossip_bp_peers_message::signed_bp_peer identity{{.producer_name="proda"_n}};
+   plugin.initial_gossip_msg_factory.set_initial_send_buffer(identity);
+   std::set<std::string> live;
+   plugin.connections.resolve_and_connect=[&](std::string a,std::string){live.insert(a);};
+   plugin.connections.disconnect_gossip_connection=[&](std::string a){live.erase(a);};
+   eosio::chain::producer_authority_schedule schedule;
+   schedule.version=1;
+   const std::vector<eosio::name> peers={"prodb"_n,"prodc"_n,"prodd"_n,"prode"_n,"prodf"_n,"prodg"_n,"prodh"_n};
+   const auto signer=fc::crypto::private_key::generate();
+   for(size_t i=0;i<peers.size();++i) {
+      schedule.producers.push_back({peers[i],{}});
+      eosio::gossip_bp_peers_message::signed_bp_peer entry{{.producer_name=peers[i]}};
+      entry.cached_bp_peer_info.emplace("127.0.0.1:"+std::to_string(8100+i),"127.0.0.1",eosio::block_timestamp_type{1000});
+      entry.bp_peer_info=fc::raw::pack(*entry.cached_bp_peer_info);
+      entry.sig=signer.sign(entry.digest(eosio::chain::chain_id_type{fc::sha256::hash(std::string("standby-component-chain"))}));
+      plugin.gossip_bps.index.insert(entry);
+   }
+   plugin.on_active_schedule(schedule);
+   BOOST_REQUIRE_MESSAGE(live.size()==3,"Eligible standby must dial three learned active peers, even when static seeds fail");
+   const auto first=live;
+   plugin.mock_bp_now+=std::chrono::seconds(9);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK(live==first);
+   plugin.mock_bp_now+=std::chrono::seconds(1);plugin.connect_to_active_bp_peers();
+   BOOST_REQUIRE_EQUAL(live.size(),3u);
+   size_t overlap=0;for(const auto& a:live)overlap+=first.contains(a);
+   BOOST_CHECK_MESSAGE(overlap==0,"Unreachable standby targets must rotate after bounded retry, without a schedule change");
+   const auto second=live;
+   plugin.mock_connected_addresses={*live.begin()};
+   plugin.mock_bp_now+=std::chrono::hours(1);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK_MESSAGE(live==second,"A useful standby path must remain stable");
+   plugin.mock_connected_addresses.clear();
+   plugin.mock_bp_now+=std::chrono::seconds(1);plugin.connect_to_active_bp_peers();
+   BOOST_CHECK_EQUAL(live.size(),3u);
+   BOOST_CHECK(live!=second);
+   plugin.initial_gossip_msg_factory.reset_initial_send_buffer();plugin.connect_to_active_bp_peers();
+   BOOST_CHECK_MESSAGE(live.empty(),"Loss of eligible local identity must retire discovered standby paths");
 }

@@ -215,8 +215,8 @@ print(json.dumps(list(map(int,pathlib.Path('/proc/sys/net/ipv4/ip_local_port_ran
             '--data-dir', str(root / 'data'), '--config-dir', str(root / 'config')]
         workers = getattr(self, 'parallel_workers', 0)
         if workers:
-            if type(workers) is not int or not 1 <= workers <= 16:
-                raise ValueError('Use one through 16 parallel workers')
+            if type(workers) is not int or not 1 <= workers <= 128:
+                raise ValueError('Use one through 128 parallel workers')
             command += ['--wasm-runtime', 'eos-vm-jit', '--experimental-parallel-engine', 'jit',
                 '--experimental-parallel-validation-threads', str(workers),
                 '--experimental-parallel-validation-batch-size', '8', '--experimental-parallel-production']

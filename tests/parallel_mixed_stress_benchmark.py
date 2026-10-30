@@ -224,12 +224,12 @@ def main():
     require(args.mode != 'balanced' or (args.hot_percent == 50 and count % 4 == 0),
             'Balanced mix requires --hot-percent 50 and a multiple-of-four corpus')
     require(0 in workers and 1 < len(workers) <= 4 and len(set(workers)) == len(workers) and
-            all(0 <= value <= 16 for value in workers) and 0 <= args.validator_workers <= 16, 'Invalid worker modes')
+            all(0 <= value <= 128 for value in workers) and 0 <= args.validator_workers <= 128, 'Invalid worker modes')
     require(1 <= args.rounds <= 5 and 1 <= args.rate <= 32768 and 1 <= args.seconds <= 120 and
             0 <= args.warmup <= 10 and 1 <= args.drain <= 180 and 64 <= count <= 131072 and
             1 <= args.complex_roots <= 100 and count * args.complex_roots <= 2000000 and
             0 <= args.iterations <= 1000000 and 0 <= args.hot_percent <= 100 and
-            1 <= args.batch_size <= 64 and len(workers) * (args.seconds + args.warmup + args.drain + 30) < 1200,
+            1 <= args.batch_size <= 256 and len(workers) * (args.seconds + args.warmup + args.drain + 30) < 1200,
             'Invalid bounded workload/lifetime')
     os.umask(0o077)
     storage = preflight(args.output_parent)

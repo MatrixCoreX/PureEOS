@@ -527,7 +527,7 @@ BOOST_FIXTURE_TEST_CASE(tickets_outlive_closed_coordinator_but_cannot_enter_new_
 BOOST_FIXTURE_TEST_CASE(batch_size_and_identity_budgets_fail_before_publication, batch_fixture) {
    BOOST_CHECK_THROW(ordered_attempt_batch(nullptr, requests), primary_state_budget_exceeded);
    BOOST_CHECK_THROW(ordered_attempt_batch(base, {}), primary_state_budget_exceeded);
-   std::vector<ordered_attempt_batch::request> large(65, requests[0]);
+   std::vector<ordered_attempt_batch::request> large(parallel_runtime_limits::max_batch_transactions + 1, requests[0]);
    BOOST_CHECK_THROW(ordered_attempt_batch(base, large), primary_state_budget_exceeded);
    auto invalid = requests; invalid[0].transaction_id = {};
    BOOST_CHECK_THROW(ordered_attempt_batch(base, invalid), primary_state_invalid_attempt);

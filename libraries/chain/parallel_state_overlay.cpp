@@ -1,6 +1,7 @@
 #include <eosio/chain/parallel_state_overlay.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <algorithm>
+#include <array>
 #include <limits>
 
 namespace eosio::chain::experimental {
@@ -161,25 +162,28 @@ std::shared_ptr<const frozen_primary_state> frozen_primary_state::capture_querie
       if (captured.queries.contains(query)) continue;
       if (result->query_count_ == limits.max_queries) throw primary_state_budget_exceeded();
       auto& table = writable_table(query.table);
-      const auto found = source.locate_primary(query);
+      // Selection, metadata validation, duplicate handling, budget checks and
+      // owned payload copy share one fresh native lookup with no callback gap.
+      auto read=source.read_primary_for_capture(query,table.metadata,table.rows,
+         result->row_count_<limits.max_rows,limits.max_value_bytes-result->value_bytes_);
       if (stats) ++stats->primary_queries_read;
-      if (found.table != table.metadata) throw primary_state_invalid_attempt();
+      const auto& found=read.metadata;
+      if(read.changed || found.table!=table.metadata)throw primary_state_invalid_attempt();
+      if(read.budget_exceeded)throw primary_state_budget_exceeded();
       std::optional<uint64_t> selected;
-      if (found.row) {
-         selected = found.row->primary_key;
-         if (auto existing = table.rows.find(*selected); existing != table.rows.end()) {
-            if (metadata(*existing->second) != *found.row) throw primary_state_invalid_attempt();
+      if(found.row) {
+         selected=found.row->primary_key;
+         if(auto existing=table.rows.find(*selected);existing!=table.rows.end()) {
+            if(metadata(*existing->second)!=*found.row || read.owned_row)throw primary_state_invalid_attempt();
          } else {
-            if (result->row_count_ == limits.max_rows ||
-                found.row->value_size > limits.max_value_bytes - result->value_bytes_)
+            if(result->row_count_==limits.max_rows ||
+               found.row->value_size>limits.max_value_bytes-result->value_bytes_)
                throw primary_state_budget_exceeded();
-            auto read = source.read_primary(query, limits.max_value_bytes - result->value_bytes_);
-            if (!read.row || read.table != found.table || metadata(*read.row) != *found.row)
-               throw primary_state_invalid_attempt();
-            result->value_bytes_ += read.row->value.size();
+            if(!read.owned_row || metadata(*read.owned_row)!=*found.row)throw primary_state_invalid_attempt();
+            result->value_bytes_+=read.owned_row->value.size();
             ++result->row_count_;
-            table.rows.emplace(*selected, std::make_shared<const primary_row_read>(std::move(*read.row)));
-            if (stats) ++stats->primary_rows_copied;
+            table.rows.emplace(*selected,std::make_shared<const primary_row_read>(std::move(*read.owned_row)));
+            if(stats)++stats->primary_rows_copied;
          }
       }
       table.queries.emplace(query, selected);
@@ -676,7 +680,11 @@ primary_overlay_result primary_state_overlay::seal() {
 
 bool primary_overlay_result::matches_base_reads(const transaction_state_view& live,
                                                const std::function<void()>& checkpoint) const {
-   std::set<int64_t> checked_values;
+   // Small read sets need no per-ID heap nodes; larger sets retain logarithmic
+   // tree storage after a bounded eight-element scan. Lifetime is this call.
+   small_seen_keys<int64_t> checked_values;
+   const auto first_value=[&](int64_t id) {return checked_values.insert(id);};
+   const auto* native=dynamic_cast<const chainbase_transaction_state_view*>(&live);
    for (const auto account : accounts_) {
       checkpoint();
       if (live.read_account(account) != base_->read_account(account)) return false;
@@ -688,13 +696,26 @@ bool primary_overlay_result::matches_base_reads(const transaction_state_view& li
    for (const auto& query : queries_) {
       checkpoint();
       const auto expected = base_->locate_primary(query);
-      if (live.locate_primary(query) != expected) return false;
-      // Distinct range/point queries can select the same large row. Selection
-      // is checked for each query, but compare its payload once per object ID
-      // while the serial owner holds this unchanged canonical state.
-      if (expected.row && checked_values.insert(expected.row->object_id).second &&
-          live.read_primary(query, expected.row->value_size) !=
-                          base_->read_primary(query, expected.row->value_size)) return false;
+      // Only the final native Chainbase adapter has the reviewed combined
+      // metadata/full-prefix semantics. Preserve the original selection and
+      // payload call protocol for every other state-view adapter.
+      if (!native) {
+         if (live.locate_primary(query) != expected) return false;
+         // Distinct range/point queries can select the same large row. Selection
+         // is checked for each query, but compare its payload once per object ID
+         // while the serial owner holds this unchanged canonical state.
+         if (expected.row && first_value(expected.row->object_id) &&
+             live.read_primary(query, expected.row->value_size) !=
+                             base_->read_primary(query, expected.row->value_size)) return false;
+         continue;
+      }
+      // The frozen base owns these bytes for the complete sealed-result lifetime.
+      // Compare all bytes plus fresh table/row metadata without copying either
+      // payload. No canonical reference survives matches_primary or a callback.
+      if (expected.row && first_value(expected.row->object_id)) {
+         const auto& value=base_->get_table(query.table).rows.at(expected.row->primary_key)->value;
+         if (!native->matches_primary(query,expected,value)) return false;
+      } else if (live.locate_primary(query) != expected) return false;
    }
    for (const auto& query : secondary_queries_) {
       checkpoint();

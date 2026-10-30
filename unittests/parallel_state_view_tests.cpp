@@ -1,5 +1,6 @@
 #include <eosio/chain/transaction_state_view.hpp>
 #include <eosio/chain/parallel_state_overlay.hpp>
+#include <eosio/chain/parallel_native_capture.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/chain/account_object.hpp>
@@ -1521,5 +1522,388 @@ BOOST_FIXTURE_TEST_CASE(derived_primary_point_observes_private_update_remove_and
    put(7, "xyz");
    BOOST_CHECK(!result.matches_base_reads(view, [] {}));
    BOOST_CHECK(base->read_primary(point, 3) == original);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+
+BOOST_AUTO_TEST_SUITE(parallel_borrowed_primary_validation_tests)
+BOOST_FIXTURE_TEST_CASE(borrowed_compare_matches_owned_metadata_and_complete_bytes, view_fixture) {
+   const std::array queries{
+      primary_query{accounts, primary_query_kind::find, 0},
+      primary_query{accounts, primary_query_kind::find, 7},
+      primary_query{accounts, primary_query_kind::find, 9},
+      primary_query{accounts, primary_query_kind::lower_bound, 5},
+      primary_query{accounts, primary_query_kind::upper_bound, 7},
+      primary_query{accounts, primary_query_kind::previous, 9},
+      primary_query{accounts, primary_query_kind::last, max_key},
+      primary_query{accounts, primary_query_kind::find, max_key},
+      primary_query{table_key{"token"_n,"absent"_n,"accounts"_n},primary_query_kind::find,7}};
+   for (const size_t size : {size_t{0},size_t{1},size_t{32},size_t{33},size_t{65536}}) {
+      put(7,std::string(size,'x')); put(9,"");
+      for (const auto& query : queries) {
+         const auto expected=view.locate_primary(query);
+         const auto bytes=view.read_primary(query,65536);
+         const auto payload=bytes.row ? std::span<const char>{bytes.row->value} : std::span<const char>{};
+         BOOST_REQUIRE(view.matches_primary(query,expected,payload));
+         auto bad=expected;
+         if (bad.table) {
+            ++bad.table->count; BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            bad.table->payer="carol"_n;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.table->object_id;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+         }
+         if (bad.row) {
+            ++bad.row->object_id;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.row->table_object_id;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.row->primary_key;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            bad.row->payer="carol"_n;BOOST_CHECK(!view.matches_primary(query,bad,payload));bad=expected;
+            ++bad.row->value_size;BOOST_CHECK(!view.matches_primary(query,bad,payload));
+            auto wrong=bytes.row->value;wrong.push_back('x');
+            BOOST_CHECK(!view.matches_primary(query,expected,wrong));
+            if (!payload.empty()) {
+               wrong=bytes.row->value;wrong.back()^=1;
+               BOOST_CHECK(!view.matches_primary(query,expected,wrong));
+               BOOST_CHECK(!view.matches_primary(query,expected,payload.first(payload.size()-1)));
+            }
+         }
+         auto forbidden=std::async(std::launch::async,[&] {
+            try {view.matches_primary(query,expected,payload);return false;}
+            catch(const state_view_wrong_thread&) {return true;}
+         });
+         BOOST_CHECK(forbidden.get());
+         // Fresh same-view checks across actual canonical mutations and undo.
+         {
+            auto undo=db.start_undo_session(true);
+            put(7,"changed");
+            const auto actual=view.read_primary(query,65536);
+            BOOST_CHECK(view.matches_primary(query,expected,payload)==(actual==bytes));
+         }
+         BOOST_CHECK(view.matches_primary(query,expected,payload));
+      }
+   }
+   primary_query unsupported{accounts,static_cast<primary_query_kind>(255),0};
+   BOOST_CHECK_THROW(view.matches_primary(unsupported,{},{}),state_view_unsupported_query);
+}
+
+BOOST_FIXTURE_TEST_CASE(inline_and_overflow_dedup_preserve_old_validation_and_generic_protocol, view_fixture) {
+   // Cross both sides of the eight-ID inline boundary and exercise repeated
+   // selections for IDs stored inline AND in the unbounded tree fallback.
+   for (const unsigned rows : {0u,1u,8u,9u,32u}) {
+      for (unsigned i=0;i<rows;++i) put(2*i+1,std::string(33,char(i)));
+      const std::array tables{accounts};
+      primary_state_overlay overlay(frozen_primary_state::capture(view,tables));
+      overlay.read_table(accounts);
+      for (unsigned i=0;i<rows;++i) {
+         overlay.locate_primary({accounts,primary_query_kind::find,2*i+1});
+         overlay.locate_primary({accounts,primary_query_kind::lower_bound,2*i});
+      }
+      const auto result=overlay.seal();
+      struct counted_view final:transaction_state_view {
+         const transaction_state_view& source;mutable unsigned payloads=0,selections=0;
+         explicit counted_view(const transaction_state_view& s):source(s){}
+         std::optional<account_read> read_account(name a)const override{return source.read_account(a);}
+         std::optional<table_read> read_table(const table_key& k)const override{return source.read_table(k);}
+         primary_metadata_result locate_primary(const primary_query& q)const override{
+            ++selections;return source.locate_primary(q);}
+         primary_prefix_result read_primary_prefix(const primary_query& q,size_t n)const override{
+            return source.read_primary_prefix(q,n);}
+         primary_read_result read_primary(const primary_query& q,size_t n)const override{
+            ++payloads;return source.read_primary(q,n);}
+      } counted(view);
+      unsigned checkpoints=0;
+      BOOST_CHECK(result.matches_base_reads(view,[&]{++checkpoints;}));
+      BOOST_CHECK_EQUAL(checkpoints,1+rows*2);
+      BOOST_CHECK(result.matches_base_reads(counted,[]{}));
+      BOOST_CHECK_EQUAL(counted.selections,rows*2);BOOST_CHECK_EQUAL(counted.payloads,rows);
+      for (unsigned i=0;i<rows;++i) {
+         {
+            auto undo=db.start_undo_session(true);put(2*i+1,"mutated");
+            BOOST_CHECK(!result.matches_base_reads(view,[]{}));
+            BOOST_CHECK(!result.matches_base_reads(counted,[]{}));
+         }
+         BOOST_CHECK(result.matches_base_reads(view,[]{}));
+      }
+      BOOST_CHECK_THROW(result.matches_base_reads(view,[]{throw std::runtime_error("deadline");}),std::runtime_error);
+      for(unsigned i=0;i<rows;++i)erase(2*i+1);
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_single_capture_read_tests)
+BOOST_FIXTURE_TEST_CASE(single_read_capture_matches_physical_oracle_across_budgets,view_fixture) {
+   constexpr table_key absent{"token"_n,"absent"_n,"accounts"_n};
+   constexpr table_key empty{"token"_n,"empty"_n,"accounts"_n};
+   table(empty);
+   for(unsigned i=0;i<16;++i)put(3*i+1,std::string(std::array<size_t,5>{0,1,31,32,33}[i%5],char(i)));
+   put(max_key,std::string(65536,'z'));
+   const std::array keys{accounts,empty,absent};
+   std::vector<primary_query> queries;
+   for(const auto& key:keys)
+      for(auto kind:{primary_query_kind::find,primary_query_kind::lower_bound,
+                    primary_query_kind::upper_bound,primary_query_kind::previous,primary_query_kind::last})
+         for(uint64_t value:{uint64_t{0},uint64_t{1},uint64_t{5},uint64_t{46},max_key-1,max_key})
+            queries.push_back({key,kind,value});
+   // Duplicate selections must remain legal at an exhausted byte/row budget.
+   for(unsigned i=0;i<10;++i)queries.push_back({accounts,primary_query_kind::lower_bound,0});
+   BOOST_REQUIRE_EQUAL(queries.size(),100u);
+   for(size_t tables:{size_t{2},size_t{3}})
+   for(size_t rows:{size_t{0},size_t{1},size_t{8},size_t{17},size_t{32}})
+   for(size_t bytes:{size_t{0},size_t{1},size_t{32},size_t{128},size_t{65536},size_t{1048576}})
+   for(size_t count:{size_t{0},size_t{99},size_t{100},size_t{256}}) {
+      primary_snapshot_limits limits;limits.max_tables=tables;limits.max_rows=rows;
+      limits.max_value_bytes=bytes;limits.max_queries=count;
+      bool allowed=keys.size()<=tables && queries.size()<=count;
+      size_t expected_bytes=0;std::set<int64_t> selected_rows;
+      std::set<primary_query,primary_query_less> selected_queries;
+      if(allowed)for(auto query:queries) {
+         if(query.kind==primary_query_kind::last)query.primary_key=0;
+         if(!selected_queries.insert(query).second)continue;
+         const auto expected=reference_read(db,query); // physical by_id walk
+         if(expected.row && !selected_rows.contains(expected.row->object_id)) {
+            if(selected_rows.size()==rows || expected.row->value.size()>bytes-expected_bytes) {
+               allowed=false;break;
+            }
+            selected_rows.insert(expected.row->object_id);expected_bytes+=expected.row->value.size();
+         }
+      }
+      if(!allowed) {
+         BOOST_CHECK_THROW(frozen_primary_state::capture_queries(view,keys,queries,limits),primary_state_budget_exceeded);
+         continue;
+      }
+      auto captured=frozen_primary_state::capture_queries(view,keys,queries,limits);
+      BOOST_CHECK_EQUAL(captured->row_count(),selected_rows.size());
+      BOOST_CHECK_EQUAL(captured->value_bytes(),expected_bytes);
+      for(const auto& query:queries)BOOST_CHECK(captured->read_primary(query,65536)==reference_read(db,query));
+   }
+}
+
+BOOST_FIXTURE_TEST_CASE(single_capture_duplicate_reuse_keeps_stats_and_exhausted_budget,view_fixture) {
+   put(1,"");
+   frozen_primary_capture_session session(view);
+   primary_snapshot_limits limits;limits.max_tables=1;limits.max_rows=1;
+   limits.max_value_bytes=0;limits.max_queries=3;
+   const primary_query first{accounts,primary_query_kind::find,1};
+   const std::array more{primary_query{accounts,primary_query_kind::lower_bound,0},
+                         primary_query{accounts,primary_query_kind::upper_bound,0}};
+   auto a=session.capture({},std::array{first},{},limits,[]{});
+   auto b=session.capture({},more,{},limits,[]{});
+   BOOST_CHECK_EQUAL(a->row_count(),1u);BOOST_CHECK_EQUAL(b->row_count(),1u);
+   BOOST_CHECK_EQUAL(b->value_bytes(),0u);
+   for(const auto& q:more)BOOST_CHECK(b->read_primary(q,0)==reference_read(db,q));
+   BOOST_CHECK(a->read_primary(first,0)==reference_read(db,first));
+   BOOST_CHECK_EQUAL(session.stats().tables_read,1u);
+   BOOST_CHECK_EQUAL(session.stats().primary_rows_copied,1u);
+   BOOST_CHECK_EQUAL(session.stats().primary_queries_read,3u);
+   BOOST_CHECK_THROW(a->locate_primary(more.front()),primary_state_missing);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_small_local_container_tests)
+BOOST_AUTO_TEST_CASE(inline_name_membership_and_catalog_match_ordered_oracles) {
+   const auto check=[]<size_t N>() {
+      small_seen_keys<name,N> seen;std::set<name> expected;
+      small_name_map<int64_t,N> values;std::map<name,int64_t> oracle;
+      BOOST_CHECK(seen.insert(name{}));expected.insert(name{});
+      BOOST_CHECK(values.emplace(name{},-1));oracle.emplace(name{},-1);
+      const auto* stable=values.find(name{});BOOST_REQUIRE(stable);
+      std::mt19937_64 random(0x9767a11+N);
+      for(unsigned i=0;i<10000;++i) {
+         const name key{random()%257};const int64_t value=static_cast<int64_t>(random());
+         BOOST_CHECK(seen.insert(key)==expected.insert(key).second);
+         BOOST_CHECK_EQUAL(seen.size(),expected.size());
+         BOOST_CHECK(values.emplace(key,value)==oracle.emplace(key,value).second);
+         const auto* found=values.find(key);BOOST_REQUIRE(found);
+         BOOST_CHECK_EQUAL(*found,oracle.at(key));BOOST_CHECK_EQUAL(values.size(),oracle.size());
+         BOOST_CHECK(values.find(name{})==stable);BOOST_CHECK_EQUAL(*stable,-1);
+      }
+      BOOST_CHECK(!values.find(name{std::numeric_limits<uint64_t>::max()}));
+   };
+   check.template operator()<1>();check.template operator()<8>();
+}
+BOOST_AUTO_TEST_CASE(inline_signed_identity_membership_matches_tree_for_all_boundaries) {
+   small_seen_keys<int64_t> seen;std::set<int64_t> expected;
+   for(int64_t value:{int64_t{0},int64_t{-1},int64_t{1},std::numeric_limits<int64_t>::min(),std::numeric_limits<int64_t>::max()})
+      BOOST_CHECK(seen.insert(value)==expected.insert(value).second);
+   std::mt19937_64 random(0x899112);
+   for(unsigned i=0;i<10000;++i) {
+      const auto value=static_cast<int64_t>(random()%1024)-512;
+      BOOST_CHECK(seen.insert(value)==expected.insert(value).second);
+      BOOST_CHECK_EQUAL(seen.size(),expected.size());
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(parallel_primary_validation_optimization_tests)
+BOOST_FIXTURE_TEST_CASE(full_payload_single_lookup_matches_prior_validation_and_rejects_stale_state, view_fixture) {
+   put(7, std::string("a\0b\xff", 4)); put(9, ""); put(11, "tail");
+   constexpr table_key absent{"token"_n, "carol"_n, "accounts"_n};
+   const std::array queries{
+      primary_query{accounts, primary_query_kind::find, 7},
+      primary_query{accounts, primary_query_kind::lower_bound, 5},
+      primary_query{accounts, primary_query_kind::upper_bound, 7},
+      primary_query{accounts, primary_query_kind::last, 0},
+      primary_query{accounts, primary_query_kind::previous, 11},
+      primary_query{accounts, primary_query_kind::find, max_key},
+      primary_query{absent, primary_query_kind::find, 7}};
+   const auto base = frozen_primary_state::capture_queries(view, {}, queries, {});
+   primary_state_overlay overlay(base);
+   for (const auto& query : queries) overlay.locate_primary(query);
+   const auto result = overlay.seal();
+   // Preserve the former two-lookup algorithm as an independent equivalence
+   // oracle. Mutate the live database and undo after EVERY case, using the
+   // SAME view/result to catch accidental cache lifetime extension as well.
+   const auto previous = [&] {
+      std::set<int64_t> checked;
+      for (const auto& key : result.read_tables())
+         if (view.read_table(key) != base->read_table(key)) return false;
+      for (const auto& query : result.read_queries()) {
+         const auto expected = base->locate_primary(query);
+         if (view.locate_primary(query) != expected) return false;
+         if (expected.row && checked.insert(expected.row->object_id).second &&
+             view.read_primary(query, expected.row->value_size) !=
+             base->read_primary(query, expected.row->value_size)) return false;
+      }
+      return true;
+   };
+   BOOST_REQUIRE(previous());
+   BOOST_REQUIRE(result.matches_base_reads(view, [] {}));
+   for (unsigned mutation = 0; mutation < 12; ++mutation) {
+      {
+         auto undo = db.start_undo_session(true);
+         switch (mutation) {
+            case 0: put(7, "abcd"); break; // same-size content
+            case 1: put(7, "a"); break; // truncated
+            case 2: put(7, "abcdef"); break; // grew beyond requested prefix
+            case 3: put(9, "x"); break; // empty row grew
+            case 4: put(7, ""); break; // became empty
+            case 5: erase(7); put(7, std::string("a\0b\xff", 4)); break; // generation
+            case 6: db.modify(table(), [](auto& t) { t.payer = "bob"_n; }); break;
+            case 7: {
+               const auto& t = table();
+               const auto& row = db.get<key_value_object, by_scope_primary>(boost::make_tuple(t.id, 7));
+               db.modify(row, [](auto& r) { r.payer = "carol"_n; }); break;
+            }
+            case 8: put(max_key, "new"); break; // former absence
+            case 9: put(7, "new", absent); break; // former missing table
+            case 10: erase(9); break; // range selection and empty row
+            case 11: put(6, "new"); break; // lower-bound phantom
+         }
+         BOOST_CHECK(!previous());
+         BOOST_CHECK(result.matches_base_reads(view, [] {}) == previous());
+      }
+      BOOST_CHECK(previous());
+      BOOST_CHECK(result.matches_base_reads(view, [] {}));
+   }
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(parallel_native_capture_tests)
+BOOST_FIXTURE_TEST_CASE(all_query_shapes_accounts_and_negatives_match_serial,view_fixture) {
+   const std::array<table_key,4> keys{accounts,table_key{"token"_n,"bob"_n,"accounts"_n},
+      table_key{"other"_n,"alice"_n,"accounts"_n},table_key{"token"_n,"missing"_n,"accounts"_n}};
+   for(size_t t=0;t<3;++t)for(uint64_t k:{0u,5u,9u})put(k,std::string(t+3,char('a'+k)),keys[t]);
+   db.create<account_object>([](auto& obj){obj.name="bob"_n;});
+   db.create<account_metadata_object>([](auto& obj){obj.name="bob"_n;});
+   std::vector<primary_query> queries;
+   for(auto key:keys)for(auto kind:{primary_query_kind::find,primary_query_kind::lower_bound,
+         primary_query_kind::upper_bound,primary_query_kind::previous,primary_query_kind::last})
+      for(uint64_t k:{0u,1u,5u,10u})queries.push_back({key,kind,k});
+   const std::array names{"alice"_n,"bob"_n};
+   const auto expected=frozen_primary_state::capture_queries(view,keys,queries,{},[]{},names);
+   for(size_t n:{1u,2u,4u,8u}) {
+      bounded_native_capture_pool pool(n);frozen_primary_capture_session session(view);
+      const auto actual=session.capture_parallel(db,pool,keys,queries,{}, {},names);
+      BOOST_CHECK(!pool.active());
+      BOOST_CHECK_EQUAL(actual->row_count(),expected->row_count());
+      BOOST_CHECK_EQUAL(actual->value_bytes(),expected->value_bytes());
+      for(const auto& q:queries)BOOST_CHECK(actual->read_primary(q,1024)==reference_read(db,q));
+      for(auto name:names)BOOST_CHECK(actual->read_account(name)==expected->read_account(name));
+      BOOST_CHECK_THROW(actual->read_account("unasked"_n),primary_state_missing);
+      BOOST_CHECK_NO_THROW(db.get_mutable_index<table_id_multi_index>());
+   }
+}
+BOOST_FIXTURE_TEST_CASE(imbalanced_partition_retries_original_global_caps,view_fixture) {
+   put(1,"1234567");put(9,"abcdefgh");
+   const std::array queries{primary_query{accounts,primary_query_kind::find,1},
+      primary_query{accounts,primary_query_kind::find,9}};
+   bounded_native_capture_pool pool(4);
+   primary_snapshot_limits exact;exact.max_rows=2;exact.max_value_bytes=15;
+   frozen_primary_capture_session session(view);
+   const auto saved=session.capture_parallel(db,pool,{},queries,exact,{});
+   BOOST_CHECK_EQUAL(saved->row_count(),2u);BOOST_CHECK_EQUAL(saved->value_bytes(),15u);
+   for(const auto& q:queries)BOOST_CHECK(saved->read_primary(q,8)==reference_read(db,q));
+   for(auto fail:{0,1,2}) {
+      auto limit=exact;
+      if(fail==0)limit.max_rows=1;
+      if(fail==1)limit.max_value_bytes=14;
+      if(fail==2)limit.max_queries=1;
+      frozen_primary_capture_session rejected(view);
+      BOOST_CHECK_THROW(rejected.capture_parallel(db,pool,{},queries,limit,{}),primary_state_budget_exceeded);
+      BOOST_CHECK(!pool.active());
+      BOOST_CHECK_NO_THROW(db.get_mutable_index<table_id_multi_index>());
+   }
+}
+BOOST_FIXTURE_TEST_CASE(extension_preserves_union_caps_and_first_capture_identity,view_fixture) {
+   put(1,"abc");put(9,"def");
+   const primary_query first{accounts,primary_query_kind::find,1},second{accounts,primary_query_kind::find,9};
+   bounded_native_capture_pool pool(2);frozen_primary_capture_session session(view);
+   primary_snapshot_limits exact;exact.max_rows=2;exact.max_value_bytes=6;
+   auto a=session.capture_parallel(db,pool,{},std::array{first},exact,{});
+   auto b=session.capture({},std::array{second},{},exact);
+   BOOST_CHECK_EQUAL(b->row_count(),2u);BOOST_CHECK_EQUAL(b->value_bytes(),6u);
+   BOOST_CHECK_THROW(a->read_primary(second,3),primary_state_missing);
+   BOOST_CHECK_THROW(session.capture_parallel(db,pool,{},std::array{first},exact,{}),primary_state_invalid_attempt);
+   BOOST_CHECK(a->read_primary(first,3)==b->read_primary(first,3));
+}
+BOOST_FIXTURE_TEST_CASE(owner_database_and_prior_read_mode_fail_closed,view_fixture) {
+   bounded_native_capture_pool pool(2);frozen_primary_capture_session session(view);view_fixture other;
+   BOOST_CHECK_THROW(session.capture_parallel(other.db,pool,{}, {}, {}, {}),primary_state_invalid_attempt);
+   auto result=std::async(std::launch::async,[&] {
+      try{session.capture_parallel(db,pool,{}, {}, {}, {});}
+      catch(const state_view_wrong_thread&){return true;}return false;
+   });
+   BOOST_CHECK(result.get());
+   auto wrong_pool=std::async(std::launch::async,[&] {
+      try{pool.capture(db,{}, {}, {}, {}, {});}
+      catch(const state_view_wrong_thread&){return true;}return false;
+   });
+   BOOST_CHECK(wrong_pool.get());
+   db.set_read_only_mode();
+   BOOST_CHECK_THROW(pool.capture(db,{}, {}, {}, {}, {}),std::logic_error);
+   BOOST_CHECK_THROW(db.get_mutable_index<table_id_multi_index>(),std::logic_error);
+   db.unset_read_only_mode();
+   BOOST_CHECK_NO_THROW(pool.capture(db,{}, {}, {}, {}, {}));
+}
+BOOST_FIXTURE_TEST_CASE(cancel_deadline_throw_and_healthy_retry_restore_write_mode,view_fixture) {
+   put(1,"abc");const std::array query{primary_query{accounts,primary_query_kind::find,1}};
+   bounded_native_capture_pool pool(4);auto generation=std::make_shared<std::atomic<uint64_t>>(1);
+   isolated_cancel cancel;cancel.generation=generation;cancel.observed=0;
+   frozen_primary_capture_session session(view);
+   BOOST_CHECK_THROW(session.capture_parallel(db,pool,{},query,{},cancel),isolated_execution_interrupted);
+   cancel.observed=1;cancel.deadline=std::chrono::steady_clock::now();
+   BOOST_CHECK_THROW(session.capture_parallel(db,pool,{},query,{},cancel),isolated_execution_interrupted);
+   cancel.deadline=std::chrono::steady_clock::time_point::max();
+   BOOST_CHECK_NO_THROW(session.capture_parallel(db,pool,{},query,{},cancel));
+   BOOST_CHECK(!pool.active());BOOST_CHECK_NO_THROW(put(1,"new"));
+}
+BOOST_AUTO_TEST_CASE(results_outlive_database_and_pool_and_fresh_undo_recaptures) {
+   const primary_query query{accounts,primary_query_kind::find,1};
+   std::shared_ptr<const frozen_primary_state> old;
+   {
+      view_fixture f;bounded_native_capture_pool pool(4);f.put(1,"old");
+      {frozen_primary_capture_session session(f.view);old=session.capture_parallel(f.db,pool,{},std::array{query},{},{});}
+      auto undo=f.db.start_undo_session(true);f.put(1,"new");
+      std::shared_ptr<const frozen_primary_state> changed;
+      {frozen_primary_capture_session session(f.view);changed=session.capture_parallel(f.db,pool,{},std::array{query},{},{});}
+      BOOST_CHECK(old->read_primary(query,3)!=changed->read_primary(query,3));
+      undo.undo();
+      frozen_primary_capture_session restored(f.view);
+      BOOST_CHECK(restored.capture_parallel(f.db,pool,{},std::array{query},{},{})->read_primary(query,3)==old->read_primary(query,3));
+   }
+   BOOST_REQUIRE(old->read_primary(query,3).row);
+   BOOST_CHECK(old->read_primary(query,3).row->value==std::vector<char>({'o','l','d'}));
 }
 BOOST_AUTO_TEST_SUITE_END()

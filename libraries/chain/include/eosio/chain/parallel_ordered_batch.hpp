@@ -41,6 +41,10 @@ public:
       std::stop_token stop_token() const { check(); return identity_->stop.get_token(); }
       const fc::sha256& transaction_id() const { check(); return preparation_->transaction.transaction_id; }
       size_t index() const { return index_; }
+      bool same_preparation(const ticket& other)const noexcept {
+         return identity_ && preparation_ && identity_==other.identity_ &&
+            preparation_==other.preparation_ && index_==other.index_;
+      }
    private:
       friend class ordered_attempt_batch;
       void check() const { if (!identity_ || !preparation_) throw primary_state_invalid_attempt(); }
@@ -62,8 +66,10 @@ public:
    ordered_attempt_batch& operator=(const ordered_attempt_batch&) = delete;
    ticket get_ticket(size_t index) const;
    struct retry_request { size_t index; request transaction; };
-   // Owner-only, before ANY canonical callback, after joining the previous
-   // wave. Atomically replace just the unfinished descriptors. Unselected
+   // Owner-only, before ANY canonical callback. Selected descriptors must be
+   // unpublished, or their previous worker wave must have fully joined.
+   // Other outstanding tickets read their own immutable descriptor, never this
+   // owner-only slot vector. Atomically replace just the selected descriptors. Unselected
    // tickets/results remain bound to their original snapshots; replaced
    // tickets cannot be adopted. Aggregate retained payload stays <= 4 MiB.
    void prepare_retries(std::shared_ptr<const frozen_primary_state>, std::span<const retry_request>);
@@ -194,7 +200,7 @@ private:
    };
    std::map<table_key, std::array<secondary_changes, 5>, table_key_less> secondary_dirty_;
    static constexpr size_t max_operations_per_result = 4096;
-   static constexpr size_t max_batch_write_operations = parallel_runtime_limits::max_batch_transactions * max_operations_per_result;
+   static constexpr size_t max_batch_write_operations = parallel_runtime_limits::max_batch_write_operations;
    size_t write_operations_ = 0;
    size_t next_ = 0;
    size_t refreshes_ = 0;
