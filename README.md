@@ -1,57 +1,48 @@
-# PureEOS 系统合约
+# PureEOS System Contracts
 
-本仓库维护 PureEOS 新链使用的系统、代币、资源及奖励合约，配套工具链为
-AIC CDT 1.0.0。节点和系统合约必须使用同一份经过验证的发行组合。
-当前首版仍在验收，不能将开发分支或历史二进制视作已经完成联合发布。
+[简体中文](#简体中文) · [English](#english)
 
-## 本版规则
+## 简体中文
 
-- 每个投票者只选择一个节点，按代币最小单位整数计票；代理投票关闭，买入REX必须保持唯一投票选择。
-- 合格候选初始上限210，按四年翻倍的速度线性增长；从一个节点起链，逐步加入。
-- 最多21个节点同时出块，按候选顺序逐次替换一人；轮岗资格和实际出块窗口顺序分别由合约及原生共识规则确定。
-- 不由现任21人预检其他节点。满21时连续三个完整本人窗口零产出，永久禁止该账号再次轮岗；不足21时不拉黑。
-- 节点仅按实际出块获取奖励，没有按排名或票数分发的备用节点奖励。保留历史收益和账户资产；领奖仍受正常权限和24小时规则约束。
-- 节点增发初始约1%年率，四年减半；原储备账户80%增发取消。
-- 直接质押及REX租赁合计动态占约10%资源权重，其余由PowerUp提供；保留REX租赁。
-- 系统升级由独立开发者账号申报，固定公示14天，合格节点可按原生规则反对；不通过eosio.msig或eosio.wrap授予升级权。
+当前新链配置保持单选直接投票、原生 Savanna 出块/确认与轮岗、签名 BP 发现、计划维护、全链停摆缺席保护、10% 质押 / 90% PowerUp 和 14 天升级治理。RAM 初始 64 GiB，初始化时调用 `setramrate(1024)`；延迟交易两个禁用阶段保持激活。
 
-实际执行边界以本仓库代码、匹配的节点原生治理实现和发行验证记录为准。
-满席离线安全移除的说明见[SAFE_BLACKLIST_EVICTION.md](SAFE_BLACKLIST_EVICTION.md)。
+出块奖励按当前已发行量，以每 364 天 **1%** 的系数计提，每 1461 天减半。金额使用整数最小代币单位计算，跨减半段合并余数后，在填池区间末尾向下取整。新发行全部用于出块奖励，不发行额外 4%，不新增投票或候补奖励。
 
-## 构建
+首次正权重直接投票激活计时。实际出块累计 `unpaid_blocks`；成功 `claimrewards` 时才实际发行和填池，再按未领奖出块比例支付。首次领取距注册、后续领取距上次成功领取均须超过 24 小时。失败领取原子回滚，不清除出块份额及计时。
 
-使用新建的独立构建目录及已经核验的AIC CDT 1.0.0 SDK，环境需要CMake、Ninja
-和原生C/C++编译器。下列路径应替换成自己的实际SDK和输出目录：
+当前浏览器测试链初始发行 `100000000.0000 AIC`，上限 `2100000000.0000 AIC`。上限限制发行总量，不保证奖励公式最终发行到上限。这里只定义奖励规则，代币符号、初始发行与上限通过正常初始化设置。
+
+### 编译
+
+安装 PureEOS CDT 1.0.0 SDK，并填入其实际绝对路径。Ubuntu 24.04 LTS / 26.04 LTS 的节点和 SDK 使用范围见 PureEOS 兼容性报告。
 
 ```bash
-cmake -S . -B /your/output/pureeos-contracts -G Ninja \
-  -DCDT_ROOT=/your/aic-cdt-1.0.0 \
-  -Dcdt_DIR=/your/aic-cdt-1.0.0/lib/cmake/cdt \
-  -DBUILD_TESTS=OFF
-cmake --build /your/output/pureeos-contracts --parallel 2
+export PUREEOS_CDT_ROOT=/absolute/path/to/pureeos-cdt-1.0.0
+export PATH="$PUREEOS_CDT_ROOT/bin:$PATH"
+cmake -S . -B build/current -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_PREFIX_PATH="$PUREEOS_CDT_ROOT" \
+  -DPUREEOS_BP_PEERING=ON -DPUREEOS_BP_MAINTENANCE=ON \
+  -DPUREEOS_UPGRADE_GOVERNANCE=ON -DPUREEOS_SINGLE_CHOICE_VOTING=ON \
+  -DPUREEOS_RESOURCE_SPLIT=ON -DPUREEOS_SEQUENTIAL_ROTATION=ON
+cmake --build build/current --target contracts_project --parallel 2
+sha256sum build/current/contracts/eosio.system/eosio.system.wasm
+python3 tests/run_reward_accrual_exact.py --output /path/to/new-math-results --sanitize
 ```
 
-四项新链功能默认开启且必须开启：`PUREEOS_UPGRADE_GOVERNANCE`、
-`PUREEOS_SINGLE_CHOICE_VOTING`、`PUREEOS_RESOURCE_SPLIT`、
-`PUREEOS_SEQUENTIAL_ROTATION`。旧构建缓存若关闭其中任何一项会明确报错，
-不会生成一份仍采用旧投票、奖励或资源规则的系统合约。
+当前包面向新创世链。已有链的奖励政策状态迁移和实际升级需单独验证，并遵守链上治理；本包不执行自动升级。产物及测试范围以配套清单和报告为准。许可见 `AIC_LICENSE.md`、`LICENSING.md`、`LICENSE` 和各组件声明。
 
-也可以直接构建`contracts/`，需要显式选择SDK中的WASM工具链；默认功能要求相同。
-AIC CDT源码中的`tests/hardening/build_system_contracts.py`提供隔离重建和逐文件摘要记录。
-完整构建还会生成若干继承的工具/示例合约；首版系统部署只使用发行清单指定的合约。
-生成一个msig或wrap文件，不代表它获得系统治理或升级权限。
+## English
 
-## 部署
+The current new-chain profile retains direct single-choice voting, native Savanna proposer/finalizer rotation, signed BP discovery, planned maintenance, global-interruption absence protection, 10% staking / 90% PowerUp and the 14-day upgrade review. RAM starts at 64 GiB; explicitly initialize growth with `setramrate(1024)`. Both deferred-disable stages remain active.
 
-此分支用于原生Savanna新创世链。必须先激活匹配的`PUREEOS_ROTATION_CONTEXT`，
-部署发行清单中的system/token/bpay及REX、PowerUp辅助合约，完成资源初始化后再
-调用`govinit`封存开发者权限与固定14天公示规则。不能使用默认测试私钥或测试资金
-作为正式创世配置。准确操作顺序参照节点仓库的候选使用说明和同版本测试脚本。
+Block rewards accrue at **1% of currently issued supply per 364-day contract year**, halved every 1461 days. Integer token-unit arithmetic combines remainders across halving segments and floors once at the end of each funding interval. All new reward issuance funds block pay. The additional 4% is never issued; voting and idle standby status create no new reward entitlement.
 
-系统升级、注册矿工、出块签名及账号管理是不同权限；不要把开发者升级私钥装入
-普通出块服务器。普通应用可以保留自己的业务权限结构，不因此取得系统升级权。
+A positive-weight direct vote starts the reward clock. Produced blocks accumulate unpaid credits. A successful `claimrewards` issues/funds the pool and pays the claimant's proportional unpaid-block share. Claims require more than 24 hours since registration or the last successful claim. Failed claims roll back without consuming credits or accrual clocks.
 
-## 许可
+The explorer devnet initializes `100000000.0000 AIC` with a `2100000000.0000 AIC` maximum. The maximum is a ceiling, not a guaranteed issuance target. Symbols and supply parameters are initialized through ordinary actions.
 
-继承代码及第三方声明按[LICENSE](LICENSE)保留；有权授权的自有原创部分适用
-[AIC开源许可1.0](AIC_LICENSE.md)。具体范围见[LICENSING.md](LICENSING.md)。
+### Build
+
+Install PureEOS CDT 1.0.0 and run the complete commands above with your SDK's absolute path. The root CMake build forwards all selected modes and produces the system contract under `build/current/contracts/eosio.system/`. The independent arithmetic test uses Python Fraction and can run with UBSan through the final command.
+
+This package targets a fresh genesis. Existing-chain reward-policy migration and deployment need separate qualification under on-chain governance; there is no automatic upgrade. Consult the matching manifests and reports for exact artifacts and scope. See `AIC_LICENSE.md`, `LICENSING.md`, `LICENSE` and component notices for licenses.
