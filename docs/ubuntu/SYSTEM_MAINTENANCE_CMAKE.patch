@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index df2bb03..be7d8bc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -31,6 +31,8 @@ option(SYSTEM_ENABLE_SPRING_VERSION_CHECK
+ option(SYSTEM_ENABLE_CDT_VERSION_CHECK
+       "Enables a configure-time check that the version of CDT is compatible with this project's contracts" ON)
+ 
++option(PUREEOS_BP_MAINTENANCE "Enable planned BP maintenance through normal rotation handoff" ON)
++
+ option(PUREEOS_BP_PEERING "Enable authenticated BP peer-key registry and bounded PureEOS peering roster" ON)
+ 
+ option(PUREEOS_UPGRADE_GOVERNANCE "Enable PureEOS native developer-upgrade governance integration" ON)
+@@ -53,6 +55,7 @@ ExternalProject_Add(
+              -DSYSTEM_CONFIGURABLE_WASM_LIMITS=${SYSTEM_CONFIGURABLE_WASM_LIMITS}
+              -DSYSTEM_BLOCKCHAIN_PARAMETERS=${SYSTEM_BLOCKCHAIN_PARAMETERS}
+              -DSYSTEM_ENABLE_CDT_VERSION_CHECK=${SYSTEM_ENABLE_CDT_VERSION_CHECK}
++             -DPUREEOS_BP_MAINTENANCE=${PUREEOS_BP_MAINTENANCE}
+              -DPUREEOS_BP_PEERING=${PUREEOS_BP_PEERING}
+              -DPUREEOS_UPGRADE_GOVERNANCE=${PUREEOS_UPGRADE_GOVERNANCE}
+              -DPUREEOS_SINGLE_CHOICE_VOTING=${PUREEOS_SINGLE_CHOICE_VOTING}

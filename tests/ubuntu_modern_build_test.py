@@ -1,4 +1,4 @@
-"""Read-only profile/guard tests; actual 26.10 checks are recorded separately."""
+"""Read-only profile/guard tests; actual Ubuntu compatibility checks are recorded separately."""
 from pathlib import Path
 import os
 import platform
@@ -18,7 +18,7 @@ class UbuntuProfileTests(unittest.TestCase):
 
     def require_native_prerequisites(self):
         data = platform.freedesktop_os_release()
-        if data.get('ID') != 'ubuntu' or data.get('VERSION_ID') not in ('26.04', '26.10'):
+        if data.get('ID') != 'ubuntu' or data.get('VERSION_ID') not in ('24.04', '26.04', '26.10'):
             self.skipTest('Actual supported Ubuntu host required')
         if not all(shutil.which(tool) for tool in ('cmake', 'c++', 'git', 'python3')):
             self.skipTest('Build tools not installed')
@@ -117,7 +117,7 @@ class UbuntuProfileTests(unittest.TestCase):
             self.assertEqual(cache.read_text(), original)
 
     def test_modern_ci_platforms_do_not_install_legacy_oc_llvm(self):
-        for release in ('26.04', '26.10'):
+        for release in ('24.04', '26.04', '26.10'):
             text = (REPO / '.cicd/platforms' / ('ubuntu' + release + '.Dockerfile')).read_text()
             self.assertIn('FROM ubuntu:' + release, text)
             self.assertIn('HELIOS_MODERN_JIT_PROFILE=1', text)
@@ -128,7 +128,7 @@ class UbuntuProfileTests(unittest.TestCase):
 
     def test_modern_platforms_have_bounded_native_component_ci(self):
         workflow = (REPO / '.github/workflows/build.yaml').read_text()
-        self.assertIn('ubuntu: ["26.04", "26.10"]', workflow)
+        self.assertIn('ubuntu: ["24.04", "26.04", "26.10"]', workflow)
         base = (REPO / '.github/workflows/build_base.yaml').read_text()
         self.assertIn('runs-on: ubuntu-24.04', base)
         self.assertIn('container: ubuntu:${{ inputs.ubuntu-release }}', base)

@@ -1110,6 +1110,7 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "pureeos_committee_boundary_tests.inc"
 #include "pureeos_reward_halving_tests.inc"
 #include "pureeos_reward_activation_tests.inc"
+#include "pureeos_exact_reward_tests.inc"
 #endif
 #endif
 #endif

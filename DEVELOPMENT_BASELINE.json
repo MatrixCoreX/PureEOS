@@ -3,8 +3,8 @@
   "product": "PureEOS",
   "compiled_node_source": "00443330a0d29673700a4eebee78de3b0234c281",
   "nodeos_sha256": "e7776703f09bec15e8476279e76075ac8e2af3cd94e44ece16c3607859ba2f32",
-  "system_source": "6f3160ed23b725e8cd97790f7a0e9042afbfdc9a",
-  "system_WASM_sha256": "5f25a25816fc6db145dbd811d9c24dd99c9b9b1fd260b8e16a045476d0c3c11a",
+  "system_source": "432360edd6763be000626898435bffcfe1aaf866",
+  "system_WASM_sha256": "6ed4cccc3aac05231f95e63b5464325315668bea2997ddb15de0b29768bf3a62",
   "system_ABI_sha256": "6809814cb91cdfb55e9cf9bfb926343b9a8be02f82b8996796e11173eec40a9c",
   "compiler_product": "PureEOS CDT",
   "compiler_code_source": "d5816c442dd03db13413645f99c61a01c82fdda6",
@@ -42,5 +42,19 @@
   "physical_hosts": 3,
   "independent_processes": 30,
   "TPS": "unmeasured",
-  "original_released_artifacts_preserved": true
+  "original_released_artifacts_preserved": true,
+  "development_profile": "2026.10.31-exact1pct",
+  "system_delivery_source": "d126cae28057edfcd0e2eb84654afd8efd6da257",
+  "reward_qualification": {
+    "WASM_action_cases": 14,
+    "independent_math_cases": 4277,
+    "UBSan": "PASS"
+  },
+  "current_contract_package": "system-contracts/pureeos-system-2026.10.31-exact1pct.tar.gz",
+  "current_contract_scope": "fresh genesis; historical policy migration separately qualified",
+  "qualified_Ubuntu_versions": [
+    "Ubuntu24.04.5 LTS",
+    "Ubuntu26.04.1 LTS",
+    "Ubuntu26.10"
+  ]
 }

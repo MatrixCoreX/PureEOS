@@ -8,7 +8,7 @@ on:
         required: false
     inputs:
       ubuntu-release:
-        description: Actual Ubuntu user space, either 26.04 or 26.10
+        description: Actual Ubuntu user space, 24.04, 26.04 or 26.10
         type: string
         required: true
 

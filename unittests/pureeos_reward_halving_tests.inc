@@ -5,7 +5,7 @@ namespace {
 struct reward_fixture : sequential_rotation_fixture {
    static constexpr int64_t day_us = 86400LL * 1000000;
    static constexpr int64_t period_us = 1461LL * day_us;
-   static constexpr double base_rate = 0.04879016416943201 / 5.0;
+   static constexpr double base_rate = 0.01;
    explicit reward_fixture(bool headroom = false, std::filesystem::path root = rotation_contracts_for_test(),
                            bool empty_treasury = false, uint8_t legacy_vote_revision = 0)
       : sequential_rotation_fixture(2, true, std::move(root), headroom, empty_treasury, legacy_vote_revision) {

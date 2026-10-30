@@ -58,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu: ["26.04", "26.10"]
+        ubuntu: ["24.04", "26.04", "26.10"]
     uses: ./.github/workflows/build_base.yaml
     secrets:
       AIC_VM_DEPLOY_KEY: ${{ secrets.AIC_VM_DEPLOY_KEY }}

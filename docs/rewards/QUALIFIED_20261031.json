@@ -1,0 +1,145 @@
+{
+  "qualification": {
+    "status": "PASS",
+    "source_commit": "432360edd6763be000626898435bffcfe1aaf866",
+    "system_WASM": "6ed4cccc3aac05231f95e63b5464325315668bea2997ddb15de0b29768bf3a62",
+    "system_ABI": "6809814cb91cdfb55e9cf9bfb926343b9a8be02f82b8996796e11173eec40a9c",
+    "native_positive_cases": 14,
+    "independent_exact_rational_cases": 4277,
+    "UBSan": "PASS",
+    "old_0_9758_percent_control_rejected": true,
+    "floating_1_percent_control_rejected_at_legal_block_time": true,
+    "initial_reward_fraction": "1/100 per 364-day contract year",
+    "halving_days": 1461,
+    "additional_4_percent_issued": false,
+    "scope": "fresh-chain profile; historical released inputs and live old-chain reward policy state not migrated"
+  },
+  "independent_math": {
+    "status": "PASS",
+    "cases": 4277,
+    "oracle": "Python Fraction, independent exact 1/100 and 364/1461-day constants",
+    "sanitizer": "UBSan",
+    "errors": [],
+    "header_SHA256": "81c1b0c8fb355c6c1e0d7b4e32fbd52581b50d7fed21e294ad8f1fcac832de3b",
+    "inputs_SHA256": "e9565952f156da1277a682dcb0ff410a2907fd8704623e871c39e5a06860c471"
+  },
+  "native": {
+    "status": "PASS",
+    "cases": [
+      {
+        "name": "pureeos_exact_rate_tests/one_percent_claim_uses_exact_smallest_units_at_legal_block_time",
+        "exit": 0
+      }
+    ],
+    "jobs": [
+      {
+        "name": "compile",
+        "exit": 0
+      },
+      {
+        "name": "link",
+        "exit": 0
+      },
+      {
+        "name": "one_percent_claim_uses_exact_smallest_units_at_legal_block_time",
+        "exit": 0
+      },
+      {
+        "name": "old-rate-negative-control",
+        "exit": 201
+      },
+      {
+        "name": "floating-candidate-negative-control",
+        "exit": 201
+      }
+    ],
+    "native_program_SHA256": "53020a462c353044da21323fbe31ff3a89be43454701a33210ea46f8676594b6",
+    "core_library_SHA256": "7f09b5ddf43867192aa3f87855f7f58c8054344d4fe178b0be9345966ddc6b6c",
+    "old_rate_control_rejected": true,
+    "floating_candidate_control_rejected": true,
+    "prior_passed_cases": [
+      {
+        "name": "pureeos_reward_halving_tests/activation_and_real_issuance_fund_only_actual_blocks",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_halving_tests/large_vote_changes_do_not_change_block_entitlements_or_create_vote_shares",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_halving_tests/exact_four_year_boundary_and_later_eras_do_not_reprice_prior_accrual",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_halving_tests/rate_changes_at_the_exact_boundary_not_one_block_early",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_halving_tests/fixed_principal_equal_intervals_halve_and_clock_survives_restart",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_halving_tests/legacy_management_actions_cannot_override_the_fixed_policy",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_halving_tests/insufficient_treasury_rolls_back_claim_without_losing_reward_accrual",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_activation_tests/zero_amount_claim_preserves_block_credits_cooldown_and_fractional_interval",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_activation_tests/liquid_balance_registration_empty_votes_and_unvoted_stake_do_not_activate",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_activation_tests/one_smallest_unit_vote_and_one_producer_can_issue_and_claim_with_small_supply",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_activation_tests/first_rex_purchase_activates_from_zero_weight_selection",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_activation_tests/withdrawal_restart_and_halving_preserve_the_first_positive_vote_clock",
+        "exit": 0
+      },
+      {
+        "name": "pureeos_reward_activation_tests/failed_positive_vote_transaction_rolls_back_activation",
+        "exit": 0
+      }
+    ],
+    "validated_positive_case_total": 14
+  },
+  "source_delivery": "d126cae28057edfcd0e2eb84654afd8efd6da257",
+  "package_SHA256": "b1d7c44c65e34d770e461ede2e8e7947428e82b7524abc35873a676b8210115a",
+  "live": {
+    "status": "RUNNING",
+    "chain_id": "00223894a4a8df6606c13b6abe588af7af6ea7dfc5ef1fa078495001c34dfbd7",
+    "first_BP": "nodea",
+    "initial_supply": "100000000.0000 AIC",
+    "max_supply": "2100000000.0000 AIC",
+    "nodeos_SHA256": "e7776703f09bec15e8476279e76075ac8e2af3cd94e44ece16c3607859ba2f32",
+    "deferred_stages_both_disabled": true,
+    "checks": [],
+    "confirmed_transactions": [
+      {
+        "transaction_id": "f7cf051a24f59b25bff0d9811a798dc247c3b65072ca45e1b9f09a4e9bf7bc8d",
+        "block_num": 3823,
+        "block_id": "00000eef90f3342463753d9a01f0c169e243d41c93ae5612f97d7ac6e442fbbc",
+        "observed_lib": 3823,
+        "reported_block_num": 3823
+      },
+      {
+        "transaction_id": "1b8abf3e5e2e3196893a089c550e926f9f051903b8569a9dcc663f2fc2941556",
+        "block_num": 3826,
+        "block_id": "00000ef2013862d95998c9cc054dbdb9469ef3d1303caf385e796ea9b4f7e5f1",
+        "observed_lib": 3826,
+        "reported_block_num": 3826
+      }
+    ],
+    "scope": "fresh explorer chain with one BP; real-time live checks, not TPS"
+  }
+}

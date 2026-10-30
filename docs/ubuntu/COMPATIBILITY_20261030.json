@@ -1,0 +1,167 @@
+{
+  "status": "PASS",
+  "date": "2026-10-31",
+  "hardware": {
+    "cpu": "AMD EPYC 4345P",
+    "physical_cores": 8,
+    "threads": 16,
+    "advertised_RAM_GiB": 64
+  },
+  "host_kernel": "6.8.0-146-generic",
+  "tested_node_source_parent": "0b78fb08a5ca808b7caf4c0d4ecadda9ea4921d9",
+  "qualified_node_code": "00443330a0d29673700a4eebee78de3b0234c281",
+  "node_Cpp_changes": false,
+  "platforms": {
+    "24": {
+      "Ubuntu": "24.04.5 LTS",
+      "GCC": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "CMake": "cmake version 3.28.3",
+      "glibc": "ldd (Ubuntu GLIBC 2.39-0ubuntu8.9) 2.39",
+      "full_four_tools_build": "PASS",
+      "nodeos_SHA256": "f5a150fccd0c158c0df5d87b304445ee45578ca1e0d116d5f5a581bcf227705d",
+      "profile_tests_passed": 14,
+      "native_component_checks": [
+        "test_production_timer_guard",
+        "test_incoming_transaction_batch",
+        "pureeos_parallel_state_view",
+        "pureeos_parallel_secondary_state"
+      ],
+      "toolchain_cases_per_round": 32,
+      "toolchain_rounds": 3,
+      "native_SDK_jobs": 76,
+      "system_contract_bit_parity": "PASS",
+      "head_block_num": 41978,
+      "last_irreversible_block_num": 41978,
+      "glibc_mapping_proof": [
+        "7cc306400000-7cc306428000 r--p 00000000 09:00 41656                      /usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7cc306428000-7cc3065b1000 r-xp 00028000 09:00 41656                      /usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7cc3065b1000-7cc306600000 r--p 001b1000 09:00 41656                      /usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7cc306600000-7cc306604000 r--p 001ff000 09:00 41656                      /usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7cc306604000-7cc306606000 rw-p 00203000 09:00 41656                      /usr/lib/x86_64-linux-gnu/libc.so.6"
+      ],
+      "contracts_source_build_flags": [
+        "PUREEOS_BP_MAINTENANCE",
+        "PUREEOS_BP_PEERING",
+        "PUREEOS_RESOURCE_SPLIT",
+        "PUREEOS_SEQUENTIAL_ROTATION",
+        "PUREEOS_SINGLE_CHOICE_VOTING",
+        "PUREEOS_UPGRADE_GOVERNANCE"
+      ],
+      "toolchain_status": "passed",
+      "native_SDK_status": "passed"
+    },
+    "26": {
+      "Ubuntu": "26.10",
+      "GCC": "c++ (Ubuntu 15.3.0-4ubuntu1) 15.3.0",
+      "CMake": "cmake version 4.3.4",
+      "glibc": "ldd (Ubuntu GLIBC 2.44-1ubuntu2) 2.44",
+      "full_four_tools_build": "PASS",
+      "nodeos_SHA256": "4846696178f9349eaee00123ffc763b2a52d8a58afe86905a0b80aaaf72eee09",
+      "profile_tests_passed": 14,
+      "native_component_checks": [
+        "test_production_timer_guard",
+        "test_incoming_transaction_batch",
+        "pureeos_parallel_state_view",
+        "pureeos_parallel_secondary_state"
+      ],
+      "toolchain_cases_per_round": 32,
+      "toolchain_rounds": 3,
+      "native_SDK_jobs": 76,
+      "system_contract_bit_parity": "PASS",
+      "head_block_num": 41978,
+      "last_irreversible_block_num": 41976,
+      "glibc_mapping_proof": [
+        "7b398c800000-7b398c828000 r--p 00000000 09:00 1570023                    /opt/aic-tps/rootfs/usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7b398c828000-7b398c9c5000 r-xp 00028000 09:00 1570023                    /opt/aic-tps/rootfs/usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7b398c9c5000-7b398ca14000 r--p 001c5000 09:00 1570023                    /opt/aic-tps/rootfs/usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7b398ca14000-7b398ca18000 r--p 00213000 09:00 1570023                    /opt/aic-tps/rootfs/usr/lib/x86_64-linux-gnu/libc.so.6",
+        "7b398ca18000-7b398ca1a000 rw-p 00217000 09:00 1570023                    /opt/aic-tps/rootfs/usr/lib/x86_64-linux-gnu/libc.so.6"
+      ],
+      "contracts_source_build_flags": [
+        "PUREEOS_BP_MAINTENANCE",
+        "PUREEOS_BP_PEERING",
+        "PUREEOS_RESOURCE_SPLIT",
+        "PUREEOS_SEQUENTIAL_ROTATION",
+        "PUREEOS_SINGLE_CHOICE_VOTING",
+        "PUREEOS_UPGRADE_GOVERNANCE"
+      ],
+      "toolchain_status": "passed",
+      "native_SDK_status": "passed"
+    },
+    "26.04": {
+      "Ubuntu": "Ubuntu 26.04.1 LTS",
+      "kernel": "7.0.0-38-generic",
+      "CPU": "Intel Xeon Processor (Cascadelake)",
+      "hardware_scope": "VM: 8 guest cores / 16 vCPU / 64 GiB; no dedicated physical-core or performance claim",
+      "GCC": "c++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+      "CMake": "cmake version 4.2.3",
+      "glibc": "ldd (Ubuntu GLIBC 2.43-2ubuntu2.4) 2.43",
+      "source_parent": "fb6f0f3c799332990dc4f4e9833858afa9e66f54",
+      "nodeos_SHA256": "98341767898e106ce34696ca66584154324fc1d198e801da228a6241d5f1a698",
+      "full_four_tools_build": "PASS",
+      "profile_tests_passed": 14,
+      "native_component_checks_passed": 4,
+      "toolchain_cases_per_round": 32,
+      "toolchain_rounds": 3,
+      "native_SDK_jobs": 76,
+      "system_artifacts": {
+        "wasm": "5f25a25816fc6db145dbd811d9c24dd99c9b9b1fd260b8e16a045476d0c3c11a",
+        "abi": "6809814cb91cdfb55e9cf9bfb926343b9a8be02f82b8996796e11173eec40a9c"
+      },
+      "P2P_sync": "1714 blocks, head 41978",
+      "common_finalized_height": 41976,
+      "common_finalized_id": "0000a3f82996b9ad679f606198b9ca4ac0d16a44546a405f209cf7ea333fd993",
+      "temporary_VM_deleted": true,
+      "deletion_verification": {
+        "status": "PASS",
+        "id": "ee5f39eb-6b89-4ceb-8736-7454f66e2d5b",
+        "reason": "compiled-tested-all-evidence-archived-and-verified-on-primary",
+        "checks": [
+          {
+            "listed": false,
+            "direct_404": true
+          },
+          {
+            "listed": false,
+            "direct_404": true
+          }
+        ],
+        "primary_retained": true
+      },
+      "archive_verification": {
+        "status": "PASS",
+        "files_verified": 86715,
+        "symlinks_verified": 0,
+        "path": "/opt/pureeos-private-evidence-20261030/ubuntu2604-vm-ee5f39eb-6b89-4ceb-8736-7454f66e2d5b/pureeos-ubuntu2604-compat",
+        "VM": "ee5f39eb-6b89-4ceb-8736-7454f66e2d5b",
+        "all_source_binaries_runtime_data_and_reports_preserved": true
+      }
+    }
+  },
+  "system_build_source": "92881912f068a1ee701d826302a173c26adffd72",
+  "system_WASM": "5f25a25816fc6db145dbd811d9c24dd99c9b9b1fd260b8e16a045476d0c3c11a",
+  "system_ABI": "6809814cb91cdfb55e9cf9bfb926343b9a8be02f82b8996796e11173eec40a9c",
+  "cross_Ubuntu_P2P_sync": "PASS",
+  "common_head": "0000a3fa698577007643ff03e76ac9802d5293d6dd8d8b92d0318d9c7224a31b",
+  "common_finalized_height": 41976,
+  "common_finalized_block": "0000a3f82996b9ad679f606198b9ca4ac0d16a44546a405f209cf7ea333fd993",
+  "native_policy_members": 21,
+  "native_policy_threshold": 15,
+  "policy_generation": 66,
+  "CPU_us_per_block": 3200000,
+  "NET_bytes_per_block": 16777216,
+  "P2P_payload_limit_bytes": 67108864,
+  "RAM_bytes_per_block": 1024,
+  "all_live_instances_parallel": true,
+  "scope": "Native 24.04 host, native 26.04 VM with its own kernel, and 26.10 rootfs sharing the 24.04 kernel; node builds, SDK execution, canonical replay and P2P; no TPS or complete LLVM backend rebuild.",
+  "runtime_processes_stopped": true,
+  "retained_attempts": [
+    "sdk26-toolchain: missing proc mount caused SDK self-location/header failures; retry1 passed",
+    "source-profile-tests: unittest discovery imported unrelated generated harness packages; direct 14-test entry passed on both",
+    "COMPATIBILITY-attempt1: CLI-only replay checks were mistakenly placed in config; example corrected",
+    "COMPATIBILITY-attempt2: compared different finalized heights; shared-height retry passed",
+    "contracts24 initial: missing forwarded maintenance flag produced mismatched artifacts; root CMake fixed and both-platform hashes now match"
+  ],
+  "cdt_helper_build24": "passed",
+  "system_WASM_scope": "The OS campaign rebuilt the listed 5f25 contract before the exact1pct correction; the later 6ed4 correction was built and qualified separately on the retained server. No claim of a new 6ed4 build on the deleted VM."
+}

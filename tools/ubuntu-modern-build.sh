@@ -16,7 +16,7 @@ for ubuntu_arg in "$@"; do
     --build-dir=*) ubuntu_build_dir=${ubuntu_arg#--build-dir=} ;;
     --help)
       printf '%s\n' 'Usage: bash tools/ubuntu-modern-build.sh [--check|--configure|--build|--test] [--jobs=2] [--build-dir=PATH]' \
-        'Ubuntu 26.04/26.10, x86_64 parallel JIT profile. Default: read-only prerequisite check.' \
+        'Ubuntu 24.04/26.04/26.10, x86_64 parallel JIT profile. Default: read-only prerequisite check.' \
         '--build builds nodeos, cleos, keosd and helios-util in the isolated directory.' \
         '--test runs queue, timer and real producer checks; it is not full release acceptance.'
       exit 0 ;;
@@ -37,8 +37,8 @@ fi
 ubuntu_release=$(python3 - <<'PY'
 import platform
 data = platform.freedesktop_os_release()
-if data.get('ID') != 'ubuntu' or data.get('VERSION_ID') not in ('26.04', '26.10'):
-    raise SystemExit('This profile targets actual Ubuntu 26.04 or 26.10; do not relabel another OS.')
+if data.get('ID') != 'ubuntu' or data.get('VERSION_ID') not in ('24.04', '26.04', '26.10'):
+    raise SystemExit('This profile targets actual Ubuntu 24.04, 26.04 or 26.10; do not relabel another OS.')
 if platform.machine() not in ('x86_64', 'amd64'):
     raise SystemExit('The parallel JIT profile is currently x86_64 only.')
 print(data['VERSION_ID'])
