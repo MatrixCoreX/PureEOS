@@ -1,3 +1,6 @@
+add_test(NAME pureeos_version_metadata COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/version_metadata_test.py -v)
+set_tests_properties(pureeos_version_metadata PROPERTIES TIMEOUT 30 LABELS "version-metadata")
+
 include_directories( "${CMAKE_SOURCE_DIR}/plugins/wallet_plugin/include" )
 
 # PX0 tooling only: does not build or enable a parallel transaction executor.
