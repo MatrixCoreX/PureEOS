@@ -177,6 +177,8 @@ CLEOS=(./bin/cleos --no-auto-keosd --url "$PUREEOS_TX_RPC" --wallet-url "$PUREEO
 - `get_info.last_irreversible_block_num >= bpmaint.effective_block`，并确认读取的是同一条规范链。
 - 自己已经离开原生 active/pending/proposed 出块名单、active/pending 最终确认名单，以及 `rotation.active` / `rotation.target`。
 
+已激活注册且未永久封禁的候补 BP 也可申请维护；若没有任何原生或轮换职责，通常可直接进入状态 2，仍须等待生效检查点不可逆。仅不在出块名单中，不代表已没有最终确认或待生效轮岗职责。
+
 当前在岗允许申请维护，系统先完成正常 proposer/finalizer 交接。没有合格候补时，普通维护不会自动缩小 21 席，申请者必须继续在线等待或取消申请。不要把“维护请求交易成功”“浏览器显示等待维护”或“本地停止出块”当作可以关机。
 
 维护已生效后，不新增生产奖励权益或新分配职责的缺岗处罚；既有 unpaid blocks、有效违规及永久封禁记录仍保留。停机操作使用自己实际的服务名，本文不提供可直接误停其他节点的固定 service 命令。

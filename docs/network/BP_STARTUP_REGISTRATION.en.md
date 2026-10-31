@@ -175,6 +175,8 @@ Stop only after all conditions hold:
 - `get_info.last_irreversible_block_num >= bpmaint.effective_block`, reading the same canonical chain.
 - Your account has left native active/pending/proposed proposer lists, active/pending finalizer lists and `rotation.active` / `rotation.target`.
 
+An actively registered, non-banned standby may also request maintenance. Without any native or rotation duties, it can usually enter state 2 directly; its effective checkpoint must still become irreversible. Absence from the proposer list alone does not establish release from finalizer or pending rotation duties.
+
 An incumbent may request maintenance, but its normal proposer/finalizer handoff must complete first. Without a qualified replacement, ordinary maintenance does not shrink the 21-member committee; continue online or cancel the request. A successful request transaction, an awaiting-maintenance badge or a local production pause does not authorize immediate shutdown.
 
 Effective maintenance creates no new production rights or newly assigned-duty absence penalties. Historical unpaid blocks, valid violations and permanent bans remain. Stop only the service corresponding to your own node; no fixed service-stop command is supplied here.
@@ -194,7 +196,7 @@ Verify irreversible cancellation and your state returning to 0, then stay online
 
 On a healthy full committee, **three consecutive finalized personal production windows with zero blocks** permanently ban the BP account. This does not mean three ordinary blocks, arbitrary periods or failed online probes after registration. Unassigned standbys do not accrue absence penalties just for waiting; registration alone does not immediately cause a ban.
 
-An interruption in production/finality observation of252slots (126seconds, inclusive), or a committee below21members, pauses new personal absence evidence. Earlier valid evidence and permanent bans remain. These global safeguards are not a substitute for planned personal maintenance. Re-registration, key changes, votes and maintenance cannot unban the same account. A banned BP may still synchronize as an ordinary full node.
+An interruption in production/finality observation of 252 slots (126 seconds, inclusive), or a committee below 21 members, pauses new personal absence evidence. Earlier valid evidence and permanent bans remain. These global safeguards are not a substitute for planned personal maintenance. Re-registration, key changes, votes and maintenance cannot unban the same account. A banned BP may still synchronize as an ordinary full node.
 
 ## 9. Unconfirmed transactions and unexpected states
 
