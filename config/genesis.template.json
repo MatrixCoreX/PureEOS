@@ -2,7 +2,7 @@
   "initial_timestamp": "<YOUR_GENESIS_UTC_TIMESTAMP>",
   "initial_key": "<YOUR_PUBLIC_BOOTSTRAP_KEY>",
   "initial_configuration": {
-    "max_block_net_usage": 16777216,
+    "max_block_net_usage": 4194304,
     "target_block_net_usage_pct": 1000,
     "max_transaction_net_usage": 524288,
     "base_per_transaction_net_usage": 12,

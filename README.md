@@ -27,8 +27,16 @@ sha256sum -c SHA256SUMS
 
 - x86_64，最低 **8 个物理核心、16 个逻辑线程、64 GB 系统可见物理内存**。节点启动时检查并打印检测值，拒绝低于要求或显式串行配置。
 - 节点必须并行运行。当前预设为 **8 worker / batch 24 / early-adoption group 8**，保留完整验证、授权、计费和冲突安全回退。
-- **CPU16：3,200,000 μs/块；NET：16 MiB/块；P2P：64 MiB/消息；生产交易队列：1 GiB**。硬件扩容不会自动提高链限额。P2P 研究结论及候选配置见 [消息大小分析](docs/network/P2P_MESSAGE_LIMIT.md)。
+- **CPU16：3,200,000 μs/块；NET：4 MiB/块（4,194,304 字节）；P2P：64 MiB/消息；生产交易队列：1 GiB**。CPU16 指链上 CPU 计费上限倍率；硬件扩容不会自动提高链限额。配置须通过链上初始化或授权更新生效。详见 [消息大小分析](docs/network/P2P_MESSAGE_LIMIT.md)。
 - Ubuntu **24.04 LTS**、**26.04 LTS** 和 **26.10** 的构建、运行及 PureEOS CDT 合约编译范围见 [兼容性报告](docs/ubuntu/COMPATIBILITY_20261030.md)。优先支持服务器 LTS：24.04、26.04。报告区分原生构建、26.04 独立虚拟机内核及 26.10 共享宿主内核；系统支持以已记录的具体版本为准。
+
+### 状态库、出块节点和历史服务
+
+当前部署的本地状态库容量配置为 **16 GiB**（`chain-state-db-size-mb = 16384`），保存账户、权限、余额及合约表等当前状态，随状态增长需要扩容。该配置是数据库容量上限，不代表启动即占满 16 GiB 物理内存；链上 **64 GiB RAM 市场**属于另一项系统合约配置。
+
+出块节点关闭 SHIP，不加载 `eosio::state_history_plugin`。非出块历史节点保持完整验证和并行运行，启用 SHIP 的 `trace-history`、`chain-state-history`，向 **PureHistory** 提供交易执行轨迹和状态变化。已有索引仍可查询，持续更新历史需要保持该数据源同步。
+
+当前测试部署将出块节点、非出块历史节点和 PureHistory 放在同一台物理机，仍会共享 CPU、内存和磁盘。最新纯转账实测在历史节点及全部历史后端停止时完成：EPYC 4345P、8 物理核 / 16 线程、8 个投送连接，12 秒固定窗口 **36,892.67 入块 TPS / 35,810.17 不可逆 TPS**，共 **1,040,000 笔最终确认、未确认 0**。详见[参数、节点分工与实测范围](docs/network/CPU16_NET4_SHIP_ROLES_20261031.md)。该短窗结果不代表历史服务同时运行时的持续吞吐。
 
 ### BP、最终确认和维护
 
@@ -95,8 +103,16 @@ Prepare network settings, genesis configuration and your own keys using the [con
 
 - x86_64 with at least **8 physical cores, 16 logical threads and 64 GB of system-visible physical RAM**. Startup reports detected hardware and rejects insufficient hardware or explicitly serial configuration.
 - All nodes run in parallel. Current settings are **8 workers / batch 24 / early-adoption group 8**, retaining full validation, authorization, billing and safe conflict fallbacks.
-- **CPU16: 3,200,000 μs/block; NET: 16 MiB/block; P2P: 64 MiB/message; producer transaction queue: 1 GiB.** More hardware does not automatically raise chain caps. See the [P2P message analysis](docs/network/P2P_MESSAGE_LIMIT.md) for the proposed next setting and its qualification requirements.
+- **CPU16: 3,200,000 μs/block; NET: 4 MiB/block (4,194,304 bytes); P2P: 64 MiB/message; producer transaction queue: 1 GiB.** CPU16 denotes the multiplier of the chain's billed CPU cap. More hardware does not automatically raise chain caps. The preset takes effect through chain initialization or an authorized parameter update. See the [P2P message analysis](docs/network/P2P_MESSAGE_LIMIT.md).
 - The [compatibility report](docs/ubuntu/COMPATIBILITY_20261030.md) records node builds, execution and PureEOS CDT contract compilation on Ubuntu **24.04 LTS**, **26.04 LTS**, and **26.10**. Server support prioritizes 24.04 and 26.04 LTS. The report distinguishes native builds, the separately booted 26.04 VM, bundled runtimes and the shared host kernel used for 26.10. Support claims apply to the exact recorded versions.
+
+### State storage, producers and history
+
+The current deployment configures **16 GiB** of local state storage (`chain-state-db-size-mb = 16384`) for accounts, permissions, balances and contract tables. Increase this capacity as state grows. This capacity setting does not immediately consume 16 GiB of physical RAM; the chain's **64 GiB RAM market** is a separate system-contract configuration.
+
+The producer runs with SHIP disabled and does not load `eosio::state_history_plugin`. A non-producing history node retains full validation and parallel execution, with SHIP `trace-history` and `chain-state-history` enabled to supply execution traces and state changes to **PureHistory**. Existing indexed records remain queryable; new history requires a synchronized source.
+
+The current test deployment places the producer, history node and PureHistory on the same physical host, sharing CPU, RAM and disk. The latest pure-transfer measurement stopped the history node and all history backends: EPYC 4345P, 8 physical cores / 16 threads and 8 sender connections achieved **36,892.67 inclusion TPS / 35,810.17 irreversible TPS** over a fixed 12-second window, with **1,040,000 finalized transactions and zero unconfirmed**. See [parameters, node roles and measurement scope](docs/network/CPU16_NET4_SHIP_ROLES_20261031.md). This short window does not establish sustained throughput with history services running.
 
 ### BP selection, finality and maintenance
 
