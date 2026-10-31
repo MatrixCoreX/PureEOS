@@ -40,6 +40,8 @@ sha256sum -c SHA256SUMS
 
 ### BP、最终确认和维护
 
+节点上线操作见 [启动、同步、BP 注册与维护流程](docs/network/BP_STARTUP_REGISTRATION.md)，包含命令示例、参选前检查及维护停机/恢复条件。
+
 用户以自身权限直接投票，最多选择一个 BP，代理投票禁用。投票排名候选、FIFO 轮岗候补、当前生效出块/确认政策及实际在线节点分别管理；每次按现有规则交接一个席位。注册和有选票不代表节点已同步或密钥已就绪。
 
 当前等权政策的确认门槛为 `floor(2N/3)+1`，其中 `N` 是生效确认政策中的人数：21 人需 15 票，20 人需 14 票。人数不按开机数量计算。正常交接完成前仍须满足原生旧/新政策要求；已被永久封禁的账户经正常政策移除后不计入新政策。确认票不足会停止新的最终确认，全链停摆保护不会降低门槛。
@@ -115,6 +117,8 @@ The producer runs with SHIP disabled and does not load `eosio::state_history_plu
 The current test deployment places the producer, history node and PureHistory on the same physical host, sharing CPU, RAM and disk. The latest pure-transfer measurement stopped the history node and all history backends: EPYC 4345P, 8 physical cores / 16 threads and 8 sender connections achieved **36,892.67 inclusion TPS / 35,810.17 irreversible TPS** over a fixed 12-second window, with **1,040,000 finalized transactions and zero unconfirmed**. See [parameters, node roles and measurement scope](docs/network/CPU16_NET4_SHIP_ROLES_20261031.md). This short window does not establish sustained throughput with history services running.
 
 ### BP selection, finality and maintenance
+
+Follow the [startup, synchronization, BP registration and maintenance guide](docs/network/BP_STARTUP_REGISTRATION.en.md) for command examples, readiness checks and shutdown/resume conditions.
 
 Users vote directly with their own authority for at most one BP; proxy voting is disabled. Ranked candidates, FIFO standbys, effective proposer/finalizer policies and online processes are separate states. Rotation hands off one seat at a time under the existing rules. Registration and votes do not establish synchronization or key readiness.
 
