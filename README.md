@@ -10,7 +10,7 @@ PureEOS 是一套支持并行处理独立交易的区块链软件。它把区块
 
 目前公开运行的网络与示例交易用于测试，主网代币名称和符号尚未确定。
 
-共识协议名为 **TITAN（泰坦共识协议）**。它在 DPoS 基础上结合单选投票、确定性轮岗、BLS 最终确认、维护交接和基于已最终确认证据的故障处理。独立交易可以并行执行，存在依赖或冲突的交易保留安全回退，状态仍按区块中的交易顺序提交。
+共识协议名为 **TITAN（泰坦共识协议）**。它在 DPoS 基础上结合单选投票（一票一投）、确定性轮岗、BLS 最终确认、维护交接和基于已最终确认证据的故障处理。独立交易可以并行执行，存在依赖或冲突的交易保留安全回退，状态仍按区块中的交易顺序提交。
 
 本 README 介绍 **1.0.0 当前发行**的配置和使用方法。完整规则见[基线说明](docs/BASELINE.md)，可供程序核对的参数见[基线清单](config/BASELINE.json)和[链参数预设](config/chain-parameters.json)。
 
@@ -43,7 +43,7 @@ PureEOS CDT 沿用已验证的编译器和运行库；部分工具输出及 CMak
 | 生产交易队列 | 1 GiB |
 | RAM 市场 | 初始 64 GiB；`setramrate(1024)` |
 | 资源模式 | 10% 长期质押 / 90% PowerUp |
-| 投票 | 精确整数、单选、直接投票；无代理、无时间加权 |
+| 投票 | 精确整数、单选投票（一票一投）、直接投票；无代理、无时间加权 |
 | 治理 | 开发者提案、BP 否决；新提案完整审查 7 天 |
 | 延迟交易 | `DISABLE_DEFERRED_TRXS_STAGE_1/2` 均保持激活 |
 
@@ -277,7 +277,7 @@ PureEOS is blockchain software that processes independent transactions in parall
 
 Current network deployments and example transactions are for testing. The mainnet token name and symbol have not yet been decided.
 
-Its consensus protocol is **TITAN (Titan Consensus Protocol)**. Built on DPoS, it combines single-choice voting, deterministic rotation, BLS finality, maintenance handovers and fault handling based on finalized evidence. Independent transactions can run in parallel; dependent or conflicting transactions retain safe fallbacks, and state commits follow transaction order within the block.
+Its consensus protocol is **TITAN (Titan Consensus Protocol)**. Built on DPoS, it combines single-choice voting (one BP per voter), deterministic rotation, BLS finality, maintenance handovers and fault handling based on finalized evidence. Independent transactions can run in parallel; dependent or conflicting transactions retain safe fallbacks, and state commits follow transaction order within the block.
 
 This README describes the **current 1.0.0 release**. See the [baseline guide](docs/BASELINE.md), [machine-readable baseline](config/BASELINE.json) and [chain parameter preset](config/chain-parameters.json) for the complete rules.
 
@@ -310,7 +310,7 @@ PureEOS CDT retains its qualified compiler and runtime libraries. Some tool outp
 | Producer transaction queue | 1 GiB |
 | RAM market | Initially 64 GiB; `setramrate(1024)` |
 | Resource mode | 10% staking / 90% PowerUp |
-| Voting | Exact integer, single-choice, direct voting; no proxy or time weighting |
+| Voting | Exact integer, single-choice voting (one BP per voter), direct voting; no proxy or time weighting |
 | Governance | Developer proposals, BP vetoes; seven full days for new reviews |
 | Deferred transactions | `DISABLE_DEFERRED_TRXS_STAGE_1/2` both remain active |
 
