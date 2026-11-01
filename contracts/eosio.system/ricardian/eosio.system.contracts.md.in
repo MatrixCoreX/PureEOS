@@ -873,7 +873,7 @@ Reclaim and retire {{$action.unvest_net_quantity}} and {{$action.unvest_cpu_quan
 
 <h1 class="contract">govinit</h1>
 
-One-time PureEOS profile-2 bootstrap, authorized by eosio@owner. Seals protected system permissions, selects the independent developer, and verifies the system contract's initial electorate handshake. The review_seconds field must equal 1209600: a fixed 14-day review period, not a configurable duration. This cannot be used after initialization.
+One-time PureEOS profile-2 bootstrap, authorized by eosio@owner. Seals protected system permissions, selects the independent developer, and verifies the system contract's initial electorate handshake. After PUREEOS_SEVEN_DAY_GOVERNANCE activation, review_seconds must equal 604800 (seven days); pre-activation replay requires the original 1209600. This is not a configurable duration and cannot be used after initialization.
 
 <h1 class="contract">refreshgov</h1>
 
@@ -881,11 +881,11 @@ Refresh the deterministic, at-most-210 eligible producer electorate. The caller 
 
 <h1 class="contract">devpropose</h1>
 
-The configured developer publishes an upgrade bound to the target, base and new code/ABI hashes, review document hash, frozen electorate and full 14-day review deadline. This action does not install code. Ordinary users and producer authorities cannot publish system upgrades.
+The configured developer publishes an upgrade bound to the target, base and new code/ABI hashes, review document hash and frozen electorate. New proposals after PUREEOS_SEVEN_DAY_GOVERNANCE activation require a full seven-day review; pre-activation proposals retain their original deadlines. This action does not install code. Ordinary users and producer authorities cannot publish system upgrades.
 
 <h1 class="contract">devveto</h1>
 
-A member of the proposal's frozen electorate permanently records one objection before the deadline. At least ceiling(2N/3) distinct objections block that proposal; abstention is not an objection. This does not grant any general system management authority.
+A member of the proposal's frozen electorate records one objection before its deadline. After PUREEOS_SEVEN_DAY_GOVERNANCE activation, permanent bans exclude an account from both the effective electorate N and the effective objections V; original records remain. At least ceiling(2N/3) effective objections block execution; an empty effective electorate also blocks execution. Abstention is not an objection. Maintenance and ordinary vote changes do not rewrite frozen rights. This grants no general system management authority.
 
 <h1 class="contract">devcancel</h1>
 
@@ -893,4 +893,4 @@ The configured developer cancels the identified pending upgrade. A new proposal 
 
 <h1 class="contract">devexec</h1>
 
-The configured developer executes the exact reviewed code and ABI after the full 14-day deadline, only when the frozen electorate's veto threshold has not been reached. No affirmative producer approval is required; zero objections allow execution after the deadline, never before it. The native host checks all hashes and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.
+The configured developer executes the exact reviewed code and ABI only after the proposal's full deadline and below the effective veto threshold. New proposals after PUREEOS_SEVEN_DAY_GOVERNANCE activation wait seven days; older deadlines remain unchanged. No affirmative producer approval is required. The native host verifies hashes, authorization and a nonempty effective electorate, and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.
