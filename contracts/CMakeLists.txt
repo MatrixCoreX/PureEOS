@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(contracts)
 
+option(PUREEOS_BP_BOND "Enable fixed 10000 AIC BP admission bonds" ON)
+
 option(PUREEOS_BP_PEERING "Enable authenticated BP peer-key registry and bounded PureEOS peering roster" ON)
 
 option(PUREEOS_UPGRADE_GOVERNANCE "Build for PureEOS native Savanna genesis profile 2 (not deployable on legacy hosts)" ON)

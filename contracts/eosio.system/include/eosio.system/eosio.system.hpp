@@ -1620,6 +1620,13 @@ namespace eosiosystem {
 #ifdef PUREEOS_BP_MAINTENANCE
          [[eosio::action]] void setmaint(const name& producer, bool maintenance);
 #endif
+#ifdef PUREEOS_BP_BOND
+         [[eosio::action]] void initbpbond();
+         [[eosio::action]] void bondbp(const name& producer);
+         [[eosio::action]] void exitbond(const name& producer);
+         [[eosio::action]] void refundbond(const name& producer);
+         [[eosio::action]] void settlebond(const name& producer);
+#endif
 
          /**
           * Vote producer action, votes for a set of producers. This action updates the list of `producers` voted for,
@@ -2010,6 +2017,9 @@ namespace eosiosystem {
          void update_elected_producers( const block_timestamp& timestamp );
 #ifdef PUREEOS_SEQUENTIAL_ROTATION
          void advance_rotation(const block_timestamp& timestamp, name producer);
+#ifdef PUREEOS_BP_BOND
+         void advance_bond_exits();
+#endif
 #ifdef PUREEOS_BP_MAINTENANCE
          void advance_maintenance();
 #endif

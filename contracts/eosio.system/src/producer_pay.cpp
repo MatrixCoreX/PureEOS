@@ -2,6 +2,9 @@
 #include <eosio.system/maintenance.hpp>
 #endif
 #include <eosio.system/eosio.system.hpp>
+#ifdef PUREEOS_BP_BOND
+#include <eosio.system/bp_bond.hpp>
+#endif
 #include <eosio.token/eosio.token.hpp>
 
 namespace eosiosystem {
@@ -47,6 +50,9 @@ namespace eosiosystem {
 #ifdef PUREEOS_SEQUENTIAL_ROTATION
       // Consensus rotation does not depend on the reward activation clock.
       advance_rotation(timestamp, producer);
+#ifdef PUREEOS_BP_BOND
+      advance_bond_exits();
+#endif
 #ifdef PUREEOS_BP_MAINTENANCE
       advance_maintenance();
 #endif
@@ -125,7 +131,16 @@ namespace eosiosystem {
 #endif
       execute_next_schedule();
       const auto& prod = _producers.get( owner.value, "producer not registered" );
+#ifdef PUREEOS_BP_BOND
+      // Exit deactivates registration before the seven-day refund. A previously
+      // funded producer retains its actual unpaid-block claim, including after
+      // a ban. Owner authorization and positive historical production above
+      // still apply; a bond never creates reward rights by itself.
+      bp_bonds bonds(get_self(),get_self().value);
+      check(prod.active() || bonds.find(owner.value)!=bonds.end(),"producer has no historical bonded registration");
+#else
       check( prod.active(), "producer does not have an active key" );
+#endif
 
       check( _gstate.thresh_activated_stake_time != time_point(),
 #ifdef PUREEOS_SINGLE_CHOICE_VOTING

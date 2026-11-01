@@ -8,6 +8,9 @@
 #include <eosio/singleton.hpp>
 
 #include <eosio.system/eosio.system.hpp>
+#ifdef PUREEOS_BP_BOND
+#include <eosio.system/bp_bond.hpp>
+#endif
 #if defined(PUREEOS_UPGRADE_GOVERNANCE) && defined(PUREEOS_SINGLE_CHOICE_VOTING)
 #include <eosio.system/upgrade_governance.hpp>
 #endif
@@ -28,6 +31,11 @@ namespace eosiosystem {
    using eosio::singleton;
 
    void system_contract::register_producer( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location ) {
+#ifdef PUREEOS_BP_BOND
+      bp_bond_config_singleton bond_policy(get_self(),get_self().value);
+      check(bond_policy.exists() && bp_bond_funded(get_self(),producer),"producer must lock 10000.0000 AIC BP bond before registration");
+#endif
+
 #ifdef PUREEOS_SINGLE_CHOICE_VOTING
       require_direct_vote_policy();
 #endif

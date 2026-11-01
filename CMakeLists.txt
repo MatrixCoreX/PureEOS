@@ -33,6 +33,8 @@ option(SYSTEM_ENABLE_CDT_VERSION_CHECK
 
 option(PUREEOS_BP_MAINTENANCE "Enable planned BP maintenance through normal rotation handoff" ON)
 
+option(PUREEOS_BP_BOND "Enable fixed 10000 AIC BP admission bonds" ON)
+
 option(PUREEOS_BP_PEERING "Enable authenticated BP peer-key registry and bounded PureEOS peering roster" ON)
 
 option(PUREEOS_UPGRADE_GOVERNANCE "Enable PureEOS native developer-upgrade governance integration" ON)
@@ -56,6 +58,7 @@ ExternalProject_Add(
              -DSYSTEM_BLOCKCHAIN_PARAMETERS=${SYSTEM_BLOCKCHAIN_PARAMETERS}
              -DSYSTEM_ENABLE_CDT_VERSION_CHECK=${SYSTEM_ENABLE_CDT_VERSION_CHECK}
              -DPUREEOS_BP_MAINTENANCE=${PUREEOS_BP_MAINTENANCE}
+             -DPUREEOS_BP_BOND=${PUREEOS_BP_BOND}
              -DPUREEOS_BP_PEERING=${PUREEOS_BP_PEERING}
              -DPUREEOS_UPGRADE_GOVERNANCE=${PUREEOS_UPGRADE_GOVERNANCE}
              -DPUREEOS_SINGLE_CHOICE_VOTING=${PUREEOS_SINGLE_CHOICE_VOTING}

@@ -1,5 +1,8 @@
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.system/upgrade_governance.hpp>
+#ifdef PUREEOS_BP_BOND
+#include <eosio.system/bp_bond.hpp>
+#endif
 #include <algorithm>
 #include <cmath>
 
@@ -30,7 +33,11 @@ void system_contract::refreshgov() {
    uint32_t scanned = 0;
    for (auto it = ranked.begin(); it != ranked.end() && it->rank < invalid_rank_floor && voters.size() < 210; ++it) {
       check(scanned++ < max_scanned_candidates, "governance candidate scan limit exceeded");
-      if (!it->banned && it->owner != developer) voters.push_back(it->owner.value);
+      if (!it->banned && it->owner != developer
+#ifdef PUREEOS_BP_BOND
+          && !bp_bond_excludes(get_self(),it->owner)
+#endif
+         ) voters.push_back(it->owner.value);
    }
 #else
    const auto ranked = _producers.get_index<"prototalvote"_n>();

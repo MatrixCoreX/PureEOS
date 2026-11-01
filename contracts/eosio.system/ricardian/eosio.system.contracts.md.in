@@ -894,3 +894,23 @@ The configured developer cancels the identified pending upgrade. A new proposal 
 <h1 class="contract">devexec</h1>
 
 The configured developer executes the exact reviewed code and ABI only after the proposal's full deadline and below the effective veto threshold. New proposals after PUREEOS_SEVEN_DAY_GOVERNANCE activation wait seven days; older deadlines remain unchanged. No affirmative producer approval is required. The native host verifies hashes, authorization and a nonempty effective electorate, and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.
+
+<h1 class="contract">initbpbond</h1>
+
+Initialize fixed 10000.0000 AIC BP bonds, a seven-day refund cooldown and dedicated eosio.bond/eosio.bslash custody. Forfeitures stay locked; there is no pool withdrawal or burn action. Fresh-chain initialization is mandatory before governance sealing and BP registration. No initialization argument can change these terms.
+
+<h1 class="contract">bondbp</h1>
+
+Producer authorizes an atomic transfer of exactly 10000.0000 AIC to eosio.bond. No CPU/NET, vote or reward stake is reused. Permanent bans cannot be cleared by funding.
+
+<h1 class="contract">exitbond</h1>
+
+Request full bond exit and deactivate registration. Continue existing native duties until safe handoff; previous violations and permanent bans remain.
+
+<h1 class="contract">refundbond</h1>
+
+Refund only after safe proposer/finalizer handoff, settled duty windows, irreversible exit and the initialized cooldown. No automatic deferred transaction is used.
+
+<h1 class="contract">settlebond</h1>
+
+After the blacklist decision becomes irreversible, settle its forfeiture once from eosio.bond into the dedicated locked eosio.bslash pool. Anyone may submit; no caller chooses the amount or recipient. The pool has no withdrawal action. Blacklist accounting itself sends no external notifications.

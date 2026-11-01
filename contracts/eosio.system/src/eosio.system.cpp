@@ -662,6 +662,9 @@ namespace eosiosystem {
 
       token::open_action open_act{ token_account, { {get_self(), active_permission} } };
       open_act.send( rex_account, core, get_self() );
+#ifdef PUREEOS_BP_BOND
+       initbpbond(); // Fresh-chain custody must exist before any BP registration or governance sealing.
+#endif
    }
 
 } /// eosio.system

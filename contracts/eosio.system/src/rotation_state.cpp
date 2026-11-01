@@ -3,6 +3,9 @@
 #endif
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.system/rotation.hpp>
+#ifdef PUREEOS_BP_BOND
+#include <eosio.system/bp_bond.hpp>
+#endif
 #include <eosio.system/upgrade_governance.hpp>
 #include <algorithm>
 
@@ -56,7 +59,11 @@ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
       auto c = candidates.find(b->owner.value);
       // Legacy banned rows can still carry a positive vote key after upgrade.
       // Skip them BEFORE counting capacity, allowing C+1 (and later) to enter.
-      if (c->banned) {
+       if (c->banned
+#ifdef PUREEOS_BP_BOND
+           || bp_bond_excludes(candidates.get_code(),c->owner)
+#endif
+          ) {
          candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
          continue;
       }
@@ -145,7 +152,11 @@ void observe_windows(rotation_info& s, rotation_candidates& candidates,
             r.evidence_policies[r.zero_windows] = w.policy_version;
             if (++r.zero_windows == 3) {
                r.banned = true;
-               r.ban_final_block = ctx.final_block_num;
+                r.ban_final_block = ctx.final_block_num;
+#ifdef PUREEOS_BP_BOND
+                check(ctx.block_num<uint32_t(-1),"BP blacklist checkpoint exhausted");
+                forfeit_bp_bond(candidates.get_code(),r.owner,ctx.final_block_num,ctx.block_num+1);
+#endif
                revoke_banned_rank(r, s);
                // A ban may arrive after this row was already counted. Rebuild
                // the bounded snapshot so it cannot strand a capacity vacancy.
@@ -238,7 +249,11 @@ void system_contract::refresh_rotation_candidate(name owner, bool reserve) {
          candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
       return; // Votes, re-registration and key changes never restore eligibility.
    }
-   if (p != _producers.end() && p->total_votes > 0 && usable_producer(*p) &&
+    if (
+#ifdef PUREEOS_BP_BOND
+        !bp_bond_excludes(get_self(),owner) &&
+#endif
+        p != _producers.end() && p->total_votes > 0 && usable_producer(*p) &&
        f != _finalizers.end() && f->active_key_binary.size() == 96)
       key = (uint128_t(uint64_t(-1) - uint64_t(p->total_votes)) << 64) | owner.value;
    if (c == candidates.end()) {
@@ -410,7 +425,10 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
    name incoming, outgoing;
    const auto eligible = [&](name n) {
       auto c = candidates.find(n.value);
-      return c != candidates.end() && !c->banned && c->seen_epoch == s.published_epoch && c->rank < invalid_rank_floor
+       return c != candidates.end() && !c->banned && c->seen_epoch == s.published_epoch && c->rank < invalid_rank_floor
+#ifdef PUREEOS_BP_BOND
+          && !bp_bond_excludes(get_self(),n)
+#endif
 #ifdef PUREEOS_BP_MAINTENANCE
          && !maintenance_excludes(get_self(),n)
 #endif

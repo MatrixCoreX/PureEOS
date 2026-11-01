@@ -20,6 +20,14 @@ add_contract(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/limit_auth_changes.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/block_info.cpp)
 
+if(PUREEOS_BP_BOND)
+  if(NOT PUREEOS_SEQUENTIAL_ROTATION)
+    message(FATAL_ERROR "BP bonds require sequential rotation")
+  endif()
+  target_sources(eosio.system PRIVATE src/bp_bond.cpp)
+  target_compile_definitions(eosio.system PUBLIC PUREEOS_BP_BOND)
+endif()
+
 if(PUREEOS_BP_MAINTENANCE)
   target_sources(eosio.system PRIVATE src/maintenance.cpp)
   target_compile_definitions(eosio.system PUBLIC PUREEOS_BP_MAINTENANCE)
