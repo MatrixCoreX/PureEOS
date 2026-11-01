@@ -4,7 +4,7 @@
 
 ## 简体中文
 
-> **自有内容专有，保留所有权利。** 授权范围、上游许可和旧版授权边界见[许可说明](#许可)。
+> **自有内容允许非商业使用、fork、修改和分发；商业使用须另行书面授权。** 授权范围与上游条款见[许可说明](#许可)。
 
 PureEOS 是采用原生 Savanna 最终确认的 C++ 区块链项目。独立交易可并行执行，状态按区块交易顺序提交。智能合约工具链为 **PureEOS CDT**。
 
@@ -99,13 +99,13 @@ bash tools/ubuntu-modern-build.sh --build --jobs=2
 
 ### 许可
 
-项目自有且有权独立授权的内容采用 [AIC 专有许可与权利保留声明 2.0](AIC_LICENSE.md)，未经事先书面授权，不授予使用、复制、修改、部署或分发许可。上游及第三方代码继续受 [LICENSE](LICENSE) 和各自声明约束；本次变更不撤销已有效授出的 [AIC 开源许可 1.0](licenses/AIC-1.0-archived.md) 或其他既有授权。适用范围与继承许可见 [LICENSING.md](LICENSING.md)。
+项目自有且有权独立授权的内容采用 [AIC 非商业许可 3.0](AIC_LICENSE.md)：允许非商业使用、fork、修改及分发源码或构建产物，须保留版权、许可声明及商业使用限制；商业使用须事先取得单独书面授权。本许可不是 OSI 定义的开源许可。上游及第三方代码继续受 [LICENSE](LICENSE) 和各自声明约束，既有有效授权不变。适用范围与继承许可见 [LICENSING.md](LICENSING.md)。
 
 ---
 
 ## English
 
-> **Project-owned materials: proprietary; all rights reserved.** See [Licenses](#licenses) for scope, upstream terms and existing grants.
+> **Project-owned materials permit noncommercial use, forks, modifications and distribution; commercial use requires separate written authorization.** See [Licenses](#licenses) for scope and upstream terms.
 
 PureEOS is a C++ blockchain project with native Savanna finality. Independent transactions execute in parallel and state commits follow block transaction order. Its smart-contract toolchain is **PureEOS CDT**.
 
@@ -189,4 +189,4 @@ The compatibility report documents exact environments and checks. Changes must p
 
 ### Licenses
 
-Independently licensable project-owned materials are covered by the [AIC Proprietary Rights Notice 2.0](AIC_LICENSE.md). No permission to use, copy, modify, deploy or distribute those materials is granted without prior written authorization. Upstream and third-party materials remain governed by [LICENSE](LICENSE) and their applicable notices. This change does not revoke valid existing grants under [AIC Open Source License 1.0](licenses/AIC-1.0-archived.md) or another license. See [LICENSING.md](LICENSING.md) for scope and inherited obligations.
+Independently licensable project-owned materials use the [AIC Noncommercial License 3.0](AIC_LICENSE.md): noncommercial use, forks, modifications, and distribution of source code or build outputs are permitted with copyright notices, license terms and commercial use restrictions retained. Commercial use requires separate prior written authorization. This is not an open-source license under the OSI definition. Upstream and third-party materials remain governed by [LICENSE](LICENSE) and their applicable notices; valid existing grants remain unaffected. See [LICENSING.md](LICENSING.md) for scope and inherited obligations.
