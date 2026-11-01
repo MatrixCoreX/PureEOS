@@ -20,7 +20,7 @@ PureEOS 是采用原生 Savanna 最终确认的 C++ 区块链项目。独立交�
 
 ### 获取和运行
 
-[节点发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/baseline-2026.10.30)提供运行包、PureEOS CDT SDK 和 SHA256SUMS。当前源码从 `main` 获取；新链使用[精确 1% 系统合约发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.10.31-exact1pct)，其中包含配套源码、WASM、ABI 及校验清单。
+[节点发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/governance-2026.11.01)提供运行包、PureEOS CDT SDK 和 SHA256SUMS。当前源码从 `main` 获取；新链使用[精确 1% 系统合约发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.11.01-governance7)，其中包含配套源码、WASM、ABI 及校验清单。
 
 下载节点运行包和配套摘要，先校验，再解压到独立目录：
 
@@ -66,7 +66,7 @@ BP 通过链上当前 peer key 和签名 gossip 发现彼此，支持撤销、�
 
 ### 系统合约和验证
 
-系统合约保持单选投票、出块/确认/轮岗模式、**10% 长期质押 / 90% PowerUp**、奖励减半及 **14 天**升级公示治理。RAM 初始 **64 GiB**，通过既有 `setramrate(1024)` 初始化每块增长；`DISABLE_DEFERRED_TRXS_STAGE_1/2` 保持激活。
+系统合约保持单选投票、出块/确认/轮岗模式、**10% 长期质押 / 90% PowerUp**、奖励减半及 **7 天**升级公示治理。RAM 初始 **64 GiB**，通过既有 `setramrate(1024)` 初始化每块增长；`DISABLE_DEFERRED_TRXS_STAGE_1/2` 保持激活。
 
 [功能验收记录](docs/baseline-20261030/REPORT.md)包含 **154 项通过、零跳过**，区分三台物理机上的 30 个并行进程、原生测试、组件检查和预期攻击拒绝。20 人政策下验证了 14 票继续、13 票暂停、无候补封禁移除及恢复。该不足 21 人实机范围具体为 20 人。本轮属于功能/拓扑验证，未测新 TPS。
 
@@ -121,7 +121,7 @@ For producers that persistently fail to perform their block production duties, T
 
 ### Install and run
 
-The [node release](https://github.com/MatrixCoreX/PureEOS/releases/tag/baseline-2026.10.30) provides the runtime, PureEOS CDT SDK and checksums. Obtain current source from `main` and use the [exact 1% system-contract release](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.10.31-exact1pct) for a fresh chain; it includes matching source, WASM, ABI and checksums. Verify and extract the runtime into a separate directory using the commands above. Start tools through the package's `bin/` wrappers to use the matching loader and libraries.
+The [node release](https://github.com/MatrixCoreX/PureEOS/releases/tag/governance-2026.11.01) provides the runtime, PureEOS CDT SDK and checksums. Obtain current source from `main` and use the [exact 1% system-contract release](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.11.01-governance7) for a fresh chain; it includes matching source, WASM, ABI and checksums. Verify and extract the runtime into a separate directory using the commands above. Start tools through the package's `bin/` wrappers to use the matching loader and libraries.
 
 Prepare network settings, genesis configuration and your own keys using the [configuration instructions](config/README.txt). The complete chain preset is [chain-parameters.json](config/chain-parameters.json). See [PureEOS CDT](https://github.com/MatrixCoreX/PureEOS-CDT#readme) for SDK installation and contract compilation.
 
@@ -190,3 +190,8 @@ The compatibility report documents exact environments and checks. Changes must p
 ### Licenses
 
 Independently licensable project-owned materials use the [AIC Noncommercial License 3.0](AIC_LICENSE.md): noncommercial use, forks, modifications, and distribution of source code or build outputs are permitted with copyright notices, license terms and commercial use restrictions retained. Commercial use requires separate prior written authorization. This is not an open-source license under the OSI definition. Upstream and third-party materials remain governed by [LICENSE](LICENSE) and their applicable notices; valid existing grants remain unaffected. See [LICENSING.md](LICENSING.md) for scope and inherited obligations.
+
+
+当前治理规则：指定开发者提案，BP否决，新提案固定审查7天。永久封禁BP不占排名容量，并从待处理提案的有效名单及已投否决同时剔除。启用条件、原提案截止保护、权限与哈希核验见[升级治理](genesis/developer-upgrades.md)；测试范围与结果见[验收项目](tests/qualification/governance7-20261101/README.md)。
+
+Current governance: developer-only proposals, BP vetoes and a fixed7day review for new proposals after protocol activation. Permanent bans consume no ranked capacity and are removed from both effective electorate and cast vetoes. See [upgrade governance](genesis/developer-upgrades.md) and [qualification](tests/qualification/governance7-20261101/README.md) for activation, preserved pending deadlines, authorization and validation scope.

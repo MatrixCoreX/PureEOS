@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "scope": "Native backwards compatibility before new protocol activation; no live node/TPS/clock changes",
+  "cases": [
+    {
+      "suite": "pureeos_governance_tests",
+      "exit": 0
+    }
+  ]
+}

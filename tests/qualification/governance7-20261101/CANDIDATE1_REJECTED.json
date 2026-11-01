@@ -1,0 +1,11 @@
+{
+  "status": "REJECTED_NOT_DEPLOYED",
+  "source": "e7fb4d57043c80fc40a9a1583c18970aa2b63799",
+  "WASM": "590c0be3305d78594ba9ce7a244e755de37e04fac45f085d6fec68c4b2470801",
+  "six_directed_cases": "PASS",
+  "additional_component_race": "FAIL: expected FIFO nodebs, got nodeei after interrupted partially built snapshot",
+  "scope": "Prior-streak fault injection; not canonical penalty evidence. Separate actual finalized-window cases pass.",
+  "fix": "Keep nonzero tickets stamped by an interrupted newer epoch; only seen_epoch older than published_epoch rejoins queue tail",
+  "new_candidate_source": "5aaec95f76fdf8a07f329d5b66e0a60de9f3c8b7",
+  "node_TPS": "unmeasured"
+}

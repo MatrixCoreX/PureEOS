@@ -1,0 +1,147 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "pureeos_rank_restart_fifo_tests/interrupted_snapshot_preserves_existing_waiter_tickets_fault_injection",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_blacklist_capacity_tests/high_vote_ban_releases_capacity_and_cannot_return",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_blacklist_capacity_tests/multiple_bans_backfill_multiple_rank_slots",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/seven_days_permissions_boundary_and_old_pending_deadline",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/ban_removes_already_cast_veto_and_denominator",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/ban_without_veto_changes_denominator_and_threshold",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/fresh_bootstrap_accepts_only_seven_days_after_activation",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/empty_or_malformed_effective_electorate_fails_closed_fault_injection",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/maintenance_preserves_frozen_governance_rights_and_resumes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/incumbent_maintenance_handoff_pauses_only_new_duties_then_resumes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/reviewed_upgrade_normalizes_existing_released_bans_and_backfills211",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_sequential_rotation_tests/grows_one_at_a_time_then_fifo_across_vote_changes_and_restart",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_sequential_rotation_tests/offline_entrant_three_finalized_windows_ban_and_single_seat_replacement",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_reward_halving_tests/activation_and_real_issuance_fund_only_actual_blocks",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_reward_halving_tests/permanently_banned_producer_can_claim_old_unpaid_blocks_but_not_new_rewards",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_exact_rate_tests/one_percent_claim_uses_exact_smallest_units_at_legal_block_time",
+      "exit": 0
+    }
+  ],
+  "jobs": [
+    {
+      "name": "compile",
+      "exit": 0
+    },
+    {
+      "name": "link",
+      "exit": 0
+    },
+    {
+      "name": "interrupted_snapshot_preserves_existing_waiter_tickets_fault_injection",
+      "exit": 0
+    },
+    {
+      "name": "high_vote_ban_releases_capacity_and_cannot_return",
+      "exit": 0
+    },
+    {
+      "name": "multiple_bans_backfill_multiple_rank_slots",
+      "exit": 0
+    },
+    {
+      "name": "seven_days_permissions_boundary_and_old_pending_deadline",
+      "exit": 0
+    },
+    {
+      "name": "ban_removes_already_cast_veto_and_denominator",
+      "exit": 0
+    },
+    {
+      "name": "ban_without_veto_changes_denominator_and_threshold",
+      "exit": 0
+    },
+    {
+      "name": "fresh_bootstrap_accepts_only_seven_days_after_activation",
+      "exit": 0
+    },
+    {
+      "name": "empty_or_malformed_effective_electorate_fails_closed_fault_injection",
+      "exit": 0
+    },
+    {
+      "name": "maintenance_preserves_frozen_governance_rights_and_resumes",
+      "exit": 0
+    },
+    {
+      "name": "incumbent_maintenance_handoff_pauses_only_new_duties_then_resumes",
+      "exit": 0
+    },
+    {
+      "name": "reviewed_upgrade_normalizes_existing_released_bans_and_backfills211",
+      "exit": 0
+    },
+    {
+      "name": "grows_one_at_a_time_then_fifo_across_vote_changes_and_restart",
+      "exit": 0
+    },
+    {
+      "name": "offline_entrant_three_finalized_windows_ban_and_single_seat_replacement",
+      "exit": 0
+    },
+    {
+      "name": "activation_and_real_issuance_fund_only_actual_blocks",
+      "exit": 0
+    },
+    {
+      "name": "permanently_banned_producer_can_claim_old_unpaid_blocks_but_not_new_rewards",
+      "exit": 0
+    },
+    {
+      "name": "one_percent_claim_uses_exact_smallest_units_at_legal_block_time",
+      "exit": 0
+    }
+  ],
+  "native_program_SHA256": "aa119a710de99cdffff084c39759552e2d66ff6e7db1e947ed40d46ceb91e199",
+  "core_library_SHA256": "95efefac3799ffef10aefcafec7e9dfaf3828fe11f3e4ee0545af565a5539ce9",
+  "tested_system_WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "validated_positive_case_total": 16
+}

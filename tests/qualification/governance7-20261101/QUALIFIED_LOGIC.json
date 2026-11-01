@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "logic_source": "cbe8646585783e0a145ffe4d40e9771454dadac3",
+  "contract_source": "5aaec95f76fdf8a07f329d5b66e0a60de9f3c8b7",
+  "system_WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "ABI_JSON_SHA256": "6809814cb91cdfb55e9cf9bfb926343b9a8be02f82b8996796e11173eec40a9c",
+  "ABI_packed_SHA256": "3ede155adf72526771d86bbfa789922c8e1394ab7b51ba61e00e189f7bb4efba",
+  "directed_case_executions": 16,
+  "supported_case_executions": 56,
+  "legacy_native_compatibility_cases": 22,
+  "unique_native_case_names": 92,
+  "overlap_note": "Two reward cases occur in both directed and supported groups",
+  "fault_injection_cases_separately_labeled": [
+    "interrupted_snapshot_preserves_existing_waiter_tickets_fault_injection",
+    "empty_or_malformed_effective_electorate_fails_closed_fault_injection"
+  ],
+  "scope": "Socket-free real WASM/native Savanna/signatures/QCs, normal reviewed upgrade, snapshot/replay, plus separately labeled corruption/state-seed tests. Not independent live-node or TPS evidence.",
+  "original_failures_retained": true,
+  "candidate1_590c_rejected_never_deployed": true,
+  "node_TPS": "unmeasured",
+  "live_rollout_and_real7day_review": "not yet executed"
+}

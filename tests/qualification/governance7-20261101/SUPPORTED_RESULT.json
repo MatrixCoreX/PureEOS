@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "scope": "Current final WASM supported functionality; socket-free, not live-node/TPS qualification",
+  "system_WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "results": [
+    {
+      "suite": "pureeos_resource_split_tests",
+      "declared_cases": 14,
+      "exit": 0
+    },
+    {
+      "suite": "pureeos_single_choice_contract_tests",
+      "declared_cases": 19,
+      "exit": 0
+    },
+    {
+      "suite": "pureeos_reward_halving_tests",
+      "declared_cases": 10,
+      "exit": 0
+    },
+    {
+      "suite": "pureeos_reward_activation_tests",
+      "declared_cases": 8,
+      "exit": 0
+    },
+    {
+      "suite": "pureeos_governance_contract_tests",
+      "declared_cases": 2,
+      "exit": 0
+    },
+    {
+      "suite": "pureeos_committee_boundary_tests",
+      "declared_cases": 3,
+      "exit": 0
+    }
+  ],
+  "declared_case_total": 56
+}
