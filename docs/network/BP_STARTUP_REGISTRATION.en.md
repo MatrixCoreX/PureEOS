@@ -190,11 +190,15 @@ Effective maintenance creates no new production rights or newly assigned-duty ab
 "${CLEOS[@]}" get table eosio eosio bpmaint --lower bpoperatoraa --limit 1
 ```
 
+Restarting, reconnecting or waiting for a fixed duration does not automatically end maintenance. The BP account must authorize `setmaint(false)`. Long-term maintenance can retain state 2 without sending that cancellation.
+
 Verify irreversible cancellation and your state returning to 0, then stay online. Cancellation restores candidacy rather than forcing immediate committee admission. Do not cancel while the process is stopped, still synchronizing or unable to sign.
 
 ## 8. Permanent blacklist rules
 
 On a healthy full committee, **three consecutive finalized personal production windows with zero blocks** permanently ban the BP account. This does not mean three ordinary blocks, arbitrary periods or failed online probes after registration. Unassigned standbys do not accrue absence penalties just for waiting; registration alone does not immediately cause a ban.
+
+A committee below 21 does not guarantee uninterrupted finality: a 20-member finalizer policy still needs 14 signatures. Continued finality depends on the actual quorum; global safeguards do not lower it.
 
 An interruption in production/finality observation of 252 slots (126 seconds, inclusive), or a committee below 21 members, pauses new personal absence evidence. Earlier valid evidence and permanent bans remain. These global safeguards are not a substitute for planned personal maintenance. Re-registration, key changes, votes and maintenance cannot unban the same account. A banned BP may still synchronize as an ordinary full node.
 
