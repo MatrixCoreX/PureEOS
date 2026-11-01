@@ -1,0 +1,51 @@
+{
+  "types": {
+    "preserved": true,
+    "added": []
+  },
+  "structs": {
+    "preserved": true,
+    "added": [
+      "bondbp",
+      "bp_bond",
+      "bp_bond_config",
+      "exitbond",
+      "initbpbond",
+      "refundbond",
+      "settlebond"
+    ]
+  },
+  "actions": {
+    "preserved": true,
+    "added": [
+      "bondbp",
+      "exitbond",
+      "initbpbond",
+      "refundbond",
+      "settlebond"
+    ]
+  },
+  "tables": {
+    "preserved": true,
+    "added": [
+      "bpbondcfg",
+      "bpbonds"
+    ]
+  },
+  "variants": {
+    "preserved": true,
+    "added": []
+  },
+  "action_results": {
+    "preserved": true,
+    "added": []
+  },
+  "ricardian_clauses": {
+    "preserved": true,
+    "added": []
+  },
+  "error_messages": {
+    "preserved": true,
+    "added": []
+  }
+}

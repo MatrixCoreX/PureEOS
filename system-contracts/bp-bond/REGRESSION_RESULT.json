@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "pureeos_resource_split_tests/bootstrap_tracks_weights_and_requires_powerup_before_seal",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_resource_split_tests/fixed_ratio_and_manual_limits_cannot_bypass_policy",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_resource_split_tests/staking_transfer_and_powerup_do_not_multiply_votes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_resource_split_tests/failed_payment_rolls_back_resources_orders_and_counters",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/seven_days_permissions_boundary_and_old_pending_deadline",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/ban_removes_already_cast_veto_and_denominator",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/ban_without_veto_changes_denominator_and_threshold",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/maintenance_preserves_frozen_governance_rights_and_resumes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/incumbent_maintenance_handoff_pauses_only_new_duties_then_resumes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_reward_halving_tests/activation_and_real_issuance_fund_only_actual_blocks",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_sequential_rotation_tests/grows_one_at_a_time_then_fifo_across_vote_changes_and_restart",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_blacklist_capacity_tests/multiple_bans_backfill_multiple_rank_slots",
+      "exit": 0
+    }
+  ],
+  "WASM": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+  "native_executable_SHA256": "45de31754f88e59ed1bde962791885327110443598b2a716a82e18c45b731fc9",
+  "scope": "existing qualified feature regressions against fresh mandatory-bond WASM; socket-free native controller; no TPS"
+}

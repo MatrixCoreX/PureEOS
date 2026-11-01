@@ -1,0 +1,16 @@
+{
+  "status": "PASS_RELEASED_WASM_REPRODUCED_BYTE_EXACT",
+  "scope": "remote candidate build, no live deployment",
+  "jobs": [
+    {
+      "label": "configure",
+      "exit": 0
+    },
+    {
+      "label": "compile",
+      "exit": 0
+    }
+  ],
+  "WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "ABI": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a"
+}

@@ -1,0 +1,516 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index be7d8bc..58b549a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -33,6 +33,8 @@ option(SYSTEM_ENABLE_CDT_VERSION_CHECK
+ 
+ option(PUREEOS_BP_MAINTENANCE "Enable planned BP maintenance through normal rotation handoff" ON)
+ 
++option(PUREEOS_BP_BOND "Enable fixed 10000 AIC BP admission bonds" ON)
++
+ option(PUREEOS_BP_PEERING "Enable authenticated BP peer-key registry and bounded PureEOS peering roster" ON)
+ 
+ option(PUREEOS_UPGRADE_GOVERNANCE "Enable PureEOS native developer-upgrade governance integration" ON)
+@@ -56,6 +58,7 @@ ExternalProject_Add(
+              -DSYSTEM_BLOCKCHAIN_PARAMETERS=${SYSTEM_BLOCKCHAIN_PARAMETERS}
+              -DSYSTEM_ENABLE_CDT_VERSION_CHECK=${SYSTEM_ENABLE_CDT_VERSION_CHECK}
+              -DPUREEOS_BP_MAINTENANCE=${PUREEOS_BP_MAINTENANCE}
++             -DPUREEOS_BP_BOND=${PUREEOS_BP_BOND}
+              -DPUREEOS_BP_PEERING=${PUREEOS_BP_PEERING}
+              -DPUREEOS_UPGRADE_GOVERNANCE=${PUREEOS_UPGRADE_GOVERNANCE}
+              -DPUREEOS_SINGLE_CHOICE_VOTING=${PUREEOS_SINGLE_CHOICE_VOTING}
+diff --git a/contracts/CMakeLists.txt b/contracts/CMakeLists.txt
+index 13a6a35..8ce2c79 100644
+--- a/contracts/CMakeLists.txt
++++ b/contracts/CMakeLists.txt
+@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
+ 
+ project(contracts)
+ 
++option(PUREEOS_BP_BOND "Enable fixed 10000 AIC BP admission bonds" ON)
++
+ option(PUREEOS_BP_PEERING "Enable authenticated BP peer-key registry and bounded PureEOS peering roster" ON)
+ 
+ option(PUREEOS_UPGRADE_GOVERNANCE "Build for PureEOS native Savanna genesis profile 2 (not deployable on legacy hosts)" ON)
+diff --git a/contracts/eosio.system/CMakeLists.txt b/contracts/eosio.system/CMakeLists.txt
+index e28b2d6..c75cc39 100644
+--- a/contracts/eosio.system/CMakeLists.txt
++++ b/contracts/eosio.system/CMakeLists.txt
+@@ -20,6 +20,14 @@ add_contract(
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/limit_auth_changes.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/block_info.cpp)
+ 
++if(PUREEOS_BP_BOND)
++  if(NOT PUREEOS_SEQUENTIAL_ROTATION)
++    message(FATAL_ERROR "BP bonds require sequential rotation")
++  endif()
++  target_sources(eosio.system PRIVATE src/bp_bond.cpp)
++  target_compile_definitions(eosio.system PUBLIC PUREEOS_BP_BOND)
++endif()
++
+ if(PUREEOS_BP_MAINTENANCE)
+   target_sources(eosio.system PRIVATE src/maintenance.cpp)
+   target_compile_definitions(eosio.system PUBLIC PUREEOS_BP_MAINTENANCE)
+diff --git a/contracts/eosio.system/include/eosio.system/bp_bond.hpp b/contracts/eosio.system/include/eosio.system/bp_bond.hpp
+new file mode 100644
+index 0000000..ac2515a
+--- /dev/null
++++ b/contracts/eosio.system/include/eosio.system/bp_bond.hpp
+@@ -0,0 +1,76 @@
++#pragma once
++#include <eosio/eosio.hpp>
++#include <eosio/singleton.hpp>
++#include <eosio/asset.hpp>
++
++namespace eosiosystem {
++inline constexpr int64_t bp_bond_required = 100000000; // 10,000.0000 AIC
++inline constexpr eosio::name bp_bond_escrow = "eosio.bond"_n;
++inline constexpr eosio::name bp_bond_forfeit_pool = "eosio.bslash"_n;
++inline constexpr uint32_t bp_bond_refund_delay_sec = 7u*24*60*60;
++enum class bp_bond_status : uint8_t { bonded=0, exiting=1, cooling=2, refunded=3, slashed=4 };
++
++struct [[eosio::table("bpbondcfg"), eosio::contract("eosio.system")]] bp_bond_config {
++   uint8_t version = 1;
++   bool enforced = true;
++   uint32_t refund_delay_sec = bp_bond_refund_delay_sec;
++   int64_t locked = 0;
++   int64_t slash_pending = 0;
++   int64_t slash_settled = 0;
++   int64_t refunded = 0;
++   EOSLIB_SERIALIZE(bp_bond_config,(version)(enforced)(refund_delay_sec)
++                   (locked)(slash_pending)(slash_settled)(refunded))
++};
++using bp_bond_config_singleton = eosio::singleton<"bpbondcfg"_n,bp_bond_config>;
++
++struct [[eosio::table("bpbonds"), eosio::contract("eosio.system")]] bp_bond {
++   eosio::name owner;
++   uint8_t state = uint8_t(bp_bond_status::bonded);
++   int64_t balance = 0;
++   int64_t forfeited = 0;
++   int64_t settled = 0;
++   uint32_t bonded_at = 0;
++   uint32_t exit_block = 0;
++   uint32_t refundable_at = 0;
++   uint32_t ban_final_block = 0;
++   uint32_t ban_record_block = 0;
++   uint64_t primary_key() const { return owner.value; }
++   uint64_t by_state() const { return state; }
++   EOSLIB_SERIALIZE(bp_bond,(owner)(state)(balance)(forfeited)(settled)(bonded_at)
++                   (exit_block)(refundable_at)(ban_final_block)(ban_record_block))
++};
++using bp_bonds = eosio::multi_index<"bpbonds"_n,bp_bond,
++   eosio::indexed_by<"bystate"_n,eosio::const_mem_fun<bp_bond,uint64_t,&bp_bond::by_state>>>;
++
++// Fresh-chain profile: custody is initialized before governance sealing.
++// Every ordinary BP must fund its own bond before registration or admission.
++inline bool bp_bond_enforced(eosio::name code) {
++   bp_bond_config_singleton cfg(code,code.value);
++   return cfg.exists() && cfg.get().enforced;
++}
++inline bool bp_bond_funded(eosio::name code,eosio::name producer) {
++   bp_bonds table(code,code.value);const auto row=table.find(producer.value);
++   return row!=table.end() && row->state==uint8_t(bp_bond_status::bonded) && row->balance==bp_bond_required;
++}
++inline bool bp_bond_excludes(eosio::name code,eosio::name producer) {
++   return bp_bond_enforced(code) && !bp_bond_funded(code,producer);
++}
++
++// Called only by the deterministic system-contract blacklist path. No external
++// actions or recipient notifications may interrupt onblock/rotation here.
++inline void forfeit_bp_bond(eosio::name code,eosio::name producer,uint32_t evidence_block,uint32_t record_block) {
++   bp_bonds bonds(code,code.value);auto row=bonds.find(producer.value);
++   if(row==bonds.end() || row->balance==0)return;
++   bp_bond_config_singleton configs(code,code.value);
++   eosio::check(configs.exists(),"BP bond accounting is not initialized");
++   auto cfg=configs.get();const auto amount=row->balance;
++   eosio::check(amount==bp_bond_required && cfg.locked>=amount,"invalid BP bond liability");
++   eosio::check(cfg.slash_pending<=eosio::asset::max_amount-amount,"BP slash pool overflow");
++   cfg.locked-=amount;cfg.slash_pending+=amount;
++   bonds.modify(row,eosio::same_payer,[&](auto& r){
++      r.balance=0;r.forfeited=amount;r.settled=0;r.state=uint8_t(bp_bond_status::slashed);
++      r.refundable_at=0;r.ban_final_block=evidence_block;r.ban_record_block=record_block;
++   });
++   configs.set(cfg,code);
++}
++}
+diff --git a/contracts/eosio.system/include/eosio.system/eosio.system.hpp b/contracts/eosio.system/include/eosio.system/eosio.system.hpp
+index bc1b804..3ac84a8 100644
+--- a/contracts/eosio.system/include/eosio.system/eosio.system.hpp
++++ b/contracts/eosio.system/include/eosio.system/eosio.system.hpp
+@@ -1620,6 +1620,13 @@ namespace eosiosystem {
+ #ifdef PUREEOS_BP_MAINTENANCE
+          [[eosio::action]] void setmaint(const name& producer, bool maintenance);
+ #endif
++#ifdef PUREEOS_BP_BOND
++         [[eosio::action]] void initbpbond();
++         [[eosio::action]] void bondbp(const name& producer);
++         [[eosio::action]] void exitbond(const name& producer);
++         [[eosio::action]] void refundbond(const name& producer);
++         [[eosio::action]] void settlebond(const name& producer);
++#endif
+ 
+          /**
+           * Vote producer action, votes for a set of producers. This action updates the list of `producers` voted for,
+@@ -2010,6 +2017,9 @@ namespace eosiosystem {
+          void update_elected_producers( const block_timestamp& timestamp );
+ #ifdef PUREEOS_SEQUENTIAL_ROTATION
+          void advance_rotation(const block_timestamp& timestamp, name producer);
++#ifdef PUREEOS_BP_BOND
++         void advance_bond_exits();
++#endif
+ #ifdef PUREEOS_BP_MAINTENANCE
+          void advance_maintenance();
+ #endif
+diff --git a/contracts/eosio.system/ricardian/eosio.system.contracts.md.in b/contracts/eosio.system/ricardian/eosio.system.contracts.md.in
+index 1cb8789..8335ef0 100644
+--- a/contracts/eosio.system/ricardian/eosio.system.contracts.md.in
++++ b/contracts/eosio.system/ricardian/eosio.system.contracts.md.in
+@@ -894,3 +894,23 @@ The configured developer cancels the identified pending upgrade. A new proposal
+ <h1 class="contract">devexec</h1>
+ 
+ The configured developer executes the exact reviewed code and ABI only after the proposal's full deadline and below the effective veto threshold. New proposals after PUREEOS_SEVEN_DAY_GOVERNANCE activation wait seven days; older deadlines remain unchanged. No affirmative producer approval is required. The native host verifies hashes, authorization and a nonempty effective electorate, and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.
++
++<h1 class="contract">initbpbond</h1>
++
++Initialize fixed 10000.0000 AIC BP bonds, a seven-day refund cooldown and dedicated eosio.bond/eosio.bslash custody. Forfeitures stay locked; there is no pool withdrawal or burn action. Fresh-chain initialization is mandatory before governance sealing and BP registration. No initialization argument can change these terms.
++
++<h1 class="contract">bondbp</h1>
++
++Producer authorizes an atomic transfer of exactly 10000.0000 AIC to eosio.bond. No CPU/NET, vote or reward stake is reused. Permanent bans cannot be cleared by funding.
++
++<h1 class="contract">exitbond</h1>
++
++Request full bond exit and deactivate registration. Continue existing native duties until safe handoff; previous violations and permanent bans remain.
++
++<h1 class="contract">refundbond</h1>
++
++Refund only after safe proposer/finalizer handoff, settled duty windows, irreversible exit and the initialized cooldown. No automatic deferred transaction is used.
++
++<h1 class="contract">settlebond</h1>
++
++After the blacklist decision becomes irreversible, settle its forfeiture once from eosio.bond into the dedicated locked eosio.bslash pool. Anyone may submit; no caller chooses the amount or recipient. The pool has no withdrawal action. Blacklist accounting itself sends no external notifications.
+diff --git a/contracts/eosio.system/src/bp_bond.cpp b/contracts/eosio.system/src/bp_bond.cpp
+new file mode 100644
+index 0000000..0df1bb7
+--- /dev/null
++++ b/contracts/eosio.system/src/bp_bond.cpp
+@@ -0,0 +1,147 @@
++#include <eosio.system/eosio.system.hpp>
++#include <eosio.system/bp_bond.hpp>
++#include <eosio.system/rotation_state.hpp>
++#include <eosio.system/rotation.hpp>
++#include <eosio.token/eosio.token.hpp>
++#include <eosio.system/upgrade_governance.hpp>
++#include <algorithm>
++#include <limits>
++
++namespace eosiosystem {
++namespace {
++rotation_context_v1 bond_context() {
++   const auto size=get_rotation_context_v1(nullptr,0);
++   check(size>0,"BP bond requires native rotation context");std::vector<char> data(size);
++   check(get_rotation_context_v1(data.data(),size)==size,"rotation context changed");
++   auto ctx=eosio::unpack<rotation_context_v1>(data.data(),data.size());
++   check(ctx.version==1 && ctx.producers.size()<=rotation::committee_limit &&
++         ctx.finalizers.size()<=rotation::committee_limit,"unsupported BP bond committee");
++   return ctx;
++}
++bool has_bond_duty(name owner,const rotation_context_v1& ctx,const rotation_info& state) {
++   return std::any_of(ctx.producers.begin(),ctx.producers.end(),[&](const auto& p){return p.producer_name==owner;}) ||
++      std::any_of(ctx.finalizers.begin(),ctx.finalizers.end(),[&](const auto& f){return f.description==owner.to_string();}) ||
++      std::find(state.active.begin(),state.active.end(),owner)!=state.active.end() ||
++      std::find(state.target.begin(),state.target.end(),owner)!=state.target.end();
++}
++bool unsettled_bond_window(name owner,const rotation_info& state) {
++   return std::any_of(state.pending_windows.begin(),state.pending_windows.end(),[&](const auto& w){return w.owner==owner;});
++}
++bool bond_banned(name code,name owner) {
++   rotation_candidates candidates(code,code.value);auto c=candidates.find(owner.value);
++   return c!=candidates.end() && c->banned;
++}
++void check_bond_symbol(const symbol& core) {
++   check(core==symbol(symbol_code("AIC"),4),"BP bond requires the 4-decimal AIC core token");
++}
++}
++
++void system_contract::initbpbond() {
++   require_auth(get_self());
++   check(get_upgrade_developer()==0,"fresh-chain BP bonds must be initialized before governance sealing");
++   check_bond_symbol(core_symbol());
++   bp_bond_config_singleton configs(get_self(),get_self().value);
++   check(!configs.exists(),"BP bond is already initialized");
++   authority auth;auth.threshold=1;auth.accounts.push_back({{get_self(),"eosio.code"_n},1});
++   for(const auto account:{bp_bond_escrow,bp_bond_forfeit_pool}){
++      check(!is_account(account),"BP bond custody account already exists; refusing an unverified authority");
++      eosio::action(permission_level{get_self(),active_permission},get_self(),"newaccount"_n,
++         std::make_tuple(get_self(),account,auth,auth)).send();
++      // Fund fixed custody metadata/RAM with real system tokens. These small
++      // setup purchases are separate from BP deposits and issue no currency.
++      eosio::action(permission_level{get_self(),active_permission},get_self(),"buyrambytes"_n,
++         std::make_tuple(get_self(),account,uint32_t(8192))).send();
++   }
++   configs.set(bp_bond_config{},get_self());
++}
++
++void system_contract::bondbp(const name& producer) {
++   require_auth(producer);check_bond_symbol(core_symbol());
++   bp_bond_config_singleton configs(get_self(),get_self().value);
++   check(configs.exists(),"BP bond is not initialized");
++   check(producer!=bp_bond_escrow && producer!=bp_bond_forfeit_pool && producer!=get_self(),"system accounts cannot post a BP bond");
++   check(!bond_banned(get_self(),producer),"permanently banned producer cannot post a BP bond");
++   bp_bonds bonds(get_self(),get_self().value);auto row=bonds.find(producer.value);
++   check(row==bonds.end() || row->state==uint8_t(bp_bond_status::refunded),"BP bond is already locked or forfeited");
++   auto cfg=configs.get();check(cfg.locked<=asset::max_amount-bp_bond_required,"BP bond pool overflow");
++   const auto stamp=eosio::current_time_point().sec_since_epoch();
++   if(row==bonds.end())bonds.emplace(producer,[&](auto& r){r.owner=producer;r.balance=bp_bond_required;r.bonded_at=stamp;});
++   else bonds.modify(row,same_payer,[&](auto& r){r=bp_bond{};r.owner=producer;r.balance=bp_bond_required;r.bonded_at=stamp;});
++   cfg.locked+=bp_bond_required;configs.set(cfg,get_self());
++   eosio::token::transfer_action transfer{token_account,{{producer,active_permission}}};
++   transfer.send(producer,bp_bond_escrow,asset(bp_bond_required,core_symbol()),"BP bond: 10000 AIC");
++   refresh_rotation_candidate(producer);
++}
++
++void system_contract::exitbond(const name& producer) {
++   require_auth(producer);bp_bonds bonds(get_self(),get_self().value);
++   auto row=bonds.require_find(producer.value,"BP bond not found");
++   check(row->state==uint8_t(bp_bond_status::bonded) && row->balance==bp_bond_required,"BP bond is not active");
++   check(!bond_banned(get_self(),producer),"permanently banned producer cannot exit a BP bond");
++   bonds.modify(row,same_payer,[&](auto& r){r.state=uint8_t(bp_bond_status::exiting);});
++   auto registered=_producers.find(producer.value);
++   if(registered!=_producers.end())_producers.modify(registered,same_payer,[](auto& p){p.deactivate();});
++   refresh_rotation_candidate(producer);
++   rotation_singleton rotations(get_self(),get_self().value);
++   if(rotations.exists()){
++      auto state=rotations.get();state.next_attempt_slot=std::min<uint64_t>(state.next_attempt_slot,bond_context().slot);
++      rotations.set(state,get_self());
++   }
++}
++
++void system_contract::advance_bond_exits() {
++   bp_bond_config_singleton configs(get_self(),get_self().value);if(!configs.exists())return;
++   bp_bonds bonds(get_self(),get_self().value);auto pending=bonds.get_index<"bystate"_n>();
++   auto it=pending.lower_bound(uint64_t(bp_bond_status::exiting));
++   if(it==pending.end() || it->state!=uint8_t(bp_bond_status::exiting))return;
++   const auto ctx=bond_context();if(ctx.transitioning)return;
++   rotation_singleton rotations(get_self(),get_self().value);if(!rotations.exists())return;
++   const auto state=rotations.get();const auto cfg=configs.get();
++   check(ctx.block_num<std::numeric_limits<uint32_t>::max(),"BP bond exit checkpoint exhausted");
++   const auto now=eosio::current_time_point().sec_since_epoch();
++   check(now<=std::numeric_limits<uint32_t>::max()-cfg.refund_delay_sec,"BP bond refund time exhausted");
++   // Bound work including rows that are not yet safe to release. No history
++   // append or token transfer is performed in this per-block path.
++   for(uint32_t work=0;work<64 && it!=pending.end() && it->state==uint8_t(bp_bond_status::exiting);++work){
++      auto current=it++;
++      if(bond_banned(get_self(),current->owner))continue;
++      if(has_bond_duty(current->owner,ctx,state) || unsettled_bond_window(current->owner,state))continue;
++      pending.modify(current,same_payer,[&](auto& r){r.state=uint8_t(bp_bond_status::cooling);r.exit_block=ctx.block_num+1;
++         r.refundable_at=cfg.refund_delay_sec?now+cfg.refund_delay_sec:0;});
++   }
++}
++
++void system_contract::refundbond(const name& producer) {
++   require_auth(producer);bp_bond_config_singleton configs(get_self(),get_self().value);
++   check(configs.exists(),"BP bond is not initialized");auto cfg=configs.get();
++   check(cfg.refund_delay_sec==bp_bond_refund_delay_sec,"unsupported BP bond refund policy");
++   bp_bonds bonds(get_self(),get_self().value);auto row=bonds.require_find(producer.value,"BP bond not found");
++   check(row->state==uint8_t(bp_bond_status::cooling) && row->balance==bp_bond_required,"BP bond has not completed duty handoff");
++   check(!bond_banned(get_self(),producer),"permanently banned producer cannot receive a BP bond refund");
++   check(row->refundable_at && eosio::current_time_point().sec_since_epoch()>=row->refundable_at,"BP bond refund cooldown has not elapsed");
++   const auto ctx=bond_context();rotation_singleton rotations(get_self(),get_self().value);
++   check(rotations.exists() && !ctx.transitioning && row->exit_block>0 && ctx.final_block_num>=row->exit_block,"BP bond exit is not irreversible");
++   const auto state=rotations.get();check(!has_bond_duty(producer,ctx,state) && !unsettled_bond_window(producer,state),"BP still has unresolved duties");
++   check(cfg.locked>=bp_bond_required && cfg.refunded<=asset::max_amount-bp_bond_required,"invalid BP refund accounting");
++   cfg.locked-=bp_bond_required;cfg.refunded+=bp_bond_required;
++   bonds.modify(row,same_payer,[](auto& r){r.balance=0;r.state=uint8_t(bp_bond_status::refunded);});configs.set(cfg,get_self());
++   eosio::token::transfer_action transfer{token_account,{{bp_bond_escrow,active_permission}}};
++   transfer.send(bp_bond_escrow,producer,asset(bp_bond_required,core_symbol()),"BP bond refund");
++}
++
++void system_contract::settlebond(const name& producer) {
++   // Anyone may submit settlement; recipient and amount are fixed by policy.
++   bp_bond_config_singleton configs(get_self(),get_self().value);check(configs.exists(),"BP bond is not initialized");auto cfg=configs.get();
++   bp_bonds bonds(get_self(),get_self().value);auto row=bonds.require_find(producer.value,"BP bond not found");
++   check(row->state==uint8_t(bp_bond_status::slashed) && row->forfeited>row->settled,"no unsettled BP forfeiture");
++   check(bond_banned(get_self(),producer),"BP forfeiture requires a permanent blacklist record");
++   const auto ctx=bond_context();check(row->ban_record_block>0 && ctx.final_block_num>=row->ban_record_block,"BP blacklist decision is not irreversible");
++   const auto amount=row->forfeited-row->settled;check(cfg.slash_pending>=amount && cfg.slash_settled<=asset::max_amount-amount,"invalid BP forfeiture accounting");
++   cfg.slash_pending-=amount;cfg.slash_settled+=amount;
++   bonds.modify(row,same_payer,[&](auto& r){r.settled+=amount;});configs.set(cfg,get_self());
++   // Transfer INTO the dedicated forfeiture pool only. This reviewed profile
++   // contains no action that transfers tokens out of eosio.bslash or burns them.
++   eosio::token::transfer_action transfer{token_account,{{bp_bond_escrow,active_permission}}};
++   transfer.send(bp_bond_escrow,bp_bond_forfeit_pool,asset(amount,core_symbol()),"Permanent BP blacklist: locked forfeiture pool");
++}
++}
+diff --git a/contracts/eosio.system/src/eosio.system.cpp b/contracts/eosio.system/src/eosio.system.cpp
+index d5c8584..d845c05 100644
+--- a/contracts/eosio.system/src/eosio.system.cpp
++++ b/contracts/eosio.system/src/eosio.system.cpp
+@@ -662,6 +662,9 @@ namespace eosiosystem {
+ 
+       token::open_action open_act{ token_account, { {get_self(), active_permission} } };
+       open_act.send( rex_account, core, get_self() );
++#ifdef PUREEOS_BP_BOND
++       initbpbond(); // Fresh-chain custody must exist before any BP registration or governance sealing.
++#endif
+    }
+ 
+ } /// eosio.system
+diff --git a/contracts/eosio.system/src/producer_pay.cpp b/contracts/eosio.system/src/producer_pay.cpp
+index 86ab6d2..23934cb 100644
+--- a/contracts/eosio.system/src/producer_pay.cpp
++++ b/contracts/eosio.system/src/producer_pay.cpp
+@@ -2,6 +2,9 @@
+ #include <eosio.system/maintenance.hpp>
+ #endif
+ #include <eosio.system/eosio.system.hpp>
++#ifdef PUREEOS_BP_BOND
++#include <eosio.system/bp_bond.hpp>
++#endif
+ #include <eosio.token/eosio.token.hpp>
+ 
+ namespace eosiosystem {
+@@ -47,6 +50,9 @@ namespace eosiosystem {
+ #ifdef PUREEOS_SEQUENTIAL_ROTATION
+       // Consensus rotation does not depend on the reward activation clock.
+       advance_rotation(timestamp, producer);
++#ifdef PUREEOS_BP_BOND
++      advance_bond_exits();
++#endif
+ #ifdef PUREEOS_BP_MAINTENANCE
+       advance_maintenance();
+ #endif
+@@ -125,7 +131,16 @@ namespace eosiosystem {
+ #endif
+       execute_next_schedule();
+       const auto& prod = _producers.get( owner.value, "producer not registered" );
++#ifdef PUREEOS_BP_BOND
++      // Exit deactivates registration before the seven-day refund. A previously
++      // funded producer retains its actual unpaid-block claim, including after
++      // a ban. Owner authorization and positive historical production above
++      // still apply; a bond never creates reward rights by itself.
++      bp_bonds bonds(get_self(),get_self().value);
++      check(prod.active() || bonds.find(owner.value)!=bonds.end(),"producer has no historical bonded registration");
++#else
+       check( prod.active(), "producer does not have an active key" );
++#endif
+ 
+       check( _gstate.thresh_activated_stake_time != time_point(),
+ #ifdef PUREEOS_SINGLE_CHOICE_VOTING
+diff --git a/contracts/eosio.system/src/rotation_state.cpp b/contracts/eosio.system/src/rotation_state.cpp
+index dce1cf0..7c8170b 100644
+--- a/contracts/eosio.system/src/rotation_state.cpp
++++ b/contracts/eosio.system/src/rotation_state.cpp
+@@ -3,6 +3,9 @@
+ #endif
+ #include <eosio.system/eosio.system.hpp>
+ #include <eosio.system/rotation.hpp>
++#ifdef PUREEOS_BP_BOND
++#include <eosio.system/bp_bond.hpp>
++#endif
+ #include <eosio.system/upgrade_governance.hpp>
+ #include <algorithm>
+ 
+@@ -56,7 +59,11 @@ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
+       auto c = candidates.find(b->owner.value);
+       // Legacy banned rows can still carry a positive vote key after upgrade.
+       // Skip them BEFORE counting capacity, allowing C+1 (and later) to enter.
+-      if (c->banned) {
++       if (c->banned
++#ifdef PUREEOS_BP_BOND
++           || bp_bond_excludes(candidates.get_code(),c->owner)
++#endif
++          ) {
+          candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
+          continue;
+       }
+@@ -145,7 +152,11 @@ void observe_windows(rotation_info& s, rotation_candidates& candidates,
+             r.evidence_policies[r.zero_windows] = w.policy_version;
+             if (++r.zero_windows == 3) {
+                r.banned = true;
+-               r.ban_final_block = ctx.final_block_num;
++                r.ban_final_block = ctx.final_block_num;
++#ifdef PUREEOS_BP_BOND
++                check(ctx.block_num<uint32_t(-1),"BP blacklist checkpoint exhausted");
++                forfeit_bp_bond(candidates.get_code(),r.owner,ctx.final_block_num,ctx.block_num+1);
++#endif
+                revoke_banned_rank(r, s);
+                // A ban may arrive after this row was already counted. Rebuild
+                // the bounded snapshot so it cannot strand a capacity vacancy.
+@@ -238,7 +249,11 @@ void system_contract::refresh_rotation_candidate(name owner, bool reserve) {
+          candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
+       return; // Votes, re-registration and key changes never restore eligibility.
+    }
+-   if (p != _producers.end() && p->total_votes > 0 && usable_producer(*p) &&
++    if (
++#ifdef PUREEOS_BP_BOND
++        !bp_bond_excludes(get_self(),owner) &&
++#endif
++        p != _producers.end() && p->total_votes > 0 && usable_producer(*p) &&
+        f != _finalizers.end() && f->active_key_binary.size() == 96)
+       key = (uint128_t(uint64_t(-1) - uint64_t(p->total_votes)) << 64) | owner.value;
+    if (c == candidates.end()) {
+@@ -410,7 +425,10 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
+    name incoming, outgoing;
+    const auto eligible = [&](name n) {
+       auto c = candidates.find(n.value);
+-      return c != candidates.end() && !c->banned && c->seen_epoch == s.published_epoch && c->rank < invalid_rank_floor
++       return c != candidates.end() && !c->banned && c->seen_epoch == s.published_epoch && c->rank < invalid_rank_floor
++#ifdef PUREEOS_BP_BOND
++          && !bp_bond_excludes(get_self(),n)
++#endif
+ #ifdef PUREEOS_BP_MAINTENANCE
+          && !maintenance_excludes(get_self(),n)
+ #endif
+diff --git a/contracts/eosio.system/src/upgrade_governance.cpp b/contracts/eosio.system/src/upgrade_governance.cpp
+index 50ab33d..f00e165 100644
+--- a/contracts/eosio.system/src/upgrade_governance.cpp
++++ b/contracts/eosio.system/src/upgrade_governance.cpp
+@@ -1,5 +1,8 @@
+ #include <eosio.system/eosio.system.hpp>
+ #include <eosio.system/upgrade_governance.hpp>
++#ifdef PUREEOS_BP_BOND
++#include <eosio.system/bp_bond.hpp>
++#endif
+ #include <algorithm>
+ #include <cmath>
+ 
+@@ -30,7 +33,11 @@ void system_contract::refreshgov() {
+    uint32_t scanned = 0;
+    for (auto it = ranked.begin(); it != ranked.end() && it->rank < invalid_rank_floor && voters.size() < 210; ++it) {
+       check(scanned++ < max_scanned_candidates, "governance candidate scan limit exceeded");
+-      if (!it->banned && it->owner != developer) voters.push_back(it->owner.value);
++      if (!it->banned && it->owner != developer
++#ifdef PUREEOS_BP_BOND
++          && !bp_bond_excludes(get_self(),it->owner)
++#endif
++         ) voters.push_back(it->owner.value);
+    }
+ #else
+    const auto ranked = _producers.get_index<"prototalvote"_n>();
+diff --git a/contracts/eosio.system/src/voting.cpp b/contracts/eosio.system/src/voting.cpp
+index 4e68539..f18fdd1 100644
+--- a/contracts/eosio.system/src/voting.cpp
++++ b/contracts/eosio.system/src/voting.cpp
+@@ -8,6 +8,9 @@
+ #include <eosio/singleton.hpp>
+ 
+ #include <eosio.system/eosio.system.hpp>
++#ifdef PUREEOS_BP_BOND
++#include <eosio.system/bp_bond.hpp>
++#endif
+ #if defined(PUREEOS_UPGRADE_GOVERNANCE) && defined(PUREEOS_SINGLE_CHOICE_VOTING)
+ #include <eosio.system/upgrade_governance.hpp>
+ #endif
+@@ -28,6 +31,11 @@ namespace eosiosystem {
+    using eosio::singleton;
+ 
+    void system_contract::register_producer( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location ) {
++#ifdef PUREEOS_BP_BOND
++      bp_bond_config_singleton bond_policy(get_self(),get_self().value);
++      check(bond_policy.exists() && bp_bond_funded(get_self(),producer),"producer must lock 10000.0000 AIC BP bond before registration");
++#endif
++
+ #ifdef PUREEOS_SINGLE_CHOICE_VOTING
+       require_direct_vote_policy();
+ #endif
