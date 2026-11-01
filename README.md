@@ -210,9 +210,7 @@ curl -sS http://127.0.0.1:8888/v1/chain/get_upgrade_state \
 
 以返回的特性状态、有效票数、到期时间、实际 WASM/ABI 摘要和不可逆高度判断升级进展。配套发行清单记录本版绑定的合约源码和摘要。
 
-### 12. AIC、奖励和 RAM
-
-新链测试配置使用精度为 4 的 AIC：**初始发行 100,000,000.0000 AIC，最大供应量 2,100,000,000.0000 AIC**。最大供应量不是预先发出的余额，剩余部分不一次性发行，既有额外发行方式保持不变。
+### 12. 奖励和 RAM
 
 出块奖励以当前已发行量为基数，按合约每 **364 天精确 1%** 计提，并每 **1461 天减半**；另外 4% 不发行。只有实际出块累计未领权益，成功领取时才发行并填充奖励池；首次正权重直接投票激活相关计时，领取间隔须严格超过 24 小时。
 
@@ -477,9 +475,7 @@ curl -sS http://127.0.0.1:8888/v1/chain/get_upgrade_state \
 
 Use the returned feature state, effective counts, deadline, actual WASM/ABI hashes and irreversible height to assess progress. The release manifest binds this version to its contract source and hashes.
 
-### 12. AIC, rewards and RAM
-
-The fresh test-chain profile uses AIC with 4 decimals: **100,000,000.0000 AIC initially issued and 2,100,000,000.0000 AIC maximum supply**. Maximum supply is not a pre-issued balance. Remaining headroom is not issued up front, and the existing separate issuance mechanism remains unchanged.
+### 12. Rewards and RAM
 
 Block rewards accrue at exactly **1% of currently issued supply per 364-day contract year**, halved every **1461 days**. The additional 4% is never issued. Only actual blocks accrue unpaid rights; a successful claim issues tokens and funds the pool. The first positive-weight direct vote starts the relevant clock, and claims must be strictly more than 24 hours apart.
 
