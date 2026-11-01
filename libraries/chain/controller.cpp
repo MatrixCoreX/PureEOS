@@ -1434,6 +1434,7 @@ struct controller_impl {
       set_activation_handler<builtin_protocol_feature_t::disable_deferred_trxs_stage_2>();
       set_activation_handler<builtin_protocol_feature_t::savanna>();
       set_activation_handler<builtin_protocol_feature_t::pureeos_rotation_context>();
+      set_activation_handler<builtin_protocol_feature_t::pureeos_seven_day_governance>();
       set_activation_handler<builtin_protocol_feature_t::sync_call>();
 
       irreversible_block.connect([this](const block_signal_params& t) {
@@ -7846,6 +7847,13 @@ void controller_impl::on_activation<builtin_protocol_feature_t::pureeos_rotation
    db.modify(db.get<protocol_state_object>(), [&](auto& ps) {
       add_intrinsic_to_whitelist(ps.whitelisted_intrinsics, "get_rotation_context_v1");
    });
+}
+
+template<>
+void controller_impl::on_activation<builtin_protocol_feature_t::pureeos_seven_day_governance>() {
+   if (const auto* state = find_upgrade_governance(db))
+      db.modify(*state,[](auto& s){s.review_seconds=upgrade_review_seconds_v2;});
+   // Existing pending execute_after is immutable; only the next proposal gets7days.
 }
 
 template<>

@@ -48,6 +48,10 @@ namespace eosio { namespace chain { namespace webassembly {
                     wasm_execution_error, "electorate must be sorted, unique, existing nodes, excluding the developer");
          previous = voter;
       }
+      if (context.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_seven_day_governance)) {
+         std::erase_if(voters,[&](auto voter){return is_upgrade_voter_permanently_banned(context.db,voter);});
+         EOS_ASSERT(!voters.empty(), wasm_execution_error, "no effective veto electorate after excluding permanent bans");
+      }
       context.db.modify(*state, [&](auto& s) {
          s.current_voters = voters;
          s.voters_updated_at = context.control.pending_block_time();

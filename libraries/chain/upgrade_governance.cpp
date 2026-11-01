@@ -1,5 +1,7 @@
 #include <eosio/chain/upgrade_governance.hpp>
 #include <eosio/chain/account_object.hpp>
+#include <eosio/chain/contract_table_objects.hpp>
+#include <eosio/chain/protocol_feature_manager.hpp>
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/authorization_manager.hpp>
 #include <eosio/chain/permission_link_object.hpp>
@@ -14,6 +16,9 @@ namespace eosio::chain {
 namespace {
 constexpr auto upgrade_permission = "upgrade"_n;
 constexpr auto veto_permission = "veto"_n;
+bool governance_v2(const apply_context& ctx) {
+   return ctx.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_seven_day_governance);
+}
 
 bool permanently_disabled(account_name account) {
    return account == "eosio.prods"_n || account == "eosio.wrap"_n ||
@@ -60,6 +65,35 @@ const upgrade_governance_object* find_upgrade_governance(const chainbase::databa
    return index.empty() ? nullptr : &*index.begin();
 }
 
+bool is_upgrade_voter_permanently_banned(const chainbase::database& db, account_name account) {
+   const auto* table = db.find<table_id_object, by_code_scope_table>(boost::make_tuple("eosio"_n,"eosio"_n,"rotcands"_n));
+   if (!table) return false;
+   const auto* row = db.find<key_value_object, by_scope_primary>(boost::make_tuple(table->id,account.to_uint64_t()));
+   if (!row) return false;
+   const auto* rotation_table = db.find<table_id_object, by_code_scope_table>(boost::make_tuple("eosio"_n,"eosio"_n,"rotation"_n));
+   EOS_ASSERT(rotation_table, action_validate_exception, "permanent-ban table requires rotation v2 state");
+   const auto* rotation = db.find<key_value_object, by_scope_primary>(boost::make_tuple(rotation_table->id,"rotation"_n.to_uint64_t()));
+   EOS_ASSERT(rotation && rotation->value.size()>=4, action_validate_exception, "missing rotation v2 state");
+   const auto* version = reinterpret_cast<const unsigned char*>(rotation->value.data());
+   EOS_ASSERT(version[0]==2 && version[1]==0 && version[2]==0 && version[3]==0 && row->value.size()==114,
+              action_validate_exception, "unsupported permanent-ban record schema");
+   const auto* data = reinterpret_cast<const unsigned char*>(row->value.data());
+   uint64_t owner=0;for(unsigned i=0;i<8;++i) owner|=uint64_t(data[i])<<(8*i);
+   EOS_ASSERT(owner==account.to_uint64_t() && data[73]<=1, action_validate_exception, "malformed permanent-ban record");
+   return data[73]!=0;
+}
+upgrade_effective_tally get_upgrade_effective_tally(const chainbase::database& db,
+      const upgrade_governance_object& state, bool exclude_banned) {
+   upgrade_effective_tally result;
+   for (auto voter : state.proposal_voters) {
+      if (exclude_banned && is_upgrade_voter_permanently_banned(db,voter)) result.excluded_banned_voters.push_back(voter);
+      else result.voters.push_back(voter);
+   }
+   for (auto voter : state.vetoes)
+      if (std::binary_search(result.voters.begin(),result.voters.end(),voter)) result.vetoes.push_back(voter);
+   return result;
+}
+
 bool is_protected_system_account(const chainbase::database& db, account_name account) {
    auto* state = find_upgrade_governance(db);
    if (!state || state->developer == account_name{}) return false;
@@ -96,8 +130,9 @@ void apply_eosio_govinit(apply_context& ctx) {
               "govinit requires a fresh native genesis profile 2 and can run only once");
    ctx.require_authorization("eosio"_n, config::owner_name);
    const auto args = ctx.get_action().data_as<govinit>();
-   EOS_ASSERT(args.review_seconds == upgrade_review_seconds,
-              action_validate_exception, "review_seconds must be exactly 1209600 seconds (14 days)");
+   const auto review_seconds = governance_v2(ctx) ? upgrade_review_seconds_v2 : upgrade_review_seconds;
+   EOS_ASSERT(args.review_seconds == review_seconds,
+              action_validate_exception, "review_seconds must match the activated governance protocol");
    EOS_ASSERT(args.developer != account_name{} && args.developer != "eosio"_n && !permanently_disabled(args.developer),
               action_validate_exception, "developer must be a separate ordinary account");
    const auto& schedule = ctx.control.head_active_producers().producers;
@@ -156,7 +191,7 @@ void apply_eosio_govinit(apply_context& ctx) {
 
    ctx.db.modify(*state, [&](auto& s) {
       s.developer = args.developer;
-      s.review_seconds = upgrade_review_seconds;
+      s.review_seconds = review_seconds;
       s.protected_accounts = std::vector<account_name>(targets.begin(), targets.end());
       s.current_voters = {"eosio"_n};
       s.voters_updated_at = ctx.control.pending_block_time();
@@ -199,6 +234,7 @@ void apply_eosio_devpropose(apply_context& ctx) {
       s.new_abi_hash = args.new_abi_hash;
       s.review_document_hash = args.review_document_hash;
       s.proposed_at = ctx.control.pending_block_time();
+      s.review_seconds = governance_v2(ctx) ? upgrade_review_seconds_v2 : upgrade_review_seconds;
       s.execute_after = s.proposed_at + fc::seconds(s.review_seconds);
       s.proposal_voters = s.current_voters;
       s.vetoes.clear();
@@ -215,6 +251,8 @@ void apply_eosio_devveto(apply_context& ctx) {
    EOS_ASSERT(ctx.control.pending_block_time() < state.execute_after, action_validate_exception, "veto period has ended");
    EOS_ASSERT(std::binary_search(state.proposal_voters.begin(), state.proposal_voters.end(), args.voter),
               action_validate_exception, "voter is not in this proposal's frozen electorate");
+   EOS_ASSERT(!governance_v2(ctx) || !is_upgrade_voter_permanently_banned(ctx.db,args.voter),
+              action_validate_exception, "permanently blacklisted BP cannot veto an upgrade");
    EOS_ASSERT(std::find(state.vetoes.begin(), state.vetoes.end(), args.voter) == state.vetoes.end(),
               action_validate_exception, "voter has already vetoed this proposal");
    ctx.db.modify(state, [&](auto& s) { s.vetoes.emplace_back(args.voter); });
@@ -235,8 +273,10 @@ void apply_eosio_devexec(apply_context& ctx) {
    const auto args = ctx.get_action().data_as<devexec>();
    check_pending(state, args.proposal_id);
    EOS_ASSERT(ctx.control.pending_block_time() >= state.execute_after, action_validate_exception, "upgrade review period has not ended");
-   EOS_ASSERT(state.vetoes.size() < upgrade_veto_threshold(state.proposal_voters.size()),
-              action_validate_exception, "upgrade vetoed by at least two thirds of the frozen electorate");
+   const auto tally = get_upgrade_effective_tally(ctx.db,state,governance_v2(ctx));
+   EOS_ASSERT(!tally.voters.empty(), action_validate_exception, "no effective veto electorate; upgrade execution blocked");
+   EOS_ASSERT(tally.vetoes.size() < upgrade_veto_threshold(tally.voters.size()),
+              action_validate_exception, "upgrade vetoed by at least two thirds of the effective frozen electorate");
    EOS_ASSERT((ctx.db.get<account_metadata_object, by_name>(state.target).code_hash == state.old_code_hash &&
               abi_hash(ctx, state.target) == state.old_abi_hash), action_validate_exception, "upgrade base hashes no longer match");
    EOS_ASSERT(!args.code.empty() && ctx.trx_context.hash_with_checktime<fc::sha256>(args.code.data(), args.code.size()) == state.new_code_hash &&

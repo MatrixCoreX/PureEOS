@@ -15,13 +15,15 @@ constexpr uint32_t upgrade_veto_threshold(uint32_t voters) {
    return (2 * voters + 2) / 3;
 }
 constexpr uint32_t max_upgrade_voters = 210;
+// Legacy constant remains immutable for replay before the v2 protocol feature.
 constexpr uint32_t upgrade_review_seconds = 14 * 24 * 60 * 60;
+constexpr uint32_t upgrade_review_seconds_v2 = 7 * 24 * 60 * 60;
 
 // These native actions are enabled only on the opt-in native genesis profile 2.
 // govinit is a one-time, owner-authorized bootstrap operation, never an upgrade bypass.
 struct govinit {
    account_name developer;
-   // Retain the action's wire format, but the native handler accepts only 14 days.
+   // Wire format unchanged:14days before governance v2 activation,7days after.
    uint32_t review_seconds = upgrade_review_seconds;
    std::vector<account_name> protected_accounts;
    static account_name get_account() { return config::system_account_name; }
@@ -84,6 +86,13 @@ using upgrade_governance_index = chainbase::shared_multi_index_container<
       member<upgrade_governance_object, upgrade_governance_object::id_type, &upgrade_governance_object::id>>>>;
 
 const upgrade_governance_object* find_upgrade_governance(const chainbase::database& db);
+// Read only the versioned, candidate-funded permanent-ban record. Missing
+// bootstrap tables mean no ban; incompatible existing state fails closed.
+bool is_upgrade_voter_permanently_banned(const chainbase::database&, account_name);
+struct upgrade_effective_tally {
+   std::vector<account_name> voters, vetoes, excluded_banned_voters;
+};
+upgrade_effective_tally get_upgrade_effective_tally(const chainbase::database&, const upgrade_governance_object&, bool exclude_banned);
 bool is_protected_system_account(const chainbase::database& db, account_name account);
 void check_system_permission_change(apply_context& context, account_name account);
 void check_system_code_change(apply_context& context, account_name account, bool abi, const bytes& payload);

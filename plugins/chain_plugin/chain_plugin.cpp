@@ -1474,6 +1474,14 @@ fc::variant read_only::get_upgrade_state(const get_upgrade_state_params&, const 
          ("required_vetoes", state && !state->proposal_voters.empty() ? chain::upgrade_veto_threshold(state->proposal_voters.size()) : 0)
          ("head_block_num", db.head().block_num())
          ("head_block_id", db.head().id());
+   const bool v2=db.is_builtin_activated(chain::builtin_protocol_feature_t::pureeos_seven_day_governance);
+   const auto tally=state ? chain::get_upgrade_effective_tally(db.db(),*state,v2) : chain::upgrade_effective_tally{};
+   result("governance_v2_activated",v2)
+         ("effective_proposal_voters",tally.voters)("effective_vetoes",tally.vetoes)
+         ("excluded_banned_voters",tally.excluded_banned_voters)
+         ("effective_voter_count",tally.voters.size())("effective_veto_count",tally.vetoes.size())
+         ("required_vetoes",tally.voters.empty()?0:chain::upgrade_veto_threshold(tally.voters.size()))
+         ("execution_blocked_no_electorate",state && state->pending && tally.voters.empty());
    return result;
 }
 
