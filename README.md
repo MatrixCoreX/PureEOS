@@ -4,6 +4,8 @@
 
 ## 简体中文
 
+> **自有内容专有，保留所有权利。** 授权范围、上游许可和旧版授权边界见[许可说明](#许可)。
+
 PureEOS 是采用原生 Savanna 最终确认的 C++ 区块链项目。独立交易可并行执行，状态按区块交易顺序提交。智能合约工具链为 **PureEOS CDT**。
 
 ### TITAN（泰坦共识协议）
@@ -97,11 +99,13 @@ bash tools/ubuntu-modern-build.sh --build --jobs=2
 
 ### 许可
 
-见 [AIC_LICENSE.md](AIC_LICENSE.md)、[LICENSING.md](LICENSING.md)、[LICENSE](LICENSE) 及依赖声明；继承代码的版权、许可及 BSL 生产用途范围按各自声明执行。
+项目自有且有权独立授权的内容采用 [AIC 专有许可与权利保留声明 2.0](AIC_LICENSE.md)，未经事先书面授权，不授予使用、复制、修改、部署或分发许可。上游及第三方代码继续受 [LICENSE](LICENSE) 和各自声明约束；本次变更不撤销已有效授出的 [AIC 开源许可 1.0](licenses/AIC-1.0-archived.md) 或其他既有授权。适用范围与继承许可见 [LICENSING.md](LICENSING.md)。
 
 ---
 
 ## English
+
+> **Project-owned materials: proprietary; all rights reserved.** See [Licenses](#licenses) for scope, upstream terms and existing grants.
 
 PureEOS is a C++ blockchain project with native Savanna finality. Independent transactions execute in parallel and state commits follow block transaction order. Its smart-contract toolchain is **PureEOS CDT**.
 
@@ -185,4 +189,4 @@ The compatibility report documents exact environments and checks. Changes must p
 
 ### Licenses
 
-See [AIC_LICENSE.md](AIC_LICENSE.md), [LICENSING.md](LICENSING.md), [LICENSE](LICENSE) and dependency notices. Inherited copyrights, license terms and applicable BSL production-use scope remain as declared.
+Independently licensable project-owned materials are covered by the [AIC Proprietary Rights Notice 2.0](AIC_LICENSE.md). No permission to use, copy, modify, deploy or distribute those materials is granted without prior written authorization. Upstream and third-party materials remain governed by [LICENSE](LICENSE) and their applicable notices. This change does not revoke valid existing grants under [AIC Open Source License 1.0](licenses/AIC-1.0-archived.md) or another license. See [LICENSING.md](LICENSING.md) for scope and inherited obligations.

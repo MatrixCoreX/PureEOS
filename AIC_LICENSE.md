@@ -1,67 +1,67 @@
-# AIC 开源许可 1.0
+# AIC 专有许可与权利保留声明 2.0
+# AIC Proprietary Rights Notice 2.0
 
-Copyright (c) 2026 AIC 项目各贡献者。
-各贡献者分别保有其原创贡献的著作权；该声明不表示取得第三方代码的权利。
+生效日期 / Effective date: 2026-11-01
 
-## 一、适用范围
+Copyright (c) 2026 MatrixCoreX and the respective rights holders.
+All rights reserved to the extent owned or independently licensable by those holders.
 
-“授权内容”是著作权人有权授权、并明确标注采用本许可的原创代码、文档和其他作品。
-“权利人”是授权内容的著作权人，或获得其相应授权的人。
+## 中文条款
 
-本许可不覆盖仅因复制、修改、改名或合并而进入项目的第三方作品，
-也不替代这些作品原有的许可证、版权声明和其他法律义务。
-对于同时含有原创贡献和第三方内容的文件，本许可仅授予权利人能够授予的权利；
-使用该文件或组合后的程序仍须符合相应第三方许可证。
+### 1. 适用范围
 
-## 二、授予的权利
+本声明仅适用于 MatrixCoreX 或相应权利人依法拥有著作权、有权独立授权，并以本声明发布的原创代码、文档、设计及其他自有内容。各贡献者分别保有其著作权；纳入同一仓库不构成著作权转让或代其他权利人授权。
 
-任何取得授权内容的人，都可以在全球范围内免费地使用、运行、阅读、研究、
-复制、修改、合并、公开展示、发布、分发、再许可和销售授权内容，
-以及允许接收者从事这些行为。
-这些权利适用于源码和编译后的形式，允许商业使用及独立建立衍生项目，
-不因使用者的身份、所属组织、用途或使用的技术而受到区别对待。
+### 2. 不授予一般使用许可
 
-在遵守本许可的情况下，上述授权永久有效。权利人以后采用其他许可，
-不撤回已经根据本许可授予接收者的权利。
+本声明不是开源许可证。除已取得适格权利人或其授权许可人的事先书面授权外，不授予对上述自有内容进行使用、运行、复制、修改、制作衍生作品、合并、公开发布、分发、再许可、销售、部署、托管或提供第三方服务的许可。商业用途、非商业用途、研究和测试均不因用途本身获得豁免。能够查看或取得源码、构建产物、文档或发行包，不表示获得上述许可。
 
-## 三、分发条件
+本声明不改变对官方已授权在线服务的正常访问安排；访问官方服务本身不授予复用、独立部署或分发其代码的权利。
 
-分发授权内容或其具有实质内容的副本时，应一并提供本许可全文及适用的
-著作权声明。以二进制形式分发时，可以放在随包附带的许可文件或文档中。
+### 3. 上游、第三方和既有授权
 
-对于修改后的版本，应说明其经过修改，不得把修改后的内容冒充原作者
-未经修改的版本，也不得虚称得到原作者或其他项目的认可。
+上游代码、第三方依赖及其版权和许可声明继续按各自有效条款执行。本声明不重新授权这些材料，不覆盖必须遵循原许可的派生部分，也不向依上游许可合法取得的权利增加相冲突的限制。尤其不能用本声明取代仓库保留的 BSL、MIT 或其他第三方条款。
 
-接收者可以为自己有权授权的新增部分选择其他许可，
-但不得以此撤销原授权内容已有的权利或免除第三方许可证的要求。
-本许可不要求使用者公开其未分发的私人修改，也不要求公开仅与授权内容
-一同使用、且没有其他许可义务的软件源码。
+本次变更不追溯撤销依法已授予且仍有效的 AIC 开源许可 1.0 或其他许可。历史版本、明确另有许可的文件及其他权利人的贡献，仍按其实际适用的授权处理。更改仓库声明不能消除接收者已合法取得的权利。
 
-## 四、贡献与名称
+依法不得排除的权利，以及适用平台条款已有效授予的权利，不因本声明而被排除。
 
-贡献本身不转让著作权。每位贡献者只能授权自己拥有或有权授权的部分，
-其他人的贡献不因纳入同一项目而自动改用本许可。
+### 4. 名称与其他权利
 
-本许可不授予任何商标、标志、域名或项目身份的使用权；
-如实说明技术来源、兼容性或修改关系，不表示获得项目背书。
-本许可本身不作第三方专利许可或不存在第三方权利的保证。
+本声明不另行授予 TITAN、PureEOS、AIC、MatrixCoreX 等名称、标志、域名的商标许可，也不作第三方专利授权或第三方权利不存在的保证。任何另行授权均以对应权利人实际拥有或获授权的权利范围为限。
 
-## 五、无担保与责任限制
+### 5. 无担保与责任限制
 
-在适用法律允许的范围内，授权内容按其现有状态提供。
-权利人及贡献者不保证其适销性、适合特定用途、准确性、安全性、
-持续可用性或不侵犯第三方权利。
+在适用法律允许的范围内，内容按现状提供，不保证适销性、特定用途适用性、准确性、持续可用性或不侵权；权利人及贡献者不对因内容使用产生的损失承担可依法排除的责任。依法不能排除的义务和责任不受本条影响。
 
-使用、修改或分发授权内容所产生的风险由使用者自行承担。
-在适用法律允许排除责任的范围内，权利人及贡献者不对由此产生的损失负责，
-包括数据损失、利润损失、业务中断以及其他直接或间接损失。
-依法不能排除的义务和责任不受本条影响。
+中文条款为本声明的有效文本；以下英文仅为对照译文。自定义标识 LicenseRef-AIC-Proprietary-2.0 不表示获得 OSI 批准或已列入 SPDX 标准许可清单。
 
-## 六、采用与版本
+## English reference translation
 
-原创文件可以用“SPDX-License-Identifier: LicenseRef-AIC-1.0”指向本许可，
-并保留实际著作权人的声明。该标识是项目自定义标识，
-不表示已在 SPDX 许可列表登记或获得 OSI 批准。
+### 1. Scope
 
-本文件是 AIC 自行制定的许可文本，不声称是 MIT、Apache 或其他已有许可的
-官方版本。中文正文为本许可的有效文本；翻译应明确标为参考译文。
+This notice applies only to original code, documentation, designs and other materials that MatrixCoreX or the respective rights holder owns, may license independently, and releases under this notice. Contributors retain their respective copyrights. Inclusion in a repository does not transfer copyright or authorize one party to license another party's work.
+
+### 2. No general permission granted
+
+This is not an open-source license. Without prior written authorization from the appropriate rights holder or its authorized licensor, no permission is granted to use, execute, copy, modify, create derivative works from, merge, publish, distribute, sublicense, sell, deploy, host, or provide third-party services using the covered materials. Commercial, noncommercial, research and testing purposes are not exempt merely because of their purpose. Access to source code, build outputs, documentation or release packages does not itself grant these permissions.
+
+This notice does not change normal access arrangements for an officially authorized hosted service. Access to an official service does not grant rights to reuse, independently deploy or redistribute its code.
+
+### 3. Upstream materials, third parties and existing grants
+
+Upstream code, third-party dependencies, and their copyright and license notices remain governed by their own applicable terms. This notice does not relicense those materials, override obligations that apply to derivative works, or impose conflicting restrictions on rights validly granted under their governing licenses. In particular, it does not replace the retained BSL, MIT or other third-party terms.
+
+This change does not retroactively revoke rights that were validly granted and remain effective under AIC Open Source License 1.0 or another license. Historical versions, files with separate license notices, and other rights holders' contributions remain subject to their applicable grants. Changing a repository notice cannot eliminate rights a recipient has already validly obtained.
+
+Rights that cannot lawfully be excluded, and rights effectively granted by applicable platform terms, are not excluded by this notice.
+
+### 4. Names and other rights
+
+This notice grants no additional trademark rights in TITAN, PureEOS, AIC, MatrixCoreX, their logos or domain names. It provides no third-party patent license or assurance that third-party rights do not exist. Any separate authorization is limited to rights actually owned by, or licensed to, the authorizing party.
+
+### 5. Disclaimer
+
+To the extent permitted by applicable law, the materials are provided as is, without warranties of merchantability, fitness for a particular purpose, accuracy, continued availability or noninfringement. Rights holders and contributors disclaim liability to the extent it may lawfully be excluded. Obligations and liabilities that cannot lawfully be excluded remain unaffected.
+
+The Chinese terms are authoritative; this English text is a reference translation. LicenseRef-AIC-Proprietary-2.0 is a custom identifier and does not imply OSI approval or inclusion in the SPDX License List.
