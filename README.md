@@ -6,6 +6,16 @@
 
 PureEOS 是采用原生 Savanna 最终确认的 C++ 区块链项目。独立交易可并行执行，状态按区块交易顺序提交。智能合约工具链为 **PureEOS CDT**。
 
+### TITAN（泰坦共识协议）
+
+**TITAN（泰坦共识协议）是一套在 DPoS 基础上改进与扩展的共识协议，将链上选举、动态轮岗、BLS 最终确认、维护交接与故障淘汰整合为统一的节点运行规则。** 协议依据链上投票、注册状态及密钥资格建立候选节点集合，并通过确定性的排班和轮岗机制，组织当班节点与候补节点有序参与网络共识。
+
+在最终确认环节，TITAN 采用 BLS 聚合签名与法定确认权重门槛，验证节点提交的确认票，推动区块进入不可逆状态。节点名单发生变化时，通过明确的策略交接流程协调出块职责与最终确认权限，保证成员切换遵循共识规则。
+
+对于计划维护，TITAN 提供申请、等待交接、维护生效与恢复参与的状态流程。节点在完成职责交接并满足相应确认条件后进入维护，使运维操作能够与链上的共识状态保持一致。
+
+对于持续不履行出块职责的节点，TITAN 根据已最终确认的链上出块证据，在满足委员会规模、观察窗口及处罚条件后执行淘汰与永久封禁。通过明确的证据结算和状态转换规则，协议为节点准入、轮岗、维护及故障处置提供可查询、可验证的运行依据。
+
 ### 获取和运行
 
 [节点发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/baseline-2026.10.30)提供运行包、PureEOS CDT SDK 和 SHA256SUMS。当前源码从 `main` 获取；新链使用[精确 1% 系统合约发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.10.31-exact1pct)，其中包含配套源码、WASM、ABI 及校验清单。
@@ -94,6 +104,16 @@ bash tools/ubuntu-modern-build.sh --build --jobs=2
 ## English
 
 PureEOS is a C++ blockchain project with native Savanna finality. Independent transactions execute in parallel and state commits follow block transaction order. Its smart-contract toolchain is **PureEOS CDT**.
+
+### TITAN Consensus Protocol
+
+**TITAN (Titan Consensus Protocol) improves and extends DPoS by integrating on-chain elections, dynamic producer rotation, finality using BLS signatures, maintenance handovers, and the removal of faulty producers into a unified set of rules for operating consensus nodes.** The protocol forms a candidate set based on on-chain votes, registration status, and signing key requirements. Deterministic scheduling and rotation rules organize the participation of incumbent and standby producers in network consensus.
+
+For finality, TITAN uses BLS signature aggregation and a quorum threshold measured by finalizer voting weight to validate confirmation votes and advance blocks toward irreversibility. When membership changes, an explicit policy handover process coordinates changes to block production duties and finalization authority, so that transitions follow the consensus rules.
+
+For planned maintenance, TITAN defines a process for requesting maintenance, awaiting handover, entering maintenance, and returning to participation. A producer enters maintenance after handing over its consensus duties and satisfying the applicable confirmation conditions, aligning operational procedures with the on-chain consensus state.
+
+For producers that persistently fail to perform their block production duties, TITAN relies on finalized on-chain production evidence. Removal and permanent bans are applied only when the committee size, observation windows, and penalty conditions are satisfied. Explicit evidence settlement and state transition rules provide an inspectable and verifiable basis for producer admission, rotation, maintenance, and fault handling.
 
 ### Install and run
 
