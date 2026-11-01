@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-01T04:20:33.704636+00:00",
+  "candidate": {
+    "status": "ABI_PROSE_CANDIDATE",
+    "contract_source": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+    "logic_source": "5aaec95f76fdf8a07f329d5b66e0a60de9f3c8b7",
+    "WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+    "ABI_packed_SHA256": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+    "ABI_packed_bytes": 59817,
+    "action_struct_table_wire_schema_unchanged": true,
+    "changed_ricardian_actions": [
+      "govinit",
+      "devpropose",
+      "devveto",
+      "devexec"
+    ],
+    "old_qualified_artifacts_preserved": true,
+    "serialization_note": "Re-emitting the entire ABI JSON with ensure_ascii=True changed native parsing of unrelated Unicode Ricardian text. Original byte encoding/format now preserved; only four exact JSON string literals are replaced."
+  },
+  "source_rebuilt": {
+    "status": "PASS",
+    "source": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+    "WASM_SHA256": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "runtime_WASM_byte_exact_to_qualified_C2": true,
+    "ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+    "reviewed_ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+    "ABI_all_fields_semantically_identical": true,
+    "all_selected_contract_modes_preserved": true
+  },
+  "supplementary_native_case_executions": 17,
+  "core_unique_native_cases": 92,
+  "unique_cases_combined": 93,
+  "successful_case_executions_combined": 111,
+  "count_scope": "17reruns overlap16core cases and add1new ABI-serialization case. Not109unique cases. Two core reward names overlap their16/56groups. Failed/interrupted candidates retained separately.",
+  "native_program_SHA256": "e97178bd95573374cfde9906f91137464235dcc9178eb65a4be0adea1ab45d62",
+  "full_execution_packing_preflight": {
+    "status": "PASS_SIGNED_AND_DECODED_NO_BROADCAST",
+    "time": "2026-11-01T04:15:54.336247+00:00",
+    "code_SHA256": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "ABI_SHA256": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+    "uncompressed_transaction_bytes": 558261,
+    "compressed_transaction_bytes": 147624,
+    "consensus_max_transaction_net_usage": 524288,
+    "safe_size_margin_bytes": 375640,
+    "actual_native_ABI_action_decode_byte_exact": true,
+    "signatures": 1,
+    "transaction_sent": false,
+    "keys_only_remote_stdin": true,
+    "future_executor_must_fresh_sign": true
+  },
+  "live_WASM_installed": false,
+  "live_contract_requires_full_actual_seven_day_review": true,
+  "TPS": "unmeasured"
+}

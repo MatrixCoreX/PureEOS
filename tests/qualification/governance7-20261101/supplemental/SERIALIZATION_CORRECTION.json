@@ -1,0 +1,13 @@
+{
+  "status": "PASS_CORRECTED_AND_SOURCE_REBUILT",
+  "old_native_matches_live_byte_exact": true,
+  "old_native_SHA256": "3ede155adf72526771d86bbfa789922c8e1394ab7b51ba61e00e189f7bb4efba",
+  "escaped_JSON_native_ABI": "0cc0f19286f33b80e69ce9a824011f6326a50bc2254702dd1bb5423e6a2c0631",
+  "cause": "Re-emitting the entire ABI JSON with ensure_ascii=True changed native parsing of unrelated Unicode Ricardian text. Original byte encoding/format now preserved; only four exact JSON string literals are replaced.",
+  "expected_minimal_native_ABI": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+  "incorrect_initial_empty_extension_theory_rejected": true,
+  "live_changes": false,
+  "native_codec_verified": true,
+  "native17_passed": true,
+  "reviewed_JSON_byte_exact_to_source_build": true
+}

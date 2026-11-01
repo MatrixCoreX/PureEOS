@@ -1,0 +1,18 @@
+{
+  "status": "ABI_PROSE_CANDIDATE",
+  "contract_source": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+  "logic_source": "5aaec95f76fdf8a07f329d5b66e0a60de9f3c8b7",
+  "WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+  "ABI_packed_SHA256": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+  "ABI_packed_bytes": 59817,
+  "action_struct_table_wire_schema_unchanged": true,
+  "changed_ricardian_actions": [
+    "govinit",
+    "devpropose",
+    "devveto",
+    "devexec"
+  ],
+  "old_qualified_artifacts_preserved": true,
+  "serialization_note": "Re-emitting the entire ABI JSON with ensure_ascii=True changed native parsing of unrelated Unicode Ricardian text. Original byte encoding/format now preserved; only four exact JSON string literals are replaced."
+}

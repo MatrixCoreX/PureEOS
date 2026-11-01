@@ -1,0 +1,15 @@
+{
+  "status": "PASS_SIGNED_AND_DECODED_NO_BROADCAST",
+  "time": "2026-11-01T04:15:54.336247+00:00",
+  "code_SHA256": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "ABI_SHA256": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+  "uncompressed_transaction_bytes": 558261,
+  "compressed_transaction_bytes": 147624,
+  "consensus_max_transaction_net_usage": 524288,
+  "safe_size_margin_bytes": 375640,
+  "actual_native_ABI_action_decode_byte_exact": true,
+  "signatures": 1,
+  "transaction_sent": false,
+  "keys_only_remote_stdin": true,
+  "future_executor_must_fresh_sign": true
+}

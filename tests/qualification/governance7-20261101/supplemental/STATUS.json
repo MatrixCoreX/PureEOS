@@ -1,0 +1,31 @@
+{
+  "status": "FUNCTIONAL_QUALIFICATION_PASS_LIVE_ROLLOUT_AND_REAL_REVIEW_PENDING",
+  "snapshot_UTC": "2026-11-01T04:22:41.929259+00:00",
+  "actual_hardware": {
+    "cpu_model": "AMD EPYC 4345P 8-Core Processor",
+    "MemTotal": "MemTotal:       63360244 kB"
+  },
+  "advertised_physical_cores": 8,
+  "hardware_threads": 16,
+  "advertised_RAM_MiB": 65536,
+  "native_unique_cases": 93,
+  "native_successful_case_executions": 111,
+  "frontend_tests": 179,
+  "vote_API_tests": 12,
+  "summary_tests": 5,
+  "legacy_compatibility_tests": 18,
+  "voting_finalized_transactions": 119,
+  "new_ordinary_12character_voters": 40,
+  "live_nodeos": 31,
+  "maintenance_pending": 0,
+  "maintenance_effective": 0,
+  "permanent_bans": 5,
+  "current_native_versions": {
+    "v2.0.0-5d95aa18fea665f4ee60eda13b01dec82ff43535": 13,
+    "v2.0.0-7372b1de773e339d3c9b4f62fc161c459e85d66a": 18
+  },
+  "current_review_seconds": 1209600,
+  "current_proposal_pending": false,
+  "live_contract_replaced": false,
+  "new_TPS": "unmeasured"
+}

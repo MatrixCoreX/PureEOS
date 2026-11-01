@@ -1,0 +1,144 @@
+diff --git a/contracts/eosio.system/ricardian/eosio.system.contracts.md.in b/contracts/eosio.system/ricardian/eosio.system.contracts.md.in
+index 96d2719..1cb8789 100644
+--- a/contracts/eosio.system/ricardian/eosio.system.contracts.md.in
++++ b/contracts/eosio.system/ricardian/eosio.system.contracts.md.in
+@@ -873,7 +873,7 @@ Reclaim and retire {{$action.unvest_net_quantity}} and {{$action.unvest_cpu_quan
+ 
+ <h1 class="contract">govinit</h1>
+ 
+-One-time PureEOS profile-2 bootstrap, authorized by eosio@owner. Seals protected system permissions, selects the independent developer, and verifies the system contract's initial electorate handshake. The review_seconds field must equal 1209600: a fixed 14-day review period, not a configurable duration. This cannot be used after initialization.
++One-time PureEOS profile-2 bootstrap, authorized by eosio@owner. Seals protected system permissions, selects the independent developer, and verifies the system contract's initial electorate handshake. After PUREEOS_SEVEN_DAY_GOVERNANCE activation, review_seconds must equal 604800 (seven days); pre-activation replay requires the original 1209600. This is not a configurable duration and cannot be used after initialization.
+ 
+ <h1 class="contract">refreshgov</h1>
+ 
+@@ -881,11 +881,11 @@ Refresh the deterministic, at-most-210 eligible producer electorate. The caller
+ 
+ <h1 class="contract">devpropose</h1>
+ 
+-The configured developer publishes an upgrade bound to the target, base and new code/ABI hashes, review document hash, frozen electorate and full 14-day review deadline. This action does not install code. Ordinary users and producer authorities cannot publish system upgrades.
++The configured developer publishes an upgrade bound to the target, base and new code/ABI hashes, review document hash and frozen electorate. New proposals after PUREEOS_SEVEN_DAY_GOVERNANCE activation require a full seven-day review; pre-activation proposals retain their original deadlines. This action does not install code. Ordinary users and producer authorities cannot publish system upgrades.
+ 
+ <h1 class="contract">devveto</h1>
+ 
+-A member of the proposal's frozen electorate permanently records one objection before the deadline. At least ceiling(2N/3) distinct objections block that proposal; abstention is not an objection. This does not grant any general system management authority.
++A member of the proposal's frozen electorate records one objection before its deadline. After PUREEOS_SEVEN_DAY_GOVERNANCE activation, permanent bans exclude an account from both the effective electorate N and the effective objections V; original records remain. At least ceiling(2N/3) effective objections block execution; an empty effective electorate also blocks execution. Abstention is not an objection. Maintenance and ordinary vote changes do not rewrite frozen rights. This grants no general system management authority.
+ 
+ <h1 class="contract">devcancel</h1>
+ 
+@@ -893,4 +893,4 @@ The configured developer cancels the identified pending upgrade. A new proposal
+ 
+ <h1 class="contract">devexec</h1>
+ 
+-The configured developer executes the exact reviewed code and ABI after the full 14-day deadline, only when the frozen electorate's veto threshold has not been reached. No affirmative producer approval is required; zero objections allow execution after the deadline, never before it. The native host checks all hashes and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.
++The configured developer executes the exact reviewed code and ABI only after the proposal's full deadline and below the effective veto threshold. New proposals after PUREEOS_SEVEN_DAY_GOVERNANCE activation wait seven days; older deadlines remain unchanged. No affirmative producer approval is required. The native host verifies hashes, authorization and a nonempty effective electorate, and installs code and ABI atomically. Failure leaves the pending proposal and previous code unchanged.
+diff --git a/contracts/eosio.system/src/rotation_state.cpp b/contracts/eosio.system/src/rotation_state.cpp
+index cdea86a..dce1cf0 100644
+--- a/contracts/eosio.system/src/rotation_state.cpp
++++ b/contracts/eosio.system/src/rotation_state.cpp
+@@ -27,6 +27,18 @@ bool sync_ranking(rotation_candidates& candidates) {
+    return false; // begin the next snapshot on a later block: total rank work <= 16
+ }
+ 
++// Permanent bans revoke both queue membership and the live ranking key.
++// A building snapshot keeps its old scan key until the bounded dirty drain.
++void revoke_banned_rank(rotation_candidate& candidate, const rotation_info& state) {
++   const auto key = invalid_rank_floor | candidate.owner.value;
++   if (candidate.rank != key) {
++      candidate.rank = key;
++      if (state.ranking) candidate.frozen_epoch = state.snapshot_epoch;
++      else { candidate.previous_rank = key; candidate.frozen_epoch = 0; }
++   }
++   candidate.ticket = 0;
++}
++
+ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
+    auto previous = candidates.get_index<"byprevious"_n>();
+    for (uint32_t work = 0; work < rotation::rank_work_budget; ++work) {
+@@ -42,9 +54,18 @@ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
+       s.rank_cursor = key;
+       s.rank_started = true;
+       auto c = candidates.find(b->owner.value);
+-      ++s.ranked_count; // banned accounts still occupy their rank; never backfill C+1
++      // Legacy banned rows can still carry a positive vote key after upgrade.
++      // Skip them BEFORE counting capacity, allowing C+1 (and later) to enter.
++      if (c->banned) {
++         candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
++         continue;
++      }
++      ++s.ranked_count;
+       candidates.modify(c, same_payer, [&](auto& r) {
+-         if (!r.banned && (r.ticket == 0 || r.seen_epoch != s.published_epoch)) r.ticket = next_ticket(s);
++         // Aborted snapshots may already have stamped a newer epoch. Their
++         // existing tickets keep FIFO priority; only older stale membership
++         // must rejoin at the tail of the queue.
++         if (r.ticket == 0 || r.seen_epoch < s.published_epoch) r.ticket = next_ticket(s);
+          r.seen_epoch = s.snapshot_epoch;
+       });
+    }
+@@ -125,6 +146,13 @@ void observe_windows(rotation_info& s, rotation_candidates& candidates,
+             if (++r.zero_windows == 3) {
+                r.banned = true;
+                r.ban_final_block = ctx.final_block_num;
++               revoke_banned_rank(r, s);
++               // A ban may arrive after this row was already counted. Rebuild
++               // the bounded snapshot so it cannot strand a capacity vacancy.
++               if (s.ranking || s.selecting) {
++                  s.ranking = false; s.selecting = false;
++                  s.ranked_count = 0; s.rank_started = false; s.rank_cursor = 0;
++               }
+                ++s.total_banned;
+             }
+          }
+@@ -205,6 +233,11 @@ void system_contract::refresh_rotation_candidate(name owner, bool reserve) {
+    const auto p = _producers.find(owner.value);
+    const auto f = _finalizers.find(owner.value);
+    auto key = invalid_rank_floor | owner.value;
++   if (c != candidates.end() && c->banned) {
++      if (c->rank != key || c->ticket != 0)
++         candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
++      return; // Votes, re-registration and key changes never restore eligibility.
++   }
+    if (p != _producers.end() && p->total_votes > 0 && usable_producer(*p) &&
+        f != _finalizers.end() && f->active_key_binary.size() == 96)
+       key = (uint128_t(uint64_t(-1) - uint64_t(p->total_votes)) << 64) | owner.value;
+@@ -243,16 +276,15 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
+    s.capacity = rotation::candidate_capacity(s.growth_start_slot, ctx.slot);
+    rotation_candidates candidates(get_self(), get_self().value);
+    const bool observation_gap = s.last_slot && uint64_t(ctx.slot) - s.last_slot >= rotation::pause_guard_slots;
+-   // Outside a snapshot, user mutations update both indexes directly and do
+-   // not add dirty rows. Thus this drain has a finite, monotonically shrinking
+-   // workload even under continuous voting; policy handoffs need not wait.
+-   const bool rank_ready = s.ranking || sync_ranking(candidates);
+    s.blocked = 0;
+    std::vector<name> actual;
+    for (const auto& p : ctx.producers) actual.push_back(p.producer_name);
+    observe_windows(s, candidates, ctx, producer,
+       actual.size() == rotation::committee_limit && ctx.finalizers.size() == rotation::committee_limit,
+       common_members(ctx, actual));
++   // A newly settled ban can restart a building snapshot. Drain its frozen
++   // keys AFTER observing bans, before taking the next immutable snapshot.
++   const bool rank_ready = s.ranking || sync_ranking(candidates);
+    const auto banned = [&](name n) {
+       auto c = candidates.find(n.value);
+       return c != candidates.end() && c->banned;
+diff --git a/contracts/eosio.system/src/upgrade_governance.cpp b/contracts/eosio.system/src/upgrade_governance.cpp
+index 514fa13..50ab33d 100644
+--- a/contracts/eosio.system/src/upgrade_governance.cpp
++++ b/contracts/eosio.system/src/upgrade_governance.cpp
+@@ -24,10 +24,13 @@ void system_contract::refreshgov() {
+    rotation_candidates candidates(get_self(), get_self().value);
+    const auto ranked = candidates.get_index<"byrank"_n>();
+    constexpr uint128_t invalid_rank_floor = uint128_t(uint64_t(-1)) << 64;
++   // New bans have invalid keys. Bound any legacy banned prefix until the
++   // rotation scanner has normalized it; never publish a truncated electorate.
++   constexpr uint32_t max_scanned_candidates = 1024;
++   uint32_t scanned = 0;
+    for (auto it = ranked.begin(); it != ranked.end() && it->rank < invalid_rank_floor && voters.size() < 210; ++it) {
+-      // At most 211 eligible rows including the developer. Blacklisting only
+-      // removes rotation rights; preserve the existing veto eligibility rule.
+-      if (it->owner != developer) voters.push_back(it->owner.value);
++      check(scanned++ < max_scanned_candidates, "governance candidate scan limit exceeded");
++      if (!it->banned && it->owner != developer) voters.push_back(it->owner.value);
+    }
+ #else
+    const auto ranked = _producers.get_index<"prototalvote"_n>();

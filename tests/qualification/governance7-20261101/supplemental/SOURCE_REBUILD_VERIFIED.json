@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "source": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+  "WASM_SHA256": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "runtime_WASM_byte_exact_to_qualified_C2": true,
+  "ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+  "reviewed_ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+  "ABI_all_fields_semantically_identical": true,
+  "all_selected_contract_modes_preserved": true
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "canonical_native_codec": "cleos convert pack_hex --type abi_def",
+  "packed_ABI_SHA256": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+  "packed_bytes": 59817,
+  "identical_to_minimal_four_string_change": true,
+  "JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a"
+}
