@@ -24,10 +24,13 @@ void system_contract::refreshgov() {
    rotation_candidates candidates(get_self(), get_self().value);
    const auto ranked = candidates.get_index<"byrank"_n>();
    constexpr uint128_t invalid_rank_floor = uint128_t(uint64_t(-1)) << 64;
+   // New bans have invalid keys. Bound any legacy banned prefix until the
+   // rotation scanner has normalized it; never publish a truncated electorate.
+   constexpr uint32_t max_scanned_candidates = 1024;
+   uint32_t scanned = 0;
    for (auto it = ranked.begin(); it != ranked.end() && it->rank < invalid_rank_floor && voters.size() < 210; ++it) {
-      // At most 211 eligible rows including the developer. Blacklisting only
-      // removes rotation rights; preserve the existing veto eligibility rule.
-      if (it->owner != developer) voters.push_back(it->owner.value);
+      check(scanned++ < max_scanned_candidates, "governance candidate scan limit exceeded");
+      if (!it->banned && it->owner != developer) voters.push_back(it->owner.value);
    }
 #else
    const auto ranked = _producers.get_index<"prototalvote"_n>();

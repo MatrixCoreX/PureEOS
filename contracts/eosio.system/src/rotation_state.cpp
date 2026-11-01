@@ -27,6 +27,18 @@ bool sync_ranking(rotation_candidates& candidates) {
    return false; // begin the next snapshot on a later block: total rank work <= 16
 }
 
+// Permanent bans revoke both queue membership and the live ranking key.
+// A building snapshot keeps its old scan key until the bounded dirty drain.
+void revoke_banned_rank(rotation_candidate& candidate, const rotation_info& state) {
+   const auto key = invalid_rank_floor | candidate.owner.value;
+   if (candidate.rank != key) {
+      candidate.rank = key;
+      if (state.ranking) candidate.frozen_epoch = state.snapshot_epoch;
+      else { candidate.previous_rank = key; candidate.frozen_epoch = 0; }
+   }
+   candidate.ticket = 0;
+}
+
 void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
    auto previous = candidates.get_index<"byprevious"_n>();
    for (uint32_t work = 0; work < rotation::rank_work_budget; ++work) {
@@ -42,9 +54,15 @@ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
       s.rank_cursor = key;
       s.rank_started = true;
       auto c = candidates.find(b->owner.value);
-      ++s.ranked_count; // banned accounts still occupy their rank; never backfill C+1
+      // Legacy banned rows can still carry a positive vote key after upgrade.
+      // Skip them BEFORE counting capacity, allowing C+1 (and later) to enter.
+      if (c->banned) {
+         candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
+         continue;
+      }
+      ++s.ranked_count;
       candidates.modify(c, same_payer, [&](auto& r) {
-         if (!r.banned && (r.ticket == 0 || r.seen_epoch != s.published_epoch)) r.ticket = next_ticket(s);
+         if (r.ticket == 0 || r.seen_epoch != s.published_epoch) r.ticket = next_ticket(s);
          r.seen_epoch = s.snapshot_epoch;
       });
    }
@@ -125,6 +143,13 @@ void observe_windows(rotation_info& s, rotation_candidates& candidates,
             if (++r.zero_windows == 3) {
                r.banned = true;
                r.ban_final_block = ctx.final_block_num;
+               revoke_banned_rank(r, s);
+               // A ban may arrive after this row was already counted. Rebuild
+               // the bounded snapshot so it cannot strand a capacity vacancy.
+               if (s.ranking || s.selecting) {
+                  s.ranking = false; s.selecting = false;
+                  s.ranked_count = 0; s.rank_started = false; s.rank_cursor = 0;
+               }
                ++s.total_banned;
             }
          }
@@ -205,6 +230,11 @@ void system_contract::refresh_rotation_candidate(name owner, bool reserve) {
    const auto p = _producers.find(owner.value);
    const auto f = _finalizers.find(owner.value);
    auto key = invalid_rank_floor | owner.value;
+   if (c != candidates.end() && c->banned) {
+      if (c->rank != key || c->ticket != 0)
+         candidates.modify(c, same_payer, [&](auto& r) { revoke_banned_rank(r, s); });
+      return; // Votes, re-registration and key changes never restore eligibility.
+   }
    if (p != _producers.end() && p->total_votes > 0 && usable_producer(*p) &&
        f != _finalizers.end() && f->active_key_binary.size() == 96)
       key = (uint128_t(uint64_t(-1) - uint64_t(p->total_votes)) << 64) | owner.value;
@@ -243,16 +273,15 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
    s.capacity = rotation::candidate_capacity(s.growth_start_slot, ctx.slot);
    rotation_candidates candidates(get_self(), get_self().value);
    const bool observation_gap = s.last_slot && uint64_t(ctx.slot) - s.last_slot >= rotation::pause_guard_slots;
-   // Outside a snapshot, user mutations update both indexes directly and do
-   // not add dirty rows. Thus this drain has a finite, monotonically shrinking
-   // workload even under continuous voting; policy handoffs need not wait.
-   const bool rank_ready = s.ranking || sync_ranking(candidates);
    s.blocked = 0;
    std::vector<name> actual;
    for (const auto& p : ctx.producers) actual.push_back(p.producer_name);
    observe_windows(s, candidates, ctx, producer,
       actual.size() == rotation::committee_limit && ctx.finalizers.size() == rotation::committee_limit,
       common_members(ctx, actual));
+   // A newly settled ban can restart a building snapshot. Drain its frozen
+   // keys AFTER observing bans, before taking the next immutable snapshot.
+   const bool rank_ready = s.ranking || sync_ranking(candidates);
    const auto banned = [&](name n) {
       auto c = candidates.find(n.value);
       return c != candidates.end() && c->banned;
