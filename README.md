@@ -4,7 +4,19 @@
 
 ## 简体中文
 
+> **自有内容允许非商业使用、fork、修改和分发；商业使用须另行书面授权。** 授权范围与上游条款见[许可说明](#许可)。
+
 PureEOS 是采用原生 Savanna 最终确认的 C++ 区块链项目。独立交易可并行执行，状态按区块交易顺序提交。智能合约工具链为 **PureEOS CDT**。
+
+### TITAN（泰坦共识协议）
+
+**TITAN（泰坦共识协议）是一套在 DPoS 基础上改进与扩展的共识协议，将链上选举、动态轮岗、BLS 最终确认、维护交接与故障淘汰整合为统一的节点运行规则。** 协议依据链上投票、注册状态及密钥资格建立候选节点集合，并通过确定性的排班和轮岗机制，组织当班节点与候补节点有序参与网络共识。
+
+在最终确认环节，TITAN 采用 BLS 聚合签名与法定确认权重门槛，验证节点提交的确认票，推动区块进入不可逆状态。节点名单发生变化时，通过明确的策略交接流程协调出块职责与最终确认权限，保证成员切换遵循共识规则。
+
+对于计划维护，TITAN 提供申请、等待交接、维护生效与恢复参与的状态流程。节点在完成职责交接并满足相应确认条件后进入维护，使运维操作能够与链上的共识状态保持一致。
+
+对于持续不履行出块职责的节点，TITAN 根据已最终确认的链上出块证据，在满足委员会规模、观察窗口及处罚条件后执行淘汰与永久封禁。通过明确的证据结算和状态转换规则，协议为节点准入、轮岗、维护及故障处置提供可查询、可验证的运行依据。
 
 ### 获取和运行
 
@@ -39,6 +51,8 @@ sha256sum -c SHA256SUMS
 当前测试部署将出块节点、非出块历史节点和 PureHistory 放在同一台物理机，仍会共享 CPU、内存和磁盘。最新纯转账实测在历史节点及全部历史后端停止时完成：EPYC 4345P、8 物理核 / 16 线程、8 个投送连接，12 秒固定窗口 **36,892.67 入块 TPS / 35,810.17 不可逆 TPS**，共 **1,040,000 笔最终确认、未确认 0**。详见[参数、节点分工与实测范围](docs/network/CPU16_NET4_SHIP_ROLES_20261031.md)。该短窗结果不代表历史服务同时运行时的持续吞吐。
 
 ### BP、最终确认和维护
+
+节点上线操作见 [启动、同步、BP 注册与维护流程](docs/network/BP_STARTUP_REGISTRATION.md)，包含命令示例、参选前检查及维护停机/恢复条件。
 
 用户以自身权限直接投票，最多选择一个 BP，代理投票禁用。投票排名候选、FIFO 轮岗候补、当前生效出块/确认政策及实际在线节点分别管理；每次按现有规则交接一个席位。注册和有选票不代表节点已同步或密钥已就绪。
 
@@ -85,13 +99,25 @@ bash tools/ubuntu-modern-build.sh --build --jobs=2
 
 ### 许可
 
-见 [AIC_LICENSE.md](AIC_LICENSE.md)、[LICENSING.md](LICENSING.md)、[LICENSE](LICENSE) 及依赖声明；继承代码的版权、许可及 BSL 生产用途范围按各自声明执行。
+项目自有且有权独立授权的内容采用 [AIC 非商业许可 3.0](AIC_LICENSE.md)：允许非商业使用、fork、修改及分发源码或构建产物，须保留版权、许可声明及商业使用限制；商业使用须事先取得单独书面授权。本许可不是 OSI 定义的开源许可。上游及第三方代码继续受 [LICENSE](LICENSE) 和各自声明约束，既有有效授权不变。适用范围与继承许可见 [LICENSING.md](LICENSING.md)。
 
 ---
 
 ## English
 
+> **Project-owned materials permit noncommercial use, forks, modifications and distribution; commercial use requires separate written authorization.** See [Licenses](#licenses) for scope and upstream terms.
+
 PureEOS is a C++ blockchain project with native Savanna finality. Independent transactions execute in parallel and state commits follow block transaction order. Its smart-contract toolchain is **PureEOS CDT**.
+
+### TITAN Consensus Protocol
+
+**TITAN (Titan Consensus Protocol) improves and extends DPoS by integrating on-chain elections, dynamic producer rotation, finality using BLS signatures, maintenance handovers, and the removal of faulty producers into a unified set of rules for operating consensus nodes.** The protocol forms a candidate set based on on-chain votes, registration status, and signing key requirements. Deterministic scheduling and rotation rules organize the participation of incumbent and standby producers in network consensus.
+
+For finality, TITAN uses BLS signature aggregation and a quorum threshold measured by finalizer voting weight to validate confirmation votes and advance blocks toward irreversibility. When membership changes, an explicit policy handover process coordinates changes to block production duties and finalization authority, so that transitions follow the consensus rules.
+
+For planned maintenance, TITAN defines a process for requesting maintenance, awaiting handover, entering maintenance, and returning to participation. A producer enters maintenance after handing over its consensus duties and satisfying the applicable confirmation conditions, aligning operational procedures with the on-chain consensus state.
+
+For producers that persistently fail to perform their block production duties, TITAN relies on finalized on-chain production evidence. Removal and permanent bans are applied only when the committee size, observation windows, and penalty conditions are satisfied. Explicit evidence settlement and state transition rules provide an inspectable and verifiable basis for producer admission, rotation, maintenance, and fault handling.
 
 ### Install and run
 
@@ -115,6 +141,8 @@ The producer runs with SHIP disabled and does not load `eosio::state_history_plu
 The current test deployment places the producer, history node and PureHistory on the same physical host, sharing CPU, RAM and disk. The latest pure-transfer measurement stopped the history node and all history backends: EPYC 4345P, 8 physical cores / 16 threads and 8 sender connections achieved **36,892.67 inclusion TPS / 35,810.17 irreversible TPS** over a fixed 12-second window, with **1,040,000 finalized transactions and zero unconfirmed**. See [parameters, node roles and measurement scope](docs/network/CPU16_NET4_SHIP_ROLES_20261031.md). This short window does not establish sustained throughput with history services running.
 
 ### BP selection, finality and maintenance
+
+Follow the [startup, synchronization, BP registration and maintenance guide](docs/network/BP_STARTUP_REGISTRATION.en.md) for command examples, readiness checks and shutdown/resume conditions.
 
 Users vote directly with their own authority for at most one BP; proxy voting is disabled. Ranked candidates, FIFO standbys, effective proposer/finalizer policies and online processes are separate states. Rotation hands off one seat at a time under the existing rules. Registration and votes do not establish synchronization or key readiness.
 
@@ -161,4 +189,4 @@ The compatibility report documents exact environments and checks. Changes must p
 
 ### Licenses
 
-See [AIC_LICENSE.md](AIC_LICENSE.md), [LICENSING.md](LICENSING.md), [LICENSE](LICENSE) and dependency notices. Inherited copyrights, license terms and applicable BSL production-use scope remain as declared.
+Independently licensable project-owned materials use the [AIC Noncommercial License 3.0](AIC_LICENSE.md): noncommercial use, forks, modifications, and distribution of source code or build outputs are permitted with copyright notices, license terms and commercial use restrictions retained. Commercial use requires separate prior written authorization. This is not an open-source license under the OSI definition. Upstream and third-party materials remain governed by [LICENSE](LICENSE) and their applicable notices; valid existing grants remain unaffected. See [LICENSING.md](LICENSING.md) for scope and inherited obligations.
