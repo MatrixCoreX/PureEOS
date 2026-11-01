@@ -1,0 +1,18 @@
+{
+  "status": "CLEAN_END_TO_END_DRIVER",
+  "inputs": "immutable genuine signed blocklog + independent canonical integrity reference",
+  "steps": [
+    "fresh independent data dir",
+    "same production ELF full checks and parallel",
+    "exact head/chain verification and graceful stop",
+    "read-only restart",
+    "full canonical integrity hash and668physical table metadata comparison",
+    "four secondary indexes and governance/token/resource checks",
+    "stop temporary node"
+  ],
+  "prior_failures_retained": [
+    "r1oneshot-cancellation",
+    "r2internal-index-API-query"
+  ],
+  "production_code_changed": false
+}

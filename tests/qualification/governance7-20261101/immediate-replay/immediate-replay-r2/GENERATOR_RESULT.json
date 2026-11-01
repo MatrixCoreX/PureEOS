@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "pureeos_governance_v2_extra_tests/immediate_reviewed_upgrade_export_for_nodeos_full_replay",
+      "exit": 0
+    }
+  ],
+  "jobs": [
+    {
+      "name": "compile",
+      "exit": 0
+    },
+    {
+      "name": "link",
+      "exit": 0
+    },
+    {
+      "name": "immediate_reviewed_upgrade_export_for_nodeos_full_replay",
+      "exit": 0
+    }
+  ],
+  "native_program_SHA256": "029b02ad52b81075e24f1a0fc3154425177e5bf307e2abceb806d5aa764359e6",
+  "core_library_SHA256": "95efefac3799ffef10aefcafec7e9dfaf3828fe11f3e4ee0545af565a5539ce9",
+  "tested_system_WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "validated_positive_case_total": 1
+}

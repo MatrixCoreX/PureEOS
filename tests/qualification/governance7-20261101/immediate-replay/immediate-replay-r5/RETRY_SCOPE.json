@@ -1,0 +1,8 @@
+{
+  "status": "COMBINED_DRIVER_NAME_COLLISION_FIXED",
+  "previous": "immediate-replay-r4",
+  "correction": "Separate inspection_state helper from replay-stage state variable",
+  "production_code_changed": false,
+  "signed_blocks_unchanged": true,
+  "previous_r3_complete_acceptance": "PASS"
+}

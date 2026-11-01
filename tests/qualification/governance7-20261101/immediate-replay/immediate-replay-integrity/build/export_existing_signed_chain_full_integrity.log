@@ -1,0 +1,16 @@
+Random number generator seeded to 1793511933
+Running 1 test case...
+
+Test module "Master Test Suite" has passed with:
+  1 test case out of 115 passed
+  114 test cases out of 115 skipped
+  1265 assertions out of 1265 passed
+
+  Test suite "pureeos_governance_v2_extra_tests" has passed with:
+    1 test case out of 7 passed
+    6 test cases out of 7 skipped
+    1265 assertions out of 1265 passed
+
+    Test case "pureeos_governance_v2_extra_tests/export_existing_signed_chain_full_integrity" has passed with:
+      1265 assertions out of 1265 passed
+

@@ -1,0 +1,122 @@
+{
+  "status": "PASS",
+  "snapshot_UTC": "2026-11-01T06:07:07.661883+00:00",
+  "scope": "Read-only current browser-chain snapshot, separate from accelerated isolated replay",
+  "chain_id": "03c98ab62ea764e74d2d80ac862b10f4d9c4dc1f0b7a3370692a44427f3f7aea",
+  "head": 143848,
+  "LIB": 143846,
+  "live_nodeos_APIs": 31,
+  "node_versions": {
+    "v2.0.0-5d95aa18fea665f4ee60eda13b01dec82ff43535": 31
+  },
+  "current_review_seconds": 1209600,
+  "current_proposal_pending": false,
+  "system_WASM": "6ed4cccc3aac05231f95e63b5464325315668bea2997ddb15de0b29768bf3a62",
+  "maintenance_pending": 0,
+  "maintenance_effective": 0,
+  "temporary_units": {
+    "pureeos-immediate-history-profile-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-history-profile-r2-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-inspect-r2-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-inspect-r3-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-inspect-r4-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-inspect-r5-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-replay-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-replay-r2-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-replay-r4-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-replay-r5-20261101.service": {
+      "MainPID": "0",
+      "ActiveState": "inactive"
+    },
+    "pureeos-immediate-seven-day-acceptance-20261101-r1.service": {
+      "MainPID": "0",
+      "ActiveState": "failed"
+    },
+    "pureeos-immediate-seven-day-acceptance-20261101-r2.service": {
+      "MainPID": "0",
+      "ActiveState": "failed"
+    },
+    "pureeos-immediate-seven-day-acceptance-20261101-r4.service": {
+      "MainPID": "0",
+      "ActiveState": "failed"
+    }
+  },
+  "TPS": "unmeasured",
+  "new_servers_created": false,
+  "CPU": [
+    "Architecture:                            x86_64",
+    "CPU op-mode(s):                          32-bit, 64-bit",
+    "Address sizes:                           48 bits physical, 48 bits virtual",
+    "Byte Order:                              Little Endian",
+    "CPU(s):                                  16",
+    "On-line CPU(s) list:                     0-15",
+    "Vendor ID:                               AuthenticAMD",
+    "BIOS Vendor ID:                          Advanced Micro Devices, Inc.",
+    "Model name:                              AMD EPYC 4345P 8-Core Processor",
+    "BIOS Model name:                         AMD EPYC 4345P 8-Core Processor                 Unknown CPU @ 3.8GHz",
+    "BIOS CPU family:                         107",
+    "CPU family:                              26",
+    "Model:                                   68",
+    "Thread(s) per core:                      2",
+    "Core(s) per socket:                      8",
+    "Socket(s):                               1",
+    "Stepping:                                0",
+    "CPU(s) scaling MHz:                      98%",
+    "CPU max MHz:                             5581.0000",
+    "CPU min MHz:                             600.0000",
+    "BogoMIPS:                                7585.61",
+    "Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx_vnni avx512_bf16 clzero irperf xsaveerptr rdpru wbnoinvd cppc amd_ibpb_ret arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid bus_lock_detect movdiri movdir64b overflow_recov succor smca fsrm avx512_vp2intersect flush_l1d srso_user_kernel_no",
+    "Virtualization:                          AMD-V",
+    "L1d cache:                               384 KiB (8 instances)",
+    "L1i cache:                               256 KiB (8 instances)",
+    "L2 cache:                                8 MiB (8 instances)",
+    "L3 cache:                                32 MiB (1 instance)",
+    "NUMA node(s):                            1",
+    "NUMA node0 CPU(s):                       0-15",
+    "Vulnerability Gather data sampling:      Not affected",
+    "Vulnerability Indirect target selection: Not affected",
+    "Vulnerability Itlb multihit:             Not affected",
+    "Vulnerability L1tf:                      Not affected",
+    "Vulnerability Mds:                       Not affected",
+    "Vulnerability Meltdown:                  Not affected",
+    "Vulnerability Mmio stale data:           Not affected",
+    "Vulnerability Reg file data sampling:    Not affected",
+    "Vulnerability Retbleed:                  Not affected",
+    "Vulnerability Spec rstack overflow:      Not affected",
+    "Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl",
+    "Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization",
+    "Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP always-on; PBRSB-eIBRS Not affected; BHI Not affected",
+    "Vulnerability Srbds:                     Not affected",
+    "Vulnerability Tsa:                       Not affected",
+    "Vulnerability Tsx async abort:           Not affected",
+    "Vulnerability Vmscape:                   Not affected"
+  ],
+  "MemTotal": "MemTotal:       63360244 kB"
+}

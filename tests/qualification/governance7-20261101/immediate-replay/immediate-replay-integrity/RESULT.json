@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "pureeos_governance_v2_extra_tests/export_existing_signed_chain_full_integrity",
+      "exit": 0
+    }
+  ],
+  "jobs": [
+    {
+      "name": "compile",
+      "exit": 0
+    },
+    {
+      "name": "link",
+      "exit": 0
+    },
+    {
+      "name": "export_existing_signed_chain_full_integrity",
+      "exit": 0
+    }
+  ],
+  "native_program_SHA256": "40d3341962892d86c64a0b1fe2f3d68343998434720e8e40f63eb44da00c982e",
+  "core_library_SHA256": "95efefac3799ffef10aefcafec7e9dfaf3828fe11f3e4ee0545af565a5539ce9",
+  "tested_system_WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+  "validated_positive_case_total": 1
+}

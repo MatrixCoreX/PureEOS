@@ -1,0 +1,48 @@
+{
+  "UTC": "2026-11-01T05:50:46.189457+00:00",
+  "fast_acceptance": {
+    "status": "PASS",
+    "full_state_integrity_hash": "bbd17ae27b4fce0b1aaca78d763c6f6d53bc51f464823fbe403051d563f15fc8",
+    "table_count": 668,
+    "canonical_table_record_count": 1730,
+    "candidate_count": 212,
+    "ranked_count": 211,
+    "candidate_capacity": 211,
+    "review_span_seconds": 604800,
+    "wall_seconds": 1.379
+  },
+  "temporary_units": {
+    "pureeos-immediate-seven-day-replay-20261101-r1.service": {
+      "ActiveState": "inactive",
+      "MainPID": "0",
+      "Result": "success"
+    },
+    "pureeos-immediate-seven-day-replay-20261101-r2.service": {
+      "ActiveState": "inactive",
+      "MainPID": "0",
+      "Result": "success"
+    },
+    "pureeos-immediate-seven-day-inspect-20261101-r2.service": {
+      "ActiveState": "inactive",
+      "MainPID": "0",
+      "Result": "success"
+    },
+    "pureeos-immediate-seven-day-inspect-20261101-r3.service": {
+      "ActiveState": "inactive",
+      "MainPID": "0",
+      "Result": "success"
+    }
+  },
+  "existing_chain": {
+    "chain_id": "03c98ab62ea764e74d2d80ac862b10f4d9c4dc1f0b7a3370692a44427f3f7aea",
+    "head": 141886,
+    "LIB": 141884,
+    "maintenance_pending": 0,
+    "maintenance_effective": 0,
+    "updated_BP_count": 27,
+    "BP_total": 30,
+    "governance_review_seconds": 1209600,
+    "pending_proposal": false,
+    "WASM": "6ed4cccc3aac05231f95e63b5464325315668bea2997ddb15de0b29768bf3a62"
+  }
+}

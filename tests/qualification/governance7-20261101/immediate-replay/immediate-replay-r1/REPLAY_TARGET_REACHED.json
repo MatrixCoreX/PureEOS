@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "info": {
+    "server_version": "5d95aa18",
+    "chain_id": "25f7b6b3f91a2961a2f33d6914b309be5e6e1458dfa8bf602c68eeb2726b49dc",
+    "head_block_num": 1266,
+    "last_irreversible_block_num": 1266,
+    "last_irreversible_block_id": "000004f2e25ae94b2670a9105d71c2045600a1e7e5d9c412497613a10884ff7b",
+    "head_block_id": "000004f2e25ae94b2670a9105d71c2045600a1e7e5d9c412497613a10884ff7b",
+    "head_block_time": "2026-10-31T11:00:57.500",
+    "head_block_producer": "replaynodeaq",
+    "virtual_block_cpu_limit": 11332432,
+    "virtual_block_net_limit": 14854073,
+    "block_cpu_limit": 3200000,
+    "block_net_limit": 4194304,
+    "server_version_string": "v2.0.0",
+    "fork_db_head_block_num": 1268,
+    "fork_db_head_block_id": "000004f4de4c106b5979f75b0cfd5e048571fe18b7e1891b9b6b88e4b969ad66",
+    "server_full_version_string": "v2.0.0-5d95aa18fea665f4ee60eda13b01dec82ff43535",
+    "total_cpu_weight": "112890000000",
+    "total_net_weight": "112890000000",
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-10-31T11:00:57.500"
+  },
+  "reason": "terminate-at-block did not stop after startup replay; exact canonical target verified via RPC, request normal graceful shutdown before comparison restart"
+}

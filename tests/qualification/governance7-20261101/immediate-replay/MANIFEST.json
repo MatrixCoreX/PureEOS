@@ -1,0 +1,351 @@
+{
+  "schema": 1,
+  "created_UTC": "2026-11-01T06:07:51.881450+00:00",
+  "scope": "Public whitelisted immediate seven-day replay evidence; no DB, raw blocklog, wallet, keys or raw config",
+  "files": {
+    "CURRENT_CHAIN_AND_CLEANUP.json": {
+      "SHA256": "bf6e0387ac3ef4312999dc96a80cd251601dbafc110feb1c3a3057fbf85c9af3",
+      "bytes": 6579
+    },
+    "REPORT.md": {
+      "SHA256": "8c74fa9cca0f72da1e746403d38e1d84c9b107888776db692966cd58e3019f69",
+      "bytes": 7451
+    },
+    "immediate-history-profile-r2/CLEANUP.json": {
+      "SHA256": "17ce32f888cdd2c77f40cb93e9f49f5c30d1dcc9cd2500e54202632822f74adf",
+      "bytes": 73
+    },
+    "immediate-history-profile-r2/RESULT.json": {
+      "SHA256": "7bd61d211830b415c6d893ea040bd97b978308a268b5ad5e20f51421ba177349",
+      "bytes": 2711
+    },
+    "immediate-history-profile-r2/driver.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-history-profile-r2/integration.py": {
+      "SHA256": "88fd55d5c1deda92f4afe8fcf7800cc7d3a95743fa9f18ca89914292a2517ad2",
+      "bytes": 1929
+    },
+    "immediate-history-profile-r2/integration.stderr.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-history-profile-r2/nodeos.log": {
+      "SHA256": "2699498b0539531ac6ceff6ab62bdac4cd237a32550007a9456b05eeeccda5fb",
+      "bytes": 26880
+    },
+    "immediate-history-profile-r2/run.py": {
+      "SHA256": "58fc6892f501c5e65379bb791a3c451888a35c3bf1255eabaeeb847be3a0b1a7",
+      "bytes": 2266
+    },
+    "immediate-replay-integrity/EXPECTED_INTEGRITY.json": {
+      "SHA256": "3c4be979149864467c4621937f5457add9faf7becf418c55456a46b99eddd043",
+      "bytes": 90996
+    },
+    "immediate-replay-integrity/RESULT.json": {
+      "SHA256": "29eebfc8f590cd5d363c9c3f89cd6a577a0f32db0f97a0024f41d65fb37d2a79",
+      "bytes": 693
+    },
+    "immediate-replay-integrity/build/compile.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-integrity/build/export_existing_signed_chain_full_integrity.log": {
+      "SHA256": "0a2e699cebb87dea68701b2d020dc9da70ed40c113dc914b961c41e9ce8a51f7",
+      "bytes": 549
+    },
+    "immediate-replay-integrity/build/link.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-integrity/driver.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-integrity/native-source/pureeos_blacklist_capacity_tests.inc": {
+      "SHA256": "be7edf3c40f27ed118340394d8c30e9ce02f8c3178062dd992614bcdf8270e0f",
+      "bytes": 4390
+    },
+    "immediate-replay-integrity/native-source/pureeos_blacklist_current_policy_tests.inc": {
+      "SHA256": "80767bb0fdd8f717983433906f06dc9705490f72edf25058056159c744743c8f",
+      "bytes": 9615
+    },
+    "immediate-replay-integrity/native-source/pureeos_committee_boundary_tests.inc": {
+      "SHA256": "9dcc17b486ec23ec7472e561b47ce426b6251edb2ec8cc1aace15aafec851446",
+      "bytes": 7443
+    },
+    "immediate-replay-integrity/native-source/pureeos_governance_tests.cpp": {
+      "SHA256": "c86f774c115603c0009e330cddf3ce4895f60ebbce81851614e424b60a2f4a45",
+      "bytes": 64472
+    },
+    "immediate-replay-integrity/native-source/pureeos_governance_v2_extra_tests.inc": {
+      "SHA256": "ed784133a2db630d9693fa2e0f969ed14b1fee89a7cb588b95d6c2bc9a68dd14",
+      "bytes": 14119
+    },
+    "immediate-replay-integrity/native-source/pureeos_governance_v2_tests.inc": {
+      "SHA256": "055f79ac31b6523ec9e6994adb2ada1ee860febf9d078accea88ab855069e2b9",
+      "bytes": 5132
+    },
+    "immediate-replay-integrity/native-source/pureeos_rank_restart_fifo_tests.inc": {
+      "SHA256": "723f4d7f6d01fd92ab6765a708cf288653332c3f729b0aa4190d36923e6e068e",
+      "bytes": 2538
+    },
+    "immediate-replay-integrity/native-source/pureeos_resource_split_tests.inc": {
+      "SHA256": "1ecd91ba3341555105521ffc55b684ebbeb282ee5006290f98e332f1894d3fd9",
+      "bytes": 25322
+    },
+    "immediate-replay-integrity/native-source/pureeos_reward_activation_tests.inc": {
+      "SHA256": "977ca6e0432030753d8b65e4fb399554af4335166a429f1c81693010334482be",
+      "bytes": 16836
+    },
+    "immediate-replay-integrity/native-source/pureeos_reward_halving_tests.inc": {
+      "SHA256": "d90e8248285ed65e2d8f1be1fb30fb1362162a28a06c792903cdef3772ca34f0",
+      "bytes": 21451
+    },
+    "immediate-replay-integrity/native-source/pureeos_sequential_rotation_tests.inc": {
+      "SHA256": "e9237c1e1137ca1bc27ea9e97a1681e1bffc6f6942fadceddef731c59b41fbbd",
+      "bytes": 65222
+    },
+    "immediate-replay-integrity/read_expected.py": {
+      "SHA256": "9ab91e89bb3298133602741cf381d1f4e0936f8d0f06a840b7d67c04f074d774",
+      "bytes": 3647
+    },
+    "immediate-replay-r1/FAILURE.json": {
+      "SHA256": "cfdc24a17a967c6b540ce8982028250d99ead33f03f5abde48689b5005192433",
+      "bytes": 42574
+    },
+    "immediate-replay-r1/GENERATOR_RESULT.json": {
+      "SHA256": "de009484115fe293796e8fb7876f68a2f3ae98a09de9be0263d99570e965f76d",
+      "bytes": 719
+    },
+    "immediate-replay-r1/PROGRESS.json": {
+      "SHA256": "cfdc24a17a967c6b540ce8982028250d99ead33f03f5abde48689b5005192433",
+      "bytes": 42574
+    },
+    "immediate-replay-r1/REPLAY_TARGET_REACHED.json": {
+      "SHA256": "99edf272cc6c6af719edee4535e7f1766dc0b8b19fb6eea560f234ea72952246",
+      "bytes": 1264
+    },
+    "immediate-replay-r1/acceptance-driver.log": {
+      "SHA256": "0fc96c61e16ec424497f19f0a403a6286845b5009b2f4aaebd65251bf8261854",
+      "bytes": 474
+    },
+    "immediate-replay-r1/build/compile.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-r1/build/immediate_reviewed_upgrade_export_for_nodeos_full_replay.log": {
+      "SHA256": "452fae1fac2a9d0f256ff7fc1b0bc206c07769eb581936b5ad4e0f02095e0962",
+      "bytes": 568
+    },
+    "immediate-replay-r1/build/link.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-r1/export/EXPECTED.json": {
+      "SHA256": "85846330cf12095437d61a0d53be0933c535994cfe5d9817a3c9c1669dbe77c8",
+      "bytes": 396237
+    },
+    "immediate-replay-r1/export/genesis.json": {
+      "SHA256": "f8171e4137b139e3f713049dc3ae102230289078a39f3d00e4e4b9de7f30ec95",
+      "bytes": 3070
+    },
+    "immediate-replay-r1/generate.py": {
+      "SHA256": "96e546cfd57dca8ef03e548b69460597b6d2abb1ac15c4c3594f789dde2472c8",
+      "bytes": 3649
+    },
+    "immediate-replay-r1/generator-driver.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-r1/native-source/pureeos_blacklist_capacity_tests.inc": {
+      "SHA256": "be7edf3c40f27ed118340394d8c30e9ce02f8c3178062dd992614bcdf8270e0f",
+      "bytes": 4390
+    },
+    "immediate-replay-r1/native-source/pureeos_blacklist_current_policy_tests.inc": {
+      "SHA256": "80767bb0fdd8f717983433906f06dc9705490f72edf25058056159c744743c8f",
+      "bytes": 9615
+    },
+    "immediate-replay-r1/native-source/pureeos_committee_boundary_tests.inc": {
+      "SHA256": "9dcc17b486ec23ec7472e561b47ce426b6251edb2ec8cc1aace15aafec851446",
+      "bytes": 7443
+    },
+    "immediate-replay-r1/native-source/pureeos_governance_tests.cpp": {
+      "SHA256": "c86f774c115603c0009e330cddf3ce4895f60ebbce81851614e424b60a2f4a45",
+      "bytes": 64472
+    },
+    "immediate-replay-r1/native-source/pureeos_governance_v2_extra_tests.inc": {
+      "SHA256": "b85b211cffac03060e4014e1067f0ba9686774824c24497d868bb29271b8593d",
+      "bytes": 12849
+    },
+    "immediate-replay-r1/native-source/pureeos_governance_v2_tests.inc": {
+      "SHA256": "055f79ac31b6523ec9e6994adb2ada1ee860febf9d078accea88ab855069e2b9",
+      "bytes": 5132
+    },
+    "immediate-replay-r1/native-source/pureeos_rank_restart_fifo_tests.inc": {
+      "SHA256": "723f4d7f6d01fd92ab6765a708cf288653332c3f729b0aa4190d36923e6e068e",
+      "bytes": 2538
+    },
+    "immediate-replay-r1/native-source/pureeos_resource_split_tests.inc": {
+      "SHA256": "1ecd91ba3341555105521ffc55b684ebbeb282ee5006290f98e332f1894d3fd9",
+      "bytes": 25322
+    },
+    "immediate-replay-r1/native-source/pureeos_reward_activation_tests.inc": {
+      "SHA256": "977ca6e0432030753d8b65e4fb399554af4335166a429f1c81693010334482be",
+      "bytes": 16836
+    },
+    "immediate-replay-r1/native-source/pureeos_reward_halving_tests.inc": {
+      "SHA256": "d90e8248285ed65e2d8f1be1fb30fb1362162a28a06c792903cdef3772ca34f0",
+      "bytes": 21451
+    },
+    "immediate-replay-r1/native-source/pureeos_sequential_rotation_tests.inc": {
+      "SHA256": "e9237c1e1137ca1bc27ea9e97a1681e1bffc6f6942fadceddef731c59b41fbbd",
+      "bytes": 65222
+    },
+    "immediate-replay-r1/nodeos-replay.log": {
+      "SHA256": "97aef3f6c5555329db549301cedbf68e301cdb359908ce54e29dea83c086bc51",
+      "bytes": 146593
+    },
+    "immediate-replay-r1/replay-systemd-result.log": {
+      "SHA256": "56afe9cb22fd631399fb2bb80f1d329aaa2173262b150a9eae365128454d5607",
+      "bytes": 73
+    },
+    "immediate-replay-r1/replay_check.py": {
+      "SHA256": "6012e3fe88ba8333d24c857d1dfaf6ac95adbb87de14f5d3b3b3ae8d54581137",
+      "bytes": 9949
+    },
+    "immediate-replay-r2/FAILURE.json": {
+      "SHA256": "ce5815cfbdb4976f91f3adff8e72b5c5e29c72c305f5afef1dc2b28d1a130300",
+      "bytes": 46216
+    },
+    "immediate-replay-r2/GENERATOR_RESULT.json": {
+      "SHA256": "de009484115fe293796e8fb7876f68a2f3ae98a09de9be0263d99570e965f76d",
+      "bytes": 719
+    },
+    "immediate-replay-r2/PROGRESS.json": {
+      "SHA256": "ce5815cfbdb4976f91f3adff8e72b5c5e29c72c305f5afef1dc2b28d1a130300",
+      "bytes": 46216
+    },
+    "immediate-replay-r2/RETRY_SCOPE.json": {
+      "SHA256": "f334fc44af706731a7ac5c93cf8fa603336564e183e39cf88bdccfc11cbbf97e",
+      "bytes": 514
+    },
+    "immediate-replay-r2/acceptance-driver.log": {
+      "SHA256": "19c06aad9d7136d8af9cc98e848efdda9ef64cc53166c5c327ea68e951a88717",
+      "bytes": 2797
+    },
+    "immediate-replay-r2/nodeos-inspect.log": {
+      "SHA256": "80beb0047e48bba4639ad9211222e8396afb5b9a9ac3c49bc0e8cd20cf176a7b",
+      "bytes": 26640
+    },
+    "immediate-replay-r2/nodeos-replay.log": {
+      "SHA256": "b1d2475a132c47128d5dc9b998e601992676129bd3738ab5ab1647ad780fd610",
+      "bytes": 146594
+    },
+    "immediate-replay-r2/replay-systemd-result.log": {
+      "SHA256": "95bff5a9d23e1e3a640d9387a2e9ca488cef7373cd536d889614e9ee18045580",
+      "bytes": 95
+    },
+    "immediate-replay-r2/replay_check.py": {
+      "SHA256": "4aa972804ab4120c88168ee60ebc855a032a6cf93614f2bd6f2132779633c58e",
+      "bytes": 10730
+    },
+    "immediate-replay-r3/CLEANUP_AND_EXISTING_CHAIN.json": {
+      "SHA256": "a5ea61b37ef5a196b44ce9cc0b6b88894381b1d6ed11b62cbf204ae97d36713e",
+      "bytes": 1459
+    },
+    "immediate-replay-r3/PROGRESS.json": {
+      "SHA256": "5e323327e51045413d3fb8d05865eaab1cad9d5682429a0db59dd4a3116399b4",
+      "bytes": 18649
+    },
+    "immediate-replay-r3/RESULT.json": {
+      "SHA256": "5e323327e51045413d3fb8d05865eaab1cad9d5682429a0db59dd4a3116399b4",
+      "bytes": 18649
+    },
+    "immediate-replay-r3/RETRY_SCOPE.json": {
+      "SHA256": "19b59fe54030c60fc1f13fb0e02a3ef45836a4d9af31dcc3f45fb04bee3aa890",
+      "bytes": 462
+    },
+    "immediate-replay-r3/acceptance.py": {
+      "SHA256": "589efad1519bcd7170ca1c376e5db3a0269e0d383198977a12f1d8e68efc9cdb",
+      "bytes": 7767
+    },
+    "immediate-replay-r3/driver.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-r3/nodeos-inspect.log": {
+      "SHA256": "7d181a4bc9bcd366b5338407028919265e9fd70ba6973562ebb7d061676c40c2",
+      "bytes": 27119
+    },
+    "immediate-replay-r4/FAILURE.json": {
+      "SHA256": "1accc31d7f8d8d4ba971607fcd671cb8382588079e088f2ac6b54bb8cc2f59e9",
+      "bytes": 43837
+    },
+    "immediate-replay-r4/METHOD.json": {
+      "SHA256": "e04c5791c6b56b3fee7db0e560ee72f2c9479dcbe0fe028f7a3e17acb4f675c7",
+      "bytes": 625
+    },
+    "immediate-replay-r4/PROGRESS.json": {
+      "SHA256": "1accc31d7f8d8d4ba971607fcd671cb8382588079e088f2ac6b54bb8cc2f59e9",
+      "bytes": 43837
+    },
+    "immediate-replay-r4/driver.log": {
+      "SHA256": "edd36b6afa7c3bb20f6e9cf57f947cba10779bb00def79df0b404c7f4c800a85",
+      "bytes": 243
+    },
+    "immediate-replay-r4/nodeos-inspect.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-r4/nodeos-replay.log": {
+      "SHA256": "fd1511a2c7aeeaf2634322ddc20679d733fb308a936e3ce2a9f40c1150d1df0e",
+      "bytes": 146594
+    },
+    "immediate-replay-r4/replay-systemd-result.log": {
+      "SHA256": "95bff5a9d23e1e3a640d9387a2e9ca488cef7373cd536d889614e9ee18045580",
+      "bytes": 95
+    },
+    "immediate-replay-r4/run_acceptance.py": {
+      "SHA256": "59d1c681c5c3390cb6aa5c286b8befe00ab5b84c75d97c66854a147f42025752",
+      "bytes": 11247
+    },
+    "immediate-replay-r5/PROGRESS.json": {
+      "SHA256": "42f399fd66aa2f77f51d0c206fdb2e0d579c92fb3752f0d018ff12127a8afe94",
+      "bytes": 61741
+    },
+    "immediate-replay-r5/RESULT.json": {
+      "SHA256": "42f399fd66aa2f77f51d0c206fdb2e0d579c92fb3752f0d018ff12127a8afe94",
+      "bytes": 61741
+    },
+    "immediate-replay-r5/RETRY_SCOPE.json": {
+      "SHA256": "b66180f8535432481efc964a07530f3d033e06e609cadf14304ead99f5058e54",
+      "bytes": 293
+    },
+    "immediate-replay-r5/driver.log": {
+      "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "immediate-replay-r5/history-profile-nodeos.log": {
+      "SHA256": "71128f35ad0330dd56a408b9ed05ccb281183be4fe71faaa1995257f1ecb461d",
+      "bytes": 26637
+    },
+    "immediate-replay-r5/nodeos-inspect.log": {
+      "SHA256": "6628f6afd8d7e4a66a4b2c08fee1a5a8f0db65629a92144dce1e7ce16157566b",
+      "bytes": 26880
+    },
+    "immediate-replay-r5/nodeos-replay.log": {
+      "SHA256": "b90084b1e82ffac9ca88d66721f660016eb26f45c9310d6a1d72858913930502",
+      "bytes": 146595
+    },
+    "immediate-replay-r5/replay-systemd-result.log": {
+      "SHA256": "95bff5a9d23e1e3a640d9387a2e9ca488cef7373cd536d889614e9ee18045580",
+      "bytes": 95
+    },
+    "immediate-replay-r5/run_acceptance.py": {
+      "SHA256": "0666664f82e478268a34bd171f1d942a3d322c18e6ee2fe4ad5a364e7b8e3704",
+      "bytes": 11269
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "tested_at": "2026-11-01T06:05:21.845144+00:00",
+  "scope": "Actual deployed PureHistory Python modules reading unchanged production nodeos replay state; no live SHIP indexing in this isolated test",
+  "chain_id": "25f7b6b3f91a2961a2f33d6914b309be5e6e1458dfa8bf602c68eeb2726b49dc",
+  "head_block_num": 1266,
+  "summary": {
+    "available": true,
+    "system_code_hash": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "registered_bp_count": 212,
+    "eligible_bp_count": 211,
+    "published_candidate_count": 211,
+    "active_producer_count": 21,
+    "permanent_blacklist_count": 1,
+    "maintenance_excluded_count": 0,
+    "maintenance_active_count": 0,
+    "maintenance_pending_count": 0,
+    "rotation_capacity": 211,
+    "next_capacity": 212,
+    "next_capacity_slot": "1694674782",
+    "next_capacity_estimated_at": "2026-11-07T03:29:51.000+00:00",
+    "count_scope": "All native producer/candidate/maintenance rows; pagination complete; no online-process or history-node count",
+    "eligible_scope": "Active registration, positive integer votes and usable producer/finalizer keys (valid rank), excluding permanent bans and non-normal maintenance; candidate admission still follows ranking snapshots"
+  },
+  "votes": {
+    "schema_version": 1,
+    "available": true,
+    "chain_id": "25f7b6b3f91a2961a2f33d6914b309be5e6e1458dfa8bf602c68eeb2726b49dc",
+    "vote_schema": "integer-v2",
+    "vote_precision": 4,
+    "rows": [
+      {
+        "owner": "replaynodeaa",
+        "total_votes": "212000000",
+        "self_votes": "212000000",
+        "other_votes": "0",
+        "permanently_blacklisted": false
+      },
+      {
+        "owner": "replaynodeav",
+        "total_votes": "191000000",
+        "self_votes": "191000000",
+        "other_votes": "0",
+        "permanently_blacklisted": true
+      },
+      {
+        "owner": "replaynodeic",
+        "total_votes": "2000000",
+        "self_votes": "2000000",
+        "other_votes": "0",
+        "permanently_blacklisted": false
+      }
+    ],
+    "head_block_num": 1266,
+    "head_block_id": "000004f2e25ae94b2670a9105d71c2045600a1e7e5d9c412497613a10884ff7b",
+    "generated_at": "2026-11-01T06:05:21.845+00:00",
+    "system_code_hash": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "scope": "Committed history-node head; self means voting-account identity, not funding origin"
+  },
+  "module_SHA256": {
+    "/opt/purehistory-producer-votes-20261101-r1/producer_votes.py": "72f3ac476f94287960975795acea5147b28ecf6092194b6aa8b828b227e067e7",
+    "/opt/pureeos-rotation-demo-20261031-r1/producer_summary.py": "d34dc4b872984a71cce0799c6aca6709e2fa9369149964688bf2af30951f2fd8"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "status": "TARGETED_ORCHESTRATION_RETRY",
+  "source": "../immediate-replay-r1",
+  "generator_assertions": 15521,
+  "same_signed_blocklog_reused": true,
+  "first_nodeos_replay_actually_passed": true,
+  "first_head": 1266,
+  "first_failure": "oneshot stop canceled systemd start job after replay complete; no chain validation failure",
+  "correction": "simple service, verify actual chain/head before clean stop; automatically compare all tables after read-only restart",
+  "production_binary_unchanged": true
+}

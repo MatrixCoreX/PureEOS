@@ -1,0 +1,8 @@
+{
+  "status": "HARNESS_QUERY_CORRECTION",
+  "prior": "immediate-replay-r2",
+  "error": "get_table_rows was applied to internal secondary-index storage names which are not primary table ABI names",
+  "correction": "Native full canonical state integrity hash plus all668 physical table metadata/count/payers and four secondary ordering checks; reuse already force-validated nodeos state",
+  "production_code_changed": false,
+  "failure_evidence_preserved": true
+}

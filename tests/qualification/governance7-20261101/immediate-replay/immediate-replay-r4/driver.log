@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-governance-seven-day-20261101-r1/immediate-replay-r4/run_acceptance.py", line 57, in <module>
+    pid=int(state()['MainPID'])
+            ^^^^^^^
+TypeError: 'dict' object is not callable

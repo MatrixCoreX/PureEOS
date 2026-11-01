@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-governance-seven-day-20261101-r1/immediate-replay-r1/replay_check.py", line 36, in <module>
+    (R/'replay-systemd-result.log').write_text(q.stdout+q.stderr);assert q.returncode==0,'Force-all-checks nodeos replay failed; inspect nodeos-replay.log'
+                                                                         ^^^^^^^^^^^^^^^
+AssertionError: Force-all-checks nodeos replay failed; inspect nodeos-replay.log
