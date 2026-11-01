@@ -70,7 +70,7 @@ BP 通过链上当前 peer key 和签名 gossip 发现彼此，支持撤销、�
 
 系统合约保持单选投票、出块/确认/轮岗模式、**10% 长期质押 / 90% PowerUp**、奖励减半及 **7 天**升级公示治理。RAM 初始 **64 GiB**，通过既有 `setramrate(1024)` 初始化每块增长；`DISABLE_DEFERRED_TRXS_STAGE_1/2` 保持激活。
 
-[功能验收记录](docs/baseline-20261030/REPORT.md)包含 **154 项通过、零跳过**，区分三台物理机上的 30 个并行进程、原生测试、组件检查和预期攻击拒绝。20 人政策下验证了 14 票继续、13 票暂停、无候补封禁移除及恢复。该不足 21 人实机范围具体为 20 人。本轮属于功能/拓扑验证，未测新 TPS。
+[当前功能验收](tests/qualification/governance7-20261101/)包含93个原生用例、111次成功执行，另有跨7天签名历史重放15521断言、完整状态与索引核对。验收保留失败及针对性复测范围；本发行未新增TPS或7天现实时间稳定性结论。
 
 出块奖励以当前已发行量为基数，按每 364 天 **1%** 精确计提，每 1461 天减半；额外 4% 不发行。仅实际出块累计权益，成功领取时发行并填池，首次正权重直接投票激活计时，领取须超过 24 小时间隔。当前系统合约 [WASM/源码包](system-contracts/pureeos-system-1.0.0.tar.gz) 与[奖励复核报告](docs/rewards/EXACT_1PCT_20261031.md)配套使用，适用于新创世链。
 
@@ -162,7 +162,7 @@ See the [1.0.0 baseline](docs/BASELINE.md) and [machine manifest](config/BASELIN
 
 The system contract retains single-choice voting, proposer/finalizer/rotation modes, **10% staking / 90% PowerUp**, reward halving and the **7-day** upgrade review. RAM starts at **64 GiB** and grows through explicit `setramrate(1024)` initialization. Both deferred-disable stages remain activated.
 
-The [functional report](docs/baseline-20261030/REPORT.md) records **154 passing cases, zero skipped**, separating 30 parallel processes on three physical hosts, native tests, component checks and expected attack rejections. Live 20-member checks cover continued finality with 14 votes, interruption with 13, permanent-ban removal without standbys and recovery. Live sub-21 coverage specifically means 20 members. This functional/topology campaign measures no new TPS.
+The [current qualification](tests/qualification/governance7-20261101/) records93unique native cases/111successful executions, plus15521assertions in historical signed-chain replay with full state/index agreement. Failed attempts and targeted retries retain their scope. This release claims no new TPS or seven-day wall-clock stability.
 
 Block rewards accrue at exactly **1% of currently issued supply per 364-day contract year**, halved every 1461 days; the additional 4% is never issued. Only actual blocks create unpaid credits. A successful claim issues and funds the pool; a positive-weight direct vote starts the clock and claims require more than 24 hours. Use the matching [WASM/source package](system-contracts/pureeos-system-1.0.0.tar.gz) and [reward review](docs/rewards/EXACT_1PCT_20261031.md) for fresh genesis chains.
 
