@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "release": "1.0.0",
+  "chain": {
+    "CPU_multiplier": 16,
+    "max_block_cpu_usage": 3200000,
+    "max_block_net_usage": 4194304,
+    "max_transaction_net_usage": 524288,
+    "max_transaction_cpu_usage": 150000,
+    "slot_seconds": 0.5,
+    "full_preset": "chain-parameters.json"
+  },
+  "node": {
+    "parallel_required": true,
+    "minimum_physical_cores": 8,
+    "minimum_logical_threads": 16,
+    "minimum_system_RAM_bytes": 64000000000,
+    "state_db_MiB": 16384,
+    "chain_threads": 6,
+    "workers": 8,
+    "batch": 24,
+    "early_adoption_group": 8,
+    "P2P_message_limit_bytes": 67108864,
+    "P2P_transaction_inflight_limit_bytes": 104857600,
+    "producer_transaction_queue_MiB": 1024,
+    "producer_SHIP": false,
+    "nonproducing_history_SHIP": true
+  },
+  "system": {
+    "source": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+    "WASM_SHA256": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "ABI_JSON_SHA256": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a",
+    "packed_ABI_SHA256": "038ffbab99e3c261dfc0d1655ddd3acd75b89bfeaae350eb86e4df930564f959",
+    "system_namespace": "eosio",
+    "RAM_initial_bytes": 68719476736,
+    "RAM_growth_bytes_per_block": 1024,
+    "RAM_growth_initialization": "eosio::setramrate(1024)",
+    "resource_split_staking_percent": 10,
+    "resource_split_PowerUp_percent": 90,
+    "voting": "integer-v2; direct single choice; no proxy; no time weighting",
+    "reward_rate": "exactly1% of currently issued supply per364-day contract year",
+    "reward_halving_days": 1461,
+    "additional_unissued_percent": 4,
+    "reward_rights": "actual blocks only; issue and fund pool on successful claim; claims more than24hours apart",
+    "finality_equal_weight_quorum": "floor(2N/3)+1 of effective finalizer policy;15of21",
+    "rotation": "one-seat normal proposer/finalizer handoff; ranked admission and FIFO standbys",
+    "candidate_capacity": "base=210*2^epoch; capacity=base+floor(base*remainder/period), period=1461days; uint32 saturation",
+    "permanent_blacklist": "three consecutive finalized personal zero-production windows; re-registration/rekey/votes/maintenance never erase a ban",
+    "global_interruption_pause_slots_inclusive": 252,
+    "sub21_new_personal_penalties": "paused; finality quorum never lowered",
+    "blacklist_candidate_capacity": "exclude before ranked capacity counting; next eligible candidate backfills; retain old evidence",
+    "maintenance": "normal handoff before effective; exclude future rotation and new duty rewards/penalties; retain prior rights/evidence",
+    "governance": {
+      "proposal_authority": "designated developer upgrade permission only",
+      "BP_role": "veto, not proposals",
+      "review_seconds": 604800,
+      "feature": "PUREEOS_SEVEN_DAY_GOVERNANCE",
+      "feature_digest": "7bfa158c580e0af5bdecd38c65a035273b7b5af42d36049c699988ea715bb3c8",
+      "effective_voters": "frozen proposal electorate minus current permanent bans",
+      "effective_vetoes": "raw vetoes intersect effective voters",
+      "required_vetoes": "ceil(2N/3)",
+      "empty_electorate": "execution blocked",
+      "old_pending_deadlines": "preserved"
+    },
+    "deferred_stages_disabled": [
+      1,
+      2
+    ]
+  },
+  "fresh_chain_token": {
+    "symbol": "AIC",
+    "precision": 4,
+    "initial_issued": "100000000.0000 AIC",
+    "maximum_supply": "2100000000.0000 AIC",
+    "headroom": "not pre-issued; separate existing issuance mechanism unchanged"
+  },
+  "ordinary_account_names": "12characters; protocol-fixed system names retained",
+  "short_names": {
+    "auction": "existing bidname/bidrefund retained; not disabled; current empty auction table is not proof of disabled code",
+    "closing": "existing activated-chain14day and last-bid24hour conditions retained",
+    "leasing_and_aic_namespace": "discussion plans only; not implemented"
+  },
+  "qualified_node_logic_source": "5d95aa18fea665f4ee60eda13b01dec82ff43535",
+  "version_only_relink": "1.0.0; final release source/ELF hashes recorded externally",
+  "qualification": {
+    "native_unique_cases": 93,
+    "successful_executions": 111,
+    "immediate_signed_chain_assertions": 15521,
+    "frontend_tests": 179,
+    "history_tests": 35,
+    "new_TPS": "unmeasured"
+  }
+}

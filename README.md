@@ -1,4 +1,4 @@
-# PureEOS
+# PureEOS 1.0.0
 
 [简体中文](#简体中文) · [English](#english)
 
@@ -20,14 +20,14 @@ PureEOS 是采用原生 Savanna 最终确认的 C++ 区块链项目。独立交�
 
 ### 获取和运行
 
-[节点发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/governance-2026.11.01)提供运行包、PureEOS CDT SDK 和 SHA256SUMS。当前源码从 `main` 获取；新链使用[精确 1% 系统合约发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.11.01-governance7)，其中包含配套源码、WASM、ABI 及校验清单。
+[节点发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/governance-2026.11.01)提供运行包、PureEOS CDT SDK 和 SHA256SUMS。当前源码从 `main` 获取；新链使用[配套1.0.0系统合约发行](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.11.01-governance7)，其中包含配套源码、WASM、ABI 及校验清单。
 
 下载节点运行包和配套摘要，先校验，再解压到独立目录：
 
 ```bash
 sha256sum -c SHA256SUMS --ignore-missing
 mkdir pureeos
-tar -xzf pureeos-baseline-2026.10.30-linux-x86_64.tar.gz -C pureeos
+tar -xzf pureeos-1.0.0-linux-x86_64.tar.gz -C pureeos
 cd pureeos
 sha256sum -c SHA256SUMS
 ./bin/nodeos --full-version
@@ -66,11 +66,13 @@ BP 通过链上当前 peer key 和签名 gossip 发现彼此，支持撤销、�
 
 ### 系统合约和验证
 
+完整当前规则见[1.0.0基线](docs/BASELINE.md)和[机器清单](config/BASELINE.json)。永久黑名单在候选容量计数前排除，不占排名/席位，后续合格候选递补。治理仅开发者提案、BP否决；当前永久封禁者从有效否决分子与选民分母同时剔除，原始记录保留；门槛ceil(2N/3)，N=0禁止执行。旧提案既定期限保留。旧短号拍卖保留，租约尚未实施。
+
 系统合约保持单选投票、出块/确认/轮岗模式、**10% 长期质押 / 90% PowerUp**、奖励减半及 **7 天**升级公示治理。RAM 初始 **64 GiB**，通过既有 `setramrate(1024)` 初始化每块增长；`DISABLE_DEFERRED_TRXS_STAGE_1/2` 保持激活。
 
 [功能验收记录](docs/baseline-20261030/REPORT.md)包含 **154 项通过、零跳过**，区分三台物理机上的 30 个并行进程、原生测试、组件检查和预期攻击拒绝。20 人政策下验证了 14 票继续、13 票暂停、无候补封禁移除及恢复。该不足 21 人实机范围具体为 20 人。本轮属于功能/拓扑验证，未测新 TPS。
 
-出块奖励以当前已发行量为基数，按每 364 天 **1%** 精确计提，每 1461 天减半；额外 4% 不发行。仅实际出块累计权益，成功领取时发行并填池，首次正权重直接投票激活计时，领取须超过 24 小时间隔。当前系统合约 [WASM/源码包](system-contracts/pureeos-system-2026.10.31-exact1pct.tar.gz) 与[奖励复核报告](docs/rewards/EXACT_1PCT_20261031.md)配套使用，适用于新创世链。
+出块奖励以当前已发行量为基数，按每 364 天 **1%** 精确计提，每 1461 天减半；额外 4% 不发行。仅实际出块累计权益，成功领取时发行并填池，首次正权重直接投票激活计时，领取须超过 24 小时间隔。当前系统合约 [WASM/源码包](system-contracts/pureeos-system-1.0.0.tar.gz) 与[奖励复核报告](docs/rewards/EXACT_1PCT_20261031.md)配套使用，适用于新创世链。
 
 ### 从当前源码开发
 
@@ -121,7 +123,7 @@ For producers that persistently fail to perform their block production duties, T
 
 ### Install and run
 
-The [node release](https://github.com/MatrixCoreX/PureEOS/releases/tag/governance-2026.11.01) provides the runtime, PureEOS CDT SDK and checksums. Obtain current source from `main` and use the [exact 1% system-contract release](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.11.01-governance7) for a fresh chain; it includes matching source, WASM, ABI and checksums. Verify and extract the runtime into a separate directory using the commands above. Start tools through the package's `bin/` wrappers to use the matching loader and libraries.
+The [node release](https://github.com/MatrixCoreX/PureEOS/releases/tag/governance-2026.11.01) provides the runtime, PureEOS CDT SDK and checksums. Obtain current source from `main` and use the [matching 1.0.0 system-contract release](https://github.com/MatrixCoreX/PureEOS/releases/tag/system-contracts-2026.11.01-governance7) for a fresh chain; it includes matching source, WASM, ABI and checksums. Verify and extract the runtime into a separate directory using the commands above. Start tools through the package's `bin/` wrappers to use the matching loader and libraries.
 
 Prepare network settings, genesis configuration and your own keys using the [configuration instructions](config/README.txt). The complete chain preset is [chain-parameters.json](config/chain-parameters.json). See [PureEOS CDT](https://github.com/MatrixCoreX/PureEOS-CDT#readme) for SDK installation and contract compilation.
 
@@ -156,11 +158,13 @@ Planned maintenance excludes future rotation. An incumbent must complete normal 
 
 ### System contracts and qualification
 
-The system contract retains single-choice voting, proposer/finalizer/rotation modes, **10% staking / 90% PowerUp**, reward halving and the **14-day** upgrade review. RAM starts at **64 GiB** and grows through explicit `setramrate(1024)` initialization. Both deferred-disable stages remain activated.
+See the [1.0.0 baseline](docs/BASELINE.md) and [machine manifest](config/BASELINE.json). Bans are excluded before ranked capacity counting; the next eligible candidate backfills. Only the developer proposes; BPs veto. Current permanent bans are removed from both effective electorate and vetoes, with threshold ceil(2N/3) and execution blocked at N=0. Raw records and existing proposal deadlines remain. Existing short-name auctions remain; rentals are not implemented.
+
+The system contract retains single-choice voting, proposer/finalizer/rotation modes, **10% staking / 90% PowerUp**, reward halving and the **7-day** upgrade review. RAM starts at **64 GiB** and grows through explicit `setramrate(1024)` initialization. Both deferred-disable stages remain activated.
 
 The [functional report](docs/baseline-20261030/REPORT.md) records **154 passing cases, zero skipped**, separating 30 parallel processes on three physical hosts, native tests, component checks and expected attack rejections. Live 20-member checks cover continued finality with 14 votes, interruption with 13, permanent-ban removal without standbys and recovery. Live sub-21 coverage specifically means 20 members. This functional/topology campaign measures no new TPS.
 
-Block rewards accrue at exactly **1% of currently issued supply per 364-day contract year**, halved every 1461 days; the additional 4% is never issued. Only actual blocks create unpaid credits. A successful claim issues and funds the pool; a positive-weight direct vote starts the clock and claims require more than 24 hours. Use the matching [WASM/source package](system-contracts/pureeos-system-2026.10.31-exact1pct.tar.gz) and [reward review](docs/rewards/EXACT_1PCT_20261031.md) for fresh genesis chains.
+Block rewards accrue at exactly **1% of currently issued supply per 364-day contract year**, halved every 1461 days; the additional 4% is never issued. Only actual blocks create unpaid credits. A successful claim issues and funds the pool; a positive-weight direct vote starts the clock and claims require more than 24 hours. Use the matching [WASM/source package](system-contracts/pureeos-system-1.0.0.tar.gz) and [reward review](docs/rewards/EXACT_1PCT_20261031.md) for fresh genesis chains.
 
 ### Develop from current source
 
