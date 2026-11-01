@@ -6,7 +6,9 @@
 
 ### 1. 认识 PureEOS
 
-PureEOS 是一套以 AIC 为默认代币、支持并行处理独立交易的区块链软件。它把区块生产、BP 轮岗和最终确认放在可查询的链上规则中，方便节点运营者判断自己何时在岗、何时可以维护，以及哪些区块已经不可逆。
+PureEOS 是一套支持并行处理独立交易的区块链软件。它把区块生产、BP 轮岗和最终确认放在可查询的链上规则中，方便节点运营者判断自己何时在岗、何时可以维护，以及哪些区块已经不可逆。
+
+目前公开运行的网络与示例交易用于测试，主网代币名称和符号尚未确定。
 
 共识协议名为 **TITAN（泰坦共识协议）**。它在 DPoS 基础上结合单选投票、确定性轮岗、BLS 最终确认、维护交接和基于已最终确认证据的故障处理。独立交易可以并行执行，存在依赖或冲突的交易保留安全回退，状态仍按区块中的交易顺序提交。
 
@@ -23,7 +25,7 @@ PureEOS 是一套以 AIC 为默认代币、支持并行处理独立交易的区�
 
 本版包括 **7 天升级审查**、**永久黑名单不占候选名额并由后续合格者递补**，以及审查期内从有效否决票和选民人数中同时剔除永久封禁者的规则。配套系统合约的源码、WASM、ABI 和摘要一起提供，安装时应作为同一套发行核验。
 
-PureEOS CDT 沿用已验证的编译器和运行库；部分工具输出及 CMake 名称保留 AIC/CDT 兼容标识，安装与编译方法见其 README。
+PureEOS CDT 沿用已验证的编译器和运行库；部分工具输出及 CMake 名称保留兼容标识，安装与编译方法见其 README。
 
 ### 3. 运行基线
 
@@ -61,7 +63,7 @@ CPU16 是链上 CPU 计费预算的倍率，不是 worker 数量，也不表示�
 | 系统 | Ubuntu 24.04.5 LTS 主机，使用配套打包运行时 |
 | 测试方式 | 单节点出块；投送程序与节点在同一台机器 |
 | 参数 | CPU16 / NET4MiB / 状态库16GiB；8 workers / batch24 / group8 |
-| 负载 | 纯 AIC 转账；81,920 对账户轮转；8 个投送连接 |
+| 负载 | 纯测试代币转账；81,920 对账户轮转；8 个投送连接 |
 | 投送目标 | 80,000 TPS，仅表示发送端目标速率 |
 | 窗口 | 1 秒预热；事前固定 12 秒计时；90 秒排空 |
 | 历史服务 | **测量时出块节点 SHIP 关闭，历史节点、PureHistory 及全部历史后端停止** |
@@ -224,11 +226,11 @@ RAM 市场初始为 64 GiB，通过既有 `setramrate(1024)` 初始化增长速�
 
 历史来源停下后，已经索引的数据仍可查询，新数据则等待来源恢复和追平。PureHistory 读取链上的投票、维护与黑名单结果，不自己决定共识处罚。它按 ABI 区分 PureEOS 整数投票与旧 EOS 数据，旧 EOS 的代理/权重语义保持原样。
 
-| 服务 | 默认入口 |
+| 服务 | 测试网入口 |
 | --- | --- |
-| 浏览器 | https://aic.matrixai.one |
-| 节点 HTTPS API | https://aic-api.matrixai.one |
-| PureHistory API | https://purehistory-api.matrixai.one |
+| 浏览器 | [测试网浏览器](https://aic.matrixai.one) |
+| 节点 HTTPS API | [测试网节点 API](https://aic-api.matrixai.one) |
+| PureHistory API | [测试网历史 API](https://purehistory-api.matrixai.one) |
 
 浏览器只读，展示真实区块、当前排班、有效 BP、维护和黑名单；票数按精确整数拆分为总票权、自投和他投。12 块活动默认展开，链上最高 TPS 来自服务端不可逆记录。前端直接访问已配置的 HTTPS API，连接失败不会改用虚构数据。
 
@@ -240,7 +242,7 @@ RAM 市场初始为 64 GiB，通过既有 `setramrate(1024)` 初始化增长速�
 
 `bidname` 和 `bidrefund` 接口仍存在。没有出价记录不代表拍卖代码被禁用；成交仍受原规则约束，包括链激活超过 14 天、最后出价超过 24 小时和关拍频率等条件。**这 14 天是拍卖条件，与合约升级的 7 天审查期无关。**
 
-把短号改为“抢注＋租金、到期释放、解析/转让给 12 位原生账户”的方案，以及把系统账号整体改成 `aic*` 的方案，仍在讨论和设计中，尚未纳入本版实现。
+把短号改为“抢注＋租金、到期释放、解析/转让给 12 位原生账户”的方案，以及系统账号命名空间的更名方案，仍在讨论和设计中，尚未纳入本版实现。
 
 ### 15. 如何查看验证结果
 
@@ -263,7 +265,7 @@ RAM 市场初始为 64 GiB，通过既有 `setramrate(1024)` 初始化增长速�
 
 许可按组件分别适用。使用、修改或分发时，请一并保留随包的版权、许可和第三方声明，并核对所用组件的实际条款。
 
-项目说明见 [AIC_LICENSE.md](AIC_LICENSE.md)、[LICENSING.md](LICENSING.md)、[LICENSE](LICENSE) 及 [licenses](licenses/)；继承代码和依赖的原有权利及适用的 BSL 生产用途范围，以各自文件为准。
+项目说明见 [项目补充许可](AIC_LICENSE.md)、[LICENSING.md](LICENSING.md)、[LICENSE](LICENSE) 及 [licenses](licenses/)；继承代码和依赖的原有权利及适用的 BSL 生产用途范围，以各自文件为准。
 
 ---
 
@@ -271,7 +273,9 @@ RAM 市场初始为 64 GiB，通过既有 `setramrate(1024)` 初始化增长速�
 
 ### 1. About PureEOS
 
-PureEOS is blockchain software that uses AIC as its default token and processes independent transactions in parallel. Block production, BP rotation and finality follow queryable on-chain rules, helping operators see when they are on duty, when maintenance is safe and which blocks are irreversible.
+PureEOS is blockchain software that processes independent transactions in parallel. Block production, BP rotation and finality follow queryable on-chain rules, helping operators see when they are on duty, when maintenance is safe and which blocks are irreversible.
+
+Current network deployments and example transactions are for testing. The mainnet token name and symbol have not yet been decided.
 
 Its consensus protocol is **TITAN (Titan Consensus Protocol)**. Built on DPoS, it combines single-choice voting, deterministic rotation, BLS finality, maintenance handovers and fault handling based on finalized evidence. Independent transactions can run in parallel; dependent or conflicting transactions retain safe fallbacks, and state commits follow transaction order within the block.
 
@@ -288,7 +292,7 @@ This README describes the **current 1.0.0 release**. See the [baseline guide](do
 
 This release includes **seven-day upgrade review**, **permanent bans excluded from candidate capacity with eligible successors filling the vacancy**, and the removal of currently banned members from both effective vetoes and electorate counts during review. Matching system-contract source, WASM, ABI and checksums are supplied together and should be verified as one set.
 
-PureEOS CDT retains its qualified compiler and runtime libraries. Some tool output and CMake names keep AIC/CDT compatibility identifiers; its README explains installation and compilation.
+PureEOS CDT retains its qualified compiler and runtime libraries. Some tool output and CMake names keep compatibility identifiers; its README explains installation and compilation.
 
 ### 3. Runtime baseline
 
@@ -326,7 +330,7 @@ For the current **CPU16 / NET4MiB / 16GiB state** combination, the highest retai
 | System | Ubuntu 24.04.5 LTS host with the matching bundled runtime |
 | Topology | Single producing node; load generator on the same machine |
 | Parameters | CPU16 / NET4MiB / 16GiB state; 8 workers / batch24 / group8 |
-| Workload | Pure AIC transfers; 81,920 rotating account pairs; 8 sender connections |
+| Workload | Pure test-token transfers; 81,920 rotating account pairs; 8 sender connections |
 | Submission target | 80,000 TPS, describing the sender target only |
 | Timing | 1-second warmup; fixed 12-second measurement; 90-second drain |
 | History services | **Producer SHIP off; history node, PureHistory and all history backends stopped during measurement** |
@@ -489,11 +493,11 @@ Separate the roles: keep producer SHIP off, and use a synchronized nonproducing 
 
 If the history source stops, already indexed data remains queryable while new data waits for recovery and catch-up. PureHistory reads on-chain voting, maintenance and blacklist decisions rather than imposing consensus penalties. ABI detection preserves the distinction between PureEOS integer voting and legacy EOS proxy/weight semantics.
 
-| Service | Default endpoint |
+| Service | Testnet endpoint |
 | --- | --- |
-| Explorer | https://aic.matrixai.one |
-| Node HTTPS API | https://aic-api.matrixai.one |
-| PureHistory API | https://purehistory-api.matrixai.one |
+| Explorer | [Testnet explorer](https://aic.matrixai.one) |
+| Node HTTPS API | [Testnet node API](https://aic-api.matrixai.one) |
+| PureHistory API | [Testnet history API](https://purehistory-api.matrixai.one) |
 
 The explorer is read-only and shows real blocks, effective schedules, eligible BPs, maintenance and bans. Exact integer votes are split into total/self/other values. Its 12-block activity view opens by default, and lifetime peak TPS comes from server-owned irreversible records. The static frontend queries configured HTTPS APIs directly and does not substitute invented data after failure.
 
@@ -505,7 +509,7 @@ This release retains protocol system accounts such as `eosio` and `eosio.token`,
 
 `bidname` and `bidrefund` remain available. An empty bid table does not mean auction code is disabled. Closing follows existing conditions, including more than 14 days since chain activation, more than 24 hours since the last bid and the closing-frequency rule. **Those 14 days are an auction condition, separate from seven-day contract upgrade review.**
 
-First-come rental aliases with expiry/re-registration and binding/transfer to 12-character native accounts remain a design under discussion. Renaming system accounts to an `aic*` namespace is also a plan, not an implementation in this release.
+First-come rental aliases with expiry/re-registration and binding/transfer to 12-character native accounts remain a design under discussion. Renaming the system-account namespace is also a plan, not an implementation in this release.
 
 ### 15. How to read the validation evidence
 
@@ -528,4 +532,4 @@ Continue new development from current `main`. Bind changes to source, binaries, 
 
 Licenses apply per component. Preserve the accompanying copyright, license and third-party notices when using, modifying or distributing the software, and consult the terms of the components you use.
 
-See [AIC_LICENSE.md](AIC_LICENSE.md), [LICENSING.md](LICENSING.md), [LICENSE](LICENSE) and [licenses](licenses/). Inherited code/dependency rights and any applicable BSL production-use scope remain governed by their respective files.
+See [Project license notes](AIC_LICENSE.md), [LICENSING.md](LICENSING.md), [LICENSE](LICENSE) and [licenses](licenses/). Inherited code/dependency rights and any applicable BSL production-use scope remain governed by their respective files.
