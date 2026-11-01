@@ -62,7 +62,10 @@ void advance_ranking(rotation_info& s, rotation_candidates& candidates) {
       }
       ++s.ranked_count;
       candidates.modify(c, same_payer, [&](auto& r) {
-         if (r.ticket == 0 || r.seen_epoch != s.published_epoch) r.ticket = next_ticket(s);
+         // Aborted snapshots may already have stamped a newer epoch. Their
+         // existing tickets keep FIFO priority; only older stale membership
+         // must rejoin at the tail of the queue.
+         if (r.ticket == 0 || r.seen_epoch < s.published_epoch) r.ticket = next_ticket(s);
          r.seen_epoch = s.snapshot_epoch;
       });
    }
