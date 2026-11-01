@@ -12,6 +12,56 @@ PureEOS 是一套支持并行处理独立交易的区块链软件。它把区块
 
 共识协议名为 **TITAN（泰坦共识协议）**。它在 DPoS 基础上结合单选投票（一票一投）、确定性轮岗、BLS 最终确认、维护交接和基于已最终确认证据的故障处理。独立交易可以并行执行，存在依赖或冲突的交易保留安全回退，状态仍按区块中的交易顺序提交。
 
+#### 1.1 单选投票（一票一投）与精确票权
+
+每个投票账户同一时间最多支持一个 BP，也可以撤回选择；改投时，合约先从原 BP 扣除该账户的有效票权，再计入新 BP。同一份票权不能同时重复支持多个 BP。投票须由投票账户按自身权限直接授权，代理投票和注册投票代理均被禁用。
+
+“一票一投”约束的是选择数量，票权大小仍取决于合约记录的有效权益，并非每个账号固定只有一票，也不是按人数平均分配。票数以最小代币单位使用精确整数累计；例如，账户有 100 个单位的有效票权，选择某 BP 后，该 BP 增加 100 个单位。钱包全部余额、CPU/NET 可用额度与有效票权是不同数据，实际应读取链上投票记录。
+
+票权不乘投票日期或持有时间系数，不需要为了刷新时间权重反复重投。有效权益、投票选择发生变化时，按合约规则结算增减。撤回、改投和权益结算保留授权检查与原子性，不能通过重复操作复制票数。
+
+#### 1.2 候选准入、FIFO 候补与单席位轮岗
+
+投票排名先决定候选准入范围，再由链上队列安排谁进入实际岗位。候选需要完成有效注册，具有有效出块和最终确认密钥，并满足正票权、排名、维护及永久封禁条件。注册成功或刚获得选票，不代表已经入选当前排班；准入还需经过链上排名快照与状态更新。
+
+候选容量从 210 开始，按链上增长起点和 1461 天周期的整数公式逐步扩容。这是允许参与轮岗的候选范围上限，不是必须上线的机器数量，也不代表同时有 210 个 BP 出块。永久封禁者在容量计数之前排除，后续合格者可以递补，高票封禁账户也不能占住名额。
+
+合格稳态排班为 21 名成员。队列保留仍合格候选的先后顺序，新候选按确定的排名顺序加入；正常轮岗按 FIFO 逐席交接，每次换上一名合格候补、换下一名在岗成员，而不是一次重排整套委员会。维护、失去资格和已成立故障等情况优先按相应规则处理。票数影响候选准入，不赋予永久占据在岗席位的权利。
+
+例如，35 个 BP 均已完成候选准入时，稳态由 21 名成员在岗，其余候补。候补不足时不会凭空补足人数；没有合适替补时，也不能把注册数当作可立即接班的人数。出块排班与 BLS 最终确认政策须完成相互一致的正常交接及不可逆检查，才能继续下一次成员轮换。交接仍须满足生效政策的法定票数，不能因有人关机就把分母临时改成在线人数。
+
+#### 1.3 链上维护申请与职责交接
+
+BP 使用自己的账户权限申请或解除维护。维护状态写入链上，节点运营者和浏览器能够查询申请是否已经转为可安全停机的状态：
+
+| 状态 | 含义与操作 |
+| --- | --- |
+| 正常 | 按资格与排名参与候选及轮岗。 |
+| 等待维护 | 请求已记录，退出后续候选选择，但尚未卸下已有出块、最终确认或待生效职责；必须继续在线。 |
+| 维护中 | 相关职责已经完成交接；核对生效检查点不可逆后，再按流程停机。 |
+
+没有任何现有或待交接职责的候补，申请后可以较快进入有效维护；在岗 BP 则需先完成交接，不能把“提交申请成功”当成“可以立刻关机”。恢复时先让节点同步，再由 BP 账户解除维护，随后按正常规则重新等待准入与轮岗。
+
+有效维护期间不再分配新的轮岗职责，也不新增相应生产奖励或缺岗处罚；此前未领取的出块权益、已成立的有效违规和永久封禁记录保留。维护状态不能用来清除处罚或重置历史权益。
+
+#### 1.4 以已最终确认的个人职责判断缺岗
+
+缺岗按该 BP 实际被分配的完整个人出块窗口观察，只有窗口覆盖的事实得到最终确认，才能结算为有效证据。当前一次出块时段为 12 个半秒 slot，即 6 秒；“连续三个个人零出块窗口”指同一 BP 连续三次被安排出块却整段没有产出，不是全链连续三个区块，也不能直接换算成全链连续 18 秒无块。正常产出的完整个人窗口会清零连续零产出计数。
+
+在健康的完整委员会下，连续三个已最终确认的个人零出块窗口形成永久 BP 账户封禁。候补没有被分配岗位时不因等待受罚；单个缺块也不等于整个个人窗口零产出。证据记录窗口、对应政策及最终确认检查点，判断依据是链上职责与实际产出，不是浏览器是否能连通某台机器。
+
+全链出块或最终性观察中断达到 252 slot（126 秒，含边界），或委员会不足 21 人时，暂停新增个人缺岗证据。恢复后重新观察完整窗口，不能把停摆时段追补成仍在运行 BP 的个人违规；此前已经结算成立的违规与永久封禁保留。这个保护处理处罚归责，不能代替缺失的最终确认票，也不能保证法定票数不足时继续最终确认。
+
+永久封禁限制该账户的 BP 资格；同一账户重注册、换钥、加票或申请维护都不能解除封禁。它的普通账户资产和既有未领出块权益不因此自动没收。运营者如用另一个合格原生账户重新参选，须重新注册并获得投票，旧账户的选票不会自动转过去。
+
+#### 1.5 独立交易并行执行与冲突安全回退
+
+满足并行准入条件的交易先在隔离的工作状态中执行，节点记录并检查实际读写依赖。准备采用并行结果时，还要核对它读取的状态是否与前面已经提交的交易一致；不能只看两个转账的收款账号是否不同，就认定它们一定互不影响。
+
+例如，两笔转账分别涉及完全独立的账户状态，并且没有其他共享写入依赖时，可以并行准备结果；若第二笔要使用第一笔转入的余额，或两笔操作竞争同一合约记录、索引或资源状态，就需要按依赖处理。发现冲突、状态前提失效或路径不符合并行条件时，节点按既定顺序回退重执行，不强行采用过期的计算结果。
+
+并行的是可独立处理的执行工作，最终写入仍遵守区块中的交易顺序。验签、权限、CPU/NET 计费和单笔交易的原子回滚继续生效，多操作交易失败不会留下部分成功状态。节点保持并行运行模式，同时允许具体交易为正确性而安全回退；关联交易较多时，实际并行收益会下降。
+
 本 README 介绍 **1.0.0 当前发行**的配置和使用方法。完整规则见[基线说明](docs/BASELINE.md)，可供程序核对的参数见[基线清单](config/BASELINE.json)和[链参数预设](config/chain-parameters.json)。
 
 ### 2. 这一版包含什么
@@ -278,6 +328,56 @@ PureEOS is blockchain software that processes independent transactions in parall
 Current network deployments and example transactions are for testing. The mainnet token name and symbol have not yet been decided.
 
 Its consensus protocol is **TITAN (Titan Consensus Protocol)**. Built on DPoS, it combines single-choice voting (one BP per voter), deterministic rotation, BLS finality, maintenance handovers and fault handling based on finalized evidence. Independent transactions can run in parallel; dependent or conflicting transactions retain safe fallbacks, and state commits follow transaction order within the block.
+
+#### 1.1 Single-choice voting (one BP per voter) and exact vote amounts
+
+Each voting account may support at most one BP at a time or clear its selection. Switching deducts that account's effective vote amount from the previous BP and adds it to the new BP. The same voting power cannot be counted in full for multiple BPs. The voting account must authorize the action through its own permissions; proxy voting and proxy registration are disabled.
+
+“One BP per voter” limits the selection count. Voting power still follows eligible interests recorded by the contract; it is not one equal vote per account or per person. Amounts accumulate as exact integers in the token's smallest units. An account with 100 units of effective voting power adds 100 units to its chosen BP. Liquid wallet balances, available CPU/NET and effective vote amounts are different values; use the on-chain voting records.
+
+Vote amounts have no voting-date or holding-time multiplier, so users need not repeatedly vote to refresh a time weight. Changes to eligible interests or selections settle under the contract rules. Authorization and atomic updates prevent withdrawal, switching or repeated settlement from duplicating votes.
+
+#### 1.2 Candidate admission, FIFO standbys and one-seat rotation
+
+Vote ranking first determines candidate admission; the on-chain queue then determines actual duty. Candidates need active registration, usable producer and finalizer keys, positive votes, a qualifying rank and acceptable maintenance/ban status. Registration or a new vote does not immediately place a BP in the effective schedule: ranked snapshots and chain-state updates still apply.
+
+Candidate capacity begins at 210 and grows under the integer formula using its on-chain origin and 1461-day periods. This limits the eligible rotation pool; it is neither a required machine count nor 210 simultaneous producers. Permanent bans are excluded before capacity counting, allowing the next eligible candidate to backfill even when a banned account retains high votes.
+
+A qualified steady-state roster contains 21 members. The queue preserves the relative order of surviving candidates and appends new candidates in deterministic rank order. Normal FIFO rotation hands over one seat at a time, replacing one incumbent with one eligible standby rather than reshuffling the whole committee. Maintenance, loss of eligibility and established faults receive the corresponding priority handling. Votes govern admission, not a permanent right to remain on duty.
+
+For example, once 35 BPs have completed admission, 21 serve in the steady-state roster and the others are standbys. A shortage cannot manufacture qualified replacements, and registration counts do not establish immediate readiness. Producer schedules and BLS finalizer policies must complete a coherent native handover and irreversible checks before the next membership rotation. Effective-policy quorum still applies; offline members do not turn the denominator into the number of online processes.
+
+#### 1.3 On-chain maintenance and duty handover
+
+The BP account authorizes maintenance requests and cancellation. Operators and the explorer can query the on-chain state to distinguish a recorded request from effective maintenance:
+
+| State | Meaning and operator action |
+| --- | --- |
+| Normal | Participate in admission and rotation under eligibility/ranking rules. |
+| Awaiting maintenance | The request is recorded and excludes future candidate selection, but existing proposer, finalizer or pending duties remain; stay online. |
+| In maintenance | Relevant duties have completed handover; verify the effective checkpoint is irreversible before shutting down. |
+
+A standby with no existing or pending duties may enter effective maintenance promptly. An incumbent must first complete handover: a successful request is not permission to stop immediately. On recovery, synchronize the node, clear maintenance through the BP account and wait for normal admission and rotation.
+
+Effective maintenance assigns no new rotation duties or corresponding production rewards/absence penalties. Earlier unpaid production rights, valid settled violations and permanent bans remain. Maintenance cannot erase punishment or reset historical entitlements.
+
+#### 1.4 Absence evidence from finalized personal duties
+
+Absence is observed over complete personal production windows actually assigned to the BP and settled only after the window's facts become final. A current production turn spans 12 half-second slots, or 6 seconds. Three consecutive personal zero-production windows mean the same BP produced nothing during three consecutive assigned turns, not three consecutive chain blocks or an arbitrary 18-second chain halt. A complete personal window with production clears the consecutive-zero counter.
+
+On a healthy full committee, three consecutive finalized personal zero-production windows permanently ban the BP account. Unassigned standbys are not punished for waiting, and one missed block is not an entirely empty personal turn. Evidence records the windows, associated policies and finalization checkpoint; duties and production on chain determine the result, not whether the explorer can reach a machine.
+
+A block-production or finality-observation interruption of 252 slots/126 seconds inclusive, or a committee below 21, pauses new personal absence evidence. Recovery starts complete observation windows instead of retroactively blaming running BPs for the interruption. Previously settled valid violations and permanent bans remain. This protection governs attribution; it cannot replace missing finalizer votes or guarantee finality without quorum.
+
+A permanent ban restricts that account's BP eligibility. Re-registration, keys, votes or maintenance cannot remove it. Ordinary assets and existing unpaid production rights are not automatically confiscated. An operator entering through another eligible native account must register and obtain votes again; the old account's votes do not transfer automatically.
+
+#### 1.5 Parallel independent execution and safe conflict fallback
+
+Transactions meeting parallel-admission conditions execute against isolated worker state while the node records and checks actual read/write dependencies. Before adopting a result, it validates the state that result read against transactions already committed ahead of it. Different transfer recipients alone do not prove independence.
+
+Two transfers touching independent account state with no other shared-write dependencies can prepare results in parallel. A transfer spending funds received from an earlier transaction, or operations competing over a contract row, index or resource state, require dependency handling. Conflicts, invalidated state assumptions and ineligible paths trigger ordered fallback execution instead of adopting stale results.
+
+Independent execution work is parallel; final state writes still follow transaction order in the block. Signatures, authorization, CPU/NET billing and per-transaction atomic rollback remain enforced, including rollback of a failed multi-action transaction. A node runs in parallel mode while individual transactions may safely fall back for correctness. Heavily dependent workloads therefore obtain less parallel benefit.
 
 This README describes the **current 1.0.0 release**. See the [baseline guide](docs/BASELINE.md), [machine-readable baseline](config/BASELINE.json) and [chain parameter preset](config/chain-parameters.json) for the complete rules.
 
