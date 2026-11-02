@@ -2,7 +2,7 @@
 
 制定日期：2026-11-02  
 适用范围：现有测试服务器上的 AIC 测试链重建、单 BP TPS 测量、历史服务恢复、BP 逐步加入及另行授权的故障验证。  
-执行记录：[40 BP部署报告](../system-contracts/bp-bond/deployment-20261102/REPORT.md)、[投票与随机业务准备](../system-contracts/bp-bond/deployment-20261102/preparation/REPORT.md) 及 [五节点故障验收](../system-contracts/bp-bond/deployment-20261102/offline-five/REPORT.md) 分阶段留档。本文定义启动规则；每轮须分别记录通过、失败、未执行和正在进行的项目。
+执行记录：[40 BP 部署与单 BP TPS](performance-results/machines/amd-epyc-4345p-8-core-processor--baremetal--8physical-16threads--65536MiB/20261102-bp-bond-newchain-r1/REPORT.md)、[投票、普通业务及浏览器准备](performance-results/machines/amd-epyc-4345p-8-core-processor--baremetal--8physical-16threads--65536MiB/20261102-bp-bond-preparation-r1/REPORT.md)、[五节点停机、永久黑名单及罚没验收](performance-results/machines/amd-epyc-4345p-8-core-processor--baremetal--8physical-16threads--65536MiB/20261102-bp-bond-offline-five-r1/REPORT.md)均分阶段留档。本文定义启动规则；每轮须分别记录通过、失败、未执行和正在进行的项目。
 
 ## 文档维护约定
 
@@ -148,7 +148,7 @@
 
 本轮 BP 名称全部使用有含义的完整 12 字符，不用 `aa`、`bb`、`aaa` 等重复字母补尾。创始 BP 为 `gptgenesisbp`；其余混合使用少量 AI 名称、国家加意象及自然星空名称。名称是模拟节点标签，实际仍位于同一保留服务器。按以下顺序准备：
 
-命名规则作为后续启动默认保留：创始节点包含 `gpt`，全部普通 BP 名称严格匹配 `[a-z1-5]{12}` 且唯一，不用无意义补尾，不全部采用 AI 厂商名；可使用“国家＋有含义名称”，例如 `japanblossom`、`canadaboreal`、`swissglacier`。国家标签不代表实际部署地域，AI 名称不代表相关企业参与或背书。本轮机器可读名单为 [SELECTED_BP_NAMES.json](../system-contracts/bp-bond/SELECTED_BP_NAMES.json)，合计创始 1 个、AI 8 个、国家意象 12 个、自然星空 19 个；脚本读取同一名单，禁止另外生成不一致的 BP 身份。
+命名规则作为后续启动默认保留：创始节点包含 `gpt`，全部普通 BP 名称严格匹配 `[a-z1-5]{12}` 且唯一，不用无意义补尾，不全部采用 AI 厂商名；可使用“国家＋有含义名称”，例如 `japanblossom`、`canadaboreal`、`swissglacier`。国家标签不代表实际部署地域，AI 名称不代表相关企业参与或背书。本轮机器可读名单为 [SELECTED_BP_NAMES.json](release-work-20261102/bp-bond-r1/SELECTED_BP_NAMES.json)，合计创始 1 个、AI 8 个、国家意象 12 个、自然星空 19 个；脚本读取同一名单，禁止另外生成不一致的 BP 身份。
 
 - `openaivision`
 - `solarvoyager`
@@ -315,3 +315,84 @@ performance-results/machines/<实际CPU与核心线程内存配置>/<本轮日�
 浏览器已部署押金查询，库保持私有。公网真实 Chrome 的中英文、深浅主题及桌面/手机宽度检查通过；五个实际罚没账户均显示当前押金 0、已罚没 10,000 AIC、已结算至罚没池和真实决定块，锁定/罚没合计准确，无脚本或 HTTP 错误。
 
 排期经验：注册完成不等于已进入生效排班。预计等待时长应根据全部较早 FIFO 票据和实际交接间隔计算，包括暂时在岗、但会在新 BP 之前再次进入候选的票据；不能只数当前候补。保留真实排班与出块条件，不为缩短等待而改票据、窗口或黑名单计数。
+
+
+## 15. 低成本测试发行版（2026-11-02 新选定范围）
+
+用户选择独立 TEST 版，最低验证目标 4 vCPU、8 GB 内存，CPU4 与 4 个并行 worker，并要求同时检查线程、缓存、队列、状态库及 NET 等参数。正式版 v1.0.0、CPU16/NET4MiB 和 8 物理核/16 线程/64 GB 门槛保持现有值；仅 TEST 版单独降低门槛和本机配置。测试版另发预发布版本，不移动正式标签、不自动切换现有公共测试链。
+
+构建和功能验证在保留的 EPYC 4345P 测试服务器隔离目录、回环端口与受限 cgroup 内完成，明确记录实际宿主机以及 CPU/内存限额；受限进程验证不等同廉价 VPS 实机性能或新 TPS 测量。此次不创建服务器、不停止现有 40 个健康 BP、历史节点及普通账户业务。不改变系统合约字节、押金、7 天冷却、罚没池、投票、最终性、维护、黑名单、奖励、治理、64 GiB 链上 RAM 和 setramrate(1024)、禁用延迟交易。具体候选参数、测试和发行证据见 release-work-20261102/test-release-cpu4-r1。
+
+### 15.1 已选定的低配预设
+
+TEST 版专用源码目录为 `PureEOS-Test/`，远端为 `/opt/pureeos-test-release-20261102-r1/`，发行包顶层为 `pureeos-test-1.0.0-test.1/`；源码分支 `testing/low-cost-cpu4-v1`。测试二进制默认配置/数据根也使用 `pureeos-test`，不会沿用正式版 eosio 路径。
+
+- 新测试链：CPU4，即每块 800000 μs；NET 每块 1048576 字节。仅通过创世参数/正常链上初始化生效，不是已有链每台节点随意改 INI。
+- 本机：4 worker、batch12、group4；chain/vote/net/HTTP 线程 2/2/2/1；read-only-threads=0；状态库4096MiB、保护128MiB；交易队列256MiB；HTTP在途64MiB/128请求；入站及同IP连接64。
+- 维持单笔CPU150000μs、NET512KiB及计费/权限/签名/回退；P2P64MiB消息、100MiB在途保护；RAM64GiB与setramrate1024；原押金/最终性/轮岗/治理规则。历史服务独立配置，不把索引服务算进单节点8GB目标。
+- TEST 构建开关 `PUREEOS_TEST_BUILD=ON`，默认为OFF。最低检查4个affinity/quota可用vCPU、7500000000字节有效内存（8GB档内核预留差异）；CPU/内存不足和串行配置须拒绝。4worker不是整个进程只有4线程。
+- 资格验证：21项CPU/内存及正式版门槛断言、18项实际功能断言、3种真实启动拒绝通过。独立创世链在4CPU/8GiB/零swap限制下部署现有b591ca押金合约、完成资源/治理初始化、出块/最终确认、转账和拒绝检查、重启及P2P同步。宿主机仍为EPYC4345P，不是廉价VPS性能证明；TPS未测。原构建/查询脚本失败与修正均保留。
+
+发行和完整证据以 `release-work-20261102/test-release-cpu4-r1/WORK_STATE.json` 及实际硬件目录下 `20261102-low-cost-test-release-r1` 为准。
+
+### 15.2 发行完成
+
+已发布独立预发布 [PureEOS TEST v1.0.0-test.1](https://github.com/MatrixCoreX/PureEOS/releases/tag/v1.0.0-test.1)，源码2208fac7e6f84e3fffc3804eeaa9faaa3e70e097，nodeos SHA256为ce9fdc858c1ad16e369227b7e39562ba9b2c18f6c75b080343d26da9834326a9。8个发行附件经本机/远端/GitHub哈希一致性检查，运行包解压后604个文件校验通过。正式v1.0.0仍为最新正式版，标签和全部附件保持。此版不自动部署；现有40BP+1历史节点及普通账户业务保持运行，独立验证节点已全部退出。
+
+
+## 16. 低价VPS实际多节点验证（2026-11-02新授权）
+
+新开一台4vCPU/8GB/160GBSSD的Vultr普通云主机，API报价每小时0.055美元、每月40美元，Ubuntu24.04LTS，使用独立TEST1.0.0-test.1、CPU4/NET1MiB/4worker预设，逐步加入35个BP和1个非出块SHIP历史节点，共36个nodeos。测试网浏览器域名为https://aic-test.matrixai.one/，默认连接新链；成功后保留该机提供用户请求的浏览器服务，不设自动删除定时器。只授权这一台，不自动升配或加机，不包含额外TPS压力轮。
+
+原EPYC链、40BP、历史服务、普通账户活动及正式浏览器保持运行。新链继续使用已验证b591ca押金合约及64GiB/setramrate1024、10000AIC押金/7天冷却/罚没锁池、投票/轮岗/最终性/维护/黑名单/治理/资源/奖励模式。BP命名、自投加普通账户随机投票、不同票权、普通小额业务及留空块规则均沿用本手册；钥匙远端独立随机生成，不写入Git或公开报告。实际CPU型号和可见拓扑、超卖/steal、RAM/OOM、磁盘、进程/线程、同步/最终性、全员可用与历史流必须保留证据。同一台VPS模拟36进程仅说明该机负载与功能，不等于36台去中心化服务器或峰值TPS资格。计划与执行记录见release-work-20261102/cheap-vps-35bp-history-r1。
+
+### 16.1 条件追加黑名单演示
+
+用户追加：若35BP+1历史稳定，则增加到40–50BP。本轮选择45BP+1历史，共46个nodeos；最后新增5个BP分别缴纳10000AIC押金、自投并接受普通随机单选票，票权各不相同。必须等5个全部进入真实生效出块与最终确认政策并出块，再仅停止这5个；按原始连续3个已最终确认个人零出块窗口自然进入永久黑名单。核验罚没50000AIC准确一次锁入eosio.bslash、健康40BP正常出块/21人15票最终性与历史/浏览器可用。不得注入黑名单、缩短窗口或改规则，不自动追加服务器或升配，不动原EPYC链。若35节点本身无法稳定，则不进入此条件阶段，保留真实容量瓶颈和失败证据。
+
+用户进一步明确：本低配测试网不做TPS测试，只验证多BP、历史/查询/浏览器与条件黑名单演示。普通低频业务不是吞吐测试，禁止添加压力或饱和发送轮。
+
+### 16.2 与高配链一致的普通业务
+
+低配链同样准备90个普通账户，使用各自权限持续产生小额业务。每批随机1–20笔，约90%为AIC转账，约10%为已验证的civiccounter合约tick/note调用；等整批交易不可逆、余额和合约状态核对通过并排空后，随机保留1–6个实际空块再开始下一批。业务钱包只持有这些普通账户的权限，不导入创始、系统或BP密钥。普通账户随机单选投票与BP自投均保留，并保证所有BP总票数不同。禁止为了补充交易展示改成饱和发送或叠加批次。
+
+逐批保留交易ID、规范区块与不可逆确认、余额/计数器检查和真实空块审计；历史索引与浏览器必须能查询实际转账和合约调用。进程开机恢复，失败保留现场，不把累计交易量或观察到的每块交易数标为TPS资格结果。
+
+### 16.3 本次实际结果与容量门槛
+
+新VM为66.245.194.132，实际Intel Xeon Cascadelake共享4vCPU，来宾显示2核4线程（宿主物理核未知），可见内存8320786432字节，镜像自带8GiB swap。35个BP和1个非出块SHIP历史节点、完整PureHistory后端与浏览器均已部署；测试网为https://aic-test.matrixai.one/，独立链ID为547e72843e450cbe4610d5f14241c9392e1195a93e8a64ad44779a8a08fc9284。
+
+35进程能启动并同步，但满原生21人/15票后未通过稳定性验证：59个样本平均CPU99.674%，49个样本超出既定head新鲜度或最终确认间距，最差head年龄32.684秒、head与LIB相差90块，最长连续健康18.721秒。因此11:04UTC停止、禁用自动条件演示控制器；未扩到40/45，也未故意停任何BP或进行罚没。保留35BP、历史、普通业务和浏览器运行，禁止自动恢复扩容、升配或加机。
+
+历史角色使用明确head/full验证、API/P2P交易接收关闭、vote-threads=0，保留4并行worker及完整区块/最终确认凭证验证；BP仍使用2个投票验证线程。浏览器查询经非出块历史节点提供，HTTP/ABI读取预算500ms；不得借此改CPU/NET上限、签名校验、21/15阈值或黑名单时序。
+
+11:07UTC普通业务审计通过：577批、6030笔唯一交易，5486转账、279tick、265note；实际空块2324个，零重复ID，所有1–20批量均已出现。10个曾因CPU超时拒绝的原交易ID均已最终确认。另独立抽查12个原生规范区块的ID和executed收据。浏览器私有分支fix/build-default-testnet-label-20261102已推送fe125105d9918d70a5ff0c384867105a9eb8bd7f，仅更新测试域名，207项测试、构建与4种真实Chrome界面检查通过。
+
+完整证据和失败记录位于performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261102-cheap-vps-multibp-history-r1/REPORT.md。该结论只针对本共享VM多进程配置，不代表35台独立服务器或TPS资格；原EPYC正式测试链与浏览器保持不变。
+
+### 16.4 后续直接停机请求与低频业务设置
+
+用户在容量报告后直接要求执行5个BP停机，覆盖此前先扩到45再停机的前置安排。本轮11:17UTC仅停止、禁用swissglacier、solarvoyager、radiantorbit、openaivision、oceanicbloom五个BP服务。停机前五者都在真实出块和最终确认政策中并有不可逆出块证明；21人/15票政策还剩16个在线成员。创始gptgenesisbp、其余30BP和1个历史节点保留运行，不增加节点、服务器或TPS任务。
+
+11:32UTC已核验其中4个自然达到三次已最终确认个人零出块窗口并永久拉黑，每个10000AIC准确结算一次，40000AIC锁入eosio.bslash，押金托管余额310000AIC。openaivision在停机后正常轮出在岗名单，当前只有1个零出块窗口；要等后续实际排班再累计，不能按关机墙钟时间直接拉黑。后台watch_requested_five.py逐个验证不可逆黑名单证据并结算，保持原有判定时间与规则，不手工补黑名单。若最终5个全部满足条件，预期池50000AIC、剩余押金300000AIC；在此之前不得把预期值展示成已发生值。
+
+用户随后要求进一步减少低配业务。仅这台低配链改为每批随机1–3笔；每批全部不可逆、排空后，确认真实1–6个空块，并满足30–60秒的最低墙钟等待，再开始下一批。保留90个普通账户、90%转账/10%tick-note目标，原EPYC业务设置不变。实际已核验新批次588为1笔、589为3笔，距上一批最终确认分别约42.78秒、37.32秒。
+
+客户端签名必须显式传入cleos --expiration 1800。只改交易JSON的expiration不足以覆盖cleos默认30秒，不能通过放宽链上交易上限解决客户端过期问题。卡住的587批次原计划7笔，已扫描不可逆规范区块12675–15814并核对90账户余额与合约nonce：6笔早已执行，只补记收据；1笔已过期且被完整证明未执行的模拟意图被丢弃，没有补发新支付。保留原计划、取消ID、完整区块范围摘要、余额核验与源代码SHA，历史记录不得改成新频率。
+
+本次续测记录目录：performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261102-cheap-vps-stopfive-r1。远端stop-five-request-20261102-r1保存逐个黑名单与罚没证据，activity/expired-recovery-*保存旧批次核对证明。后续进展按链上实际结果更新；5个BP保持停机，旧45扩容控制器保持禁用。
+
+低频发送器同时持久化下一批最早发送时间，服务异常重启也要继续等待；同一批的广播重试最少间隔30秒，避免失败后反复发送增加服务器负担。当前源SHA256为142e8342cf952b6dd0f93643b4f44df32942ebf6eb6c0af9b85b06db980b1ffa。配置更新重启后的真实批次已再次核对数量及间隔，无需改变链的资源限制。
+
+
+### 16.5 低配演示的计划维护停机（2026-11-02）
+
+用户因低配服务器卡顿，要求另选5个健康在线BP申请维护，再关闭服务。选择amberhorizon、chilehorizon、sapphiretide、nvidiabrains、crystalriver：预检时均待岗、押金10000AIC、正常注册，避开创始BP、历史节点以及原故障测试的5个永久黑名单BP。
+
+计划停机统一使用以下顺序：本人权限签署eosio::setmaint(producer,true)，等待交易规范不可逆；确认bpmaint.state=2且effective_block已不可逆；核对所有生效/待生效/提议的原生出块、最终确认政策，以及rotation.active/target，均已没有这些节点；将这份状态观察锚定到规范不可逆区块后，才停机并禁用对应systemd服务。state=1仍是交接中，不能提前关机；不注销、不退押金、不修改票数和共识阈值。
+
+目标运行规模为25个BP加1个非出块历史节点，共26个nodeos进程；保留21人/15票的原生政策和稀疏普通业务。原故障测试的swissglacier、solarvoyager、radiantorbit、openaivision、oceanicbloom仍保持停机。预检已经读到这5个都自然永久拉黑并各罚没10000AIC：池50000AIC、押金托管300000AIC；原35BP容量失败报告仍保留，不把减少进程后的表现写成35BP合格。
+
+维护执行证据放在远端maintenance-five-20261102-r1及本机release-work-20261102/cheap-vps-maintain-five-r1。完成后保存签名申请ID、不可逆交易位置、交接检查点、停止服务回执和出块/最终确认、历史接口、进程/内存的实际观察。恢复时先启动这5个原服务并同步到不可逆链头，再由各BP本人setmaint(false)退出维护，等待正常轮岗；不能先取消维护后才开机。恢复须有新的用户指令。
+
+本次实际完成：2026-11-02 14:09:10UTC，5个维护申请已不可逆且维护完全生效后停机、禁用。剩余25BP+1历史节点；21/15原生政策持续出块/最终确认。查询接口确认维护中5、等待维护0；押金、票数未变，无新增黑名单。维护交易ID为2b260693960df4af12bf2e25c996c1bd024b7f7fabc64bd5ee3ac1853fd53890。90秒观察后可用内存增加约582MiB，但CPU仍约100%，未将其描述为卡顿已完全解决。完整报告：performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261102-cheap-vps-maintain-five-r1/REPORT.md。

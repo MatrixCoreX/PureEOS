@@ -1,0 +1,11 @@
+{
+  "targets": [
+    "amberhorizon",
+    "chilehorizon",
+    "sapphiretide",
+    "nvidiabrains",
+    "crystalriver"
+  ],
+  "selection": "Healthy registered, fully bonded online standby BPs outside all observed active/pending/proposed policies and rotation target/active/outgoing/incoming; smallest integer vote totals first. Revalidate live before applying.",
+  "chain_id": "547e72843e450cbe4610d5f14241c9392e1195a93e8a64ad44779a8a08fc9284"
+}

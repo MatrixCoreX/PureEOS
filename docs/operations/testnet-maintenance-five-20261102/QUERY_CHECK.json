@@ -1,0 +1,49 @@
+{
+  "UTC": "2026-11-02T14:11:40.808074+00:00",
+  "summary": {
+    "schema_version": 1,
+    "chain_id": "547e72843e450cbe4610d5f14241c9392e1195a93e8a64ad44779a8a08fc9284",
+    "generated_at": "2026-11-02T14:11:39.418384+00:00",
+    "head": 28669,
+    "LIB": 28665,
+    "available": true,
+    "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "registered_bp_count": 35,
+    "eligible_bp_count": 25,
+    "published_candidate_count": 25,
+    "active_producer_count": 21,
+    "permanent_blacklist_count": 5,
+    "maintenance_excluded_count": 5,
+    "maintenance_active_count": 5,
+    "maintenance_pending_count": 0,
+    "rotation_capacity": 210,
+    "next_capacity": 211,
+    "next_capacity_slot": "1695054520",
+    "next_capacity_estimated_at": "2026-11-09T08:14:20.000+00:00",
+    "count_scope": "All native producer/candidate/maintenance rows; pagination complete; no online-process or history-node count",
+    "eligible_scope": "Active registration, positive integer votes and usable producer/finalizer keys (valid rank), excluding permanent bans and non-normal maintenance; candidate admission still follows ranking snapshots"
+  },
+  "transaction": {
+    "available": true,
+    "returned_transaction_id": "2b260693960df4af12bf2e25c996c1bd024b7f7fabc64bd5ee3ac1853fd53890",
+    "action_count": 5,
+    "action_names": [
+      "setmaint",
+      "setmaint",
+      "setmaint",
+      "setmaint",
+      "setmaint"
+    ],
+    "block_num": null,
+    "keys": [
+      "query_time_ms",
+      "executed",
+      "trx_id",
+      "lib",
+      "cached_lib",
+      "actions",
+      "last_indexed_block",
+      "last_indexed_block_time"
+    ]
+  }
+}
