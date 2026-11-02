@@ -1,3 +1,6 @@
+> **PureEOS TEST 1.0.0-test.1 — 4 vCPU / 8 GB-class test-only prerelease. 独立测试版。**
+> 使用、参数对照和隔离目录说明见 [TEST guide](docs/TEST_LOW_COST.md)。下方正式版要求不适用于带 PUREEOS_TEST_BUILD 的测试二进制。
+
 # PureEOS 1.0.0
 
 [简体中文](#简体中文) · [English](#english)

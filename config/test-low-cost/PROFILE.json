@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "product": "PureEOS TEST",
+  "version": "1.0.0-test.1",
+  "test_only": true,
+  "target": {
+    "vCPUs": 4,
+    "advertised_RAM_GB": 8,
+    "minimum_effective_memory_bytes": 7500000000
+  },
+  "local": {
+    "workers": 4,
+    "batch": 12,
+    "group": 4,
+    "chain_threads": 2,
+    "vote_threads": 2,
+    "net_threads": 2,
+    "http_threads": 1,
+    "read_only_threads": 0,
+    "state_db_MiB": 4096,
+    "state_guard_MiB": 128,
+    "transaction_queue_MiB": 256,
+    "http_inflight_MiB": 64,
+    "http_inflight_requests": 128,
+    "max_clients": 64,
+    "per_host_inbound_clients": 64
+  },
+  "fresh_chain_only": {
+    "CPU_multiplier": 4,
+    "max_block_cpu_usage": 800000,
+    "max_block_net_usage": 1048576
+  },
+  "unchanged": {
+    "per_transaction_CPU_us": 150000,
+    "per_transaction_NET_bytes": 524288,
+    "P2P_message_bytes": 67108864,
+    "P2P_transaction_inflight_bytes": 104857600,
+    "RAM_initial_bytes": 68719476736,
+    "RAM_growth_bytes_per_block": 1024,
+    "system_contract_bytes": "existing separately qualified contracts; not rebuilt or replaced",
+    "finality": "floor(2N/3)+1; 15 of 21",
+    "BP_bond_AIC": 10000,
+    "BP_refund_cooldown_seconds": 604800,
+    "forfeiture": "locked eosio.bslash pool",
+    "deferred_stages_disabled": [
+      1,
+      2
+    ]
+  },
+  "scope": "Functional testing on separate fresh chains. A local config cannot change the CPU/NET caps of an existing chain. No cheap-VPS performance or TPS claim."
+}

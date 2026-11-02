@@ -1,5 +1,11 @@
 add_executable( ${NODE_EXECUTABLE_NAME} main.cpp )
 
+option(PUREEOS_TEST_BUILD "Build the separate low-cost TEST node; never use for production qualification" OFF)
+if(PUREEOS_TEST_BUILD)
+  target_compile_definitions(${NODE_EXECUTABLE_NAME} PRIVATE PUREEOS_TEST_BUILD=1)
+  message(WARNING "Building PureEOS TEST ONLY: 4 vCPU / 8 GB-class startup floor; use config/test-low-cost")
+endif()
+
 if( UNIX AND NOT APPLE )
   set(rt_library rt )
 endif()

@@ -24,6 +24,9 @@
 
 #include "config.hpp"
 #include "node_hardware_requirements.hpp"
+#ifdef PUREEOS_TEST_BUILD
+#include "node_test_requirements.hpp"
+#endif
 
 using namespace appbase;
 using namespace eosio;
@@ -140,10 +143,14 @@ void initialize_logging()
    fc::log_config::initialize_appenders();
 
    app().set_sighup_callback(logging_conf_handler);
+#ifdef PUREEOS_TEST_BUILD
+   ilog("${profile}", ("profile",eosio::nodeos::test_build::check()));
+#else
    const auto hardware = eosio::nodeos::detect_hardware();
    if (const auto error = eosio::nodeos::hardware_requirement_error(hardware); !error.empty())
       throw std::runtime_error(error);
    ilog("nodeos hardware requirements satisfied: ${detected}", ("detected", eosio::nodeos::hardware_description(hardware)));
+#endif
 
 }
 
@@ -175,8 +182,13 @@ int main(int argc, char** argv)
       fc::from_hex(eosio::version::version_hash(), (char*)&short_hash, sizeof(short_hash));
 
       app->set_version(htonl(short_hash));
+#ifdef PUREEOS_TEST_BUILD
+      app->set_version_string(eosio::version::version_client()+"-test.1");
+      app->set_full_version_string(eosio::version::version_full()+" / TEST test.1");
+#else
       app->set_version_string(eosio::version::version_client());
       app->set_full_version_string(eosio::version::version_full());
+#endif
 
       auto root = fc::app_path();
       app->set_default_data_dir(root / "eosio" / nodeos::config::node_executable_name / "data" );
