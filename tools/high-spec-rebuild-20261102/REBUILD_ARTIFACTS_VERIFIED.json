@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "nodeos": "05d62c4a92497153e21833be7d2796d1d1fc9eeb09ebeb4dc1034f41c72ecf67",
+  "system_WASM": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+  "runtime_package": "ab311a293ff179b73ec49ba9239a1a8f768e336e8ae039e82004ec48a29690af",
+  "GitHub_release_digest_matches": true,
+  "compiled_artifacts_included": true,
+  "block_databases_included": false
+}

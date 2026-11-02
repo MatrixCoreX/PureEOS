@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "components": {
+    "node": {
+      "remote_base_commit": "e62a7ea30632ad5069a9640fc6bd0e1fe819b159",
+      "local_directory": "PureEOS-deployed-node-20261102",
+      "local_commit": "e62a7ea30632ad5069a9640fc6bd0e1fe819b159",
+      "verified_source_files": 76468,
+      "mismatches": []
+    },
+    "system": {
+      "remote_base_commit": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+      "local_directory": "PureEOS-deployed-system-20261102",
+      "local_commit": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+      "verified_source_files": 174,
+      "mismatches": []
+    },
+    "history": {
+      "remote_base_commit": "2837894d40fb8e58866fb7c7def62717ad714785",
+      "local_directory": "PureHistory-deployed-20261102",
+      "local_commit": "2889d694848287b2084a22d8ee74a3c9ceacda06",
+      "verified_source_files": 285,
+      "mismatches": []
+    },
+    "explorer": {
+      "deployed_commit": "9150f62a333a38fb4a0d400d9f2974aa94b6cfd7",
+      "local_commit": "a92ddb0fb7033658e983ebdb3d7de4ec7d4bbe05",
+      "served_files_identical": true,
+      "file_count": 11,
+      "private_repo": true
+    },
+    "system_public_git_archive": {
+      "github_branch": "MatrixCoreX/PureEOS:feature/bp-bond-20261102",
+      "sha256": "d42e6ea5c3fc5d74cf9b7189c3fe87cf76f593331b20e5563fe01782e929a860",
+      "source_file_count": 174,
+      "full_source_content_match": true
+    }
+  }
+}
