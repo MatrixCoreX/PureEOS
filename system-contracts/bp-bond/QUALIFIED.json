@@ -1,0 +1,36 @@
+{
+  "status": "QUALIFIED_FOR_AUTHORIZED_FRESH_CHAIN",
+  "UTC": "2026-11-01T22:38:46.925262+00:00",
+  "source_commit": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+  "source_parent": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+  "source_archive_SHA256": "d42e6ea5c3fc5d74cf9b7189c3fe87cf76f593331b20e5563fe01782e929a860",
+  "WASM": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+  "ABI_JSON": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+  "unique_native_cases": 22,
+  "native_core": "95efefac3799ffef10aefcafec7e9dfaf3828fe11f3e4ee0545af565a5539ce9",
+  "native_programs": [
+    "f921e23b7ce5a0d89521cec140ef40500e580b24751376a34d88372b6310dd0f",
+    "45de31754f88e59ed1bde962791885327110443598b2a716a82e18c45b731fc9"
+  ],
+  "OFF_control": {
+    "status": "PASS_RELEASED_WASM_REPRODUCED_BYTE_EXACT",
+    "scope": "remote candidate build, no live deployment",
+    "jobs": [
+      {
+        "label": "configure",
+        "exit": 0
+      },
+      {
+        "label": "compile",
+        "exit": 0
+      }
+    ],
+    "WASM": "373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb",
+    "ABI": "dd02bdbc3e4253e647a3d9562978cd3ad5263c1cf844ba2e5e9334b91b43945a"
+  },
+  "ABI_entries_preserved": true,
+  "runtime_nodeos_SHA256": "05d62c4a92497153e21833be7d2796d1d1fc9eeb09ebeb4dc1034f41c72ecf67",
+  "scope": "fresh-chain BP bond functional qualification only; TPS pending",
+  "live_chain_changed": false,
+  "workflow_SHA256": "f969e83baa69c277487cca3b9dbe285695e4d730b042ef95b33b1fe085cff2de"
+}

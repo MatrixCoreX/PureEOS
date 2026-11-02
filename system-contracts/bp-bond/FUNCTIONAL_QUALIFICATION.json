@@ -1,0 +1,86 @@
+{
+  "status": "PASS_FUNCTIONAL_CANDIDATE_NOT_DEPLOYED",
+  "parent": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+  "WASM": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+  "ABI_JSON": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+  "core_financial_unique_cases": [
+    "pureeos_bp_bond_tests/fixed_policy_seven_days_and_custody_permissions",
+    "pureeos_bp_bond_tests/missing_deposit_blocks_both_registration_actions",
+    "pureeos_bp_bond_tests/insufficient_funds_and_wrong_authorization_rollback",
+    "pureeos_bp_bond_tests/exact_deposit_no_vote_resource_change_and_no_double_charge",
+    "pureeos_bp_bond_tests/uncredited_direct_transfer_cannot_forge_a_bond",
+    "pureeos_bp_bond_tests/active_exit_requires_real_handoff_and_full_seven_day_cooldown",
+    "pureeos_bp_bond_tests/no_funded_replacement_keeps_duty_and_deposit_locked",
+    "pureeos_bp_bond_tests/real_finalized_blacklist_forfeits_once_and_locks_dedicated_pool",
+    "pureeos_bp_bond_tests/refund_notification_failure_rolls_back_entire_liability",
+    "pureeos_bp_bond_tests/inactive_exit_keeps_earned_reward_claim_rights"
+  ],
+  "regression_cases": [
+    {
+      "name": "pureeos_resource_split_tests/bootstrap_tracks_weights_and_requires_powerup_before_seal",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_resource_split_tests/fixed_ratio_and_manual_limits_cannot_bypass_policy",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_resource_split_tests/staking_transfer_and_powerup_do_not_multiply_votes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_resource_split_tests/failed_payment_rolls_back_resources_orders_and_counters",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/seven_days_permissions_boundary_and_old_pending_deadline",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/ban_removes_already_cast_veto_and_denominator",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_tests/ban_without_veto_changes_denominator_and_threshold",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/maintenance_preserves_frozen_governance_rights_and_resumes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_governance_v2_extra_tests/incumbent_maintenance_handoff_pauses_only_new_duties_then_resumes",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_reward_halving_tests/activation_and_real_issuance_fund_only_actual_blocks",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_sequential_rotation_tests/grows_one_at_a_time_then_fifo_across_vote_changes_and_restart",
+      "exit": 0
+    },
+    {
+      "name": "pureeos_blacklist_capacity_tests/multiple_bans_backfill_multiple_rank_slots",
+      "exit": 0
+    }
+  ],
+  "unique_total": 22,
+  "programs": [
+    "f921e23b7ce5a0d89521cec140ef40500e580b24751376a34d88372b6310dd0f",
+    "45de31754f88e59ed1bde962791885327110443598b2a716a82e18c45b731fc9"
+  ],
+  "native_core": "95efefac3799ffef10aefcafec7e9dfaf3828fe11f3e4ee0545af565a5539ce9",
+  "policy": {
+    "deposit": "10000.0000 AIC",
+    "refund_seconds": 604800,
+    "escrow": "eosio.bond",
+    "forfeit_pool": "eosio.bslash",
+    "withdraw_or_burn_forfeitures": false,
+    "deployment": "fresh chain only; init before governance sealing"
+  },
+  "live_chain_changed": false,
+  "node_TPS": "UNMEASURED_PENDING_USER_AUTHORIZED_SINGLE_BP_ROUND",
+  "test_scope": "socket-free native controller executing actual candidate WASM; native test clocks, not seven days of wall time",
+  "failed_attempts_retained": true
+}
