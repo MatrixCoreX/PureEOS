@@ -2,7 +2,7 @@
 
 制定日期：2026-11-02  
 适用范围：现有测试服务器上的 AIC 测试链重建、单 BP TPS 测量、历史服务恢复、BP 逐步加入及另行授权的故障验证。  
-执行记录：本轮进度见 [WORK_STATE.json](release-work-20261102/bp-bond-r1/WORK_STATE.json) 及远程阶段凭证。本文定义启动规则，不替代资格、部署、TPS 或历史完整性报告；每轮须分别记录通过、失败、未执行和正在进行的项目。
+执行记录：本轮原定部署结果见 [40BP部署报告](../system-contracts/bp-bond/deployment-20261102/REPORT.md)，新增投票与随机业务见 [准备报告](../system-contracts/bp-bond/deployment-20261102/preparation/REPORT.md)；五节点故障执行另行记录。本文定义启动规则，不替代资格、部署、TPS 或历史完整性报告；每轮须分别记录通过、失败、未执行和正在进行的项目。
 
 ## 文档维护约定
 
@@ -148,7 +148,7 @@
 
 本轮 BP 名称全部使用有含义的完整 12 字符，不用 `aa`、`bb`、`aaa` 等重复字母补尾。创始 BP 为 `gptgenesisbp`；其余混合使用少量 AI 名称、国家加意象及自然星空名称。名称是模拟节点标签，实际仍位于同一保留服务器。按以下顺序准备：
 
-命名规则作为后续启动默认保留：创始节点包含 `gpt`，全部普通 BP 名称严格匹配 `[a-z1-5]{12}` 且唯一，不用无意义补尾，不全部采用 AI 厂商名；可使用“国家＋有含义名称”，例如 `japanblossom`、`canadaboreal`、`swissglacier`。国家标签不代表实际部署地域，AI 名称不代表相关企业参与或背书。本轮机器可读名单为 [SELECTED_BP_NAMES.json](release-work-20261102/bp-bond-r1/SELECTED_BP_NAMES.json)，合计创始 1 个、AI 8 个、国家意象 12 个、自然星空 19 个；脚本读取同一名单，禁止另外生成不一致的 BP 身份。
+命名规则作为后续启动默认保留：创始节点包含 `gpt`，全部普通 BP 名称严格匹配 `[a-z1-5]{12}` 且唯一，不用无意义补尾，不全部采用 AI 厂商名；可使用“国家＋有含义名称”，例如 `japanblossom`、`canadaboreal`、`swissglacier`。国家标签不代表实际部署地域，AI 名称不代表相关企业参与或背书。本轮机器可读名单为 [SELECTED_BP_NAMES.json](../system-contracts/bp-bond/SELECTED_BP_NAMES.json)，合计创始 1 个、AI 8 个、国家意象 12 个、自然星空 19 个；脚本读取同一名单，禁止另外生成不一致的 BP 身份。
 
 - `openaivision`
 - `solarvoyager`
