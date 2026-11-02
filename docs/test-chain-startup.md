@@ -2,7 +2,7 @@
 
 制定日期：2026-11-02  
 适用范围：现有测试服务器上的 AIC 测试链重建、单 BP TPS 测量、历史服务恢复、BP 逐步加入及另行授权的故障验证。  
-执行记录：本轮原定部署结果见 [40BP部署报告](../system-contracts/bp-bond/deployment-20261102/REPORT.md)，新增投票与随机业务见 [准备报告](../system-contracts/bp-bond/deployment-20261102/preparation/REPORT.md)；五节点故障执行另行记录。本文定义启动规则，不替代资格、部署、TPS 或历史完整性报告；每轮须分别记录通过、失败、未执行和正在进行的项目。
+执行记录：本轮进度见 [WORK_STATE.json](release-work-20261102/bp-bond-r1/WORK_STATE.json) 及远程阶段凭证。本文定义启动规则，不替代资格、部署、TPS 或历史完整性报告；每轮须分别记录通过、失败、未执行和正在进行的项目。
 
 ## 文档维护约定
 
@@ -148,7 +148,7 @@
 
 本轮 BP 名称全部使用有含义的完整 12 字符，不用 `aa`、`bb`、`aaa` 等重复字母补尾。创始 BP 为 `gptgenesisbp`；其余混合使用少量 AI 名称、国家加意象及自然星空名称。名称是模拟节点标签，实际仍位于同一保留服务器。按以下顺序准备：
 
-命名规则作为后续启动默认保留：创始节点包含 `gpt`，全部普通 BP 名称严格匹配 `[a-z1-5]{12}` 且唯一，不用无意义补尾，不全部采用 AI 厂商名；可使用“国家＋有含义名称”，例如 `japanblossom`、`canadaboreal`、`swissglacier`。国家标签不代表实际部署地域，AI 名称不代表相关企业参与或背书。本轮机器可读名单为 [SELECTED_BP_NAMES.json](../system-contracts/bp-bond/SELECTED_BP_NAMES.json)，合计创始 1 个、AI 8 个、国家意象 12 个、自然星空 19 个；脚本读取同一名单，禁止另外生成不一致的 BP 身份。
+命名规则作为后续启动默认保留：创始节点包含 `gpt`，全部普通 BP 名称严格匹配 `[a-z1-5]{12}` 且唯一，不用无意义补尾，不全部采用 AI 厂商名；可使用“国家＋有含义名称”，例如 `japanblossom`、`canadaboreal`、`swissglacier`。国家标签不代表实际部署地域，AI 名称不代表相关企业参与或背书。本轮机器可读名单为 [SELECTED_BP_NAMES.json](release-work-20261102/bp-bond-r1/SELECTED_BP_NAMES.json)，合计创始 1 个、AI 8 个、国家意象 12 个、自然星空 19 个；脚本读取同一名单，禁止另外生成不一致的 BP 身份。
 
 - `openaivision`
 - `solarvoyager`
@@ -297,3 +297,7 @@ performance-results/machines/<实际CPU与核心线程内存配置>/<本轮日�
 普通用户资源准备沿用本轮已验证的 30 天 PowerUp 份额 `net_frac=cpu_frac=1000000000` 和 `max_payment=1.0000 AIC`，由普通用户本人支付。份额必须满足链上最低费用；过小份额会拒绝，资金、质押和投票必须原子回滚。账户创建与后续资金/资源/投票分别保存不可逆凭证，失败恢复不得重复创建或重复充值。
 
 空块必须有真实规范区块头且交易收据为空；没有产出的BP责任时段是缺块，不算空块。故障验收同时核对健康BP正常产生空块不会被误判为缺勤。活动钱包在应用部署完成后移除部署者及BP密钥，仅保留普通账户密钥。
+
+接口验收按实际ABI与节点配置执行：`regproducer2.producer_authority` 的ABI变体使用类型名 `block_signing_authority_v0`，不要将原生排班接口的数字变体标签直接作为ABI动作参数。批量 `getpeerkeys` 普通交易会受到既有256字节返回上限；本轮默认API节点未启用外部只读交易RPC。BP发现本身使用控制器内部只读执行，验收通过 `/v1/net/bp_gossip_peers` 的真实签名通告缓存与开放签名连接核对，不为查询测试调大链上资源上限或重启节点改线程模式。
+
+归档旧链时，同时停止并禁用旧随机业务、签名钱包和观察/自动恢复服务，检查它们对旧节点的Requires/After依赖；不要留下能重新拉起归档节点的已启用作业。保留原状态、交易和故障证据，再启动新链对应的独立作业。
