@@ -191,8 +191,13 @@ int main(int argc, char** argv)
 #endif
 
       auto root = fc::app_path();
+#ifdef PUREEOS_TEST_BUILD
+      app->set_default_data_dir(root / "pureeos-test" / nodeos::config::node_executable_name / "data" );
+      app->set_default_config_dir(root / "pureeos-test" / nodeos::config::node_executable_name / "config" );
+#else
       app->set_default_data_dir(root / "eosio" / nodeos::config::node_executable_name / "data" );
       app->set_default_config_dir(root / "eosio" / nodeos::config::node_executable_name / "config" );
+#endif
       http_plugin::set_defaults({
          .default_unix_socket_path = "",
          .default_http_port = 8888,
