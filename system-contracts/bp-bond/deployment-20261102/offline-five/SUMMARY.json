@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-02T05:29:58.906077+00:00",
+  "chain_id": "9924d9d6405276c9e4cfee86a5b497a19b5c3fa4d576508689884b8be47a0bac",
+  "scope": "Same physical host; five genuine offline BPs, canonical irreversible permanent bans, bond forfeiture and post-ban functional checks. No new TPS, no wall-seven-day claim. Native22case qualification separately retained.",
+  "assertions": 206,
+  "registered_BP": 45,
+  "eligible_BP": 40,
+  "permanent_bans": [
+    "koreamoonlit",
+    "indiasunrise",
+    "icelandcrown",
+    "aurorashield",
+    "quantumhaven"
+  ],
+  "online_BP": 40,
+  "history_nodes": 1,
+  "nodeos_processes": 41,
+  "native_members": 21,
+  "threshold": 15,
+  "escrow": "400000.0000 AIC",
+  "forfeiture_pool": "50000.0000 AIC",
+  "configuration": {
+    "version": 1,
+    "enforced": 1,
+    "refund_delay_sec": 604800,
+    "locked": 4000000000,
+    "slash_pending": 0,
+    "slash_settled": 500000000,
+    "refunded": 0
+  },
+  "supply": "100000000.0000 AIC",
+  "ordinary_voters": 90,
+  "BP_self_votes": 45,
+  "distinct_total_vote_counts": 45,
+  "browser_variants": 4,
+  "browser_banned_account_details": 5,
+  "browser_JS_errors": 0,
+  "browser_HTTP_errors": 0,
+  "private_explorer_commit": "50f07cf0aad18495403eef56f93e014274dd3b24",
+  "public_evidence_archive_SHA256": "8f7d00d39b84a2390a6374af711d63348cd34dcb704c29742a784b235afef5c0"
+}

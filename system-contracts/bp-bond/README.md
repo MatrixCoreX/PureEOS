@@ -17,6 +17,8 @@ This additive candidate does not replace v1.0.0 files or tags. New-chain deploym
 
 ## Deployment evidence / 部署证据
 
-[40 BP＋独立历史节点部署与一次单 BP TPS](deployment-20261102/REPORT.md) 已通过。另行授权的45个BP自投、90个普通用户随机投票、普通业务及空块、浏览器押金显示已完成，见[准备报告](deployment-20261102/preparation/REPORT.md)。五个新增节点的实际停机/永久黑名单验收仍单独进行，未在准备报告中提前宣称通过。
+[40 BP＋独立历史节点部署与一次单 BP TPS](deployment-20261102/REPORT.md)、[自投/随机投票、普通业务及浏览器准备](deployment-20261102/preparation/REPORT.md) 和 [五个 BP 真实停机、永久黑名单、押金罚没及后续功能](deployment-20261102/offline-five/REPORT.md) 均已通过。
 
-The [40-BP plus history deployment and one single-BP TPS round](deployment-20261102/REPORT.md) passed. The separately authorized 45 self-votes, 90 randomized ordinary voters, ordinary transfers/contract activity with idle blocks, and explorer bond display are recorded in the [preparation report](deployment-20261102/preparation/REPORT.md). Actual five-node offline/permanent-blacklist qualification remains separate and is not claimed by preparation PASS.
+最终45个注册BP、40个合格BP、5个永久黑名单成员，原生21人/15票策略已补位；40个BP与一个历史节点继续运行。五笔押金共50,000AIC已结算并锁入eosio.bslash，其余400,000AIC押金保持。45个BP自投、90个普通用户随机投票及各不相同的总票数保持；随机1–20笔转账/合约调用和真实空块继续运行。浏览器中英文、深浅主题、移动宽度及五个实际罚没账户详情均通过Chrome核对。
+
+The [40-BP plus history deployment and single-BP TPS round](deployment-20261102/REPORT.md), [ordinary voting/activity and explorer preparation](deployment-20261102/preparation/REPORT.md), and [five real offline BPs, permanent bans, locked forfeitures and post-ban functionality](deployment-20261102/offline-five/REPORT.md) passed separately. Final state: 45 registered, 40 eligible, five banned; native 21-member/15-vote replacement, 40 online BPs plus one history node. Exactly 50,000 AIC is locked in the forfeiture pool and 400,000 AIC remains bonded. Self-votes, 90 randomized ordinary voters and distinct totals remain intact. Sparse ordinary transfers/contract calls and actual empty blocks continue. Real Chrome also checked all five forfeited account details. This is same-host functional evidence, without additional TPS or seven-day wall-clock claims. The v1.0.0 files and tags remain preserved; the explorer repository remains private.
