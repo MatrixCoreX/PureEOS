@@ -1,0 +1,484 @@
+{
+  "status": "PREPARATION_PASS_FAULT_PENDING",
+  "UTC": "2026-11-02T01:40:43.163802+00:00",
+  "chain_id": "9924d9d6405276c9e4cfee86a5b497a19b5c3fa4d576508689884b8be47a0bac",
+  "BP_count": 45,
+  "ordinary_voters": 90,
+  "all_self_votes": true,
+  "distinct_BP_totals": 45,
+  "vote_API_available": true,
+  "activity": {
+    "status": "RUNNING",
+    "started_UTC": "2026-11-02T01:27:46.792727+00:00",
+    "UTC": "2026-11-02T01:40:43.060204+00:00",
+    "completed_batches": 220,
+    "business_transactions": 2434,
+    "transfers": 2216,
+    "ticks": 108,
+    "notes": 110,
+    "empty_blocks": 730,
+    "batch_sizes": {
+      "9": 13,
+      "15": 12,
+      "14": 10,
+      "17": 16,
+      "13": 11,
+      "16": 12,
+      "10": 9,
+      "18": 12,
+      "3": 8,
+      "20": 14,
+      "7": 15,
+      "6": 11,
+      "8": 9,
+      "19": 7,
+      "12": 13,
+      "4": 8,
+      "5": 12,
+      "2": 8,
+      "11": 12,
+      "1": 8
+    },
+    "empty_block_samples": [
+      {
+        "height": 21026,
+        "id": "00005222cf3abe2aec4677818a576dc18b67d9ff57f57f9b56ee849cee4d2b00",
+        "timestamp": "2026-11-02T01:39:48.500"
+      },
+      {
+        "height": 21027,
+        "id": "000052233c2071df113ff3f8b07bcee1fe43660f137ca65a3cfd1d885e36aafc",
+        "timestamp": "2026-11-02T01:39:49.000"
+      },
+      {
+        "height": 21028,
+        "id": "000052242b7b9cd8ef2776ae263e6fecf495a99a86600dbc51a2b20d3daf7e92",
+        "timestamp": "2026-11-02T01:39:49.500"
+      },
+      {
+        "height": 21033,
+        "id": "000052295d8af06c852bfc10796d97a2de45656c3bafbfcf4244213d4b2d85f1",
+        "timestamp": "2026-11-02T01:39:52.000"
+      },
+      {
+        "height": 21034,
+        "id": "0000522ad0a8d1affd49163f5df55da4bd3b79dc7e7ea02b0fe4ce1929ab29b6",
+        "timestamp": "2026-11-02T01:39:52.500"
+      },
+      {
+        "height": 21035,
+        "id": "0000522b35454db982c1218ce387578d06e36f8ce989240a41334b18a8cf5d62",
+        "timestamp": "2026-11-02T01:39:53.000"
+      },
+      {
+        "height": 21039,
+        "id": "0000522f287e54920c89e27944c8401ce64263fd2125be98d3395707d071feb4",
+        "timestamp": "2026-11-02T01:39:55.000"
+      },
+      {
+        "height": 21043,
+        "id": "00005233896efa4899f701ca300a44939e5391c99faf7ad466de26b2b4aefaef",
+        "timestamp": "2026-11-02T01:39:57.000"
+      },
+      {
+        "height": 21044,
+        "id": "000052341139d5a72df19d39f48bbbe8c99c967e8bf747d6dab7b223bc515298",
+        "timestamp": "2026-11-02T01:39:57.500"
+      },
+      {
+        "height": 21045,
+        "id": "000052358e46477cf0f481b03b86ead75f1022dbf6846f73885ee3c7f46d53ee",
+        "timestamp": "2026-11-02T01:39:58.000"
+      },
+      {
+        "height": 21046,
+        "id": "00005236f8b3df24c6c8a2c46d568cccbe2e2e056d9fab768acc6da2db754e3c",
+        "timestamp": "2026-11-02T01:39:58.500"
+      },
+      {
+        "height": 21047,
+        "id": "00005237ed67924a214cf418b724c83d3b826ed8daf60458ab9f3d9003eccb23",
+        "timestamp": "2026-11-02T01:39:59.000"
+      },
+      {
+        "height": 21051,
+        "id": "0000523b27d6579447f2d687a1cef813fa446f97776eb8b1a80a276d5b461b28",
+        "timestamp": "2026-11-02T01:40:01.000"
+      },
+      {
+        "height": 21052,
+        "id": "0000523cac9e83379a6d33058821e857bd7efc29d6c19f695de8139db9903777",
+        "timestamp": "2026-11-02T01:40:01.500"
+      },
+      {
+        "height": 21057,
+        "id": "00005241c0278552ee1232ceb77c5cdae0ab928afa886fb59bc8f4a0ea197116",
+        "timestamp": "2026-11-02T01:40:04.000"
+      },
+      {
+        "height": 21058,
+        "id": "00005242569ee7237df690888e0df73c16b57d45061e6a1f33909726ceaac1a5",
+        "timestamp": "2026-11-02T01:40:04.500"
+      },
+      {
+        "height": 21059,
+        "id": "000052435b29a656d87f4e30de426d39dac1c91ea2a7bc83b21f6fbffb03dc4a",
+        "timestamp": "2026-11-02T01:40:05.000"
+      },
+      {
+        "height": 21064,
+        "id": "0000524898cb8bb4ee714576908f44a4d91497aee3b970c023b14344c5237d50",
+        "timestamp": "2026-11-02T01:40:07.500"
+      },
+      {
+        "height": 21065,
+        "id": "000052494bea003f4fd85a63d2f4341bd49c1b7404201d634304c6cb1c7750d6",
+        "timestamp": "2026-11-02T01:40:08.000"
+      },
+      {
+        "height": 21066,
+        "id": "0000524aafbbc06c8db3515753d146b14ea165e753184808599ab928853be14f",
+        "timestamp": "2026-11-02T01:40:08.500"
+      },
+      {
+        "height": 21067,
+        "id": "0000524b71593fea287f5d60a97e0bbe7289bccddf148bff7c5d3ad5d1e3c226",
+        "timestamp": "2026-11-02T01:40:09.000"
+      },
+      {
+        "height": 21068,
+        "id": "0000524ca88d845963bddb543de1fa3ac82767529b7cac5722eba65204d3bd65",
+        "timestamp": "2026-11-02T01:40:09.500"
+      },
+      {
+        "height": 21073,
+        "id": "00005251ad7e268f2e41074737649e7099353f4db3789a2b06e37fda4a8d9ee9",
+        "timestamp": "2026-11-02T01:40:12.000"
+      },
+      {
+        "height": 21074,
+        "id": "000052522989167dada5f6d2e6a09b7547dd34fe2d063decb05bfa12c4fbeb81",
+        "timestamp": "2026-11-02T01:40:12.500"
+      },
+      {
+        "height": 21075,
+        "id": "000052539c544a73e5f92b82c8a40abd855693d2eb2a641434684b41fd73c8f8",
+        "timestamp": "2026-11-02T01:40:13.000"
+      },
+      {
+        "height": 21076,
+        "id": "00005254a898625524464642d8571b0cfd3863263747de231c4f62072ce32ee1",
+        "timestamp": "2026-11-02T01:40:13.500"
+      },
+      {
+        "height": 21080,
+        "id": "00005258eb3e923abaeecf08f9f4ff85bc1e09cdb815bb24082d6fb704764387",
+        "timestamp": "2026-11-02T01:40:15.500"
+      },
+      {
+        "height": 21081,
+        "id": "000052598ea43a2231f50f43fc5be82f945ddbed89e6cfe0b421d3f0f2dd92ca",
+        "timestamp": "2026-11-02T01:40:16.000"
+      },
+      {
+        "height": 21086,
+        "id": "0000525e3072dbf238aa955c03ba24b4110475c6dccfb8ec64fec7398ec9603b",
+        "timestamp": "2026-11-02T01:40:18.500"
+      },
+      {
+        "height": 21087,
+        "id": "0000525f6d53a86521ef17b546394ed112331baf4af78063eccc256bcd01d4fc",
+        "timestamp": "2026-11-02T01:40:19.000"
+      },
+      {
+        "height": 21088,
+        "id": "0000526075ce83f79bb9ff777461c42291996682f9769d244c777ff41e142c85",
+        "timestamp": "2026-11-02T01:40:19.500"
+      },
+      {
+        "height": 21093,
+        "id": "00005265652893e18c962c23b3cb5d99d88d92126a99b40539b9b45473919a39",
+        "timestamp": "2026-11-02T01:40:22.000"
+      },
+      {
+        "height": 21094,
+        "id": "00005266365c3201d8e59eb9a13c853fc84cf411df542bc50c92a93e31820d8e",
+        "timestamp": "2026-11-02T01:40:22.500"
+      },
+      {
+        "height": 21095,
+        "id": "0000526718701736da4fbb391efd9700be850c9bf8b3b4fcd8de0adbf05fa3bc",
+        "timestamp": "2026-11-02T01:40:23.000"
+      },
+      {
+        "height": 21096,
+        "id": "00005268f84d5ebeb3d4bc596c5c3346424f69f42643f6b9659cfcd0d2a4b334",
+        "timestamp": "2026-11-02T01:40:23.500"
+      },
+      {
+        "height": 21097,
+        "id": "00005269dca4c9ee7536376d6ec1fcbd82a8b0edca921c84bab2e7759049ee2b",
+        "timestamp": "2026-11-02T01:40:24.000"
+      },
+      {
+        "height": 21102,
+        "id": "0000526ee880f0690f23bc8b6379a7a248cf3c11dd32aa268c6a7454a3b0b4f8",
+        "timestamp": "2026-11-02T01:40:26.500"
+      },
+      {
+        "height": 21103,
+        "id": "0000526f4f155b2b957759405eb5d5becfd8e671611c861e884be6f827d23d55",
+        "timestamp": "2026-11-02T01:40:27.000"
+      },
+      {
+        "height": 21104,
+        "id": "000052703fff5358ecacaf271397b71aa3877258cbce6d4dbdc0f6d9896e2d7f",
+        "timestamp": "2026-11-02T01:40:27.500"
+      },
+      {
+        "height": 21105,
+        "id": "00005271d6615fdd5a505597bdb3aeb95a954980b971b5bc51450bc7b8ed9654",
+        "timestamp": "2026-11-02T01:40:28.000"
+      },
+      {
+        "height": 21106,
+        "id": "00005272b40fa573869e93dc56755d675a29fc67877d2ec02350f3ae3bc9e7d0",
+        "timestamp": "2026-11-02T01:40:28.500"
+      },
+      {
+        "height": 21110,
+        "id": "0000527647b90af58f910bf34b85a426bbe76c9c768d4a4c05dfc701f7d85ed7",
+        "timestamp": "2026-11-02T01:40:30.500"
+      },
+      {
+        "height": 21115,
+        "id": "0000527b61fbaddca0446c2566f090ea8999ebdb00bce6ac59ab182002fe4c34",
+        "timestamp": "2026-11-02T01:40:33.000"
+      },
+      {
+        "height": 21116,
+        "id": "0000527ce74465ac8dd6a3b49cf9f863ee0de1ec38f6061e2ef80a4238d1af32",
+        "timestamp": "2026-11-02T01:40:33.500"
+      },
+      {
+        "height": 21117,
+        "id": "0000527d2fdbe46d1f3e1970de61e4152677a2e508e6250cfb47e690003712d3",
+        "timestamp": "2026-11-02T01:40:34.000"
+      },
+      {
+        "height": 21118,
+        "id": "0000527ec81541faa5082ce4420db4b624bfff207718b00aecdf8119989b9ba4",
+        "timestamp": "2026-11-02T01:40:34.500"
+      },
+      {
+        "height": 21119,
+        "id": "0000527ff430958e254d642e16e9a13da9a2550ccc1839ba1f32408ef697bb5d",
+        "timestamp": "2026-11-02T01:40:35.000"
+      },
+      {
+        "height": 21123,
+        "id": "00005283407dbd9ea672ffc2000c6a43fb24be523e934a83ae85badd17cfccfc",
+        "timestamp": "2026-11-02T01:40:37.000"
+      },
+      {
+        "height": 21124,
+        "id": "00005284583bb2e8d653deae4df41186e26cf6de2534483637f272df0bea24c6",
+        "timestamp": "2026-11-02T01:40:37.500"
+      },
+      {
+        "height": 21129,
+        "id": "000052893c2f5c444f2a9c969b40189b2459250e103e6ca073c395e02a214c4f",
+        "timestamp": "2026-11-02T01:40:40.000"
+      }
+    ],
+    "max_chain_receipts_in_observed_batch_block": 20,
+    "initial_ordinary_liquid_total_smallest_units": 17999820,
+    "source_history": [
+      {
+        "UTC": "2026-11-02T01:27:46.792735+00:00",
+        "SHA256": "cebf60b2d8e67f41d6143fae38ed7958b66359adc74ff31d1e627a41fd866e25"
+      }
+    ],
+    "snapshot_UTC": "2026-11-02T01:40:43.163802+00:00"
+  },
+  "contract": {
+    "status": "PASS",
+    "UTC": "2026-11-02T01:20:01.509229+00:00",
+    "chain_id": "9924d9d6405276c9e4cfee86a5b497a19b5c3fa4d576508689884b8be47a0bac",
+    "account": "civiccounter",
+    "CDT": "/opt/pureeos-v1-release-20261101-r1/sdk-package/pureeos-cdt-1.0.0/bin/cdt-cpp",
+    "source_SHA256": "38a8d0184b824bfba264624200fc2e34a6228e60786765d518afb24df870fac4",
+    "WASM_SHA256": "8a0c9b48dd7044199fa38a184a6287e0f79350462f909aa9d8afb2437de84108",
+    "ABI_JSON_SHA256": "89524b0163849cda60aa20fc73a7a5559186e8c3d4a0fdab58fe6bd73bf84a04",
+    "checks": [
+      {
+        "check": "deployed civiccounter matches built WASM",
+        "status": "PASS"
+      },
+      {
+        "check": "real tick updates own fixed-size row",
+        "status": "PASS"
+      },
+      {
+        "check": "wrong user authority rejected",
+        "status": "PASS",
+        "error": "\": {\n      \"code\": 3090004,\n      \"name\": \"missing_auth_exception\",\n      \"message\": \"Missing required authority\",\n      \"stack\": [{\n          \"context\": {\n            \"level\": \"error\",\n            \"file\": \"apply_context.cpp\",\n            \"line\": 379,\n            \"method\": \"require_authorization\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.122\"\n          },\n          \"format\": \"missing authority of ${account}\",\n          \"data\": {\n            \"account\": \"brightpollen\"\n          }\n        },{\n          \"context\": {\n            \"level\": \"warn\",\n            \"file\": \"apply_context.cpp\",\n            \"line\": 262,\n            \"method\": \"exec_one\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.122\"\n          },\n          \"format\": \"${receiver} <= ${account}::${action} console output: ${console}\",\n          \"data\": {\n            \"console\": \"\",\n            \"account\": \"civiccounter\",\n            \"action\": \"tick\",\n            \"receiver\": \"civiccounter\"\n          }\n        }\n      ]\n    },\n    \"error_code\": \"10000000000000000000\"\n  }\n}\n"
+      },
+      {
+        "check": "wrong user authority rejected atomic state and balance rollback",
+        "status": "PASS"
+      },
+      {
+        "check": "replayed business nonce rejected",
+        "status": "PASS",
+        "error": " 3050003,\n      \"name\": \"eosio_assert_message_exception\",\n      \"message\": \"eosio_assert_message assertion failure\",\n      \"stack\": [{\n          \"context\": {\n            \"level\": \"error\",\n            \"file\": \"cf_system.cpp\",\n            \"line\": 14,\n            \"method\": \"eosio_assert\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.132\"\n          },\n          \"format\": \"assertion failure with message: ${s}\",\n          \"data\": {\n            \"s\": \"nonce must advance by one\"\n          }\n        },{\n          \"context\": {\n            \"level\": \"warn\",\n            \"file\": \"apply_context.cpp\",\n            \"line\": 262,\n            \"method\": \"exec_one\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.132\"\n          },\n          \"format\": \"${receiver} <= ${account}::${action} console output: ${console}\",\n          \"data\": {\n            \"console\": \"\",\n            \"account\": \"civiccounter\",\n            \"action\": \"tick\",\n            \"receiver\": \"civiccounter\"\n          }\n        }\n      ]\n    },\n    \"error_code\": \"10000000000000000000\"\n  }\n}\n"
+      },
+      {
+        "check": "replayed business nonce rejected atomic state and balance rollback",
+        "status": "PASS"
+      },
+      {
+        "check": "out-of-range increment rejected",
+        "status": "PASS",
+        "error": "003,\n      \"name\": \"eosio_assert_message_exception\",\n      \"message\": \"eosio_assert_message assertion failure\",\n      \"stack\": [{\n          \"context\": {\n            \"level\": \"error\",\n            \"file\": \"cf_system.cpp\",\n            \"line\": 14,\n            \"method\": \"eosio_assert\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.140\"\n          },\n          \"format\": \"assertion failure with message: ${s}\",\n          \"data\": {\n            \"s\": \"delta must be between 1 and 20\"\n          }\n        },{\n          \"context\": {\n            \"level\": \"warn\",\n            \"file\": \"apply_context.cpp\",\n            \"line\": 262,\n            \"method\": \"exec_one\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.140\"\n          },\n          \"format\": \"${receiver} <= ${account}::${action} console output: ${console}\",\n          \"data\": {\n            \"console\": \"\",\n            \"account\": \"civiccounter\",\n            \"action\": \"tick\",\n            \"receiver\": \"civiccounter\"\n          }\n        }\n      ]\n    },\n    \"error_code\": \"10000000000000000000\"\n  }\n}\n"
+      },
+      {
+        "check": "out-of-range increment rejected atomic state and balance rollback",
+        "status": "PASS"
+      },
+      {
+        "check": "overlong note rejected",
+        "status": "PASS",
+        "error": "0003,\n      \"name\": \"eosio_assert_message_exception\",\n      \"message\": \"eosio_assert_message assertion failure\",\n      \"stack\": [{\n          \"context\": {\n            \"level\": \"error\",\n            \"file\": \"cf_system.cpp\",\n            \"line\": 14,\n            \"method\": \"eosio_assert\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.148\"\n          },\n          \"format\": \"assertion failure with message: ${s}\",\n          \"data\": {\n            \"s\": \"note must contain 1..64 bytes\"\n          }\n        },{\n          \"context\": {\n            \"level\": \"warn\",\n            \"file\": \"apply_context.cpp\",\n            \"line\": 262,\n            \"method\": \"exec_one\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.148\"\n          },\n          \"format\": \"${receiver} <= ${account}::${action} console output: ${console}\",\n          \"data\": {\n            \"console\": \"\",\n            \"account\": \"civiccounter\",\n            \"action\": \"note\",\n            \"receiver\": \"civiccounter\"\n          }\n        }\n      ]\n    },\n    \"error_code\": \"10000000000000000000\"\n  }\n}\n"
+      },
+      {
+        "check": "overlong note rejected atomic state and balance rollback",
+        "status": "PASS"
+      },
+      {
+        "check": "failed contract rolls back prior cross-contract transfer",
+        "status": "PASS",
+        "error": " 3050003,\n      \"name\": \"eosio_assert_message_exception\",\n      \"message\": \"eosio_assert_message assertion failure\",\n      \"stack\": [{\n          \"context\": {\n            \"level\": \"error\",\n            \"file\": \"cf_system.cpp\",\n            \"line\": 14,\n            \"method\": \"eosio_assert\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.156\"\n          },\n          \"format\": \"assertion failure with message: ${s}\",\n          \"data\": {\n            \"s\": \"nonce must advance by one\"\n          }\n        },{\n          \"context\": {\n            \"level\": \"warn\",\n            \"file\": \"apply_context.cpp\",\n            \"line\": 262,\n            \"method\": \"exec_one\",\n            \"hostname\": \"\",\n            \"thread_name\": \"ld-linux-x86-64.so.2\",\n            \"timestamp\": \"2026-11-02T01:20:00.156\"\n          },\n          \"format\": \"${receiver} <= ${account}::${action} console output: ${console}\",\n          \"data\": {\n            \"console\": \"\",\n            \"account\": \"civiccounter\",\n            \"action\": \"tick\",\n            \"receiver\": \"civiccounter\"\n          }\n        }\n      ]\n    },\n    \"error_code\": \"10000000000000000000\"\n  }\n}\n"
+      },
+      {
+        "check": "failed contract rolls back prior cross-contract transfer atomic state and balance rollback",
+        "status": "PASS"
+      },
+      {
+        "check": "real note changes nonce/hash without altering counter",
+        "status": "PASS"
+      },
+      {
+        "check": "packed pre-sign interface is valid and does not broadcast",
+        "status": "PASS"
+      },
+      {
+        "check": "all45 distinct votes unchanged by ordinary app preparation",
+        "status": "PASS"
+      },
+      {
+        "check": "supply unchanged",
+        "status": "PASS"
+      }
+    ],
+    "transactions": {
+      "create-civiccounter": {
+        "id": "04ea80e50b4ede843dfd55bbd01200e33ce33cdb6292c3ef1d2e9380c12649fb",
+        "height": 18638,
+        "block_id": "000048ce418981ca232214b9866cf4db0f118acfd344afb360811ffb2b4e5e06",
+        "finalized_at": "2026-11-02T01:19:55.481002+00:00",
+        "actions": [
+          "eosio::newaccount",
+          "eosio::buyrambytes"
+        ]
+      },
+      "fund-own-civiccounter-resources": {
+        "id": "28a2eac7440f812c7c19dff0db409e21eb917768b9c60bc3fa56b83e6c8e7e3d",
+        "height": 18641,
+        "block_id": "000048d100dc94b96734882c7eec9d3f377dd404b1e7afb86d50134ef90188ce",
+        "finalized_at": "2026-11-02T01:19:56.886255+00:00",
+        "actions": [
+          "eosio.token::transfer",
+          "eosio::delegatebw",
+          "eosio::powerup"
+        ]
+      },
+      "deploy-civiccounter": {
+        "id": "6fb8aa7ec87573ba8bac308d345cf4c37ee1fe4937147c8251d32f3b6a8fcb9a",
+        "height": 18644,
+        "block_id": "000048d4606944c8ea97e6dceee92c8221bd2ed4125f1e9ad9c5494d01c76ebf"
+      },
+      "qualification-positive-tick": {
+        "id": "78c30edbd27765d8744e688ff0eaca0c48312dd6efc9b3aa2e214358ee0dfff8",
+        "height": 18647,
+        "block_id": "000048d74da6df2caf73f46e46228bb8437176239440adc8a21f045b30012f37",
+        "finalized_at": "2026-11-02T01:20:00.041638+00:00",
+        "actions": [
+          "civiccounter::tick"
+        ]
+      },
+      "qualification-positive-note": {
+        "id": "9cab83b2dc7e4f89f6f058603f602be7410d54f3f6308429458e637e448d3496",
+        "height": 18650,
+        "block_id": "000048da28e61bd11cc0ba2a70083e95973b852e347b6265740c0e735134bd1e",
+        "finalized_at": "2026-11-02T01:20:01.415246+00:00",
+        "actions": [
+          "civiccounter::note"
+        ]
+      }
+    },
+    "key_and_wallet_private": true,
+    "runtime_whitelist_changed": false,
+    "no_TPS_claim": true,
+    "signing_wallet_ordinary_keys_only": true,
+    "signing_wallet_public_key_count": 90,
+    "deployer_keys_removed_from_activity_wallet": [
+      "gptgenesisbp",
+      "civiccounter"
+    ]
+  },
+  "explorer": {
+    "status": "PASS",
+    "release": "/var/www/pureeos-explorer/releases/20261102T012801Z",
+    "previous": "/var/www/pureeos-explorer/releases/20261101T103958Z",
+    "source_commit": "50f07cf0aad18495403eef56f93e014274dd3b24",
+    "files": {
+      "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+      "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+      "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+      "index.html": "a7cc05fcb432ff1a3ec35c265992e26abd73d3d05d92701c41eaaa282e75eebb",
+      "assets/index-lFcM_BGf.js": "837df23e5f2c2d6e6cb717400f8da6a068dd911c9466336ba2ffabdedbc8d78c",
+      "assets/index-DYkmXYDo.css": "dc8be46f31e24297f7e26e29368a281203f88aa3527b81cf07d203e2e89949e9"
+    },
+    "main_hashes_unchanged": {
+      "/var/www/matrixai/dist/index.html": "ef2b96a82dd7013fd7f3e259f3c6ff6c73f06d266cd794704e1a9a415448e00b",
+      "/etc/nginx/sites-enabled/matrixai": "20009820b536b38bf1203f60a1e2c99acd656c9ad8a68c05fccab717490a4818"
+    }
+  },
+  "fault_at_export": {
+    "status": "WAITING_REAL_NATIVE_DUTY_AND_PRODUCTION",
+    "started_UTC": "2026-11-02T01:12:51.847574+00:00",
+    "UTC": "2026-11-02T01:40:41.591714+00:00",
+    "joined": [
+      "koreamoonlit",
+      "indiasunrise",
+      "icelandcrown",
+      "aurorashield",
+      "quantumhaven"
+    ],
+    "native_duty": [],
+    "unpaid_blocks": {
+      "koreamoonlit": 0,
+      "indiasunrise": 0,
+      "icelandcrown": 0,
+      "aurorashield": 0,
+      "quantumhaven": 0
+    },
+    "head": 21132,
+    "LIB": 21130,
+    "rotation_incoming": "sapphiretide",
+    "rotation_completed": 31
+  },
+  "public_archive_SHA256": "1b1f803b18ae857b6230ef81e8e2c558365d5ec5b28d5aeab4aa87e959713803",
+  "private_wallets_keys_pending_unsigned_packets_excluded": true
+}

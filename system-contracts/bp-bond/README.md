@@ -14,3 +14,9 @@ Standalone contracts commit: b230c7e12d7cd0bc05ad8269140dc030f8b5fe79; parent: 1
 WASM SHA256: b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170. ABI JSON SHA256: 9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358. Building with PUREEOS_BP_BOND=OFF reproduces the released WASM byte-for-byte (373b66b2994c3131ce6c9c3d4526fdf836c0ac2c36d8265b2239d61e75ca2ceb).
 
 This additive candidate does not replace v1.0.0 files or tags. New-chain deployment and the authorized single-BP TPS round have separate execution receipts; functional PASS alone does not claim deployment or throughput.
+
+## Deployment evidence / 部署证据
+
+[40 BP＋独立历史节点部署与一次单 BP TPS](deployment-20261102/REPORT.md) 已通过。另行授权的45个BP自投、90个普通用户随机投票、普通业务及空块、浏览器押金显示已完成，见[准备报告](deployment-20261102/preparation/REPORT.md)。五个新增节点的实际停机/永久黑名单验收仍单独进行，未在准备报告中提前宣称通过。
+
+The [40-BP plus history deployment and one single-BP TPS round](deployment-20261102/REPORT.md) passed. The separately authorized 45 self-votes, 90 randomized ordinary voters, ordinary transfers/contract activity with idle blocks, and explorer bond display are recorded in the [preparation report](deployment-20261102/preparation/REPORT.md). Actual five-node offline/permanent-blacklist qualification remains separate and is not claimed by preparation PASS.
