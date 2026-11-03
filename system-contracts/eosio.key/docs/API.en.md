@@ -113,7 +113,7 @@ Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durabl
 
 参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。
 
-## Fee-free income claim candidate (latest 2026-11-03 selection)
+## Fee-free income claim (qualified TEST deployment, 2026-11-03)
 
 `claim(bp,to,quantity,max_fee)` pays the full positive earned AIC quantity. It uses no fee quote,
 charges no AIC fee, never requires/debits/allocates `nativefees`, never credits a network-fee bucket

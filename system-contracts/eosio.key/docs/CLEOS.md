@@ -117,7 +117,7 @@ built 1,800-second TEST review profile. Production remains at 604,800 seconds. O
 chains must follow their existing native governance rules.
 
 ```bash
-# New candidate: full earned quantity, zero application fee; recipient AIC row must already exist.
+# Qualified TEST: full earned quantity, zero application fee; recipient AIC row must already exist.
 cleos -u https://YOUR-RPC push action eosio.key claim \
   '{"bp":"keyrelaymoon","to":"keyrelaymoon","quantity":"1.0000 AIC","max_fee":"0.0000 AIC"}' \
   -p keyrelaymoon@active --expiration 1800

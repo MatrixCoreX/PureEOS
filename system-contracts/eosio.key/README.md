@@ -53,3 +53,5 @@ License: repository [AIC noncommercial license](../../AIC_LICENSE.md).
 承担原生 CPU/NET 并为缺失的收款 AIC 行付 RAM open。所有转账（包括内部公钥转公钥）
 继续动态计费。本轮用户授权在远端验证后重建 TEST 链，封存前部署；新 TEST 节点的升级公示期为30分钟，正式版仍为七天。实际生效以执行报告为准。
 参见 [cleos 提现语义](docs/CLEOS.md)。
+
+本轮 TEST 新链已部署并通过公开验收，提案公示1800秒。领取中继收入免费且全额到账，公钥转账继续动态收费；见[实际交易与测试公钥](../../performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261103-claim-free-test30-r2/REPORT.md)。

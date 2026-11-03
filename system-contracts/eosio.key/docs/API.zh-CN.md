@@ -12,7 +12,7 @@
 | 公钥给文本账户 | `withdraw(request)` | 文本账户必须已经存在 |
 | 持有人自助转出 | `selfout(payer,request)` | 原生 payer 提供 CPU/NET；公钥付基础 AIC 费，无 30% 加价 |
 | 撤销未执行授权 | `cancel` / `selfcancel` | 将 auth_epoch 提升到更大 next_epoch |
-| 提取过去中继收入 | `claim` | 新候选：全额到账、无AIC应用手续费；领取BP承担原生资源及收款行RAM |
+| 提取过去中继收入 | `claim` | 已验收TEST：全额到账、无AIC应用手续费；领取BP承担原生资源及收款行RAM |
 | 退回费用预存 | `refundfee` | 原生费用所有者授权 |
 
 ## RAM 登记与付款方费用
