@@ -1,0 +1,24 @@
+{
+  "status": "MATCH",
+  "checks": {
+    "src/eosio.key.cpp": true,
+    "include/eosio.key.hpp": true,
+    "sdk/index.mjs": true,
+    "tests/chain_test.py": true,
+    "tests/sdk.test.mjs": true,
+    "abi/eosio.key.abi": true
+  },
+  "source_hashes": {
+    "src/eosio.key.cpp": "5f54ebc45d4a1c18bb4ef6297e62d6ecb6beaded4c9547648e6008a82d2d4870",
+    "include/eosio.key.hpp": "507e0067515c561a7d096eab77f2be48f8b2f451f81f6953a8c9f295d109fd06",
+    "sdk/index.mjs": "34aebb99b581f6717613684f826a1325fa72b83f17c463bca42e80802ca66270",
+    "tests/chain_test.py": "67d782860e1974765c8746a02b731a29bb00df5d92ac79ee969eaf65cd238819",
+    "tests/sdk.test.mjs": "58081daf26d66d1b6050e1aacd55b81d77c783b8d1ea015afb45d6cd2d86a1b4",
+    "abi/eosio.key.abi": "594ccdcf34b1939fec6fccf5b37206e418c6a1b19c9b1ad6306dc09f369589f4"
+  },
+  "private_test_pids_remaining": [],
+  "units": {
+    "r2": "Result=success\nExecMainStatus=0\nActiveState=inactive\n",
+    "r3f": "Result=success\nExecMainStatus=0\nActiveState=inactive\n"
+  }
+}

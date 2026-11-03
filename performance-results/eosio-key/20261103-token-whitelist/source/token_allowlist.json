@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "tokens": [
+    {
+      "contract": "eosio.token",
+      "symbol": "4,AIC",
+      "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+    },
+    {
+      "contract": "keyusdtoken1",
+      "symbol": "4,USD",
+      "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+    }
+  ]
+}

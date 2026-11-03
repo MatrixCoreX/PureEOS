@@ -1,0 +1,210 @@
+{
+  "status": "PASS",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "origin": "https://aic-test.matrixai.one",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440,
+        "theme": "dark"
+      },
+      "actual_balances": [
+        {
+          "key": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+          "wallet_id": "1",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "475429",
+              "display": "47.5429 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "482499",
+              "display": "48.2499 USD"
+            }
+          ]
+        },
+        {
+          "key": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+          "wallet_id": "2",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "20000",
+              "display": "2.0000 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "12501",
+              "display": "1.2501 USD"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "layout": {
+        "width": 375,
+        "viewport": 390,
+        "theme": "light"
+      },
+      "actual_balances": [
+        {
+          "key": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+          "wallet_id": "1",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "475429",
+              "display": "47.5429 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "482499",
+              "display": "48.2499 USD"
+            }
+          ]
+        },
+        {
+          "key": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+          "wallet_id": "2",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "20000",
+              "display": "2.0000 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "12501",
+              "display": "1.2501 USD"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "layout": {
+        "width": 375,
+        "viewport": 390,
+        "theme": "dark"
+      },
+      "actual_balances": [
+        {
+          "key": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+          "wallet_id": "1",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "475429",
+              "display": "47.5429 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "482499",
+              "display": "48.2499 USD"
+            }
+          ]
+        },
+        {
+          "key": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+          "wallet_id": "2",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "20000",
+              "display": "2.0000 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "12501",
+              "display": "1.2501 USD"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440,
+        "theme": "light"
+      },
+      "actual_balances": [
+        {
+          "key": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+          "wallet_id": "1",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "475429",
+              "display": "47.5429 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "482499",
+              "display": "48.2499 USD"
+            }
+          ]
+        },
+        {
+          "key": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+          "wallet_id": "2",
+          "auth_epoch": "0",
+          "balances": [
+            {
+              "contract": "eosio.token",
+              "symbol": "4,AIC",
+              "atoms": "20000",
+              "display": "2.0000 AIC"
+            },
+            {
+              "contract": "keyusdtoken1",
+              "symbol": "4,USD",
+              "atoms": "12501",
+              "display": "1.2501 USD"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "unknown_key_not_fake_zero": true,
+  "source": "Actual public AIC/USD ledger after real HTTPS cleos relay payment"
+}

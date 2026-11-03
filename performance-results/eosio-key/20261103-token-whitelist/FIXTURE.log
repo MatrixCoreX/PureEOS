@@ -1,0 +1,171 @@
+QUALIFICATION NODE v22.23.4
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 37.027868
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 110.873115
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 33.910388
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 0.535938
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 1.017742
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 30.763723
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 7 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 6.485164
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 8 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 0.358915
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 9 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 44.907013
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 10 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 0.788879
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 11 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 0.59887
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 12 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 82.031369
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 13 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 27.660168
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 14 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 12.193925
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 425.062568
+Local test directory: /opt/pureeos-key-token-ram-20261103-r1/functional-r10f/local-tests/integer-v2-nwmtc52t
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Seven-day governance sealed after eosio.key deployment
+PASS: Wallet is explicitly protected by seven-day native governance
+PASS: RAM1024 initialization preserved
+PASS: Wallet owner and active have no deployer private keys after initialization
+PASS: Actual deployed wallet WASM hash equals the selected production/fixture artifact
+PASS: AIC also requires paid RAM registration before accepting fee credit
+PASS: Native payer buys real RAM; registration credits only actual purchased bytes to AIC
+PASS: Unregistered other token deposit rolls back principal, fees and all rows
+PASS: Failed registration atomically refunds native RAM purchase and leaves no token admission
+PASS: Wrong token precision cannot obtain admission and refunds the paired RAM purchase
+PASS: Another account cannot register against a different RAM payer authorization
+PASS: Permissionless sponsor registers full issuer, precision and symbol without recipient opening
+PASS: Native deposits create one canonical wallet and distinct multi-token reserves
+PASS: AIC deposit sender pays additional new-recipient fee; receiving key gets full principal and no account prerequisite
+PASS: Existing AIC recipient is not charged a repeated new-row fee or another RAM allocation
+PASS: Key sender pays AIC principal plus recipient RAM row fee; recipient receives full principal, repeated sends reuse rows
+PASS: JS SDK reads actual key/asset secondary indices and exact four-decimal USD balance
+PASS: Per-token RAM exhaustion rejects new key deposits without using AIC token budget or debiting sender
+PASS: Existing recipient rows accept deposits at exhausted allocation budget without repeated RAM charges
+PASS: Another native sponsor can top up; new key consumes its own token budget while retaining first-sponsor attribution
+PASS: Native cleos and JS SDK produce the same owner signing digest
+PASS: Native cleos --dont-broadcast exports safely, including --skip-sign, without executing the authorized transfer
+PASS: Real cleos prepare/sign/push public-key to native text account sends full principal
+PASS: Native cleos external relay request forwards no RPC credentials/custom headers
+PASS: Native cleos loopback exception rejects URL userinfo/remote-host confusion
+PASS: Cleos combined fee funding and public-key deposit roll back atomically
+PASS: Two independently prepared same-epoch transactions both finalize; exact principals and one extra fee each, no shared nonce allocator
+PASS: Owner proof attack expiration rejects without principal, fee or reserve changes
+PASS: Owner proof attack extra-root rejects without principal, fee or reserve changes
+PASS: Owner proof attack domain rejects without principal, fee or reserve changes
+PASS: Owner proof attack invalid-proof rejects without principal, fee or reserve changes
+PASS: Owner proof attack extra-cfd rejects without principal, fee or reserve changes
+PASS: Failed same-ID invalid proof does not poison later valid transaction
+PASS: Exact native retry after success cannot debit twice
+PASS: Changing native packet compression cannot create a second payment
+PASS: Already executed short-lived packet remains rejected after expiry and native dedup pruning
+PASS: Revoked native BP relay hot key cannot authorize pending wallet transaction
+PASS: Rotating only native resource signature preserves holder proof and native transaction ID
+PASS: Fee cap rejection rolls back token transfer, fee, wallet and reserve
+PASS: Duplicate owner intent cannot debit twice
+PASS: Public-key to native text account delivers exact AIC principal; fee is additional
+PASS: Unopened native USD recipient rejects before fees, principal or custody RAM change
+PASS: USD withdrawal reuses the recipient-funded balance row without extra custody RAM or row-budget charge
+PASS: Approved standard USD withdrawal delivers the full principal
+PASS: Cancellation advances only the revocation epoch and invalidates outstanding older authorizations
+PASS: Owner-signed self withdrawal works while selected commercial relay is disabled
+PASS: Owner self cancellation works independently of commercial relay eligibility
+PASS: Fixture BP maintenance rejects relay work while preserving owner self exit
+PASS: Revoked relay can claim previously earned service income without new relay eligibility
+PASS: All outgoing token interactions finish without outstanding busy locks
+PASS: Non-whitelisted issuer registration atomically refunds its RAM purchase
+PASS: Non-whitelisted deposits cannot allocate custody rows or consume fees
+PASS: Whitelisted USD upgraded to RAM attack is rejected before custody authority; fees, principal and RAM stay unchanged
+PASS: Changed issuer code also rejects deposits atomically
+PASS: Restoring exactly the approved USD code restores owner withdrawal
+PASS: Approval of USD never approves another symbol on the same standard contract; fake AIC cannot fund fees
+PASS: Native RAM_RESTRICTIONS rejects recipient notification billing; withdrawal fully rolls back
+PASS: Zero AIC balance and later funding preserve wallet identity and revocation epoch
+PASS: Checksum-valid off-curve recipient is rejected before allocating a wallet
+PASS: Configured wallet storage cap rejects RAM growth with atomic fee/principal rollback
+PASS: TEST FIXTURE: fully occupied resource market increases on-chain multiplier to configured maximum
+PASS: TEST FIXTURE: blacklist blocks existing relay and permission re-registration without debiting owner
+PASS: TEST FIXTURE: system schema hash change fails closed for commercial sends and retains owner self withdrawal
+PASS: Actual RPC and JS SDK retain an on-chain revocation epoch above 2^53 exactly
+PASS: Native cleos prepares the exact uint64 epoch without JavaScript rounding
+PASS: Owner-authorized withdrawal succeeds with large epoch without consuming a transfer sequence
+PASS: Attempt to spend entire principal without additional AIC fee fails atomically
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for keyusdtoken1::4,USD
+PASS: Ordinary account cannot publish wallet whitelist-code proposal
+PASS: Native developer proposal binds whitelist wallet hashes and exact seven-day review deadline
+PASS: Actual native frozen bootstrap electorate can veto the proposed wallet upgrade
+PASS: Cancelled proposal and rejected early execution leave the approved wallet code unchanged
+RESULT PASS

@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-03T05:17:12.826679+00:00",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "nodeos_processes": 26,
+  "registered_BPs": 25,
+  "full_bond_BPs": 25,
+  "escrow": "250000.0000 AIC",
+  "slash_pool": "0.0000 AIC",
+  "self_voted_BPs": 25,
+  "distinct_actual_vote_weights": 25,
+  "banned": 0,
+  "maintenance": 0,
+  "native_finalizers": 11,
+  "native_threshold": 8,
+  "native_proposers": 11,
+  "native_admission_complete_21_15": false,
+  "natural_admission_timing_unchanged": true,
+  "wallet_code_hash": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+  "no_TPS": true,
+  "production_defaults_changed": false,
+  "old_archive_retained": "/opt/pureeos-keynet-20261103-r1/archive"
+}

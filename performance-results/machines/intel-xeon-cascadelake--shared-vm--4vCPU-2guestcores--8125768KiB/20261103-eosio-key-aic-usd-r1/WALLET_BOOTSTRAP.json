@@ -1,0 +1,45 @@
+{
+  "status": "PRESEALED",
+  "configuration": {
+    "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+    "deployment": "8e5d42a049c6fdff8f1decf4d278530e65735ae6988e5652d079734bca0e3fe7",
+    "fee_contract": "eosio.token",
+    "fee_symbol": "4,AIC",
+    "system_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "policy": {
+      "minimum_fee": 100,
+      "unit_fee": 10,
+      "new_row_fee": 500,
+      "maximum_multiplier_bps": 100000,
+      "epoch_seconds": 1,
+      "max_wallets": 1000,
+      "max_balances": 4000,
+      "max_assets": 32,
+      "max_native_payers": 1000
+    }
+  },
+  "whitelist": {
+    "version": 1,
+    "tokens": [
+      {
+        "contract": "eosio.token",
+        "symbol": "4,AIC",
+        "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      },
+      {
+        "contract": "keyusdtoken1",
+        "symbol": "4,USD",
+        "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      }
+    ]
+  },
+  "artifacts": {
+    "files": {
+      "eosio.key.wasm": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+      "eosio.key.abi": "40352fb405d5ac80e67e871382a91c3ffd24958eef2aaaa6df841e1f06885d9a",
+      "token_allowlist.json": "7ee77f1a6939915e4a97caa60f9ef6601b2c318bcd10794e18da462c9c4db201"
+    },
+    "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+  },
+  "note": "Initial AIC/USD bootstrap profile, not an early governance proposal execution"
+}

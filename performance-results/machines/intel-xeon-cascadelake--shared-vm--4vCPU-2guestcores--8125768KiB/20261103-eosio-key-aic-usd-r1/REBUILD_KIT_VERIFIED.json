@@ -1,0 +1,18 @@
+{
+  "status": "REBUILD_KIT_VERIFIED",
+  "UTC": "2026-11-03T05:16:29.337596+00:00",
+  "directory": "/run/media/guagua/Windows/PureEOS-key-security-20261103",
+  "files": 35,
+  "bytes": 528323479,
+  "secrets_and_databases_excluded": true,
+  "provenance": {
+    "wallet_repository": "/home/guagua/AntelopeIO/PureEOS-Key",
+    "wallet_branch": "wip/eosio-key-v2-security-20261103",
+    "wallet_commit": "3e162407850f34ad38ed99d708138f4dfd554bd1",
+    "test_source_commit": "2208fac7e6f84e3fffc3804eeaa9faaa3e70e097",
+    "qualified_wallet_wasm": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+    "native_cleos": "c7e1deef45d5070745b27032db603348ea177a9f9b90a9ed4236a7c83353f846",
+    "live_chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+    "stable_release_unchanged": true
+  }
+}

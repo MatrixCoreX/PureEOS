@@ -1,0 +1,27 @@
+{
+  "functional_status": "PASS",
+  "release_qualified": false,
+  "normal_observed_checks": 71,
+  "fixture_observed_checks": 71,
+  "unit_tests_passed": 14,
+  "sender_paid_RAM_fees": {
+    "native_first_fee_atoms": 1050,
+    "native_repeat_fee_atoms": 100,
+    "key_first_fee_atoms": 1365,
+    "key_repeat_fee_atoms": 130,
+    "recipient_principal_atoms": 20000
+  },
+  "unreviewed_issuer_RAM_exposure": {
+    "reproduced": true,
+    "extra_RAM_bytes": 4330,
+    "wallet_row_counter_changed": false
+  },
+  "private_test_nodes_remaining": 0,
+  "public_chain_changed": false,
+  "TPS_measured": false,
+  "scope": "Independent Vultr security VM, normal system private chain plus clearly marked alternate-system fixtures",
+  "hashes": {
+    "wallet_WASM": "b11af90a6823e7c73c9fe6fc9fba14a6bd4aa7a6133cf589245e818db2a5caca",
+    "wallet_ABI": "594ccdcf34b1939fec6fccf5b37206e418c6a1b19c9b1ad6306dc09f369589f4"
+  }
+}

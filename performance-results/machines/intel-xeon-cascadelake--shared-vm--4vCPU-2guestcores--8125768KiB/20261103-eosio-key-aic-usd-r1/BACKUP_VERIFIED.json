@@ -1,0 +1,14 @@
+{
+  "status": "RECEIVED_ALL_INNER_HASHES_VERIFIED",
+  "UTC": "2026-11-03T05:13:44.109154+00:00",
+  "instance_id": "3f7cf7fa-c4a7-44bb-b633-f8d9c692c3e3",
+  "local_archive": "/run/media/guagua/Windows/PureEOS-key-security-20261103/remote-public-evidence.tar.gz",
+  "archive": {
+    "path": "/opt/pureeos-key-security-public-evidence-20261103.tar.gz",
+    "bytes": 5529179,
+    "sha256": "4c0ea362d483dd29a4dfc7365e85112db7d4db2737c32f01a5e57b770900cdb1",
+    "files": 3516,
+    "redacted_files": 0
+  },
+  "verified_files": 3516
+}

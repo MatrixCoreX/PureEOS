@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "TPS": "explicitly excluded",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "seed": "d1009b68a5313fda2bc1ed6f0d9e45fb616274fb1ba13cc128c2f213d9d12f73",
+  "prepared_accounts": 90,
+  "last_transaction": "a8688aafc74d2a0ff17861eb173df5f173b66ace26d938b19d9e65874aecf2d8",
+  "ordinary_accounts": 90,
+  "distinct_BP_vote_totals": true,
+  "all25BPs_self_voted": true,
+  "sparse_activity_enabled": true,
+  "contract_WASM": "8a0c9b48dd7044199fa38a184a6287e0f79350462f909aa9d8afb2437de84108"
+}

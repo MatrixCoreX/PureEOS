@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "public_test_deployment_qualified": true,
+  "stable_release_qualified": false,
+  "unit_tests_passed": 14,
+  "normal_observed_checks": 74,
+  "fixture_observed_checks": 74,
+  "admission": {
+    "native": "eosio.token::4,AIC",
+    "third_party": "keyusdtoken1::4,USD",
+    "reviewed_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "unlisted_identity_rejected": true,
+    "changed_code_withdrawal_rejected": true,
+    "extra_RAM_bytes": 0,
+    "restored_code_exit_verified": true,
+    "recipient_notification_RAM_rejected": true,
+    "third_party_requires_preopened_native_recipient": true
+  },
+  "governance": {
+    "mechanism": "native refreshgov/devpropose/devveto/devexec",
+    "review_seconds": 604800,
+    "manifest": {
+      "version": 1,
+      "tokens": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+        }
+      ]
+    },
+    "manifest_sha256": "eceb5f183dd3f1a0ba0e2206798e1b7035ceabd6c7fd8b03c30000c1e5d5fb49",
+    "unauthorized_proposal_rejected": true,
+    "direct_setcode_rejected": true,
+    "early_execution_rejected": true,
+    "native_veto_verified": true,
+    "proposal_cancelled": true,
+    "mature_execution_retested": false,
+    "bootstrap_note": "AIC and USD are initialized in the approved test wallet before governance sealing; no early proposal execution"
+  },
+  "sender_paid_RAM_fees": {
+    "native_first_fee_atoms": 1050,
+    "native_repeat_fee_atoms": 100,
+    "key_first_fee_atoms": 1365,
+    "key_repeat_fee_atoms": 130,
+    "recipient_principal_atoms": 20000
+  },
+  "WASM_SHA256": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+  "ABI_SHA256": "40352fb405d5ac80e67e871382a91c3ffd24958eef2aaaa6df841e1f06885d9a",
+  "TPS": "not measured",
+  "public_chain_changed_during_qualification": false,
+  "private_test_nodes_remaining": 0
+}

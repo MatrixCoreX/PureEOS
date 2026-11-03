@@ -1,0 +1,26 @@
+{
+  "status": "MATCH",
+  "checks": {
+    "src/eosio.key.cpp": true,
+    "include/eosio.key.hpp": true,
+    "scripts/build.sh": true,
+    "scripts/generate_allowlist.py": true,
+    "token_allowlist.json": true,
+    "sdk/index.mjs": true,
+    "tests/chain_test.py": true,
+    "tests/sdk.test.mjs": true,
+    "abi/eosio.key.abi": true
+  },
+  "source_hashes": {
+    "src/eosio.key.cpp": "978ce52e46ef92c59161c31b39103e4ff15983ef8dd68530baa9a1c18deac9bf",
+    "include/eosio.key.hpp": "1385e75e0520708a3b2de01ebeacfa703db0cb81d7599347343d284f998b3721",
+    "scripts/build.sh": "5f0adfc16ebdc7680bfab66c3d4cf1a0d741154f24f53fdbc23543e1a9016005",
+    "scripts/generate_allowlist.py": "8ef2a299d821d1c2a3d45ecb76be0fd9e2c4a987f1901a7299c2ab7234a26f28",
+    "token_allowlist.json": "7ee77f1a6939915e4a97caa60f9ef6601b2c318bcd10794e18da462c9c4db201",
+    "sdk/index.mjs": "34aebb99b581f6717613684f826a1325fa72b83f17c463bca42e80802ca66270",
+    "tests/chain_test.py": "b6142ce84c1bfcff148091603ae6bb06bc5e708fe348c2e528ceb0605f0cc4bb",
+    "tests/sdk.test.mjs": "58081daf26d66d1b6050e1aacd55b81d77c783b8d1ea015afb45d6cd2d86a1b4",
+    "abi/eosio.key.abi": "40352fb405d5ac80e67e871382a91c3ffd24958eef2aaaa6df841e1f06885d9a"
+  },
+  "private_test_pids_remaining": []
+}

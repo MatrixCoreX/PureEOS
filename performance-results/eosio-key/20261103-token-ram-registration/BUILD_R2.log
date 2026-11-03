@@ -1,0 +1,159 @@
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:143:20: warning: abigen warning (Action <init> does not have a ricardian contract)
+void key_contract::init(checksum256 chain_id, checksum256 deployment, name fee_contract,
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:219:20: warning: abigen warning (Action <regtoken> does not have a ricardian contract)
+void key_contract::regtoken(name payer, name token_contract, symbol token_symbol, uint32_t min_bytes) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:255:20: warning: abigen warning (Action <regrelay> does not have a ricardian contract)
+void key_contract::regrelay(name bp, name permission, std::string endpoint) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:269:20: warning: abigen warning (Action <setrelay> does not have a ricardian contract)
+void key_contract::setrelay(name bp, bool enabled) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:375:20: warning: abigen warning (Action <prove> does not have a ricardian contract)
+void key_contract::prove(public_key owner, checksum256 chain_id, checksum256 deployment, uint32_t reference_block_num) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:541:20: warning: abigen warning (Action <ksend> does not have a ricardian contract)
+void key_contract::ksend(transfer_request request) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:584:20: warning: abigen warning (Action <finishout> does not have a ricardian contract)
+void key_contract::finishout(uint64_t asset_id, uint64_t ticket) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:613:20: warning: abigen warning (Action <withdraw> does not have a ricardian contract)
+void key_contract::withdraw(withdrawal_request request) { perform_withdraw({}, request, false); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:614:20: warning: abigen warning (Action <selfout> does not have a ricardian contract)
+void key_contract::selfout(name payer, withdrawal_request request) { perform_withdraw(payer, request, true); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:630:20: warning: abigen warning (Action <cancel> does not have a ricardian contract)
+void key_contract::cancel(cancellation_request request) { perform_cancel({}, request, false); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:631:20: warning: abigen warning (Action <selfcancel> does not have a ricardian contract)
+void key_contract::selfcancel(name payer, cancellation_request request) { perform_cancel(payer, request, true); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:632:20: warning: abigen warning (Action <claim> does not have a ricardian contract)
+void key_contract::claim(name bp, name to, asset quantity, asset max_fee) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:645:20: warning: abigen warning (Action <refundfee> does not have a ricardian contract)
+void key_contract::refundfee(name owner, name to, asset quantity, asset max_fee) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:665:20: warning: abigen warning (Action <receipt> does not have a ricardian contract)
+void key_contract::receipt(name kind, checksum256 request_id, checksum256 transaction_id, name native_from, checksum256 from_key,
+                   ^
+14 warnings generated.
+Warning, empty ricardian clause file
+Warning, empty ricardian clause file
+Warning, action <init> does not have a ricardian contract
+Warning, action <regtoken> does not have a ricardian contract
+Warning, action <regrelay> does not have a ricardian contract
+Warning, action <setrelay> does not have a ricardian contract
+Warning, action <prove> does not have a ricardian contract
+Warning, action <ksend> does not have a ricardian contract
+Warning, action <withdraw> does not have a ricardian contract
+Warning, action <selfout> does not have a ricardian contract
+Warning, action <cancel> does not have a ricardian contract
+Warning, action <selfcancel> does not have a ricardian contract
+Warning, action <claim> does not have a ricardian contract
+Warning, action <refundfee> does not have a ricardian contract
+Warning, action <finishout> does not have a ricardian contract
+Warning, action <receipt> does not have a ricardian contract
+Warning, action <init> does not have a ricardian contract
+Warning, action <regtoken> does not have a ricardian contract
+Warning, action <regrelay> does not have a ricardian contract
+Warning, action <setrelay> does not have a ricardian contract
+Warning, action <prove> does not have a ricardian contract
+Warning, action <ksend> does not have a ricardian contract
+Warning, action <finishout> does not have a ricardian contract
+Warning, action <withdraw> does not have a ricardian contract
+Warning, action <selfout> does not have a ricardian contract
+Warning, action <cancel> does not have a ricardian contract
+Warning, action <selfcancel> does not have a ricardian contract
+Warning, action <claim> does not have a ricardian contract
+Warning, action <refundfee> does not have a ricardian contract
+Warning, action <receipt> does not have a ricardian contract
+b11af90a6823e7c73c9fe6fc9fba14a6bd4aa7a6133cf589245e818db2a5caca  /opt/pureeos-key-token-ram-20261103-r1/artifacts/eosio.key.wasm
+594ccdcf34b1939fec6fccf5b37206e418c6a1b19c9b1ad6306dc09f369589f4  /opt/pureeos-key-token-ram-20261103-r1/artifacts/eosio.key.abi
+Warning, empty ricardian clause file
+Warning, empty ricardian clause file
+Warning, action <setbp> does not have a ricardian contract
+Warning, action <setmarket> does not have a ricardian contract
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:143:20: warning: abigen warning (Action <init> does not have a ricardian contract)
+void key_contract::init(checksum256 chain_id, checksum256 deployment, name fee_contract,
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:219:20: warning: abigen warning (Action <regtoken> does not have a ricardian contract)
+void key_contract::regtoken(name payer, name token_contract, symbol token_symbol, uint32_t min_bytes) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:255:20: warning: abigen warning (Action <regrelay> does not have a ricardian contract)
+void key_contract::regrelay(name bp, name permission, std::string endpoint) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:269:20: warning: abigen warning (Action <setrelay> does not have a ricardian contract)
+void key_contract::setrelay(name bp, bool enabled) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:375:20: warning: abigen warning (Action <prove> does not have a ricardian contract)
+void key_contract::prove(public_key owner, checksum256 chain_id, checksum256 deployment, uint32_t reference_block_num) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:541:20: warning: abigen warning (Action <ksend> does not have a ricardian contract)
+void key_contract::ksend(transfer_request request) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:584:20: warning: abigen warning (Action <finishout> does not have a ricardian contract)
+void key_contract::finishout(uint64_t asset_id, uint64_t ticket) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:613:20: warning: abigen warning (Action <withdraw> does not have a ricardian contract)
+void key_contract::withdraw(withdrawal_request request) { perform_withdraw({}, request, false); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:614:20: warning: abigen warning (Action <selfout> does not have a ricardian contract)
+void key_contract::selfout(name payer, withdrawal_request request) { perform_withdraw(payer, request, true); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:630:20: warning: abigen warning (Action <cancel> does not have a ricardian contract)
+void key_contract::cancel(cancellation_request request) { perform_cancel({}, request, false); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:631:20: warning: abigen warning (Action <selfcancel> does not have a ricardian contract)
+void key_contract::selfcancel(name payer, cancellation_request request) { perform_cancel(payer, request, true); }
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:632:20: warning: abigen warning (Action <claim> does not have a ricardian contract)
+void key_contract::claim(name bp, name to, asset quantity, asset max_fee) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:645:20: warning: abigen warning (Action <refundfee> does not have a ricardian contract)
+void key_contract::refundfee(name owner, name to, asset quantity, asset max_fee) {
+                   ^
+/opt/pureeos-key-token-ram-20261103-r1/source/src/eosio.key.cpp:665:20: warning: abigen warning (Action <receipt> does not have a ricardian contract)
+void key_contract::receipt(name kind, checksum256 request_id, checksum256 transaction_id, name native_from, checksum256 from_key,
+                   ^
+14 warnings generated.
+Warning, empty ricardian clause file
+Warning, empty ricardian clause file
+Warning, action <init> does not have a ricardian contract
+Warning, action <regtoken> does not have a ricardian contract
+Warning, action <regrelay> does not have a ricardian contract
+Warning, action <setrelay> does not have a ricardian contract
+Warning, action <prove> does not have a ricardian contract
+Warning, action <ksend> does not have a ricardian contract
+Warning, action <withdraw> does not have a ricardian contract
+Warning, action <selfout> does not have a ricardian contract
+Warning, action <cancel> does not have a ricardian contract
+Warning, action <selfcancel> does not have a ricardian contract
+Warning, action <claim> does not have a ricardian contract
+Warning, action <refundfee> does not have a ricardian contract
+Warning, action <finishout> does not have a ricardian contract
+Warning, action <receipt> does not have a ricardian contract
+Warning, action <init> does not have a ricardian contract
+Warning, action <regtoken> does not have a ricardian contract
+Warning, action <regrelay> does not have a ricardian contract
+Warning, action <setrelay> does not have a ricardian contract
+Warning, action <prove> does not have a ricardian contract
+Warning, action <ksend> does not have a ricardian contract
+Warning, action <finishout> does not have a ricardian contract
+Warning, action <withdraw> does not have a ricardian contract
+Warning, action <selfout> does not have a ricardian contract
+Warning, action <cancel> does not have a ricardian contract
+Warning, action <selfcancel> does not have a ricardian contract
+Warning, action <claim> does not have a ricardian contract
+Warning, action <refundfee> does not have a ricardian contract
+Warning, action <receipt> does not have a ricardian contract
+Warning, empty ricardian clause file
+Warning, empty ricardian clause file
+Warning, action <arm> does not have a ricardian contract
+Warning, action <setmode> does not have a ricardian contract
+Warning, action <create> does not have a ricardian contract
+Warning, action <transfer> does not have a ricardian contract
+BUILD PASS

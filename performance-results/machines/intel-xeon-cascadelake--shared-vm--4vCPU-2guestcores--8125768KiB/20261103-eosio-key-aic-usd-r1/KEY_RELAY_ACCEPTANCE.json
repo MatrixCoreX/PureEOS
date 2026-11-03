@@ -1,0 +1,105 @@
+{
+  "status": "PASS",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "receipts": [
+    {
+      "transaction_id": "e8e10ff7250a2eee753cdb0c0786d3acb62c0615820fd2506fbd1a94988676fb",
+      "block_num": 3900,
+      "block_id": "00000f3c3b23b8689c4bca13c8c07a5c97a59235978919fd126099ad7e724186",
+      "observed_lib": 3900,
+      "reported_block_num": 3900
+    },
+    {
+      "transaction_id": "2ab3716e149697c73c00292a213421840b9787c833a9ef28991af66bb8c0e472",
+      "block_num": 3903,
+      "block_id": "00000f3fdb7b2de0a5296ab4241f3b969af543533c4c03dcf235564e329f5f13",
+      "observed_lib": 3903,
+      "reported_block_num": 3903
+    },
+    {
+      "transaction_id": "5ba8b9201e45b393ce7ecf5a288f48b6bf057f97f66e9e0d824e7e1deba62805",
+      "block_num": 3906,
+      "block_id": "00000f425e5a3bd2a2d066950103816e4e648d3aad35e743725de773d165c2b3",
+      "observed_lib": 3906,
+      "reported_block_num": 3906
+    },
+    {
+      "transaction_id": "3abc82f36796a7342435fe24b89400edc1f45378deb7270f10bf9f7d2813c810",
+      "block_num": 3909,
+      "block_id": "00000f45c90d84c94ca59f42cfae4f5ead1c16675cd7d9bb15e3e427b0e7460c",
+      "observed_lib": 3909,
+      "reported_block_num": 3909
+    },
+    {
+      "transaction_id": "507e1446f9f6cc013a26bad70576bab13e915e5bf30ea4866a5ab9f564341d64",
+      "block_num": 3912,
+      "block_id": "00000f484b302c4c3b53d15e6256eba820c1b66005231ee8ac327a1031631b0d",
+      "observed_lib": 3912,
+      "reported_block_num": 3912
+    },
+    {
+      "transaction_id": "eecf60510f88409f82c88aa3983468af1883e78730f43f1f863a586243cd9da5",
+      "block_num": 3915,
+      "block_id": "00000f4b1498ac56b2b85cd1445dfd7068a9a079eca5046d00ebbb30a13ddb10",
+      "observed_lib": 3915,
+      "reported_block_num": 3915
+    },
+    {
+      "transaction_id": "f3222c593d68c72c3411287f772e31c607f12c6d1e0195410b6adbb1bdf5ece7",
+      "block_num": 3918,
+      "block_id": "00000f4e5bf2bd18290cc3c9484fbd2c9fab9455d555b2e1b37a45a66f6b3702",
+      "observed_lib": 3918,
+      "reported_block_num": 3918
+    },
+    {
+      "transaction_id": "b7e1477d84349c7afd7d9a7f250ae44e6ae74edbb32a3114797dd12b84572f9e",
+      "block_num": 3924,
+      "block_id": "00000f54bc4741e03a62c012cd8353c8a157f93e8a23c3406220cc34b674f1e3",
+      "observed_lib": 3924,
+      "reported_block_num": 3924
+    },
+    {
+      "transaction_id": "7326db1e2dc6824b9c8df5deecc0c3d69bbf357008ab235c0ca7b354d4927228",
+      "block_num": 3927,
+      "block_id": "00000f579b4e0c0379f5f116f2128461c3f8ab163184dead8e95fc1158b877d7",
+      "observed_lib": 3927,
+      "reported_block_num": 3927
+    },
+    {
+      "transaction_id": "71f9b4188ef6815db539aa17b05e8e8de463a10c246b893cd6c31f5249d78736",
+      "block_num": 3932,
+      "block_id": "00000f5cc06889af0a3ab1794b55ba202869cfc4fcc63b4a67a5554e35ce6da4",
+      "observed_lib": 3932
+    },
+    {
+      "transaction_id": "03837fd896a8f279d0781d1d8004d4260196b149f5084f7689aa76f66fc46b22",
+      "block_num": 3940,
+      "block_id": "00000f64812b660732cf3cfc10fa7b841e386a62d1a2b93ec62b6b99b2dd17fb",
+      "observed_lib": 3940
+    },
+    {
+      "transaction_id": "fe3239796d19e31c401b1e9bf065ea701e7d934b03ed057f7a1062d90f41a71a",
+      "block_num": 3949,
+      "block_id": "00000f6d4e81351a6b69d890609f5a69406db75203d103266d8ca71228e81df7",
+      "observed_lib": 3949,
+      "reported_block_num": 3949
+    }
+  ],
+  "TPS": "excluded",
+  "unit": "pureeos-keynet-relay-20261103.service",
+  "standalone_HTTP_port": 8787,
+  "public_endpoint": "https://aic-test.matrixai.one/relay",
+  "holder_public_key": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+  "recipient_public_key": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+  "whitelist": [
+    "eosio.token::4,AIC",
+    "keyusdtoken1::4,USD"
+  ],
+  "wallet_WASM": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+  "unopened_USD_withdrawal_rejected": true,
+  "opened_USD_withdrawal_extra_custody_RAM": 0,
+  "relay_earned_atoms": 997,
+  "prior_relay_income_claim_verified": true,
+  "duplicate_HTTP_submission_same_native_ID": true,
+  "native_cleos_SHA256": "c7e1deef45d5070745b27032db603348ea177a9f9b90a9ed4236a7c83353f846"
+}

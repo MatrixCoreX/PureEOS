@@ -1,0 +1,592 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-03T05:12:51.998770+00:00",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "info": {
+    "server_version": "2208fac7",
+    "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+    "head_block_num": 6004,
+    "last_irreversible_block_num": 6002,
+    "last_irreversible_block_id": "000017723a017d5464639b679628782175e80b10a28a198639d2f6733058cf77",
+    "head_block_id": "00001774324906a2cc682e9d2b45033ba96a62d02c820aa70da6aaadef621156",
+    "head_block_time": "2026-11-03T05:12:52.000",
+    "head_block_producer": "gptgenesisbp",
+    "virtual_block_cpu_limit": 324156400,
+    "virtual_block_net_limit": 425372549,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.1",
+    "fork_db_head_block_num": 6004,
+    "fork_db_head_block_id": "00001774324906a2cc682e9d2b45033ba96a62d02c820aa70da6aaadef621156",
+    "server_full_version_string": "v1.0.0-2208fac7e6f84e3fffc3804eeaa9faaa3e70e097 / TEST test.1",
+    "total_cpu_weight": "5858203000",
+    "total_net_weight": 224000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-03T05:12:51.000"
+  },
+  "history_info": {
+    "server_version": "2208fac7",
+    "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+    "head_block_num": 6004,
+    "last_irreversible_block_num": 6002,
+    "last_irreversible_block_id": "000017723a017d5464639b679628782175e80b10a28a198639d2f6733058cf77",
+    "head_block_id": "00001774324906a2cc682e9d2b45033ba96a62d02c820aa70da6aaadef621156",
+    "head_block_time": "2026-11-03T05:12:52.000",
+    "head_block_producer": "gptgenesisbp",
+    "virtual_block_cpu_limit": 324156400,
+    "virtual_block_net_limit": 425372549,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.1",
+    "fork_db_head_block_num": 6004,
+    "fork_db_head_block_id": "00001774324906a2cc682e9d2b45033ba96a62d02c820aa70da6aaadef621156",
+    "server_full_version_string": "v1.0.0-2208fac7e6f84e3fffc3804eeaa9faaa3e70e097 / TEST test.1",
+    "total_cpu_weight": "5858203000",
+    "total_net_weight": 224000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-03T05:12:51.000"
+  },
+  "nodeos_processes": 26,
+  "registered_BPs": 25,
+  "full_bond_BPs": 25,
+  "escrow": "250000.0000 AIC",
+  "slash_pool": "0.0000 AIC",
+  "self_voted_BPs": 25,
+  "distinct_actual_vote_weights": 25,
+  "banned": 0,
+  "maintenance": 0,
+  "native_finalizers": 10,
+  "native_threshold": 7,
+  "native_proposers": 10,
+  "native_admission_complete_21_15": false,
+  "natural_admission_timing_unchanged": true,
+  "native_rotation": {
+    "version": 2,
+    "stage": 0,
+    "active": [
+      "gptgenesisbp",
+      "canadaboreal",
+      "egyptpyramid",
+      "deepseekcore",
+      "cosmicgarden",
+      "coherevision",
+      "cobaltspring",
+      "brazilamazon",
+      "anthropiclab",
+      "moonlitgrove"
+    ],
+    "target": [],
+    "incoming": "moonlitgrove",
+    "outgoing": "",
+    "proposer_version": 10,
+    "finalizer_generation": 11,
+    "proposer_digest": "f619f5699b4890199463f6bb5fb310cc84a8b56f852eb8bf5378440d4e027c4c",
+    "finalizer_digest": "776a070cffff5fe09ec439891337b3c968c53bde750ddf209628af40acfc0540",
+    "next_attempt_slot": 1693996093,
+    "observation_start": 1693995720,
+    "observation_end": 1693995839,
+    "produced_mask": 1023,
+    "observation_block": 5899,
+    "completed": 10,
+    "stalled_windows": 0,
+    "growth_start_slot": 1693990062,
+    "capacity": 210,
+    "snapshot_capacity": 210,
+    "ranked_count": 25,
+    "snapshot_epoch": 13,
+    "published_epoch": 13,
+    "queue_tail": 41,
+    "scan_end_ticket": 38,
+    "ranking": 0,
+    "rank_started": 1,
+    "selecting": 0,
+    "rank_cursor": "340282366920859880191420955215054319264",
+    "penalty_epoch": 1,
+    "last_slot": 1693995944,
+    "window_start": 0,
+    "penalty_paused": 1,
+    "window_produced": 0,
+    "window_policy": 0,
+    "window_members": [],
+    "pending_windows": [],
+    "failed_admissions": 0,
+    "total_banned": 0,
+    "blocked": 1,
+    "retry_outgoing": ""
+  },
+  "governance": {
+    "developer": "civicgovlead",
+    "review_seconds": 604800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "gptgenesisbp"
+    ],
+    "voters_updated_at": "2026-11-03T04:35:43.500",
+    "proposal_id": 0,
+    "pending": false,
+    "target": "",
+    "old_code_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "old_abi_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "new_code_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "new_abi_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "review_document_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "proposed_at": "1970-01-01T00:00:00.000",
+    "execute_after": "1970-01-01T00:00:00.000",
+    "proposal_voters": [],
+    "vetoes": [],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 0,
+    "head_block_num": 6004,
+    "head_block_id": "00001774324906a2cc682e9d2b45033ba96a62d02c820aa70da6aaadef621156",
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [],
+    "effective_vetoes": [],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 0,
+    "effective_veto_count": 0,
+    "execution_blocked_no_electorate": false
+  },
+  "wallet_code_hash": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+  "public_USD_transaction": {
+    "query_time_ms": 14.903,
+    "executed": true,
+    "trx_id": "3deb4c9420ec47b2e867c861d1da79c2a5b9b8a5bdc9b65a86d245e8d44414b6",
+    "lib": 6002,
+    "cached_lib": false,
+    "actions": [
+      {
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "act": {
+          "account": "eosio.key",
+          "name": "prove",
+          "authorization": [],
+          "data": {
+            "owner": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+            "chain_id": "38391D73BBCAAC3C51AF7009D0D11B09CA263895C1BF55A96494C3194F7F4D65",
+            "deployment": "8E5D42A049C6FDFF8F1DECF4D278530E65735AE6988E5652D079734BCA0E3FE7",
+            "reference_block_num": 4984
+          }
+        },
+        "context_free": true,
+        "@timestamp": "2026-11-03T05:04:24.000",
+        "block_num": 4988,
+        "block_id": "0000137cbf1d5fb65ec9654a3346c1b78cb24e94c3ff736c095b12e3fa5f1e1a",
+        "producer": "cosmicgarden",
+        "trx_id": "3deb4c9420ec47b2e867c861d1da79c2a5b9b8a5bdc9b65a86d245e8d44414b6",
+        "global_sequence": 12796,
+        "cpu_usage_us": 655,
+        "net_usage_words": 49,
+        "signatures": [
+          "SIG_K1_KkRNWNCuQELvkPRiTEPYn5NNnGCvasnjrjPgRHWNq2H6CS1n31VDonN8M6eFHChPUWS1viBDHNDpQL1gFrPB8778r4bXRF"
+        ],
+        "inline_count": 2,
+        "inline_filtered": false,
+        "receipts": [
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "12796",
+            "recv_sequence": "37",
+            "auth_sequence": []
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "9AF7606EBAD2FE56B2148D702B70846D57EF990E8416CBEF0CA1878773FB56DC",
+        "timestamp": "2026-11-03T05:04:24.000",
+        "notified": "eosio.key"
+      },
+      {
+        "action_ordinal": 2,
+        "creator_action_ordinal": 0,
+        "act": {
+          "account": "eosio.key",
+          "name": "ksend",
+          "authorization": [
+            {
+              "actor": "gptgenesisbp",
+              "permission": "keyrelay"
+            }
+          ],
+          "data": {
+            "request": {
+              "from": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+              "to": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+              "token_contract": "keyusdtoken1",
+              "quantity": "0.0001 USD",
+              "memo": "",
+              "auth_epoch": "0",
+              "request_id": "3DED9DA05F726852CA82B8674451F41AB29FBC7972113C0D62FA4BC48B361ACF",
+              "relayer": "gptgenesisbp",
+              "reward_to": "gptgenesisbp",
+              "max_fee": "2.0000 AIC"
+            }
+          }
+        },
+        "@timestamp": "2026-11-03T05:04:24.000",
+        "block_num": 4988,
+        "block_id": "0000137cbf1d5fb65ec9654a3346c1b78cb24e94c3ff736c095b12e3fa5f1e1a",
+        "producer": "cosmicgarden",
+        "trx_id": "3deb4c9420ec47b2e867c861d1da79c2a5b9b8a5bdc9b65a86d245e8d44414b6",
+        "global_sequence": 12797,
+        "receipts": [
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "12797",
+            "recv_sequence": "38",
+            "auth_sequence": [
+              {
+                "account": "gptgenesisbp",
+                "sequence": "67"
+              }
+            ]
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "75C077D941F2C145C259876B85557C0E89A2472E2879CF9C03A9205CC9C4C28D",
+        "timestamp": "2026-11-03T05:04:24.000",
+        "notified": "eosio.key"
+      },
+      {
+        "action_ordinal": 3,
+        "creator_action_ordinal": 2,
+        "act": {
+          "account": "eosio.key",
+          "name": "receipt",
+          "authorization": [
+            {
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "kind": "ksend",
+            "request_id": "3DED9DA05F726852CA82B8674451F41AB29FBC7972113C0D62FA4BC48B361ACF",
+            "transaction_id": "3DEB4C9420EC47B2E867C861D1DA79C2A5B9B8A5BDC9B65A86D245E8D44414B6",
+            "native_from": "",
+            "from_key": "5D0115C2797C1EA5AD313BC8D6AF7337848EB087F07B3D28B15585F0B348E921",
+            "to_key": "9638DE590648414A695D539AB3AA8AE9443BAC900856D3B798F7128EA71A1962",
+            "token_contract": "keyusdtoken1",
+            "quantity": "0.0001 USD",
+            "fee": "0.0130 AIC",
+            "relayer": "gptgenesisbp",
+            "auth_epoch": "0"
+          }
+        },
+        "@timestamp": "2026-11-03T05:04:24.000",
+        "block_num": 4988,
+        "block_id": "0000137cbf1d5fb65ec9654a3346c1b78cb24e94c3ff736c095b12e3fa5f1e1a",
+        "producer": "cosmicgarden",
+        "trx_id": "3deb4c9420ec47b2e867c861d1da79c2a5b9b8a5bdc9b65a86d245e8d44414b6",
+        "global_sequence": 12798,
+        "receipts": [
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "12798",
+            "recv_sequence": "39",
+            "auth_sequence": [
+              {
+                "account": "eosio.key",
+                "sequence": "28"
+              }
+            ]
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "8054D5A4FB5ABA1E1ECF28D08EAD87584902C1CD6316F4E5F5585BF8774C0749",
+        "timestamp": "2026-11-03T05:04:24.000",
+        "notified": "eosio.key"
+      }
+    ],
+    "last_indexed_block": 6004,
+    "last_indexed_block_time": "2026-11-03T05:12:52.000"
+  },
+  "history_health": {
+    "product": "PureHistory",
+    "version": "4.1.0-purehistory.1-dirty",
+    "version_hash": "custom",
+    "host": "aic-test.matrixai.one/history",
+    "health": [
+      {
+        "service": "StateHistory",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 16.266403,
+        "service_data": {
+          "nodes": [
+            {
+              "label": "independent-nonproducing-TEST-history",
+              "active": true,
+              "range": {
+                "from": 2,
+                "to": 6005
+              }
+            }
+          ]
+        }
+      },
+      {
+        "service": "RabbitMq",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 59.04781,
+        "service_data": null
+      },
+      {
+        "service": "NodeosRPC",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 12.129503,
+        "service_data": {
+          "head_block_num": 6004,
+          "head_block_time": "2026-11-03T05:12:52.000",
+          "time_offset": -69,
+          "last_irreversible_block": 6002,
+          "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65"
+        }
+      },
+      {
+        "service": "Elasticsearch",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 11.373131,
+        "service_data": {
+          "active_shards": "100.0%",
+          "disk_status": "green",
+          "head_offset": 2,
+          "first_indexed_block": 2,
+          "last_indexed_block": 6002,
+          "total_indexed_blocks": 6000,
+          "missing_blocks": 0,
+          "missing_pct": "0.00%",
+          "times": [
+            {
+              "phase": "cluster_health",
+              "phase_time_ms": 0.016734,
+              "cache": true
+            },
+            {
+              "phase": "first_indexed_block",
+              "phase_time_ms": 2.823524,
+              "cache": true
+            },
+            {
+              "phase": "last_indexed_block",
+              "phase_time_ms": 8.500436,
+              "cache": false
+            }
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "get_actions": 100,
+      "get_voters": 100,
+      "get_links": 1000,
+      "get_deltas": 100,
+      "get_trx_actions": 1000
+    },
+    "features": {
+      "streaming": {
+        "enable": false,
+        "traces": false,
+        "deltas": false
+      },
+      "tables": {
+        "proposals": true,
+        "accounts": true,
+        "voters": true,
+        "permissions": true,
+        "user_resources": false
+      },
+      "contract_state": {
+        "contracts": {}
+      },
+      "index_deltas": true,
+      "index_transfer_memo": true,
+      "index_all_deltas": true,
+      "index_deltas_deletions": false,
+      "deferred_trx": false,
+      "failed_trx": false,
+      "resource_limits": false,
+      "resource_usage": false
+    },
+    "pruning": {
+      "auto_pruning_enabled": false,
+      "max_retained_blocks": 0
+    },
+    "query_time_ms": 64.324,
+    "last_indexed_block": 6004,
+    "last_indexed_block_time": "2026-11-03T05:12:52.000"
+  },
+  "producer_summary": {
+    "schema_version": 1,
+    "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+    "generated_at": "2026-11-03T05:12:50.210267+00:00",
+    "head": 6000,
+    "LIB": 5998,
+    "available": true,
+    "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "registered_bp_count": 25,
+    "eligible_bp_count": 25,
+    "published_candidate_count": 25,
+    "active_producer_count": 10,
+    "permanent_blacklist_count": 0,
+    "maintenance_excluded_count": 0,
+    "maintenance_active_count": 0,
+    "maintenance_pending_count": 0,
+    "rotation_capacity": 210,
+    "next_capacity": 211,
+    "next_capacity_slot": "1695192257",
+    "next_capacity_estimated_at": "2026-11-10T03:22:08.500+00:00",
+    "count_scope": "All native producer/candidate/maintenance rows; pagination complete; no online-process or history-node count",
+    "eligible_scope": "Active registration, positive integer votes and usable producer/finalizer keys (valid rank), excluding permanent bans and non-normal maintenance; candidate admission still follows ranking snapshots"
+  },
+  "activity": {
+    "status": "RUNNING",
+    "completed_batches": 26,
+    "business_transactions": 54,
+    "transfers": 45,
+    "ticks": 7,
+    "notes": 2,
+    "batch_sizes": {
+      "1": 7,
+      "3": 9,
+      "2": 10
+    },
+    "empty_blocks": 123,
+    "last_completed_batch": {
+      "batch": 26,
+      "created_UTC": "2026-11-03T05:12:44.125446+00:00",
+      "planned_size": 3,
+      "receipts": {
+        "dcea08e429465b2217797aae85149c41b443345cfb64c016626c5a4c51c039ff": {
+          "height": 5989,
+          "id": "00001765a760a51dc437f80b81f9db428adf32c6bec4cb8d80cbbe919f165fa3",
+          "timestamp": "2026-11-03T05:12:44.500",
+          "receipt_status": "executed",
+          "whole_block_receipt_count": 3
+        },
+        "7a7fb89f862238049eb53c38e26b4505815d194ec54e03e4e2102882d63b514b": {
+          "height": 5989,
+          "id": "00001765a760a51dc437f80b81f9db428adf32c6bec4cb8d80cbbe919f165fa3",
+          "timestamp": "2026-11-03T05:12:44.500",
+          "receipt_status": "executed",
+          "whole_block_receipt_count": 3
+        },
+        "183c261311960c7648b18baed1870571f97817b1ed4261b204e1f1c9e0facc0d": {
+          "height": 5989,
+          "id": "00001765a760a51dc437f80b81f9db428adf32c6bec4cb8d80cbbe919f165fa3",
+          "timestamp": "2026-11-03T05:12:44.500",
+          "receipt_status": "executed",
+          "whole_block_receipt_count": 3
+        }
+      },
+      "source_SHA256": "8a3e43e9aee600a0859d1fc03f1e0d8bb4145f07e94999025a4ea440147818c1",
+      "expiry_recovery": null,
+      "finalized_UTC": "2026-11-03T05:12:45.434192+00:00",
+      "transactions": [
+        {
+          "id": "dcea08e429465b2217797aae85149c41b443345cfb64c016626c5a4c51c039ff",
+          "metadata": {
+            "kind": "transfer",
+            "actor": "velvetbreeze",
+            "to": "goldencanyon",
+            "quantity_smallest_units": 8
+          },
+          "action": {
+            "account": "eosio.token",
+            "name": "transfer",
+            "authorization": [
+              {
+                "actor": "velvetbreeze",
+                "permission": "active"
+              }
+            ],
+            "data": {
+              "from": "velvetbreeze",
+              "to": "goldencanyon",
+              "quantity": "0.0008 AIC",
+              "memo": "Service tip 26"
+            }
+          }
+        },
+        {
+          "id": "7a7fb89f862238049eb53c38e26b4505815d194ec54e03e4e2102882d63b514b",
+          "metadata": {
+            "kind": "transfer",
+            "actor": "gentlegarden",
+            "to": "arcanewillow",
+            "quantity_smallest_units": 14
+          },
+          "action": {
+            "account": "eosio.token",
+            "name": "transfer",
+            "authorization": [
+              {
+                "actor": "gentlegarden",
+                "permission": "active"
+              }
+            ],
+            "data": {
+              "from": "gentlegarden",
+              "to": "arcanewillow",
+              "quantity": "0.0014 AIC",
+              "memo": "Daily transfer 26"
+            }
+          }
+        },
+        {
+          "id": "183c261311960c7648b18baed1870571f97817b1ed4261b204e1f1c9e0facc0d",
+          "metadata": {
+            "kind": "transfer",
+            "actor": "silvercomets",
+            "to": "velvetgarden",
+            "quantity_smallest_units": 45
+          },
+          "action": {
+            "account": "eosio.token",
+            "name": "transfer",
+            "authorization": [
+              {
+                "actor": "silvercomets",
+                "permission": "active"
+              }
+            ],
+            "data": {
+              "from": "silvercomets",
+              "to": "velvetgarden",
+              "quantity": "0.0045 AIC",
+              "memo": "Compute credits 26"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "no_TPS": true,
+  "production_defaults_changed": false,
+  "old_archive_retained": "/opt/pureeos-keynet-20261103-r1/archive"
+}

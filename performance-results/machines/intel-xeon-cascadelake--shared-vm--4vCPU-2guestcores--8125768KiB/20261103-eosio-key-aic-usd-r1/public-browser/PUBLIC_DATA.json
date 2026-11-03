@@ -1,0 +1,68 @@
+{
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "head": 5398,
+  "LIB": 5396,
+  "nodeos_processes": 26,
+  "native_proposers": 9,
+  "native_finalizers": 9,
+  "native_threshold": 7,
+  "holdings": [
+    {
+      "key": "PUB_K1_7CR14qLKVhXhQsByKeeMzj6vRMoqVpodAeNuJmp2QVgDNtbsHt",
+      "wallet_id": "1",
+      "auth_epoch": "0",
+      "balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": "475429",
+          "display": "47.5429 AIC"
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": "482499",
+          "display": "48.2499 USD"
+        }
+      ]
+    },
+    {
+      "key": "PUB_K1_8DbMLEPnx6nDhMJYmdsddC22KWxpQrjobE1TSi2irjXtjPb5sj",
+      "wallet_id": "2",
+      "auth_epoch": "0",
+      "balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": "20000",
+          "display": "2.0000 AIC"
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": "12501",
+          "display": "1.2501 USD"
+        }
+      ]
+    }
+  ],
+  "wallet_WASM": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+  "public_CLI": {
+    "status": "PASS",
+    "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+    "RPC": "https://aic-test.matrixai.one/rpc",
+    "relay": "https://aic-test.matrixai.one/relay",
+    "transaction_id": "3deb4c9420ec47b2e867c861d1da79c2a5b9b8a5bdc9b65a86d245e8d44414b6",
+    "confirmed": {
+      "transaction_id": "3deb4c9420ec47b2e867c861d1da79c2a5b9b8a5bdc9b65a86d245e8d44414b6",
+      "block_num": 4988,
+      "block_id": "0000137cbf1d5fb65ec9654a3346c1b78cb24e94c3ff736c095b12e3fa5f1e1a",
+      "observed_lib": 4988
+    },
+    "quantity": "0.0001 USD",
+    "token_contract": "keyusdtoken1",
+    "same_packet_retry_verified": true,
+    "native_cleos_default_HTTP_headers": true,
+    "private_keys_sent_to_relay": false
+  }
+}

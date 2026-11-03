@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "files": {
+    "source/src/eosio.key.cpp": "978ce52e46ef92c59161c31b39103e4ff15983ef8dd68530baa9a1c18deac9bf",
+    "source/include/eosio.key.hpp": "1385e75e0520708a3b2de01ebeacfa703db0cb81d7599347343d284f998b3721",
+    "source/tests/chain_test.py": "a6fdcf6066342244abebe95d8125bb160c3f9fde7e1c0a325e74741dd0d68742",
+    "source/token_allowlist.json": "7ee77f1a6939915e4a97caa60f9ef6601b2c318bcd10794e18da462c9c4db201",
+    "source/scripts/generate_allowlist.py": "8ef2a299d821d1c2a3d45ecb76be0fd9e2c4a987f1901a7299c2ab7234a26f28",
+    "source/scripts/build.sh": "5f0adfc16ebdc7680bfab66c3d4cf1a0d741154f24f53fdbc23543e1a9016005",
+    "artifacts/token_allowlist.json": "7ee77f1a6939915e4a97caa60f9ef6601b2c318bcd10794e18da462c9c4db201",
+    "artifacts/eosio.key.wasm": "1e0ed2c38e994dea218948483c1333fbd4a0a54c647eb8d8f5932b3d76ac98ea",
+    "artifacts/test-only-token/keybadtokenx.wasm": "8e656c4909be879b0e94b83867a3385b127b8b550585c4093d4c828d1187efdf",
+    "artifacts/test-only-recipient/keyramattack.wasm": "6a86113be25e9982245549b3dd8ad163fc2ae271dab25dee254e6e83bb5cb96a",
+    "artifacts/test-only-system/keysysmockup.wasm": "069cdcc856c0eb716af7c1b16f30c558ed3d6a48f63822cb4439e656f46413ed",
+    "artifacts/test-only-wallet/eosio.key.wasm": "29e2b7bf3a1e956a806e5ec84559ffb79499f825e3392c99d0350d1c2140a233",
+    "artifacts/eosio.key.abi": "40352fb405d5ac80e67e871382a91c3ffd24958eef2aaaa6df841e1f06885d9a",
+    "artifacts/test-only-token/keybadtokenx.abi": "c8860fa45cfe56836412e730e9a7bbb8a0402760bbddb4c707328f948c8762a6",
+    "artifacts/test-only-recipient/keyramattack.abi": "4944d4d383067446640618b42eb091d3e3052adfe8ecfd8dd09b796fc1384c34",
+    "artifacts/test-only-system/keysysmockup.abi": "d74dbf0517bdc95e998d8776ef9ab62350bbf029beb7b91e45769cbc65d4ff44",
+    "artifacts/test-only-wallet/eosio.key.abi": "40352fb405d5ac80e67e871382a91c3ffd24958eef2aaaa6df841e1f06885d9a"
+  }
+}

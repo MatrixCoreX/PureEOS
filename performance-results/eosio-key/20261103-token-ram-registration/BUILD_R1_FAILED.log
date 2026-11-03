@@ -1,0 +1,4 @@
+  File "/opt/pureeos-key-token-ram-20261103-r1/build.py", line 8
+    (K/'BUILD_RESULT.json').write_text(json.dumps({'status':'PASS','files':{str(p.relative_to(K)):hashlib.sha256(p.read_bytes()).hexdigest()for p in files}},indent=2)+'
+                                                                                                                                                                       ^
+SyntaxError: unterminated string literal (detected at line 8)

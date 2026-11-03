@@ -1,0 +1,29 @@
+{
+  "status": "DELETED_AND_VERIFIED_ABSENT",
+  "instance_id": "3f7cf7fa-c4a7-44bb-b633-f8d9c692c3e3",
+  "old_IP": "66.245.192.224",
+  "UTC": "2026-11-03T05:17:02.494105+00:00",
+  "observations": [
+    {
+      "UTC": "2026-11-03T05:16:58.773241+00:00",
+      "listed": false,
+      "individual_404": true,
+      "cheap_VM_preserved": true
+    },
+    {
+      "UTC": "2026-11-03T05:17:02.494078+00:00",
+      "listed": false,
+      "individual_404": true,
+      "cheap_VM_preserved": true
+    }
+  ],
+  "public_handover_PASS": true,
+  "backup": "/run/media/guagua/Windows/PureEOS-key-security-20261103",
+  "verified_remote_files": 3516,
+  "verified_rebuild_files": 35,
+  "only_authorized_security_VM_deleted": true,
+  "cheap_testnet_preserved": "d6daadff-285c-4074-ba1b-edd6660f1021",
+  "retired_high_EPYC_not_accessed": true,
+  "cloud_SSH_key_deleted": false,
+  "other_instances_preserved_count": 10
+}

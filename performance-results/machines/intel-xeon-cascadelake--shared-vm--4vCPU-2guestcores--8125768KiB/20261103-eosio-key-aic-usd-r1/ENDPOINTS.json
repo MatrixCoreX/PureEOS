@@ -1,0 +1,12 @@
+{
+  "status": "PUBLISHED",
+  "read_only_RPC": "https://aic-test.matrixai.one/api",
+  "transaction_RPC": "https://aic-test.matrixai.one/rpc",
+  "relay": "https://aic-test.matrixai.one/relay",
+  "history": "https://aic-test.matrixai.one/history",
+  "old_config_SHA256": "80b08208dd5ebfb35ff3bb7506a4acfcbdae1379257781c2f8d2659a3b8a94e0",
+  "new_config_SHA256": "b1001dbc49f302238948a7d3d974738ed3f1b37e4d06060dae866be9a05f567a",
+  "nginx_validation": "nginx: the configuration file /etc/nginx/nginx.conf syntax is ok\nnginx: configuration file /etc/nginx/nginx.conf test is successful\n",
+  "nodeos_HTTP_plugin_modified": false,
+  "signing_wallet_exposed": false
+}

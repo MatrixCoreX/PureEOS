@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "files": {
+    "source/src/eosio.key.cpp": "5f54ebc45d4a1c18bb4ef6297e62d6ecb6beaded4c9547648e6008a82d2d4870",
+    "source/include/eosio.key.hpp": "507e0067515c561a7d096eab77f2be48f8b2f451f81f6953a8c9f295d109fd06",
+    "source/tests/chain_test.py": "265c77938e4b50ffdffc5531fd5b8fa8e098ec9a80621b09a73832458c1ef06c",
+    "artifacts/eosio.key.wasm": "b11af90a6823e7c73c9fe6fc9fba14a6bd4aa7a6133cf589245e818db2a5caca",
+    "artifacts/test-only-token/keybadtokenx.wasm": "8e656c4909be879b0e94b83867a3385b127b8b550585c4093d4c828d1187efdf",
+    "artifacts/test-only-system/keysysmockup.wasm": "069cdcc856c0eb716af7c1b16f30c558ed3d6a48f63822cb4439e656f46413ed",
+    "artifacts/test-only-wallet/eosio.key.wasm": "77bfeba299992a281ebf2f83386319c7d133643b5278a45ffc8bf30d34259213",
+    "artifacts/eosio.key.abi": "594ccdcf34b1939fec6fccf5b37206e418c6a1b19c9b1ad6306dc09f369589f4",
+    "artifacts/test-only-token/keybadtokenx.abi": "c8860fa45cfe56836412e730e9a7bbb8a0402760bbddb4c707328f948c8762a6",
+    "artifacts/test-only-system/keysysmockup.abi": "d74dbf0517bdc95e998d8776ef9ab62350bbf029beb7b91e45769cbc65d4ff44",
+    "artifacts/test-only-wallet/eosio.key.abi": "594ccdcf34b1939fec6fccf5b37206e418c6a1b19c9b1ad6306dc09f369589f4"
+  }
+}
