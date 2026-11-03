@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "stable_TEST30_opt_in_rejected": true,
+  "exit_code": 1,
+  "command": [
+    "cmake",
+    "-S",
+    "/opt/pureeos-test30-20261103-r1/source",
+    "-B",
+    "/opt/pureeos-test30-20261103-r1/guard-stable-reject",
+    "-DPUREEOS_TEST_GOVERNANCE_30MIN=ON",
+    "-DPUREEOS_TEST_BUILD=OFF"
+  ],
+  "final_input_archive_SHA256": "65857b3869ae811c75bef9d385bf4d998ce9444d0e5f998d5843752d0bf80795",
+  "final_manifest_SHA256": "f9ba9e813bba4537061211389ae9a2a7df9da5a10fd55336a1d1f6ef8f8515ba",
+  "original_staging_archive_retained": true,
+  "all_actual_build_inputs_file_hash_verified_before_compilation": true,
+  "scope": "Native CMake configuration guard on retained remote VM; no local build/test"
+}

@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "quantity": "0.0030 AIC",
+  "AIC_application_fee": "0.0000 AIC",
+  "missing_row_claim_rejected_atomically": true,
+  "claimant": "gptgenesisbp",
+  "recipient": "keyclaimdest",
+  "claimant_RAM_bytes": 240,
+  "custody_RAM_bytes": 0,
+  "prepaid_row_for_claimant": false,
+  "network_fees_unchanged": true,
+  "pricing_unchanged": true,
+  "create_transaction_id": "e2a6bd2bb5b788768a98288fb80e1119f27046c204930dfe793dd1829038291c",
+  "transaction_id": "0f872dc1b995aedf80fc928e46ded280192513ace0955159eded4762d64b9c3e",
+  "confirmed": {
+    "transaction_id": "0f872dc1b995aedf80fc928e46ded280192513ace0955159eded4762d64b9c3e",
+    "block_num": 1288,
+    "block_id": "00000508daa30631baabd4693415db4412566b34a047d72a459e8fe5711daf28",
+    "observed_lib": 1288,
+    "reported_block_num": 1288
+  }
+}

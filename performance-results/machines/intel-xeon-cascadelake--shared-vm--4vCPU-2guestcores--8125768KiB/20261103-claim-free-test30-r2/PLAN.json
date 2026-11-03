@@ -1,0 +1,205 @@
+{
+  "BPs": [
+    {
+      "index": 0,
+      "name": "gptgenesisbp",
+      "rpc_port": 8888,
+      "p2p_port": 9876,
+      "fault_demo": false
+    },
+    {
+      "index": 1,
+      "name": "anthropiclab",
+      "rpc_port": 12001,
+      "p2p_port": 13001,
+      "fault_demo": false
+    },
+    {
+      "index": 2,
+      "name": "brazilamazon",
+      "rpc_port": 12002,
+      "p2p_port": 13002,
+      "fault_demo": false
+    },
+    {
+      "index": 3,
+      "name": "canadaboreal",
+      "rpc_port": 12003,
+      "p2p_port": 13003,
+      "fault_demo": false
+    },
+    {
+      "index": 4,
+      "name": "cobaltspring",
+      "rpc_port": 12004,
+      "p2p_port": 13004,
+      "fault_demo": false
+    },
+    {
+      "index": 5,
+      "name": "coherevision",
+      "rpc_port": 12005,
+      "p2p_port": 13005,
+      "fault_demo": false
+    },
+    {
+      "index": 6,
+      "name": "cosmicgarden",
+      "rpc_port": 12006,
+      "p2p_port": 13006,
+      "fault_demo": false
+    },
+    {
+      "index": 7,
+      "name": "deepseekcore",
+      "rpc_port": 12007,
+      "p2p_port": 13007,
+      "fault_demo": false
+    },
+    {
+      "index": 8,
+      "name": "egyptpyramid",
+      "rpc_port": 12008,
+      "p2p_port": 13008,
+      "fault_demo": false
+    },
+    {
+      "index": 9,
+      "name": "finlandhaven",
+      "rpc_port": 12009,
+      "p2p_port": 13009,
+      "fault_demo": false
+    },
+    {
+      "index": 10,
+      "name": "francegarden",
+      "rpc_port": 12010,
+      "p2p_port": 13010,
+      "fault_demo": false
+    },
+    {
+      "index": 11,
+      "name": "germanycrest",
+      "rpc_port": 12011,
+      "p2p_port": 13011,
+      "fault_demo": false
+    },
+    {
+      "index": 12,
+      "name": "glaciercrest",
+      "rpc_port": 12012,
+      "p2p_port": 13012,
+      "fault_demo": false
+    },
+    {
+      "index": 13,
+      "name": "italyharbors",
+      "rpc_port": 12013,
+      "p2p_port": 13013,
+      "fault_demo": false
+    },
+    {
+      "index": 14,
+      "name": "kenyasavanna",
+      "rpc_port": 12014,
+      "p2p_port": 13014,
+      "fault_demo": false
+    },
+    {
+      "index": 15,
+      "name": "lunarcompass",
+      "rpc_port": 12015,
+      "p2p_port": 13015,
+      "fault_demo": false
+    },
+    {
+      "index": 16,
+      "name": "maplecascade",
+      "rpc_port": 12016,
+      "p2p_port": 13016,
+      "fault_demo": false
+    },
+    {
+      "index": 17,
+      "name": "mistralcloud",
+      "rpc_port": 12017,
+      "p2p_port": 13017,
+      "fault_demo": false
+    },
+    {
+      "index": 18,
+      "name": "moonlitgrove",
+      "rpc_port": 12018,
+      "p2p_port": 13018,
+      "fault_demo": false
+    },
+    {
+      "index": 19,
+      "name": "nebularlight",
+      "rpc_port": 12019,
+      "p2p_port": 13019,
+      "fault_demo": false
+    },
+    {
+      "index": 20,
+      "name": "silverstream",
+      "rpc_port": 12020,
+      "p2p_port": 13020,
+      "fault_demo": false
+    },
+    {
+      "index": 21,
+      "name": "stellarhaven",
+      "rpc_port": 12021,
+      "p2p_port": 13021,
+      "fault_demo": false
+    },
+    {
+      "index": 22,
+      "name": "velvetforest",
+      "rpc_port": 12022,
+      "p2p_port": 13022,
+      "fault_demo": false
+    },
+    {
+      "index": 23,
+      "name": "willowgarden",
+      "rpc_port": 12023,
+      "p2p_port": 13023,
+      "fault_demo": false
+    },
+    {
+      "index": 24,
+      "name": "xaineuralnet",
+      "rpc_port": 12024,
+      "p2p_port": 13024,
+      "fault_demo": false
+    }
+  ],
+  "first_target_BP_count": 25,
+  "history": {
+    "rpc_port": 8890,
+    "p2p_port": 9877,
+    "SHIP_port": 8080,
+    "produces": false
+  },
+  "TPS": "excluded",
+  "old_chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "excluded_old_identities": [
+    "amberhorizon",
+    "chilehorizon",
+    "crystalriver",
+    "nvidiabrains",
+    "oceanicbloom",
+    "openaivision",
+    "radiantorbit",
+    "sapphiretide",
+    "solarvoyager",
+    "swissglacier"
+  ],
+  "governance_review_seconds": 1800,
+  "old_raw_history_retention": false,
+  "native_variant": "TEST test.2-dev only",
+  "claim_application_fee": 0,
+  "transfer_pricing": "unchanged dynamic CPU/NET PowerUp; internal sends also pay"
+}

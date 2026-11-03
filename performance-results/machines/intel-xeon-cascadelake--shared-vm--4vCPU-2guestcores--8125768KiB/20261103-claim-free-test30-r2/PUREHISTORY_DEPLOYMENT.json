@@ -1,0 +1,24 @@
+{
+  "status": "STARTED",
+  "source": "2837894d40fb8e58866fb7c7def62717ad714785",
+  "source_SHA256": "305ccc33890e61a38b653623d830ac203f046cac3af1d0a69f812d7f835fe90e",
+  "build_reused_from_verified_old_history": true,
+  "old_indices_reused": false,
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "backends": {
+    "rabbitmq": "rabbitmq@sha256:19631289492291db06639e466539be96fa84236fc6ae22ab2babe90f6fa26af7",
+    "redis": "redis@sha256:298641b35ac51aa999f9bb85707d6681fe635ce59cda51886a0b6adc1da37b8e",
+    "mongo": "mongo@sha256:b9924c330a8bbc5800fe9c69f04a84e221eca7b28fd049a0354147d9908fa142",
+    "elasticsearch": "docker.elastic.co/elasticsearch/elasticsearch@sha256:13b4a40bb095774f5fda635e45fd5677cc6a26565e42b24997b0c72b88e75984"
+  },
+  "settings": {
+    "ES_heap_MiB": 768,
+    "api_heap_MiB": 384,
+    "indexer_heap_MiB": 512,
+    "indexing_workers": 1,
+    "API_port": 7000,
+    "from_genesis": true,
+    "new_independent_passwords": true
+  },
+  "scope": "Full PureHistory with ES/Mongo/Rabbit/Redis plus API/indexer on same cheapVM; no TPS workload."
+}

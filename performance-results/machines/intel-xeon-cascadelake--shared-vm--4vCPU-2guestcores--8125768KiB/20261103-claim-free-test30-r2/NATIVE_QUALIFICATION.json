@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-03T07:44:48.496128+00:00",
+  "nodeos_SHA256": "0be5282d1d5a5eb72081e1d1374931d5e79cff139de728f8d230e29df50534e7",
+  "source_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+  "review_seconds": 1800,
+  "stable_default_seconds": 604800,
+  "legacy_review_unchanged": true,
+  "version": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+  "all_first_party_native_objects_rebuilt": true,
+  "results": {
+    "native30": {
+      "result_file": "/opt/kclaim-q/native30/RESULT.json",
+      "sha256": "1c4a121606e192956d0ace21da9ce285009187077bdd7f23f988886bb65e995a",
+      "checks": 95,
+      "fixture": false
+    },
+    "fixture30": {
+      "result_file": "/opt/kclaim-q/fixture30/RESULT.json",
+      "sha256": "5ef6abbe4f9753acce21a049a175bc551d7ba56fad97f2526e99cb67d04a8483",
+      "checks": 95,
+      "fixture": true
+    }
+  },
+  "test_source_SHA256": "28196e48074a8efb7b363080ed76bcc02ea4103e9a5d8282afe137582554f1b6",
+  "wallet_WASM_SHA256": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+  "scope": "Remote private TEST functional/security; no TPS; fixture is wallet-logic evidence only"
+}

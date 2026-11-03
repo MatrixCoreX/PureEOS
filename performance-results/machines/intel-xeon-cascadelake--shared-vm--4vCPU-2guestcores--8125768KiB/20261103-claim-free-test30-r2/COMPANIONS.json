@@ -1,0 +1,18 @@
+{
+  "status": "STARTED",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "units": [
+    "pureeos-keynet2-companion-observed-peak-20261103.service",
+    "pureeos-keynet2-companion-rotation-20261103.service",
+    "pureeos-keynet2-companion-votes-20261103.service"
+  ],
+  "source_hashes": {
+    "rotation_api.py": "14887ddc34833dad9a8e91a0d5f4a9cdcb6a7b9438a00b73ce8d19842abe8609",
+    "peak_tps.py": "c6e56e6df3d9e179ef5eb573bbfc25ff3c7b39cefea0a9a0cae8ea614617db68",
+    "producer_votes.py": "51025c831b6689d461e986f6f788bd5b0b6ad11f3424c7d590a44e5fd129f3bd",
+    "votes_server.py": "b6f2d43f0a450ede11fff5fc91740ec1869978a88e91461c77fc589334a9e551",
+    "producer_summary.py": "ae1c40e74e839f36d12b4ae151ff02955320eff474135d699bb289aa3eb9199b",
+    "producer_votes.qualified-original.py": "58a985251d2d710e4d93e6869f698c8b449eed5ab2f1853f72afa57b826162a5"
+  },
+  "old_statistics_or_rotation_databases_reused": false
+}

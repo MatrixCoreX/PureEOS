@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "variant": "1.0.0-test.2-dev",
+  "nodeos_SHA256": "0be5282d1d5a5eb72081e1d1374931d5e79cff139de728f8d230e29df50534e7",
+  "runtime_files_verified": 607,
+  "manifest_SHA256": "b7db68dce5895b475aedae207d9bd794a430f117db6dadde9f824a5700f09ab0",
+  "base_release_metadata_preserved_as_reference": true,
+  "released_assets_changed": false
+}

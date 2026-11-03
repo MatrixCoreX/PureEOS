@@ -1,0 +1,14 @@
+{
+  "key_source_commit": "81a09942c0e8531c020a4891d928bc7485979971",
+  "native_source_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+  "key_files": {
+    "src/eosio.key.cpp": "b181f2cd97a7753bb888aa358f910ad4618cc566706c19039094f31d184ea316",
+    "include/eosio.key.hpp": "be42169c0332ca7e7ce4aa178bc6f656a2d23dc691d32f4caf00dc506c847db3",
+    "sdk/index.mjs": "dd540c93f8da1a9f4eb89c0c842edb8bcf595411ca78176730d92b0e02949eae",
+    "tests/chain_test.py": "28196e48074a8efb7b363080ed76bcc02ea4103e9a5d8282afe137582554f1b6",
+    "tests/sdk.test.mjs": "7fc6505a366e8b0377eb565cc8e7f1cd646c79997f7e0b156b8a1c0fb67ce98b",
+    "token_allowlist.json": "7ee77f1a6939915e4a97caa60f9ef6601b2c318bcd10794e18da462c9c4db201"
+  },
+  "expected_key_WASM": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+  "expected_nodeos": "0be5282d1d5a5eb72081e1d1374931d5e79cff139de728f8d230e29df50534e7"
+}

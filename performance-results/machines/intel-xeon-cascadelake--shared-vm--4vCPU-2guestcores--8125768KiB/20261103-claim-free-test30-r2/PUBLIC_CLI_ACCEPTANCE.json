@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "RPC": "https://aic-test.matrixai.one/rpc",
+  "relay": "https://aic-test.matrixai.one/relay",
+  "transaction_id": "a344763b456d6e15ada249ba9f0556984667a08f4eab1c7f7bde38f6a266699f",
+  "confirmed": {
+    "transaction_id": "a344763b456d6e15ada249ba9f0556984667a08f4eab1c7f7bde38f6a266699f",
+    "block_num": 1282,
+    "block_id": "00000502577c191816ab8e0507d3ccba6089cfd9bdc5fb8bf4091e853e9bcb09",
+    "observed_lib": 1282
+  },
+  "quantity": "0.0001 USD",
+  "token_contract": "keyusdtoken1",
+  "same_packet_retry_verified": true,
+  "native_cleos_default_HTTP_headers": true,
+  "private_keys_sent_to_relay": false
+}

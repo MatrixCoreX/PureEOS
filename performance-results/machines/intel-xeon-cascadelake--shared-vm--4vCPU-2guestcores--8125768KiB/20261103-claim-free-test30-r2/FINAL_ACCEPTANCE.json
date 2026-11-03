@@ -1,0 +1,710 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-03T07:56:35.230988+00:00",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "review_seconds": 1800,
+  "claim_application_fee": "0.0000 AIC",
+  "transfer_fees_retained": true,
+  "BPs": 25,
+  "nonproducing_history": 1,
+  "actual_nodeos": 26,
+  "nodes": [
+    {
+      "name": "gptgenesisbp",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "anthropiclab",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "brazilamazon",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "canadaboreal",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "cobaltspring",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "coherevision",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "cosmicgarden",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "deepseekcore",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "egyptpyramid",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "finlandhaven",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "francegarden",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "germanycrest",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "glaciercrest",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "italyharbors",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "kenyasavanna",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "lunarcompass",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "maplecascade",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "mistralcloud",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "moonlitgrove",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "nebularlight",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "silverstream",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "stellarhaven",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "velvetforest",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "willowgarden",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "xaineuralnet",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    },
+    {
+      "name": "history",
+      "head": 1379,
+      "LIB": 1377,
+      "server_version_string": "v1.0.0-test.2-dev"
+    }
+  ],
+  "bond_escrow": "250000.0000 AIC",
+  "slash_pool": "0.0000 AIC",
+  "all_self_votes": true,
+  "ordinary_random_votes": 90,
+  "distinct_total_vote_weights": true,
+  "history_health": {
+    "product": "PureHistory",
+    "version": "4.1.0-purehistory.1-dirty",
+    "version_hash": "custom",
+    "host": "aic-test.matrixai.one/history",
+    "health": [
+      {
+        "service": "StateHistory",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 32.325858,
+        "service_data": {
+          "nodes": [
+            {
+              "label": "independent-nonproducing-TEST-history",
+              "active": true,
+              "range": {
+                "from": 2,
+                "to": 1380
+              }
+            }
+          ]
+        }
+      },
+      {
+        "service": "RabbitMq",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 75.369054,
+        "service_data": null
+      },
+      {
+        "service": "NodeosRPC",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 20.667323,
+        "service_data": {
+          "head_block_num": 1379,
+          "head_block_time": "2026-11-03T07:56:35.000",
+          "time_offset": -286,
+          "last_irreversible_block": 1377,
+          "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0"
+        }
+      },
+      {
+        "service": "Elasticsearch",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 92.366315,
+        "service_data": {
+          "active_shards": "100.0%",
+          "disk_status": "green",
+          "head_offset": 2,
+          "first_indexed_block": 2,
+          "last_indexed_block": 1377,
+          "total_indexed_blocks": 1375,
+          "missing_blocks": 0,
+          "missing_pct": "0.00%",
+          "times": [
+            {
+              "phase": "cluster_health",
+              "phase_time_ms": 29.116416,
+              "cache": false
+            },
+            {
+              "phase": "first_indexed_block",
+              "phase_time_ms": 53.621589,
+              "cache": false
+            },
+            {
+              "phase": "last_indexed_block",
+              "phase_time_ms": 9.075629,
+              "cache": false
+            }
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "get_actions": 100,
+      "get_voters": 100,
+      "get_links": 1000,
+      "get_deltas": 100,
+      "get_trx_actions": 1000
+    },
+    "features": {
+      "streaming": {
+        "enable": false,
+        "traces": false,
+        "deltas": false
+      },
+      "tables": {
+        "proposals": true,
+        "accounts": true,
+        "voters": true,
+        "permissions": true,
+        "user_resources": false
+      },
+      "contract_state": {
+        "contracts": {}
+      },
+      "index_deltas": true,
+      "index_transfer_memo": true,
+      "index_all_deltas": true,
+      "index_deltas_deletions": false,
+      "deferred_trx": false,
+      "failed_trx": false,
+      "resource_limits": false,
+      "resource_usage": false
+    },
+    "pruning": {
+      "auto_pruning_enabled": false,
+      "max_retained_blocks": 0
+    },
+    "query_time_ms": 105.762,
+    "last_indexed_block": 1378,
+    "last_indexed_block_time": "2026-11-03T07:56:34.500"
+  },
+  "activity": {
+    "status": "RUNNING",
+    "completed_batches": 3,
+    "business_transactions": 5,
+    "transfers": 5,
+    "ticks": 0,
+    "notes": 0,
+    "batch_sizes": {
+      "1": 1,
+      "2": 2
+    },
+    "empty_blocks": 11,
+    "last_completed_batch": {
+      "batch": 3,
+      "created_UTC": "2026-11-03T07:56:10.589159+00:00",
+      "planned_size": 2,
+      "receipts": {
+        "799d989b619c260262170116c2cfae4dea1bb24db91ee3fe2a47526dce6aa5b8": {
+          "height": 1332,
+          "id": "000005341493181f89858c5f3029f21de0859f311f303307104491e4e2c0ee5e",
+          "timestamp": "2026-11-03T07:56:11.500",
+          "receipt_status": "executed",
+          "whole_block_receipt_count": 2
+        },
+        "603234d77263b8786bf5b713be67d0d12128fbf1a3f2b054f6691192bcd3067a": {
+          "height": 1332,
+          "id": "000005341493181f89858c5f3029f21de0859f311f303307104491e4e2c0ee5e",
+          "timestamp": "2026-11-03T07:56:11.500",
+          "receipt_status": "executed",
+          "whole_block_receipt_count": 2
+        }
+      },
+      "source_SHA256": "48d4de84f5c22f9fe92ff87f3128797c20c3dd204ebb2d1c7217dfd68db081e8",
+      "expiry_recovery": null,
+      "finalized_UTC": "2026-11-03T07:56:12.679640+00:00",
+      "transactions": [
+        {
+          "id": "799d989b619c260262170116c2cfae4dea1bb24db91ee3fe2a47526dce6aa5b8",
+          "metadata": {
+            "kind": "transfer",
+            "actor": "civicuserone",
+            "to": "purplecanyon",
+            "quantity_smallest_units": 79
+          },
+          "action": {
+            "account": "eosio.token",
+            "name": "transfer",
+            "authorization": [
+              {
+                "actor": "civicuserone",
+                "permission": "active"
+              }
+            ],
+            "data": {
+              "from": "civicuserone",
+              "to": "purplecanyon",
+              "quantity": "0.0079 AIC",
+              "memo": "Daily transfer 3"
+            }
+          }
+        },
+        {
+          "id": "603234d77263b8786bf5b713be67d0d12128fbf1a3f2b054f6691192bcd3067a",
+          "metadata": {
+            "kind": "transfer",
+            "actor": "velvetbreeze",
+            "to": "silentvalley",
+            "quantity_smallest_units": 41
+          },
+          "action": {
+            "account": "eosio.token",
+            "name": "transfer",
+            "authorization": [
+              {
+                "actor": "velvetbreeze",
+                "permission": "active"
+              }
+            ],
+            "data": {
+              "from": "velvetbreeze",
+              "to": "silentvalley",
+              "quantity": "0.0041 AIC",
+              "memo": "Daily transfer 3"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "native_active_finalizers": 3,
+  "native_policy": {
+    "active_finalizer_policy": {
+      "generation": 4,
+      "threshold": 3,
+      "finalizers": [
+        {
+          "description": "canadaboreal",
+          "weight": 1,
+          "public_key": "PUB_BLS_8FqhEKXdGWbAymMEtHzna5V94KY3josR_gKT4e7DXPRCRSsSE_cc8NEmFnddIt4LyDg5HUJuYNsAXifCz2X-VFiTamcrmAhOpdg2j-P6hE8JUEZ_T3T4zRiM7Di2cxsUhzfEOA"
+        },
+        {
+          "description": "gptgenesisbp",
+          "weight": 1,
+          "public_key": "PUB_BLS_7De7UJHbZeGNDTgCyQr8ABwoObslXepqUZdX5EoMygs-eZiFTjrfcT3A9gNO_xMWaZ1WRdqRwQmNkSJP8R804-vwgdLet8Ftj073EIlacCbTIlOJePqF6LgUI80nWuoTZUVggQ"
+        },
+        {
+          "description": "maplecascade",
+          "weight": 1,
+          "public_key": "PUB_BLS_JB3dKacLAzu4oGWKe9RVI1_OFKUDY08XqHPDuuoWH7FkUc5Bog_CIoHaWIJImEYIg8XJWhUQPWTmB4U0lh5LHY7Ssoa22YcxuUnnzX73bxdxg9n8dlOc2jWET8LjTckOvVK4RA"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "canadaboreal",
+        "public_key": "PUB_BLS_8FqhEKXdGWbAymMEtHzna5V94KY3josR_gKT4e7DXPRCRSsSE_cc8NEmFnddIt4LyDg5HUJuYNsAXifCz2X-VFiTamcrmAhOpdg2j-P6hE8JUEZ_T3T4zRiM7Di2cxsUhzfEOA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 4,
+        "voted_for_block_id": "00000563633e33153d013070aee9411f7b5821c7433288fdfa2c23c2d03044dd",
+        "voted_for_block_num": 1379,
+        "voted_for_block_timestamp": "2026-11-03T07:56:35.000"
+      },
+      {
+        "description": "gptgenesisbp",
+        "public_key": "PUB_BLS_7De7UJHbZeGNDTgCyQr8ABwoObslXepqUZdX5EoMygs-eZiFTjrfcT3A9gNO_xMWaZ1WRdqRwQmNkSJP8R804-vwgdLet8Ftj073EIlacCbTIlOJePqF6LgUI80nWuoTZUVggQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 4,
+        "voted_for_block_id": "00000563633e33153d013070aee9411f7b5821c7433288fdfa2c23c2d03044dd",
+        "voted_for_block_num": 1379,
+        "voted_for_block_timestamp": "2026-11-03T07:56:35.000"
+      },
+      {
+        "description": "maplecascade",
+        "public_key": "PUB_BLS_JB3dKacLAzu4oGWKe9RVI1_OFKUDY08XqHPDuuoWH7FkUc5Bog_CIoHaWIJImEYIg8XJWhUQPWTmB4U0lh5LHY7Ssoa22YcxuUnnzX73bxdxg9n8dlOc2jWET8LjTckOvVK4RA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 4,
+        "voted_for_block_id": "00000563633e33153d013070aee9411f7b5821c7433288fdfa2c23c2d03044dd",
+        "voted_for_block_num": 1379,
+        "voted_for_block_timestamp": "2026-11-03T07:56:35.000"
+      }
+    ]
+  },
+  "head_LIB": [
+    1379,
+    1377
+  ],
+  "native_qualification": {
+    "status": "PASS",
+    "UTC": "2026-11-03T07:44:48.496128+00:00",
+    "nodeos_SHA256": "0be5282d1d5a5eb72081e1d1374931d5e79cff139de728f8d230e29df50534e7",
+    "source_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+    "review_seconds": 1800,
+    "stable_default_seconds": 604800,
+    "legacy_review_unchanged": true,
+    "version": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "all_first_party_native_objects_rebuilt": true,
+    "results": {
+      "native30": {
+        "result_file": "/opt/kclaim-q/native30/RESULT.json",
+        "sha256": "1c4a121606e192956d0ace21da9ce285009187077bdd7f23f988886bb65e995a",
+        "checks": 95,
+        "fixture": false
+      },
+      "fixture30": {
+        "result_file": "/opt/kclaim-q/fixture30/RESULT.json",
+        "sha256": "5ef6abbe4f9753acce21a049a175bc551d7ba56fad97f2526e99cb67d04a8483",
+        "checks": 95,
+        "fixture": true
+      }
+    },
+    "test_source_SHA256": "28196e48074a8efb7b363080ed76bcc02ea4103e9a5d8282afe137582554f1b6",
+    "wallet_WASM_SHA256": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+    "scope": "Remote private TEST functional/security; no TPS; fixture is wallet-logic evidence only"
+  },
+  "governance": {
+    "developer": "civicgovlead",
+    "review_seconds": 1800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "gptgenesisbp"
+    ],
+    "voters_updated_at": "2026-11-03T07:49:28.500",
+    "proposal_id": 0,
+    "pending": false,
+    "target": "",
+    "old_code_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "old_abi_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "new_code_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "new_abi_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "review_document_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "proposed_at": "1970-01-01T00:00:00.000",
+    "execute_after": "1970-01-01T00:00:00.000",
+    "proposal_voters": [],
+    "vetoes": [],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 0,
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [],
+    "effective_vetoes": [],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 0,
+    "effective_veto_count": 0,
+    "execution_blocked_no_electorate": false
+  },
+  "examples": [
+    {
+      "case": "native_to_key_AIC",
+      "transaction_id": "22c7121372c2a501f6143fa45f76e9500112044f5c547bd6647eb1d295c9e576",
+      "block_num": 1249,
+      "block_id": "000004e1b0698f1b27d3d1049c0352b14f037f8bacc39e8c31f382fe34ee3205",
+      "receipts": [
+        {
+          "kind": "deposit",
+          "request_id": "966244393183B536F3F2ECE68642F8D52E7F05A2FC1260C9BAE9F5D8D03A4E31",
+          "transaction_id": "22C7121372C2A501F6143FA45F76E9500112044F5C547BD6647EB1D295C9E576",
+          "native_from": "keyusdtoken1",
+          "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "to_key": "81A6574B57740F6D7DA3F03A5A7C19B8DACB3301025FEABA09DF4A31E28C3054",
+          "token_contract": "eosio.token",
+          "quantity": "50.0000 AIC",
+          "fee": "0.2205 AIC",
+          "relayer": "",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/22c7121372c2a501f6143fa45f76e9500112044f5c547bd6647eb1d295c9e576"
+    },
+    {
+      "case": "native_to_key_USD",
+      "transaction_id": "261e02f85f15ea43b50b57c707060e59631c323cdac6ce07702b2a65bd6bad79",
+      "block_num": 1252,
+      "block_id": "000004e47d2a95d0e04b42d9bd9858f67e2312c303c1e508ee411121de0420e1",
+      "receipts": [
+        {
+          "kind": "deposit",
+          "request_id": "3DD2FC7A24C448AB59929BB659FAAD0A11C79CDA89BC35C9DD8DC822110BE2E5",
+          "transaction_id": "261E02F85F15EA43B50B57C707060E59631C323CDAC6CE07702B2A65BD6BAD79",
+          "native_from": "keyusdtoken1",
+          "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "to_key": "81A6574B57740F6D7DA3F03A5A7C19B8DACB3301025FEABA09DF4A31E28C3054",
+          "token_contract": "keyusdtoken1",
+          "quantity": "50.0000 USD",
+          "fee": "0.1155 AIC",
+          "relayer": "",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/261e02f85f15ea43b50b57c707060e59631c323cdac6ce07702b2a65bd6bad79"
+    },
+    {
+      "case": "key_to_key_USD",
+      "transaction_id": "93100589173f25ae6e40e02129886d493863cf2fd3eee3502ce2e0f28c5c111f",
+      "block_num": 1258,
+      "block_id": "000004ea4b883f580f6ec7ad4edd2551caa896240253c02cd538827cc8d63010",
+      "receipts": [
+        {
+          "kind": "ksend",
+          "request_id": "281FB03E5BABC959E94788D6670917495005DAC3741CD20181F33077588A2396",
+          "transaction_id": "93100589173F25AE6E40E02129886D493863CF2FD3EEE3502CE2E0F28C5C111F",
+          "native_from": "",
+          "from_key": "81A6574B57740F6D7DA3F03A5A7C19B8DACB3301025FEABA09DF4A31E28C3054",
+          "to_key": "633301E790D4CADB3E2D924677153640A73DB7354D04D593EE31354C20B289F1",
+          "token_contract": "keyusdtoken1",
+          "quantity": "1.2500 USD",
+          "fee": "0.2840 AIC",
+          "relayer": "gptgenesisbp",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/93100589173f25ae6e40e02129886d493863cf2fd3eee3502ce2e0f28c5c111f"
+    },
+    {
+      "case": "key_to_key_AIC",
+      "transaction_id": "9f37c55a85a73c108242a2340613b037de0a51600e16010b50b641e806831238",
+      "block_num": 1265,
+      "block_id": "000004f127c2da335bf0649593a336d43ee6922bb12121e34f2eb414956643df",
+      "receipts": [
+        {
+          "kind": "ksend",
+          "request_id": "BD43B6EF5A7FA985B41E6F1204F4AB151D1CD0F88DEBAA2691A4B616356AD324",
+          "transaction_id": "9F37C55A85A73C108242A2340613B037DE0A51600E16010B50B641E806831238",
+          "native_from": "",
+          "from_key": "81A6574B57740F6D7DA3F03A5A7C19B8DACB3301025FEABA09DF4A31E28C3054",
+          "to_key": "633301E790D4CADB3E2D924677153640A73DB7354D04D593EE31354C20B289F1",
+          "token_contract": "eosio.token",
+          "quantity": "2.0000 AIC",
+          "fee": "0.1475 AIC",
+          "relayer": "gptgenesisbp",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/9f37c55a85a73c108242a2340613b037de0a51600e16010b50b641e806831238"
+    },
+    {
+      "case": "key_to_native_USD",
+      "transaction_id": "2c1706d57b2856eb3a30ff5468874c77aaf35c120bf931e11c90882990264cba",
+      "block_num": 1275,
+      "block_id": "000004fb060fcb76753b947230d7b299fae4e650be8e4a802598be74485a30d0",
+      "receipts": [
+        {
+          "kind": "selfout",
+          "request_id": "8092438DB814C5AFB994DF3A9977AFA59D92726D604DEC97660B51B0E6C25FA7",
+          "transaction_id": "2C1706D57B2856EB3A30FF5468874C77AAF35C120BF931E11C90882990264CBA",
+          "native_from": "",
+          "from_key": "81A6574B57740F6D7DA3F03A5A7C19B8DACB3301025FEABA09DF4A31E28C3054",
+          "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "token_contract": "keyusdtoken1",
+          "quantity": "0.5000 USD",
+          "fee": "0.0126 AIC",
+          "relayer": "",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/2c1706d57b2856eb3a30ff5468874c77aaf35c120bf931e11c90882990264cba"
+    },
+    {
+      "case": "free_relay_income_claim",
+      "transaction_id": "f57b5623cccf898098b20bae8032b951b3197a678cc1fb6ebb4ad0aaa8f8fb2a",
+      "block_num": 1278,
+      "block_id": "000004fe8da5d34f5f660b05c469acf351022ebd9110cc55bc521695ebc5d103",
+      "receipts": [
+        {
+          "kind": "claim",
+          "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+          "transaction_id": "F57B5623CCCF898098B20BAE8032B951B3197A678CC1FB6EBB4AD0AAA8F8FB2A",
+          "native_from": "gptgenesisbp",
+          "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "token_contract": "eosio.token",
+          "quantity": "0.0997 AIC",
+          "fee": "0.0000 AIC",
+          "relayer": "gptgenesisbp",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/f57b5623cccf898098b20bae8032b951b3197a678cc1fb6ebb4ad0aaa8f8fb2a"
+    },
+    {
+      "case": "claimant_paid_RAM_and_claim",
+      "transaction_id": "0f872dc1b995aedf80fc928e46ded280192513ace0955159eded4762d64b9c3e",
+      "block_num": 1288,
+      "block_id": "00000508daa30631baabd4693415db4412566b34a047d72a459e8fe5711daf28",
+      "receipts": [
+        {
+          "kind": "claim",
+          "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+          "transaction_id": "0F872DC1B995AEDF80FC928E46DED280192513ACE0955159EDED4762D64B9C3E",
+          "native_from": "gptgenesisbp",
+          "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+          "token_contract": "eosio.token",
+          "quantity": "0.0030 AIC",
+          "fee": "0.0000 AIC",
+          "relayer": "gptgenesisbp",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/0f872dc1b995aedf80fc928e46ded280192513ace0955159eded4762d64b9c3e"
+    },
+    {
+      "case": "public_HTTPS_relay",
+      "transaction_id": "a344763b456d6e15ada249ba9f0556984667a08f4eab1c7f7bde38f6a266699f",
+      "block_num": 1282,
+      "block_id": "00000502577c191816ab8e0507d3ccba6089cfd9bdc5fb8bf4091e853e9bcb09",
+      "receipts": [
+        {
+          "kind": "ksend",
+          "request_id": "B82E6254146A1BA735C26326A767379F04593D3D412D5593D1B08845B77F3074",
+          "transaction_id": "A344763B456D6E15ADA249BA9F0556984667A08F4EAB1C7F7BDE38F6A266699F",
+          "native_from": "",
+          "from_key": "81A6574B57740F6D7DA3F03A5A7C19B8DACB3301025FEABA09DF4A31E28C3054",
+          "to_key": "633301E790D4CADB3E2D924677153640A73DB7354D04D593EE31354C20B289F1",
+          "token_contract": "keyusdtoken1",
+          "quantity": "0.0001 USD",
+          "fee": "0.0130 AIC",
+          "relayer": "gptgenesisbp",
+          "auth_epoch": "0"
+        }
+      ],
+      "URL": "https://aic-test.matrixai.one/#/transaction/a344763b456d6e15ada249ba9f0556984667a08f4eab1c7f7bde38f6a266699f"
+    }
+  ],
+  "exact_custody_reserves": [
+    {
+      "token": "eosio.token::4,AIC",
+      "held_atoms": 2098973,
+      "liability_atoms": 2098973
+    },
+    {
+      "token": "keyusdtoken1::4,USD",
+      "held_atoms": 1695000,
+      "liability_atoms": 1695000
+    }
+  ],
+  "old_raw_history_removed_without_backup": true,
+  "no_old_disabled_identity_restarted": true,
+  "scope": "Fresh TEST deployment and actual functional transactions; no TPS or capacity qualification"
+}

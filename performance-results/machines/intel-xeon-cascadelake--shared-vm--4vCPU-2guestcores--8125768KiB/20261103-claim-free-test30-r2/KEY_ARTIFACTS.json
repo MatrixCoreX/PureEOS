@@ -1,0 +1,8 @@
+{
+  "files": {
+    "eosio.key.wasm": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+    "eosio.key.abi": "40352fb405d5ac80e67e871382a91c3ffd24958eef2aaaa6df841e1f06885d9a",
+    "token_allowlist.json": "7ee77f1a6939915e4a97caa60f9ef6601b2c318bcd10794e18da462c9c4db201"
+  },
+  "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+}

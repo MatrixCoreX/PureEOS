@@ -1,0 +1,5 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-test30-20261103-r1/build_native.py\", line 44, in <module>\n    assert not r.returncode,(K/'link.log').read_text()[-5000:]\n           ^^^^^^^^^^^^^^^^\nAssertionError: /usr/bin/ld: cannot find /usr/lib/x86_64-linux-gnu/libgmp.so: No such file or directory\ncollect2: error: ld returned 1 exit status\n\n",
+  "successful_compiles": 134
+}

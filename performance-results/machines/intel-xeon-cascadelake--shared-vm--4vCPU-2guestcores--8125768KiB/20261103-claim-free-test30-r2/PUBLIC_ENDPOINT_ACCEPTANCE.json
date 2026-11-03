@@ -1,0 +1,180 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-03T07:59:44.013Z",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "public_RPC": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 1756,
+    "last_irreversible_block_num": 1754,
+    "last_irreversible_block_id": "000006daaabf392969cbc340fc575c989bc1ce164d9fcec63ff2d7ed9b3bc9a4",
+    "head_block_id": "000006dccbc4719addc8bd257579fde075e3772ef01809df4ad1020e03c32b4c",
+    "head_block_time": "2026-11-03T07:59:43.500",
+    "head_block_producer": "gptgenesisbp",
+    "virtual_block_cpu_limit": 4623754,
+    "virtual_block_net_limit": 6067352,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1756,
+    "fork_db_head_block_id": "000006dccbc4719addc8bd257579fde075e3772ef01809df4ad1020e03c32b4c",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-03T07:59:42.500"
+  },
+  "public_history_RPC": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 1756,
+    "last_irreversible_block_num": 1754,
+    "last_irreversible_block_id": "000006daaabf392969cbc340fc575c989bc1ce164d9fcec63ff2d7ed9b3bc9a4",
+    "head_block_id": "000006dccbc4719addc8bd257579fde075e3772ef01809df4ad1020e03c32b4c",
+    "head_block_time": "2026-11-03T07:59:43.500",
+    "head_block_producer": "gptgenesisbp",
+    "virtual_block_cpu_limit": 4623754,
+    "virtual_block_net_limit": 6067352,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1756,
+    "fork_db_head_block_id": "000006dccbc4719addc8bd257579fde075e3772ef01809df4ad1020e03c32b4c",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-03T07:59:42.500"
+  },
+  "public_governance_review_seconds": 1800,
+  "public_relay_health": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key"
+  },
+  "history_health": {
+    "product": "PureHistory",
+    "version": "4.1.0-purehistory.1-dirty",
+    "version_hash": "custom",
+    "host": "aic-test.matrixai.one/history",
+    "health": [
+      {
+        "service": "StateHistory",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 25.935146,
+        "service_data": {
+          "nodes": [
+            {
+              "label": "independent-nonproducing-TEST-history",
+              "active": true,
+              "range": {
+                "from": 2,
+                "to": 1758
+              }
+            }
+          ]
+        }
+      },
+      {
+        "service": "RabbitMq",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 109.639087,
+        "service_data": null
+      },
+      {
+        "service": "NodeosRPC",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 14.17604,
+        "service_data": {
+          "head_block_num": 1757,
+          "head_block_time": "2026-11-03T07:59:44.000",
+          "time_offset": -145,
+          "last_irreversible_block": 1755,
+          "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0"
+        }
+      },
+      {
+        "service": "Elasticsearch",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 67.075384,
+        "service_data": {
+          "active_shards": "100.0%",
+          "disk_status": "green",
+          "head_offset": 2,
+          "first_indexed_block": 2,
+          "last_indexed_block": 1755,
+          "total_indexed_blocks": 1753,
+          "missing_blocks": 0,
+          "missing_pct": "0.00%",
+          "times": [
+            {
+              "phase": "cluster_health",
+              "phase_time_ms": 0.038408,
+              "cache": true
+            },
+            {
+              "phase": "first_indexed_block",
+              "phase_time_ms": 2.508752,
+              "cache": true
+            },
+            {
+              "phase": "last_indexed_block",
+              "phase_time_ms": 64.49269,
+              "cache": false
+            }
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "get_actions": 100,
+      "get_voters": 100,
+      "get_links": 1000,
+      "get_deltas": 100,
+      "get_trx_actions": 1000
+    },
+    "features": {
+      "streaming": {
+        "enable": false,
+        "traces": false,
+        "deltas": false
+      },
+      "tables": {
+        "proposals": true,
+        "accounts": true,
+        "voters": true,
+        "permissions": true,
+        "user_resources": false
+      },
+      "contract_state": {
+        "contracts": {}
+      },
+      "index_deltas": true,
+      "index_transfer_memo": true,
+      "index_all_deltas": true,
+      "index_deltas_deletions": false,
+      "deferred_trx": false,
+      "failed_trx": false,
+      "resource_limits": false,
+      "resource_usage": false
+    },
+    "pruning": {
+      "auto_pruning_enabled": false,
+      "max_retained_blocks": 0
+    },
+    "query_time_ms": 110.804,
+    "last_indexed_block": 1756,
+    "last_indexed_block_time": "2026-11-03T07:59:43.500"
+  },
+  "public_fee_free_claim": "f57b5623cccf898098b20bae8032b951b3197a678cc1fb6ebb4ad0aaa8f8fb2a",
+  "public_claim_history_verified": true,
+  "frontend_HTML_SHA256": "8184581a314aca87beccbc9bc2685752c06fdc80b2cb1bf86f55270720e3ad0b",
+  "frontend_source_changed": false,
+  "client": "Actual Node.js22 default fetch/SDK HTTP behavior",
+  "generic_python_user_agent_rejected_by_existing_Cloudflare_1010": true,
+  "scope": "Public HTTPS endpoints and indexed canonical data; no new frontend build/local test"
+}

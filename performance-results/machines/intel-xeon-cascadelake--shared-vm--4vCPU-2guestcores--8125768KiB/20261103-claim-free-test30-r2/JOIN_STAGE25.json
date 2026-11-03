@@ -1,0 +1,187 @@
+{
+  "status": "REGISTERED_AND_SYNCED",
+  "target_BPs": 25,
+  "joined": [
+    {
+      "name": "anthropiclab",
+      "index": 1,
+      "unit": "pureeos-keynet2-bp-anthropiclab-20261103.service",
+      "funding_transaction": "82ff3e30b3d5b3e205a49ba663c5b2db6d0a1d0891a96d9527834e638202143a",
+      "registration_transaction": "9e79492b26e32cc1d1ab46a2249ae19ae21ba7b3201288e2f65f9b4b2cf3d7d7"
+    },
+    {
+      "name": "brazilamazon",
+      "index": 2,
+      "unit": "pureeos-keynet2-bp-brazilamazon-20261103.service",
+      "funding_transaction": "6ed96c1419094e74986876e31cd76bbd4db85482b20ec164a54fae0b5256c548",
+      "registration_transaction": "ec06106a5b46a136eb1c20b6c237d96fc9bc3f7c63ba4aa44f27e675a83e3ee5"
+    },
+    {
+      "name": "canadaboreal",
+      "index": 3,
+      "unit": "pureeos-keynet2-bp-canadaboreal-20261103.service",
+      "funding_transaction": "2c71accab962f999048167eb4d353c86294f487a107f9682d4297245edb35c48",
+      "registration_transaction": "da28289d608b3b5d5e036b0d13265577f23687cbbd4109cb956ded664e2afd58"
+    },
+    {
+      "name": "cobaltspring",
+      "index": 4,
+      "unit": "pureeos-keynet2-bp-cobaltspring-20261103.service",
+      "funding_transaction": "2833409aa7d28f92c50c21a75b07ed347ff20372c4b2fc8c0630d73805810875",
+      "registration_transaction": "28d99cdfaa8dc0f73ba8bf0456a37d45209812543000bf40c2e77a7527cfd43a"
+    },
+    {
+      "name": "coherevision",
+      "index": 5,
+      "unit": "pureeos-keynet2-bp-coherevision-20261103.service",
+      "funding_transaction": "81c692ed9526b861686fe82e0fe97cdbd4f8235b7f0498fd345037131b46374f",
+      "registration_transaction": "73df5f817e4136b0b55b2d1b12c12ae1ce5a34a9ba0e3b05e787588aa68e2cf4"
+    },
+    {
+      "name": "cosmicgarden",
+      "index": 6,
+      "unit": "pureeos-keynet2-bp-cosmicgarden-20261103.service",
+      "funding_transaction": "725dc963bf60b451ae0d1ae4d71ba0c6c18322d4bc3d901c35c24601c83a024e",
+      "registration_transaction": "f3763cf0e3c5ae1256a2ab50229177d09851209bf7e63ef078a8f055b0bbc090"
+    },
+    {
+      "name": "deepseekcore",
+      "index": 7,
+      "unit": "pureeos-keynet2-bp-deepseekcore-20261103.service",
+      "funding_transaction": "3603b3974e759e47416abe47e8363d537f02ecbe98dc32cf1a72c277ba443e3f",
+      "registration_transaction": "c9f886c0a16f2135a06dfd1700e6076cf6f73a31d1ad24abfa9f6093510c875c"
+    },
+    {
+      "name": "egyptpyramid",
+      "index": 8,
+      "unit": "pureeos-keynet2-bp-egyptpyramid-20261103.service",
+      "funding_transaction": "9db62e9aaa7b816b188e59c039661c1d6ea4711a71630c8ef0fc73806f5169a8",
+      "registration_transaction": "b903887e3210604a18c160f713cccc4fa2de6729a79ccfcaf07329bb4847e35a"
+    },
+    {
+      "name": "finlandhaven",
+      "index": 9,
+      "unit": "pureeos-keynet2-bp-finlandhaven-20261103.service",
+      "funding_transaction": "a2a5422f8aa86ab626f6101d468fa027ffe356167027066aa996f6e62d8a0fe8",
+      "registration_transaction": "525fd93cafd70098dcf8db7e4ddd322863296f2b027a79907204675c7c3da40d"
+    },
+    {
+      "name": "francegarden",
+      "index": 10,
+      "unit": "pureeos-keynet2-bp-francegarden-20261103.service",
+      "funding_transaction": "580ec51fede7a3a7805d03bf7b2093deb48699e1d99c1671aae144bed55eb481",
+      "registration_transaction": "190341858a474c599db946b135334b81ec5af9f9aa7abfc9dfa51c35327f4f9b"
+    },
+    {
+      "name": "germanycrest",
+      "index": 11,
+      "unit": "pureeos-keynet2-bp-germanycrest-20261103.service",
+      "funding_transaction": "a469c666d339efa943b09cd14b3c4fdb08b7ff29c46a27eb17925a948937cc8b",
+      "registration_transaction": "0ef003f3b1887256a57b206e77534558b2a5cda3869a51f508dfd84b565a18ea"
+    },
+    {
+      "name": "glaciercrest",
+      "index": 12,
+      "unit": "pureeos-keynet2-bp-glaciercrest-20261103.service",
+      "funding_transaction": "7877a530a815356884b259e5d4db545d65559019a526761ecdc20c620b998b28",
+      "registration_transaction": "324419d12b3656ac227c642560c1212d9c7df497af3801f4b84e246d8bb4c903"
+    },
+    {
+      "name": "italyharbors",
+      "index": 13,
+      "unit": "pureeos-keynet2-bp-italyharbors-20261103.service",
+      "funding_transaction": "dcd178ebd4c68e7aa2e1152a9b01e0eeaf6dce4100b6d6bcc54db13400fd3879",
+      "registration_transaction": "fcad71f85f8f2b670ccce603b158765937f7ef4853ef7b1adf8c39b4feda8bd3"
+    },
+    {
+      "name": "kenyasavanna",
+      "index": 14,
+      "unit": "pureeos-keynet2-bp-kenyasavanna-20261103.service",
+      "funding_transaction": "b55e7c56aeef9ef2c44211ee88b4d9e6ad9fc5c60719fe99babd42104198d7f1",
+      "registration_transaction": "ebf86b22945d476b7928e19a223c2783a9e5a97686508d06b41091cd19388d80"
+    },
+    {
+      "name": "lunarcompass",
+      "index": 15,
+      "unit": "pureeos-keynet2-bp-lunarcompass-20261103.service",
+      "funding_transaction": "e831cf5dd48473e47212b57ff86f23293b328efb16b7845b4bf722268096801e",
+      "registration_transaction": "cd1441e998fb3212701a4d4288d7a8c9c0e8177eb435f22aab12dced1fb716ca"
+    },
+    {
+      "name": "maplecascade",
+      "index": 16,
+      "unit": "pureeos-keynet2-bp-maplecascade-20261103.service",
+      "funding_transaction": "65aa3d20d39fc4070a8ab35671e11ed38c2fad0ce747f94875012678a33a9c9c",
+      "registration_transaction": "50438c780c6c520e00b319631278b4424dd8146cc5c9a4c1013bb7962b643ba3"
+    },
+    {
+      "name": "mistralcloud",
+      "index": 17,
+      "unit": "pureeos-keynet2-bp-mistralcloud-20261103.service",
+      "funding_transaction": "1fe1b2d057bff8b2d13f2454c2d243172cfd20e6d1b4fcc4a8e4cf7606989dd1",
+      "registration_transaction": "23536313addbe6b3c83f7d6dc64f7a3329b6465631da94fc6a90d3d70b2c5740"
+    },
+    {
+      "name": "moonlitgrove",
+      "index": 18,
+      "unit": "pureeos-keynet2-bp-moonlitgrove-20261103.service",
+      "funding_transaction": "459acda250404ecc881d193979266bf900936bc328dbd9ae609305079fda9383",
+      "registration_transaction": "4bd07ae4ca6626e123ec62b0d16e00db84f1b720ca55b81762a67d0771abc51b"
+    },
+    {
+      "name": "nebularlight",
+      "index": 19,
+      "unit": "pureeos-keynet2-bp-nebularlight-20261103.service",
+      "funding_transaction": "1d563393cdc0541cb69f5cbcb72570f041126ef1b281fb288f7faacab2f11ba2",
+      "registration_transaction": "cb33f0f8ecd15babd3df8e7a22d999afc07c6f14640c84fc9143541bc4c6354f"
+    },
+    {
+      "name": "silverstream",
+      "index": 20,
+      "unit": "pureeos-keynet2-bp-silverstream-20261103.service",
+      "funding_transaction": "2fd27e6a66f745a035dcf4b53336dde656ebf876c7678bcc0a187472151fff9d",
+      "registration_transaction": "364b833b4eef1e3d2bd12a54d5e134b0da8b35133d250e6d0d847233a7be5198"
+    },
+    {
+      "name": "stellarhaven",
+      "index": 21,
+      "unit": "pureeos-keynet2-bp-stellarhaven-20261103.service",
+      "funding_transaction": "16b8f095bdd789204976c3c59b3a1e35a110a3a66cffd49d40d40a2aa4912eef",
+      "registration_transaction": "2bfcc8b37502fc93e38b357a16e7c2259b6b98b80834b41ae0fd1cb372d428f9"
+    },
+    {
+      "name": "velvetforest",
+      "index": 22,
+      "unit": "pureeos-keynet2-bp-velvetforest-20261103.service",
+      "funding_transaction": "8c4fb2117cfc797a8da08e301b242a1100f9cc8957464b9715abe27d6db38661",
+      "registration_transaction": "59e8a90e42af1bcee4cbd35afb4ad8405e43773b5ce5711c54364818b21649e2"
+    },
+    {
+      "name": "willowgarden",
+      "index": 23,
+      "unit": "pureeos-keynet2-bp-willowgarden-20261103.service",
+      "funding_transaction": "65ac90b25df2219747f5cca22ac789fa79f017555e1d0633036a08cb6cc4a804",
+      "registration_transaction": "69e2f65bdecb8a55ce15ddbb811238088436f2f8dc849ef151af22641daa71a2"
+    },
+    {
+      "name": "xaineuralnet",
+      "index": 24,
+      "unit": "pureeos-keynet2-bp-xaineuralnet-20261103.service",
+      "funding_transaction": "ce301135869757321e452ab4bdcd3d022d545f1667a8c1be6923e6f6a1a0fba5",
+      "registration_transaction": "9fcb6b4ca0d7e0515bd59817a8d41e867b1cdad85c37fd490f3cf2e9863baacf"
+    }
+  ],
+  "TPS": "explicitly excluded",
+  "registered_BPs": 25,
+  "bond_config": {
+    "version": 1,
+    "enforced": 1,
+    "refund_delay_sec": 604800,
+    "locked": 2500000000,
+    "slash_pending": 0,
+    "slash_settled": 0,
+    "refunded": 0
+  },
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "notes": "This is enrollment, not the later sustained stability or full native-duty qualification."
+}

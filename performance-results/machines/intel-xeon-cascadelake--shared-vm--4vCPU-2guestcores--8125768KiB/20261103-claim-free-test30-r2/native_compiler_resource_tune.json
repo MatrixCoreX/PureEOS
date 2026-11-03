@@ -1,0 +1,10 @@
+{
+  "status": "COMPILER_ONLY_RESOURCE_TUNE",
+  "UTC": "2026-11-03T07:34:00.943063+00:00",
+  "unit": "pureeos-test30-native-build-r3-20261103",
+  "before": "CPUQuotaPerSecUSec=1.500000s\nMemoryHigh=4294967296\nMemoryMax=7516192768\nActiveState=activating\n",
+  "after": "CPUQuotaPerSecUSec=1.500000s\nMemoryHigh=6442450944\nMemoryMax=7516192768\nActiveState=activating\n",
+  "reason": "Avoid soft-limit reclaim during one large O3 native TU while old chain remains stopped",
+  "node_caps_or_startup_floor_changed": false,
+  "native_functional_unit_limits_changed": false
+}

@@ -1,0 +1,9 @@
+{
+  "status": "STARTED",
+  "unit": "pureeos-keynet2-history-20261103.service",
+  "rpc": 8890,
+  "SHIP": 8080,
+  "produces": false,
+  "keys_present": false,
+  "parallel": true
+}
