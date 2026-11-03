@@ -1,0 +1,405 @@
+{
+  "status": "PASS",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "steps": {
+    "native-create-keymapleseed": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "f1fbd92479e5cb7768318379c2d934f4fc92ee7cf33595dad253528296dc0249",
+      "start_LIB": 11072,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/native-create-keymapleseed.signed.json",
+      "receipt": {
+        "transaction_id": "f1fbd92479e5cb7768318379c2d934f4fc92ee7cf33595dad253528296dc0249",
+        "block_num": 11076,
+        "block_id": "00002b442eadacac993f850be73d618ff4b3ad46edc195e6cf50785a958b0085",
+        "observed_lib": 11076
+      }
+    },
+    "native-fund-keymapleseed": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "44f376eaa985f720838b46c0f91f1e8b78e20f7a5f11d64ed723bed9d65854a0",
+      "start_LIB": 11077,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/native-fund-keymapleseed.signed.json",
+      "receipt": {
+        "transaction_id": "44f376eaa985f720838b46c0f91f1e8b78e20f7a5f11d64ed723bed9d65854a0",
+        "block_num": 11083,
+        "block_id": "00002b4baacda20a7000f8ac6fbafadd417d43db7a6d578aca57a91721d3541a",
+        "observed_lib": 11083
+      }
+    },
+    "native-create-keyriverbank": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "9667904639ca2207f39086942048d739a2f3248df9e192a12ba59317e18f6d2c",
+      "start_LIB": 11085,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/native-create-keyriverbank.signed.json",
+      "receipt": {
+        "transaction_id": "9667904639ca2207f39086942048d739a2f3248df9e192a12ba59317e18f6d2c",
+        "block_num": 11089,
+        "block_id": "00002b51a8d6924701ada156f353d4b70f3b0538c27248c49c82003781f543cd",
+        "observed_lib": 11089
+      }
+    },
+    "native-fund-keyriverbank": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "bdb2136c335075b92c927ebe8d167f1a5cfbdd9c679e9c04b9b2b6827e19a46b",
+      "start_LIB": 11091,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/native-fund-keyriverbank.signed.json",
+      "receipt": {
+        "transaction_id": "bdb2136c335075b92c927ebe8d167f1a5cfbdd9c679e9c04b9b2b6827e19a46b",
+        "block_num": 11094,
+        "block_id": "00002b569e14335d4460970a2677fa1677a42c135febe5ba67e6ee9d95380e85",
+        "observed_lib": 11094
+      }
+    },
+    "native-create-keystarlight": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "bc46658d1c1ee0968f5f4c10c2fad0667129174131697b971c698a3ed1f9b3ad",
+      "start_LIB": 11096,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/native-create-keystarlight.signed.json",
+      "receipt": {
+        "transaction_id": "bc46658d1c1ee0968f5f4c10c2fad0667129174131697b971c698a3ed1f9b3ad",
+        "block_num": 11100,
+        "block_id": "00002b5c4c73a0f7d707fcf5fc362c3a62fa7261341b35c1718a8b3f1b15fe29",
+        "observed_lib": 11100
+      }
+    },
+    "native-fund-keystarlight": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "a1774726ad4d735d2ae3364291db41df5dd017564036d61021185eb5f84d8f0b",
+      "start_LIB": 11101,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/native-fund-keystarlight.signed.json",
+      "receipt": {
+        "transaction_id": "a1774726ad4d735d2ae3364291db41df5dd017564036d61021185eb5f84d8f0b",
+        "block_num": 11106,
+        "block_id": "00002b62663490269750e9cf0cb6a33e1ded425078f8b3cfbcb73da003f22d81",
+        "observed_lib": 11106
+      }
+    },
+    "key-1-AIC": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "5494a7ff501ac1bcc11c7726472346e3f991c185be87cd2382bc54e8efe82991",
+      "start_LIB": 11108,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-1-AIC.signed.json",
+      "receipt": {
+        "transaction_id": "5494a7ff501ac1bcc11c7726472346e3f991c185be87cd2382bc54e8efe82991",
+        "block_num": 11112,
+        "block_id": "00002b68dc629e3572d9552898df25766dda6150e1fa9438ea8f697852e9ef9a",
+        "observed_lib": 11112
+      }
+    },
+    "key-1-USD": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "378d1075fc26da716013ffe7e241367db614b03c1c3188c8e762409066cb8dc6",
+      "start_LIB": 11113,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-1-USD.signed.json",
+      "receipt": {
+        "transaction_id": "378d1075fc26da716013ffe7e241367db614b03c1c3188c8e762409066cb8dc6",
+        "block_num": 11118,
+        "block_id": "00002b6e72c382e4dc512b31e725a6dad761fcc8631a459930664d8fef56dac7",
+        "observed_lib": 11118
+      }
+    },
+    "key-2-AIC": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "347722b3e07a9253034a1eb7e5f9503233a621d7624c3cce4dfbd59f46fdddf1",
+      "start_LIB": 11120,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-2-AIC.signed.json",
+      "receipt": {
+        "transaction_id": "347722b3e07a9253034a1eb7e5f9503233a621d7624c3cce4dfbd59f46fdddf1",
+        "block_num": 11123,
+        "block_id": "00002b73646651d01085d1bd13cf4722abde2a4f8d4b2a0123521d13455555f3",
+        "observed_lib": 11124
+      }
+    },
+    "key-2-USD": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "d3b5a157fe36007e3dcb1d0919dccf1003dc2b28ab68c97abacc59c1fb19b030",
+      "start_LIB": 11127,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-2-USD.signed.json",
+      "receipt": {
+        "transaction_id": "d3b5a157fe36007e3dcb1d0919dccf1003dc2b28ab68c97abacc59c1fb19b030",
+        "block_num": 11130,
+        "block_id": "00002b7a39d229233a0dba3c928de2f8b3839ccf70d038df54650711eebec9e0",
+        "observed_lib": 11130
+      }
+    },
+    "key-3-AIC": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "c0fc8012ebd17ca5485694f700d4a4ae7b4b6aab53706a09eb65074a6445a2a6",
+      "start_LIB": 11131,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-3-AIC.signed.json",
+      "receipt": {
+        "transaction_id": "c0fc8012ebd17ca5485694f700d4a4ae7b4b6aab53706a09eb65074a6445a2a6",
+        "block_num": 11136,
+        "block_id": "00002b8025033dc068cd4dda6a05109d499609f80ae9212e19425e460467bf66",
+        "observed_lib": 11136
+      }
+    },
+    "key-3-USD": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "74fc15ab740a44c8904755b3e3cb9571f44fcc0c2e4245711458034b0a62f043",
+      "start_LIB": 11138,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-3-USD.signed.json",
+      "receipt": {
+        "transaction_id": "74fc15ab740a44c8904755b3e3cb9571f44fcc0c2e4245711458034b0a62f043",
+        "block_num": 11143,
+        "block_id": "00002b87e520855033cc17279f675ffbf2b9fdc19529d79c67a3c7c2b22eea35",
+        "observed_lib": 11143
+      }
+    },
+    "key-4-AIC": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "0feb424871de14c9382c1c3adf49606471669ab9f8526561cca025bd3334af8c",
+      "start_LIB": 11145,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-4-AIC.signed.json",
+      "receipt": {
+        "transaction_id": "0feb424871de14c9382c1c3adf49606471669ab9f8526561cca025bd3334af8c",
+        "block_num": 11149,
+        "block_id": "00002b8d6d9b87190d4a3ef20d1f6761d49d7dfc1c465424fa53eb482113ccd6",
+        "observed_lib": 11149
+      }
+    },
+    "key-4-USD": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "6bd4b532ff2a1d30bea5d1db61d8a464c0f835d05d617643cd98d918509ae3bc",
+      "start_LIB": 11152,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-4-USD.signed.json",
+      "receipt": {
+        "transaction_id": "6bd4b532ff2a1d30bea5d1db61d8a464c0f835d05d617643cd98d918509ae3bc",
+        "block_num": 11155,
+        "block_id": "00002b9342381712780ef809198f4bb46c4f163ee5cd97e3e79e765c30d6131e",
+        "observed_lib": 11155
+      }
+    },
+    "key-5-AIC": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "1a28b200f7bdb29d347f96f04b3c259c4f8006ff07fc7c9dd60b9b7559d83fac",
+      "start_LIB": 11156,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-5-AIC.signed.json",
+      "receipt": {
+        "transaction_id": "1a28b200f7bdb29d347f96f04b3c259c4f8006ff07fc7c9dd60b9b7559d83fac",
+        "block_num": 11163,
+        "block_id": "00002b9bca08a57cb72d95357d8a02cfbdf9d8963827d952b229cf8bfac024e7",
+        "observed_lib": 11163
+      }
+    },
+    "key-5-USD": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "2efde340cf3ed37ba925e2f31a8fc92f95c39e9b0e66fbbb9ea2a8b8ef462f6b",
+      "start_LIB": 11166,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-5-USD.signed.json",
+      "receipt": {
+        "transaction_id": "2efde340cf3ed37ba925e2f31a8fc92f95c39e9b0e66fbbb9ea2a8b8ef462f6b",
+        "block_num": 11174,
+        "block_id": "00002ba6c58061b85bada30e5da1840eb364c9c4a0c088c5389677f08f1845dd",
+        "observed_lib": 11174
+      }
+    },
+    "key-6-AIC": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "d0fdda2afe1883081844f4f75f688182ff11ab46acc8d0470ac6b6119f9f19f0",
+      "start_LIB": 11175,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-6-AIC.signed.json",
+      "receipt": {
+        "transaction_id": "d0fdda2afe1883081844f4f75f688182ff11ab46acc8d0470ac6b6119f9f19f0",
+        "block_num": 11187,
+        "block_id": "00002bb3b929a3ede82951480896082f47600e84bfd7d384504063bee44cc55f",
+        "observed_lib": 11187
+      }
+    },
+    "key-6-USD": {
+      "status": "IRREVERSIBLE",
+      "transaction_id": "a79f1ca9bf9a156e4752ae584378c097d6818bf71efdafe34f5961c3356da9e9",
+      "start_LIB": 11188,
+      "signed_file": "/opt/pureeos-keynet-20261103-r1/key-demo-six-20261103-r1/key-6-USD.signed.json",
+      "receipt": {
+        "transaction_id": "a79f1ca9bf9a156e4752ae584378c097d6818bf71efdafe34f5961c3356da9e9",
+        "block_num": 11196,
+        "block_id": "00002bbcb71f84b5489f275d06586649444f8530f1bac490bc4debbacf62035b",
+        "observed_lib": 11196
+      }
+    }
+  },
+  "keys": [
+    {
+      "index": 1,
+      "public_key": "PUB_K1_7KkBtkkFhkK3CJ751zzghVVQKbXvN4x9kcCSH4ZoNgXDHaNrp7",
+      "native_account": "keymapleseed"
+    },
+    {
+      "index": 2,
+      "public_key": "PUB_K1_5NiBtf3pshecov8Dc9jNXw2BFyGRk7mGqdFTm8BpfoLaKG2cmT",
+      "native_account": "keyriverbank"
+    },
+    {
+      "index": 3,
+      "public_key": "PUB_K1_7g4xWPhmt48rjUB6uZCNF36zY1XgmrUR77RNuwwt27iSeEhTFx",
+      "native_account": "keystarlight"
+    },
+    {
+      "index": 4,
+      "public_key": "PUB_K1_78awimr8VkVzBHw3xXWK77VQP7rwVXTXNg42WuBfFMG9hHhpZd",
+      "native_account": null
+    },
+    {
+      "index": 5,
+      "public_key": "PUB_K1_51WWk5G31dS3XXEVEnU2kAG8zPRrUNP5tPd8XoSEozF2t2i4h3",
+      "native_account": null
+    },
+    {
+      "index": 6,
+      "public_key": "PUB_K1_6Rf6SG444QchLiHPxaDZkQEnak53TtXMjPkV3qLPdwrTEuqJzw",
+      "native_account": null
+    }
+  ],
+  "UTC": "2026-11-03T05:56:21.415736+00:00",
+  "results": [
+    {
+      "index": 1,
+      "public_key": "PUB_K1_7KkBtkkFhkK3CJ751zzghVVQKbXvN4x9kcCSH4ZoNgXDHaNrp7",
+      "native_account": "keymapleseed",
+      "wallet_id": 3,
+      "key_balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": 100000
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": 200000
+        }
+      ],
+      "native_balances": {
+        "AIC": "15.0000 AIC",
+        "USD": "5.0000 USD"
+      },
+      "indexed_accounts": [
+        "keymapleseed"
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_7KkBtkkFhkK3CJ751zzghVVQKbXvN4x9kcCSH4ZoNgXDHaNrp7"
+    },
+    {
+      "index": 2,
+      "public_key": "PUB_K1_5NiBtf3pshecov8Dc9jNXw2BFyGRk7mGqdFTm8BpfoLaKG2cmT",
+      "native_account": "keyriverbank",
+      "wallet_id": 4,
+      "key_balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": 100000
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": 200000
+        }
+      ],
+      "native_balances": {
+        "AIC": "15.0000 AIC",
+        "USD": "5.0000 USD"
+      },
+      "indexed_accounts": [
+        "keyriverbank"
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_5NiBtf3pshecov8Dc9jNXw2BFyGRk7mGqdFTm8BpfoLaKG2cmT"
+    },
+    {
+      "index": 3,
+      "public_key": "PUB_K1_7g4xWPhmt48rjUB6uZCNF36zY1XgmrUR77RNuwwt27iSeEhTFx",
+      "native_account": "keystarlight",
+      "wallet_id": 5,
+      "key_balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": 100000
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": 200000
+        }
+      ],
+      "native_balances": {
+        "AIC": "15.0000 AIC",
+        "USD": "5.0000 USD"
+      },
+      "indexed_accounts": [
+        "keystarlight"
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_7g4xWPhmt48rjUB6uZCNF36zY1XgmrUR77RNuwwt27iSeEhTFx"
+    },
+    {
+      "index": 4,
+      "public_key": "PUB_K1_78awimr8VkVzBHw3xXWK77VQP7rwVXTXNg42WuBfFMG9hHhpZd",
+      "native_account": null,
+      "wallet_id": 6,
+      "key_balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": 100000
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": 200000
+        }
+      ],
+      "native_balances": null,
+      "indexed_accounts": [],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_78awimr8VkVzBHw3xXWK77VQP7rwVXTXNg42WuBfFMG9hHhpZd"
+    },
+    {
+      "index": 5,
+      "public_key": "PUB_K1_51WWk5G31dS3XXEVEnU2kAG8zPRrUNP5tPd8XoSEozF2t2i4h3",
+      "native_account": null,
+      "wallet_id": 7,
+      "key_balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": 100000
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": 200000
+        }
+      ],
+      "native_balances": null,
+      "indexed_accounts": [],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_51WWk5G31dS3XXEVEnU2kAG8zPRrUNP5tPd8XoSEozF2t2i4h3"
+    },
+    {
+      "index": 6,
+      "public_key": "PUB_K1_6Rf6SG444QchLiHPxaDZkQEnak53TtXMjPkV3qLPdwrTEuqJzw",
+      "native_account": null,
+      "wallet_id": 8,
+      "key_balances": [
+        {
+          "contract": "eosio.token",
+          "symbol": "4,AIC",
+          "atoms": 100000
+        },
+        {
+          "contract": "keyusdtoken1",
+          "symbol": "4,USD",
+          "atoms": 200000
+        }
+      ],
+      "native_balances": null,
+      "indexed_accounts": [],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_6Rf6SG444QchLiHPxaDZkQEnak53TtXMjPkV3qLPdwrTEuqJzw"
+    }
+  ],
+  "binding_semantics": "The same K1 public key is owner/active authority of its native account; custody and native balances are separate",
+  "key_private_material_remote_only": true,
+  "ordinary_90_unchanged": true,
+  "BP_votes_bonds_unchanged": true,
+  "new_servers": 0,
+  "code_changes": 0,
+  "TPS": false
+}

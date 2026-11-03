@@ -1,0 +1,117 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-03T05:56:44.665906+00:00",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "verification": "Actual public endpoints used by the existing browser; no new frontend code or Chrome run",
+  "keys": [
+    {
+      "index": 1,
+      "public_key": "PUB_K1_7KkBtkkFhkK3CJ751zzghVVQKbXvN4x9kcCSH4ZoNgXDHaNrp7",
+      "indexed_accounts": [
+        "keymapleseed"
+      ],
+      "wallet_id": 3,
+      "public_balances": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_7KkBtkkFhkK3CJ751zzghVVQKbXvN4x9kcCSH4ZoNgXDHaNrp7"
+    },
+    {
+      "index": 2,
+      "public_key": "PUB_K1_5NiBtf3pshecov8Dc9jNXw2BFyGRk7mGqdFTm8BpfoLaKG2cmT",
+      "indexed_accounts": [
+        "keyriverbank"
+      ],
+      "wallet_id": 4,
+      "public_balances": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_5NiBtf3pshecov8Dc9jNXw2BFyGRk7mGqdFTm8BpfoLaKG2cmT"
+    },
+    {
+      "index": 3,
+      "public_key": "PUB_K1_7g4xWPhmt48rjUB6uZCNF36zY1XgmrUR77RNuwwt27iSeEhTFx",
+      "indexed_accounts": [
+        "keystarlight"
+      ],
+      "wallet_id": 5,
+      "public_balances": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_7g4xWPhmt48rjUB6uZCNF36zY1XgmrUR77RNuwwt27iSeEhTFx"
+    },
+    {
+      "index": 4,
+      "public_key": "PUB_K1_78awimr8VkVzBHw3xXWK77VQP7rwVXTXNg42WuBfFMG9hHhpZd",
+      "indexed_accounts": [],
+      "wallet_id": 6,
+      "public_balances": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_78awimr8VkVzBHw3xXWK77VQP7rwVXTXNg42WuBfFMG9hHhpZd"
+    },
+    {
+      "index": 5,
+      "public_key": "PUB_K1_51WWk5G31dS3XXEVEnU2kAG8zPRrUNP5tPd8XoSEozF2t2i4h3",
+      "indexed_accounts": [],
+      "wallet_id": 7,
+      "public_balances": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_51WWk5G31dS3XXEVEnU2kAG8zPRrUNP5tPd8XoSEozF2t2i4h3"
+    },
+    {
+      "index": 6,
+      "public_key": "PUB_K1_6Rf6SG444QchLiHPxaDZkQEnak53TtXMjPkV3qLPdwrTEuqJzw",
+      "indexed_accounts": [],
+      "wallet_id": 8,
+      "public_balances": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "browser_URL": "https://aic-test.matrixai.one/#/key/PUB_K1_6Rf6SG444QchLiHPxaDZkQEnak53TtXMjPkV3qLPdwrTEuqJzw"
+    }
+  ],
+  "all_payments_irreversible": true
+}
