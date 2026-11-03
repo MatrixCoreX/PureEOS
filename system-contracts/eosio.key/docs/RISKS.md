@@ -1,8 +1,19 @@
 # 风险控制 / Risk controls
 
-当前公开部署阻断项：尚未隔离任意自定义代币发行合约所取得的托管账户原生转账授权。原生规则允许收到该授权的第一接收合约向授权账户计费 RAM，因此恶意发行合约可能影响共享托管账户的可用性。普通余额/通知/储备校验和内部行数上限不足以消除此路径。正在验证原生计费证据，并等待确认第一版采用已审核代码准入，还是改为独立托管隔离架构。功能测试 PASS 不能解除此发布阻断。
+2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
 
-Public-deployment blocker: arbitrary custom issuers receive native custody transfer authority. Native rules permit an authorized first receiver to bill RAM to that sender, so a malicious issuer may affect shared-custody availability. Ledger/notification/reserve checks and internal row caps do not eliminate this path. Native evidence is being collected; the product choice is reviewed-code admission or separate custody isolation. Functional PASS alone does not clear this blocker.
+2026-11-03 已选定并实现正常 RAM 分配规则：包括 AIC 在内，每个完整币种先由
+原生 sponsor 真实购买 RAM 并原子登记，预算不足拒绝新增行；新增收款记录费由
+本次发送方承担，收款本金全额到账。登记仅验证实际出资，不代表代码审核。
+这些预算不覆盖发行合约在自己表中借提币原生授权额外计费，因此还须执行独立的代码哈希白名单。
+
+Paid per-token admission now gates ordinary allocation, including AIC. Native
+sponsors fund capacity; transfer senders pay extra recipient-creation fees.
+Admission proves funding, not reviewed issuer code or native RAM isolation.
+
+历史任意代币版本已复现发行合约借托管授权额外计费 RAM 的风险。当前选择已审核代码准入，完整发行账号/符号/精度与 WASM 哈希均绑定，代码改变后先拒绝再授权。AIC/标准 USD 配置已完成独立远端验证及公开 TEST 部署；这不构成任意代币 RAM 沙箱或稳定版审计结论。
+
+The historical unrestricted profile reproduced shared RAM exposure. The selected AIC/standard USD profile now enforces reviewed identity and current code hashes before authority, passed remote qualification and is deployed on the public TEST chain. Arbitrary issuer code and separate custody isolation remain outside this implementation.
 
 本文是开发阶段的风险清单和验证边界，不能视为零风险承诺或独立审计结论。最终验证状态见同版本 qualification 报告，不能用旧协议测试代替新版本结论。初始顺序 nonce 原型已被协议 2 取代。
 
@@ -54,7 +65,7 @@ Native recipient token rows newly funded by the wallet also consume the shared b
 
 原生收款方首次建立代币余额行、且由钱包承担 RAM 时，也计入共用余额行预算并收新行费；关闭再重建不会重置预算。初始化上限须按实际已购买 RAM 留出运行余量。恶意发行方伪造状态或滥用原生 RAM 计费仍属于发行方信任边界。
 
-Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keytesttoken,...` only after operator review for additional issuers. These service limits do not change on-chain multi-token support or independent-device signing.
+Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keyusdtoken1,...` only after operator review for additional issuers. Operator issuer review can only narrow the compiled on-chain whitelist; it cannot add an unapproved identity or code hash. Independent-device signing is unchanged.
 
 参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。
 
@@ -64,6 +75,6 @@ Authority boundary: the contract enforces the registered permission identity and
 
 [代币托管修复方案 / Custody options](TOKEN_CUSTODY_REVIEW.md)
 
-最新实际钱包复现：正常系统 WASM 的私有链上，`eosio.key` 提取测试恶意币时额外被计费 **4,330 字节 RAM**，`balance_count` 未变化，四种资产的储备等式仍成立。此项是已确认的资源隔离失败，见 [FUNCTIONAL_R4.json](../../../performance-results/eosio-key/20261103-v2-security/FUNCTIONAL_R4.json) 中 `unreviewed_issuer_RAM_exposure` 和 `release_qualified=false`。
+历史任意代币版本实际复现：正常系统 WASM 的私有链上，`eosio.key` 提取测试恶意币时额外被计费 **4,330 字节 RAM**，`balance_count` 未变化，四种资产的储备等式仍成立。此项是已确认的资源隔离失败，见 [FUNCTIONAL_R4.json](../../../performance-results/eosio-key/20261103-v2-security/FUNCTIONAL_R4.json) 中 `unreviewed_issuer_RAM_exposure` 和 `release_qualified=false`。
 
 The normal-system wallet itself reproduced the extra **4,330-byte** charge without changing its row counter, while all four reserve equations remained valid. This is a confirmed resource-isolation failure. Functional execution PASS does not mean release approval.

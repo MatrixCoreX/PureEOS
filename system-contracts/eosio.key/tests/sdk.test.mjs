@@ -3,13 +3,23 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {PrivateKey,PublicKey} from '@wharfkit/antelope';
 import {normalizePublicKey,keyHash,assetIdentity,depositMemo,atomicAsset,formatFee,
-  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,parseRPCJSON} from '../sdk/index.mjs';
+  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,parseRPCJSON,ramRegistrationActions} from '../sdk/index.mjs';
 
 const abi=JSON.parse(readFileSync(process.env.KEY_ABI||new URL('../abi/eosio.key.abi',import.meta.url)));
 const owner=PrivateKey.generate('K1'),receiver=PrivateKey.generate('K1');
 const config={version:2,chain_id:'ab'.repeat(32),deployment:'cd'.repeat(32)};
 const request={from:owner.toPublic().toString(),to:receiver.toPublic().toString(),
  token_contract:'eosio.token',quantity:'1.2345 AIC',memo:'全额到账',auth_epoch:'9007199254740993',request_id:'ef'.repeat(32),relayer:'keyrelaymoon',reward_to:'keyrelaymoon',max_fee:'0.1000 AIC'};
+test('RAM admission binds actual native purchase and full token identity to the same sponsor',()=>{
+ const actions=ramRegistrationActions('keyusersolar','keytesttoken','6,USDT','1.0000 AIC');
+ assert.deepEqual(actions.map(x=>[x.account,x.name]),[['eosio','buyram'],['eosio.key','regtoken']]);
+ assert.equal(actions[0].data.receiver,'eosio.key');assert.equal(actions[1].data.token_symbol,'6,USDT');
+ for(const a of actions)assert.equal(a.authorization[0].actor,'keyusersolar');
+ assert.throws(()=>ramRegistrationActions('eosio.key','keytesttoken','6,USDT','1.0000 AIC'));
+ assert.throws(()=>ramRegistrationActions('keyusersolar','keytesttoken','6,USDT','1.0000 USDT'));
+ assert.throws(()=>ramRegistrationActions('keyusersolar','keytesttoken','6,USDT','0.0000 AIC'));
+ assert.throws(()=>ramRegistrationActions('keyusersolar','keytesttoken','6,USDT','1.0000 AIC',{minimumBytes:0}));
+});
 test('RPC JSON retains exact uint64/int64 lexemes before number rounding',()=>{
  const value=parseRPCJSON('{"nonce":9007199254740993,"max":18446744073709551615,"debt":-9007199254740993,"height":100,"memo":"9007199254740993"}');
  assert.equal(value.nonce,'9007199254740993');assert.equal(value.max,'18446744073709551615');

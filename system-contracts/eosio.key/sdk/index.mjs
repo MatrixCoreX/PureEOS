@@ -30,6 +30,16 @@ export function assetIdentity(tokenContract,tokenSymbol){return sha(Serializer.e
 export function atomicAsset(quantity){const a=Asset.from(quantity),units=BigInt(a.units.toString());if(units< -LIMIT||units>LIMIT)throw new Error('Asset amount out of range');return{units,symbol:a.symbol.toString(),text:a.toString()};}
 export function formatFee(value){value=BigInt(value);if(value<0n||value>LIMIT)throw new Error('Invalid fee amount');return`${value/10000n}.${String(value%10000n).padStart(4,'0')} AIC`;}
 export function depositMemo(key,maximumFee,id=randomRequestId()){const cap=atomicAsset(maximumFee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('AIC fee cap required');return`PK2|${normalizePublicKey(key)}|${cap.units}|${hash(id)}`;}
+export function ramRegistrationActions(payer,tokenContract,tokenSymbol,ramPayment,{minimumBytes=4096,contract=CONTRACT}={}) {
+  nativeName(payer);nativeName(tokenContract);nativeName(contract);
+  if(payer===contract||tokenContract===contract)throw new Error('External RAM payer and token issuer required');
+  const payment=atomicAsset(ramPayment),symbol=Asset.Symbol.from(tokenSymbol).toString();
+  if(symbol!==tokenSymbol||payment.symbol!=='4,AIC'||payment.units<=0n)throw new Error('Canonical token symbol and positive AIC RAM purchase required');
+  if(!Number.isInteger(minimumBytes)||minimumBytes<4096||minimumBytes>1073741824)throw new Error('Invalid minimum RAM bytes');
+  const authorization=[{actor:payer,permission:'active'}];
+  return [{account:'eosio',name:'buyram',authorization,data:{payer,receiver:contract,quant:payment.text}},
+          {account:contract,name:'regtoken',authorization:[...authorization],data:{payer,token_contract:tokenContract,token_symbol:tokenSymbol,min_bytes:minimumBytes}}];
+}
 export function validateRequest(operation,request){const type=REQUESTS[operation];if(!type)throw new Error('Unsupported wallet operation');exact(request,schema[type].map(x=>x[0]));normalizePublicKey(request.from);if(operation==='ksend')normalizePublicKey(request.to);u64(request.auth_epoch);hash(request.request_id);nativeName(request.relayer,true);nativeName(request.reward_to,true);if(type!=='cancellation_request'){nativeName(request.token_contract);if(operation!=='ksend')nativeName(request.to);}const cap=atomicAsset(request.max_fee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('Invalid AIC fee cap');if(type==='cancellation_request'){if(u64(request.next_epoch)<=u64(request.auth_epoch))throw new Error('Invalid next epoch');}else{if(atomicAsset(request.quantity).units<=0n||typeof request.memo!=='string'||Buffer.byteLength(request.memo)>128)throw new Error('Invalid principal or memo');}if(operation.startsWith('self')){if(request.relayer||request.reward_to)throw new Error('Self operation cannot pay relay');}else if(!request.relayer||request.reward_to!==request.relayer)throw new Error('Selected BP and reward identity must match');return type;}
 export function ownerDigest(config,transaction,contract=CONTRACT){if(Number(config.version)!==2)throw new Error('Unsupported owner proof version');return Checksum256.from(sha(encode('proof_envelope',{tag:TAG,version:2,chain_id:hash(config.chain_id),contract,deployment:hash(config.deployment),transaction_id:Transaction.from(transaction).id}).array));}
 export function prepareEnvelope(config,info,operation,request,{payer='',permission='keyrelay',validSeconds=120,contract=CONTRACT}={}){
@@ -141,9 +151,9 @@ export class KeyWalletClient {
       const symbol=atomicAsset(request.quantity).symbol;
       const key=recipientKey||request.to;
       const [wallet,asset]=await Promise.all([this.wallet(key),this.asset(request.token_contract,symbol)]);
+      if(!asset||!BigInt(asset.ram_purchased||0))throw new Error('Token requires paid RAM registration before receiving funds');
       if(!wallet)rows=2;
       else if(!asset||(await this.rows('balances',String(wallet.id),{lower_bound:String(asset.id),upper_bound:String(asset.id),limit:2})).length===0)rows=1;
-      if(operation==='deposit'&&!asset)rows++;
       units=(operation==='deposit'?2:4)+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
     }else if(operation==='withdraw'||operation==='selfout'){units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);}
     else if(operation==='cancel'||operation==='selfcancel')units=3;

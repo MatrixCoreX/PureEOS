@@ -1,10 +1,14 @@
 # eosio.key · 公钥转账 / Public-key transfers
 
-开发版本，尚未公开部署。自定义代币的托管 RAM 授权隔离仍是发布阻断项，见 [风险记录](docs/RISKS.md)。 / Development only. Custom-token custody RAM authority remains a release blocker; see the risk register.
+开发测试版本，已部署至 [公开测试链](https://aic-test.matrixai.one/)，未发布为稳定版。当前测试范围为系统 AIC 与标准 USD；只接入绑定完整币种及审核代码哈希的白名单，见 [白名单提案流程](docs/TOKEN_ALLOWLIST.md)。 / Development TEST deployment; not a stable release. The test profile admits native AIC and standard USD through an exact-identity/code-hash whitelist; see the proposal workflow.
 
 独立的多代币公钥钱包合约。文本账户可以给任意有效 K1 公钥转币，公钥持有人可以给其他公钥或已存在的文本账户转币。收款本金全额到账，AIC 手续费另外支付。公钥收款人无需先创建链上文本账户。
 
 An independent multi-token public-key wallet contract. Native accounts can deposit to any valid K1 public key; the holder can send to another public key or withdraw to an existing native account. The recipient receives the full principal; AIC fees are additional. A public-key recipient needs no native account or prior registration.
+
+所有币种（包括 AIC）必须先由原生账户购买真实 RAM 并调用 `regtoken` 登记。每个币种有独立的已购字节预算，可由任何账户补充；未登记或新增行预算不足的充值原子回滚。新增收款公钥及余额行费用由本次付款方承担，已有行不重复收取新建费用。见 [登记接口与费用规则](docs/API.zh-CN.md#ram-登记与付款方费用)。
+
+Every asset, including AIC, requires a native sponsor's real RAM purchase and `regtoken` admission first. Each full token identity has its own purchased-byte allocation budget, which any sponsor may top up. Unregistered or over-budget new allocations roll back. The transfer sender pays additional recipient-creation fees; existing rows pay no repeated creation fee. RAM funding does not grant whitelist admission. Arbitrary custom implementations remain outside this profile.
 
 第一版使用链上 PowerUp CPU/NET **资源市场占用**定价，商业中继仅允许已注册、押金正常、未维护且未永久拉黑的 BP。中继收入为基础费用的 30% 加价，合约每次执行都重新检查资格。用户指令在合约内验证签名，绑定完整原生交易、撤销代次、到期时间、收款方、代币、金额、指定 BP 和总费用上限。
 

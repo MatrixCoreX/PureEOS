@@ -1,5 +1,7 @@
 # 部署与验证 / Deployment and qualification
 
+2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
+
 此分支实现独立合约与客户端，不替换 eosio.system，不修改 nodeos，也不自动升级当前公开演示链。已封存治理的链禁止直接新增 eosio.* 短账号。当前验证使用独立新测试链，在治理封存前创建 eosio.key；不要绕过既有保护。
 
 This branch adds a contract/client, without replacing eosio.system, changing nodeos or automatically upgrading the public demo. Sealed governance prohibits direct creation of new eosio.* accounts. Qualification uses a new isolated chain and provisions eosio.key before sealing; do not bypass existing protections.
@@ -19,7 +21,7 @@ npm test
 KEY_BUILD_FIXTURES=1 bash scripts/build.sh ./artifacts
 ```
 
-`artifacts/eosio.key.wasm` is the normal build using real system tables; it is not approved for public deployment while the RAM-authority blocker remains. The `test-only-*` directories are incompatible test/alternate-system builds and must never be substituted into a deployment package. The parent repository's normal CMake `cleos` target compiles the native client additions in `programs/cleos/key_wallet.hpp`; it adds no runtime dependency on Node.js to cleos.
+`artifacts/eosio.key.wasm` is the normal build using real system tables; the AIC/USD reviewed-code profile passed remote qualification and is deployed on the public TEST chain. Arbitrary issuer code remains excluded. The `test-only-*` directories are incompatible test/alternate-system builds and must never be substituted into a deployment package. The parent repository's normal CMake `cleos` target compiles the native client additions in `programs/cleos/key_wallet.hpp`; it adds no runtime dependency on Node.js to cleos.
 
 ## Bootstrap before governance sealing
 
@@ -28,10 +30,25 @@ Keep the qualified system WASM bytes and existing selected modes: single-choice 
 The current schema pin is the qualified system WASM SHA-256 `b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170`. Its PowerUp state version is **1** (PureEOS 10%/90% resource split); inner CPU/NET resource versions are **0**. Treat a different system hash/schema as an adaptation requiring review, rather than accepting upstream version-0 behavior silently.
 
 ```bash
-# Existing native bootstrap authorities, BEFORE governance seal:
-cleos create account eosio eosio.key OWNER_PUBLIC_KEY ACTIVE_PUBLIC_KEY
-cleos push action eosio buyram \
-  '{"payer":"eosio","receiver":"eosio.key","quant":"100.0000 AIC"}' -p eosio
+# After eosio.system/PowerUp initialization, BEFORE governance seal.
+# New accounts have no initial RAM: create and fund in one atomic transaction.
+cleos push transaction '{"actions":[
+ {"account":"eosio","name":"newaccount","authorization":[{"actor":"eosio","permission":"active"}],
+  "data":{"creator":"eosio","name":"eosio.key",
+   "owner":{"threshold":1,"keys":[{"key":"OWNER_PUBLIC_KEY","weight":1}],"accounts":[],"waits":[]},
+   "active":{"threshold":1,"keys":[{"key":"ACTIVE_PUBLIC_KEY","weight":1}],"accounts":[],"waits":[]}}},
+ {"account":"eosio","name":"buyram","authorization":[{"actor":"eosio","permission":"active"}],
+  "data":{"payer":"eosio","receiver":"eosio.key","quant":"100.0000 AIC"}}
+]}' --expiration 1800
+
+# Allocate self-owned resources before EOSKEY becomes code-only. The funding
+# and stake are atomic and leave ZERO liquid AIC, as required by init.
+cleos push transaction '{"actions":[
+ {"account":"eosio.token","name":"transfer","authorization":[{"actor":"eosio","permission":"active"}],
+  "data":{"from":"eosio","to":"eosio.key","quantity":"110.0000 AIC","memo":"bootstrap own resources"}},
+ {"account":"eosio","name":"delegatebw","authorization":[{"actor":"eosio.key","permission":"active"}],
+  "data":{"from":"eosio.key","receiver":"eosio.key","stake_net_quantity":"10.0000 AIC","stake_cpu_quantity":"100.0000 AIC","transfer":false}}
+]}' --expiration 1800
 
 # Contract-only active permission; use owner for this initial deployment/init.
 cleos set account permission eosio.key active \
@@ -62,6 +79,21 @@ Construct `init.json` from the actual RPC chain ID, a fresh public 32-byte deplo
 The deployment salt is public, distinct across deployments and immutable after initialization. Verify config.chain_id against get_info. The wallet must have no pre-existing unattributed AIC balance. Initialize PowerUp first. Buy enough real RAM for reviewed row limits plus outgoing token balance rows and safety reserve; the example RAM purchase and tiny test caps are not a production capacity estimate. If contract RAM is scarce, recipients can pre-open supported token balance rows with their own RAM before withdrawal.
 
 Seal governance through the existing procedure. Confirm eosio.key is protected, owner/active deployment keys cannot directly move funds or update code, the deployed code hash equals the qualified artifact, and global2.new_ram_per_block is 1024. Later wallet upgrades go through existing governance; V1 has no admin sweep or unlocked network-fee payout.
+
+## Paid token RAM admission
+
+Register `eosio.token::4,AIC` before accepting principal or fee credit; every other
+issuer/symbol/precision follows the same rule. Use the atomic `buyram` + `regtoken`
+example in [CLEOS.md](CLEOS.md). The initialization RAM purchase covers deployment
+and configuration but grants no asset budget. Only matching new native purchase
+receipts grant token capacity. Any signing native sponsor may top up without
+granting account permissions to eosio.key. Transfer senders additionally pay new
+recipient row fees; received principal stays whole.
+
+Asset RAM fields change the development table schema. Use a fresh isolated
+deployment; an existing deployment needs a reviewed migration. Owner signing
+protocol stays at version 2. Paid admission does not resolve malicious issuer
+authority over shared custody RAM. The separate qualified code-hash whitelist excludes arbitrary issuer programs.
 
 ## BP relay provisioning
 

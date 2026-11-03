@@ -60,6 +60,9 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    [[eosio::action]] void init(checksum256 chain_id, checksum256 deployment,
                               name fee_contract, symbol fee_symbol,
                               checksum256 system_hash, fee_policy policy);
+   [[eosio::action]] void regtoken(name payer, name token_contract, symbol token_symbol, uint32_t min_bytes);
+   [[eosio::on_notify("eosio::logbuyram")]]
+   void onbuyram(name payer, name receiver, asset quantity, int64_t bytes, int64_t ram_bytes, asset fee);
    [[eosio::action]] void regrelay(name bp, name permission, std::string endpoint);
    [[eosio::action]] void setrelay(name bp, bool enabled);
    [[eosio::action]] void prove(public_key owner, checksum256 chain_id, checksum256 deployment, uint32_t reference_block_num);
@@ -86,7 +89,8 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
       fee_policy policy;
       uint64_t next_wallet = 1, next_asset = 2;
       uint32_t wallet_count = 0, balance_count = 0, asset_count = 1, native_payer_count = 0;
-      EOSLIB_SERIALIZE(configuration, (version)(chain_id)(deployment)(system_hash)(fee_contract)(fee_symbol)(policy)(next_wallet)(next_asset)(wallet_count)(balance_count)(asset_count)(native_payer_count))
+      checksum256 token_hash;
+      EOSLIB_SERIALIZE(configuration, (version)(chain_id)(deployment)(system_hash)(fee_contract)(fee_symbol)(policy)(next_wallet)(next_asset)(wallet_count)(balance_count)(asset_count)(native_payer_count)(token_hash))
    };
    using config_table = singleton<"config"_n, configuration>;
    struct [[eosio::table]] wallet {
@@ -117,9 +121,12 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
       uint64_t out_ticket = 0;
       name out_to;
       int64_t out_amount = 0, receiver_before = 0;
+      name ram_sponsor;
+      uint64_t ram_purchased = 0, ram_used = 0;
+      checksum256 funding_tx;
       uint64_t primary_key() const { return id; }
       checksum256 by_identity() const { return identity; }
-      EOSLIB_SERIALIZE(registered_asset, (id)(token_contract)(token_symbol)(identity)(reserve)(busy)(notified)(out_ticket)(out_to)(out_amount)(receiver_before))
+      EOSLIB_SERIALIZE(registered_asset, (id)(token_contract)(token_symbol)(identity)(reserve)(busy)(notified)(out_ticket)(out_to)(out_amount)(receiver_before)(ram_sponsor)(ram_purchased)(ram_used)(funding_tx))
    };
    using assets = multi_index<"assets"_n, registered_asset,
       indexed_by<"byidentity"_n, const_mem_fun<registered_asset, checksum256, &registered_asset::by_identity>>>;
@@ -156,6 +163,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    struct charge { int64_t base, premium, total; };
    configuration config() const;
    void check_system(const configuration& cfg) const;
+   void check_token(name token, symbol sym) const;
    void check_bp(name bp, const configuration& cfg) const;
    void check_relay(name bp, name reward_to, const configuration& cfg) const;
    static checksum256 hash_key(const public_key& key);
@@ -165,9 +173,10 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    static int64_t checked(__int128 value);
    static int64_t raw_balance(name token, name owner, symbol sym);
    uint64_t find_wallet(const public_key& key) const;
-   uint64_t ensure_wallet(const public_key& key);
+   uint64_t ensure_wallet(const public_key& key, uint64_t asset_id);
    uint64_t find_asset(name token, symbol sym) const;
    uint64_t ensure_asset(name token, symbol sym);
+   void consume_ram(uint64_t asset_id, uint64_t bytes);
    void check_asset(uint64_t id) const;
    int64_t balance_of(uint64_t wallet_id, uint64_t asset_id) const;
    void credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);

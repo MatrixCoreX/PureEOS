@@ -1,5 +1,7 @@
 # First-release API · owner protocol 2
 
+2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
+
 ## Funds and supported tokens
 
 `eosio.key` is the custody account, distinct from the issuing token contract and from BP escrow/slash pools. Initialization selects the 4-decimal AIC issuing interface. Other fungible tokens must provide standard `transfer(from,to,quantity,memo)`, `stat` and `accounts` semantics. Identity includes issuer contract and complete symbol/precision; identically named tokens remain distinct.
@@ -21,6 +23,33 @@ A key sending another token still needs additional AIC. No automatic conversion 
 
 Non-AIC reserves equal the sum of that asset's key balances. AIC reserves equal key balances plus native fee credits, network base-fee buckets and earned BP premiums. Outgoing transfers require a matching sender notification, exact reserve change, and full recipient increase during the standard sender-notification phase. A later normal recipient callback can use its received tokens. A missing step rolls back epoch, fees, ledger and external token effects.
 
+## Paid RAM admission and sender fees
+
+Every asset, including AIC principal and AIC fee deposits, requires paid
+`regtoken(payer, token_contract, token_symbol, min_bytes)` admission. Send exactly
+two ordinary root actions in one atomic transaction: `eosio::buyram` to eosio.key,
+then `eosio.key::regtoken`, both authorized by the same native payer. The exact AIC
+spend is bounded by the purchase amount, and minimum bytes must be at least 4096.
+Only actual native `logbuyram` bytes grant capacity. Failed admission rolls the
+purchase back. Any native account may top up; first-sponsor attribution remains.
+There is no sponsor refund, RAM sale or token deregistration interface.
+
+Per-token `ram_purchased` is real purchased bytes; `ram_used` is a conservative
+allocation budget rather than actual native RAM usage. Reserve 2048 bytes per
+asset, 1024 per new key, 512 per new internal asset-balance/native recipient row,
+and 1024 per native fee payer for its credit/bucket rows. Exhausted budgets reject
+new allocation while existing rows can receive and no-new-row exits still work.
+Zero balances and recipient close/reopen never reset budgets.
+
+The transfer sender pays extra recipient-creation fees: native sender prepaid AIC
+for deposits, sending-key AIC for key transfers/withdrawals. The recipient needs
+no account or opening signature and gets full principal. Existing records pay no
+repeated creation charge; normal execution fees remain. `new_row_fee` is a policy
+price, not a live RAM byte quote. Collected fees do not refill purchased-byte
+budgets automatically. SDK `ramRegistrationActions` builds the purchase/admission
+actions; see [CLEOS.md](CLEOS.md). This accounting does not isolate arbitrary
+malicious issuer RAM authority. The qualified profile separately requires exact-identity/code-hash whitelist admission; arbitrary issuers remain excluded.
+
 ## Dynamic fees
 
 The pinned PureEOS system code is read through `eosio::powup.state`, **scope 0**. CPU/NET `max(adjusted_utilization, utilization) / weight` measures committed resource-market occupancy. A fresh reservation can raise current utilization before the smoothed field catches up; that is valid on-chain state. It is **not actual block CPU/NET consumption, host CPU percentage or TPS**. V1 adds no nodeos meter and accepts no BP-reported congestion value.
@@ -38,7 +67,9 @@ Arithmetic is integer-only. Ordinary deposits, self exits, claims and refunds ha
 
 The first fee operation per consensus-time epoch refreshes pricing; others reuse it. Initialization chooses a 1–60 second epoch. Quotes are estimates; execution uses current cached pricing and actual new rows and cannot exceed the signed maximum. Test prices are functional fixtures, not production economic qualification. A nonzero floor, row costs and capacity limits impose initial spam costs/bounds without claiming resistance to arbitrary economic attacks.
 
-Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, claim/refund `4`. New key wallets, asset-balance rows and asset registration## Complete transaction owner proof (protocol 2)
+Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, claim/refund `4`. New recipient wallets and asset-balance rows incur the sender-paid row fee; token registration has its separate sponsored RAM purchase.
+
+## Complete transaction owner proof (protocol 2)
 
 The holder prepares a complete native transaction, with one context-free `eosio.key::prove` action and one ordinary root operation. No delay, extra root actions or transaction extensions are accepted. The native authorization names exactly one selected BP child permission, or one explicit self payer. Native expiration is at most one hour. The signed full reference block number must agree with the native TAPOS low 16 bits; relay admission additionally checks the actual irreversible reference ID/prefix.
 
@@ -78,6 +109,6 @@ Native recipient token rows newly funded by the wallet also consume the shared b
 
 原生收款方首次建立代币余额行、且由钱包承担 RAM 时，也计入共用余额行预算并收新行费；关闭再重建不会重置预算。初始化上限须按实际已购买 RAM 留出运行余量。恶意发行方伪造状态或滥用原生 RAM 计费仍属于发行方信任边界。
 
-Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keytesttoken,...` only after operator review for additional issuers. These service limits do not change on-chain multi-token support or independent-device signing.
+Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keyusdtoken1,...` only after operator review for additional issuers. Operator issuer review can only narrow the compiled on-chain whitelist; it cannot add an unapproved identity or code hash. Independent-device signing is unchanged.
 
 参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。

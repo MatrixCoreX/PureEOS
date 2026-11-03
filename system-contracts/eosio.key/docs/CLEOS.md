@@ -4,14 +4,35 @@
 
 These are native C++ cleos commands in this branch. Existing native-to-native transfers retain their syntax. Endpoints, accounts and amounts below are examples; use a chain with eosio.key deployed. Import the owner's key into the local keosd wallet only; never send it to a BP.
 
+## 代币 RAM 登记 / Token RAM registration
+
+任何原生账户均可真实购买 RAM 并登记币种，AIC 也遵守同一规则。
+一个原子交易依次购买与登记，失败一起回滚。相同调用用于追加预算。
+把 `keyusdtoken1` / `4,USD` 改为 `eosio.token` / `4,AIC` 即为 AIC 登记。
+
+Any native sponsor can fund admission/top-ups; the receiving public key needs no
+opening action. The purchase spends exactly `quant`; `min_bytes` bounds capacity.
+
+```bash
+cleos -u https://YOUR-RPC push transaction '{"actions":[
+ {"account":"eosio","name":"buyram","authorization":[{"actor":"keyusersolar","permission":"active"}],
+  "data":{"payer":"keyusersolar","receiver":"eosio.key","quant":"1.0000 AIC"}},
+ {"account":"eosio.key","name":"regtoken","authorization":[{"actor":"keyusersolar","permission":"active"}],
+  "data":{"payer":"keyusersolar","token_contract":"keyusdtoken1","token_symbol":"4,USD","min_bytes":4096}}
+]}' --expiration 1800
+```
+
+登记人预购容量；新增收款记录费由每次发送方另付，收款本金全额到账。
+已有行不重复收取新建费用。当前没有 sponsor 退款，正常手续费不自动补充 RAM 字节预算。
+
 ## 文本账户转公钥 / Native account to public key
 
 ```bash
 cleos -u https://YOUR-RPC transfer keyusersolar PUB_K1_RECIPIENT '10.0000 AIC' \
   --max-key-fee '0.5000 AIC' --key-fee-fund '1.0000 AIC'
 
-cleos -u https://YOUR-RPC transfer keyusersolar PUB_K1_RECIPIENT '5.000000 USDT' \
-  -c keytesttoken --max-key-fee '0.5000 AIC' --key-fee-fund '1.0000 AIC'
+cleos -u https://YOUR-RPC transfer keyusersolar PUB_K1_RECIPIENT '5.0000 USD' \
+  -c keyusdtoken1 --max-key-fee '0.5000 AIC' --key-fee-fund '1.0000 AIC'
 ```
 
 `--key-fee-fund` 是独立的 AIC 费用预存，与本金转账放在同一个原子交易中；余额足够时可省略。`--max-key-fee` 必须明确填写，是本次最高实际费用，并非预存金额。余额多出的部分可通过 `refundfee` 取回。公钥转账使用合约路由 memo，不能同时指定普通 memo 或 `--pay-ram-to-open`。支持 PUB_K1 和旧式 EOS K1 公钥。
@@ -65,6 +86,27 @@ Independent devices can authorize concurrent sends at the same epoch. Only cance
 提交外部中继使用独立 HTTP 配置，不转发 RPC Authorization 或其他自定义请求头，且单独校验 HTTPS 证书。loopback 测试豁免只接受严格的本地主机地址。
 
 External relay submission uses a separate HTTP configuration, forwards no RPC credentials/custom headers, and verifies TLS certificates independently. Test HTTP accepts exact loopback hosts only.
+
+## 中继收入领取 / Claim relay earnings
+
+成功商业执行把基础费记入网络费用桶，把基础费的 30% 加价记入指定 BP 的
+`feebuckets.relay_earned`。例如基础费 0.0100 AIC、加价 0.0030 AIC，发送方共付
+0.0130 AIC；这不是总费用按 70%/30% 分成。失败整笔回滚，不产生可领取收入。
+BP 可累积后授权领取到已有原生账户；中继子权限默认不链接 `claim`。
+领取需要 BP 自己的原生授权、预存 AIC 支付领取费用，并设置费用上限。
+已赚收入不因中继停用、维护或失去资格而被抹去。
+
+Successful commercial execution credits the BP's markup, which is 30% of base
+fees, to `relay_earned`. The BP may aggregate and withdraw with its native account
+authority, separate prepaid AIC withdrawal fees and an explicit fee cap. Relay
+hot permissions are not linked to `claim` by the provisioning procedure.
+
+```bash
+# Requires sufficient confirmed earnings and separately prepaid AIC fee credit.
+cleos -u https://YOUR-RPC push action eosio.key claim \
+  '{"bp":"keyrelaymoon","to":"keyrelaymoon","quantity":"1.0000 AIC","max_fee":"0.1000 AIC"}' \
+  -p keyrelaymoon@active --expiration 1800
+```
 
 ## 原生交易导出 / Native transaction export
 

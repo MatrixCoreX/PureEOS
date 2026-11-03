@@ -1,8 +1,10 @@
 # 自定义代币托管边界 / Custom-token custody boundary
 
-决策待确认。此文记录已经复现的风险和两个可执行方向，不能作为已完成修复的声明。
+2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
 
-Decision pending. This document records a reproduced risk and two implementable directions; neither is claimed as completed.
+2026-11-03 最终选择并完成方案一：系统 AIC 与标准 USD 的完整身份/代码哈希白名单。远端正常系统74项、替代夹具74项和SDK/中继14项通过，已部署公开 TEST 链。两币在新链封存前引导配置，未声称经过七天成熟提案；后续新增必须走既有开发者提案。方案二仅保留为未选研究。
+
+Option 1 is selected and qualified for the reviewed AIC/standard USD profile. It is deployed on the fresh public TEST chain, without changing the stable release. Bootstrap admission is distinct from executing a mature seven-day proposal. Option 2 remains unimplemented research.
 
 ## 已复现的问题 / Reproduced behavior
 
@@ -38,10 +40,10 @@ This preserves support for arbitrary custom issuer programs while isolating avai
 
 ## 当前发布状态 / Current release state
 
-当前实现的并发与资金回归已通过，但上述共享 RAM 风险仍是公开部署阻断项。代码保留在开发分支，不更新稳定版本、公开链或 release tag。待用户确认方向后实施，并重新跑相应的正反例、权限撤销、资金回滚及 RAM 隔离验证。
+当前 AIC/USD 资格及制品见 [20261103-token-whitelist](../../../performance-results/eosio-key/20261103-token-whitelist/REPORT.md)。拒绝未列币种及批准 USD 被替换成恶意代码的路径；USD 文本收款人必须预先 open。稳定 v1.0.0 标签/制品不变，未进行 TPS 或任意自定义代币资格测试。
 
-The current concurrency/funds regression passes, but shared RAM authority remains a public-deployment blocker. Keep development separate from stable releases, public chains and tags. Implement the selected direction and requalify before promotion.
+The qualification is limited to the reviewed whitelist and public TEST deployment. It does not implement native exact RAM metering or arbitrary-code custody isolation.
 
-最新实际钱包复现：正常系统 WASM 的私有链上，`eosio.key` 提取测试恶意币时额外被计费 **4,330 字节 RAM**，`balance_count` 未变化，四种资产的储备等式仍成立。此项是已确认的资源隔离失败，见 [FUNCTIONAL_R4.json](../../../performance-results/eosio-key/20261103-v2-security/FUNCTIONAL_R4.json) 中 `unreviewed_issuer_RAM_exposure` 和 `release_qualified=false`。
+历史任意代币版本实际复现：正常系统 WASM 的私有链上，`eosio.key` 提取测试恶意币时额外被计费 **4,330 字节 RAM**，`balance_count` 未变化，四种资产的储备等式仍成立。此项是已确认的资源隔离失败，见 [FUNCTIONAL_R4.json](../../../performance-results/eosio-key/20261103-v2-security/FUNCTIONAL_R4.json) 中 `unreviewed_issuer_RAM_exposure` 和 `release_qualified=false`。
 
 The normal-system wallet itself reproduced the extra **4,330-byte** charge without changing its row counter, while all four reserve equations remained valid. This is a confirmed resource-isolation failure. Functional execution PASS does not mean release approval.

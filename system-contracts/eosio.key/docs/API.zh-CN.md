@@ -1,5 +1,7 @@
 # 第一版 API · 签名协议 2
 
+2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
+
 `eosio.key` 是代币托管账户，代币仍由原发行合约发行。资产身份为「发行合约 + 精度 + 符号」，同名假 AIC 不能支付真实 AIC 手续费。标准代币的本金全额到账，手续费额外用初始化指定的 4 位 AIC 支付。发行方仍能改变其代币逻辑；储备检查无法证明恶意发行合约所有表均真实。
 
 | 操作 | 接口 | 费用 |
@@ -12,6 +14,41 @@
 | 撤销未执行授权 | `cancel` / `selfcancel` | 将 auth_epoch 提升到更大 next_epoch |
 | 提取过去中继收入 | `claim` | BP 原生授权；不要求当前仍有中继资格 |
 | 退回费用预存 | `refundfee` | 原生费用所有者授权 |
+
+## RAM 登记与付款方费用
+
+所有币种（包括 AIC 本金和 AIC `fee` 费用预存）都先调用
+`regtoken(payer, token_contract, token_symbol, min_bytes)` 登记。
+任意原生账户均可授权购买真实 RAM；收款公钥不需要开户、签名或提供 RAM。
+
+一次原子交易必须依次且仅包含两个普通根 action，均由同一 payer 授权：
+
+1. `eosio::buyram(payer, receiver=eosio.key, quant)`：payer 同意支付确切的 AIC 金额。
+2. `eosio.key::regtoken(payer, token_contract, token_symbol, min_bytes)`：完整币种例如 `keyusdtoken1` / `4,USD`，最低字节数至少 4096。
+
+合约只根据真实 `eosio::logbuyram` 的实际字节记账，不能用声明、转入金额或过去赠送的 RAM 冒充。
+购买不足、精度错误或登记失败时两步一起回滚。同一接口用于追加预算，其他账户也可出资；
+首次 sponsor 保存在 `ram_sponsor`。RAM 归 eosio.key 使用，当前没有 sponsor 退款、卖出或注销接口。
+
+每币 `ram_purchased` 为累计实际购买字节，`ram_used` 为保守分配预算，不是原生实际 `ram_usage`。
+每币预留 2048 字节覆盖登记及托管余额行；新公钥分配 1024 字节；新内部币种余额行或原生
+收款余额行分配 512 字节；新原生费用付款人分配 1024 字节覆盖费用余额及费用桶。
+预算不足拒绝新分配，已有行仍能接收，不需要新增行的退出仍可执行。
+余额归零或原生接收方关闭再打开余额行不会返还预算。
+
+登记人的预购预算保证容量；每次新增收款记录费由本次付款方额外承担：
+
+| 路径 | 新增收款记录费付款方 | 收款方 |
+|---|---|---|
+| 文本账户充值公钥 | 发送账户自己的预存 AIC | 本金全额入账 |
+| 公钥转公钥 | 发送公钥自己的 AIC | 本金全额入账 |
+| 提币需建立原生 token 余额行 | 发送公钥自己的 AIC | 本金全额到账 |
+
+已有记录不重复收新建费用，普通执行费仍适用。`new_row_fee` 属于初始化费用策略，
+不是实时 RAM 市场逐字节报价，正常手续费也不会自动补充字节预算。
+此登记只控制正常分配，恶意发行合约借提币授权额外计费的安全阻断仍保留。
+SDK `ramRegistrationActions(payer, token, symbol, ramPayment, {minimumBytes})` 返回上述两项 action。
+原生调用示例见 [CLEOS.md](CLEOS.md)。
 
 ## 多设备并发和重复提交
 
@@ -39,6 +76,6 @@ Native recipient token rows newly funded by the wallet also consume the shared b
 
 原生收款方首次建立代币余额行、且由钱包承担 RAM 时，也计入共用余额行预算并收新行费；关闭再重建不会重置预算。初始化上限须按实际已购买 RAM 留出运行余量。恶意发行方伪造状态或滥用原生 RAM 计费仍属于发行方信任边界。
 
-Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keytesttoken,...` only after operator review for additional issuers. These service limits do not change on-chain multi-token support or independent-device signing.
+Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keyusdtoken1,...` only after operator review for additional issuers. Operator issuer review can only narrow the compiled on-chain whitelist; it cannot add an unapproved identity or code hash. Independent-device signing is unchanged.
 
 参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。
