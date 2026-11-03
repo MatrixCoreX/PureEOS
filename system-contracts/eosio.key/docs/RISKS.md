@@ -63,3 +63,7 @@ Authority boundary: the contract enforces the registered permission identity and
 权限边界：合约强制匹配已登记权限并检查 BP 资格，但不能直接读取原生权限树。参考中继额外核验 active 下的单密钥、阈值 1 子权限，无账户/等待绑定，并与 owner/active/出块密钥分离。直接运行中继的 BP 也须保持该设置，登记一个权限名称不等于已证明其密钥管理安全。
 
 [代币托管修复方案 / Custody options](TOKEN_CUSTODY_REVIEW.md)
+
+最新实际钱包复现：正常系统 WASM 的私有链上，`eosio.key` 提取测试恶意币时额外被计费 **4,330 字节 RAM**，`balance_count` 未变化，四种资产的储备等式仍成立。此项是已确认的资源隔离失败，见 [FUNCTIONAL_R4.json](../../../performance-results/eosio-key/20261103-v2-security/FUNCTIONAL_R4.json) 中 `unreviewed_issuer_RAM_exposure` 和 `release_qualified=false`。
+
+The normal-system wallet itself reproduced the extra **4,330-byte** charge without changing its row counter, while all four reserve equations remained valid. This is a confirmed resource-isolation failure. Functional execution PASS does not mean release approval.

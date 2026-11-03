@@ -1,0 +1,26 @@
+{
+  "source_commit": "622eb43c8eb214bd430e9377e37a0a1654d8897a",
+  "branch": "wip/eosio-key-v2-security-20261103",
+  "release_status": "BLOCKED_UNREVIEWED_ISSUER_RAM",
+  "release_qualified": false,
+  "unit_tests_passed": 13,
+  "normal_build_observed_checks": 58,
+  "normal_checks_include_known_RAM_risk_reproduction": true,
+  "fixture_observed_checks": 56,
+  "RAM_extra_bytes": 4330,
+  "RAM_wallet_counter_changed": false,
+  "node_TPS": "UNMEASURED",
+  "user_decision_pending": [
+    "reviewed token implementations for first release",
+    "isolated custody for arbitrary custom implementations"
+  ],
+  "hardware": "Vultr vhp-4c-8gb-amd; AMD EPYC-Rome guest; 4 allowed logical CPUs / 2 guest cores / 4 threads; 8 GB class",
+  "private_test_nodes_remaining": 0,
+  "hashes": {
+    "nodeos": "ce9fdc858c1ad16e369227b7e39562ba9b2c18f6c75b080343d26da9834326a9",
+    "system_WASM": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "wallet_WASM": "bd8f2b599968450e112a2af0002869badc4b78b48c41ed6527a88fe01b5b67b2",
+    "wallet_ABI": "6ba9885801ae5eb44a6fd605baee5eaccccf33bf9adf15b91784869c1572e8d5",
+    "native_cleos": "c7e1deef45d5070745b27032db603348ea177a9f9b90a9ed4236a7c83353f846"
+  }
+}

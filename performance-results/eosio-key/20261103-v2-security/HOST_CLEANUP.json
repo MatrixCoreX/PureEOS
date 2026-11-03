@@ -1,0 +1,12 @@
+{
+  "private_nodes_remaining": 0,
+  "host_public_listeners": [
+    "LISTEN 0      4096      127.0.0.54:53 0.0.0.0:*",
+    "LISTEN 0      4096   127.0.0.53%lo:53 0.0.0.0:*",
+    "LISTEN 0      128          0.0.0.0:22 0.0.0.0:*",
+    "LISTEN 0      128             [::]:22    [::]:*"
+  ],
+  "firewall": "Status: active\n\nTo                         Action      From\n--                         ------      ----\n22/tcp                     ALLOW       Anywhere                  \n22/tcp (v6)                ALLOW       Anywhere (v6)             \n\n",
+  "release_qualified": false,
+  "release_blocker": "Unreviewed issuer can bill shared custody RAM; reproduced natively and directly against eosio.key. User choice on token admission versus custody isolation pending."
+}

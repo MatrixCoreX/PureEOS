@@ -1,0 +1,114 @@
+{
+  "status": "PASS",
+  "directory": "/opt/pureeos-key-security-20261103-r1/ram-probe-test-r1/local-tests/integer-v2-n0ecjdrn",
+  "endpoint": "http://127.0.0.1:54799",
+  "scope": "TEST ONLY native RAM authority boundary demonstration; no wallet production qualification, no live changes, no TPS",
+  "checks": [
+    "Authorized malicious token first receiver can bill 4 KiB extra RAM to custody sender",
+    "RAM_RESTRICTIONS rejects recipient-notification RAM theft and rolls back principal"
+  ],
+  "harness_script_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+  "artifacts": {
+    "eosio.system/eosio.system.wasm": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "eosio.system/eosio.system.abi": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+    "eosio.bpay/eosio.bpay.wasm": "a67721fce63c8cbad1fcc3f05d88017c4a5fa9ea67543c6b0ed03cbcd3a8f8aa",
+    "eosio.token/eosio.token.wasm": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+  },
+  "chain_id": "6b5d53648541525c9b6348b7525095c192600f0d93550c80094047ec5e406c03",
+  "confirmed_transactions": [
+    {
+      "transaction_id": "9b93d4aafb127dacade6453a6ffa502bbdf4c5661a0bb135003a11e99d91caf8",
+      "block_num": 20,
+      "block_id": "000000144b636d8c0602eafb70f1fd093d64626049e0fb7ebb4313420af148ab",
+      "observed_lib": 20,
+      "reported_block_num": 20
+    },
+    {
+      "transaction_id": "6ce8bb90df96c3b273bd005c52711dca31570e316a4cc0035c96d278e8902279",
+      "block_num": 23,
+      "block_id": "00000017bf90f8c37edf3806fa7bb8869ba6440ca027a967922467ce05b09a31",
+      "observed_lib": 23,
+      "reported_block_num": 23
+    },
+    {
+      "transaction_id": "e6e40592ec9caec4c1182638571eec6cf32ff32357896b2f5c23b931a1d60626",
+      "block_num": 26,
+      "block_id": "0000001af1a530ddc40f2fe58f24967d98b0e9f08efc16231eeea8556f684456",
+      "observed_lib": 26,
+      "reported_block_num": 26
+    },
+    {
+      "transaction_id": "864cba20ce7c1b9554161a08eea3c62cc7ad7899d47b0c484442e93243cb6faf",
+      "block_num": 29,
+      "block_id": "0000001d558032ace8fd73ad1e544ca3981d6674d0a4c99ac02149ab69aebb87",
+      "observed_lib": 29,
+      "reported_block_num": 29
+    },
+    {
+      "transaction_id": "14ae18215e593ffe4b1ec9598e59a0eaf4464cc9e2c2966642ef8937a20f4555",
+      "block_num": 32,
+      "block_id": "0000002027ad0ea59a6b3968d8840ff748af20abce90914decb71a89f905d0dd",
+      "observed_lib": 32,
+      "reported_block_num": 32
+    },
+    {
+      "transaction_id": "094f5f87890462ad1432c1217cee6523a7e3c556e11621c4aaf6f9f2183a1a87",
+      "block_num": 35,
+      "block_id": "000000237423b318840e56f2132102c8e2bebc84a90e789a2e5fb4eaf2d09bc5",
+      "observed_lib": 35,
+      "reported_block_num": 35
+    },
+    {
+      "transaction_id": "073e08accbf73c061bbca956c469963666e402e38686ff4239e7f147a69ccb15",
+      "block_num": 38,
+      "block_id": "00000026cf88764c8ca28e529d6783069e3c0113bc5f1e2aca0696a10b47eece",
+      "observed_lib": 38,
+      "reported_block_num": 38
+    },
+    {
+      "transaction_id": "88f16c1d2721fd4f962318cc4f07bc27a1e2a7d2ae5da2936f4d4e2e3fd52230",
+      "block_num": 41,
+      "block_id": "00000029d37b4f388477c10888ba8c68c7f02949f1a54ef4bffe6293f35a3af2",
+      "observed_lib": 41,
+      "reported_block_num": 41
+    },
+    {
+      "transaction_id": "25096109da3e8e3c346af9efb15d51d1a3565fcc5e4c6e560e6e9801bec97346",
+      "block_num": 44,
+      "block_id": "0000002c51525265017ac045f71e7a7644f30adf8547868ee7c01d715f8991d5",
+      "observed_lib": 44,
+      "reported_block_num": 44
+    },
+    {
+      "transaction_id": "579a46062505812086cdc3a9acac7c798ae4538160eb486ac087face6266471b",
+      "block_num": 47,
+      "block_id": "0000002fa6e36d0932eacc33f803ea2aa2fe7c99009e6c16475ba78c5d0262a1",
+      "observed_lib": 47,
+      "reported_block_num": 47
+    },
+    {
+      "transaction_id": "f63238bec29014383c3441ebc2c0373ff2c9bf03d0c5362512e8b731b20c0d4d",
+      "block_num": 50,
+      "block_id": "000000322baab47258b913bc120e5d7c2f83ebcd04c0842464dc4fa82ae72f6c",
+      "observed_lib": 50,
+      "reported_block_num": 50
+    },
+    {
+      "transaction_id": "d1a09846c9592b97bd7803d6684a9dafc34fc229b80003b04c1be347add8f030",
+      "block_num": 53,
+      "block_id": "000000354271ae0656cfdc45f9f78158e4f865721fb6af3a9e1e34f61aa040c9",
+      "observed_lib": 53,
+      "reported_block_num": 53
+    }
+  ],
+  "demonstrated_RAM_delta_bytes": 4330,
+  "probe_WASM_SHA256": "6a86113be25e9982245549b3dd8ad163fc2ae271dab25dee254e6e83bb5cb96a",
+  "risk_reproduced": true,
+  "bootstrap_system_contract": "eosio.bios on independent disposable probe chain",
+  "production_wallet_qualified_by_this_probe": false,
+  "RESULT_SHA256": "368dd3b33b0a21fc33d519e3456368aca734277fa05c4033e9d6c7185d4c1909",
+  "probe_source_hashes": {
+    "ram_qualify.py": "1b8b3bcb5d4db61d711cb1c4dc6611a363788e58a12367a14926cf6382e437bf",
+    "ram_authority.cpp": "e5b14e167f6a0cd0f58d728774be47a08c9fdbc4921bb1090404ba4b8b2e867a"
+  }
+}

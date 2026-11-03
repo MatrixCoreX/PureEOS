@@ -1,0 +1,8 @@
+{
+  "live_public_nodeos_count": 26,
+  "old_private_test_nodeos_remaining": 0,
+  "public_chain_id": "547e72843e450cbe4610d5f14241c9392e1195a93e8a64ad44779a8a08fc9284",
+  "head_block_num": 103390,
+  "last_irreversible_block_num": 103385,
+  "running_task_units": ""
+}

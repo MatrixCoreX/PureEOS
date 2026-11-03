@@ -1,0 +1,26 @@
+{
+  "status": "GIT_SOURCE_MATCH",
+  "git_source_commit": "622eb43c8eb214bd430e9377e37a0a1654d8897a",
+  "checks": {
+    "system-contracts/eosio.key/src/eosio.key.cpp": true,
+    "system-contracts/eosio.key/include/eosio.key.hpp": true,
+    "programs/cleos/key_wallet.hpp": true,
+    "programs/cleos/main.cpp": true,
+    "programs/cleos/httpc.cpp": true,
+    "system-contracts/eosio.key/sdk/index.mjs": true,
+    "system-contracts/eosio.key/relayer/server.mjs": true,
+    "system-contracts/eosio.key/tests/chain_test.py": true,
+    "system-contracts/eosio.key/tests/qualify.py": true,
+    "system-contracts/eosio.key/tests/read.mjs": true,
+    "system-contracts/eosio.key/tests/sign.mjs": true,
+    "system-contracts/eosio.key/tests/relay.test.mjs": true,
+    "system-contracts/eosio.key/tests/sdk.test.mjs": true,
+    "system-contracts/eosio.key/tests/probes/ram_qualify.py": true,
+    "system-contracts/eosio.key/tests/probes/tx_proof.cpp": true,
+    "system-contracts/eosio.key/tests/probes/qualify.py": true,
+    "system-contracts/eosio.key/tests/probes/sign.mjs": true,
+    "system-contracts/eosio.key/tests/probes/ram_authority.cpp": true,
+    "system-contracts/eosio.key/tests/fixtures/badtoken.cpp": true,
+    "system-contracts/eosio.key/tests/fixtures/system_mock.cpp": true
+  }
+}

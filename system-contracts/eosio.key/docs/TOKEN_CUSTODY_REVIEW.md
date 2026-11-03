@@ -41,3 +41,7 @@ This preserves support for arbitrary custom issuer programs while isolating avai
 当前实现的并发与资金回归已通过，但上述共享 RAM 风险仍是公开部署阻断项。代码保留在开发分支，不更新稳定版本、公开链或 release tag。待用户确认方向后实施，并重新跑相应的正反例、权限撤销、资金回滚及 RAM 隔离验证。
 
 The current concurrency/funds regression passes, but shared RAM authority remains a public-deployment blocker. Keep development separate from stable releases, public chains and tags. Implement the selected direction and requalify before promotion.
+
+最新实际钱包复现：正常系统 WASM 的私有链上，`eosio.key` 提取测试恶意币时额外被计费 **4,330 字节 RAM**，`balance_count` 未变化，四种资产的储备等式仍成立。此项是已确认的资源隔离失败，见 [FUNCTIONAL_R4.json](../../../performance-results/eosio-key/20261103-v2-security/FUNCTIONAL_R4.json) 中 `unreviewed_issuer_RAM_exposure` 和 `release_qualified=false`。
+
+The normal-system wallet itself reproduced the extra **4,330-byte** charge without changing its row counter, while all four reserve equations remained valid. This is a confirmed resource-isolation failure. Functional execution PASS does not mean release approval.
