@@ -131,8 +131,15 @@ export class KeyWalletClient {
   async quote(operation,request,{recipientKey=null}={}) {
     if(!this.config)await this.load();
     const cfg=this.config,info=await this.rpc('get_info');
+    // Matches the fee-free-claim contract profile. Transfer pricing is unchanged.
+    if(operation==='claim'){
+      const amount=atomicAsset(request.quantity);
+      if(amount.symbol!==cfg.fee_symbol||amount.units<=0n)throw new Error('Claim requires positive native AIC income');
+      if(await this.nativeRows(cfg.fee_contract,request.to,request.quantity))throw new Error('Claim recipient must open AIC balance with claimant-paid RAM');
+      return {base:0n,premium:0n,total:0n,multiplier:10000n,units:0,rows:0,head:info.head_block_num};
+    }
     const code=await this.rpc('get_code_hash',{account_name:'eosio'});
-    const exit=['selfout','selfcancel','refundfee','claim'].includes(operation);
+    const exit=['selfout','selfcancel','refundfee'].includes(operation);
     let multiplier=10000n;
     if(code.code_hash!==cfg.system_hash){if(!exit)throw new Error('System code changed; relay profile needs review');}
     else {
@@ -157,7 +164,7 @@ export class KeyWalletClient {
       units=(operation==='deposit'?2:4)+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
     }else if(operation==='withdraw'||operation==='selfout'){units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);}
     else if(operation==='cancel'||operation==='selfcancel')units=3;
-    else if(operation==='claim'||operation==='refundfee'){units=4;rows=await this.nativeRows(cfg.fee_contract,request.to,request.quantity);}
+    else if(operation==='refundfee'){units=4;rows=await this.nativeRows(cfg.fee_contract,request.to,request.quantity);}
     else throw new Error('Unsupported fee operation');
     return {...calculateFee(cfg.policy,multiplier,units,rows,['ksend','withdraw','cancel'].includes(operation)),multiplier,units,rows,head:info.head_block_num};
   }

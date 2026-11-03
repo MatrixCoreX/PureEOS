@@ -48,3 +48,8 @@ SDK 与参考中继使用 Node.js 22.12 以上版本；原生 cleos 不依赖 No
 The production WASM reads the actual `eosio` system tables. `KEY_BUILD_FIXTURES=1` additionally builds clearly marked test substitutes; never deploy them as production. Existing system WASM, BP escrow/slash pools, governance, resource rules and disabled deferred execution remain intact. No nodeos change is required.
 
 License: repository [AIC noncommercial license](../../AIC_LICENSE.md).
+
+2026-11-03 最新选择：领取中继收入 `claim` 全额到账，不收 AIC 手续费；领取 BP
+承担原生 CPU/NET 并为缺失的收款 AIC 行付 RAM open。所有转账（包括内部公钥转公钥）
+继续动态计费。本轮用户授权在远端验证后重建 TEST 链，封存前部署；新 TEST 节点的升级公示期为30分钟，正式版仍为七天。实际生效以执行报告为准。
+参见 [cleos 提现语义](docs/CLEOS.md)。

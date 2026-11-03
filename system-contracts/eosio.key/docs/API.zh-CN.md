@@ -12,7 +12,7 @@
 | 公钥给文本账户 | `withdraw(request)` | 文本账户必须已经存在 |
 | 持有人自助转出 | `selfout(payer,request)` | 原生 payer 提供 CPU/NET；公钥付基础 AIC 费，无 30% 加价 |
 | 撤销未执行授权 | `cancel` / `selfcancel` | 将 auth_epoch 提升到更大 next_epoch |
-| 提取过去中继收入 | `claim` | BP 原生授权；不要求当前仍有中继资格 |
+| 提取过去中继收入 | `claim` | 新候选：全额到账、无AIC应用手续费；领取BP承担原生资源及收款行RAM |
 | 退回费用预存 | `refundfee` | 原生费用所有者授权 |
 
 ## RAM 登记与付款方费用
@@ -79,3 +79,12 @@ Native recipient token rows newly funded by the wallet also consume the shared b
 Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keyusdtoken1,...` only after operator review for additional issuers. Operator issuer review can only narrow the compiled on-chain whitelist; it cannot add an unapproved identity or code hash. Independent-device signing is unchanged.
 
 参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。
+
+## 2026-11-03 最新选择：领取中继收入免 AIC 手续费
+
+`claim` 全额支付已赚 AIC，收据 fee为0，不读取/扣减/新建nativefees，不改网络费桶和价格缓存。
+BP 原生签名承担 CPU/NET；收款账号缺 AIC 余额行时，由领取 BP 原生授权付 RAM open，
+可在同一原子交易先open再claim。合约拒绝缺行，不垫付 eosio.key RAM 或额外预算。
+`max_fee` 字段兼容保留，可填0.0000 AIC；不改ABI/表布局、收益归属、储备和原子回滚。
+所有转账（包括内部公钥转公钥）仍收动态 AIC 手续费，商业中继加价保留。
+此前收益内扣费方案已取代。本轮授权远端验证后重建 TEST 链并在封存前部署；新 TEST 节点公示1800秒，正式版仍604800秒。其他已封存链必须遵守各自原生治理期限。

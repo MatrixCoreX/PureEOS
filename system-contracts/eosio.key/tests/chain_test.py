@@ -13,6 +13,7 @@ def main():
     p.add_argument('--work',type=Path,required=True)
     p.add_argument('--artifacts',type=Path,required=True)
     p.add_argument('--native-cleos',type=Path)
+    p.add_argument('--review-seconds',type=int,choices=[1800,604800],default=604800)
     p.add_argument('--fixture',action='store_true',help='TEST ONLY alternate system table source; never production consensus evidence')
     args=p.parse_args()
     sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'sdk-tests'))
@@ -113,6 +114,8 @@ def main():
                 labels={s['value']for s in f['specification']}
                 if labels&required:activate(f['feature_digest']);found|=labels&required
             self.check(found==required,'Required native features activated; deferred execution remains disabled')
+            self.check(self.governance()['review_seconds']==args.review_seconds,
+                       'Governance protocol activation selects the same native review profile before sealing')
             self.tx(['set','contract','eosio.bpay',str(self.contracts/'eosio.bpay')])
             self.tx(['set','contract','eosio.rex',str(self.contracts/'eosio.system/.rex'),'rex.results.wasm','rex.results.abi'])
             self.tx(['set','contract','eosio.reserv',str(self.contracts/'eosio.system/.powerup'),'powup.results.wasm','powup.results.abi'])
@@ -159,9 +162,12 @@ def main():
                 self.tx(['set','action','permission','keyrelaymoon','eosio.key',op,'keyrelay'])
             self.action('regrelay',{'bp':'keyrelaymoon','permission':'keyrelay','endpoint':'https://relay.example.invalid'},'keyrelaymoon',contract='eosio.key')
             self.action('updateauth',{'account':'eosio.key','permission':'owner','parent':'','auth':codeauth},'eosio.key@owner')
-            self.action('govinit',{'developer':'civicgovlead','review_seconds':604800,'protected_accounts':['eosio.key']},'eosio@owner')
-            self.check(self.governance()['sealed']and self.governance()['review_seconds']==604800,'Seven-day governance sealed after eosio.key deployment')
-            self.check('eosio.key'in self.governance()['protected_accounts'],'Wallet is explicitly protected by seven-day native governance')
+            wrong_review=604800 if args.review_seconds==1800 else 1800
+            self.action('govinit',{'developer':'civicgovlead','review_seconds':wrong_review,'protected_accounts':['eosio.key']},'eosio@owner',failure='review_seconds must match')
+            self.check(not self.governance()['sealed'],'Native build rejects the other review profile before sealing')
+            self.action('govinit',{'developer':'civicgovlead','review_seconds':args.review_seconds,'protected_accounts':['eosio.key']},'eosio@owner')
+            self.check(self.governance()['sealed']and self.governance()['review_seconds']==args.review_seconds,'Native governance sealed after eosio.key deployment with selected review '+str(args.review_seconds)+' seconds')
+            self.check('eosio.key'in self.governance()['protected_accounts'],'Wallet is explicitly protected by selected native governance review')
             self.check(self.table('global2')[0]['new_ram_per_block']==1024,'RAM1024 initialization preserved')
             permissions=self.rpc('get_account',{'account_name':'eosio.key'})['permissions']
             self.check(all(not p['required_auth']['keys']for p in permissions if p['perm_name']in ['owner','active']),
@@ -226,8 +232,8 @@ def main():
             self.tx(['push','transaction',json.dumps(actions('civicgovlead','upgrade'))])
             state=self.governance()
             delta=(datetime.datetime.fromisoformat(state['execute_after'])-datetime.datetime.fromisoformat(state['proposed_at'])).total_seconds()
-            self.check(state['pending']and state['target']=='eosio.key'and delta==604800,
-                       'Native developer proposal binds whitelist wallet hashes and exact seven-day review deadline')
+            self.check(state['pending']and state['target']=='eosio.key'and delta==args.review_seconds,
+                       'Native developer proposal binds wallet hashes and exact selected review deadline')
             large_action('devexec',{'proposal_id':state['proposal_id'],'code':code.hex(),'abi':abi.hex()},'review period has not ended')
             self.action('devveto',{'voter':'eosio','proposal_id':state['proposal_id']},'eosio@veto')
             self.check(self.governance()['vetoes']==['eosio'],'Actual native frozen bootstrap electorate can veto the proposed wallet upgrade')
@@ -235,7 +241,7 @@ def main():
             self.check(not self.governance()['pending']and self.rpc('get_code_hash',{'account_name':'eosio.key'})['code_hash']==base['code_hash'],
                        'Cancelled proposal and rejected early execution leave the approved wallet code unchanged')
             self.report['whitelist_governance']={'mechanism':'native refreshgov/devpropose/devveto/devexec',
-                'review_seconds':604800,'manifest':manifest,'manifest_sha256':hashlib.sha256(document).hexdigest(),
+                'review_seconds':args.review_seconds,'manifest':manifest,'manifest_sha256':hashlib.sha256(document).hexdigest(),
                 'unauthorized_proposal_rejected':True,'direct_setcode_rejected':True,'early_execution_rejected':True,
                 'native_veto_verified':True,'proposal_cancelled':True,'mature_execution_retested':False,
                 'bootstrap_note':'AIC and USD are initialized in the approved test wallet before governance sealing; no early proposal execution'}
@@ -298,7 +304,7 @@ def main():
             self.check(key_balance(self.receiver)==10000 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
                        'AIC deposit sender pays additional new-recipient fee; receiving key gets full principal and no account prerequisite')
             before=credit();self.transfer('keyusersolar','eosio.key','1.0000 AIC',self.memo(self.receiver));repeat=before-credit()
-            self.check(first>repeat and key_balance(self.receiver)==20000 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
+            self.check(first>repeat>0 and key_balance(self.receiver)==20000 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
                        'Existing AIC recipient is not charged a repeated new-row fee or another RAM allocation')
             recipient=self.key();before=key_balance(self.owner);native_credit=credit()
             self.execute('ksend',self.owner,self.request(self.owner,to=recipient['Public key'],quantity='1.0000 AIC'))
@@ -306,7 +312,7 @@ def main():
             before=key_balance(self.owner)
             self.execute('ksend',self.owner,self.request(self.owner,to=recipient['Public key'],quantity='1.0000 AIC'))
             key_repeat=before-key_balance(self.owner)-10000
-            self.check(key_first>key_repeat and key_balance(recipient)==20000 and credit()==native_credit,
+            self.check(key_first>key_repeat>0 and key_balance(recipient)==20000 and credit()==native_credit,
                        'Key sender pays AIC principal plus recipient RAM row fee; recipient receives full principal, repeated sends reuse rows')
             self.report['sender_paid_RAM_fees']={'native_first_fee_atoms':first,'native_repeat_fee_atoms':repeat,
                                                'key_first_fee_atoms':key_first,'key_repeat_fee_atoms':key_repeat,'recipient_principal_atoms':20000}
@@ -358,7 +364,6 @@ def main():
         def tests(self):
             self.owner,self.receiver=self.key(),self.key()
             self.test_registration()
-            self.transfer('keyrelaymoon','eosio.key','10.0000 AIC','fee')
             self.transfer('keyusersolar','eosio.key','1000.0000 AIC',self.memo(self.owner))
             self.transfer('keyusersolar','eosio.key','100.0000 USD',self.memo(self.owner),token='keyusdtoken1')
             self.check(len(self.ktable('wallets'))==1 and len(self.ktable('assets'))==2,'Native deposits create one canonical wallet and distinct multi-token reserves')
@@ -418,10 +423,7 @@ def main():
             self.execute('ksend',self.owner,failure='BP in maintenance')
             self.execute('selfout',self.owner)
             self.check(True,('Fixture'if args.fixture else'Real native')+' BP maintenance rejects relay work while preserving owner self exit')
-            earned=next(b['relay_earned']for b in self.ktable('feebuckets')if b['owner']=='keyrelaymoon')
-            amount=f'{int(earned)//10000}.{int(earned)%10000:04d} AIC'
-            self.action('claim',{'bp':'keyrelaymoon','to':'keyrelaymoon','quantity':amount,'max_fee':'1.0000 AIC'},'keyrelaymoon',contract='eosio.key')
-            self.check(next(b['relay_earned']for b in self.ktable('feebuckets')if b['owner']=='keyrelaymoon')==0,'Revoked relay can claim previously earned service income without new relay eligibility')
+            self.test_claim_from_income()
             self.action('refundfee',{'owner':'keyusersolar','to':'keyusersolar','quantity':'1.0000 AIC','max_fee':'1.0000 AIC'},'keyusersolar',contract='eosio.key')
             self.check(all(not a['busy']for a in self.ktable('assets')),'All outgoing token interactions finish without outstanding busy locks')
             if (args.artifacts/'test-only-token/keybadtokenx.wasm').exists():self.test_incompatible_token()
@@ -433,6 +435,91 @@ def main():
             self.check_reserves()
             self.test_whitelist_governance()
             self.report['final_state']=self.state()
+        def test_claim_from_income(self):
+            from decimal import Decimal
+            def quantity(atoms):return f'{atoms//10000}.{atoms%10000:04d} AIC'
+            def balance(account='keyrelaymoon'):
+                value=self.token_balance(account).get('AIC','0.0000 AIC')
+                return int(Decimal(value.split()[0])*10000)
+            def bucket():return next(b for b in self.ktable('feebuckets')if b['owner']=='keyrelaymoon')
+            def claim(amount,**patch):
+                return {'bp':'keyrelaymoon','to':'keyrelaymoon','quantity':quantity(amount),'max_fee':'0.0000 AIC'}|patch
+            def rejected(data,message,actor='keyrelaymoon'):
+                before=self.state();native=balance()
+                self.action('claim',data,actor,contract='eosio.key',failure=message)
+                self.check(self.state()==before and balance()==native,'Fee-free claim rejection is atomic: '+message)
+            def receipt(result):
+                def walk(trace):
+                    yield trace
+                    for child in trace.get('inline_traces',[]):yield from walk(child)
+                return next(t['act']['data']for root in result['processed']['action_traces']for t in walk(root)
+                            if t['act']['account']=='eosio.key'and t['act']['name']=='receipt'and t['act']['data']['kind']=='claim')
+            self.check(not any(c['owner']=='keyrelaymoon'for c in self.ktable('nativefees')),
+                       'Relay has earned income without ever opening or funding native fee credit')
+            earned=int(bucket()['relay_earned']);assert earned>2
+            rejected(claim(0),'invalid claim asset')
+            rejected(claim(1,quantity='0.0001 USD'),'invalid claim asset')
+            rejected(claim(1,max_fee='0.0000 USD'),'invalid AIC fee cap')
+            rejected(claim(earned+1),'insufficient confirmed relay earnings')
+            rejected(claim(1),'authority',actor='keyusersolar')
+            rejected(claim(1),'authority',actor='keyrelaymoon@keyrelay')
+            before=self.state();old=bucket();native=balance()
+            ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
+            tx=self.action('claim',claim(1),'keyrelaymoon',contract='eosio.key')
+            event=receipt(tx);now=bucket()
+            self.check(balance()-native==1 and old['relay_earned']-now['relay_earned']==1 and
+                       now['network']==old['network'] and self.ktable('nativefees')==before['nativefees'],
+                       'One-atom relay income is delivered in full with max_fee zero, no prepaid row and no application fee')
+            self.check(event['quantity']=='0.0001 AIC'and event['fee']=='0.0000 AIC'and
+                       int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])==ram,
+                       'Fee-free claim receipt matches full payout and custody RAM does not grow')
+            self.check_reserves()
+            # Existing prepaid credits stay untouched as well.
+            self.transfer('keyrelaymoon','eosio.key','0.0500 AIC','fee')
+            rejected(claim(1,to='eosio.key'),'invalid withdrawal target')
+            recipient='keyclaimdest';key=self.key()['Public key']
+            auth={'threshold':1,'keys':[{'key':key,'weight':1}],'accounts':[],'waits':[]}
+            def act(contract,name,data):
+                return {'account':contract,'name':name,'authorization':[{'actor':'keyrelaymoon','permission':'active'}],'data':data}
+            self.tx(['push','transaction',json.dumps({'actions':[
+                act('eosio','newaccount',{'creator':'keyrelaymoon','name':recipient,'owner':auth,'active':auth}),
+                act('eosio','buyram',{'payer':'keyrelaymoon','receiver':recipient,'quant':'1.0000 AIC'})]})])
+            rejected(claim(1,to=recipient),'claim recipient must open AIC balance')
+            opened=act('eosio.token','open',{'owner':recipient,'symbol':'4,AIC','ram_payer':'keyrelaymoon'})
+            before=self.state();ram_bp=int(self.rpc('get_account',{'account_name':'keyrelaymoon'})['ram_usage'])
+            self.tx(['push','transaction',json.dumps({'actions':[opened,
+                act('eosio.key','claim',claim(int(bucket()['relay_earned'])+1,to=recipient))]})],failure='insufficient confirmed relay earnings')
+            self.check(self.state()==before and not self.token_balance(recipient)and
+                       int(self.rpc('get_account',{'account_name':'keyrelaymoon'})['ram_usage'])==ram_bp,
+                       'Failed atomic claimant-paid open plus claim refunds the new recipient RAM and leaves income unchanged')
+            old=bucket();ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
+            used=int(self.asset_row('eosio.token','4,AIC')['ram_used'])
+            tx=self.tx(['push','transaction',json.dumps({'actions':[opened,act('eosio.key','claim',claim(1,to=recipient))]})])
+            self.check(balance(recipient)==1 and int(bucket()['relay_earned'])==int(old['relay_earned'])-1 and
+                       int(self.rpc('get_account',{'account_name':'keyrelaymoon'})['ram_usage'])>ram_bp and
+                       int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])==ram and
+                       int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used,
+                       'Claimant authorizes and pays recipient token-row RAM; fee-free claim never allocates custody RAM or token budget')
+            if args.fixture:
+                self.action('setmarket',{'cpu':10000,'net':0},'keysysmockup',contract='keysysmockup')
+                self.wait_lib(self.rpc('get_info')['head_block_num']+3)
+            before=self.state();old=bucket();native=balance();amount=int(old['relay_earned'])
+            tx=self.action('claim',claim(amount),'keyrelaymoon',contract='eosio.key')
+            event=receipt(tx);now=bucket()
+            self.check(now['relay_earned']==0 and balance()-native==amount and
+                       now['network']==old['network'] and self.ktable('nativefees')==before['nativefees'],
+                       'Revoked relay receives all remaining income with no fee or prepaid debit, even at maximum fixture market occupancy')
+            self.check(event['quantity']==quantity(amount)and event['fee']=='0.0000 AIC',
+                       'Final claim receipt records full income payout and zero fee')
+            rejected(claim(1),'insufficient confirmed relay earnings')
+            self.check_reserves()
+            if args.fixture:self.action('setmarket',{'cpu':0,'net':0},'keysysmockup',contract='keysysmockup')
+            self.report['fee_free_claim']={'quantity_semantics':'full earned income paid','application_fee_atoms':0,
+                'no_native_fee_entry_first_claim':True,'existing_fee_credit_unchanged':True,
+                'smallest_atom_claim_verified':True,'final_claim_atoms':amount,
+                'claimant_paid_open_verified':True,'open_and_failed_claim_RAM_rollback':True,
+                'custody_RAM_growth':0,'revoked_relay_claim_verified':True,
+                'permission_and_overclaim_rejections':True,'max_fee_zero_supported':True}
         def test_large_nonce(self):
             large='9007199254740993'
             request=self.request(self.owner,'selfcancel',next_epoch=large)

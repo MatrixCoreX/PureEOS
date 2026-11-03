@@ -16,7 +16,7 @@ The token issuer remains a trust boundary. Reserve checks cannot stop an issuer 
 | Key → native account | `withdraw(request)` | Full principal transferred atomically to existing account |
 | Owner self withdrawal | `selfout(payer,request)` | Native payer authorizes CPU/NET; key pays base AIC fee, no markup |
 | Invalidate old intents | `cancel` / `selfcancel` | Owner signs advancement to a larger next_epoch |
-| Claim old relay earnings | `claim(bp,to,quantity,max_fee)` | BP authorizes; separate prepaid base fee; no new relay eligibility requirement |
+| Claim old relay earnings | `claim(bp,to,quantity,max_fee)` | Full income, no application fee; BP pays native resources and pre-opens missing recipient RAM |
 | Refund unused credit | `refundfee(owner,to,quantity,max_fee)` | Native owner authorizes; refund principal and fee are separate |
 
 A key sending another token still needs additional AIC. No automatic conversion is performed. Sending 10 tokens with a 0.1 AIC fee delivers all 10 tokens. AIC transfers require both principal and fee in the sender balance.
@@ -63,11 +63,11 @@ premium = commercial ? ceil(base * 30 / 100) : 0
 total = base + premium
 ```
 
-Arithmetic is integer-only. Ordinary deposits, self exits, claims and refunds have no commercial premium. Base fees stay in network fee buckets; V1 has no base-fee withdrawal/distribution action. Self exits use a fixed bucket created at initialization, so new CPU sponsors cannot allocate unbounded rows or block exits at capacity. The sponsor receives no fee reward.
+Arithmetic is integer-only. Ordinary deposits, self exits and refunds have no commercial premium. Income claims have zero application fee, independent of market occupancy. Base fees stay in network fee buckets; V1 has no base-fee withdrawal/distribution action. Self exits use a fixed bucket created at initialization, so new CPU sponsors cannot allocate unbounded rows or block exits at capacity. The sponsor receives no fee reward.
 
 The first fee operation per consensus-time epoch refreshes pricing; others reuse it. Initialization chooses a 1–60 second epoch. Quotes are estimates; execution uses current cached pricing and actual new rows and cannot exceed the signed maximum. Test prices are functional fixtures, not production economic qualification. A nonzero floor, row costs and capacity limits impose initial spam costs/bounds without claiming resistance to arbitrary economic attacks.
 
-Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, claim/refund `4`. New recipient wallets and asset-balance rows incur the sender-paid row fee; token registration has its separate sponsored RAM purchase.
+Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, refund `4`; income claim has no AIC fee or pricing refresh. New recipient wallets and asset-balance rows incur the sender-paid row fee; token registration has its separate sponsored RAM purchase.
 
 ## Complete transaction owner proof (protocol 2)
 
@@ -112,3 +112,19 @@ Native recipient token rows newly funded by the wallet also consume the shared b
 Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keyusdtoken1,...` only after operator review for additional issuers. Operator issuer review can only narrow the compiled on-chain whitelist; it cannot add an unapproved identity or code hash. Independent-device signing is unchanged.
 
 参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。
+
+## Fee-free income claim candidate (latest 2026-11-03 selection)
+
+`claim(bp,to,quantity,max_fee)` pays the full positive earned AIC quantity. It uses no fee quote,
+charges no AIC fee, never requires/debits/allocates `nativefees`, never credits a network-fee bucket
+and does not refresh pricing. The legacy `max_fee` field remains valid and may be zero.
+The BP's native authority supplies CPU/NET. A missing recipient AIC row is rejected: the claimant
+must authorize standard token `open(owner=to,symbol=4,AIC,ram_payer=bp)` before claim, optionally
+as the immediately preceding root action in the same atomic transaction. Custody RAM and byte
+budgets must not grow. Existing rows require no new RAM. Native authorization, reserve equations,
+income bounds, revocation-independent income exit and complete rollback remain. The receipt records
+full quantity and zero fee. No ABI/table migration. Other transfer/refund paths retain existing fees.
+The matching SDK quote assumes this qualified code profile. For the specifically authorized
+2026-11-03 TEST rebuild, qualify remotely and install before governance sealing; its independently
+built TEST native review is 1,800 seconds. Stable/production remains 604,800 seconds. Other sealed
+chains must follow their existing native upgrade rules.

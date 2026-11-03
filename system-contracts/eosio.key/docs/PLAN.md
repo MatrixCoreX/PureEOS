@@ -64,3 +64,23 @@ include it in the native protected-account set and leave only intended code
 authorities. Released system WASM, 7-day review, single-choice voting, 10/90 split,
 halving, rotation/finalizers, RAM64GiB/setramrate1024 and deferred-disable stages
 remain unchanged. The separately user-authorized 2026-11-03 public TEST rebuild carries this qualified contract; no TPS is authorized.
+
+2026-11-03 selected claim update: gross earnings cover their own actual base withdrawal
+fee, only the positive net is paid, and native fee deposits remain untouched. Preserve
+all other paths and schema. Build/test remotely in a private temporary namespace on
+the retained TEST host, no new server or live reset. Qualify before publishing the native
+seven-day protected-code proposal; execution cannot precede review or bypass BP veto.
+
+Latest user correction supersedes the previous gross-minus-fee selection: income claim is
+application-fee-free, full earned quantity paid, with native CPU/NET and missing recipient
+RAM supplied by the claimant. Keep all transfer fees, including internal key sends, dynamic.
+The legacy max_fee ABI field supports zero; no schema migration. Remote isolated tests and
+seven-day protected governance still apply. New work: claim-native-resources-r1.
+
+Latest redeployment authorization supersedes the preceding no-reset/seven-day TEST path:
+qualify remotely, bootstrap fresh TEST genesis with the fee-free claim before sealing, and use
+the separately opt-in native 1,800-second TEST review profile on all25BPs plus history. Stable
+release defaults and old14-day protocol replay remain unchanged. Remove old cheap TEST raw
+blocks/state/history indices without backup, retaining source/build/reports and unrelated
+immutable retired high-spec evidence. Keep the same25names and90ordinary low-rate business.
+No new server/TPS. Work: keynet-redeploy-r2 and test-governance-30min-r1.

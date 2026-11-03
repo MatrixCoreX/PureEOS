@@ -680,14 +680,19 @@ void key_contract::claim(name bp, name to, asset quantity, asset max_fee) {
    require_auth(bp);
    auto cfg = config(); check_asset(1);
    check(quantity.is_valid() && quantity.symbol == cfg.fee_symbol && quantity.amount > 0, "invalid claim asset");
-   auto fee = quote(cfg, 4, outgoing_rows(cfg.fee_contract, to, cfg.fee_symbol), false, true);
-   charge_native(bp, fee, max_fee);
+   // Native CPU/NET is paid by the BP authorizing this root action. Keep the
+   // legacy cap argument valid, but charge no application-level AIC fee.
+   check_max(cfg, charge{0, 0, 0}, max_fee);
+   // Never allocate a recipient token row at the custody account's expense.
+   // The claimant can authorize token::open as the preceding root action.
+   check(!outgoing_rows(cfg.fee_contract, to, cfg.fee_symbol),
+         "claim recipient must open AIC balance with claimant-paid RAM");
    fee_buckets table(get_self(), get_self().value);
    auto it = table.require_find(bp.value, "no relay earnings");
    check(it->relay_earned >= quantity.amount, "insufficient confirmed relay earnings");
    table.modify(it, same_payer, [&](auto& row) { row.relay_earned -= quantity.amount; });
    send_out(1, to, quantity.amount, "eosio.key relay earnings");
-   record("claim"_n, {}, bp, {}, {}, cfg.fee_contract, quantity, fee.total, bp, 0);
+   record("claim"_n, {}, bp, {}, {}, cfg.fee_contract, quantity, 0, bp, 0);
 }
 void key_contract::refundfee(name owner, name to, asset quantity, asset max_fee) {
    require_auth(owner);

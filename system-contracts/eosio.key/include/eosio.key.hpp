@@ -71,6 +71,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    [[eosio::action]] void selfout(name payer, withdrawal_request request);
    [[eosio::action]] void cancel(cancellation_request request);
    [[eosio::action]] void selfcancel(name payer, cancellation_request request);
+   // Pay full earnings, fee-free; recipient token RAM must be pre-opened.
    [[eosio::action]] void claim(name bp, name to, asset quantity, asset max_fee);
    [[eosio::action]] void refundfee(name owner, name to, asset quantity, asset max_fee);
    [[eosio::action]] void finishout(uint64_t asset_id, uint64_t ticket);

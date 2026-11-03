@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {PrivateKey,PublicKey} from '@wharfkit/antelope';
 import {normalizePublicKey,keyHash,assetIdentity,depositMemo,atomicAsset,formatFee,
-  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,parseRPCJSON,ramRegistrationActions} from '../sdk/index.mjs';
+  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,parseRPCJSON,ramRegistrationActions,KeyWalletClient} from '../sdk/index.mjs';
 
 const abi=JSON.parse(readFileSync(process.env.KEY_ABI||new URL('../abi/eosio.key.abi',import.meta.url)));
 const owner=PrivateKey.generate('K1'),receiver=PrivateKey.generate('K1');
@@ -54,6 +54,21 @@ test('market occupancy, monotonic bounded multiplier, invalid market fails',()=>
  assert.equal(marketMultiplier(p,{version:1,cpu:{...r(5000),adjusted_utilization:'0'},net:r(0)}).multiplier,32500n);
  assert.throws(()=>marketMultiplier(p,{version:1,cpu:{...r(0),adjusted_utilization:'-1'},net:r(0)}));
  assert.throws(()=>marketMultiplier(p,{version:0,cpu:r(0),net:r(0)}));
+});
+test('fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM',async()=>{
+ const client=new KeyWalletClient('http://127.0.0.1:1');
+ client.config={fee_contract:'eosio.token',fee_symbol:'4,AIC'};
+ let opened=true;
+ client.rpc=async(method,data)=>{
+  if(method==='get_info')return {head_block_num:123};
+  assert.equal(method,'get_table_rows');assert.equal(data.code,'eosio.token');
+  assert.equal(data.scope,'keyrelaymoon');assert.equal(data.table,'accounts');
+  return {rows:opened?[{balance:'0.0000 AIC'}]:[]};
+ };
+ const request={to:'keyrelaymoon',quantity:'0.0001 AIC'};
+ assert.deepEqual(await client.quote('claim',request),{base:0n,premium:0n,total:0n,multiplier:10000n,units:0,rows:0,head:123});
+ await assert.rejects(client.quote('claim',{...request,quantity:'0.0001 USD'}),/native AIC/);
+ opened=false;await assert.rejects(client.quote('claim',request),/claimant-paid RAM/);
 });
 const info={chain_id:config.chain_id,head_block_time:'2026-11-03T00:00:00',last_irreversible_block_num:20,last_irreversible_block_id:'00000014'+'00'.repeat(28)};
 test('complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers',()=>{

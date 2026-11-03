@@ -92,19 +92,34 @@ External relay submission uses a separate HTTP configuration, forwards no RPC cr
 成功商业执行把基础费记入网络费用桶，把基础费的 30% 加价记入指定 BP 的
 `feebuckets.relay_earned`。例如基础费 0.0100 AIC、加价 0.0030 AIC，发送方共付
 0.0130 AIC；这不是总费用按 70%/30% 分成。失败整笔回滚，不产生可领取收入。
-BP 可累积后授权领取到已有原生账户；中继子权限默认不链接 `claim`。
-领取需要 BP 自己的原生授权、预存 AIC 支付领取费用，并设置费用上限。
-已赚收入不因中继停用、维护或失去资格而被抹去。
 
-Successful commercial execution credits the BP's markup, which is 30% of base
-fees, to `relay_earned`. The BP may aggregate and withdraw with its native account
-authority, separate prepaid AIC withdrawal fees and an explicit fee cap. Relay
-hot permissions are not linked to `claim` by the provisioning procedure.
+2026-11-03 最新选择：领取中继收入 `claim` 不收 AIC 应用手续费，申请数量全额到账。
+领取 BP 用自身原生权限签署并承担 CPU/NET；不要求、也不扣减 `nativefees` 预存。
+若收款账号没有 AIC 余额行，领取 BP 须先签名 `eosio.token::open(owner=收款账号,
+symbol=4,AIC,ram_payer=领取BP)` 支付 RAM；可以在同一原子交易先 open 再 claim。
+`claim` 单独调用遇到缺行会拒绝，不替领取人新建收款行或消耗 eosio.key 的 RAM 预算。
+`max_fee` 为兼容 ABI 保留，可明确填 `0.0000 AIC`；收据 `quantity` 为全额到账、`fee` 为0。
+停用/维护/失去中继资格不抹去已赚收益，原生权限、余额上限和失败回滚规则保留。
+
+公钥转公钥（包括已有余额行之间的内部划转）、公钥提币和充值仍按原有 PowerUp
+CPU/NET 市场占用曲线收费，商业中继另有基础费30%加价；领取免手续费不适用于转账。
+此前收益内扣费方案已被本选择取代。本轮授权远端验证后重建 TEST 链，治理封存前部署。
+新 TEST 节点公示1800秒，正式版仍为604800秒；其他已封存链须遵守其原生治理期限。
+实际部署状态以执行报告为准。
+
+The selected claim pays full earned AIC with no application fee. The BP supplies native CPU/NET
+and pre-opens missing recipient token rows using its own authorized RAM, optionally in the same
+atomic transaction. The contract never allocates custody RAM for a claim recipient, never requires
+prepayment and keeps existing fee credit untouched. Transfer fees and commercial markup remain.
+The matching SDK quotes claims at zero; use it with the qualified fee-free-claim code after upgrade.
+This authorized TEST rebuild installs the qualified code before sealing and uses a separately
+built 1,800-second TEST review profile. Production remains at 604,800 seconds. Other sealed
+chains must follow their existing native governance rules.
 
 ```bash
-# Requires sufficient confirmed earnings and separately prepaid AIC fee credit.
+# New candidate: full earned quantity, zero application fee; recipient AIC row must already exist.
 cleos -u https://YOUR-RPC push action eosio.key claim \
-  '{"bp":"keyrelaymoon","to":"keyrelaymoon","quantity":"1.0000 AIC","max_fee":"0.1000 AIC"}' \
+  '{"bp":"keyrelaymoon","to":"keyrelaymoon","quantity":"1.0000 AIC","max_fee":"0.0000 AIC"}' \
   -p keyrelaymoon@active --expiration 1800
 ```
 
