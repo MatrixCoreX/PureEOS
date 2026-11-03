@@ -1,0 +1,102 @@
+{
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "LIB": 13498,
+  "head": 13506,
+  "bucket": {
+    "owner": "gptgenesisbp",
+    "network": 26768,
+    "relay_earned": 30
+  },
+  "fee_credit": {
+    "owner": "gptgenesisbp",
+    "amount": 976650
+  },
+  "native_balance": [
+    "88197.7415 AIC"
+  ],
+  "relay": [
+    {
+      "bp": "gptgenesisbp",
+      "permission": "keyrelay",
+      "endpoint": "https://aic-test.matrixai.one/relay",
+      "enabled": 1
+    }
+  ],
+  "config": [
+    {
+      "version": 2,
+      "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+      "deployment": "8e5d42a049c6fdff8f1decf4d278530e65735ae6988e5652d079734bca0e3fe7",
+      "system_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "fee_contract": "eosio.token",
+      "fee_symbol": "4,AIC",
+      "policy": {
+        "minimum_fee": 100,
+        "unit_fee": 10,
+        "new_row_fee": 500,
+        "maximum_multiplier_bps": 100000,
+        "epoch_seconds": 1,
+        "max_wallets": 1000,
+        "max_balances": 4000,
+        "max_assets": 32,
+        "max_native_payers": 1000
+      },
+      "next_wallet": 9,
+      "next_asset": 3,
+      "wallet_count": 8,
+      "balance_count": 16,
+      "asset_count": 2,
+      "native_payer_count": 1,
+      "token_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+    }
+  ],
+  "wallet_AIC_native": [
+    "209.9003 AIC"
+  ],
+  "keyrelay_permission": {
+    "perm_name": "keyrelay",
+    "parent": "active",
+    "required_auth": {
+      "threshold": 1,
+      "keys": [
+        {
+          "key": "PUB_K1_6ivRGAgyN98uxnyW7rtFC5LbpMaL9a5WXZtVPVLrQ2XLoYNJrk",
+          "weight": 1
+        }
+      ],
+      "accounts": [],
+      "waits": []
+    },
+    "linked_actions": [
+      {
+        "account": "eosio.key",
+        "action": "ksend"
+      },
+      {
+        "account": "eosio.key",
+        "action": "withdraw"
+      },
+      {
+        "account": "eosio.key",
+        "action": "cancel"
+      }
+    ]
+  },
+  "AIC_asset": {
+    "id": 1,
+    "token_contract": "eosio.token",
+    "token_symbol": "4,AIC",
+    "identity": "fb9e99db61fa57b4b209dadff455ea409f62443ffa22670891950711d13efe3b",
+    "reserve": 2099003,
+    "busy": 0,
+    "notified": 0,
+    "out_ticket": 1,
+    "out_to": "",
+    "out_amount": 0,
+    "receiver_before": 0,
+    "ram_sponsor": "gptgenesisbp",
+    "ram_purchased": 219429618,
+    "ram_used": 14336,
+    "funding_tx": "e8e10ff7250a2eee753cdb0c0786d3acb62c0615820fd2506fbd1a94988676fb"
+  }
+}

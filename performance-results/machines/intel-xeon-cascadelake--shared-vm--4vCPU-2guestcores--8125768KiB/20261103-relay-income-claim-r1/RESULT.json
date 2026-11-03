@@ -1,0 +1,1050 @@
+{
+  "status": "PASS",
+  "chain_id": "38391d73bbcaac3c51af7009d0d11b09ca263895c1bf55a96494c3194f7f4d65",
+  "request": {
+    "bp": "gptgenesisbp",
+    "to": "gptgenesisbp",
+    "quantity": "0.0030 AIC",
+    "max_fee": "0.1000 AIC"
+  },
+  "before": {
+    "bucket": {
+      "owner": "gptgenesisbp",
+      "network": 26768,
+      "relay_earned": 30
+    },
+    "fee_credit": {
+      "owner": "gptgenesisbp",
+      "amount": 976650
+    },
+    "native_balance_atoms": 881977415,
+    "reserve_atoms": 2099003,
+    "liabilities_atoms": 2099003,
+    "holdings": {
+      "1": [
+        {
+          "asset_id": 1,
+          "amount": 475429
+        },
+        {
+          "asset_id": 2,
+          "amount": 482499
+        }
+      ],
+      "2": [
+        {
+          "asset_id": 1,
+          "amount": 20000
+        },
+        {
+          "asset_id": 2,
+          "amount": 12501
+        }
+      ],
+      "3": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "4": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "5": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "6": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "7": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "8": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ]
+    },
+    "BP_bonds": [
+      {
+        "owner": "anthropiclab",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680949,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "brazilamazon",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680963,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "canadaboreal",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680975,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "cobaltspring",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680990,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "coherevision",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681004,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "cosmicgarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681019,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "deepseekcore",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681033,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "egyptpyramid",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681047,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "finlandhaven",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681062,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "francegarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681076,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "germanycrest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681091,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "glaciercrest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681106,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "gptgenesisbp",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680531,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "italyharbors",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681121,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "kenyasavanna",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681136,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "lunarcompass",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681152,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "maplecascade",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681168,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "mistralcloud",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681184,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "moonlitgrove",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681201,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "nebularlight",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681217,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "silverstream",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681233,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "stellarhaven",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681251,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "velvetforest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681268,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "willowgarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681287,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "xaineuralnet",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681306,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      }
+    ],
+    "bond_pool_atoms": 2500000000,
+    "slash_pool_atoms": 0
+  },
+  "start_LIB": 13622,
+  "transaction_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+  "confirmed": {
+    "transaction_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+    "block_num": 13626,
+    "block_id": "0000353a9e92063bb4dda1a8a40ff21df8c6d4620ae82898b8cd4d1c9d3c237a",
+    "observed_lib": 13627
+  },
+  "UTC": "2026-11-03T06:16:35.863998+00:00",
+  "after": {
+    "bucket": {
+      "owner": "gptgenesisbp",
+      "network": 26868,
+      "relay_earned": 0
+    },
+    "fee_credit": {
+      "owner": "gptgenesisbp",
+      "amount": 976550
+    },
+    "native_balance_atoms": 881977445,
+    "reserve_atoms": 2098973,
+    "liabilities_atoms": 2098973,
+    "holdings": {
+      "1": [
+        {
+          "asset_id": 1,
+          "amount": 475429
+        },
+        {
+          "asset_id": 2,
+          "amount": 482499
+        }
+      ],
+      "2": [
+        {
+          "asset_id": 1,
+          "amount": 20000
+        },
+        {
+          "asset_id": 2,
+          "amount": 12501
+        }
+      ],
+      "3": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "4": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "5": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "6": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "7": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ],
+      "8": [
+        {
+          "asset_id": 1,
+          "amount": 100000
+        },
+        {
+          "asset_id": 2,
+          "amount": 200000
+        }
+      ]
+    },
+    "BP_bonds": [
+      {
+        "owner": "anthropiclab",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680949,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "brazilamazon",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680963,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "canadaboreal",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680975,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "cobaltspring",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680990,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "coherevision",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681004,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "cosmicgarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681019,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "deepseekcore",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681033,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "egyptpyramid",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681047,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "finlandhaven",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681062,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "francegarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681076,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "germanycrest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681091,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "glaciercrest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681106,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "gptgenesisbp",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793680531,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "italyharbors",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681121,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "kenyasavanna",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681136,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "lunarcompass",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681152,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "maplecascade",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681168,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "mistralcloud",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681184,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "moonlitgrove",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681201,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "nebularlight",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681217,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "silverstream",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681233,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "stellarhaven",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681251,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "velvetforest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681268,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "willowgarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681287,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "xaineuralnet",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793681306,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      }
+    ],
+    "bond_pool_atoms": 2500000000,
+    "slash_pool_atoms": 0
+  },
+  "claimed_income_atoms": 30,
+  "claim_fee_atoms": 100,
+  "net_of_claim_fee_atoms": -70,
+  "history": {
+    "query_time_ms": 66.444,
+    "executed": true,
+    "trx_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+    "lib": 13627,
+    "cached_lib": false,
+    "actions": [
+      {
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "act": {
+          "account": "eosio.key",
+          "name": "claim",
+          "authorization": [
+            {
+              "actor": "gptgenesisbp",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "bp": "gptgenesisbp",
+            "to": "gptgenesisbp",
+            "quantity": "0.0030 AIC",
+            "max_fee": "0.1000 AIC"
+          }
+        },
+        "@timestamp": "2026-11-03T06:16:34.000",
+        "block_num": 13626,
+        "block_id": "0000353a9e92063bb4dda1a8a40ff21df8c6d4620ae82898b8cd4d1c9d3c237a",
+        "producer": "germanycrest",
+        "trx_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+        "global_sequence": 22120,
+        "cpu_usage_us": 356,
+        "net_usage_words": 18,
+        "signatures": [
+          "SIG_K1_Kgo6tGpuKuV77emfr1wS53WAiSqvqFPq6iA1QKKz3QjNr3W8yMudGqFXSZSh4R8AYRzSXNmoN47AXcpU9yZWBdfK1TepmU"
+        ],
+        "inline_count": 5,
+        "inline_filtered": false,
+        "receipts": [
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "22120",
+            "recv_sequence": "64",
+            "auth_sequence": [
+              {
+                "account": "gptgenesisbp",
+                "sequence": "152"
+              }
+            ]
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "A69836035413A54D02451C2EB010697A5B8A185B544A5F7B55D660E0D3F4E158",
+        "timestamp": "2026-11-03T06:16:34.000",
+        "notified": "eosio.key"
+      },
+      {
+        "action_ordinal": 2,
+        "creator_action_ordinal": 1,
+        "act": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "eosio.key",
+            "to": "gptgenesisbp",
+            "amount": 0.003,
+            "symbol": "AIC",
+            "memo": "eosio.key relay earnings",
+            "quantity": "0.0030 AIC"
+          }
+        },
+        "@timestamp": "2026-11-03T06:16:34.000",
+        "block_num": 13626,
+        "block_id": "0000353a9e92063bb4dda1a8a40ff21df8c6d4620ae82898b8cd4d1c9d3c237a",
+        "producer": "germanycrest",
+        "trx_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+        "global_sequence": 22121,
+        "receipts": [
+          {
+            "receiver": "eosio.token",
+            "global_sequence": "22121",
+            "recv_sequence": "1746",
+            "auth_sequence": [
+              {
+                "account": "eosio.key",
+                "sequence": "41"
+              }
+            ]
+          },
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "22122",
+            "recv_sequence": "65",
+            "auth_sequence": [
+              {
+                "account": "eosio.key",
+                "sequence": "42"
+              }
+            ]
+          },
+          {
+            "receiver": "gptgenesisbp",
+            "global_sequence": "22123",
+            "recv_sequence": "76",
+            "auth_sequence": [
+              {
+                "account": "eosio.key",
+                "sequence": "43"
+              }
+            ]
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "BFCE2E5376EAEB34908975BA8449F4B204F8CB465887C1BBA9C2F39E401B565F",
+        "timestamp": "2026-11-03T06:16:34.000",
+        "notified": "eosio.token,eosio.key,gptgenesisbp"
+      },
+      {
+        "action_ordinal": 3,
+        "creator_action_ordinal": 1,
+        "act": {
+          "account": "eosio.key",
+          "name": "finishout",
+          "authorization": [
+            {
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "asset_id": "1",
+            "ticket": "2"
+          }
+        },
+        "@timestamp": "2026-11-03T06:16:34.000",
+        "block_num": 13626,
+        "block_id": "0000353a9e92063bb4dda1a8a40ff21df8c6d4620ae82898b8cd4d1c9d3c237a",
+        "producer": "germanycrest",
+        "trx_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+        "global_sequence": 22124,
+        "receipts": [
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "22124",
+            "recv_sequence": "66",
+            "auth_sequence": [
+              {
+                "account": "eosio.key",
+                "sequence": "44"
+              }
+            ]
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "30C849C3D9DF61C0595FB07454B63D88FD78280D4A6CBC73058A96810516C9D1",
+        "timestamp": "2026-11-03T06:16:34.000",
+        "notified": "eosio.key"
+      },
+      {
+        "action_ordinal": 4,
+        "creator_action_ordinal": 1,
+        "act": {
+          "account": "eosio.key",
+          "name": "receipt",
+          "authorization": [
+            {
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "kind": "claim",
+            "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "transaction_id": "969510420D641AA76B8FAEAA4108E213224C14F27557AA8F5758EE1BF37F86B5",
+            "native_from": "gptgenesisbp",
+            "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+            "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+            "token_contract": "eosio.token",
+            "quantity": "0.0030 AIC",
+            "fee": "0.0100 AIC",
+            "relayer": "gptgenesisbp",
+            "auth_epoch": "0"
+          }
+        },
+        "@timestamp": "2026-11-03T06:16:34.000",
+        "block_num": 13626,
+        "block_id": "0000353a9e92063bb4dda1a8a40ff21df8c6d4620ae82898b8cd4d1c9d3c237a",
+        "producer": "germanycrest",
+        "trx_id": "969510420d641aa76b8faeaa4108e213224c14f27557aa8f5758ee1bf37f86b5",
+        "global_sequence": 22125,
+        "receipts": [
+          {
+            "receiver": "eosio.key",
+            "global_sequence": "22125",
+            "recv_sequence": "67",
+            "auth_sequence": [
+              {
+                "account": "eosio.key",
+                "sequence": "45"
+              }
+            ]
+          }
+        ],
+        "code_sequence": 1,
+        "abi_sequence": 1,
+        "act_digest": "375A77784C2C42A7AA914B1D96AA65BD8EF15DCFF8F71F2939B2FFB2F3276F88",
+        "timestamp": "2026-11-03T06:16:34.000",
+        "notified": "eosio.key"
+      }
+    ],
+    "last_indexed_block": 13629,
+    "last_indexed_block_time": "2026-11-03T06:16:35.500"
+  },
+  "relay_hot_key_not_linked_to_claim": true,
+  "actual_BP_active_permission_used": true,
+  "custodied_user_balances_unchanged": true,
+  "bonds_and_slash_pool_unchanged": true,
+  "note": "Income withdrawal is verified; income is not net operating profit. Small claims can cost more than their income."
+}
