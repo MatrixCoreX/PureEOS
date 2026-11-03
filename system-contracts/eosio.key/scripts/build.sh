@@ -10,7 +10,7 @@ cd "$key_root"
 "$CDT_ROOT/bin/cdt-cpp" -abigen -contract=eosio.key -O2 -Iinclude \
   -o "$key_temp/eosio.key.wasm" src/eosio.key.cpp
 test -s "$key_temp/eosio.key.abi"
-if [[ -f abi/eosio.key.abi ]]; then cmp -- abi/eosio.key.abi "$key_temp/eosio.key.abi"; fi
+if [[ -f abi/eosio.key.abi && "${KEY_UPDATE_ABI:-0}" != 1 ]]; then cmp -- abi/eosio.key.abi "$key_temp/eosio.key.abi"; fi
 mv -- "$key_temp/eosio.key.wasm" "$key_out/eosio.key.wasm"
 mv -- "$key_temp/eosio.key.abi" "$key_out/eosio.key.abi"
 sha256sum "$key_out/eosio.key.wasm" "$key_out/eosio.key.abi"

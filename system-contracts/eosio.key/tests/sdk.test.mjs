@@ -3,14 +3,13 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {PrivateKey,PublicKey} from '@wharfkit/antelope';
 import {normalizePublicKey,keyHash,assetIdentity,depositMemo,atomicAsset,formatFee,
-  intentDigest,signIntent,verifyIntent,validateRequest,marketMultiplier,calculateFee,parseRPCJSON} from '../sdk/index.mjs';
+  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,parseRPCJSON} from '../sdk/index.mjs';
 
 const abi=JSON.parse(readFileSync(process.env.KEY_ABI||new URL('../abi/eosio.key.abi',import.meta.url)));
 const owner=PrivateKey.generate('K1'),receiver=PrivateKey.generate('K1');
-const config={version:1,chain_id:'ab'.repeat(32),deployment:'cd'.repeat(32)};
+const config={version:2,chain_id:'ab'.repeat(32),deployment:'cd'.repeat(32)};
 const request={from:owner.toPublic().toString(),to:receiver.toPublic().toString(),
- token_contract:'eosio.token',quantity:'1.2345 AIC',memo:'全额到账',nonce:'9007199254740993',
- expires:1800000000,relayer:'keyrelaymoon',reward_to:'keyrelaymoon',max_fee:'0.1000 AIC'};
+ token_contract:'eosio.token',quantity:'1.2345 AIC',memo:'全额到账',auth_epoch:'9007199254740993',request_id:'ef'.repeat(32),relayer:'keyrelaymoon',reward_to:'keyrelaymoon',max_fee:'0.1000 AIC'};
 test('RPC JSON retains exact uint64/int64 lexemes before number rounding',()=>{
  const value=parseRPCJSON('{"nonce":9007199254740993,"max":18446744073709551615,"debt":-9007199254740993,"height":100,"memo":"9007199254740993"}');
  assert.equal(value.nonce,'9007199254740993');assert.equal(value.max,'18446744073709551615');
@@ -22,7 +21,7 @@ test('canonical K1 and contract+precision asset identities',()=>{
  assert.equal(keyHash(legacy),keyHash(request.from));
  assert.notEqual(assetIdentity('eosio.token','4,AIC'),assetIdentity('keytesttoken','4,AIC'));
  assert.notEqual(assetIdentity('eosio.token','4,AIC'),assetIdentity('eosio.token','8,AIC'));
- assert.equal(depositMemo(legacy,'0.1000 AIC'),`PK1|${request.from}|1000`);
+ assert.equal(depositMemo(legacy,'0.1000 AIC','ef'.repeat(32)),`PK2|${request.from}|1000|${'ef'.repeat(32)}`);assert.notEqual(depositMemo(legacy,'0.1000 AIC'),depositMemo(legacy,'0.1000 AIC'));
  assert.throws(()=>normalizePublicKey(PrivateKey.generate('R1').toPublic()));
  assert.throws(()=>depositMemo(request.from,'1.0000 USD'));
 });
@@ -46,38 +45,32 @@ test('market occupancy, monotonic bounded multiplier, invalid market fails',()=>
  assert.throws(()=>marketMultiplier(p,{version:1,cpu:{...r(0),adjusted_utilization:'-1'},net:r(0)}));
  assert.throws(()=>marketMultiplier(p,{version:0,cpu:r(0),net:r(0)}));
 });
-test('every value-moving field and domain is bound by the owner signature',()=>{
- const sig=signIntent(abi,config,'ksend',request,owner);
- assert(verifyIntent(abi,config,'ksend',request,sig));
- const changes={to:PrivateKey.generate('K1').toPublic().toString(),token_contract:'keytesttoken',
- quantity:'1.2346 AIC',memo:'tampered',nonce:'9007199254740994',expires:1800000001,
- max_fee:'0.1001 AIC'};
- for(const [key,value]of Object.entries(changes))assert(!verifyIntent(abi,config,'ksend',{...request,[key]:value},sig),key);
- assert(!verifyIntent(abi,config,'ksend',{...request,relayer:'keyrelaystar',reward_to:'keyrelaystar'},sig));
- for(const patch of [{chain_id:'ef'.repeat(32)},{deployment:'ef'.repeat(32)},{version:2}])
-  assert(!verifyIntent(abi,{...config,...patch},'ksend',request,sig));
- assert(!verifyIntent(abi,config,'ksend',request,sig,'keyalternate'));
- assert.throws(()=>signIntent(abi,config,'ksend',request,receiver));
- assert.notEqual(intentDigest(abi,config,'ksend',request).toString(),intentDigest(abi,config,'ksend',{...request,nonce:'9007199254740992'}).toString());
+const info={chain_id:config.chain_id,head_block_time:'2026-11-03T00:00:00',last_irreversible_block_num:20,last_irreversible_block_id:'00000014'+'00'.repeat(28)};
+test('complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers',()=>{
+ const p=prepareEnvelope(config,info,'ksend',request),body=signPrepared(p,config,owner);
+ assert(verifySigned(body,config));
+ for(const [k,v]of Object.entries({quantity:'1.2346 AIC',memo:'changed',to:PrivateKey.generate('K1').toPublic().toString(),auth_epoch:'9007199254740994',request_id:randomRequestId(),max_fee:'0.2000 AIC',token_contract:'keytesttoken'})){
+  const altered=prepareEnvelope(config,info,'ksend',{...request,[k]:v});assert.throws(()=>verifySigned({prepared:altered,owner_signature:body.owner_signature},config),/signature/);
+ }
+ const cloned=()=>JSON.parse(JSON.stringify(p));
+ for(const mutate of [q=>q.transaction.expiration='2026-11-03T00:04:00',q=>q.transaction.ref_block_prefix++,q=>q.transaction.actions.push(q.transaction.actions[0]),q=>q.transaction.actions[0].authorization[0].permission='active',q=>q.transaction.context_free_actions[0].data+='00',q=>q.transaction.extra='hidden']){const q=cloned();mutate(q);assert.throws(()=>verifyPrepared(q,config));}
+ for(const patch of [{chain_id:'11'.repeat(32)},{deployment:'12'.repeat(32)},{version:1}])assert.throws(()=>verifySigned(body,{...config,...patch}));
+ assert.throws(()=>signPrepared(p,config,receiver));
+ assert.throws(()=>verifySigned({...body,private_key:'forbidden'},config));
 });
-test('withdrawal to native account and self exit have separate signature domains',()=>{
- const out={...request,to:'keyuserlunar'};
- const sig=signIntent(abi,config,'withdraw',out,owner);
- assert(verifyIntent(abi,config,'withdraw',out,sig));
- assert(!verifyIntent(abi,config,'withdraw',{...out,to:'keyusersolar'},sig));
- const self={...out,relayer:'',reward_to:''};
- assert(!verifyIntent(abi,config,'selfout',self,sig));
- assert(verifyIntent(abi,config,'selfout',self,signIntent(abi,config,'selfout',self,owner)));
- assert.throws(()=>validateRequest('selfout',out));
- assert.throws(()=>validateRequest('ksend',{...request,private_key:'must never be accepted'}));
+test('independent devices use the same epoch and different native IDs without reservations',()=>{
+ const a=prepareEnvelope(config,info,'ksend',{...request,request_id:randomRequestId()}),b=prepareEnvelope(config,info,'ksend',{...request,request_id:randomRequestId()});
+ assert.equal(a.request.auth_epoch,b.request.auth_epoch);assert.notEqual(a.transaction_id,b.transaction_id);
+ assert(verifySigned(signPrepared(a,config,owner),config));assert(verifySigned(signPrepared(b,config,owner),config));
+ const c={from:request.from,auth_epoch:request.auth_epoch,next_epoch:'9007199254741000',request_id:randomRequestId(),relayer:request.relayer,reward_to:request.relayer,max_fee:request.max_fee};
+ assert(verifySigned(signPrepared(prepareEnvelope(config,info,'cancel',c),config,owner),config));
+ assert.throws(()=>validateRequest('cancel',{...c,next_epoch:c.auth_epoch}));
+ assert.throws(()=>validateRequest('ksend',{...request,auth_epoch:9007199254740993}));
  assert.throws(()=>validateRequest('ksend',{...request,memo:'字'.repeat(43)}));
- assert.throws(()=>validateRequest('ksend',{...request,nonce:9007199254740993}));
 });
-test('cancellation signs both current and replacement nonce',()=>{
- const c={from:request.from,nonce:request.nonce,next_nonce:'9007199254741000',expires:request.expires,
- relayer:request.relayer,reward_to:request.reward_to,max_fee:request.max_fee};
- const sig=signIntent(abi,config,'cancel',c,owner);
- assert(verifyIntent(abi,config,'cancel',c,sig));
- assert(!verifyIntent(abi,config,'cancel',{...c,next_nonce:'9007199254741001'},sig));
- assert.throws(()=>validateRequest('cancel',{...c,next_nonce:c.nonce}));
+test('self withdrawal binds explicit native payer and has no BP premium',()=>{
+ const r={...request,to:'keyuserlunar',relayer:'',reward_to:''};
+ const p=prepareEnvelope(config,info,'selfout',r,{payer:'keyusersolar',permission:'active'});assert(verifySigned(signPrepared(p,config,owner),config));
+ assert.throws(()=>prepareEnvelope(config,info,'selfout',r));
+ const q={...p,payer:'keyuserlunar'};assert.throws(()=>verifyPrepared(q,config));
 });

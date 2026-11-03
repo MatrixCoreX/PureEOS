@@ -5,7 +5,7 @@ import {readFileSync,statSync,mkdirSync,openSync,writeFileSync,fsyncSync,closeSy
 import {resolve,join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {PrivateKey,PublicKey} from '@wharfkit/antelope';
-import {KeyWalletClient,intentDigest,verifyIntent,validateRequest,atomicAsset} from '../sdk/index.mjs';
+import {KeyWalletClient,verifySigned,atomicAsset} from '../sdk/index.mjs';
 
 export class Journal {
   constructor(directory){
@@ -28,10 +28,10 @@ const terminal=job=>['finalized','expired'].includes(job.status);
 const publicJob=job=>({intent:job.intent,transaction_id:job.id,status:job.status,
   ...(job.confirmation?{confirmation:job.confirmation}:{}),...(job.last_error?{last_error:job.last_error}:{})});
 export class Relay {
-  constructor({endpoint,bp,permission,key,expectedHash,journal,client}){
+  constructor({endpoint,bp,permission,key,expectedHash,journal,client,allowedTokens=[]}){
     if(!/^[0-9a-f]{64}$/.test(expectedHash||''))throw new Error('Pin the qualified eosio.key code hash');
     this.client=client||new KeyWalletClient(endpoint);this.bp=bp;this.permission=permission;
-    this.key=PrivateKey.from(key);this.expectedHash=expectedHash;this.journal=journal;this.queue=Promise.resolve();this.pending=0;
+    this.allowedTokens=new Set(allowedTokens);this.key=PrivateKey.from(key);this.expectedHash=expectedHash;this.journal=journal;this.queue=Promise.resolve();this.pending=0;
   }
   exclusive(fn){
     if(this.pending>=32)return Promise.reject(new Error('Relay queue is full'));
@@ -61,27 +61,27 @@ export class Relay {
     if(PublicKey.from(p[0].producer_key).equals(pub))throw new Error('Relay key must be separate from block production');
   }
   async submit(body){return this.exclusive(async()=>{
-    if(!body||Object.keys(body).sort().join(',')!=='operation,request,signature')throw new Error('Only operation, request and signature are accepted');
-    const {operation,request,signature}=body;
-    if(!['ksend','withdraw','cancel'].includes(operation))throw new Error('Unsupported commercial relay action');
-    validateRequest(operation,request);
-    if(request.relayer!==this.bp||request.reward_to!==this.bp)throw new Error('Wrong selected BP');
-    // An already irreversible/expired packet is a read of our durable journal,
-    // not new relay work. It remains queryable during RPC outages/revocation.
-    if(this.client.config&&this.client.abi&&verifyIntent(this.client.abi,this.client.config,operation,request,signature)){
-      const cached=this.journal.jobs[intentDigest(this.client.abi,this.client.config,operation,request).toString()];
-      if(cached&&terminal(cached))return publicJob(cached);
-    }
-    await this.profile();
-    if(request.relayer!==this.bp||request.reward_to!==this.bp||!verifyIntent(this.client.abi,this.client.config,operation,request,signature))throw new Error('Invalid owner authorization');
-    const intent=intentDigest(this.client.abi,this.client.config,operation,request).toString();
-    const existing=this.journal.jobs[intent];if(existing){if(!terminal(existing))await this.broadcast(existing);return publicJob(existing);}
-    if(Object.keys(this.journal.jobs).length>=100000)throw new Error('Journal capacity reached; archive completed jobs');
+    // Verify the bounded owner envelope before any expensive remote work.
+    if(!this.client.config)await this.profile();
+    const tx=verifySigned(body,this.client.config,this.client.contract);
+    const {operation,request,reference_block_num:reference,permission}=body.prepared;
+    if(!['ksend','withdraw','cancel'].includes(operation)||request.relayer!==this.bp||permission!==this.permission)throw new Error('Wrong selected BP or permission');
+    const intent=tx.id.toString(),existing=this.journal.jobs[intent];
+    if(existing){if(!terminal(existing))await this.broadcast(existing);return publicJob(existing);}
+    await this.profile();verifySigned(body,this.client.config,this.client.contract);
+    if(Object.keys(this.journal.jobs).length>=10000)throw new Error('Journal capacity reached; archive completed jobs');
+    const pending=Object.values(this.journal.jobs).filter(j=>!terminal(j));
+    if(pending.length>=128)throw new Error('Pending transaction capacity reached');
+    if(pending.filter(j=>j.owner===request.from).length>=8)throw new Error('Sender pending capacity reached');
+    if(operation!=='cancel'&&request.token_contract!==this.client.config.fee_contract&&!this.allowedTokens.has(request.token_contract))throw new Error('Token issuer requires relay operator review');
     const wallet=await this.client.wallet(request.from);
-    if(!wallet||BigInt(wallet.next_nonce)!==BigInt(request.nonce))throw new Error('Nonce is stale or out of order');
-    for(const job of Object.values(this.journal.jobs))if(!terminal(job)&&job.wallet_id===String(wallet.id)&&job.nonce===String(request.nonce))throw new Error('This nonce already has a pending relay transaction');
-    const info=await this.client.rpc('get_info');const now=Math.floor(Date.parse(info.head_block_time+'Z')/1000);
-    if(request.expires<now+10||request.expires>now+3598)throw new Error('Owner intent expiration must allow submission within one hour');
+    if(!wallet||BigInt(wallet.auth_epoch)!==BigInt(request.auth_epoch))throw new Error('Authorization epoch revoked');
+    const info=await this.client.rpc('get_info'),now=Date.parse(info.head_block_time+'Z'),expiration=Date.parse(tx.expiration.toString()+'Z');
+    if(expiration<now+10000||expiration>now+3500000)throw new Error('Native transaction expiration must allow safe submission');
+    if(reference>info.last_irreversible_block_num||info.head_block_num-reference>65000)throw new Error('Signed reference is not a recent irreversible block');
+    const block=await this.client.rpc('get_block',{block_num_or_id:reference});
+    const bid=Buffer.from(block.id,'hex');
+    if(bid.length!==32||bid.readUInt32BE(0)!==reference||bid.readUInt32LE(8)!==Number(tx.ref_block_prefix))throw new Error('Signed reference block identity mismatch');
     const fee=await this.client.quote(operation,request);
     if(fee.total>atomicAsset(request.max_fee).units)throw new Error('Current fee exceeds owner maximum');
     const aic=await this.client.balance(request.from,this.client.config.fee_contract,'4,AIC');
@@ -89,16 +89,19 @@ export class Relay {
     const aicPrincipal=principal&&request.token_contract===this.client.config.fee_contract&&principal.symbol==='4,AIC'?principal.units:0n;
     if(aic<fee.total+aicPrincipal)throw new Error('Insufficient additional AIC fee balance');
     if(principal&&await this.client.balance(request.from,request.token_contract,principal.symbol)<principal.units)throw new Error('Insufficient principal');
-    const prepared=await this.client.prepareRelayTransaction(operation,request,signature,this.bp,this.permission,this.key);
-    const job={...prepared,intent,status:'pending',wallet_id:String(wallet.id),nonce:String(request.nonce),
-      next_block:prepared.startLIB+1,created_at:new Date().toISOString(),operation,request,signature};
+    const packet=await this.client.prepareRelayTransaction(body,this.bp,this.permission,this.key);
+    const job={...packet,intent,status:'pending',wallet_id:String(wallet.id),auth_epoch:String(request.auth_epoch),
+      owner:request.from,next_block:reference+1,created_at:new Date().toISOString(),operation};
     // Persist the EXACT native packet before its first broadcast. Retries never
     // choose a new TAPOS/expiration or create a second packet for this intent.
-    this.journal.jobs[intent]=job;this.journal.save();await this.broadcast(job);return publicJob(job);
+    this.journal.jobs[intent]=job;
+    try{this.journal.save();}catch(error){delete this.journal.jobs[intent];throw error;}
+    await this.broadcast(job);return publicJob(job);
   });}
   async broadcast(job){
-    if(terminal(job))return;
-    job.last_attempt=Date.now();
+    if(terminal(job)||Number(job.attempts||0)>=3)return;
+    job.attempts=Number(job.attempts||0)+1;
+    job.last_attempt=Date.now();this.journal.save();
     try{await this.client.rpc('push_transaction',job.packed);job.status='submitted';delete job.last_error;}
     catch(e){job.last_error=String(e.message).slice(0,300);}
     this.journal.save();
@@ -119,7 +122,7 @@ export class Relay {
           job.status='finalized';job.confirmation={block_num:n,block_id:block.id,observed_lib:lib};delete job.last_error;break;
         }
         job.next_block++;
-        // Native transaction expiration is fixed by prepareRelayTransaction.
+        // Native transaction expiration is fixed by the holder, before relay submission.
         // Decode only our stored original packet, never re-sign it.
         if(n===lib&&Date.parse(block.timestamp+'Z')>Date.parse(job.expiration+'Z')){job.status='expired';break;}
       }
@@ -160,7 +163,7 @@ async function main(){
   const path=process.env.RELAY_KEY_FILE;if(!path||statSync(path).mode&0o077)throw new Error('RELAY_KEY_FILE must be readable only by its owner');
   const journal=new Journal(process.env.RELAY_STATE||'./state');
   const relay=new Relay({endpoint:process.env.NODEOS_URL,bp:process.env.BP_ACCOUNT,permission:process.env.BP_PERMISSION||'keyrelay',
-    key:readFileSync(path,'utf8').trim(),expectedHash:process.env.KEY_CODE_HASH,journal});
+    key:readFileSync(path,'utf8').trim(),allowedTokens:(process.env.RELAY_ALLOWED_TOKENS||'').split(',').filter(Boolean),expectedHash:process.env.KEY_CODE_HASH,journal});
   await relay.profile();const server=createServer(relay,{port:Number(process.env.PORT||8787)});
   const timer=setInterval(()=>relay.reconcile().catch(e=>process.stderr.write(`Relay reconciliation paused: ${e.message}\n`)),2000);
   const shutdown=()=>{clearInterval(timer);server.close(()=>{journal.close();process.exit(0);});};

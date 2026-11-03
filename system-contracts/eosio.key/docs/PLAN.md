@@ -11,7 +11,7 @@ Native deposits require a separately funded AIC fee credit and an explicit total
 fee cap in memo. A wallet may atomically bundle fee funding and the principal
 transfer. Recipient wallets and per-asset rows are created on demand; there is no
 recipient registration/signature prerequisite. New storage is charged, bounded,
-and never granted unlimited contract RAM. Public-key balances/nonces survive zero
+and never granted unlimited contract RAM. Public-key balances/epochs survive zero
 balances; keys and asset IDs are never recycled.
 
 Fee inputs are committed PowerUp market adjusted/current occupancy and capacity,
@@ -29,12 +29,7 @@ Only a dedicated child permission is accepted. Only the actual successfully
 executing selected BP receives its markup. Previously earned balances remain
 claimable after role revocation. No new BP-slash condition is introduced.
 
-Signatures cover a fixed ABI encoding of protocol tag/version, real Chain ID,
-contract, deployment salt, operation and the complete request. The contract checks
-its own domain, fee cap, nonce and expiry and verifies the sender with native
-assert_recover_key. Native accounts authorize deposits/fee funding themselves.
-Self-withdrawal/self-cancellation retain an escape path with owner signature plus
-native payer authorization and no relay markup.
+Owner protocol 2 binds the complete immutable native transaction ID through a context-free proof signature. Native dedup/TAPOS/expiration replace per-transfer sequence allocation. Independent devices use cryptographic random request IDs and a shared read-only revocation epoch; only explicit cancellation increments the epoch. No allocator or permanent per-request RAM table is required. One root operation is enforced; inline proof reuse is rejected. Native deposits default to PK2 random routing IDs. Self exit still requires owner proof plus an explicit native payer.
 
 Assets maintain a reserve invariant. Outgoing token operations use checks/effects
 before interactions, expected sender notifications and a final inline reserve

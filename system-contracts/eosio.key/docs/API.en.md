@@ -1,4 +1,4 @@
-# V1 API and security model
+# First-release API · owner protocol 2
 
 ## Funds and supported tokens
 
@@ -9,17 +9,17 @@ The token issuer remains a trust boundary. Reserve checks cannot stop an issuer 
 | Operation | Interface | Payment |
 |---|---|---|
 | Prepay native fee credit | AIC transfer to wallet, memo `fee` | Full quantity credited to native sender |
-| Native account → key | Token transfer, memo `PK1\|PUBLIC_KEY\|maximum_fee_atoms` | Full principal to key; extra AIC from sender fee credit |
-| Key → key | `ksend(request,sig)` | Principal and extra AIC from sender key |
-| Key → native account | `withdraw(request,sig)` | Full principal transferred atomically to existing account |
-| Owner self withdrawal | `selfout(payer,request,sig)` | Native payer authorizes CPU/NET; key pays base AIC fee, no markup |
-| Invalidate old intents | `cancel` / `selfcancel` | Owner signs advancement to a larger next_nonce |
+| Native account → key | Token transfer, memo `PK2\|PUBLIC_KEY\|maximum_fee_atoms\|random_32byte_hex` | Full principal to key; extra AIC from sender fee credit |
+| Key → key | `ksend(request)` | Principal and extra AIC from sender key |
+| Key → native account | `withdraw(request)` | Full principal transferred atomically to existing account |
+| Owner self withdrawal | `selfout(payer,request)` | Native payer authorizes CPU/NET; key pays base AIC fee, no markup |
+| Invalidate old intents | `cancel` / `selfcancel` | Owner signs advancement to a larger next_epoch |
 | Claim old relay earnings | `claim(bp,to,quantity,max_fee)` | BP authorizes; separate prepaid base fee; no new relay eligibility requirement |
 | Refund unused credit | `refundfee(owner,to,quantity,max_fee)` | Native owner authorizes; refund principal and fee are separate |
 
 A key sending another token still needs additional AIC. No automatic conversion is performed. Sending 10 tokens with a 0.1 AIC fee delivers all 10 tokens. AIC transfers require both principal and fee in the sender balance.
 
-Non-AIC reserves equal the sum of that asset's key balances. AIC reserves equal key balances plus native fee credits, network base-fee buckets and earned BP premiums. Outgoing transfers require a matching sender notification, exact reserve change, and full recipient increase during the standard sender-notification phase. A later normal recipient callback can use its received tokens. A missing step rolls back nonce, fees, ledger and external token effects.
+Non-AIC reserves equal the sum of that asset's key balances. AIC reserves equal key balances plus native fee credits, network base-fee buckets and earned BP premiums. Outgoing transfers require a matching sender notification, exact reserve change, and full recipient increase during the standard sender-notification phase. A later normal recipient callback can use its received tokens. A missing step rolls back epoch, fees, ledger and external token effects.
 
 ## Dynamic fees
 
@@ -38,33 +38,46 @@ Arithmetic is integer-only. Ordinary deposits, self exits, claims and refunds ha
 
 The first fee operation per consensus-time epoch refreshes pricing; others reuse it. Initialization chooses a 1–60 second epoch. Quotes are estimates; execution uses current cached pricing and actual new rows and cannot exceed the signed maximum. Test prices are functional fixtures, not production economic qualification. A nonzero floor, row costs and capacity limits impose initial spam costs/bounds without claiming resistance to arbitrary economic attacks.
 
-Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, claim/refund `4`. New key wallets, asset-balance rows and asset registrations add row costs.
+Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, claim/refund `4`. New key wallets, asset-balance rows and asset registration## Complete transaction owner proof (protocol 2)
 
-## Signed envelope and relay permissions
+The holder prepares a complete native transaction, with one context-free `eosio.key::prove` action and one ordinary root operation. No delay, extra root actions or transaction extensions are accepted. The native authorization names exactly one selected BP child permission, or one explicit self payer. Native expiration is at most one hour. The signed full reference block number must agree with the native TAPOS low 16 bits; relay admission additionally checks the actual irreversible reference ID/prefix.
 
-Digest is SHA-256 of the ABI binary sequence:
+Owner digest, using fixed protocol binary types, is:
 
 ```
-string("PureEOS:eosio.key"), uint32(1), checksum256(chain_id),
-name("eosio.key"), checksum256(deployment), name(operation), request
+sha256(pack(string("PureEOS:eosio.key:transaction"), uint32(2),
+  checksum256(chain_id), name("eosio.key"), checksum256(deployment),
+  checksum256(native_transaction_id)))
 ```
 
-`ksend` request field order: from key, to key, token_contract, quantity, memo, nonce(uint64), expires(uint32), relayer, reward_to, max_fee. Withdrawal/selfout order: from key, token_contract, to native name, quantity, memo, nonce, expires, relayer, reward_to, max_fee. Cancellation: from, nonce, next_nonce, expires, relayer, reward_to, max_fee. The contract ABI is authoritative.
+`prove` data is `(public_key owner, checksum256 chain_id, checksum256 deployment, uint32 reference_block_num)`. Its sole CFD entry is a serialized K1 signature (66 bytes); extra CFD is rejected. Native transaction ID excludes signatures and CFD, avoiding a circular signature. The resource payer separately signs the native transaction **including the CFD hash**. `prove` verifies recovery without state access; the ordinary operation validates proof domain, exact action bytes, top-level execution and current revocation epoch. Inline calls cannot reuse a proof. The holder signature does not replace native BP/payer authorization.
 
-Only K1 keys/signatures are supported. Legacy EOS and PUB_K1 encodings resolve to one binary identity. New recipient points are checked on secp256k1. Native recovery verifies owner signatures. Persistent nonces never reset at zero balance; expiration uses consensus time and cannot exceed one hour. Failed operations roll back all effects. JS uses strings/BigInt for uint64 and rejects unsafe numeric nonces.
+Request field order follows the committed ABI: key send `(from, to, token_contract, quantity, memo, auth_epoch:uint64, request_id:checksum256, relayer, reward_to, max_fee)`; withdrawal places `token_contract` before native `to`; cancellation `(from, auth_epoch, next_epoch, request_id, relayer, reward_to, max_fee)`. Self wrappers prefix native `payer`. The SDK and cleos pack fixed signing schemas rather than trusting fetched RPC ABI definitions.
 
-A commercial relay registers a dedicated child permission under its parent BP. Every execution requires the exact registered permission and rechecks active registration, normal full 10000 AIC bond, no permanent blacklist, no pending/effective maintenance, and enabled opt-in registry. Relayer and reward_to must name the same selected BP. Changing workers, keys or registration cannot bypass a parent BP ban. Standby BPs may relay; the service is not restricted to the active 21.
+Each device chooses an independent cryptographic 32-byte request ID. Different transfers with the same `auth_epoch` can execute concurrently; ordinary sends never consume that epoch. Only explicit cancellation advances it. A cancellation and an old transfer racing are resolved by actual chain execution order; already finalized transfers cannot be revoked. Insufficient combined funds can still reject a concurrent transfer atomically.
 
-Relay keys must be separate from owner/active, production and BLS keys. Link the child permission to ksend, withdraw and cancel. The BP signs the native resource-paying transaction separately. Its 30% markup is gross service revenue, not guaranteed profit. Revocation does not confiscate previously earned income and adds no BP slashing rule.
+Replay protection uses native transaction ID deduplication while valid. Native cleanup requires `now > expiration`, while native acceptance requires `expiration >= pending_block_time`: there is no boundary gap. Re-signing or recompressing does not change transaction ID. Changing amount, destination, request ID, TAPOS or expiration changes the ID and invalidates the holder proof. After pruning, the immutable old transaction is expired. No per-request permanent RAM table is allocated. Never auto-reprepare on an ambiguous RPC timeout; the holder already knows the transaction ID before submission. An intentionally fresh holder signature authorizes a new payment even if economically similar.
 
-Self operations have empty relayer/reward_to, an owner signature and a native payer authorization. When the pinned system code changes, commercial operations and new principal deposits fail closed pending review. Existing-asset self exits, cancellation, old claims and credit refunds use the base multiplier to preserve exit paths. Broken token contracts or insufficient AIC can still prevent corresponding operations.
+Only K1 is supported. Public-key wallet identity and epoch survive zero balance. JavaScript preserves uint64 as strings/BigInt. PK2 routing memos provide random IDs for otherwise identical native deposits too; legacy PK1 remains accepted for compatibility but clients default to PK2.
+
+Commercial execution checks registered active BP status, normal full 10,000 AIC bond, no ban/maintenance, enabled registry and exact dedicated child permission every time. Worker/key rotation does not evade parent BP revocation. Standby BPs may relay. Previously earned premiums remain claimable. Self exits/cancellation have no BP requirement or markup; a native CPU/NET payer and additional AIC are still needed. System-code changes fail closed for commercial sends/new principal while retaining reviewed existing-asset exit behavior. There is no automatic key recovery or new BP slashing rule.
+
+ding operations.
 
 ## Queries and reference HTTP service
 
-`KeyWalletClient` reads the actual Chain ID, ABI/config, persistent nonce, complete asset identity and balances. Use a trusted RPC and verified deployment/code hashes before signing; inspect prepared JSON rather than signing untrusted files. Initialization must bind the actual `get_info` Chain ID.
+`KeyWalletClient` reads the actual Chain ID and config (signing schemas are fixed locally), revocation epoch, complete asset identity and balances. Use a trusted RPC and verified deployment/code hashes before signing; inspect prepared JSON rather than signing untrusted files. Initialization must bind the actual `get_info` Chain ID.
 
 Tables: config; wallets (bykey SHA256 secondary index); balances (scope wallet id); assets (byidentity); nativefees; feebuckets; relays; pricing. Internal-only stateless `receipt` actions can be indexed by a history service; V1 stores no unbounded event history in RAM.
 
-`POST /submit` accepts operation/request/signature only. `GET /status/{intent_digest}` reports pending/submitted/finalized/expired for one native packet. `GET /health` exposes public BP identity. No user private key is accepted. The relay durably saves the exact packet before broadcasting, retries that packet, and scans canonical irreversible receipts. A timeout is not settlement and does not immediately create a new TAPOS/signature. Expiration requires both complete LIB scanning and irreversible time beyond native transaction expiration.
+`POST /submit` accepts `{prepared, owner_signature}` only. `GET /status/{native_transaction_id}` reports pending/submitted/finalized/expired for one native packet. `GET /health` exposes public BP identity. No user private key is accepted. The relay durably saves the exact packet before broadcasting, retries that packet, and scans canonical irreversible receipts. A timeout is not settlement and does not immediately create a new TAPOS/signature. Expiration requires both complete LIB scanning and irreversible time beyond native transaction expiration.
 
-The reference service has a serialized submission queue, 8 KiB bodies, connection/rate limits and a 100000-job journal cap. Expose it through HTTPS. Configure real-client limits in the proxy; the service does not trust forwarding headers and shares its built-in quota across connections from one proxy. Remove a stale crash lock only after verifying the previous process is stopped and reviewing its journal. Never run two instances against one journal directory.
+The reference service has a serialized submission queue, 8 KiB bodies, connection/rate limits and a 10000-job journal cap. Expose it through HTTPS. Configure real-client limits in the proxy; the service does not trust forwarding headers and shares its built-in quota across connections from one proxy. Remove a stale crash lock only after verifying the previous process is stopped and reviewing its journal. Never run two instances against one journal directory.
+
+Native recipient token rows newly funded by the wallet also consume the shared balance-row budget and pay the new-row fee; closing/reopening them cannot reset that budget. Initial limits must fit purchased RAM with an operating reserve. Malicious issuers that fabricate state or abuse native RAM billing remain outside the standard-token trust profile.
+
+原生收款方首次建立代币余额行、且由钱包承担 RAM 时，也计入共用余额行预算并收新行费；关闭再重建不会重置预算。初始化上限须按实际已购买 RAM 留出运行余量。恶意发行方伪造状态或滥用原生 RAM 计费仍属于发行方信任边界。
+
+Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durable jobs total and 3 automatic broadcasts per immutable transaction. Reconciliation continues after retry exhaustion; unknown outcomes never become an automatic new authorization. It accepts the configured fee issuer by default. Set `RELAY_ALLOWED_TOKENS=keytesttoken,...` only after operator review for additional issuers. These service limits do not change on-chain multi-token support or independent-device signing.
+
+参考中继最多保留 128 笔待定任务、每公钥 8 笔、总日志 1 万笔；每原始交易最多自动广播 3 次，之后继续查不可逆回执，不自动生成新授权。默认接收配置 AIC 发行合约，其他发行方由运营者审核后写入 `RELAY_ALLOWED_TOKENS`。这些是中继服务限额，不改变链上多币种支持或多设备签名规则。

@@ -35,17 +35,17 @@ cleos -u https://YOUR-RPC key push signed.json -p keyrelaymoon@keyrelay
 cleos -u https://YOUR-RPC key submit signed.json --relay-url https://YOUR-BP-RELAY
 ```
 
-`prepare` 自动读取链 ID、部署域和持久 nonce，区分公钥收款和文本收款；文本收款账户必须存在。`sign` 通过本机 keosd 的 `sign_digest` 签名并校验返回签名。费用来自发送公钥的额外 AIC 余额；本金是其他币时仍需提前给该公钥存入 AIC。中继无权改变金额、收款人、手续费上限或收取 30% 加价的 BP 身份。
+`prepare` 读取链 ID、部署域和持久撤销代次，生成随机 request_id，并准备完整原生交易。`sign` 校验可见字段与固定协议编码一致，通过本机 keosd 签名。`push` 只补资源付款人的原生签名，不改交易正文、TAPOS 或过期时间。中继不能修改用户批准的内容。
 
-`prepare` reads chain ID, deployment domain and persistent nonce, and distinguishes public-key from native-account recipients. Native recipients must exist. `sign` calls local keosd `sign_digest` and verifies the returned signature. Fees come from the sender key's additional AIC balance; a key holding another token also needs AIC. The relay cannot change principal, destination, fee cap or the BP earning the 30% markup.
+`prepare` reads the deployment and revocation epoch, generates an independent random request ID and prepares the complete transaction. `sign` checks fixed binary schemas and uses local keosd. `push` only adds the resource payer signature; it never changes the approved transaction, TAPOS or expiration. The owner proof is in CFD, separate from native signatures.
 
 ## 自助转出 / Owner-authorized self withdrawal
 
 ```bash
 cleos -u https://YOUR-RPC key prepare PUB_K1_SENDER keyuserlunar '2.0000 AIC' \
-  --self --max-fee '0.5000 AIC' > prepared.json
+  --self --payer keyusersolar --max-fee '0.5000 AIC' > prepared.json
 cleos -u https://YOUR-RPC key sign prepared.json > signed.json
-cleos -u https://YOUR-RPC key push signed.json --payer keyusersolar -p keyusersolar@active
+cleos -u https://YOUR-RPC key push signed.json -p keyusersolar@active
 ```
 
 原生 payer 支付链上 CPU/NET，公钥余额支付基础 AIC 费用，不收 BP 加价。payer 不能替代公钥签名。BP 中继停用、维护或拉黑时仍能使用此路径。`prepare --self` 与商业 `withdraw` 签名域不同，不能把其中一种签名挪用于另一种。
@@ -56,8 +56,18 @@ The native payer supplies transaction CPU/NET, while the key pays the base AIC f
 
 `key push` retains normal cleos submission semantics; irreversible inclusion is the settlement criterion. The HTTP relay reports `finalized` only after finding the actual canonical irreversible receipt. `--allow-http-for-test` permits explicit loopback test URLs only.
 
-## nonce 与并发 / Nonce and concurrency
+## 并发、重试和撤销 / Concurrency, retries and revocation
 
-nonce 保存在合约的钱包行中。`key prepare` 查询当前值，但不会预占；当前没有跨 cleos 进程、跨设备的分号器。两个进程同时准备不同转账，可能都读到 N；链上原子校验只允许其中一笔成功，另一笔需要重新读取并签名。中继收到的是已签指令，不能擅自换号。需要多笔都成功时，应由持有人客户端在签名前协调连续 nonce，并按序提交、处理失败恢复；逐笔确认后再准备下一笔是当前直接用法。
+任意设备可使用同一 auth_epoch 各自签名并发转账，无需共同分配 nonce。普通交易不推进代次；余额不足仍可能失败。不要在未知结果时重新 prepare/sign，先用 prepared.json 中已知的 transaction_id 查询不可逆回执。中继只重发同一份交易。明确的 cancel/selfcancel 才提高 auth_epoch，使旧代次尚未执行的证明失效；当前 cleos 快捷命令提供转账，撤销结构可通过 SDK 准备。
 
-The contract wallet row owns the persistent nonce. `key prepare` reads it without reserving it; V1 has no cross-process or cross-device allocator. Concurrent prepares may both read N. Atomic execution admits one; the loser needs a fresh read/signature. A relay cannot renumber an already signed instruction. To execute all requests, an owner-side client must coordinate consecutive nonces before signing and submit in order with failure recovery. Preparing the next request after confirmation is the current direct CLI flow.
+Independent devices can authorize concurrent sends at the same epoch. Only cancellation advances it. A timeout is an unknown result: track the transaction_id already present in prepared.json before creating a replacement. Intentionally signing a new ID authorizes another payment. The convenience CLI covers transfers; cancellation envelopes can be prepared with the SDK.
+
+提交外部中继使用独立 HTTP 配置，不转发 RPC Authorization 或其他自定义请求头，且单独校验 HTTPS 证书。loopback 测试豁免只接受严格的本地主机地址。
+
+External relay submission uses a separate HTTP configuration, forwards no RPC credentials/custom headers, and verifies TLS certificates independently. Test HTTP accepts exact loopback hosts only.
+
+## 原生交易导出 / Native transaction export
+
+`key push signed.json -d` 只签署资源付款部分并导出，不广播；`-d -s` 只导出未附资源签名的原生交易。广播必须继续使用原始正文，不得更新 TAPOS、过期时间或增加强制唯一 action。修改原生字段需要持有人重新复核并签名；不能用通用 push 自动更新未附原生签名的交易头。
+
+`key push signed.json -d` signs the resource envelope and exports without broadcasting. `-d -s` exports without a resource signature. Never refresh the original header or append a uniqueness action. A resource-unsigned export must be signed without mutating its header before submission; generic push may refresh an unsigned transaction and invalidate the owner proof.

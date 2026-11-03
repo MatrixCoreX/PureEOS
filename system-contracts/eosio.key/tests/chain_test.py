@@ -147,7 +147,7 @@ def main():
                           'epoch_seconds':1,'max_wallets':10,'max_balances':30,'max_assets':10,'max_native_payers':20}}
             # eosio.key active is code-only; deployment init is owner-authorized before sealing.
             self.action('init',self.cfg,'eosio.key@owner',contract='eosio.key')
-            self.cfg['version']=1
+            self.cfg['version']=2
             for n in ['gptkeyorigin','keyrelaymoon']:
                 self.action('bondbp',{'producer':n},n)
                 self.action('regproducer',{'producer':n,'producer_key':self.accounts[n]['Public key'],'url':'','location':0},n)
@@ -183,20 +183,22 @@ def main():
         def transfer(self,account,to,amount,memo,token='eosio.token',failure=None):
             return self.action('transfer',{'from':account,'to':to,'quantity':amount,'memo':memo},account,contract=token,failure=failure)
         def memo(self,key,cap='100000'):
-            return 'PK1|'+key['Public key']+'|'+cap
+            return 'PK2|'+key['Public key']+'|'+cap+'|'+os.urandom(32).hex()
         def state(self):
             return {n:self.ktable(n)for n in ['config','wallets','assets','nativefees','feebuckets','pricing']}|{'balances':[
                 {'wallet':w['id'],'rows':self.ktable('balances',str(w['id']))}for w in self.ktable('wallets')]}
-        def signed(self,op,request,owner):
-            result=subprocess.run(['node',str(source/'tests/sign.mjs')],input=json.dumps({'abi':str(args.artifacts/'eosio.key.abi'),
-                'config':self.cfg,'operation':op,'request':request,'key':owner['Private key']}),capture_output=True,text=True,timeout=30)
+        def signed(self,op,request,owner,original=None,actor=None,attack=None,ttl=120):
+            payer=self.accounts[actor.split('@')[0]]if actor else(self.accounts['keyusersolar']if op.startswith('self')else self.hot)
+            result=subprocess.run(['node',str(source/'tests/sign.mjs')],input=json.dumps({
+                'config':self.cfg,'info':self.rpc('get_info'),'operation':op,'request':request,
+                'key':owner['Private key'],'payer_key':payer['Private key'],'payer':'keyusersolar'if op.startswith('self')else'',
+                'original':original['body']if original else None,'actor':actor,'attack':attack,'ttl':ttl}),capture_output=True,text=True,timeout=30)
             if result.returncode:raise RuntimeError('Test signing bridge failed: '+self.redact(result.stderr))
-            return json.loads(result.stdout)['signature']
+            return json.loads(result.stdout)
         def request(self,owner,op='ksend',**patch):
-            wallet=next(w for w in self.ktable('wallets')if w['key']==owner['Public key']or self.pub_equal(w['key'],owner['Public key']))
-            expires=int(datetime.datetime.fromisoformat(self.rpc('get_info')['head_block_time']).replace(tzinfo=datetime.timezone.utc).timestamp())+1800
-            common={'from':owner['Public key'],'nonce':str(wallet['next_nonce']),'expires':expires,'relayer':'keyrelaymoon','reward_to':'keyrelaymoon','max_fee':'10.0000 AIC'}
-            if op in ['cancel','selfcancel']:common['next_nonce']=str(int(common['nonce'])+7)
+            wallet=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],owner['Public key']))
+            common={'from':owner['Public key'],'auth_epoch':str(wallet['auth_epoch']),'request_id':os.urandom(32).hex(),'relayer':'keyrelaymoon','reward_to':'keyrelaymoon','max_fee':'10.0000 AIC'}
+            if op in ['cancel','selfcancel']:common['next_epoch']=str(int(common['auth_epoch'])+7)
             else:common.update({'token_contract':'eosio.token','quantity':'1.0000 AIC','memo':'native account receives full amount',
                               'to':self.receiver['Public key']if op=='ksend'else 'keyuserlunar'})
             if op.startswith('self'):common.update(relayer='',reward_to='')
@@ -209,11 +211,11 @@ def main():
                 for c in s[7:]if s.startswith('PUB_K1_')else s[3:]:v=v*58+alphabet.index(c)
                 return v.to_bytes(37,'big')[:33]
             return decode(a)==decode(b)
-        def execute(self,op,owner,request=None,sig=None,failure=None,actor=None):
+        def execute(self,op,owner,request=None,sig=None,failure=None,actor=None,attack=None):
             request=request or self.request(owner,op)
-            data={'request':request,'sig':sig or self.signed(op,request,owner)}
-            if op.startswith('self'):data['payer']='keyusersolar'
-            return self.action(op,data,actor or ('keyusersolar'if op.startswith('self')else'keyrelaymoon@keyrelay'),contract='eosio.key',failure=failure)
+            signed=sig or self.signed(op,request,owner,actor=actor,attack=attack)
+            if sig and (request!=sig['prepared']['request'] or actor or attack):signed=self.signed(op,request,owner,original=sig,actor=actor,attack=attack)
+            return self.tx(['push','transaction',json.dumps(signed['signed']),'-s'],failure=failure)
         def tests(self):
             self.owner,self.receiver=self.key(),self.key()
             self.transfer('keyusersolar','eosio.key','100.0000 AIC','fee')
@@ -227,14 +229,16 @@ def main():
             self.check(json.loads(read.stdout)['balance']=='100000000','JS SDK reads actual key/asset secondary indices and exact six-decimal balance')
             if args.native_cleos:self.test_cli()
             self.test_nonce_race()
+            self.test_proof_attacks()
+            self.test_hot_key_rotation()
             before=self.state();native=self.token_balance('keyusersolar')
             self.transfer('keyusersolar','eosio.key','1.0000 AIC',self.memo(self.receiver,'0'),failure='fee exceeds')
             self.check(self.state()==before and self.token_balance('keyusersolar')==native,'Fee cap rejection rolls back token transfer, fee, wallet and reserve')
-            self.transfer('keyusersolar','eosio.key','1.0000 AIC','not a key',failure='use PK1')
+            self.transfer('keyusersolar','eosio.key','1.0000 AIC','not a key',failure='use PK2')
             req=self.request(self.owner);sig=self.signed('ksend',req,self.owner)
             self.execute('ksend',self.owner,req,sig)
             after=self.state()
-            self.execute('ksend',self.owner,req,sig,failure='nonce already used')
+            self.execute('ksend',self.owner,req,sig,failure='duplicate transaction')
             self.check(self.state()==after,'Duplicate owner intent cannot debit twice')
             req=self.request(self.owner,'withdraw',quantity='3.4567 AIC');sig=self.signed('withdraw',req,self.owner)
             self.execute('withdraw',self.owner,req|{'quantity':'3.4568 AIC'},sig,failure='recovered key')
@@ -243,15 +247,17 @@ def main():
             diff=Decimal(self.token_balance('keyuserlunar')['AIC'].split()[0])-Decimal(before.split()[0])
             self.check(diff==Decimal('3.4567'),'Public-key to native text account delivers exact AIC principal; fee is additional')
             req=self.request(self.owner,'withdraw',token_contract='keytesttoken',quantity='1.234567 USDT')
+            row_count=self.ktable('config')[0]['balance_count']
             self.execute('withdraw',self.owner,req)
+            self.check(self.ktable('config')[0]['balance_count']==row_count+1,'Opening a native token recipient row is charged and consumes the bounded storage budget')
             self.check(self.token_balance('keyuserlunar','keytesttoken')['USDT']=='1.234567 USDT','Six-decimal other-token withdrawal to native text account is full amount')
             self.execute('withdraw',self.owner,self.request(self.owner,'withdraw',to='noaccounthere'),failure='invalid withdrawal')
-            self.execute('ksend',self.owner,self.request(self.owner,expires=1),failure='request expired')
-            self.execute('ksend',self.owner,actor='keyrelaymoon@active',failure='missing authority')
-            cancel=self.request(self.owner,'cancel');old=self.request(self.owner)
+            self.execute('ksend',self.owner,self.request(self.owner),attack='domain',failure='recovered key')
+            self.execute('ksend',self.owner,actor='keyrelaymoon@active',failure='recovered key')
+            cancel=self.request(self.owner,'cancel');old=self.request(self.owner);oldproof=self.signed('ksend',old,self.owner)
             self.execute('cancel',self.owner,cancel)
-            self.execute('ksend',self.owner,old,failure='nonce already used')
-            self.check(True,'Cancellation permanently advances nonce and invalidates older signed sends')
+            self.execute('ksend',self.owner,old,oldproof,failure='authorization epoch revoked')
+            self.check(True,'Cancellation advances only the revocation epoch and invalidates outstanding older authorizations')
             self.action('setrelay',{'bp':'keyrelaymoon','enabled':False},'keyrelaymoon',contract='eosio.key')
             self.execute('withdraw',self.owner,failure='relay disabled')
             self.execute('selfout',self.owner)
@@ -276,64 +282,92 @@ def main():
             if args.fixture:self.test_fixture_states()
             else:self.test_real_market()
             self.test_large_nonce()
+            self.test_overspend()
             self.check_reserves()
             self.report['final_state']=self.state()
         def test_large_nonce(self):
             large='9007199254740993'
-            request=self.request(self.owner,'selfcancel',next_nonce=large)
+            request=self.request(self.owner,'selfcancel',next_epoch=large)
             self.execute('selfcancel',self.owner,request)
             read=subprocess.run(['node',str(source/'tests/read.mjs')],input=json.dumps({'endpoint':self.url,'key':self.owner['Public key'],
                 'token':'eosio.token','symbol':'4,AIC'}),capture_output=True,text=True,timeout=30)
             assert read.returncode==0,self.redact(read.stderr)
-            self.check(str(json.loads(read.stdout)['wallet']['next_nonce'])==large,'Actual RPC and JS SDK retain an on-chain nonce above 2^53 exactly')
+            self.check(str(json.loads(read.stdout)['wallet']['auth_epoch'])==large,'Actual RPC and JS SDK retain an on-chain revocation epoch above 2^53 exactly')
             if args.native_cleos:
-                prepared=json.loads(self.run(['key','prepare',self.owner['Public key'],'keyuserlunar','1.0000 AIC','--self','--max-fee','1.0000 AIC']))
-                self.check(prepared['request']['nonce']==large,'Native cleos prepares the exact uint64 nonce without JavaScript rounding')
+                prepared=json.loads(self.run(['key','prepare',self.owner['Public key'],'keyuserlunar','1.0000 AIC','--self','--payer','keyusersolar','--max-fee','1.0000 AIC']))
+                self.check(prepared['request']['auth_epoch']==large,'Native cleos prepares the exact uint64 epoch without JavaScript rounding')
                 signed=json.loads(self.run(['key','sign',json.dumps(prepared)]))
-                self.tx(['key','push',json.dumps(signed),'--payer','keyusersolar','-p','keyusersolar@active'])
+                self.tx(['key','push',json.dumps(signed),'-p','keyusersolar@active'])
             else:self.execute('selfout',self.owner)
             wallet=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
-            self.check(int(wallet['next_nonce'])==int(large)+1,'Owner-authorized withdrawal succeeds with large nonce and advances it once')
+            self.check(int(wallet['auth_epoch'])==int(large),'Owner-authorized withdrawal succeeds with large epoch without consuming a transfer sequence')
         def test_nonce_race(self):
             from concurrent.futures import ThreadPoolExecutor
             from decimal import Decimal
             sender=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
-            old_nonce=int(sender['next_nonce'])
-            balance=int(next(b['amount']for b in self.ktable('balances',str(sender['id']))if int(b['asset_id'])==1))
-            recipients=['keyuserlunar','keyusersolar']
-            before=[Decimal(self.token_balance(n)['AIC'].split()[0])for n in recipients]
-            requests=[self.request(self.owner,'withdraw',to=to,quantity=q,memo='nonce race '+str(i))
-                for i,(to,q)in enumerate(zip(recipients,['0.1000 AIC','0.2000 AIC']))]
-            assert all(int(r['nonce'])==old_nonce for r in requests)
-            signed_data=[{'request':r,'sig':self.signed('withdraw',r,self.owner)}for r in requests]
+            epoch=int(sender['auth_epoch']);balance=int(next(b['amount']for b in self.ktable('balances',str(sender['id']))if int(b['asset_id'])==1))
+            recipients=['keyuserlunar','keyusersolar'];before=[Decimal(self.token_balance(n)['AIC'].split()[0])for n in recipients]
+            requests=[self.request(self.owner,'withdraw',to=to,quantity=q,memo='independent device '+str(i))for i,(to,q)in enumerate(zip(recipients,['0.1000 AIC','0.2000 AIC']))]
+            packets=[self.signed('withdraw',r,self.owner)for r in requests];assert all(int(r['auth_epoch'])==epoch for r in requests)
             lib=self.rpc('get_info')['last_irreversible_block_num'];children=[]
             try:
-                launched=[]
-                for i,data in enumerate(signed_data):
-                    command=[str(self.cleos),'--no-auto-keosd','--url',self.url,'--wallet-url','unix://'+str(self.root/'wallet/keosd.sock'),
-                        'push','action','eosio.key','withdraw',json.dumps(data),'-p','keyrelaymoon@keyrelay','-j','-x',str(300+i)]
-                    children.append(subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
-                    launched.append(time.monotonic())
-                with ThreadPoolExecutor(max_workers=2)as executor:
-                    outputs=list(executor.map(lambda c:c.communicate(timeout=60),children))
-                winners=[i for i,c in enumerate(children)if c.returncode==0]
-                self.check(len(winners)==1,'Concurrent different transactions with one nonce admit exactly one successful request')
-                winner=winners[0];loser=1-winner
-                assert 'nonce already used'in ''.join(outputs[loser]),self.redact(''.join(outputs[loser]))
-                receipt=json.loads(outputs[winner][0]);confirmed=self.wait_transaction(receipt['transaction_id'],lib,timeout=90)
-                self.report.setdefault('confirmed_transactions',[]).append(confirmed)
+                for packet in packets:
+                    children.append(subprocess.Popen([str(self.cleos),'--no-auto-keosd','--url',self.url,'--wallet-url','unix://'+str(self.root/'wallet/keosd.sock'),
+                        'push','transaction',json.dumps(packet['signed']),'-s','-j'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
+                with ThreadPoolExecutor(max_workers=2)as executor:outputs=list(executor.map(lambda c:c.communicate(timeout=60),children))
+                assert all(c.returncode==0 for c in children),self.redact(str(outputs))
+                confirmations=[self.wait_transaction(json.loads(o[0])['transaction_id'],lib,timeout=90)for o in outputs]
                 now=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
                 remaining=int(next(b['amount']for b in self.ktable('balances',str(sender['id']))if int(b['asset_id'])==1))
-                units=[1000,2000][winner]
                 deltas=[Decimal(self.token_balance(n)['AIC'].split()[0])-before[i]for i,n in enumerate(recipients)]
-                self.check(int(now['next_nonce'])==old_nonce+1 and balance-remaining==units+130 and
-                    deltas[winner]==Decimal(units)/10000 and deltas[loser]==0,
-                    'Concurrent nonce collision finalizes one principal, one fee and one nonce increment; loser has no debit')
-                self.report['nonce_race']={'nonce':str(old_nonce),'winner_request':winner,'loser_error':'nonce already used or out of order',
-                    'canonical_confirmation':confirmed,'fee_atoms':130,'principal_atoms':units,'launch_gap_ms':(launched[1]-launched[0])*1000}
+                self.check(int(now['auth_epoch'])==epoch and balance-remaining==3000+260 and deltas==[Decimal('0.1000'),Decimal('0.2000')],
+                    'Two independently prepared same-epoch transactions both finalize; exact principals and one extra fee each, no shared nonce allocator')
+                self.report['independent_device_concurrency']={'epoch':str(epoch),'confirmations':confirmations,'fee_atoms_each':130,'principal_atoms':[1000,2000]}
             finally:
-                for child in children:
-                    if child.poll()is None:child.kill();child.wait()
+                for c in children:
+                    if c.poll()is None:c.kill();c.wait()
+        def test_proof_attacks(self):
+            req=self.request(self.owner,'withdraw',quantity='0.0100 AIC');signed=self.signed('withdraw',req,self.owner)
+            for attack,error in [('expiration','recovered key'),('extra-root','recovered key'),('domain','recovered key'),('invalid-proof',''),('extra-cfd','extra context-free data')]:
+                before=self.state();native=self.token_balance('keyuserlunar')
+                self.execute('withdraw',self.owner,req,signed,attack=attack,failure=error)
+                self.check(self.state()==before and self.token_balance('keyuserlunar')==native,'Owner proof attack '+attack+' rejects without principal, fee or reserve changes')
+            self.execute('withdraw',self.owner,req,signed)
+            self.check(True,'Failed same-ID invalid proof does not poison later valid transaction')
+            after=self.state();self.execute('withdraw',self.owner,req,signed,failure='duplicate transaction')
+            self.check(self.state()==after,'Exact native retry after success cannot debit twice')
+            self.tx(['push','transaction',json.dumps(signed['signed']),'-s','--compression','zlib'],failure='duplicate transaction')
+            self.check(self.state()==after,'Changing native packet compression cannot create a second payment')
+            expired=self.signed('withdraw',self.request(self.owner,'withdraw',quantity='0.0100 AIC'),self.owner,ttl=1)
+            self.wait_lib(self.rpc('get_info')['head_block_num']+6)
+            self.tx(['push','transaction',json.dumps(expired['signed']),'-s'],failure='expired')
+            self.wait_lib(self.rpc('get_info')['head_block_num']+6)
+            self.execute('withdraw',self.owner,req,signed,failure='duplicate transaction')
+            shortreq=self.request(self.owner,'withdraw',quantity='0.0100 AIC')
+            short=self.signed('withdraw',shortreq,self.owner,ttl=15)
+            self.execute('withdraw',self.owner,shortreq,short)
+            self.wait_lib(self.rpc('get_info')['head_block_num']+36)
+            before=self.state();self.execute('withdraw',self.owner,shortreq,short,failure='expired')
+            self.check(self.state()==before,'Already executed short-lived packet remains rejected after expiry and native dedup pruning')
+            self.report['native_replay_expiration_source_review']={'dedup_pruning':'now > expiration','native_acceptance':'expiration >= pending_block_time','gap':False}
+        def test_hot_key_rotation(self):
+            req=self.request(self.owner,'ksend');old=self.signed('ksend',req,self.owner)
+            replacement=self.key();self.run(['wallet','import','-n','localtest'],input_text=replacement['Private key']+'\n')
+            self.tx(['set','account','permission','keyrelaymoon','keyrelay',replacement['Public key'],'active'])
+            before=self.state();self.execute('ksend',self.owner,req,old,failure='satisfy')
+            self.check(self.state()==before,'Revoked native BP relay hot key cannot authorize pending wallet transaction')
+            self.hot=replacement
+            renewed=self.signed('ksend',req,self.owner,original=old)
+            self.check(renewed['prepared']['transaction_id']==old['prepared']['transaction_id']and renewed['signature']==old['signature'],
+                'Rotating only native resource signature preserves holder proof and native transaction ID')
+            self.execute('ksend',self.owner,req,renewed)
+        def test_overspend(self):
+            owner=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
+            balance=int(next(b['amount']for b in self.ktable('balances',str(owner['id']))if int(b['asset_id'])==1))
+            request=self.request(self.owner,'selfout',quantity=f'{balance//10000}.{balance%10000:04d} AIC')
+            before=self.state();native=self.token_balance('keyuserlunar')
+            self.execute('selfout',self.owner,request,failure='insufficient principal balance')
+            self.check(self.state()==before and self.token_balance('keyuserlunar')==native,'Attempt to spend entire principal without additional AIC fee fails atomically')
         def check_reserves(self):
             from decimal import Decimal
             balances=[b for w in self.ktable('wallets')for b in self.ktable('balances',str(w['id']))]
@@ -392,13 +426,22 @@ def main():
             self.check(self.state()==before,'Forged from notification cannot consume another native account fee credit')
             mode(0);self.transfer('keyusersolar','eosio.key','10.0000 XTK',self.memo(self.owner),token='keybadtokenx')
             inner=self.request(self.owner,'selfout',token_contract='keybadtokenx',quantity='1.0000 XTK')
-            inner['nonce']=str(int(inner['nonce'])+1)
-            self.action('arm',{'request':inner,'sig':self.signed('selfout',inner,self.owner)},'keybadtokenx',contract='keybadtokenx')
-            for value,error in [(1,'full principal'),(2,'missing standard outgoing'),(4,'authorization'),(5,'outstanding token interaction')]:
+            inner['request_id']=os.urandom(32).hex()
+            self.action('arm',{'request':inner,'sig':self.signed('selfout',inner,self.owner)['signature']},'keybadtokenx',contract='keybadtokenx')
+            for value,error in [(1,'full principal'),(2,'missing standard outgoing'),(4,'authorization'),(5,'top-level owner operation')]:
                 mode(value);before=self.state();native=self.token_balance('keyuserlunar','keybadtokenx')
                 self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='keybadtokenx',quantity='1.0000 XTK'),failure=error)
-                self.check(self.state()==before and self.token_balance('keyuserlunar','keybadtokenx')==native,'Incompatible outgoing token mode '+str(value)+' rolls back principal, fee, nonce and reserve')
+                self.check(self.state()==before and self.token_balance('keyuserlunar','keybadtokenx')==native,'Incompatible outgoing token mode '+str(value)+' rolls back principal, fee, epoch and reserve')
             mode(0);self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='keybadtokenx',quantity='1.0000 XTK'))
+            before_ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
+            before_rows=int(self.ktable('config')[0]['balance_count'])
+            mode(6);self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='keybadtokenx',quantity='1.0000 XTK'))
+            after_ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
+            self.check(after_ram-before_ram>=4096 and int(self.ktable('config')[0]['balance_count'])==before_rows,
+                'KNOWN RELEASE BLOCKER: unreviewed issuer bills custody RAM outside the wallet row counter')
+            self.report['unreviewed_issuer_RAM_exposure']={'reproduced':True,'extra_RAM_bytes':after_ram-before_ram,'wallet_row_counter_changed':False}
+            self.report['release_qualified']=False
+            mode(0)
             self.transfer('keyusersolar','eosio.key','1.0000 AIC','fee',token='keybadtokenx',failure='fee funding accepts only configured AIC')
             self.transfer('keyusersolar','eosio.key','1.0000 AIC',self.memo(self.owner),token='keybadtokenx')
             real=self.token_balance('keyuserlunar')['AIC']
@@ -414,9 +457,9 @@ def main():
             q=balance-100
             self.execute('selfout',self.owner,self.request(self.owner,'selfout',quantity=f'{q//10000}.{q%10000:04d} AIC',memo=''))
             empty=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
-            nonce=int(empty['next_nonce']);self.transfer('keyusersolar','eosio.key','10.0000 AIC',self.memo(self.owner))
+            epoch=int(empty['auth_epoch']);self.transfer('keyusersolar','eosio.key','10.0000 AIC',self.memo(self.owner))
             refill=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
-            self.check(int(refill['next_nonce'])==nonce and refill['id']==sender['id'],'Zero AIC balance and later funding preserve wallet identity and monotonic nonce')
+            self.check(int(refill['auth_epoch'])==epoch and refill['id']==sender['id'],'Zero AIC balance and later funding preserve wallet identity and revocation epoch')
             # Invalid compressed secp256k1 point x=0 has no square root; construct a
             # correct Base58 checksum so this tests the native curve check itself.
             payload=b'\x02'+b'\0'*32;checksum=hashlib.new('ripemd160',payload+b'K1').digest()[:4]
@@ -436,15 +479,22 @@ def main():
             prepared=json.loads(self.run(['key','prepare',self.owner['Public key'],'keyuserlunar','2.3456 AIC',
                 '--bp','keyrelaymoon','--max-fee','1.0000 AIC']))
             sdk=subprocess.run(['node',str(source/'tests/sign.mjs')],input=json.dumps({'abi':str(args.artifacts/'eosio.key.abi'),
-                'config':self.cfg,'operation':prepared['operation'],'request':prepared['request'],'key':self.owner['Private key']}),
+                'config':self.cfg,'prepared':prepared,'info':self.rpc('get_info'),'operation':prepared['operation'],'request':prepared['request'],'key':self.owner['Private key'],'payer_key':self.hot['Private key']}),
                 capture_output=True,text=True,timeout=30)
             assert sdk.returncode==0,self.redact(sdk.stderr)
             self.check(json.loads(sdk.stdout)['digest']==prepared['digest'],'Native cleos and JS SDK produce the same owner signing digest')
             signed=json.loads(self.run(['key','sign',json.dumps(prepared)]))
+            before_export=self.state()
+            exported=json.loads(self.run(['key','push',json.dumps(signed),'-d','-p','keyrelaymoon@keyrelay']))
+            unsigned=json.loads(self.run(['key','push',json.dumps(signed),'-d','-s']))
+            self.wait_lib(self.rpc('get_info')['head_block_num']+3)
+            self.check(self.state()==before_export and len(exported['signatures'])==1 and len(unsigned['signatures'])==0,
+                'Native cleos --dont-broadcast exports safely, including --skip-sign, without executing the authorized transfer')
             self.tx(['key','push',json.dumps(signed),'-p','keyrelaymoon@keyrelay'])
             from decimal import Decimal
             self.check(Decimal(self.token_balance('keyuserlunar')['AIC'].split()[0])-Decimal(native_before.split()[0])==Decimal('2.3456'),
                 'Real cleos prepare/sign/push public-key to native text account sends full principal')
+            self.test_relay_headers(signed)
             if not args.fixture:self.test_http_relay()
             # Original text-account transfer remains available.
             self.tx(['transfer','keyusersolar','keyuserlunar','0.0001 AIC','existing native transfer'])
@@ -452,6 +502,26 @@ def main():
             self.tx(['transfer','keyusersolar',self.receiver['Public key'],'1.0000 AIC','--max-key-fee','0.0000 AIC',
                 '--key-fee-fund','1.0000 AIC'],failure='fee exceeds')
             self.check(self.state()==before and self.token_balance('keyusersolar')==native,'Cleos combined fee funding and public-key deposit roll back atomically')
+        def test_relay_headers(self,signed):
+            import threading
+            from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+            captured={}
+            class Handler(BaseHTTPRequestHandler):
+                def do_POST(self):
+                    captured['headers']=dict(self.headers);captured['body']=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+                    self.send_response(202);self.send_header('Content-Type','application/json');self.end_headers();self.wfile.write(b'{"status":"test-captured"}')
+                def log_message(self,*args):pass
+            server=ThreadingHTTPServer(('127.0.0.1',0),Handler);thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+            endpoint='http://127.0.0.1:'+str(server.server_port)
+            try:
+                for name,value in [('Authorization','test-rpc-credential'),('X-Private-RPC','sentinel')]:
+                    self.run(['--header',name+': '+value,'key','submit',json.dumps(signed),'--relay-url',endpoint,'--allow-http-for-test'])
+                    headers={k.lower():v for k,v in captured['headers'].items()}
+                    assert name.lower()not in headers and captured['body']==signed
+                self.check(True,'Native cleos external relay request forwards no RPC credentials/custom headers')
+                self.run(['key','submit',json.dumps(signed),'--relay-url',endpoint+'@example.invalid','--allow-http-for-test'],failure='Valid HTTPS endpoint')
+                self.check(True,'Native cleos loopback exception rejects URL userinfo/remote-host confusion')
+            finally:server.shutdown();server.server_close();thread.join()
         def test_http_relay(self):
             import urllib.request
             from native_savanna_genesis_test import free_port

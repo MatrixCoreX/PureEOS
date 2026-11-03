@@ -19,7 +19,7 @@ npm test
 KEY_BUILD_FIXTURES=1 bash scripts/build.sh ./artifacts
 ```
 
-`artifacts/eosio.key.wasm` is production. The `test-only-*` directories are incompatible test/alternate-system builds and must never be substituted into a deployment package. The parent repository's normal CMake `cleos` target compiles the native client additions in `programs/cleos/key_wallet.hpp`; it adds no runtime dependency on Node.js to cleos.
+`artifacts/eosio.key.wasm` is the normal build using real system tables; it is not approved for public deployment while the RAM-authority blocker remains. The `test-only-*` directories are incompatible test/alternate-system builds and must never be substituted into a deployment package. The parent repository's normal CMake `cleos` target compiles the native client additions in `programs/cleos/key_wallet.hpp`; it adds no runtime dependency on Node.js to cleos.
 
 ## Bootstrap before governance sealing
 
@@ -105,6 +105,10 @@ python3 -B tests/chain_test.py --fixture --package /path/to/pureeos-test-1.0.0-t
   --work /private/new-key-fixture-qualification --artifacts /path/to/artifacts
 ```
 
-Production integration covers real system-table prefixes, text/key/token paths, fees, original cleos transfers, native cleos/SDK signing agreement, real BP relay HTTP/canonical confirmation, maintenance, atomic reserve handling, unsupported token behavior, persistent nonce and RAM caps. A real PowerUp reservation checks dynamic pricing. Alternate-system fixtures cover deterministic blacklist/key-change rejection, bond/active failures, extreme occupancy and schema-change exits; they are **wallet logic tests, not native consensus blacklist qualification**. No TPS is measured, and shared VM results are not bare-metal performance claims.
+Production integration covers real system-table prefixes, text/key/token paths, fees, original cleos transfers, native cleos/SDK signing agreement, real BP relay HTTP/canonical confirmation, maintenance, atomic reserve handling, unsupported token behavior, revocation epoch and independent-device concurrency and RAM caps. A real PowerUp reservation checks dynamic pricing. Alternate-system fixtures cover deterministic blacklist/key-change rejection, bond/active failures, extreme occupancy and schema-change exits; they are **wallet logic tests, not native consensus blacklist qualification**. No TPS is measured, and shared VM results are not bare-metal performance claims.
 
 Retain all failed attempts and retries. Bootstrap transactions that demonstrably roll back at the unchanged 150ms CPU limit may be retried with a new native header on a busy shared host; authorization/business failures are never retried as successes. Verify actual WASM, ABI, client binary, source inputs, hardware, chain parameters and canonical receipts in the final qualification record.
+
+Owner proof protocol is version **2**; never initialize a new deployment with the superseded sequential-nonce ABI. Use the committed matching ABI/WASM, and require replay, inline-proof, envelope-tampering and concurrent same-epoch tests before promotion. See [risk controls](RISKS.md).
+
+2026-11-03 execution policy: future builds and all test execution belong on an independently provisioned Vultr host. The local workstation is for editing/orchestration and receiving/verifying evidence only. Keep the public low-cost demonstration host separate.

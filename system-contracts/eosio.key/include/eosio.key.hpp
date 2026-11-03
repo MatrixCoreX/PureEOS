@@ -27,30 +27,30 @@ struct transfer_request {
    name token_contract;
    asset quantity;
    std::string memo;
-   uint64_t nonce;
-   uint32_t expires;
+   uint64_t auth_epoch;
+   checksum256 request_id;
    name relayer, reward_to;
    asset max_fee;
-   EOSLIB_SERIALIZE(transfer_request, (from)(to)(token_contract)(quantity)(memo)(nonce)(expires)(relayer)(reward_to)(max_fee))
+   EOSLIB_SERIALIZE(transfer_request, (from)(to)(token_contract)(quantity)(memo)(auth_epoch)(request_id)(relayer)(reward_to)(max_fee))
 };
 struct withdrawal_request {
    public_key from;
    name token_contract, to;
    asset quantity;
    std::string memo;
-   uint64_t nonce;
-   uint32_t expires;
+   uint64_t auth_epoch;
+   checksum256 request_id;
    name relayer, reward_to;
    asset max_fee;
-   EOSLIB_SERIALIZE(withdrawal_request, (from)(token_contract)(to)(quantity)(memo)(nonce)(expires)(relayer)(reward_to)(max_fee))
+   EOSLIB_SERIALIZE(withdrawal_request, (from)(token_contract)(to)(quantity)(memo)(auth_epoch)(request_id)(relayer)(reward_to)(max_fee))
 };
 struct cancellation_request {
    public_key from;
-   uint64_t nonce, next_nonce;
-   uint32_t expires;
+   uint64_t auth_epoch, next_epoch;
+   checksum256 request_id;
    name relayer, reward_to;
    asset max_fee;
-   EOSLIB_SERIALIZE(cancellation_request, (from)(nonce)(next_nonce)(expires)(relayer)(reward_to)(max_fee))
+   EOSLIB_SERIALIZE(cancellation_request, (from)(auth_epoch)(next_epoch)(request_id)(relayer)(reward_to)(max_fee))
 };
 
 class [[eosio::contract("eosio.key")]] key_contract : public contract {
@@ -62,23 +62,24 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
                               checksum256 system_hash, fee_policy policy);
    [[eosio::action]] void regrelay(name bp, name permission, std::string endpoint);
    [[eosio::action]] void setrelay(name bp, bool enabled);
-   [[eosio::action]] void ksend(transfer_request request, signature sig);
-   [[eosio::action]] void withdraw(withdrawal_request request, signature sig);
-   [[eosio::action]] void selfout(name payer, withdrawal_request request, signature sig);
-   [[eosio::action]] void cancel(cancellation_request request, signature sig);
-   [[eosio::action]] void selfcancel(name payer, cancellation_request request, signature sig);
+   [[eosio::action]] void prove(public_key owner, checksum256 chain_id, checksum256 deployment, uint32_t reference_block_num);
+   [[eosio::action]] void ksend(transfer_request request);
+   [[eosio::action]] void withdraw(withdrawal_request request);
+   [[eosio::action]] void selfout(name payer, withdrawal_request request);
+   [[eosio::action]] void cancel(cancellation_request request);
+   [[eosio::action]] void selfcancel(name payer, cancellation_request request);
    [[eosio::action]] void claim(name bp, name to, asset quantity, asset max_fee);
    [[eosio::action]] void refundfee(name owner, name to, asset quantity, asset max_fee);
    [[eosio::action]] void finishout(uint64_t asset_id, uint64_t ticket);
-   [[eosio::action]] void receipt(name kind, checksum256 request_id, name native_from,
+   [[eosio::action]] void receipt(name kind, checksum256 request_id, checksum256 transaction_id, name native_from,
                                  checksum256 from_key, checksum256 to_key,
                                  name token_contract, asset quantity, asset fee,
-                                 name relayer, uint64_t nonce);
+                                 name relayer, uint64_t auth_epoch);
    [[eosio::on_notify("*::transfer")]]
    void ontransfer(name from, name to, asset quantity, std::string memo);
 
    struct [[eosio::table("config")]] configuration {
-      uint32_t version = 1;
+      uint32_t version = 2;
       checksum256 chain_id, deployment, system_hash;
       name fee_contract;
       symbol fee_symbol;
@@ -92,10 +93,10 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
       uint64_t id;
       public_key key;
       checksum256 key_hash;
-      uint64_t next_nonce = 0;
+      uint64_t auth_epoch = 0;
       uint64_t primary_key() const { return id; }
       checksum256 by_key() const { return key_hash; }
-      EOSLIB_SERIALIZE(wallet, (id)(key)(key_hash)(next_nonce))
+      EOSLIB_SERIALIZE(wallet, (id)(key)(key_hash)(auth_epoch))
    };
    using wallets = multi_index<"wallets"_n, wallet,
       indexed_by<"bykey"_n, const_mem_fun<wallet, checksum256, &wallet::by_key>>>;
@@ -171,7 +172,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    int64_t balance_of(uint64_t wallet_id, uint64_t asset_id) const;
    void credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
    void debit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
-   void nonce(uint64_t wallet_id, uint64_t expected, uint64_t next);
+   void epoch(uint64_t wallet_id, uint64_t expected, uint64_t next);
    uint32_t rows_for(const public_key& key, uint64_t asset_id) const;
    uint32_t multiplier(const configuration& cfg, bool exit_path);
    charge quote(const configuration& cfg, uint32_t units, uint32_t rows, bool relayed, bool exit_path = false);
@@ -182,19 +183,10 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    void send_out(uint64_t asset_id, name to, int64_t quantity, const std::string& memo);
    void record(name kind, checksum256 request_id, name native_from, checksum256 from,
                checksum256 to, name token, asset quantity, int64_t fee, name relay, uint64_t n);
-   void perform_withdraw(name payer, const withdrawal_request& request, const signature& sig, bool direct);
-   void perform_cancel(name payer, const cancellation_request& request, const signature& sig, bool direct);
-   template<typename Request>
-   checksum256 verify(name operation, const Request& request, const signature& sig,
-                      const configuration& cfg) const {
-      check(request.expires >= current_time_point().sec_since_epoch(), "request expired");
-      check(uint64_t(request.expires) <= uint64_t(current_time_point().sec_since_epoch()) + 3600, "request validity exceeds one hour");
-      check(request.from.index() == 0 && sig.index() == 0, "K1 keys and signatures required");
-      auto bytes = pack(std::make_tuple(std::string("PureEOS:eosio.key"), cfg.version,
-                                       cfg.chain_id, get_self(), cfg.deployment, operation, request));
-      auto digest = sha256(bytes.data(), bytes.size());
-      assert_recover_key(digest, sig, request.from);
-      return digest;
-   }
+   void perform_withdraw(name payer, const withdrawal_request& request, bool direct);
+   void perform_cancel(name payer, const cancellation_request& request, bool direct);
+   static std::vector<char> raw_transaction();
+   void verify_envelope(name operation, const public_key& owner, uint64_t auth_epoch,
+                        checksum256 request_id, const std::vector<char>& payload, const configuration& cfg) const;
 };
 }

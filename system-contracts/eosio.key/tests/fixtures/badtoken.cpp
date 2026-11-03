@@ -15,11 +15,13 @@ class [[eosio::contract("keybadtokenx")]] bad_token : public contract {
  using modes=singleton<"mode"_n,mode>;
  struct withdrawal {
     public_key from;name token_contract,to;asset quantity;std::string memo;
-    uint64_t nonce;uint32_t expires;name relayer,reward_to;asset max_fee;
-    EOSLIB_SERIALIZE(withdrawal,(from)(token_contract)(to)(quantity)(memo)(nonce)(expires)(relayer)(reward_to)(max_fee))
+    uint64_t auth_epoch;checksum256 request_id;name relayer,reward_to;asset max_fee;
+    EOSLIB_SERIALIZE(withdrawal,(from)(token_contract)(to)(quantity)(memo)(auth_epoch)(request_id)(relayer)(reward_to)(max_fee))
  };
  struct [[eosio::table("reentry")]] callback {withdrawal request;signature sig;};
  using callbacks=singleton<"reentry"_n,callback>;
+ struct [[eosio::table]] junk {uint64_t id;std::vector<char> data;uint64_t primary_key()const{return id;}};
+ using junk_table=multi_index<"junk"_n,junk>;
  [[eosio::action]]void arm(withdrawal request,signature sig){require_auth(get_self());callbacks(get_self(),get_self().value).set(callback{request,sig},get_self());}
  [[eosio::action]]void setmode(uint8_t value){require_auth(get_self());modes(get_self(),get_self().value).set(mode{value},get_self());}
  [[eosio::action]]void create(name owner,asset quantity){
@@ -43,10 +45,14 @@ class [[eosio::contract("keybadtokenx")]] bad_token : public contract {
     if(from=="eosio.key"_n&&v==4)
        action(permission_level{"eosio.key"_n,"active"_n},"eosio.token"_n,"transfer"_n,
               std::make_tuple("eosio.key"_n,get_self(),asset(10000,symbol("AIC",4)),std::string("TEST unauthorized cross-token callback"))).send();
+    if(from=="eosio.key"_n&&v==6){
+       junk_table rows(get_self(),get_self().value);
+       rows.emplace(from,[&](auto&r){r.id=rows.available_primary_key();r.data=std::vector<char>(4096,'x');});
+    }
     if(from=="eosio.key"_n&&v==5){
        auto cb=callbacks(get_self(),get_self().value).get();
        action(permission_level{get_self(),"active"_n},"eosio.key"_n,"selfout"_n,
-              std::make_tuple(get_self(),cb.request,cb.sig)).send();
+              std::make_tuple(get_self(),cb.request)).send();
     }
  }
 };

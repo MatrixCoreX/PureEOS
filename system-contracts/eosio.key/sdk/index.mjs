@@ -1,110 +1,64 @@
 // SPDX-License-Identifier: LicenseRef-AIC-Noncommercial-3.0
-import {createHash} from 'node:crypto';
-import {Asset, Checksum256, PrivateKey, PublicKey, Serializer, Signature,
-        Transaction, SignedTransaction, PackedTransaction} from '@wharfkit/antelope';
+import {createHash,randomBytes} from 'node:crypto';
+import {Asset,Name,Checksum256,PrivateKey,PublicKey,Serializer,Signature,Transaction,SignedTransaction,PackedTransaction} from '@wharfkit/antelope';
+export const CONTRACT='eosio.key',TAG='PureEOS:eosio.key:transaction';
+const LIMIT=(1n<<62n)-1n;
+const REQUESTS={ksend:'transfer_request',withdraw:'withdrawal_request',selfout:'withdrawal_request',cancel:'cancellation_request',selfcancel:'cancellation_request'};
+const common=[['auth_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset']];
+const schema={
+ transfer_request:[['from','public_key'],['to','public_key'],['token_contract','name'],['quantity','asset'],['memo','string'],...common],
+ withdrawal_request:[['from','public_key'],['token_contract','name'],['to','name'],['quantity','asset'],['memo','string'],...common],
+ cancellation_request:[['from','public_key'],['auth_epoch','uint64'],['next_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset']],
+ prove:[['owner','public_key'],['chain_id','checksum256'],['deployment','checksum256'],['reference_block_num','uint32']],
+ proof_envelope:[['tag','string'],['version','uint32'],['chain_id','checksum256'],['contract','name'],['deployment','checksum256'],['transaction_id','checksum256']],
+};
+for(const [op,type] of Object.entries(REQUESTS))schema[op]=[...(op.startsWith('self')?[['payer','name']]:[]),['request',type]];
+// Signing schemas are bundled protocol definitions. Untrusted RPC ABIs never
+// determine the bytes a holder authorizes.
+export const CORE_ABI={version:'eosio::abi/1.2',types:[],structs:Object.entries(schema).map(([name,fields])=>({name,base:'',fields:fields.map(([name,type])=>({name,type}))})),actions:[],tables:[]};
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const encode=(type,object)=>Serializer.encode({abi:CORE_ABI,type,object});
+function exact(value,fields){if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).sort().join(',')!==[...fields].sort().join(','))throw new Error('Fields must match protocol schema exactly');}
+function u64(value){if(typeof value==='number'&&!Number.isSafeInteger(value))throw new Error('Exact uint64 required');if(!/^(0|[1-9][0-9]*)$/.test(String(value))||BigInt(value)>=1n<<64n)throw new Error('Invalid uint64');return BigInt(value);}
+function hash(value){if(typeof value!=='string'||! /^[0-9a-f]{64}$/.test(value)||/^0+$/.test(value))throw new Error('Nonzero lowercase 32-byte hex required');return value;}
+function nativeName(s,empty=false){if(typeof s!=='string'||(!s&&!empty)||Name.from(s).toString()!==s)throw new Error('Canonical native name required');return s;}
+export const randomRequestId=()=>randomBytes(32).toString('hex');
+export function parseRPCJSON(text){return JSON.parse(text,(key,value,context)=>{if(typeof value==='number'&&Number.isInteger(value)&&!Number.isSafeInteger(value)){if(!context?.source||! /^-?\d+$/.test(context.source))throw new Error('RPC contains an unsafe numeric value');return context.source;}return value;});}
+export function normalizePublicKey(key){const p=PublicKey.from(key);if(p.type!=='K1')throw new Error('K1 public key required');return p.toString();}
+export function keyHash(key){return sha(Serializer.encode({type:'public_key',object:normalizePublicKey(key)}).array);}
+export function assetIdentity(tokenContract,tokenSymbol){return sha(Serializer.encode({abi:{...CORE_ABI,structs:[{name:'identity',base:'',fields:[{name:'token',type:'name'},{name:'symbol',type:'symbol'}]}]},type:'identity',object:{token:tokenContract,symbol:tokenSymbol}}).array);}
+export function atomicAsset(quantity){const a=Asset.from(quantity),units=BigInt(a.units.toString());if(units< -LIMIT||units>LIMIT)throw new Error('Asset amount out of range');return{units,symbol:a.symbol.toString(),text:a.toString()};}
+export function formatFee(value){value=BigInt(value);if(value<0n||value>LIMIT)throw new Error('Invalid fee amount');return`${value/10000n}.${String(value%10000n).padStart(4,'0')} AIC`;}
+export function depositMemo(key,maximumFee,id=randomRequestId()){const cap=atomicAsset(maximumFee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('AIC fee cap required');return`PK2|${normalizePublicKey(key)}|${cap.units}|${hash(id)}`;}
+export function validateRequest(operation,request){const type=REQUESTS[operation];if(!type)throw new Error('Unsupported wallet operation');exact(request,schema[type].map(x=>x[0]));normalizePublicKey(request.from);if(operation==='ksend')normalizePublicKey(request.to);u64(request.auth_epoch);hash(request.request_id);nativeName(request.relayer,true);nativeName(request.reward_to,true);if(type!=='cancellation_request'){nativeName(request.token_contract);if(operation!=='ksend')nativeName(request.to);}const cap=atomicAsset(request.max_fee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('Invalid AIC fee cap');if(type==='cancellation_request'){if(u64(request.next_epoch)<=u64(request.auth_epoch))throw new Error('Invalid next epoch');}else{if(atomicAsset(request.quantity).units<=0n||typeof request.memo!=='string'||Buffer.byteLength(request.memo)>128)throw new Error('Invalid principal or memo');}if(operation.startsWith('self')){if(request.relayer||request.reward_to)throw new Error('Self operation cannot pay relay');}else if(!request.relayer||request.reward_to!==request.relayer)throw new Error('Selected BP and reward identity must match');return type;}
+export function ownerDigest(config,transaction,contract=CONTRACT){if(Number(config.version)!==2)throw new Error('Unsupported owner proof version');return Checksum256.from(sha(encode('proof_envelope',{tag:TAG,version:2,chain_id:hash(config.chain_id),contract,deployment:hash(config.deployment),transaction_id:Transaction.from(transaction).id}).array));}
+export function prepareEnvelope(config,info,operation,request,{payer='',permission='keyrelay',validSeconds=120,contract=CONTRACT}={}){
+ validateRequest(operation,request);if(info.chain_id!==config.chain_id)throw new Error('Node chain mismatch');if(!Number.isInteger(validSeconds)||validSeconds<1||validSeconds>3500)throw new Error('Invalid transaction lifetime');
+ const self=operation.startsWith('self'),actor=self?payer:request.relayer;nativeName(actor);nativeName(permission);
+ const reference=Number(info.last_irreversible_block_num),block=Buffer.from(info.last_irreversible_block_id,'hex');if(!Number.isSafeInteger(reference)||reference<=0||block.length!==32||block.readUInt32BE(0)!==reference)throw new Error('Invalid irreversible reference block');
+ const tx=Transaction.from({expiration:new Date(Date.parse(info.head_block_time+'Z')+validSeconds*1000).toISOString().slice(0,19),ref_block_num:reference&65535,ref_block_prefix:block.readUInt32LE(8),max_net_usage_words:0,max_cpu_usage_ms:0,delay_sec:0,transaction_extensions:[],
+ context_free_actions:[{account:contract,name:'prove',authorization:[],data:encode('prove',{owner:request.from,chain_id:config.chain_id,deployment:config.deployment,reference_block_num:reference}).hexString}],
+ actions:[{account:contract,name:operation,authorization:[{actor,permission}],data:encode(operation,self?{payer,request}:{request}).hexString}]});
+ return{version:2,chain_id:config.chain_id,deployment:config.deployment,operation,request,payer:self?payer:'',permission,reference_block_num:reference,transaction:JSON.parse(JSON.stringify(tx)),transaction_id:tx.id.toString(),digest:ownerDigest(config,tx,contract).toString()};
+}
+export function verifyPrepared(prepared,config,contract=CONTRACT){
+ exact(prepared,['version','chain_id','deployment','operation','request','payer','permission','reference_block_num','transaction','transaction_id','digest']);
+ if(prepared.version!==2||prepared.chain_id!==config.chain_id||prepared.deployment!==config.deployment)throw new Error('Prepared domain mismatch');
+ const {operation,request,payer,permission,reference_block_num:reference}=prepared;validateRequest(operation,request);const self=operation.startsWith('self');nativeName(permission);nativeName(payer,true);if(self?!payer:!!payer)throw new Error('Invalid payer');
+ const tx=Transaction.from(prepared.transaction);if(tx.actions.length!==1||tx.context_free_actions.length!==1||Number(tx.delay_sec)!==0||tx.transaction_extensions.length||Number(tx.max_net_usage_words)!==0||Number(tx.max_cpu_usage_ms)!==0)throw new Error('Unexpected native transaction fields');
+ // Reject ignored JSON fields or structured ABI-dependent action objects.
+ exact(prepared.transaction,['expiration','ref_block_num','ref_block_prefix','max_net_usage_words','max_cpu_usage_ms','delay_sec','context_free_actions','actions','transaction_extensions']);
+ for(const a of [...prepared.transaction.actions,...prepared.transaction.context_free_actions]){exact(a,['account','name','authorization','data']);if(typeof a.data!=='string')throw new Error('Raw canonical action bytes required');for(const p of a.authorization)exact(p,['actor','permission']);}
+ if(!Number.isInteger(reference)||reference<=0||reference>0xffffffff||(reference&65535)!==Number(tx.ref_block_num))throw new Error('Invalid signed reference block');
+ const proof=tx.context_free_actions[0],root=tx.actions[0];
+ if(proof.account.toString()!==contract||proof.name.toString()!=='prove'||proof.authorization.length||proof.data.hexString!==encode('prove',{owner:request.from,chain_id:config.chain_id,deployment:config.deployment,reference_block_num:reference}).hexString)throw new Error('Proof action mismatch');
+ if(root.account.toString()!==contract||root.name.toString()!==operation||root.authorization.length!==1||root.authorization[0].actor.toString()!==(self?payer:request.relayer)||root.authorization[0].permission.toString()!==permission||root.data.hexString!==encode(operation,self?{payer,request}:{request}).hexString)throw new Error('Root operation mismatch');
+ if(Serializer.encode({type:Transaction,object:tx}).array.length>16384||tx.id.toString()!==prepared.transaction_id||ownerDigest(config,tx,contract).toString()!==prepared.digest)throw new Error('Prepared transaction hash mismatch');return tx;
+}
+export function signPrepared(prepared,config,userPrivateKey,contract=CONTRACT){verifyPrepared(prepared,config,contract);const key=PrivateKey.from(userPrivateKey);if(!key.toPublic().equals(PublicKey.from(prepared.request.from)))throw new Error('Signing key does not own sender wallet');return{prepared,owner_signature:key.signDigest(prepared.digest).toString()};}
+export function verifySigned(body,config,contract=CONTRACT){exact(body,['prepared','owner_signature']);const tx=verifyPrepared(body.prepared,config,contract),sig=Signature.from(body.owner_signature);if(sig.type!=='K1'||!sig.verifyDigest(body.prepared.digest,PublicKey.from(body.prepared.request.from)))throw new Error('Invalid owner signature');return tx;}
+export function resourcePacket(body,config,payerPrivateKey,contract=CONTRACT){const tx=verifySigned(body,config,contract),cfd=[Serializer.encode({type:'signature',object:body.owner_signature}).hexString];const raw=Serializer.encode({type:Transaction,object:tx}).array,cfhash=Buffer.from(sha(Serializer.encode({type:'bytes[]',object:cfd}).array),'hex');const digest=Checksum256.from(sha(Buffer.concat([Buffer.from(config.chain_id,'hex'),Buffer.from(raw),cfhash])));const signed=SignedTransaction.from({...tx.toJSON(),context_free_data:cfd,signatures:[PrivateKey.from(payerPrivateKey).signDigest(digest).toString()]});return{id:tx.id.toString(),expiration:tx.expiration.toString(),startLIB:body.prepared.reference_block_num,packed:PackedTransaction.fromSigned(signed,0).toJSON()};}
 
-export const CONTRACT = 'eosio.key';
-export const TAG = 'PureEOS:eosio.key';
-const LIMIT = (1n << 62n) - 1n;
-const REQUESTS = {
-  ksend: 'transfer_request', withdraw: 'withdrawal_request', selfout: 'withdrawal_request',
-  cancel: 'cancellation_request', selfcancel: 'cancellation_request',
-};
-const FIELDS = {
-  transfer_request: ['from','to','token_contract','quantity','memo','nonce','expires','relayer','reward_to','max_fee'],
-  withdrawal_request: ['from','token_contract','to','quantity','memo','nonce','expires','relayer','reward_to','max_fee'],
-  cancellation_request: ['from','nonce','next_nonce','expires','relayer','reward_to','max_fee'],
-};
-const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-// Preserve uint64/int64 RPC integers before JavaScript rounding. Node >=22.12
-// exposes the original JSON primitive in the reviver's source context.
-export function parseRPCJSON(text) {
-  return JSON.parse(text,(key,value,context)=>{
-    if(typeof value==='number'&&Number.isInteger(value)&&!Number.isSafeInteger(value)){
-      if(!context?.source||! /^-?\d+$/.test(context.source))throw new Error('RPC contains an unsafe numeric value');
-      return context.source;
-    }
-    return value;
-  });
-}
-export function normalizePublicKey(key) {
-  const value = PublicKey.from(key);
-  if (value.type !== 'K1') throw new Error('K1 public key required');
-  return value.toString();
-}
-export function keyHash(key) {
-  return sha(Serializer.encode({type: 'public_key', object: PublicKey.from(normalizePublicKey(key))}).array);
-}
-export function assetIdentity(tokenContract, tokenSymbol) {
-  return sha(Serializer.encode({abi: {version:'eosio::abi/1.2',types:[],structs:[{
-    name:'asset_identity',base:'',fields:[{name:'token_contract',type:'name'},{name:'token_symbol',type:'symbol'}],
-  }],actions:[],tables:[]}, type:'asset_identity',object:{token_contract:tokenContract,token_symbol:tokenSymbol}}).array);
-}
-export function atomicAsset(quantity) {
-  const asset = Asset.from(quantity);
-  const units = BigInt(asset.units.toString());
-  if (units < -LIMIT || units > LIMIT) throw new Error('Asset amount out of range');
-  return {units, symbol:asset.symbol.toString(), text:asset.toString()};
-}
-export function formatFee(units) {
-  const value = BigInt(units);
-  if (value < 0n || value > LIMIT) throw new Error('Invalid fee amount');
-  return `${value / 10000n}.${String(value % 10000n).padStart(4,'0')} AIC`;
-}
-export function depositMemo(key, maximumFee) {
-  const cap = atomicAsset(maximumFee);
-  if (cap.symbol !== '4,AIC' || cap.units < 0n) throw new Error('AIC fee cap required');
-  return `PK1|${normalizePublicKey(key)}|${cap.units}`;
-}
-export function validateRequest(operation, request) {
-  const type = REQUESTS[operation];
-  if (!type || !request || typeof request !== 'object' || Array.isArray(request)) throw new Error('Unsupported wallet operation');
-  const fields = FIELDS[type];
-  if (Object.keys(request).length !== fields.length || fields.some(k => !Object.hasOwn(request,k)) ||
-      Object.keys(request).some(k => !fields.includes(k))) throw new Error('Request fields must match the signed schema exactly');
-  normalizePublicKey(request.from);
-  if (operation === 'ksend') normalizePublicKey(request.to);
-  if(typeof request.nonce==='number'&&!Number.isSafeInteger(request.nonce))throw new Error('Nonce must be an exact integer');
-  const nonce = BigInt(request.nonce);
-  if (nonce < 0n || nonce >= 1n << 64n) throw new Error('Invalid nonce');
-  if (!Number.isInteger(request.expires) || request.expires < 0 || request.expires > 0xffffffff) throw new Error('Invalid expiration');
-  const maximum = atomicAsset(request.max_fee);
-  if (maximum.symbol !== '4,AIC' || maximum.units < 0n) throw new Error('Invalid AIC fee cap');
-  if (type !== 'cancellation_request') {
-    if (atomicAsset(request.quantity).units <= 0n) throw new Error('Principal must be positive');
-    if (typeof request.memo !== 'string' || Buffer.byteLength(request.memo,'utf8') > 128) throw new Error('Memo too long');
-  } else if ((typeof request.next_nonce==='number'&&!Number.isSafeInteger(request.next_nonce))||BigInt(request.next_nonce) <= nonce || BigInt(request.next_nonce) >= 1n << 64n) throw new Error('Invalid next nonce');
-  if (operation.startsWith('self')) {
-    if (request.relayer || request.reward_to) throw new Error('Self operation cannot pay a relay reward');
-  } else if (!request.relayer || request.reward_to !== request.relayer) throw new Error('Selected BP and reward identity must match');
-  return type;
-}
-export function intentDigest(abi, config, operation, request, contract = CONTRACT) {
-  const type = validateRequest(operation,request);
-  const envelope = {name:'key_signing_envelope',base:'',fields:[
-    {name:'tag',type:'string'},{name:'version',type:'uint32'},{name:'chain_id',type:'checksum256'},
-    {name:'contract',type:'name'},{name:'deployment',type:'checksum256'},
-    {name:'operation',type:'name'},{name:'request',type},
-  ]};
-  const combined = {...abi,structs:[...abi.structs.filter(s=>s.name!==envelope.name),envelope]};
-  const bytes = Serializer.encode({abi:combined,type:envelope.name,object:{
-    tag:TAG,version:config.version,chain_id:config.chain_id,contract,
-    deployment:config.deployment,operation,request,
-  }});
-  return Checksum256.from(sha(bytes.array));
-}
-// This helper is for the user's local wallet/test environment. The relay HTTP
-// protocol accepts only completed signatures and never accepts a user key.
-export function signIntent(abi, config, operation, request, userPrivateKey, contract = CONTRACT) {
-  const key = PrivateKey.from(userPrivateKey);
-  if (!key.toPublic().equals(PublicKey.from(request.from))) throw new Error('Signing key does not own sender wallet');
-  return key.signDigest(intentDigest(abi,config,operation,request,contract)).toString();
-}
-export function verifyIntent(abi,config,operation,request,signature,contract=CONTRACT) {
-  try {
-    return Signature.from(signature).verifyDigest(intentDigest(abi,config,operation,request,contract),PublicKey.from(request.from));
-  } catch { return false; }
-}
 function fraction(resource) {
   const capacity = BigInt(resource.weight), adjusted = BigInt(resource.adjusted_utilization), used = BigInt(resource.utilization);
   if (Number(resource.version)!==0 || capacity<=0n || used<0n || used>capacity || adjusted<0n || adjusted>capacity) throw new Error('Unsupported resource market');
@@ -140,9 +94,9 @@ export class KeyWalletClient {
     return value.rows;
   }
   async load() {
-    const [info,configs,abi]=await Promise.all([this.rpc('get_info'),this.rows('config'),this.rpc('get_abi',{account_name:this.contract})]);
-    if(configs.length!==1||configs[0].chain_id!==info.chain_id||Number(configs[0].version)!==1)throw new Error('Wallet domain does not match actual node chain');
-    this.config=configs[0];this.abi=abi.abi;return this;
+    const [info,configs]=await Promise.all([this.rpc('get_info'),this.rows('config')]);
+    if(configs.length!==1||configs[0].chain_id!==info.chain_id||Number(configs[0].version)!==2)throw new Error('Wallet domain does not match actual node chain');
+    this.config=configs[0];this.abi=CORE_ABI;return this;
   }
   async wallet(key) {
     const hash=keyHash(key);
@@ -191,30 +145,13 @@ export class KeyWalletClient {
       else if(!asset||(await this.rows('balances',String(wallet.id),{lower_bound:String(asset.id),upper_bound:String(asset.id),limit:2})).length===0)rows=1;
       if(operation==='deposit'&&!asset)rows++;
       units=(operation==='deposit'?2:4)+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
-    }else if(operation==='withdraw'||operation==='selfout')units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
+    }else if(operation==='withdraw'||operation==='selfout'){units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);}
     else if(operation==='cancel'||operation==='selfcancel')units=3;
-    else if(operation==='claim'||operation==='refundfee')units=4;
+    else if(operation==='claim'||operation==='refundfee'){units=4;rows=await this.nativeRows(cfg.fee_contract,request.to,request.quantity);}
     else throw new Error('Unsupported fee operation');
     return {...calculateFee(cfg.policy,multiplier,units,rows,['ksend','withdraw','cancel'].includes(operation)),multiplier,units,rows,head:info.head_block_num};
   }
-  async prepareRelayTransaction(operation,request,signature,bp,permission,relayPrivateKey) {
-    if(!['ksend','withdraw','cancel'].includes(operation))throw new Error('Commercial relay operation not supported');
-    if(!this.config)await this.load();
-    validateRequest(operation,request);
-    if(request.relayer!==bp||request.reward_to!==bp||!verifyIntent(this.abi,this.config,operation,request,signature,this.contract))throw new Error('Invalid sender authorization');
-    const info=await this.rpc('get_info');
-    if(info.chain_id!==this.config.chain_id)throw new Error('Node chain changed');
-    const block=Buffer.from(info.last_irreversible_block_id,'hex');
-    const data=Serializer.encode({abi:this.abi,type:this.abi.actions.find(a=>a.name===operation).type,object:{request,sig:signature}}).hexString;
-    const expiration=Math.min(Date.parse(info.head_block_time+'Z')+180000,request.expires*1000);
-    if(!Number.isFinite(expiration))throw new Error('Invalid consensus timestamp');
-    const transaction=Transaction.from({expiration:new Date(expiration).toISOString().slice(0,19),
-      ref_block_num:info.last_irreversible_block_num&0xffff,ref_block_prefix:block.readUInt32LE(8),
-      max_net_usage_words:0,max_cpu_usage_ms:0,delay_sec:0,context_free_actions:[],transaction_extensions:[],
-      actions:[{account:this.contract,name:operation,authorization:[{actor:bp,permission}],data}]});
-    const hotKey=PrivateKey.from(relayPrivateKey);
-    const signed=SignedTransaction.from({...transaction.toJSON(),signatures:[hotKey.signDigest(transaction.signingDigest(info.chain_id)).toString()],context_free_data:[]});
-    return {id:transaction.id.toString(),expiration:transaction.expiration.toString(),startLIB:info.last_irreversible_block_num,
-      packed:PackedTransaction.fromSigned(signed).toJSON()};
-  }
+  async nativeRows(token,recipient,quantity){const symbol=atomicAsset(quantity).symbol.split(',')[1],raw=BigInt('0x'+Buffer.from(symbol,'ascii').reverse().toString('hex')).toString();const result=await this.rpc('get_table_rows',{json:true,code:token,scope:recipient,table:'accounts',lower_bound:raw,upper_bound:raw,limit:1});return result.rows.length?0:1;}
+  async prepare(operation,request,options={}){if(!this.config)await this.load();return prepareEnvelope(this.config,await this.rpc('get_info'),operation,request,{contract:this.contract,...options});}
+  async prepareRelayTransaction(body,bp,permission,relayPrivateKey){if(!this.config)await this.load();verifySigned(body,this.config,this.contract);const p=body.prepared;if(p.operation.startsWith('self')||p.request.relayer!==bp||p.permission!==permission)throw new Error('Wrong BP permission');return resourcePacket(body,this.config,relayPrivateKey,this.contract);}
 }

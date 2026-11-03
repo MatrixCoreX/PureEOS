@@ -2,6 +2,7 @@
 #include "eosio.key.hpp"
 #include <eosio/action.hpp>
 #include <eosio/crypto_ext.hpp>
+#include <eosio/transaction.hpp>
 #include <algorithm>
 #include <limits>
 #include <tuple>
@@ -21,6 +22,10 @@ uint32_t occupancy(const market_resource& r) {
    // catches up. This is valid state: price the greater committed demand.
    return uint32_t(__int128(std::max(r.utilization, r.adjusted_utilization)) * 10000 / r.weight);
 }
+uint32_t outgoing_rows(name token,name recipient,symbol sym) {
+   token_balances table(token,recipient.value);
+   return table.find(sym.code().raw())==table.end()?1:0;
+}
 uint64_t parse_cap(const std::string& text) {
    check(!text.empty() && text.size() <= 19, "invalid fee cap");
    uint64_t value = 0;
@@ -30,6 +35,17 @@ uint64_t parse_cap(const std::string& text) {
       value = value * 10 + uint64_t(ch - '0');
    }
    return value;
+}
+checksum256 parse_id(const std::string& text) {
+   check(text.size() == 64, "request ID must be 32-byte hex");
+   std::array<uint8_t,32> bytes{};
+   auto nibble = [](char ch) -> uint8_t {
+      if(ch >= '0' && ch <= '9') return ch - '0';
+      if(ch >= 'a' && ch <= 'f') return ch - 'a' + 10;
+      check(false, "request ID must be lowercase hex"); return 0;
+   };
+   for(uint32_t i=0;i<32;++i) bytes[i] = uint8_t(nibble(text[2*i])*16+nibble(text[2*i+1]));
+   checksum256 id(bytes);check(!zero(id),"request ID must not be zero");return id;
 }
 }
 
@@ -41,7 +57,7 @@ key_contract::configuration key_contract::config() const {
    config_table table(get_self(), get_self().value);
    check(table.exists(), "wallet not initialized");
    auto cfg = table.get();
-   check(cfg.version == 1, "unsupported wallet version");
+   check(cfg.version == 2, "unsupported wallet version");
    return cfg;
 }
 void key_contract::check_system(const configuration& cfg) const {
@@ -279,12 +295,60 @@ void key_contract::debit(uint64_t wallet_id, uint64_t asset_id, int64_t amount) 
    check(it->amount >= amount, "insufficient token balance");
    table.modify(it, same_payer, [&](auto& row) { row.amount -= amount; });
 }
-void key_contract::nonce(uint64_t wallet_id, uint64_t expected, uint64_t next) {
+void key_contract::epoch(uint64_t wallet_id, uint64_t expected, uint64_t next) {
    wallets table(get_self(), get_self().value);
    auto it = table.require_find(wallet_id, "sender wallet missing");
-   check(it->next_nonce == expected, "nonce already used or out of order");
-   check(next > expected, "nonce must increase");
-   table.modify(it, same_payer, [&](auto& row) { row.next_nonce = next; });
+   check(it->auth_epoch == expected, "authorization epoch revoked");
+   check(next > expected, "authorization epoch must increase");
+   table.modify(it, same_payer, [&](auto& row) { row.auth_epoch = next; });
+}
+std::vector<char> key_contract::raw_transaction() {
+   auto size = transaction_size();
+   check(size > 0 && size <= 16384, "wallet transaction size bound exceeded");
+   std::vector<char> data(size);
+   check(read_transaction(data.data(), data.size()) == size, "incomplete native transaction");
+   return data;
+}
+void key_contract::prove(public_key owner, checksum256 chain_id, checksum256 deployment, uint32_t reference_block_num) {
+   // Context-free action: proof bytes are outside transaction::id(). Neither a
+   // relay nor signature malleability can manufacture a second native ID.
+   check(owner.index() == 0, "K1 owner required");
+   int size = get_context_free_data(0, nullptr, 0);
+   check(size == 66, "one canonical K1 owner proof required");
+   check(get_context_free_data(1, nullptr, 0) == -1, "unexpected extra context-free data");
+   std::vector<char> bytes(size);
+   check(get_context_free_data(0, bytes.data(), bytes.size()) == size, "incomplete owner proof");
+   auto sig = unpack<signature>(bytes); check(sig.index() == 0, "K1 signature required");
+   auto data = raw_transaction(); auto id = sha256(data.data(), data.size());
+   auto envelope = pack(std::make_tuple(std::string("PureEOS:eosio.key:transaction"), uint32_t(2),
+                                       chain_id, get_self(), deployment, id));
+   assert_recover_key(sha256(envelope.data(), envelope.size()), sig, owner);
+}
+void key_contract::verify_envelope(name operation, const public_key& owner, uint64_t auth_epoch,
+                                    checksum256 request_id, const std::vector<char>& payload,
+                                    const configuration& cfg) const {
+   check(get_first_receiver() == get_self() && !get_sender().value, "top-level owner operation required");
+   check(owner.index() == 0 && !zero(request_id), "K1 owner and nonzero request ID required");
+   auto data = raw_transaction(); auto tx = unpack<transaction>(data);
+   check(tx.actions.size() == 1 && tx.context_free_actions.size() == 1,
+         "one root operation and one owner proof required");
+   check(tx.delay_sec.value == 0 && tx.transaction_extensions.empty(), "unsupported transaction extensions");
+   check(uint64_t(tx.expiration.sec_since_epoch()) <= uint64_t(current_time_point().sec_since_epoch()) + 3600,
+         "owner transaction validity exceeds one hour");
+   const auto& proof = tx.context_free_actions[0];
+   check(proof.account == get_self() && proof.name == "prove"_n && proof.authorization.empty() && proof.data.size()==102,
+         "owner proof action mismatch");
+   auto args=unpack<std::tuple<public_key,checksum256,checksum256,uint32_t>>(proof.data);
+   auto reference=std::get<3>(args);
+   check(std::get<0>(args)==owner && std::get<1>(args)==cfg.chain_id && std::get<2>(args)==cfg.deployment &&
+         reference>0 && (reference&0xffff)==tx.ref_block_num,
+         "owner proof domain or reference block mismatch");
+   const auto& root = tx.actions[0];
+   check(root.account == get_self() && root.name == operation && root.authorization.size()==1 && root.data == payload,
+         "owner proof root operation mismatch");
+   auto sender = find_wallet(owner); check(sender, "sender wallet missing");
+   wallets table(get_self(), get_self().value);
+   check(table.get(sender).auth_epoch == auth_epoch, "authorization epoch revoked");
 }
 uint32_t key_contract::rows_for(const public_key& key, uint64_t asset_id) const {
    auto id = find_wallet(key);
@@ -380,11 +444,14 @@ void key_contract::ontransfer(name from, name to, asset quantity, std::string me
       record("fundfees"_n, {}, from, {}, {}, token, quantity, 0, {}, 0);
       return;
    }
-   check(memo.rfind("PK1|", 0) == 0, "use PK1|PUBLIC_KEY|max_fee_atomic_units or fee");
+   const bool modern = memo.rfind("PK2|", 0) == 0;
+   check(modern || memo.rfind("PK1|", 0) == 0, "use PK2|PUBLIC_KEY|max_fee_atomic_units|request_id or fee");
    const auto separator = memo.find('|', 4);
-   check(separator != std::string::npos && memo.find('|', separator + 1) == std::string::npos, "invalid deposit memo");
+   const auto last = separator == std::string::npos ? std::string::npos : memo.find('|', separator+1);
+   check(separator != std::string::npos && (modern ? last != std::string::npos && memo.find('|',last+1)==std::string::npos : last==std::string::npos), "invalid deposit memo");
    const auto key = decode_key(memo.substr(4, separator - 4));
-   const auto maximum = asset(int64_t(parse_cap(memo.substr(separator + 1))), cfg.fee_symbol);
+   const auto maximum = asset(int64_t(parse_cap(memo.substr(separator + 1, modern ? last-separator-1 : std::string::npos))), cfg.fee_symbol);
+   const auto request_id = modern ? parse_id(memo.substr(last+1)) : checksum256{};
    const uint32_t rows = rows_for(key, id) + (id ? 0 : 1);
    auto fee = quote(cfg, 2 + (memo.size() + 63) / 64, rows, false);
    charge_native(from, fee, maximum);
@@ -397,29 +464,27 @@ void key_contract::ontransfer(name from, name to, asset quantity, std::string me
    uint64_t wallet_id = ensure_wallet(key);
    credit(wallet_id, id, quantity.amount);
    table.modify(it, same_payer, [&](auto& row) { row.reserve = checked(__int128(row.reserve) + quantity.amount); });
-   record("deposit"_n, {}, from, {}, hash_key(key), token, quantity, fee.total, {}, 0);
+   record("deposit"_n, request_id, from, {}, hash_key(key), token, quantity, fee.total, {}, 0);
 }
-void key_contract::ksend(transfer_request request, signature sig) {
-   auto cfg = config(); check_relay(request.relayer, request.reward_to, cfg);
+void key_contract::ksend(transfer_request request) {
+   auto cfg = config();
+   verify_envelope("ksend"_n, request.from, request.auth_epoch, request.request_id, pack(request), cfg);
+   check_relay(request.relayer, request.reward_to, cfg);
    check(request.quantity.is_valid() && request.quantity.amount > 0 && request.memo.size() <= 128,
          "invalid transfer quantity or memo");
    check(request.from != request.to, "cannot transfer to same public key");
    auto id = find_asset(request.token_contract, request.quantity.symbol); check_asset(id); check_asset(1);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   wallets w(get_self(), get_self().value);
-   check(w.get(sender).next_nonce == request.nonce && request.nonce != uint64_t(-1), "nonce already used or out of order");
    auto fee = quote(cfg, 4 + (request.memo.size() + 63) / 64, rows_for(request.to, id), true);
    check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, id) >= checked(__int128(request.quantity.amount) + (id == 1 ? fee.total : 0)), "insufficient principal balance");
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
-   auto digest = verify("ksend"_n, request, sig, cfg);
-   nonce(sender, request.nonce, request.nonce + 1);
    charge_key(sender, request.relayer, fee, request.max_fee);
    debit(sender, id, request.quantity.amount);
    auto recipient = ensure_wallet(request.to);
    credit(recipient, id, request.quantity.amount);
-   record("ksend"_n, digest, {}, hash_key(request.from), hash_key(request.to), request.token_contract,
-          request.quantity, fee.total, request.relayer, request.nonce);
+   record("ksend"_n, request.request_id, {}, hash_key(request.from), hash_key(request.to), request.token_contract,
+          request.quantity, fee.total, request.relayer, request.auth_epoch);
 }
 void key_contract::send_out(uint64_t id, name to, int64_t quantity, const std::string& memo) {
    check(is_account(to) && to != get_self() && quantity > 0 && memo.size() <= 256, "invalid withdrawal target");
@@ -429,6 +494,12 @@ void key_contract::send_out(uint64_t id, name to, int64_t quantity, const std::s
    check(raw_balance(it->token_contract, get_self(), it->token_symbol) == it->reserve, "reserve mismatch before withdrawal");
    const auto token = it->token_contract; const auto sym = it->token_symbol;
    const auto receiver_before = raw_balance(token, to, sym);
+   if(outgoing_rows(token,to,sym)) {
+      auto cfg=config();
+      check(cfg.balance_count<cfg.policy.max_balances,"external token-row storage capacity reached");
+      ++cfg.balance_count;
+      config_table(get_self(),get_self().value).set(cfg,get_self());
+   }
    const uint64_t ticket = it->out_ticket + 1;
    table.modify(it, same_payer, [&](auto& row) { row.reserve -= quantity; row.busy = true; row.notified = false;
       row.out_ticket = ticket; row.out_to = to; row.out_amount = quantity; row.receiver_before = receiver_before; });
@@ -445,52 +516,50 @@ void key_contract::finishout(uint64_t asset_id, uint64_t ticket) {
    table.modify(it, same_payer, [&](auto& row) { row.busy = false; row.notified = false;
       row.out_to = {}; row.out_amount = 0; row.receiver_before = 0; });
 }
-void key_contract::perform_withdraw(name payer, const withdrawal_request& request, const signature& sig, bool direct) {
+void key_contract::perform_withdraw(name payer, const withdrawal_request& request, bool direct) {
    auto cfg = config();
+   verify_envelope(direct ? "selfout"_n : "withdraw"_n, request.from, request.auth_epoch, request.request_id,
+                   direct ? pack(std::make_tuple(payer, request)) : pack(request), cfg);
    if (direct) { require_auth(payer); check(!request.relayer.value && !request.reward_to.value, "self withdrawal has no relay reward"); }
    else check_relay(request.relayer, request.reward_to, cfg);
    check(request.quantity.is_valid() && request.quantity.amount > 0 && request.memo.size() <= 128 &&
          is_account(request.to) && request.to != get_self(), "invalid withdrawal");
    auto id = find_asset(request.token_contract, request.quantity.symbol); check_asset(id); check_asset(1);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   wallets w(get_self(), get_self().value);
-   check(w.get(sender).next_nonce == request.nonce && request.nonce != uint64_t(-1), "nonce already used or out of order");
-   auto fee = quote(cfg, 6 + (request.memo.size() + 63) / 64, 0, !direct, direct);
+   auto fee = quote(cfg, 6 + (request.memo.size() + 63) / 64, outgoing_rows(request.token_contract, request.to, request.quantity.symbol), !direct, direct);
    check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, id) >= checked(__int128(request.quantity.amount) + (id == 1 ? fee.total : 0)), "insufficient principal balance");
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
-   auto digest = verify(direct ? "selfout"_n : "withdraw"_n, request, sig, cfg);
-   nonce(sender, request.nonce, request.nonce + 1);
    charge_key(sender, direct ? get_self() : request.relayer, fee, request.max_fee);
    debit(sender, id, request.quantity.amount);
    send_out(id, request.to, request.quantity.amount, request.memo);
-   record(direct ? "selfout"_n : "withdraw"_n, digest, {}, hash_key(request.from), {}, request.token_contract,
-          request.quantity, fee.total, request.relayer, request.nonce);
+   record(direct ? "selfout"_n : "withdraw"_n, request.request_id, {}, hash_key(request.from), {}, request.token_contract,
+          request.quantity, fee.total, request.relayer, request.auth_epoch);
 }
-void key_contract::withdraw(withdrawal_request request, signature sig) { perform_withdraw({}, request, sig, false); }
-void key_contract::selfout(name payer, withdrawal_request request, signature sig) { perform_withdraw(payer, request, sig, true); }
-void key_contract::perform_cancel(name payer, const cancellation_request& request, const signature& sig, bool direct) {
+void key_contract::withdraw(withdrawal_request request) { perform_withdraw({}, request, false); }
+void key_contract::selfout(name payer, withdrawal_request request) { perform_withdraw(payer, request, true); }
+void key_contract::perform_cancel(name payer, const cancellation_request& request, bool direct) {
    auto cfg = config();
+   verify_envelope(direct ? "selfcancel"_n : "cancel"_n, request.from, request.auth_epoch, request.request_id,
+                   direct ? pack(std::make_tuple(payer, request)) : pack(request), cfg);
    if (direct) { require_auth(payer); check(!request.relayer.value && !request.reward_to.value, "self cancel has no relay reward"); }
    else check_relay(request.relayer, request.reward_to, cfg);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   wallets w(get_self(), get_self().value);
-   check(w.get(sender).next_nonce == request.nonce && request.next_nonce > request.nonce, "invalid cancellation nonce");
+   check(request.next_epoch > request.auth_epoch, "authorization epoch must increase");
    auto fee = quote(cfg, 3, 0, !direct, direct); check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
-   auto digest = verify(direct ? "selfcancel"_n : "cancel"_n, request, sig, cfg);
-   nonce(sender, request.nonce, request.next_nonce);
+   epoch(sender, request.auth_epoch, request.next_epoch);
    charge_key(sender, direct ? get_self() : request.relayer, fee, request.max_fee);
-   record(direct ? "selfcancel"_n : "cancel"_n, digest, {}, hash_key(request.from), {}, cfg.fee_contract,
-          asset(0, cfg.fee_symbol), fee.total, request.relayer, request.nonce);
+   record(direct ? "selfcancel"_n : "cancel"_n, request.request_id, {}, hash_key(request.from), {}, cfg.fee_contract,
+          asset(0, cfg.fee_symbol), fee.total, request.relayer, request.auth_epoch);
 }
-void key_contract::cancel(cancellation_request request, signature sig) { perform_cancel({}, request, sig, false); }
-void key_contract::selfcancel(name payer, cancellation_request request, signature sig) { perform_cancel(payer, request, sig, true); }
+void key_contract::cancel(cancellation_request request) { perform_cancel({}, request, false); }
+void key_contract::selfcancel(name payer, cancellation_request request) { perform_cancel(payer, request, true); }
 void key_contract::claim(name bp, name to, asset quantity, asset max_fee) {
    require_auth(bp);
    auto cfg = config(); check_asset(1);
    check(quantity.is_valid() && quantity.symbol == cfg.fee_symbol && quantity.amount > 0, "invalid claim asset");
-   auto fee = quote(cfg, 4, 0, false, true);
+   auto fee = quote(cfg, 4, outgoing_rows(cfg.fee_contract, to, cfg.fee_symbol), false, true);
    charge_native(bp, fee, max_fee);
    fee_buckets table(get_self(), get_self().value);
    auto it = table.require_find(bp.value, "no relay earnings");
@@ -503,7 +572,7 @@ void key_contract::refundfee(name owner, name to, asset quantity, asset max_fee)
    require_auth(owner);
    auto cfg = config(); check_asset(1);
    check(quantity.is_valid() && quantity.symbol == cfg.fee_symbol && quantity.amount > 0, "invalid fee refund");
-   auto fee = quote(cfg, 4, 0, false, true);
+   auto fee = quote(cfg, 4, outgoing_rows(cfg.fee_contract, to, cfg.fee_symbol), false, true);
    charge_native(owner, fee, max_fee);
    native_credits table(get_self(), get_self().value);
    auto it = table.require_find(owner.value, "fee credit missing");
@@ -514,13 +583,14 @@ void key_contract::refundfee(name owner, name to, asset quantity, asset max_fee)
 }
 void key_contract::record(name kind, checksum256 request_id, name native_from, checksum256 from,
                            checksum256 to, name token, asset quantity, int64_t fee, name relay, uint64_t n) {
+   auto raw = raw_transaction(); auto transaction_id = sha256(raw.data(), raw.size());
    action(permission_level{get_self(), "active"_n}, get_self(), "receipt"_n,
-          std::make_tuple(kind, request_id, native_from, from, to, token, quantity,
+          std::make_tuple(kind, request_id, transaction_id, native_from, from, to, token, quantity,
                           asset(fee, config().fee_symbol), relay, n)).send();
 }
-void key_contract::receipt(name kind, checksum256 request_id, name native_from, checksum256 from_key,
+void key_contract::receipt(name kind, checksum256 request_id, checksum256 transaction_id, name native_from, checksum256 from_key,
                           checksum256 to_key, name token_contract, asset quantity, asset fee,
-                          name relayer, uint64_t nonce) {
+                          name relayer, uint64_t auth_epoch) {
    require_auth(get_self()); check(get_sender() == get_self(), "internal receipt only");
 }
 }
