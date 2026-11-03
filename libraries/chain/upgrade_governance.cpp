@@ -12,10 +12,19 @@
 #include <limits>
 #include <set>
 
+#if defined(PUREEOS_TEST_GOVERNANCE_30MIN) && !defined(PUREEOS_TEST_BUILD)
+#error "Thirty-minute governance is restricted to the separate TEST build"
+#endif
+
 namespace eosio::chain {
 namespace {
 constexpr auto upgrade_permission = "upgrade"_n;
 constexpr auto veto_permission = "veto"_n;
+#ifdef PUREEOS_TEST_GOVERNANCE_30MIN
+constexpr uint32_t active_review_seconds_v2 = 30 * 60;
+#else
+constexpr uint32_t active_review_seconds_v2 = upgrade_review_seconds_v2;
+#endif
 bool governance_v2(const apply_context& ctx) {
    return ctx.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_seven_day_governance);
 }
@@ -130,7 +139,7 @@ void apply_eosio_govinit(apply_context& ctx) {
               "govinit requires a fresh native genesis profile 2 and can run only once");
    ctx.require_authorization("eosio"_n, config::owner_name);
    const auto args = ctx.get_action().data_as<govinit>();
-   const auto review_seconds = governance_v2(ctx) ? upgrade_review_seconds_v2 : upgrade_review_seconds;
+   const auto review_seconds = governance_v2(ctx) ? active_review_seconds_v2 : upgrade_review_seconds;
    EOS_ASSERT(args.review_seconds == review_seconds,
               action_validate_exception, "review_seconds must match the activated governance protocol");
    EOS_ASSERT(args.developer != account_name{} && args.developer != "eosio"_n && !permanently_disabled(args.developer),
@@ -234,7 +243,7 @@ void apply_eosio_devpropose(apply_context& ctx) {
       s.new_abi_hash = args.new_abi_hash;
       s.review_document_hash = args.review_document_hash;
       s.proposed_at = ctx.control.pending_block_time();
-      s.review_seconds = governance_v2(ctx) ? upgrade_review_seconds_v2 : upgrade_review_seconds;
+      s.review_seconds = governance_v2(ctx) ? active_review_seconds_v2 : upgrade_review_seconds;
       s.execute_after = s.proposed_at + fc::seconds(s.review_seconds);
       s.proposal_voters = s.current_voters;
       s.vetoes.clear();

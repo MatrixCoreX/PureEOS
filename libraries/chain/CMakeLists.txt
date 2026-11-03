@@ -174,6 +174,9 @@ add_library( eosio_chain
              ${HEADERS}
              )
 
+if(PUREEOS_TEST_GOVERNANCE_30MIN)
+   target_compile_definitions(eosio_chain PRIVATE PUREEOS_TEST_BUILD=1 PUREEOS_TEST_GOVERNANCE_30MIN=1)
+endif()
 
 ## Boost::accumulators depends on Boost::numeric_ublas, which is still missing cmake support (see
 ## https://github.com/boostorg/cmake/issues/39). Until this is fixed, manually add Boost::numeric_ublas

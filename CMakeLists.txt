@@ -28,6 +28,10 @@ endif()
 # Options
 option(ENABLE_WERROR "Enable `-Werror` compilation flag." Off)
 option(ENABLE_WEXTRA "Enable `-Wextra` compilation flag." Off)
+option(PUREEOS_TEST_GOVERNANCE_30MIN "TEST-only native upgrade review of 1800 seconds; fresh TEST chains only" OFF)
+if(PUREEOS_TEST_GOVERNANCE_30MIN AND NOT PUREEOS_TEST_BUILD)
+    message(FATAL_ERROR "PUREEOS_TEST_GOVERNANCE_30MIN requires the separate PUREEOS_TEST_BUILD; production remains seven days")
+endif()
 
 
 set( CLI_CLIENT_EXECUTABLE_NAME cleos )

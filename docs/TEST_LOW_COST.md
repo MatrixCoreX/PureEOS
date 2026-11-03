@@ -49,3 +49,15 @@ Fresh-test-chain caps are CPU4 (800,000 μs/block) and NET1MiB/block, compared w
 Per-transaction caps, billing, signatures, authorization, conflict fallbacks, P2P64MiB messages and100MiB inflight protection remain. The64GiB on-chain RAM market and setramrate(1024) do not allocate64GiB of host memory. Existing qualified contract bytes,10000AIC bonds, seven-day refunds, locked forfeitures, single-choice votes, native finality/rotation, maintenance, permanent bans,10%/90% resources, rewards/halving and seven-day governance remain independent of this node release. Both deferred-disable stages stay active. Producer SHIP and full history/indexing services are outside this single-node8GB target.
 
 Use the command above with your own test genesis, private identity/signing service and peers. No private keys or public-chain peers are shipped. Existing chains retain their actual genesis/chain ID and consensus CPU/NET caps; an INI file cannot change them. The full chain-parameters.json is for fresh initialization or normally authorized setparams. Never reuse a production data directory. Build with PUREEOS_TEST_BUILD=ON in build-test; its default OFF preserves the stable hardware gate. nodeos identifies itself as1.0.0-test.1/TEST; companion1.0.0 CLI bytes are unchanged. This is functional qualification, not cheap-VPS performance or a TPS claim.
+
+## Optional30-minute TEST governance development profile (2026-11-03)
+
+The newly selected fresh testnet additionally opts into `-DPUREEOS_TEST_GOVERNANCE_30MIN=ON`
+together with `-DPUREEOS_TEST_BUILD=ON`. This native consensus variant uses1800seconds
+for governance-v2 review and labels itself `test.2-dev`. Production and the published
+v1.0.0 / v1.0.0-test.1 assets retain their original bytes and seven-day review; the
+legacy14-day constant is unchanged. The build rejects use without TEST_BUILD.
+All nodes on this fresh Chain ID must use the same TEST30-minute binary. Existing
+review/veto/hash-bound execution, native authorization, resource limits, mandatory
+parallel processing and disabled deferred stages remain. Never swap this binary into
+an existing seven-day chain. The current campaign is functional only, not TPS.

@@ -145,6 +145,9 @@ void initialize_logging()
    app().set_sighup_callback(logging_conf_handler);
 #ifdef PUREEOS_TEST_BUILD
    ilog("${profile}", ("profile",eosio::nodeos::test_build::check()));
+#ifdef PUREEOS_TEST_GOVERNANCE_30MIN
+   ilog("TEST ONLY native governance: 1800-second upgrade review; use only on a fresh TEST chain with matching nodes");
+#endif
 #else
    const auto hardware = eosio::nodeos::detect_hardware();
    if (const auto error = eosio::nodeos::hardware_requirement_error(hardware); !error.empty())
@@ -183,8 +186,13 @@ int main(int argc, char** argv)
 
       app->set_version(htonl(short_hash));
 #ifdef PUREEOS_TEST_BUILD
+#ifdef PUREEOS_TEST_GOVERNANCE_30MIN
+      app->set_version_string(eosio::version::version_client()+"-test.2-dev");
+      app->set_full_version_string(eosio::version::version_full()+" / TEST 30-minute governance 20261103-dev");
+#else
       app->set_version_string(eosio::version::version_client()+"-test.1");
       app->set_full_version_string(eosio::version::version_full()+" / TEST test.1");
+#endif
 #else
       app->set_version_string(eosio::version::version_client());
       app->set_full_version_string(eosio::version::version_full());
