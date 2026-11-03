@@ -7852,8 +7852,14 @@ void controller_impl::on_activation<builtin_protocol_feature_t::pureeos_rotation
 template<>
 void controller_impl::on_activation<builtin_protocol_feature_t::pureeos_seven_day_governance>() {
    if (const auto* state = find_upgrade_governance(db))
-      db.modify(*state,[](auto& s){s.review_seconds=upgrade_review_seconds_v2;});
-   // Existing pending execute_after is immutable; only the next proposal gets7days.
+      db.modify(*state,[](auto& s){
+#if defined(PUREEOS_TEST_BUILD) && defined(PUREEOS_TEST_GOVERNANCE_30MIN)
+         s.review_seconds=30*60;
+#else
+         s.review_seconds=upgrade_review_seconds_v2;
+#endif
+      });
+   // Existing pending execute_after is immutable; only later proposals use the new profile.
 }
 
 template<>
