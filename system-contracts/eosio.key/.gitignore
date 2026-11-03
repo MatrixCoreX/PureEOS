@@ -1,0 +1,14 @@
+node_modules/
+artifacts/
+build/
+state/
+__pycache__/
+*.wallet
+*.pem
+*.key
+*-private.json
+.env
+.npmrc
+local-tests/
+relay-key.txt
+password.txt

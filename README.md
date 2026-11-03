@@ -294,6 +294,12 @@ RAM 市场初始为 64 GiB，通过既有 `setramrate(1024)` 初始化增长速�
 
 把短号改为“抢注＋租金、到期释放、解析/转让给 12 位原生账户”的方案，以及系统账号命名空间的更名方案，仍在讨论和设计中，尚未纳入本版实现。
 
+#### 14.1 eosio.key 公钥转账（开发功能）
+
+独立的 [eosio.key 合约与客户端](system-contracts/eosio.key/README.md) 支持文本账户转公钥、公钥转公钥、公钥转已有文本账户，以及标准接口的多种代币。本金全额到账，AIC 费用另外支付；合约验证持有人签名、nonce、到期时间和总费用上限。商业中继由已注册、正常缴纳押金且未维护/拉黑的 BP 运行，收取基础费用的 30% 加价。费用参考链上 PowerUp 市场占用，不代表实际区块或服务器 CPU 使用率。
+
+原生 cleos 增加公钥收款和 `key prepare/sign/push/submit` 流程，私钥留在本地 keosd。当前 `prepare` 查询 nonce，不预占号码；多个进程或设备同时操作需要持有人端协调。此模块使用独立测试链验证，尚未部署到公开演示网；eosio.key 必须在治理封存前创建。现有 eosio.system、共识和资源模式不变。详见 [cleos 用法](system-contracts/eosio.key/docs/CLEOS.md)。
+
 ### 15. 如何查看验证结果
 
 | 验证项目 | 记录范围 |
@@ -610,6 +616,12 @@ This release retains protocol system accounts such as `eosio` and `eosio.token`,
 `bidname` and `bidrefund` remain available. An empty bid table does not mean auction code is disabled. Closing follows existing conditions, including more than 14 days since chain activation, more than 24 hours since the last bid and the closing-frequency rule. **Those 14 days are an auction condition, separate from seven-day contract upgrade review.**
 
 First-come rental aliases with expiry/re-registration and binding/transfer to 12-character native accounts remain a design under discussion. Renaming the system-account namespace is also a plan, not an implementation in this release.
+
+#### 14.1 eosio.key public-key transfers (development feature)
+
+The independent [eosio.key contract and client](system-contracts/eosio.key/README.md) support native-to-key, key-to-key and key-to-existing-native-account transfers across standard fungible-token interfaces. Principal arrives in full, with separate AIC fees. The contract verifies holder signatures, nonce, expiration and total fee caps. Registered, normally bonded BPs outside maintenance/blacklisting may operate commercial relays for a 30% markup on base fees. Pricing follows committed PowerUp market occupancy rather than actual block or host CPU consumption.
+
+Native cleos adds public-key recipients and `key prepare/sign/push/submit`, keeping holder keys in local keosd. `prepare` reads a nonce without reserving it; multiple processes/devices require owner-side coordination. This module uses independent test chains for qualification and is not deployed to the public demo. Provision eosio.key before governance sealing. Existing eosio.system, consensus and resource modes stay unchanged. See [cleos usage](system-contracts/eosio.key/docs/CLEOS.md).
 
 ### 15. How to read the validation evidence
 

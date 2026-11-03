@@ -3060,6 +3060,8 @@ struct get_block_params {
    bool get_bheader_extensions = false;
 };
 
+#include "key_wallet.hpp"
+
 int main( int argc, char** argv ) {
 
    fc::logger::get(DEFAULT_LOGGER).set_log_level(fc::log_level::debug);
@@ -4011,6 +4013,8 @@ int main( int argc, char** argv ) {
    string amount;
    string memo;
    bool pay_ram = false;
+   string key_maximum_fee, key_fee_funding;
+   key_client::commands key_commands(app);
 
    auto transfer = app.add_subcommand("transfer", localized("Transfer tokens from account to account"));
    transfer->add_option("sender", sender, localized("The account sending tokens"))->required();
@@ -4019,9 +4023,20 @@ int main( int argc, char** argv ) {
    transfer->add_option("memo", memo, localized("The memo for the transfer"));
    transfer->add_option("--contract,-c", con, localized("The contract that controls the token, defaults to eosio.token"));
    transfer->add_flag("--pay-ram-to-open", pay_ram, localized("Pay RAM to open recipient's token balance row"));
+   transfer->add_option("--max-key-fee", key_maximum_fee, "Explicit maximum extra AIC fee for a public-key recipient");
+   transfer->add_option("--key-fee-fund", key_fee_funding, "Prepay AIC fee credit in the same atomic public-key deposit transaction");
 
    add_standard_transaction_options_plus_signing(transfer, "sender@active");
    transfer->callback([&] {
+      if(key_client::is_public_key(recipient)) {
+         FC_ASSERT(memo.empty()&&!pay_ram,"Public-key deposits use a routing memo and contract-managed wallet rows");
+         name token_contract{con};
+         if(token_contract.empty())token_contract=to_default_token_contract(asset::from_string(amount));
+         send_actions(key_client::deposit(name(sender),recipient,token_contract,to_asset(token_contract,amount),
+            key_maximum_fee,key_fee_funding),signing_keys_opt.get_keys());
+         return;
+      }
+      FC_ASSERT(key_maximum_fee.empty()&&key_fee_funding.empty(),"Key fee options require a public-key recipient");
       if (tx_force_unique && memo.size() == 0) {
          // use the memo to add a nonce
          memo = generate_nonce_string();

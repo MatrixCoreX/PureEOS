@@ -72,6 +72,12 @@ fc::variant do_http_call(const config_t& config, const std::string& base_uri, co
             throw chain::missing_net_api_plugin_exception(FC_LOG_MESSAGE(error, "Net API plugin is not enabled on specified endpoint"));
          }
       } else {
+         // BP relay endpoints may return a bounded human-readable error rather
+         // than nodeos's structured error_results. Preserve that useful message.
+         if(response_result.is_object() && response_result.get_object().contains("error") && response_result["error"].is_string()) {
+            EOS_THROW(http_request_fail, "HTTP ${status}: ${message}",
+                      ("status",status_code)("message",response_result["error"].as_string()));
+         }
          auto &&error_info = response_result.as<eosio::error_results>().error;
          // Construct fc exception from error
          const auto &error_details = error_info.details;
