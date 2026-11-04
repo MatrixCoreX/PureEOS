@@ -1,0 +1,130 @@
+{
+  "transaction_id": "65e5224e2aa58fecbd8190c9798c7a28a7951c4cd675357d2ba7600547d571c9",
+  "processed": {
+    "id": "65e5224e2aa58fecbd8190c9798c7a28a7951c4cd675357d2ba7600547d571c9",
+    "block_num": 200,
+    "block_time": "2026-11-04T05:10:30.000",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 150886,
+    "net_usage": 124,
+    "scheduled": false,
+    "action_traces": [{
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": null,
+        "receiver": "eosio",
+        "act": {
+          "account": "eosio",
+          "name": "activate",
+          "authorization": [{
+              "actor": "eosio",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "feature_digest": "7bfa158c580e0af5bdecd38c65a035273b7b5af42d36049c699988ea715bb3c8"
+          },
+          "hex_data": "7bfa158c580e0af5bdecd38c65a035273b7b5af42d36049c699988ea715bb3c8"
+        },
+        "context_free": false,
+        "elapsed": 150802,
+        "console": "",
+        "trx_id": "65e5224e2aa58fecbd8190c9798c7a28a7951c4cd675357d2ba7600547d571c9",
+        "block_num": 200,
+        "block_time": "2026-11-04T05:10:30.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": {
+          "code": 3080004,
+          "name": "tx_cpu_usage_exceeded",
+          "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+          "stack": [{
+              "context": {
+                "level": "error",
+                "file": "transaction_context.cpp",
+                "line": 603,
+                "method": "checktime",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T05:10:29.651"
+              },
+              "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+              "data": {
+                "id": "65e5224e2aa58fecbd8190c9798c7a28a7951c4cd675357d2ba7600547d571c9",
+                "billing_timer": 150778,
+                "subjective": 0,
+                "limit": 150000
+              }
+            },{
+              "context": {
+                "level": "warn",
+                "file": "apply_context.cpp",
+                "line": 262,
+                "method": "exec_one",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T05:10:29.651"
+              },
+              "format": "${receiver} <= ${account}::${action} console output: ${console}",
+              "data": {
+                "console": "",
+                "account": "eosio",
+                "action": "activate",
+                "receiver": "eosio"
+              }
+            }
+          ]
+        },
+        "error_code": "10000000000000000000",
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      }
+    ],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3080004,
+      "name": "tx_cpu_usage_exceeded",
+      "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "transaction_context.cpp",
+            "line": 603,
+            "method": "checktime",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:10:29.651"
+          },
+          "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+          "data": {
+            "id": "65e5224e2aa58fecbd8190c9798c7a28a7951c4cd675357d2ba7600547d571c9",
+            "billing_timer": 150778,
+            "subjective": 0,
+            "limit": 150000
+          }
+        },{
+          "context": {
+            "level": "warn",
+            "file": "apply_context.cpp",
+            "line": 262,
+            "method": "exec_one",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:10:29.651"
+          },
+          "format": "${receiver} <= ${account}::${action} console output: ${console}",
+          "data": {
+            "console": "",
+            "account": "eosio",
+            "action": "activate",
+            "receiver": "eosio"
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}

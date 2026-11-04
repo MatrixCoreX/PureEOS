@@ -14,7 +14,7 @@ using namespace eosio;
 struct fee_policy {
    int64_t minimum_fee;
    int64_t unit_fee;
-   int64_t new_row_fee;
+   int64_t new_row_fee; // Legacy wire/state field; market-priced WASM ignores it.
    uint32_t maximum_multiplier_bps;
    uint32_t epoch_seconds;
    uint32_t max_wallets;
@@ -222,10 +222,11 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    void credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
    void debit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
    void epoch(uint64_t wallet_id, uint64_t expected, uint64_t next);
-   uint32_t rows_for(const public_key& key, uint64_t asset_id) const;
+   uint32_t ram_for(const public_key& key, uint64_t asset_id) const;
+   int64_t ram_cost(const configuration& cfg, uint32_t bytes) const;
    uint32_t multiplier(const configuration& cfg, bool exit_path);
    uint16_t relay_fee(name bp, const binary_extension<uint16_t>& signed_bps) const;
-   charge quote(const configuration& cfg, uint32_t units, uint32_t rows, uint16_t relay_bps, bool exit_path = false);
+   charge quote(const configuration& cfg, uint32_t units, uint32_t bytes, uint16_t relay_bps, bool exit_path = false);
    void credit_fee_bucket(name owner, const charge& fee);
    void charge_native(name owner, const charge& fee, const asset& maximum);
    void charge_key(uint64_t wallet_id, name bp, const charge& fee, const asset& maximum);

@@ -1,5 +1,8 @@
 # 部署与验证 / Deployment and qualification
 
+2026-11-04 RAM 市场计费候选 / market-priced RAM candidate: see [规则、公式与兼容 / rules and compatibility](RAM_MARKET_FEES.md). New source prices approved bytes from current RAM reserves; old deployed hashes retain fixed row pricing. Public activation is not included in this development task.
+
+
 2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
 
 此分支实现独立合约与客户端，不替换 eosio.system，不修改 nodeos，也不自动升级当前公开演示链。已封存治理的链禁止直接新增 eosio.* 短账号。当前验证使用独立新测试链，在治理封存前创建 eosio.key；不要绕过既有保护。

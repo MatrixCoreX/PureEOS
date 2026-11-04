@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "work": "/opt/kram-q/fixture-r3",
+  "checks": 115,
+  "report_sha256": "562d253bee3d7312cdc6c69c9bdb655a7d16d5cb11302733519e889dea82238a",
+  "chain_test_SHA256": "55dddc8403131ed9109264f5976ddb72973366ab9c841378ecd52ce8fca86903",
+  "scope": "TEST ONLY alternate-system-table wallet build; native consensus unchanged; injected eligibility/market cases are wallet logic evidence, not native blacklist qualification"
+}

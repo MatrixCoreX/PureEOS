@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "variants": [
+    {
+      "profile": "fixed",
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "cases": 15,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "fixed",
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "cases": 15,
+      "layout": {
+        "width": 375,
+        "viewport": 390
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "fixed",
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "cases": 15,
+      "layout": {
+        "width": 375,
+        "viewport": 390
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "fixed",
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "cases": 15,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "market-fixture",
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "cases": 15,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "market-fixture",
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "cases": 15,
+      "layout": {
+        "width": 375,
+        "viewport": 390
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "market-fixture",
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "cases": 15,
+      "layout": {
+        "width": 375,
+        "viewport": 390
+      },
+      "default_collapsed": true
+    },
+    {
+      "profile": "market-fixture",
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "cases": 15,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440
+      },
+      "default_collapsed": true
+    }
+  ],
+  "errors": [],
+  "scope": "Compiled local preview in remote real Chrome; live read-only RPC. market-fixture substitutes the unpublished candidate code hash only; not public activation proof.",
+  "UTC": "2026-11-04T05:33:24.188Z"
+}

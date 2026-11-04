@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "SDK_comparisons": 480,
+  "Chrome_variants": 8,
+  "public_activation": false,
+  "browser_cache": "/opt/pureeos-key-history-20261103-r1/tools/browsers",
+  "scope": "Compiled local preview in remote real Chrome; live read-only RPC. market-fixture substitutes the unpublished candidate code hash only; not public activation proof.",
+  "first_launch_failure": "APPLICATION_REVIEW_FAILURE_r3.json"
+}

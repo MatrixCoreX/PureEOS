@@ -1,0 +1,4 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-ram-market-20261104-r1/review.py\", line 8, in <module>\n    assert not(K/'QUALIFICATION_FAILURE.json').exists(),'Qualification failed; retain its evidence and stop review'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Qualification failed; retain its evidence and stop review\n"
+}

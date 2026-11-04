@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-key-ram-market-20261104-r1/review-r3.py", line 13, in <module>
+    with (K/(script+'.log')).open('w')as log:subprocess.run(['node',str(K/script)],cwd=K,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['node', '/opt/pureeos-key-ram-market-20261104-r1/browser-check.cjs']' returned non-zero exit status 1.

@@ -70,6 +70,21 @@ struct market_view {
 };
 using market_singleton = singleton<"powup.state"_n, market_view>;
 
+// Qualified native RAM market layout. Read only; transfer fees never execute
+// a RAM purchase or alter the separately sponsored allocation budgets.
+struct ram_connector {
+   asset balance;
+   double weight;
+   EOSLIB_SERIALIZE(ram_connector, (balance)(weight))
+};
+struct ram_market_view {
+   asset supply;
+   ram_connector base, quote;
+   uint64_t primary_key() const { return supply.symbol.raw(); }
+   EOSLIB_SERIALIZE(ram_market_view, (supply)(base)(quote))
+};
+using ram_market = multi_index<"rammarket"_n, ram_market_view>;
+
 struct token_stat {
    asset supply, max_supply;
    name issuer;

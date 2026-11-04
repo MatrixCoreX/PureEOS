@@ -477,11 +477,29 @@ void key_contract::verify_envelope(name operation, const public_key& owner, uint
    wallets table(get_self(), get_self().value);
    check(table.get(sender).auth_epoch == auth_epoch, "authorization epoch revoked");
 }
-uint32_t key_contract::rows_for(const public_key& key, uint64_t asset_id) const {
+uint32_t key_contract::ram_for(const public_key& key, uint64_t asset_id) const {
    auto id = find_wallet(key);
-   if (!id) return 2;
+   if (!id) return wallet_ram + balance_ram;
    balances table(get_self(), id);
-   return !asset_id || table.find(asset_id) == table.end() ? 1 : 0;
+   return !asset_id || table.find(asset_id) == table.end() ? balance_ram : 0;
+}
+int64_t key_contract::ram_cost(const configuration& cfg, uint32_t bytes) const {
+   if (!bytes) return 0; // Existing rows and fee-free claims need no RAM quote.
+   check_system(cfg); // Do not parse an unreviewed replacement system layout.
+   ram_market table(system_account, system_account.value);
+   const auto& market = table.get(symbol("RAMCORE", 4).raw(), "RAM market missing");
+   check(market.supply.is_valid() && market.supply.symbol == symbol("RAMCORE", 4) && market.supply.amount > 0 &&
+         market.base.balance.is_valid() && market.base.balance.symbol == symbol("RAM", 0) &&
+         market.quote.balance.is_valid() && market.quote.balance.symbol == cfg.fee_symbol &&
+         market.base.weight == 0.5 && market.quote.weight == 0.5 &&
+         market.base.balance.amount > bytes && market.quote.balance.amount > 0,
+         "unsupported or invalid RAM market");
+   const auto remaining = market.base.balance.amount - bytes;
+   // Conservative whole-atom inverse of the native constant-product curve.
+   // Use integer ceilings, including the native ceil(gross / 200) buy fee.
+   // This is a quote for approved allocation bytes, not exact RAM metering.
+   const auto net = checked((__int128(market.quote.balance.amount) * bytes + remaining - 1) / remaining);
+   return checked((__int128(net) * 200 + 198) / 199);
 }
 uint32_t key_contract::multiplier(const configuration& cfg, bool exit_path) {
    if (exit_path && get_code_hash(system_account) != cfg.system_hash) return 10000;
@@ -500,11 +518,12 @@ uint32_t key_contract::multiplier(const configuration& cfg, bool exit_path) {
    table.set(next, get_self());
    return next.multiplier_bps;
 }
-key_contract::charge key_contract::quote(const configuration& cfg, uint32_t units, uint32_t rows,
+key_contract::charge key_contract::quote(const configuration& cfg, uint32_t units, uint32_t bytes,
                                          uint16_t relay_bps, bool exit_path) {
-   check(units <= 128 && rows <= 4, "fee work bound exceeded");
-   auto value = (__int128(cfg.policy.unit_fee) * units + __int128(cfg.policy.new_row_fee) * rows) * multiplier(cfg, exit_path);
-   int64_t base = std::max(cfg.policy.minimum_fee, checked((value + 9999) / 10000));
+   check(units <= 128 && bytes <= 4096, "fee work bound exceeded");
+   const auto value = __int128(cfg.policy.unit_fee) * units * multiplier(cfg, exit_path);
+   const auto computed = checked((value + 9999) / 10000 + ram_cost(cfg, bytes));
+   int64_t base = std::max(cfg.policy.minimum_fee, computed);
    check(relay_bps == 0 || (relay_bps >= 1000 && relay_bps <= 3000), "invalid relay fee rate");
    int64_t premium = relay_bps ? std::max(int64_t(1), checked((__int128(base) * relay_bps + 9999) / 10000)) : 0;
    return {base, premium, checked(__int128(base) + premium)};
@@ -587,8 +606,7 @@ void key_contract::ontransfer(name from, name to, asset quantity, std::string me
    const auto key = decode_key(memo.substr(4, separator - 4));
    const auto maximum = asset(int64_t(parse_cap(memo.substr(separator + 1, modern ? last-separator-1 : std::string::npos))), cfg.fee_symbol);
    const auto request_id = modern ? parse_id(memo.substr(last+1)) : checksum256{};
-   const uint32_t rows = rows_for(key, id) + (id ? 0 : 1);
-   auto fee = quote(cfg, 2 + (memo.size() + 63) / 64, rows, false);
+   auto fee = quote(cfg, 2 + (memo.size() + 63) / 64, ram_for(key, id), false);
    charge_native(from, fee, maximum);
    check_asset(id);
    assets table(get_self(), get_self().value);
@@ -614,7 +632,7 @@ void key_contract::ksend(transfer_request request) {
    auto id = find_asset(request.token_contract, request.quantity.symbol); check_asset(id); check_asset(1);
    check_token(request.token_contract, request.quantity.symbol);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   auto fee = quote(cfg, 4 + (request.memo.size() + 63) / 64, rows_for(request.to, id), relay_fee(request.relayer, request.relay_fee_bps));
+   auto fee = quote(cfg, 4 + (request.memo.size() + 63) / 64, ram_for(request.to, id), relay_fee(request.relayer, request.relay_fee_bps));
    check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, id) >= checked(__int128(request.quantity.amount) + (id == 1 ? fee.total : 0)), "insufficient principal balance");
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
@@ -675,7 +693,7 @@ void key_contract::perform_withdraw(name payer, const withdrawal_request& reques
          "recipient must open the third-party token balance before withdrawal");
    auto id = find_asset(request.token_contract, request.quantity.symbol); check_asset(id); check_asset(1);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   auto fee = quote(cfg, 6 + (request.memo.size() + 63) / 64, outgoing_rows(request.token_contract, request.to, request.quantity.symbol), relay_fee(direct ? name{} : request.relayer, request.relay_fee_bps), direct);
+   auto fee = quote(cfg, 6 + (request.memo.size() + 63) / 64, outgoing_rows(request.token_contract, request.to, request.quantity.symbol) * balance_ram, relay_fee(direct ? name{} : request.relayer, request.relay_fee_bps), direct);
    check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, id) >= checked(__int128(request.quantity.amount) + (id == 1 ? fee.total : 0)), "insufficient principal balance");
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
@@ -726,7 +744,7 @@ void key_contract::refundfee(name owner, name to, asset quantity, asset max_fee)
    require_auth(owner);
    auto cfg = config(); check_asset(1);
    check(quantity.is_valid() && quantity.symbol == cfg.fee_symbol && quantity.amount > 0, "invalid fee refund");
-   auto fee = quote(cfg, 4, outgoing_rows(cfg.fee_contract, to, cfg.fee_symbol), false, true);
+   auto fee = quote(cfg, 4, outgoing_rows(cfg.fee_contract, to, cfg.fee_symbol) * balance_ram, false, true);
    charge_native(owner, fee, max_fee);
    native_credits table(get_self(), get_self().value);
    auto it = table.require_find(owner.value, "fee credit missing");

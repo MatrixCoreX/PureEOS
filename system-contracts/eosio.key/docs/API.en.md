@@ -1,5 +1,8 @@
 # First-release API · owner protocol 2
 
+2026-11-04 RAM 市场计费候选 / market-priced RAM candidate: see [规则、公式与兼容 / rules and compatibility](RAM_MARKET_FEES.md). New source prices approved bytes from current RAM reserves; old deployed hashes retain fixed row pricing. Public activation is not included in this development task.
+
+
 The TEST allowlist is system AIC and standard `keyusdtoken1::4,USD`, pinned by full asset identity and reviewed code hash. Future additions require a protected eosio.key code proposal and BP veto review:1800seconds on this TEST chain, seven days for stable. Named USD recipients must fund their token balance row before withdrawal. RAM registration remains separate from code admission. Configurable relay rates are deployed through a mature native proposal; see the current deployment report linked from the module README and [token admission](TOKEN_ALLOWLIST.md).
 
 ## Funds and supported tokens
@@ -44,8 +47,9 @@ Zero balances and recipient close/reopen never reset budgets.
 The transfer sender pays extra recipient-creation fees: native sender prepaid AIC
 for deposits, sending-key AIC for key transfers/withdrawals. The recipient needs
 no account or opening signature and gets full principal. Existing records pay no
-repeated creation charge; normal execution fees remain. `new_row_fee` is a policy
-price, not a live RAM byte quote. Collected fees do not refill purchased-byte
+repeated creation charge; normal execution fees remain. Legacy code uses the policy
+`new_row_fee`; the market-priced candidate uses the approved byte budget and current
+RAM curve quote instead. Collected fees do not refill purchased-byte
 budgets automatically. SDK `ramRegistrationActions` builds the purchase/admission
 actions; see [CLEOS.md](CLEOS.md). This accounting does not isolate arbitrary
 malicious issuer RAM authority. The qualified profile separately requires exact-identity/code-hash whitelist admission; arbitrary issuers remain excluded.
@@ -58,16 +62,21 @@ The pinned PureEOS system code is read through `eosio::powup.state`, **scope 0**
 u = max(floor(max(cpu.adjusted_utilization,cpu.utilization) * 10000 / cpu.weight),
         floor(max(net.adjusted_utilization,net.utilization) * 10000 / net.weight))
 multiplier_bps = 10000 + floor((maximum_multiplier_bps - 10000) * u² / 100000000)
-base = max(minimum_fee, ceil((unit_fee * work_units + new_row_fee * new_rows) * multiplier_bps / 10000))
+execution = ceil(unit_fee * work_units * multiplier_bps / 10000)
+ram_net = new_bytes == 0 ? 0 : ceil(AIC_reserve * new_bytes / (RAM_reserve - new_bytes))
+ram_fee = ceil(ram_net * 200 / 199)
+base = max(minimum_fee, execution + ram_fee)
 premium = commercial ? max(1, ceil(base * relay_fee_bps / 10000)) : 0
 total = base + premium
 ```
+
+The formula above is for the market-priced candidate. Legacy deployed hashes instead use `base = max(minimum_fee, ceil((unit_fee * work_units + new_row_fee * new_rows) * multiplier_bps / 10000))`. RAM is read fresh; the epoch cache below applies only to CPU/NET.
 
 Arithmetic is integer-only. Ordinary deposits, self exits and refunds have no commercial premium. Income claims have zero application fee, independent of market occupancy. Base fees stay in network fee buckets; V1 has no base-fee withdrawal/distribution action. Self exits use a fixed bucket created at initialization, so new CPU sponsors cannot allocate unbounded rows or block exits at capacity. The sponsor receives no fee reward.
 
 The first fee operation per consensus-time epoch refreshes pricing; others reuse it. Initialization chooses a 1–60 second epoch. Quotes are estimates; execution uses current cached pricing and actual new rows and cannot exceed the signed maximum. Test prices are functional fixtures, not production economic qualification. A nonzero floor, row costs and capacity limits impose initial spam costs/bounds without claiming resistance to arbitrary economic attacks.
 
-Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, refund `4`; income claim has no AIC fee or pricing refresh. New recipient wallets and asset-balance rows incur the sender-paid row fee; token registration has its separate sponsored RAM purchase.
+Work units: deposit `2+ceil(memo_bytes/64)`, key send `4+ceil(memo_bytes/64)`, withdrawal `6+ceil(memo_bytes/64)`, cancellation `3`, refund `4`; income claim has no AIC fee or pricing refresh. New recipient wallets and asset-balance rows incur the sender-paid storage fee; token registration has its separate sponsored RAM purchase.
 
 ## Complete transaction owner proof (protocol 2)
 

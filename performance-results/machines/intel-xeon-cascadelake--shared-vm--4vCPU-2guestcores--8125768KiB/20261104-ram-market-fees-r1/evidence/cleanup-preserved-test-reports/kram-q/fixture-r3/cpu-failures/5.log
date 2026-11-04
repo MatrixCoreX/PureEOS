@@ -1,0 +1,255 @@
+{
+  "transaction_id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+  "processed": {
+    "id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+    "block_num": 1028,
+    "block_time": "2026-11-04T05:17:24.000",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 305930,
+    "net_usage": 140,
+    "scheduled": false,
+    "action_traces": [{
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": {
+          "receiver": "eosio.key",
+          "act_digest": "27eed2c98b0d2919bf8b9ab1caee90ddef93ac18f6ac21c598fab164e64ee57f",
+          "global_sequence": 1726,
+          "recv_sequence": 154,
+          "auth_sequence": [[
+              "keyrelaymoon",
+              53
+            ]
+          ],
+          "code_sequence": 1,
+          "abi_sequence": 1
+        },
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio.key",
+          "name": "claim",
+          "authorization": [{
+              "actor": "keyrelaymoon",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "bp": "keyrelaymoon",
+            "to": "keyrelaymoon",
+            "quantity": "0.0001 AIC",
+            "max_fee": "0.0000 AIC"
+          },
+          "hex_data": "302995de4475bd82302995de4475bd820100000000000000044149430000000000000000000000000441494300000000"
+        },
+        "context_free": false,
+        "elapsed": 305698,
+        "console": "",
+        "trx_id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+        "block_num": 1028,
+        "block_time": "2026-11-04T05:17:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 2,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.token",
+        "act": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "eosio.key",
+            "to": "keyrelaymoon",
+            "quantity": "0.0001 AIC",
+            "memo": "eosio.key relay earnings"
+          },
+          "hex_data": "0000f00a02ea3055302995de4475bd820100000000000000044149430000000018656f73696f2e6b65792072656c6179206561726e696e6773"
+        },
+        "context_free": false,
+        "elapsed": 136,
+        "console": "",
+        "trx_id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+        "block_num": 1028,
+        "block_time": "2026-11-04T05:17:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": {
+          "code": 3080004,
+          "name": "tx_cpu_usage_exceeded",
+          "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+          "stack": [{
+              "context": {
+                "level": "error",
+                "file": "transaction_context.cpp",
+                "line": 603,
+                "method": "checktime",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T05:17:23.806"
+              },
+              "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+              "data": {
+                "id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+                "billing_timer": 305859,
+                "subjective": 0,
+                "limit": 150000
+              }
+            },{
+              "context": {
+                "level": "warn",
+                "file": "apply_context.cpp",
+                "line": 262,
+                "method": "exec_one",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T05:17:23.806"
+              },
+              "format": "${receiver} <= ${account}::${action} console output: ${console}",
+              "data": {
+                "console": "",
+                "account": "eosio.token",
+                "action": "transfer",
+                "receiver": "eosio.token"
+              }
+            }
+          ]
+        },
+        "error_code": "10000000000000000000",
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 3,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio.key",
+          "name": "finishout",
+          "authorization": [{
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "asset_id": 1,
+            "ticket": 11
+          },
+          "hex_data": "01000000000000000b00000000000000"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+        "block_num": 1028,
+        "block_time": "2026-11-04T05:17:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 4,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio.key",
+          "name": "receipt",
+          "authorization": [{
+              "actor": "eosio.key",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "kind": "claim",
+            "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "transaction_id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+            "native_from": "keyrelaymoon",
+            "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+            "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+            "token_contract": "eosio.token",
+            "quantity": "0.0001 AIC",
+            "fee": "0.0000 AIC",
+            "relayer": "keyrelaymoon",
+            "auth_epoch": 0
+          },
+          "hex_data": "0000000000e94c4400000000000000000000000000000000000000000000000000000000000000000d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c302995de4475bd820000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a6823403ea30550100000000000000044149430000000000000000000000000441494300000000302995de4475bd820000000000000000"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+        "block_num": 1028,
+        "block_time": "2026-11-04T05:17:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      }
+    ],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3080004,
+      "name": "tx_cpu_usage_exceeded",
+      "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "transaction_context.cpp",
+            "line": 603,
+            "method": "checktime",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:17:23.806"
+          },
+          "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+          "data": {
+            "id": "0d0af751af0f66ccc355da25fe980217bf260d18cc4027bd559bcd4261cf9a8c",
+            "billing_timer": 305859,
+            "subjective": 0,
+            "limit": 150000
+          }
+        },{
+          "context": {
+            "level": "warn",
+            "file": "apply_context.cpp",
+            "line": 262,
+            "method": "exec_one",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:17:23.806"
+          },
+          "format": "${receiver} <= ${account}::${action} console output: ${console}",
+          "data": {
+            "console": "",
+            "account": "eosio.token",
+            "action": "transfer",
+            "receiver": "eosio.token"
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}

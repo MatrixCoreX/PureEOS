@@ -178,7 +178,11 @@ def main():
             self.action('issue',{'to':'eosio','quantity':'100000000.0000 AIC','memo':'private functional test'},'eosio',contract='eosio.token')
             self.action('create',{'issuer':'keyusdtoken1','maximum_supply':'1000000.0000 USD'},'keyusdtoken1',contract='keyusdtoken1')
             self.action('issue',{'to':'keyusdtoken1','quantity':'10000.0000 USD','memo':'private test token'},'keyusdtoken1',contract='keyusdtoken1')
-            for n in ordinary:self.tx(['transfer','eosio',n,'100000.0000 AIC','test setup'])
+            for n in ordinary:
+                # Complete the large private RAM-market test funding before
+                # govinit removes bootstrap eosio signing authority.
+                amount='600000.0000 AIC'if n=='keyusersolar'else'100000.0000 AIC'
+                self.tx(['transfer','eosio',n,amount,'test setup'])
             self.action('transfer',{'from':'keyusdtoken1','to':'keyusersolar','quantity':'1000.0000 USD','memo':'test setup'},'keyusdtoken1',contract='keyusdtoken1')
             self.tx(['set','contract','eosio',str(self.contracts/'eosio.bios')])
             supported=self.rpc('get_supported_protocol_features',{'exclude_disabled':True},namespace='producer')
@@ -225,6 +229,7 @@ def main():
             if args.fixture:
                 self.tx(['set','contract','keysysmockup',str(args.artifacts/'test-only-system'),'keysysmockup.wasm','keysysmockup.abi'])
                 self.action('setmarket',{'cpu':0,'net':0},'keysysmockup',contract='keysysmockup')
+                self.mock_ram(self.table('rammarket',scope='eosio')[0])
             self.cfg={'chain_id':info['chain_id'],'deployment':hashlib.sha256(os.urandom(32)).hexdigest(),
                 'fee_contract':'eosio.token','fee_symbol':'4,AIC','system_hash':self.rpc('get_code_hash',{'account_name':'keysysmockup'if args.fixture else'eosio'})['code_hash'],
                 'policy':{'minimum_fee':100,'unit_fee':10,'new_row_fee':500,'maximum_multiplier_bps':100000,
@@ -385,18 +390,124 @@ def main():
             self.check(key_balance(self.receiver)==10000 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
                        'AIC deposit sender pays additional new-recipient fee; receiving key gets full principal and no account prerequisite')
             before=credit();self.transfer('keyusersolar','eosio.key','1.0000 AIC',self.memo(self.receiver));repeat=before-credit()
-            self.check(first>repeat>0 and key_balance(self.receiver)==20000 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
-                       'Existing AIC recipient is not charged a repeated new-row fee or another RAM allocation')
+            self.check(first>=repeat>0 and key_balance(self.receiver)==20000 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
+                       'Existing AIC recipient allocates no repeated RAM; the base floor may mask a low market storage charge')
             recipient=self.key();before=key_balance(self.owner);native_credit=credit()
             self.execute('ksend',self.owner,self.request(self.owner,to=recipient['Public key'],quantity='1.0000 AIC'))
             key_first=before-key_balance(self.owner)-10000
             before=key_balance(self.owner)
             self.execute('ksend',self.owner,self.request(self.owner,to=recipient['Public key'],quantity='1.0000 AIC'))
             key_repeat=before-key_balance(self.owner)-10000
-            self.check(key_first>key_repeat>0 and key_balance(recipient)==20000 and credit()==native_credit,
-                       'Key sender pays AIC principal plus recipient RAM row fee; recipient receives full principal, repeated sends reuse rows')
+            self.check(key_first>=key_repeat>0 and key_balance(recipient)==20000 and credit()==native_credit,
+                       'Key sender pays fees in addition to full principal; repeated rows reuse RAM, and the base floor remains applicable')
             self.report['sender_paid_RAM_fees']={'native_first_fee_atoms':first,'native_repeat_fee_atoms':repeat,
                                                'key_first_fee_atoms':key_first,'key_repeat_fee_atoms':key_repeat,'recipient_principal_atoms':20000}
+        def mock_ram(self,market):
+            self.action('setram',{'supply':market['supply'],'ram':market['base']['balance'],'aic':market['quote']['balance'],
+                'ram_weight':float(market['base']['weight']),'aic_weight':float(market['quote']['weight'])},'keysysmockup',contract='keysysmockup')
+            # The test-only system ABI exposes setters, not the foreign
+            # read-only projection's table. Retain exact injected inputs for
+            # restoration; real production cases always read native RAM RPC.
+            self.fixture_ram_market=json.loads(json.dumps(market))
+        def ram_market(self):
+            if args.fixture:return json.loads(json.dumps(self.fixture_ram_market))
+            return self.table('rammarket',code='eosio',scope='eosio')[0]
+        def ram_quote(self,bytes):
+            if not bytes:return 0
+            from decimal import Decimal
+            m=self.ram_market();r=int(m['base']['balance'].split()[0]);q=int(Decimal(m['quote']['balance'].split()[0])*10000)
+            net=(q*bytes+r-bytes-1)//(r-bytes)
+            return (net*200+198)//199
+        def market_expected(self,units,bytes,rate=3000):
+            # These cases run before the separate real PowerUp reservation test.
+            work=(10*units+0);storage=self.ram_quote(bytes);base=max(100,work+storage)
+            premium=(base*rate+9999)//10000 if rate else 0
+            return {'execution':work,'storage':storage,'base':base,'premium':premium,'total':base+premium}
+        def sdk_quote(self,operation,request):
+            result=subprocess.run(['node',str(source/'tests/quote.mjs')],input=json.dumps({'endpoint':self.url,'operation':operation,'request':request}),
+                                  text=True,capture_output=True,timeout=40)
+            assert result.returncode==0,self.redact(result.stderr)
+            return json.loads(result.stdout)
+        def test_market_ram(self):
+            if args.fixture:return self.test_fixture_ram()
+            from decimal import Decimal
+            recipient=self.key();req=self.request(self.owner,to=recipient['Public key'],quantity='0.0001 AIC',memo='')
+            low=self.sdk_quote('ksend',req)
+            self.check(low['ram_pricing']=='market'and low['ram_bytes']==1536 and int(low['storage'])==self.ram_quote(1536),
+                       'SDK prices a new key with the same 1536-byte integer curve quote as the production contract profile')
+            signed=self.signed('ksend',req|{'max_fee':f"{int(low['total'])//10000}.{int(low['total'])%10000:04d} AIC"},self.owner)
+            quota=int(self.rpc('get_account',{'account_name':'keyusersolar'})['ram_quota'])
+            self.action('buyram',{'payer':'keyusersolar','receiver':'keyusersolar','quant':'500000.0000 AIC'},'keyusersolar')
+            purchased=int(self.rpc('get_account',{'account_name':'keyusersolar'})['ram_quota'])-quota
+            high=self.sdk_quote('ksend',req)
+            self.check(int(high['storage'])>int(low['storage'])and int(high['total'])>int(low['total']),
+                       'A real native RAM purchase raises the market-priced new-storage fee without changing fee policy')
+            before=self.state();self.execute('ksend',self.owner,signed['prepared']['request'],signed,failure='fee exceeds signed maximum')
+            self.check(self.state()==before,'RAM price increase above the owner-signed total cap atomically rejects principal, fees and row allocation')
+            expected=self.market_expected(4,1536);old=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+            used=int(self.asset_row('eosio.token','4,AIC')['ram_used']);self.execute('ksend',self.owner,req)
+            now=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+            self.check(int(now['network'])-int(old['network'])==expected['base']and int(now['relay_earned'])-int(old['relay_earned'])==expected['premium']
+                and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
+                'Production WASM charges exact market storage plus CPU/NET work and relay premium, while consuming the original sponsored budget')
+            # The receiver has AIC but no USD row: only a 512-byte balance budget.
+            req512=self.request(self.owner,to=self.receiver['Public key'],token_contract='keyusdtoken1',quantity='0.0001 USD',memo='')
+            quote512=self.sdk_quote('ksend',req512);old=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+            used=int(self.asset_row('keyusdtoken1','4,USD')['ram_used']);self.execute('ksend',self.owner,req512)
+            now=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+            self.check(quote512['ram_bytes']==512 and int(now['network'])-int(old['network'])==int(quote512['base'])
+                and int(self.asset_row('keyusdtoken1','4,USD')['ram_used'])==used+512,
+                'Existing-key first USD receipt pays exactly the 512-byte market quote from the sender and its own token allocation')
+            reused=self.sdk_quote('ksend',req512)
+            self.check(reused['ram_bytes']==0 and int(reused['storage'])==0,'Existing USD balance quote has zero RAM charge at the same high market price')
+            # Select a genuine existing native account without an AIC row.
+            native_to=next(n for n in ['eosio.saving','eosio.wrap','eosio.msig']if 'AIC'not in self.token_balance(n))
+            native_req=self.request(self.owner,'selfout',to=native_to,quantity='0.0001 AIC',memo='')
+            native_quote=self.sdk_quote('selfout',native_req)
+            self.check(native_quote['ram_bytes']==512 and int(native_quote['premium'])==0,'Native recipient opening uses a 512-byte RAM quote without a self-withdrawal relay premium')
+            old=next(r for r in self.ktable('feebuckets')if r['owner']=='eosio.key')if any(r['owner']=='eosio.key'for r in self.ktable('feebuckets'))else {'network':0}
+            self.execute('selfout',self.owner,native_req)
+            now=next(r for r in self.ktable('feebuckets')if r['owner']=='eosio.key')
+            self.check(int(now['network'])-int(old['network'])==int(native_quote['base'])and self.token_balance(native_to)['AIC']=='0.0001 AIC',
+                       'Native recipient gets full principal and sender pays the exact RAM-priced self-withdrawal fee')
+            self.action('sellram',{'account':'keyusersolar','bytes':purchased},'keyusersolar')
+            after=self.sdk_quote('ksend',self.request(self.owner,to=self.key()['Public key'],quantity='0.0001 AIC',memo=''))
+            self.check(int(after['storage'])<int(high['storage'])and int(after['total'])<int(high['total']),
+                       'A real native RAM sale lowers the new-storage quote and total automatically, with the unchanged base floor')
+            self.report['RAM_market_pricing']={'scope':'Real native buy/sell; production WASM, no RAM-market fixture','low':low,'high':high,'after_sale':after,
+                'balance_only':quote512,'existing_balance':reused,'native_recipient':native_quote,'purchased_then_sold_bytes':purchased,'signed_cap_rollback':True}
+        def test_fixture_ram(self):
+            original=self.ram_market();market={'supply':'10000000000.0000 RAMCORE','base':{'balance':'1000000 RAM','weight':0.5},'quote':{'balance':'100.0000 AIC','weight':0.5}}
+            measured_units=[]
+            def native_fee(key,cap='100000'):
+                before=int(next(r['amount']for r in self.ktable('nativefees')if r['owner']=='keyusersolar'))
+                memo=self.memo(key,cap);measured_units.append(2+(len(memo.encode())+63)//64)
+                self.transfer('keyusersolar','eosio.key','0.0001 AIC',memo)
+                return before-int(next(r['amount']for r in self.ktable('nativefees')if r['owner']=='keyusersolar'))
+            self.mock_ram(market);recipient=self.key();before=self.state()
+            self.transfer('keyusersolar','eosio.key','0.0001 AIC',self.memo(recipient,'100'),failure='fee exceeds signed maximum')
+            self.check(before==self.state(),'TEST FIXTURE: high RAM quote above native deposit cap rolls back every wallet table')
+            a=native_fee(recipient)
+            recipient2=self.key();self.mock_ram(market|{'quote':{'balance':'50.0000 AIC','weight':0.5}});b=native_fee(recipient2)
+            self.check(a>b>0,'TEST FIXTURE: lowering only the RAM AIC reserve lowers the actual new-key deposit fee')
+            self.mock_ram(market);self.action('setmarket',{'cpu':10000,'net':0},'keysysmockup',contract='keysysmockup')
+            busy=native_fee(self.key())
+            self.check(busy-a==10*measured_units[-1]*10-10*measured_units[0],
+                       'TEST FIXTURE: a 10x CPU/NET multiplier increases only execution; identical RAM allocation price is unchanged')
+            self.action('setmarket',{'cpu':0,'net':0},'keysysmockup',contract='keysysmockup')
+            bad=[market|{'base':{'balance':'1536 RAM','weight':0.5}},market|{'quote':{'balance':'0.0000 AIC','weight':0.5}},
+                 market|{'quote':{'balance':'100.0000 USD','weight':0.5}},market|{'base':{'balance':'1000000 RAM','weight':0.6}},
+                 market|{'base':{'balance':'1537 RAM','weight':0.5},'quote':{'balance':'461168601842738.7903 AIC','weight':0.5}}]
+            for i,m in enumerate(bad):
+                self.mock_ram(m);before=self.state()
+                self.transfer('keyusersolar','eosio.key','0.0001 AIC',self.memo(self.key()),failure='overflow'if i==4 else'invalid RAM market')
+                self.check(self.state()==before,'TEST FIXTURE: malformed/depleted/overflow RAM market '+str(i)+' rejects atomically')
+            self.action('dropram',{},'keysysmockup',contract='keysysmockup');before=self.state()
+            self.transfer('keyusersolar','eosio.key','0.0001 AIC',self.memo(self.key()),failure='RAM market missing')
+            self.check(self.state()==before,'TEST FIXTURE: missing RAM market cannot silently fall back to fixed fees')
+            self.execute('selfout',self.owner,self.request(self.owner,'selfout',memo=''))
+            self.check(True,'TEST FIXTURE: existing recipient owner exit requires no RAM market')
+            self.mock_ram(original)
         def test_ram_budget(self):
             def row():return self.asset_row('keyusdtoken1','4,USD')
             while int(row()['ram_purchased'])-int(row()['ram_used'])>=1536:
@@ -496,6 +607,7 @@ def main():
                 'token':'keyusdtoken1','symbol':'4,USD'}),capture_output=True,text=True,timeout=30)
             assert read.returncode==0,self.redact(read.stderr)
             self.check(json.loads(read.stdout)['balance']=='1000000','JS SDK reads actual key/asset secondary indices and exact four-decimal USD balance')
+            self.test_market_ram()
             self.test_ram_budget()
             if args.native_cleos:self.test_cli()
             self.test_nonce_race()

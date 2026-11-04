@@ -25,6 +25,17 @@ class [[eosio::contract("keysysmockup")]] mock_system : public contract {
  using candidates=multi_index<"rotcands"_n,candidate>;
  using bonds=multi_index<"bpbonds"_n,bond>;
  using maint=multi_index<"bpmaint"_n,maintenance>;
+ [[eosio::action]]void setram(asset supply,asset ram,asset aic,double ram_weight,double aic_weight){
+    require_auth(get_self());
+    keywallet::ram_market table(get_self(),get_self().value);
+    auto it=table.find(supply.symbol.raw());
+    auto update=[&](auto& r){r.supply=supply;r.base.balance=ram;r.quote.balance=aic;r.base.weight=ram_weight;r.quote.weight=aic_weight;};
+    if(it==table.end())table.emplace(get_self(),update);else table.modify(it,same_payer,update);
+ }
+ [[eosio::action]]void dropram(){
+    require_auth(get_self());keywallet::ram_market table(get_self(),get_self().value);
+    auto it=table.begin();while(it!=table.end())it=table.erase(it);
+ }
  [[eosio::action]]void setbp(name owner,public_key key,bool active,bool banned,uint8_t state,int64_t balance,uint8_t maintenance_state){
     require_auth(get_self());
     producers p(get_self(),get_self().value);auto pi=p.find(owner.value);

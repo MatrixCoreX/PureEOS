@@ -1,0 +1,212 @@
+{
+  "scope": "User requested cleanup; only stopped private test data and this task duplicate sources/caches",
+  "before": {
+    "total": 160497381376,
+    "used": 38902919168,
+    "available": 114661171200
+  },
+  "items": [
+    {
+      "path": "/opt/kram-q/fixture-r3/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 14086144
+    },
+    {
+      "path": "/opt/kram-q/fixture-r3/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kram-q/native/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 9375744
+    },
+    {
+      "path": "/opt/kram-q/native/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kram-q/native-r2/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 9379840
+    },
+    {
+      "path": "/opt/kram-q/native-r2/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kram-q/native-r3/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 11599872
+    },
+    {
+      "path": "/opt/kram-q/native-r3/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/krate-q/r1/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 6713344
+    },
+    {
+      "path": "/opt/krate-q/r1/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/krate-q/r3/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 7614464
+    },
+    {
+      "path": "/opt/krate-q/r3/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/krate-q/r4/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 6533120
+    },
+    {
+      "path": "/opt/krate-q/r4/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/krate-q/r5/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 7913472
+    },
+    {
+      "path": "/opt/krate-q/r5/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/krate-q/r6/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 10792960
+    },
+    {
+      "path": "/opt/krate-q/r6/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kclaim-q/fixture30/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 7557120
+    },
+    {
+      "path": "/opt/kclaim-q/fixture30/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kclaim-q/native30/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 7254016
+    },
+    {
+      "path": "/opt/kclaim-q/native30/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kclaim-q/r2/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 6524928
+    },
+    {
+      "path": "/opt/kclaim-q/r2/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/kclaim-q/r3/local-tests",
+      "kind": "directory",
+      "allocated_bytes": 7270400
+    },
+    {
+      "path": "/opt/kclaim-q/r3/programs",
+      "kind": "directory",
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "/opt/pureeos-key-ram-market-20261104-r1/source",
+      "kind": "directory",
+      "allocated_bytes": 7385088
+    },
+    {
+      "path": "/opt/pureeos-key-ram-market-20261104-r1/source-final",
+      "kind": "directory",
+      "allocated_bytes": 7413760
+    },
+    {
+      "path": "/opt/pureeos-key-ram-market-20261104-r1/source-r2",
+      "kind": "directory",
+      "allocated_bytes": 7413760
+    },
+    {
+      "path": "/opt/pureeos-key-ram-market-20261104-r1/source-r3/node_modules",
+      "kind": "directory",
+      "allocated_bytes": 6840320
+    },
+    {
+      "path": "/opt/pureeos-key-ram-market-20261104-r1/frontend/node_modules",
+      "kind": "symlink",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "/opt/pureeos-key-ram-market-20261104-r1/frontend/remote-integration-build",
+      "kind": "directory",
+      "allocated_bytes": 81920
+    }
+  ],
+  "backup_sha256": "9445534c08ef027c274bb9a2137e37b3629cfc6c503bb20ff002922e43bed4bc",
+  "backup_files": {
+    "kram-q/fixture-r3/RESULT.json": "562d253bee3d7312cdc6c69c9bdb655a7d16d5cb11302733519e889dea82238a",
+    "kram-q/fixture-r3/cpu-failures/5.log": "f455f7e5316170b1ff2517cb490a39f6a318878f9dc24c92ab4242eb10268a5b",
+    "kram-q/fixture-r3/cpu-failures/1.log": "69f457405806753be7fc6662d6f1615fbd8a7e012c48c98da6cd72ec570f4b34",
+    "kram-q/fixture-r3/cpu-failures/2.log": "c406e16cb6f19dd1ba6aa1641ac52b237491a53c1e055b8f14d2bccddf1f9dec",
+    "kram-q/fixture-r3/cpu-failures/8.log": "3fe1b72ed40d1f91aefb95c3741baa882287a79a3b99fc6928c4d9c669b3fb28",
+    "kram-q/fixture-r3/cpu-failures/4.log": "9f5abff7a6eacccfbb14c41f106bae2d29ab39f3e92f1fc0c504bbf83ccc9ccf",
+    "kram-q/fixture-r3/cpu-failures/3.log": "71a783a3e974b3bc528b931a2a0d171808e4a9bcb2e1f804fff593ee1b440f58",
+    "kram-q/fixture-r3/cpu-failures/7.log": "9f9f4618df72b71563d646a48413a8f1ea0b1406f60819bc7c64da7020f560f3",
+    "kram-q/fixture-r3/cpu-failures/6.log": "70400bebdf21db09679f1f590a51d0469f569dbec51e0aca7ee4897979c66ec8",
+    "kram-q/native/RESULT.json": "412a25c3f7dc360e4f690c89e17f88b620f8bc43a8ab479c6f5d6a13981b5c89",
+    "kram-q/native-r2/RESULT.json": "f4a4d6345136da32b77d76cbff24c67f24e3acda2effb4ea99989f3f0536e943",
+    "kram-q/native-r2/cpu-failures/1.log": "892017db1af82746dbb077641c7de3f2407f8acb01a0b4d37d37addec83cd181",
+    "kram-q/native-r2/cpu-failures/2.log": "718a44686bf271765e28c6ce464ffce19726844bc8d2c3d69222125b4daa63c6",
+    "kram-q/native-r2/cpu-failures/4.log": "ea3cdf969955bbc58ed1e408ae9c83e7d8794f09cdef87355d2f8b57d8f93b5e",
+    "kram-q/native-r2/cpu-failures/3.log": "e324b55ede5ee43a21040731584571f79e6bd89b4751e1942db19e84ed576de1",
+    "kram-q/native-r3/RESULT.json": "ff40f8cebc87d6061a3ac444ddbc3a52d956f1a41cc0f234c0b891b643e99201",
+    "kram-q/native-r3/cpu-failures/1.log": "93737ab50ab241a9eb7a2167e0fe6c2a7f8415153b0d55900240d86c0b5612e0",
+    "kram-q/native-r3/cpu-failures/2.log": "92f1f860698bb6f3c948d5ceb353a58a6bd2a42ca212a64f88595a21cbde739b",
+    "kram-q/native-r3/cpu-failures/3.log": "e072d9740cd2635dad85f31ce5cb0072dc7fa7f2322ff2ba6719ee18a2a63376",
+    "krate-q/r1/RESULT.json": "097c933099eb81ffa07886bfd27db57f9923d89f135a5e4b9f5fe8a143b97449",
+    "krate-q/r3/RESULT.json": "2a5e58c55a5a02a498adb4d38a7bb7df918fe4aadd5a4b30428c30516f54c68e",
+    "krate-q/r4/RESULT.json": "e9538c4fd14af5f316aca0fa2cadd231af35502d822132bf49772ded5d2e9c3f",
+    "krate-q/r5/RESULT.json": "467f415e47e9a1163ac9060f36d255c283edeef8b12b502483d680545fb922c5",
+    "krate-q/r5/cpu-failures/1.log": "af349cd7684c1eb500b4f951164d87ed536fef503989f74e4ccc9174a8abf172",
+    "krate-q/r6/RESULT.json": "6a79ce23c0dee573f1c860eef8c75031013f6c567668f3f755c74ac436612ddb",
+    "krate-q/r6/cpu-failures/1.log": "a9c8efd9900f23e4809e79620cd4510a60ca16608cc78245767a322df0f5d2e6",
+    "krate-q/r6/cpu-failures/2.log": "8862b7247fabe57c97e7a00f4075d2aae23ac4a365aa7bd2b74f48843616ac0a",
+    "kclaim-q/fixture30/RESULT.json": "5ef6abbe4f9753acce21a049a175bc551d7ba56fad97f2526e99cb67d04a8483",
+    "kclaim-q/native30/RESULT.json": "1c4a121606e192956d0ace21da9ce285009187077bdd7f23f988886bb65e995a",
+    "kclaim-q/r2/RESULT.json": "5a9b2b623881d88191ecb9388768217ab694dae364cbb7c1d4b4253a1cf54be1",
+    "kclaim-q/r3/RESULT.json": "20d2e813e42a15fc203207a156c0d779fd9932c2e8762d6abfe17c47be4cb92f"
+  },
+  "source_kit_sha256": "6d1e987f8d5dbb3f65c763d348954ab7b8c002d302d76ef11f56754f8a7250a6",
+  "preserve": [
+    "current keynet-r2 and its keys/services",
+    "all active history databases",
+    "sole founder relay source-r3 in the earlier rate task",
+    "qualified toolchain/browser/shared dependency caches",
+    "artifacts/reports/failures/final source kit and current frontend dist"
+  ]
+}

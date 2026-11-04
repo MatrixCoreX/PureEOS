@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-AIC-Noncommercial-3.0
 import {createHash,randomBytes} from 'node:crypto';
 import {Asset,Name,Checksum256,PrivateKey,PublicKey,Serializer,Signature,Transaction,SignedTransaction,PackedTransaction} from '@wharfkit/antelope';
+import {ramFeeProfile} from './fee-profiles.mjs';
 export const CONTRACT='eosio.key',TAG='PureEOS:eosio.key:transaction';
 const LIMIT=(1n<<62n)-1n;
 const REQUESTS={ksend:'transfer_request',withdraw:'withdrawal_request',selfout:'withdrawal_request',cancel:'cancellation_request',selfcancel:'cancellation_request'};
@@ -90,6 +91,42 @@ export function calculateFee(policy,multiplier,units,rows,relayed,relayFeeBps=30
   return {base,premium,total:base+premium,base_asset:formatFee(base),premium_asset:formatFee(premium),total_asset:formatFee(base+premium)};
 }
 
+export function allocationBytes(rows) {
+  if(!Number.isInteger(rows)||rows<0||rows>2)throw new Error('Invalid recipient allocation');
+  return [0,512,1536][rows];
+}
+export function ramMarketQuote(market,bytes) {
+  if(!Number.isInteger(bytes)||bytes<0||bytes>4096)throw new Error('Invalid RAM byte budget');
+  if(!bytes)return 0n;
+  const amount=(text,symbol)=>{
+    if(typeof text!=='string')throw new Error('Invalid RAM market asset');
+    const value=atomicAsset(text);
+    if(value.symbol!==symbol||value.units<=0n||value.text!==text)throw new Error('Invalid RAM market asset');
+    return value.units;
+  };
+  amount(market?.supply,'4,RAMCORE');
+  const reserve=amount(market?.base?.balance,'0,RAM'),quote=amount(market?.quote?.balance,'4,AIC');
+  const half=value=>value===0.5||typeof value==='string'&&/^0\.50*$/.test(value);
+  if(!half(market.base.weight)||!half(market.quote.weight)||reserve<=BigInt(bytes))throw new Error('Unsupported or invalid RAM market');
+  const remaining=reserve-BigInt(bytes),net=(quote*BigInt(bytes)+remaining-1n)/remaining;
+  const gross=(net*200n+198n)/199n;
+  if(gross>LIMIT)throw new Error('RAM quote out of range');
+  return gross;
+}
+export function calculateMarketFee(policy,multiplier,units,bytes,market,relayed,relayFeeBps=3000) {
+  if(!Number.isInteger(units)||units<0||units>128)throw new Error('Invalid work bound');
+  multiplier=BigInt(multiplier);
+  if(multiplier<10000n||multiplier>BigInt(policy.maximum_multiplier_bps))throw new Error('Invalid fee multiplier');
+  if(relayed&&(!Number.isInteger(relayFeeBps)||relayFeeBps<1000||relayFeeBps>3000))throw new Error('Relay fee must be 10% to 30%');
+  const execution=(BigInt(policy.unit_fee)*BigInt(units)*multiplier+9999n)/10000n;
+  const storage=ramMarketQuote(market,bytes),computed=execution+storage;
+  const base=computed>BigInt(policy.minimum_fee)?computed:BigInt(policy.minimum_fee);
+  const premium=relayed?(base*BigInt(relayFeeBps)+9999n)/10000n:0n;
+  if(execution<0n||base<=0n||base+premium>LIMIT)throw new Error('Fee out of range');
+  return {base,premium,total:base+premium,execution,storage,supplement:base-computed,ram_bytes:bytes,
+    base_asset:formatFee(base),premium_asset:formatFee(premium),total_asset:formatFee(base+premium)};
+}
+
 export class KeyWalletClient {
   constructor(endpoint,{contract=CONTRACT,fetchImpl=globalThis.fetch}={}) {
     this.endpoint=endpoint.replace(/\/+$/,'');this.contract=contract;this.fetch=fetchImpl;
@@ -140,14 +177,18 @@ export class KeyWalletClient {
   async quote(operation,request,{recipientKey=null}={}) {
     if(!this.config)await this.load();
     const cfg=this.config,info=await this.rpc('get_info');
-    // Matches the fee-free-claim contract profile. Transfer pricing is unchanged.
+    // Claims remain independent of both resource markets and pricing profiles.
     if(operation==='claim'){
       const amount=atomicAsset(request.quantity);
       if(amount.symbol!==cfg.fee_symbol||amount.units<=0n)throw new Error('Claim requires positive native AIC income');
       if(await this.nativeRows(cfg.fee_contract,request.to,request.quantity))throw new Error('Claim recipient must open AIC balance with claimant-paid RAM');
       return {base:0n,premium:0n,total:0n,multiplier:10000n,units:0,rows:0,head:info.head_block_num};
     }
-    const code=await this.rpc('get_code_hash',{account_name:'eosio'});
+    const [code,walletCode]=await Promise.all([
+      this.rpc('get_code_hash',{account_name:'eosio'}),
+      this.rpc('get_code_hash',{account_name:this.contract}),
+    ]);
+    const ramPricing=ramFeeProfile(walletCode.code_hash);
     const exit=['selfout','selfcancel','refundfee'].includes(operation);
     let multiplier=10000n;
     if(code.code_hash!==cfg.system_hash){if(!exit)throw new Error('System code changed; relay profile needs review');}
@@ -171,13 +212,29 @@ export class KeyWalletClient {
       if(!wallet)rows=2;
       else if(!asset||(await this.rows('balances',String(wallet.id),{lower_bound:String(asset.id),upper_bound:String(asset.id),limit:2})).length===0)rows=1;
       units=(operation==='deposit'?2:4)+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
-    }else if(operation==='withdraw'||operation==='selfout'){units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);}
+    }else if(operation==='withdraw'||operation==='selfout'){
+      units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);
+      if(rows&&request.token_contract!==cfg.fee_contract)throw new Error('Recipient must open the third-party token balance before withdrawal');
+    }
     else if(operation==='cancel'||operation==='selfcancel')units=3;
     else if(operation==='refundfee'){units=4;rows=await this.nativeRows(cfg.fee_contract,request.to,request.quantity);}
     else throw new Error('Unsupported fee operation');
     const relayed=['ksend','withdraw','cancel'].includes(operation),rate=relayed?await this.relayRate(request.relayer):0;
     if(Object.hasOwn(request,'relay_fee_bps')&&request.relay_fee_bps!==rate)throw new Error('Relay rate changed; sign an updated quote');
-    return {...calculateFee(cfg.policy,multiplier,units,rows,relayed,rate),relay_fee_bps:rate,multiplier,units,rows,head:info.head_block_num};
+    let fee;
+    if(ramPricing==='market'){
+      const bytes=allocationBytes(rows);let market=null;
+      if(bytes){
+        if(code.code_hash!==cfg.system_hash)throw new Error('System code changed; pre-open recipient RAM before exiting');
+        const result=await this.rpc('get_table_rows',{json:true,code:'eosio',scope:'eosio',table:'rammarket',limit:2});
+        if(result.more||result.rows?.length!==1)throw new Error('RAM market unavailable');
+        market=result.rows[0];
+      }
+      fee=calculateMarketFee(cfg.policy,multiplier,units,bytes,market,relayed,rate);
+    }else fee=calculateFee(cfg.policy,multiplier,units,rows,relayed,rate);
+    const finalCode=await this.rpc('get_code_hash',{account_name:this.contract});
+    if(finalCode.code_hash!==walletCode.code_hash)throw new Error('Wallet code changed during fee quote');
+    return {...fee,ram_pricing:ramPricing,relay_fee_bps:rate,multiplier,units,rows,head:info.head_block_num};
   }
   async nativeRows(token,recipient,quantity){const symbol=atomicAsset(quantity).symbol.split(',')[1],raw=BigInt('0x'+Buffer.from(symbol,'ascii').reverse().toString('hex')).toString();const result=await this.rpc('get_table_rows',{json:true,code:token,scope:recipient,table:'accounts',lower_bound:raw,upper_bound:raw,limit:1});return result.rows.length?0:1;}
   async prepare(operation,request,options={}){if(!this.config)await this.load();if(['ksend','withdraw','cancel'].includes(operation)&&!Object.hasOwn(request,'relay_fee_bps'))request={...request,relay_fee_bps:await this.relayRate(request.relayer)};return prepareEnvelope(this.config,await this.rpc('get_info'),operation,request,{contract:this.contract,...options});}

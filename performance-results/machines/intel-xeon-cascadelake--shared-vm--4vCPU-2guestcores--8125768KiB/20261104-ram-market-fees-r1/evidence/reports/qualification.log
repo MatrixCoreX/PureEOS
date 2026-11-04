@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-key-ram-market-20261104-r1/qualify-all.py", line 30, in <module>
+    with (K/('qualification-'+label+'.log')).open('w')as log:subprocess.run(command,cwd=S,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '-B', '/opt/pureeos-key-ram-market-20261104-r1/source-final/tests/qualify.py', '--package', '/opt/pureeos-keynet-20261103-r2/pureeos-test-1.0.0-test.1', '--work', '/opt/kram-q/native', '--artifacts', '/opt/pureeos-key-ram-market-20261104-r1/artifacts', '--native-cleos', '/opt/pureeos-keynet-20261103-r2/native-client/cleos', '--review-seconds', '1800']' returned non-zero exit status 1.

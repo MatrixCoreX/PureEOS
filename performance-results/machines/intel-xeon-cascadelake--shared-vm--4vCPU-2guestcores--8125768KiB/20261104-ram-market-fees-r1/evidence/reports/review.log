@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-key-ram-market-20261104-r1/review.py", line 8, in <module>
+    assert not(K/'QUALIFICATION_FAILURE.json').exists(),'Qualification failed; retain its evidence and stop review'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Qualification failed; retain its evidence and stop review

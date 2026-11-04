@@ -1,0 +1,164 @@
+QUALIFICATION NODE v22.23.4
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 1125.651828
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 2143.985358
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 1104.649968
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 0.486566
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 1.02883
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 719.672908
+  type: 'test'
+  ...
+# Subtest: market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes
+ok 7 - market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes
+  ---
+  duration_ms: 298.837718
+  type: 'test'
+  ...
+# Subtest: RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact
+ok 8 - RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact
+  ---
+  duration_ms: 12.986795
+  type: 'test'
+  ...
+# Subtest: invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit
+ok 9 - invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit
+  ---
+  duration_ms: 19.31141
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 10 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 1.777014
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 11 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 0.438974
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 12 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 770.200396
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 13 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 0.62063
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 14 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 5.65232
+  type: 'test'
+  ...
+# Subtest: fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+ok 15 - fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+  ---
+  duration_ms: 1.692706
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 16 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 1612.123724
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 17 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 672.446745
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 18 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 146.435029
+  type: 'test'
+  ...
+# Subtest: relay rates are bounded, rounded upward and charged at least one AIC atom
+ok 19 - relay rates are bounded, rounded upward and charged at least one AIC atom
+  ---
+  duration_ms: 45.208567
+  type: 'test'
+  ...
+# Subtest: owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+ok 20 - owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+  ---
+  duration_ms: 1243.734816
+  type: 'test'
+  ...
+# Subtest: relay rate reads validate identity and bounds; legacy registrations retain30%
+ok 21 - relay rate reads validate identity and bounds; legacy registrations retain30%
+  ---
+  duration_ms: 0.94409
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9767.900469
+Local test directory: /opt/kram-q/native/local-tests/integer-v2-22sbkrax
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Governance protocol activation selects the same native review profile before sealing
+PASS: Native build rejects the other review profile before sealing
+PASS: Native governance sealed after eosio.key deployment with selected review 1800 seconds
+PASS: Wallet is explicitly protected by selected native governance review
+PASS: RAM1024 initialization preserved
+PASS: Wallet owner and active have no deployer private keys after initialization
+PASS: Actual deployed wallet WASM hash equals the selected production/fixture artifact
+PASS: AIC also requires paid RAM registration before accepting fee credit
+PASS: Native payer buys real RAM; registration credits only actual purchased bytes to AIC
+PASS: Unregistered other token deposit rolls back principal, fees and all rows
+PASS: Failed registration atomically refunds native RAM purchase and leaves no token admission
+PASS: Wrong token precision cannot obtain admission and refunds the paired RAM purchase
+PASS: Another account cannot register against a different RAM payer authorization
+PASS: Permissionless sponsor registers full issuer, precision and symbol without recipient opening
+PASS: Native deposits create one canonical wallet and distinct multi-token reserves
+PASS: AIC deposit sender pays additional new-recipient fee; receiving key gets full principal and no account prerequisite
+PASS: Existing AIC recipient allocates no repeated RAM; the base floor may mask a low market storage charge
+PASS: Key sender pays fees in addition to full principal; repeated rows reuse RAM, and the base floor remains applicable
+PASS: SDK prices a new key with the same 1536-byte integer curve quote as the production contract profile
+FAIL: cleos ['push', 'action', 'eosio.token'] failed: [31mError 3090003: Provided keys, permissions, and delays do not satisfy declared authorizations[0m
+[32mEnsure that you have the related private keys inside your wallet and your wallet is unlocked.[0m
+[33mError Details:
+transaction declares authority '{"actor":"eosio","permission":"active"}', but does not have signatures for it.[0m
+
+RESULT FAIL

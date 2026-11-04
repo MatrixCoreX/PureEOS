@@ -1,0 +1,343 @@
+{
+  "transaction_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+  "processed": {
+    "id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+    "block_num": 1135,
+    "block_time": "2026-11-04T05:18:17.500",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 205981,
+    "net_usage": 186,
+    "scheduled": false,
+    "action_traces": [{
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": null,
+        "receiver": "eosio",
+        "act": {
+          "account": "eosio",
+          "name": "buyram",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "payer": "keyusersolar",
+            "receiver": "eosio.key",
+            "quant": "1.0000 AIC"
+          },
+          "hex_data": "704da4f82aacbd820000f00a02ea305510270000000000000441494300000000"
+        },
+        "context_free": false,
+        "elapsed": 205647,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": {
+          "code": 3080004,
+          "name": "tx_cpu_usage_exceeded",
+          "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+          "stack": [{
+              "context": {
+                "level": "error",
+                "file": "transaction_context.cpp",
+                "line": 603,
+                "method": "checktime",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T05:18:17.094"
+              },
+              "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+              "data": {
+                "id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+                "billing_timer": 205699,
+                "subjective": 0,
+                "limit": 150000
+              }
+            },{
+              "context": {
+                "level": "warn",
+                "file": "apply_context.cpp",
+                "line": 262,
+                "method": "exec_one",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T05:18:17.094"
+              },
+              "format": "${receiver} <= ${account}::${action} console output: ${console}",
+              "data": {
+                "console": "",
+                "account": "eosio",
+                "action": "buyram",
+                "receiver": "eosio"
+              }
+            }
+          ]
+        },
+        "error_code": "10000000000000000000",
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 2,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": null,
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio.key",
+          "name": "regtoken",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "payer": "keyusersolar",
+            "token_contract": "keyusdtoken1",
+            "token_symbol": "4,AIC",
+            "min_bytes": 4096
+          },
+          "hex_data": "704da4f82aacbd8210a6823427acbd82044149430000000000100000"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 3,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "keyusersolar",
+        "act": {
+          "account": "eosio",
+          "name": "buyram",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "payer": "keyusersolar",
+            "receiver": "eosio.key",
+            "quant": "1.0000 AIC"
+          },
+          "hex_data": "704da4f82aacbd820000f00a02ea305510270000000000000441494300000000"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 4,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio",
+          "name": "buyram",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "payer": "keyusersolar",
+            "receiver": "eosio.key",
+            "quant": "1.0000 AIC"
+          },
+          "hex_data": "704da4f82aacbd820000f00a02ea305510270000000000000441494300000000"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 5,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.token",
+        "act": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            },{
+              "actor": "eosio.ram",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "keyusersolar",
+            "to": "eosio.ram",
+            "quantity": "0.9950 AIC",
+            "memo": "buy ram"
+          },
+          "hex_data": "704da4f82aacbd82000090e602ea3055de260000000000000441494300000000076275792072616d"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 6,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.token",
+        "act": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "keyusersolar",
+            "to": "eosio.ramfee",
+            "quantity": "0.0050 AIC",
+            "memo": "ram fee"
+          },
+          "hex_data": "704da4f82aacbd82a0d492e602ea3055320000000000000004414943000000000772616d20666565"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 7,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.token",
+        "act": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "eosio.ramfee",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "eosio.ramfee",
+            "to": "eosio.fees",
+            "quantity": "0.0050 AIC",
+            "memo": "transfer from eosio.ramfee to eosio.fees"
+          },
+          "hex_data": "a0d492e602ea30550000566a01ea305532000000000000000441494300000000287472616e736665722066726f6d20656f73696f2e72616d66656520746f20656f73696f2e66656573"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+        "block_num": 1135,
+        "block_time": "2026-11-04T05:18:17.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      }
+    ],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3080004,
+      "name": "tx_cpu_usage_exceeded",
+      "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "transaction_context.cpp",
+            "line": 603,
+            "method": "checktime",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:18:17.094"
+          },
+          "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+          "data": {
+            "id": "b6df37aa8b009ba52d5b1becb7ae8678500187dd1ba4da6a83c5bcf37da48a52",
+            "billing_timer": 205699,
+            "subjective": 0,
+            "limit": 150000
+          }
+        },{
+          "context": {
+            "level": "warn",
+            "file": "apply_context.cpp",
+            "line": 262,
+            "method": "exec_one",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:18:17.094"
+          },
+          "format": "${receiver} <= ${account}::${action} console output: ${console}",
+          "data": {
+            "console": "",
+            "account": "eosio",
+            "action": "buyram",
+            "receiver": "eosio"
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}

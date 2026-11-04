@@ -1,0 +1,5 @@
+{
+  "native_source_sha256": "805413dc603a17719950769f98eacffce26e33d9e85ef4efc2c18ede912ab2a7",
+  "fixture_source_sha256": "55dddc8403131ed9109264f5976ddb72973366ab9c841378ecd52ce8fca86903",
+  "scope": "Only the fixture RAM input tracking changes; the running native suite has already loaded its preserved source, and native/product code is unchanged"
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "work": "/opt/kram-q/native-r3",
+  "checks": 114,
+  "report_sha256": "ff40f8cebc87d6061a3ac444ddbc3a52d956f1a41cc0f234c0b891b643e99201",
+  "chain_test_SHA256": "805413dc603a17719950769f98eacffce26e33d9e85ef4efc2c18ede912ab2a7",
+  "scope": "eosio.key production WASM functional/security integration on one private TEST process; not TPS or independent multi-node consensus qualification"
+}

@@ -1,0 +1,4 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-ram-market-20261104-r1/browser-r4.py\", line 10, in <module>\n    with (K/'browser-r4.log').open('w')as log:subprocess.run(['node',str(K/'browser-check.cjs')],cwd=K,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['node', '/opt/pureeos-key-ram-market-20261104-r1/browser-check.cjs']' returned non-zero exit status 1.\n"
+}

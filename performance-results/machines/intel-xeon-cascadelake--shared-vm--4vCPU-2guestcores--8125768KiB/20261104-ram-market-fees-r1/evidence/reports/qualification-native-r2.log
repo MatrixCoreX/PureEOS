@@ -1,0 +1,181 @@
+QUALIFICATION NODE v22.23.4
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 202.120426
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 1694.880727
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 783.460755
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 11.071871
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 5.900614
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 703.401177
+  type: 'test'
+  ...
+# Subtest: market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes
+ok 7 - market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes
+  ---
+  duration_ms: 680.659624
+  type: 'test'
+  ...
+# Subtest: RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact
+ok 8 - RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact
+  ---
+  duration_ms: 1.357846
+  type: 'test'
+  ...
+# Subtest: invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit
+ok 9 - invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit
+  ---
+  duration_ms: 90.381936
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 10 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 25.881145
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 11 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 0.523601
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 12 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 977.911973
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 13 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 40.78485
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 14 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 0.562376
+  type: 'test'
+  ...
+# Subtest: fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+ok 15 - fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+  ---
+  duration_ms: 131.169934
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 16 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 1869.764862
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 17 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 375.739277
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 18 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 128.10041
+  type: 'test'
+  ...
+# Subtest: relay rates are bounded, rounded upward and charged at least one AIC atom
+ok 19 - relay rates are bounded, rounded upward and charged at least one AIC atom
+  ---
+  duration_ms: 0.537918
+  type: 'test'
+  ...
+# Subtest: owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+ok 20 - owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+  ---
+  duration_ms: 761.248862
+  type: 'test'
+  ...
+# Subtest: relay rate reads validate identity and bounds; legacy registrations retain30%
+ok 21 - relay rate reads validate identity and bounds; legacy registrations retain30%
+  ---
+  duration_ms: 0.705066
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9245.081925
+Local test directory: /opt/kram-q/native-r2/local-tests/integer-v2-n9yevm1w
+RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Governance protocol activation selects the same native review profile before sealing
+RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged
+PASS: Native build rejects the other review profile before sealing
+PASS: Native governance sealed after eosio.key deployment with selected review 1800 seconds
+PASS: Wallet is explicitly protected by selected native governance review
+PASS: RAM1024 initialization preserved
+PASS: Wallet owner and active have no deployer private keys after initialization
+PASS: Actual deployed wallet WASM hash equals the selected production/fixture artifact
+PASS: AIC also requires paid RAM registration before accepting fee credit
+PASS: Native payer buys real RAM; registration credits only actual purchased bytes to AIC
+PASS: Unregistered other token deposit rolls back principal, fees and all rows
+PASS: Failed registration atomically refunds native RAM purchase and leaves no token admission
+PASS: Wrong token precision cannot obtain admission and refunds the paired RAM purchase
+PASS: Another account cannot register against a different RAM payer authorization
+PASS: Permissionless sponsor registers full issuer, precision and symbol without recipient opening
+PASS: Native deposits create one canonical wallet and distinct multi-token reserves
+PASS: AIC deposit sender pays additional new-recipient fee; receiving key gets full principal and no account prerequisite
+PASS: Existing AIC recipient allocates no repeated RAM; the base floor may mask a low market storage charge
+PASS: Key sender pays fees in addition to full principal; repeated rows reuse RAM, and the base floor remains applicable
+PASS: SDK prices a new key with the same 1536-byte integer curve quote as the production contract profile
+PASS: A real native RAM purchase raises the market-priced new-storage fee without changing fee policy
+PASS: RAM price increase above the owner-signed total cap atomically rejects principal, fees and row allocation
+PASS: Production WASM charges exact market storage plus CPU/NET work and relay premium, while consuming the original sponsored budget
+PASS: Existing-key first USD receipt pays exactly the 512-byte market quote from the sender and its own token allocation
+PASS: Existing USD balance quote has zero RAM charge at the same high market price
+PASS: Native recipient opening uses a 512-byte RAM quote without a self-withdrawal relay premium
+PASS: Native recipient gets full principal and sender pays the exact RAM-priced self-withdrawal fee
+PASS: A real native RAM sale lowers the new-storage quote and total automatically, with the unchanged base floor
+RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged
+PASS: On-chain relay rate 1000bp charges exact ceil premium and preserves base bucket
+PASS: On-chain relay rate 1501bp charges exact ceil premium and preserves base bucket
+PASS: On-chain relay rate 3000bp charges exact ceil premium and preserves base bucket
+PASS: Rate changes after owner signing reject atomically instead of increasing the signed rate
+PASS: Legacy envelopes retain their signed total cap and accept rates below the original30% ceiling
+PASS: Configurable signed rates work for both relayed withdrawal and cancellation
+PASS: Empty-endpoint registration is inactive metadata, without an HTTP service
+PASS: Display-only relay cannot execute owner transfers or consume fees
+RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged
+PASS: Configuring an endpoint preserves the operator-owned rate
+FAIL: JS SDK reads actual key/asset secondary indices and exact four-decimal USD balance
+RESULT FAIL

@@ -1,5 +1,8 @@
 # 第一版 API · 签名协议 2
 
+2026-11-04 RAM 市场计费候选 / market-priced RAM candidate: see [规则、公式与兼容 / rules and compatibility](RAM_MARKET_FEES.md). New source prices approved bytes from current RAM reserves; old deployed hashes retain fixed row pricing. Public activation is not included in this development task.
+
+
 当前TEST白名单为系统AIC与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希。后续新增通过受保护eosio.key代码的原生开发者提案/BP否决流程：本TEST链公示1800秒，正式版本保持七天。USD命名收款账户须先支付RAM并open余额行，RAM登记与白名单相互独立。可配置中继费率已通过成熟原生提案部署，实际字节和验证见模块README链接的本轮报告及[白名单提案流程](TOKEN_ALLOWLIST.md)。
 
 `eosio.key` 是代币托管账户，代币仍由原发行合约发行。资产身份为「发行合约 + 精度 + 符号」，同名假 AIC 不能支付真实 AIC 手续费。标准代币的本金全额到账，手续费额外用初始化指定的 4 位 AIC 支付。发行方仍能改变其代币逻辑；储备检查无法证明恶意发行合约所有表均真实。
@@ -44,8 +47,10 @@
 | 公钥转公钥 | 发送公钥自己的 AIC | 本金全额入账 |
 | 提币需建立原生 token 余额行 | 发送公钥自己的 AIC | 本金全额到账 |
 
-已有记录不重复收新建费用，普通执行费仍适用。`new_row_fee` 属于初始化费用策略，
-不是实时 RAM 市场逐字节报价，正常手续费也不会自动补充字节预算。
+已有记录不重复收新建费用，普通执行费仍适用。旧版 `new_row_fee` 为定额策略；
+市场计费候选保留此字段但不使用，按核定新增字节读取当前 RAM 市场曲线报价（含 0.5% 买入费）。
+CPU/NET 倍率仅作用于执行项；基础费取执行项与 RAM 报价之和与原保底费的较大者。
+正常手续费不会自动补充字节预算，详见 [RAM 市场计费](RAM_MARKET_FEES.md)。
 此登记只控制正常分配，恶意发行合约借提币授权额外计费的安全阻断仍保留。
 SDK `ramRegistrationActions(payer, token, symbol, ramPayment, {minimumBytes})` 返回上述两项 action。
 原生调用示例见 [CLEOS.md](CLEOS.md)。

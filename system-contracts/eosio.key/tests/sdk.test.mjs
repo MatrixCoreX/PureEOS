@@ -3,13 +3,55 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {PrivateKey,PublicKey} from '@wharfkit/antelope';
 import {normalizePublicKey,keyHash,assetIdentity,depositMemo,atomicAsset,formatFee,
-  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,parseRPCJSON,ramRegistrationActions,KeyWalletClient} from '../sdk/index.mjs';
+  prepareEnvelope,signPrepared,verifySigned,verifyPrepared,ownerDigest,resourcePacket,randomRequestId,validateRequest,marketMultiplier,calculateFee,calculateMarketFee,ramMarketQuote,allocationBytes,parseRPCJSON,ramRegistrationActions,KeyWalletClient} from '../sdk/index.mjs';
+import {ramFeeProfile,FIXED_RAM_CODES,MARKET_RAM_CODES} from '../sdk/fee-profiles.mjs';
 
 const abi=JSON.parse(readFileSync(process.env.KEY_ABI||new URL('../abi/eosio.key.abi',import.meta.url)));
 const owner=PrivateKey.generate('K1'),receiver=PrivateKey.generate('K1');
 const config={version:2,chain_id:'ab'.repeat(32),deployment:'cd'.repeat(32)};
 const request={from:owner.toPublic().toString(),to:receiver.toPublic().toString(),
  token_contract:'eosio.token',quantity:'1.2345 AIC',memo:'全额到账',auth_epoch:'9007199254740993',request_id:'ef'.repeat(32),relayer:'keyrelaymoon',reward_to:'keyrelaymoon',max_fee:'0.1000 AIC'};
+const ramMarket=(ram='1000000 RAM',aic='100.0000 AIC')=>({supply:'10000000000.0000 RAMCORE',base:{balance:ram,weight:'0.50000000000000000'},quote:{balance:aic,weight:0.5}});
+test('market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes',()=>{
+ assert.deepEqual([0,1,2].map(allocationBytes),[0,512,1536]);
+ assert.equal(ramMarketQuote(null,0),0n);
+ assert.equal(ramMarketQuote(ramMarket(),512),516n);
+ assert.equal(ramMarketQuote(ramMarket(),1536),1547n);
+ // Independently simulate the forward purchase: the quoted gross must buy at
+ // least the approved byte budget, including fee rounding, at exact integers.
+ let seed=43n;
+ for(let i=0;i<100;i++){
+  seed=(seed*48271n)%2147483647n;
+  const r=100000n+seed,q=1000n+seed*10000000n,b=BigInt([1,512,1536,4096][i%4]);
+  const a=`${q/10000n}.${String(q%10000n).padStart(4,'0')} AIC`;
+  const gross=ramMarketQuote(ramMarket(`${r} RAM`,a),Number(b)),net=gross-(gross+199n)/200n;
+  assert(net*r/(q+net)>=b);
+  const prior=gross-1n,priorNet=prior-(prior+199n)/200n;
+  assert(priorNet*r/(q+priorNet)<b);
+ }
+ assert(ramMarketQuote(ramMarket('18014398509481986 RAM','123456789012.3456 AIC'),1536)>0n);
+});
+test('RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact',()=>{
+ const p={unit_fee:10,minimum_fee:100,new_row_fee:99999999,maximum_multiplier_bps:100000};
+ const low=calculateMarketFee(p,10000n,4,512,ramMarket(),true,1000);
+ const half=calculateMarketFee(p,10000n,4,512,ramMarket('1000000 RAM','50.0000 AIC'),true,1000);
+ const busy=calculateMarketFee(p,100000n,4,512,ramMarket(),true,1000);
+ assert(half.storage<low.storage);assert(half.total<low.total);
+ assert.equal(busy.storage,low.storage);assert.equal(busy.execution,low.execution*10n);
+ assert.equal(low.base,low.execution+low.storage);assert.equal(low.premium,(low.base*1000n+9999n)/10000n);
+ const floor=calculateMarketFee(p,10000n,4,512,ramMarket('100000000000 RAM','1.0000 AIC'),true);
+ assert.equal(floor.storage,2n);assert.equal(floor.base,100n);assert.equal(floor.total,130n);
+ assert.equal(calculateMarketFee(p,10000n,4,0,null,false).storage,0n);
+});
+test('invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit',()=>{
+ for(const m of [null,ramMarket('512 RAM'),ramMarket('0 RAM'),ramMarket('1000000 RAM','0.0000 AIC'),ramMarket('1000000 RAM','100.0000 USD'),
+  {...ramMarket(),supply:'1.0000 BAD'}, {...ramMarket(),base:{balance:'1000000 RAM',weight:0.6}},ramMarket('513 RAM','461168601842738.7903 AIC')])assert.throws(()=>ramMarketQuote(m,512));
+ for(const b of [-1,0.5,4097])assert.throws(()=>ramMarketQuote(ramMarket(),b));
+ for(const h of FIXED_RAM_CODES)assert.equal(ramFeeProfile(h),'fixed');
+ assert(MARKET_RAM_CODES.length>0,'Candidate code must be pinned after the remote build');
+ for(const h of MARKET_RAM_CODES)assert.equal(ramFeeProfile(h),'market');
+ assert.throws(()=>ramFeeProfile('00'.repeat(32)),/requires review/);
+});
 test('RAM admission binds actual native purchase and full token identity to the same sponsor',()=>{
  const actions=ramRegistrationActions('keyusersolar','keytesttoken','6,USDT','1.0000 AIC');
  assert.deepEqual(actions.map(x=>[x.account,x.name]),[['eosio','buyram'],['eosio.key','regtoken']]);

@@ -1,0 +1,40 @@
+{
+  "transaction_id": "3d86c84942b6c9bdf1dd022fc4b476e21ad11f3fb71bbf7532ee2e7ff437229e",
+  "processed": {
+    "id": "3d86c84942b6c9bdf1dd022fc4b476e21ad11f3fb71bbf7532ee2e7ff437229e",
+    "block_num": 1013,
+    "block_time": "2026-11-04T05:07:23.500",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 184018,
+    "net_usage": 260,
+    "scheduled": false,
+    "action_traces": [],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3080004,
+      "name": "tx_cpu_usage_exceeded",
+      "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "transaction_context.cpp",
+            "line": 603,
+            "method": "checktime",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T05:07:22.855"
+          },
+          "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+          "data": {
+            "id": "3d86c84942b6c9bdf1dd022fc4b476e21ad11f3fb71bbf7532ee2e7ff437229e",
+            "billing_timer": 183967,
+            "subjective": 0,
+            "limit": 150000
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}
