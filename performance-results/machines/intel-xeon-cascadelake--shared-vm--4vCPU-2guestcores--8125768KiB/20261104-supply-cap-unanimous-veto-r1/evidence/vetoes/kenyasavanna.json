@@ -1,0 +1,11 @@
+{
+  "voter": "kenyasavanna",
+  "authorization": "kenyasavanna@active",
+  "transaction_id": "40ee595df3ca9f799fff9b435763ab453f9d5fbc8914b8c717612626979672ec",
+  "canonical_receipt": {
+    "transaction_id": "40ee595df3ca9f799fff9b435763ab453f9d5fbc8914b8c717612626979672ec",
+    "block_num": 170458,
+    "block_id": "000299dad69f355075cef78f9ad5c5b178e0ea9721427e13338e1cf46496c33e",
+    "observed_lib": 170458
+  }
+}

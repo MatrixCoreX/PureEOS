@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-04T09:34:34.242677+00:00",
+  "removed": {
+    "/opt/kcap-q/r2": {
+      "exists": true
+    },
+    "/opt/pureeos-cap-veto-20261104-r1/private-qualification-r1": {
+      "exists": true
+    },
+    "/opt/pureeos-cap-veto-20261104-r1/source": {
+      "exists": true
+    },
+    "/opt/pureeos-cap-veto-20261104-r1/source-failed-r1": {
+      "exists": true
+    },
+    "/opt/pureeos-cap-veto-20261104-r1/artifacts-failed-r1": {
+      "exists": true
+    }
+  },
+  "allocated_removed_MiB": 5.316,
+  "net_free_increase_MiB": 5.469,
+  "available_GiB": 105.427,
+  "preserved": "Public chain/history/wallets/original26nodes, signed immutable campaign packets, candidate artifacts, verified public source/evidence archive and failures"
+}

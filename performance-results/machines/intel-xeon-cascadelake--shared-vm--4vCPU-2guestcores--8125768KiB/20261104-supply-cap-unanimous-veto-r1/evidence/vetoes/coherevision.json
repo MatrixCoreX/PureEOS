@@ -1,0 +1,11 @@
+{
+  "voter": "coherevision",
+  "authorization": "coherevision@active",
+  "transaction_id": "f45f621e00b98adb978627be0bcf6204de23fde5af9e2a46d3a037001dac6615",
+  "canonical_receipt": {
+    "transaction_id": "f45f621e00b98adb978627be0bcf6204de23fde5af9e2a46d3a037001dac6615",
+    "block_num": 170384,
+    "block_id": "00029990911db221fb34470369d61f29f054e81fb0432899ed8a1dd2ec308ee4",
+    "observed_lib": 170385
+  }
+}

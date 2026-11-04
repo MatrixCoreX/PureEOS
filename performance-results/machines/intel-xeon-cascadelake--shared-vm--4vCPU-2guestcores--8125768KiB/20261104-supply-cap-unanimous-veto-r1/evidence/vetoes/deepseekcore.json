@@ -1,0 +1,11 @@
+{
+  "voter": "deepseekcore",
+  "authorization": "deepseekcore@active",
+  "transaction_id": "46f4d84c9f220d6a52328285793c0b9eeeac64726244c2db24c945cbbdf42a1d",
+  "canonical_receipt": {
+    "transaction_id": "46f4d84c9f220d6a52328285793c0b9eeeac64726244c2db24c945cbbdf42a1d",
+    "block_num": 170407,
+    "block_id": "000299a769bfcdbda8daf072d06ad6413a9fc58c5a583aa91004c6fadcbec3f5",
+    "observed_lib": 170407
+  }
+}

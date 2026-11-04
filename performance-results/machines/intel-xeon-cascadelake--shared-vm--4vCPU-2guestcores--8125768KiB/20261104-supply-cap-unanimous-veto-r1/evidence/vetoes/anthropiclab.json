@@ -1,0 +1,11 @@
+{
+  "voter": "anthropiclab",
+  "authorization": "anthropiclab@active",
+  "transaction_id": "3a152240906ab02d110eb6964b53238cbbd7a552ecfe84f4ba68c8ea3936fc0c",
+  "canonical_receipt": {
+    "transaction_id": "3a152240906ab02d110eb6964b53238cbbd7a552ecfe84f4ba68c8ea3936fc0c",
+    "block_num": 170351,
+    "block_id": "0002996fd71f7f9453f0cbc85908500f78d6eed3a5d29ee8618088c7ccc23b6c",
+    "observed_lib": 170351
+  }
+}

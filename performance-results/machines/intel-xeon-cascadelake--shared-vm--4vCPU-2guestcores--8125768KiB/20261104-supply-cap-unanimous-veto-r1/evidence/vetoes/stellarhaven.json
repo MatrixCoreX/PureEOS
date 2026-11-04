@@ -1,0 +1,11 @@
+{
+  "voter": "stellarhaven",
+  "authorization": "stellarhaven@active",
+  "transaction_id": "5ae2c35b73324eeafed9683d8f927c0ff9403b5c2855d700f463ad4b3c5c90c4",
+  "canonical_receipt": {
+    "transaction_id": "5ae2c35b73324eeafed9683d8f927c0ff9403b5c2855d700f463ad4b3c5c90c4",
+    "block_num": 170508,
+    "block_id": "00029a0c889c8b38c172df7c68e10910cef59c3732cb897120378439b85361f0",
+    "observed_lib": 170512
+  }
+}

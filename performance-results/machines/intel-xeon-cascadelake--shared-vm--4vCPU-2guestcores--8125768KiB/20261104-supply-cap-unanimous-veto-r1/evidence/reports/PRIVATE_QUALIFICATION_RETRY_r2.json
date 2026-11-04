@@ -1,0 +1,6 @@
+{
+  "prior_failure": "Unix socket path too long; private test node never started",
+  "old_socket_path_bytes": 108,
+  "new_private_root": "/opt/kcap-q/r2",
+  "public_services_changed": false
+}

@@ -1,0 +1,11 @@
+{
+  "voter": "xaineuralnet",
+  "authorization": "xaineuralnet@active",
+  "transaction_id": "eb2099a359ff7db5fcdce8ba5efc1c16261e3733fc9d731d4a43de08e7ba584b",
+  "canonical_receipt": {
+    "transaction_id": "eb2099a359ff7db5fcdce8ba5efc1c16261e3733fc9d731d4a43de08e7ba584b",
+    "block_num": 170534,
+    "block_id": "00029a2687d9069d510464ea3b6c20792e7c0946d018c3dfcd75c5c149b3b2cd",
+    "observed_lib": 170534
+  }
+}

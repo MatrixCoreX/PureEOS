@@ -1,0 +1,15 @@
+{
+  "status": "FAIL",
+  "directory": "/opt/pureeos-cap-veto-20261104-r1/private-qualification-r1/local-tests/integer-v2-woato4f1",
+  "endpoint": "http://127.0.0.1:55823",
+  "scope": "Private one-node cap migration functionality only; not public governance/parallel throughput qualification",
+  "checks": [],
+  "harness_script_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+  "artifacts": {
+    "eosio.system/eosio.system.wasm": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "eosio.system/eosio.system.abi": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+    "eosio.bpay/eosio.bpay.wasm": "a67721fce63c8cbad1fcc3f05d88017c4a5fa9ea67543c6b0ed03cbcd3a8f8aa",
+    "eosio.token/eosio.token.wasm": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+  },
+  "error": "cleos ['wallet', 'create', '-n'] failed: \u001b[31mError 3200000: http exception\u001b[0m\n\u001b[33mError Details:\nCouldn't resolve host name\u001b[0m\n"
+}

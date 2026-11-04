@@ -1,0 +1,11 @@
+{
+  "voter": "mistralcloud",
+  "authorization": "mistralcloud@active",
+  "transaction_id": "d53d0d4dbc77cdd900b472e0c898872a53a0c717f52a44c05d6706085b8e13e5",
+  "canonical_receipt": {
+    "transaction_id": "d53d0d4dbc77cdd900b472e0c898872a53a0c717f52a44c05d6706085b8e13e5",
+    "block_num": 170479,
+    "block_id": "000299efdc723b917a57dda61a590b47599e1c1173ce539e05aa15f16b14876e",
+    "observed_lib": 170479
+  }
+}

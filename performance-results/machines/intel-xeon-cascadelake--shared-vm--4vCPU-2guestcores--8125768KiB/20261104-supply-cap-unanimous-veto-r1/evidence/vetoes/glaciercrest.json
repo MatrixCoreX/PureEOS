@@ -1,0 +1,11 @@
+{
+  "voter": "glaciercrest",
+  "authorization": "glaciercrest@active",
+  "transaction_id": "e32253beb7094a7503c09ecff52440dbeba8c0159e2cd908bd90d6809d777c51",
+  "canonical_receipt": {
+    "transaction_id": "e32253beb7094a7503c09ecff52440dbeba8c0159e2cd908bd90d6809d777c51",
+    "block_num": 170437,
+    "block_id": "000299c534e94b88ed5eda89c67743ce32a1477f52cf16d0278950584d08f351",
+    "observed_lib": 170438
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "status": "IRREVERSIBLE",
+  "transaction_id": "4942d4fe8c6f8937898333d33be8e66f8c5a69f0c57ba803a7ff34c4b66f7dfa",
+  "packet_sha256": "c0a4728553f880d4f697da3d1497ae4e2a5dd602a2d4697355c6fc13f99cd0ec",
+  "start_LIB": 170357,
+  "CPU_cap_us": 150000,
+  "UTC": "2026-11-04T08:53:32.959254+00:00",
+  "block_hint": 170364
+}

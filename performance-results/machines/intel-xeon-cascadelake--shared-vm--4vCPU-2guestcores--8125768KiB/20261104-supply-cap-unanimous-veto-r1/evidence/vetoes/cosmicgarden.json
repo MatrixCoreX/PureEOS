@@ -1,0 +1,11 @@
+{
+  "voter": "cosmicgarden",
+  "authorization": "cosmicgarden@active",
+  "transaction_id": "a7f30d14c6381572d34f1c7e5b5aa0082780f614ef087c91f0bdc78d0b417ea6",
+  "canonical_receipt": {
+    "transaction_id": "a7f30d14c6381572d34f1c7e5b5aa0082780f614ef087c91f0bdc78d0b417ea6",
+    "block_num": 170395,
+    "block_id": "0002999baa9d37339d98d2ba2561253df6ba3f9c888f96678375b56b49cd5bb2",
+    "observed_lib": 170395
+  }
+}

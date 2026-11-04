@@ -1,0 +1,11 @@
+{
+  "voter": "maplecascade",
+  "authorization": "maplecascade@active",
+  "transaction_id": "5dd3c16c846b5458ad7a5e6825eacd935c3a04ade7eb989e38ea254b296f1ac9",
+  "canonical_receipt": {
+    "transaction_id": "5dd3c16c846b5458ad7a5e6825eacd935c3a04ade7eb989e38ea254b296f1ac9",
+    "block_num": 170474,
+    "block_id": "000299eae411045bd4444fb06f39e75a40468e23729370c2849e0111dd42f724",
+    "observed_lib": 170474
+  }
+}

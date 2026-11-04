@@ -1,0 +1,11 @@
+{
+  "voter": "moonlitgrove",
+  "authorization": "moonlitgrove@active",
+  "transaction_id": "fb081ab1f3fe7db77aa5c56606572934d09b36062d2237ea2d17705a0479f53f",
+  "canonical_receipt": {
+    "transaction_id": "fb081ab1f3fe7db77aa5c56606572934d09b36062d2237ea2d17705a0479f53f",
+    "block_num": 170486,
+    "block_id": "000299f6655557ef9af5e35b14b8507411ea910ca3d668bc983ee3083b0a33c4",
+    "observed_lib": 170487
+  }
+}

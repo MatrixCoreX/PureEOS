@@ -1,0 +1,11 @@
+{
+  "voter": "lunarcompass",
+  "authorization": "lunarcompass@active",
+  "transaction_id": "ee65205df99512c4c07f627c3c9374275020ec97c80e8db0201eb51ea13789d5",
+  "canonical_receipt": {
+    "transaction_id": "ee65205df99512c4c07f627c3c9374275020ec97c80e8db0201eb51ea13789d5",
+    "block_num": 170467,
+    "block_id": "000299e3baebcb477ffb444fbbe307860f5ec3136f3172fade3ca8ec109dd8da",
+    "observed_lib": 170467
+  }
+}

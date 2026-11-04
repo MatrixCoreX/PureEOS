@@ -1,0 +1,11 @@
+{
+  "voter": "velvetforest",
+  "authorization": "velvetforest@active",
+  "transaction_id": "dd46b7a9cc81ff695f94eca891ab002a11e4556b25119851ba57e9fb56a57dd6",
+  "canonical_receipt": {
+    "transaction_id": "dd46b7a9cc81ff695f94eca891ab002a11e4556b25119851ba57e9fb56a57dd6",
+    "block_num": 170519,
+    "block_id": "00029a17c31b675e3086cf311182b77d5b4237f55d622bf89bec919f3e7c1770",
+    "observed_lib": 170519
+  }
+}

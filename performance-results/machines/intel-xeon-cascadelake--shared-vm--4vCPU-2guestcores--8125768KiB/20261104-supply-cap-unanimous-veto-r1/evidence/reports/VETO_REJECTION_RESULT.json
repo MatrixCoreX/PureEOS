@@ -1,0 +1,56 @@
+{
+  "status": "PASS_NATIVE_VETO_REJECTION",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "proposal_id": 3,
+  "attempted_transaction_id": "1040ef871d1fa27bfc7418093bc1afec940197cfaef995bee558bcd793cd5135",
+  "native_error": "upgrade vetoed by at least two thirds of the effective frozen electorate",
+  "attempt_chain_time": "2026-11-04T09:23:24.500",
+  "execute_after": "2026-11-04T09:23:23.500",
+  "review_elapsed_seconds": 1801.0,
+  "effective_vetoes": 24,
+  "effective_voters": 24,
+  "threshold": 16,
+  "canonical_absence": [
+    {
+      "block_num": 173855,
+      "block_id": "0002a71fbd5aaab9ab1f51ee9d23132d34ae8c61e538b0ab5c1f77e2daafd628"
+    },
+    {
+      "block_num": 173856,
+      "block_id": "0002a720e48eeb3cdd0e3709d820dbb07c62c98f4acf820c093f0bc71d889548"
+    },
+    {
+      "block_num": 173857,
+      "block_id": "0002a7213592cab5563ce9d6691029f99c5d27819450d3d998bcadde005d667f"
+    },
+    {
+      "block_num": 173858,
+      "block_id": "0002a722bf458c03804db78d1ac6fc85528f397283ab8650d4e378cfa2b2bba2"
+    },
+    {
+      "block_num": 173859,
+      "block_id": "0002a7236e9623d111cb9cdd070961a1868305b8b95b4f33e0a8a7ceb98dee34"
+    },
+    {
+      "block_num": 173860,
+      "block_id": "0002a724983ac0e2659d44242d77829b48da2529b4b1cd99993d213c20eb529f"
+    },
+    {
+      "block_num": 173861,
+      "block_id": "0002a7254bfb34882694a70f63f8609e56142851fc3f75d067d53a50649ea5ad"
+    },
+    {
+      "block_num": 173862,
+      "block_id": "0002a726adbca1cd0ef328230797f3f3be7cdafc378faf49a709f309c3500354"
+    }
+  ],
+  "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+  "ABI_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+  "stats": {
+    "supply": "100000000.0000 AIC",
+    "max_supply": "2100000000.0000 AIC",
+    "issuer": "eosio"
+  },
+  "proposal_remains_vetoed": true,
+  "pending": true
+}

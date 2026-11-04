@@ -1,0 +1,57 @@
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:129:47: error: invalid operands to binary expression ('eosio::symbol_code' and 'eosio::symbol')
+    if ( get_self() == "eosio.token"_n && sym == symbol("AIC", 4) &&
+                                          ~~~ ^  ~~~~~~~~~~~~~~~~
+/opt/pureeos-key-v1-20261103-r1/toolchain/pureeos-cdt-1.0.0/bin/../include/eosiolib/core/eosio/symbol.hpp:181:29: note: candidate function not viable: no known conversion from 'eosio::symbol' to 'const eosio::symbol_code' for 2nd argument
+      friend constexpr bool operator == ( const symbol_code& a, const symbol_code& b ) {
+                            ^
+/opt/pureeos-key-v1-20261103-r1/toolchain/pureeos-cdt-1.0.0/bin/../include/eosiolib/core/eosio/symbol.hpp:317:29: note: candidate function not viable: no known conversion from 'eosio::symbol_code' to 'const eosio::symbol' for 1st argument
+      friend constexpr bool operator == ( const symbol& a, const symbol& b ) {
+                            ^
+/opt/pureeos-key-v1-20261103-r1/toolchain/pureeos-cdt-1.0.0/bin/../include/eosiolib/contracts/eosio/../../core/eosio/fixed_bytes.hpp:287:9: note: candidate template ignored: could not match 'fixed_bytes<Size>' against 'eosio::symbol_code'
+   bool operator ==(const fixed_bytes<Size> &c1, const fixed_bytes<Size> &c2) {
+        ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:5:13: warning: abigen warning (Action <create> does not have a ricardian contract)
+void token::create( const name&   issuer,
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:26:13: warning: abigen warning (Action <issue> does not have a ricardian contract)
+void token::issue( const name& to, const asset& quantity, const string& memo )
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:52:13: warning: abigen warning (Action <issuefixed> does not have a ricardian contract)
+void token::issuefixed( const name& to, const asset& supply, const string& memo )
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:60:13: warning: abigen warning (Action <setmaxsupply> does not have a ricardian contract)
+void token::setmaxsupply( const name& issuer, const asset& maximum_supply )
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:79:13: warning: abigen warning (Action <retire> does not have a ricardian contract)
+void token::retire( const asset& quantity, const string& memo )
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:103:13: warning: abigen warning (Action <transfer> does not have a ricardian contract)
+void token::transfer( const name&    from,
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:166:13: warning: abigen warning (Action <open> does not have a ricardian contract)
+void token::open( const name& owner, const symbol& symbol, const name& ram_payer )
+            ^
+/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp:186:13: warning: abigen warning (Action <close> does not have a ricardian contract)
+void token::close( const name& owner, const symbol& symbol )
+            ^
+8 warnings and 1 error generated.
+Error while processing /opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp.
+abigen error
+Warning, empty ricardian clause file
+Warning, empty ricardian clause file
+Warning, action <create> does not have a ricardian contract
+Warning, action <issue> does not have a ricardian contract
+Warning, action <issuefixed> does not have a ricardian contract
+Warning, action <setmaxsupply> does not have a ricardian contract
+Warning, action <retire> does not have a ricardian contract
+Warning, action <transfer> does not have a ricardian contract
+Warning, action <open> does not have a ricardian contract
+Warning, action <close> does not have a ricardian contract
+Warning, action <create> does not have a ricardian contract
+Warning, action <issue> does not have a ricardian contract
+Warning, action <issuefixed> does not have a ricardian contract
+Warning, action <setmaxsupply> does not have a ricardian contract
+Warning, action <retire> does not have a ricardian contract
+Warning, action <transfer> does not have a ricardian contract
+Warning, action <open> does not have a ricardian contract
+Warning, action <close> does not have a ricardian contract

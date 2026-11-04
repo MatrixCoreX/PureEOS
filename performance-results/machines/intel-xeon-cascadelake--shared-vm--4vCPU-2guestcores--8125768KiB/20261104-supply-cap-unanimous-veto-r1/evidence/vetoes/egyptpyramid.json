@@ -1,0 +1,11 @@
+{
+  "voter": "egyptpyramid",
+  "authorization": "egyptpyramid@active",
+  "transaction_id": "a3591f44b927a2a509d71ef0769a60c654868c19f2e2057e5412b04b69eae898",
+  "canonical_receipt": {
+    "transaction_id": "a3591f44b927a2a509d71ef0769a60c654868c19f2e2057e5412b04b69eae898",
+    "block_num": 170415,
+    "block_id": "000299af4d49699d261f924f47d746a31efa3607de1f0ddc7a0dea571c952a37",
+    "observed_lib": 170416
+  }
+}

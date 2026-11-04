@@ -1,0 +1,11 @@
+{
+  "voter": "francegarden",
+  "authorization": "francegarden@active",
+  "transaction_id": "b85241b1a8d6a9c7d3bbacbb158bf103788467bfe2594f4bf01ef56fc1837de1",
+  "canonical_receipt": {
+    "transaction_id": "b85241b1a8d6a9c7d3bbacbb158bf103788467bfe2594f4bf01ef56fc1837de1",
+    "block_num": 170429,
+    "block_id": "000299bd2f95e7344705aee6597580fc9bc1e366d2a3ed28d448d5c4c7455621",
+    "observed_lib": 170429
+  }
+}

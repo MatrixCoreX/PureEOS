@@ -1,0 +1,11 @@
+{
+  "voter": "silverstream",
+  "authorization": "silverstream@active",
+  "transaction_id": "887b677d63bd23e563e6d679219f57f291db3dfe65e7c4f24dd63ea154f5712e",
+  "canonical_receipt": {
+    "transaction_id": "887b677d63bd23e563e6d679219f57f291db3dfe65e7c4f24dd63ea154f5712e",
+    "block_num": 170501,
+    "block_id": "00029a0566a9b5e26fa108de92fe3ea5064ac5bc3c79ff0e4976a60a6855157e",
+    "observed_lib": 170501
+  }
+}

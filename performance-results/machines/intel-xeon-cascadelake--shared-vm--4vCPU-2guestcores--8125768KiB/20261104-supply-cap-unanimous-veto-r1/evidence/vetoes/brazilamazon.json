@@ -1,0 +1,11 @@
+{
+  "voter": "brazilamazon",
+  "authorization": "brazilamazon@active",
+  "transaction_id": "1cb59f604685fdb527e1cdbee9f66e87fe42e651cb1f9482760e517ae29fba77",
+  "canonical_receipt": {
+    "transaction_id": "1cb59f604685fdb527e1cdbee9f66e87fe42e651cb1f9482760e517ae29fba77",
+    "block_num": 170357,
+    "block_id": "00029975c6a8da875286a7bf1e4538f8ac605b929a1134c79d02db09e32b0167",
+    "observed_lib": 170357
+  }
+}

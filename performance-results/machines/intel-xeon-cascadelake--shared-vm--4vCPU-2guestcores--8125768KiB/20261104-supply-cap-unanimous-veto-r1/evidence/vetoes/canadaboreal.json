@@ -1,0 +1,11 @@
+{
+  "voter": "canadaboreal",
+  "authorization": "canadaboreal@active",
+  "transaction_id": "4942d4fe8c6f8937898333d33be8e66f8c5a69f0c57ba803a7ff34c4b66f7dfa",
+  "canonical_receipt": {
+    "transaction_id": "4942d4fe8c6f8937898333d33be8e66f8c5a69f0c57ba803a7ff34c4b66f7dfa",
+    "block_num": 170364,
+    "block_id": "0002997cbdbfd46b6beeefcce0c7a8cc9fe448bc21fd4ffcfecc9ac300b2490e",
+    "observed_lib": 170364
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "voter": "nebularlight",
+  "authorization": "nebularlight@active",
+  "transaction_id": "96d294d9283125c4868fec1642e103a27c95896ad57bfb6ba6bb68db8c824d4a",
+  "canonical_receipt": {
+    "transaction_id": "96d294d9283125c4868fec1642e103a27c95896ad57bfb6ba6bb68db8c824d4a",
+    "block_num": 170494,
+    "block_id": "000299fef337ad26d7b1fdd62ef9bf6530eaae9ad24f340e0925662c505d539d",
+    "observed_lib": 170494
+  }
+}

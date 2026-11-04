@@ -1,0 +1,147 @@
+{
+  "status": "PASS",
+  "directory": "/opt/kcap-q/r2/local-tests/integer-v2-oozxb51s",
+  "endpoint": "http://127.0.0.1:35755",
+  "scope": "Private one-node cap migration functionality only; not public governance/parallel throughput qualification",
+  "checks": [
+    "Code installation alone leaves the old cap and supply unchanged",
+    "Non-AIC transfer never migrates AIC or USD caps",
+    "Overdrawn transfer rolls the preceding cap modification back atomically",
+    "Wrong precision cannot trigger a cap migration",
+    "First successful AIC transfer doubles only max_supply; no mint or issuer change",
+    "Recipient receives full principal",
+    "Repeated transfers do not double the cap again",
+    "Same symbol on another contract is outside the exact migration identity"
+  ],
+  "harness_script_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+  "artifacts": {
+    "eosio.system/eosio.system.wasm": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "eosio.system/eosio.system.abi": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+    "eosio.bpay/eosio.bpay.wasm": "a67721fce63c8cbad1fcc3f05d88017c4a5fa9ea67543c6b0ed03cbcd3a8f8aa",
+    "eosio.token/eosio.token.wasm": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+  },
+  "qualification_script_sha256": "e0e76384536e457b5063096230361564e7519c05e9ef1657031c357a3631f2db",
+  "chain_id": "9b7c9065c5250460161df7236ddc62877e73fefc5d7e2c121f6713b0495240f9",
+  "confirmed_transactions": [
+    {
+      "transaction_id": "86bb4e9ec2d9e9acd76190c20190036b0e1ee9cfd26e97af223268c7b95cca38",
+      "block_num": 21,
+      "block_id": "000000154a87d61a875f6e0a531ff542c3897bda780f39704002b9e2e9405f6b",
+      "observed_lib": 21
+    },
+    {
+      "transaction_id": "bce43c5ad2c7d0f5dd9e07bdc7d63a5a2bb6782aa3e53c46f56aaf48ef916ff7",
+      "block_num": 24,
+      "block_id": "000000185fdbe6584ad0459ce0abbadd9bbf1a7ddad8a42ed335cac170a864b6",
+      "observed_lib": 24
+    },
+    {
+      "transaction_id": "935af4abcdcf54b184f82f28dac19fafed3125ca386d088c34011fb045f809b0",
+      "block_num": 27,
+      "block_id": "0000001bee33e4ac35102a58b4a922e556d4b2eacbd1f3bc8a36a402715728d5",
+      "observed_lib": 27
+    },
+    {
+      "transaction_id": "84c1b8cfae8aecb0f48be953ee27030f0728639e0c4ef09cef8ddbab6bb9e1c2",
+      "block_num": 31,
+      "block_id": "0000001f3154495e16a4859a41369ebf2bf41cd87318efef2744248049546ceb",
+      "observed_lib": 31
+    },
+    {
+      "transaction_id": "b9d7b9a38d30c73d602dd2b528496d960caad1383915b5915e9b666cfccdb572",
+      "block_num": 36,
+      "block_id": "0000002422340601ef0fce7150f9bde25952d8932cd2edf8123e6b75a78455a7",
+      "observed_lib": 36
+    },
+    {
+      "transaction_id": "54497a90b3a916e00c36b920d5a626b41c51839bd72cdbe17c7eaf1996d07b90",
+      "block_num": 40,
+      "block_id": "0000002864aa05395d9da8ec04903faa610e6dc73e0c42b6403236e2080b22ea",
+      "observed_lib": 40
+    },
+    {
+      "transaction_id": "a752882bbcbe08fe8ebb3902e20c140a036e1f1c16491ea1a42827c62fbd2197",
+      "block_num": 43,
+      "block_id": "0000002ba0f70a41e41c15b6a554cfe261779e9d6012704fa50d8d5a0da55449",
+      "observed_lib": 43
+    },
+    {
+      "transaction_id": "6c598e488183ef5401d201d689a59ec5c6a657da6361a1957b450b330dc5175a",
+      "block_num": 47,
+      "block_id": "0000002f624f70d1630f203ec3e81c5408eb7bf775e135f8299cfde9c8d26ad0",
+      "observed_lib": 47
+    },
+    {
+      "transaction_id": "1d8c7bdf50b789732ae8581423d3cc2b05ea6a1492fdfc25d68c7fb298304f49",
+      "block_num": 51,
+      "block_id": "00000033717d32c11ecee03a83750c3a0846c963e9e480f67566908ab931624b",
+      "observed_lib": 51
+    },
+    {
+      "transaction_id": "4a8118d00dd5e06feb76dbfb3e1cf73b8ec0cef8f84008d1d71dea8e341d8616",
+      "block_num": 55,
+      "block_id": "000000373b70d0b99b5a3a163836ba0b47d25137871e90079ef0431fa0d092d4",
+      "observed_lib": 55
+    },
+    {
+      "transaction_id": "0ffdf5609cf1196e1c9f66dec4c181d4a92ee6a4a827fe94f23752e3879bc0e3",
+      "block_num": 58,
+      "block_id": "0000003a3dd1a58d6a14f3dbdbcd36771752cbcd8237b8c042b0c2fa459981ad",
+      "observed_lib": 58
+    },
+    {
+      "transaction_id": "4b87fa7f66f8e9855b9f2a9a2e0fe94c9c74681189a5fae754e3a1172eb7c0eb",
+      "block_num": 73,
+      "block_id": "000000490d1158262107915b42dc935acaaa1cb091ddc22ca5820331a35148d4",
+      "observed_lib": 73
+    },
+    {
+      "transaction_id": "17c5ddb830b66effb7b400eeecfa57da6069f51cd6903fd217a94e87d1acf4f5",
+      "block_num": 78,
+      "block_id": "0000004ec6da890b386002d844a686bb85d763da85c7ded7f808af8299402885",
+      "observed_lib": 78
+    },
+    {
+      "transaction_id": "17581ce9be201418c555ed817e3982272f24c8c00c5d5e0d364fd144fd52d842",
+      "block_num": 82,
+      "block_id": "000000529206c757413c89958b48d8f0c8310e3d0acfd08b67b214ad7a5f266f",
+      "observed_lib": 82
+    },
+    {
+      "transaction_id": "cd9d0fcf0d7fbc7a361b47f86a8cfd613b82aedc2eb1e161b49858c0095f92a5",
+      "block_num": 86,
+      "block_id": "000000567efefa4b12614045da4954725cf937653fc71bb33dd9c8802ab54527",
+      "observed_lib": 86
+    },
+    {
+      "transaction_id": "52a28764bb5d17678b8dc8d5b2e250411f42ae5b9d61cbb358de890b68852040",
+      "block_num": 91,
+      "block_id": "0000005bee2ff97c813893a7dfd9750f415d621ae7b5e9d0023bcb99dd585438",
+      "observed_lib": 91
+    },
+    {
+      "transaction_id": "708d5e7e4bb745ff542b9affb3f1c130172c2a741a7882a5e6eddd38a394cad9",
+      "block_num": 94,
+      "block_id": "0000005e44327dfe8b6e0d9eb4c02717c1f097d87912e10b896601252afe4fb2",
+      "observed_lib": 94
+    }
+  ],
+  "rejected_transactions": [
+    {
+      "transaction_id": "e8326afa2bb5ad586c6ee187aee9548aaabe2d459e728021ec3f37240112c6ac",
+      "expected_error": "overdrawn balance",
+      "canonical_absence_through_LIB": 62
+    },
+    {
+      "transaction_id": "442e92b33408953263a4d0e7bbcb512ffcac8b172614b73d132289feda985ef6",
+      "expected_error": "symbol precision mismatch",
+      "canonical_absence_through_LIB": 67
+    }
+  ],
+  "final_stats": {
+    "supply": "100000000.0000 AIC",
+    "max_supply": "4200000000.0000 AIC",
+    "issuer": "eosio"
+  },
+  "new_WASM_sha256": "bee8320e5e761703f469fb6b0f8c0744479b0bf329f709867bb613855808845a"
+}

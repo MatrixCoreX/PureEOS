@@ -1,0 +1,11 @@
+{
+  "voter": "finlandhaven",
+  "authorization": "finlandhaven@active",
+  "transaction_id": "29fef65fd1530bd3d26aa478fe8c4a3708f42d88d4ebc47101b528a603ceeaf4",
+  "canonical_receipt": {
+    "transaction_id": "29fef65fd1530bd3d26aa478fe8c4a3708f42d88d4ebc47101b528a603ceeaf4",
+    "block_num": 170421,
+    "block_id": "000299b52eb60acf1185c52b06c6409699e3045f4470c782cede7cb1f0460046",
+    "observed_lib": 170421
+  }
+}

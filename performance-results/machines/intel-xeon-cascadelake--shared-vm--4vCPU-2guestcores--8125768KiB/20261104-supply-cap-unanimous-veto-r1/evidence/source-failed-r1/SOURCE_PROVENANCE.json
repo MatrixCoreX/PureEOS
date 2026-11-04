@@ -1,0 +1,12 @@
+{
+  "baseline_source_repository": "PureEOS-deployed-system-20261102",
+  "baseline_commit": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+  "baseline_cpp_sha256": "abfeb90e0cbae7c7438c37f6e0de6bcc5a04b96e830bc5525e1bae92eeda3dbe",
+  "baseline_header_sha256": "6cd0c910eb4951fbdb1ce332530d4f5bf30094ea78c862c4ca5f6c4c12e9bdbd",
+  "live_old_WASM": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+  "old_max_supply": "2100000000.0000 AIC",
+  "proposed_max_supply": "4200000000.0000 AIC",
+  "mint": false,
+  "new_public_action_or_table": false,
+  "public_activation_intended": false
+}

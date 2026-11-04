@@ -1,0 +1,11 @@
+{
+  "voter": "cobaltspring",
+  "authorization": "cobaltspring@active",
+  "transaction_id": "bbfa19f9476256c6127c6eaa7689d257a404cdef00d631bd24145897447db111",
+  "canonical_receipt": {
+    "transaction_id": "bbfa19f9476256c6127c6eaa7689d257a404cdef00d631bd24145897447db111",
+    "block_num": 170373,
+    "block_id": "00029985683640b2ea9fb45d7f159532ce60de2ed107a8f79343fed0afa54a76",
+    "observed_lib": 170373
+  }
+}

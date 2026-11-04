@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-cap-veto-20261104-r1/build_candidate.py", line 14, in <module>
+    with(K/'build.log').open('w')as log:subprocess.run(command,cwd=S,stdout=log,stderr=subprocess.STDOUT,check=True)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/pureeos-key-v1-20261103-r1/toolchain/pureeos-cdt-1.0.0/bin/cdt-cpp', '-abigen', '-contract=eosio.token', '-O2', '-I/opt/pureeos-cap-veto-20261104-r1/source/include', '-o', '/opt/pureeos-cap-veto-20261104-r1/artifacts/generated/eosio.token.wasm', '/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp']' returned non-zero exit status 255.

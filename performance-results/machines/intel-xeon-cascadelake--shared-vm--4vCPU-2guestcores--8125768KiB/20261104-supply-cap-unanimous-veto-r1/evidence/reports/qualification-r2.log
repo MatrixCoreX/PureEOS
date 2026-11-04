@@ -1,0 +1,10 @@
+Local test directory: /opt/kcap-q/r2/local-tests/integer-v2-oozxb51s
+PASS: Code installation alone leaves the old cap and supply unchanged
+PASS: Non-AIC transfer never migrates AIC or USD caps
+PASS: Overdrawn transfer rolls the preceding cap modification back atomically
+PASS: Wrong precision cannot trigger a cap migration
+PASS: First successful AIC transfer doubles only max_supply; no mint or issuer change
+PASS: Recipient receives full principal
+PASS: Repeated transfers do not double the cap again
+PASS: Same symbol on another contract is outside the exact migration identity
+PRIVATE CAP QUALIFICATION PASS

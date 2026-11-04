@@ -1,0 +1,11 @@
+{
+  "voter": "willowgarden",
+  "authorization": "willowgarden@active",
+  "transaction_id": "0669760bb1237f1602bfdf52f1bc2c7f384da3c2ff87351dd282fcab47f4f7ad",
+  "canonical_receipt": {
+    "transaction_id": "0669760bb1237f1602bfdf52f1bc2c7f384da3c2ff87351dd282fcab47f4f7ad",
+    "block_num": 170527,
+    "block_id": "00029a1fe307cef6abb8f6f80ba655c6a6140892af877f82c9bbbf9a88c237e0",
+    "observed_lib": 170527
+  }
+}

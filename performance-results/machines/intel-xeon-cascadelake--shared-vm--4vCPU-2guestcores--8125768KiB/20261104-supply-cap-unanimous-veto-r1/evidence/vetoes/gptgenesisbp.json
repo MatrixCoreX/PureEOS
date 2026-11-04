@@ -1,0 +1,11 @@
+{
+  "voter": "gptgenesisbp",
+  "authorization": "gptgenesisbp@active",
+  "transaction_id": "dc0fd36abc7108aeae91f9542df19eb1f64f92395871cd9a16a742463991c684",
+  "canonical_receipt": {
+    "transaction_id": "dc0fd36abc7108aeae91f9542df19eb1f64f92395871cd9a16a742463991c684",
+    "block_num": 170443,
+    "block_id": "000299cb1de2e0aa671733dddd8c75e871e411c6ae9098106a81559048a8e25d",
+    "observed_lib": 170443
+  }
+}

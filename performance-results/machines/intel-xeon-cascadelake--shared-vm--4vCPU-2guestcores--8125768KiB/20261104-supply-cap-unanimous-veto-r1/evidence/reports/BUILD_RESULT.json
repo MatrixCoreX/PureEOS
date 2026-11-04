@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "files": {
+    "artifacts/eosio.token.abi": "2a3bf85925c7a6ca97d75916ae251c699ee7d0b065f25717a8e6170d0634ff38",
+    "artifacts/eosio.token.wasm": "bee8320e5e761703f469fb6b0f8c0744479b0bf329f709867bb613855808845a",
+    "artifacts/generated/eosio.token.abi": "3b5e0f50ca1089bbdd190c00e76d4d3a43be933fd5f6d05a4648c8f371b2c82b",
+    "artifacts/generated/eosio.token.wasm": "bee8320e5e761703f469fb6b0f8c0744479b0bf329f709867bb613855808845a"
+  },
+  "ABI_interface_unchanged": true,
+  "published_ABI_reused": true,
+  "public_chain_changed": false,
+  "command": [
+    "/opt/pureeos-key-v1-20261103-r1/toolchain/pureeos-cdt-1.0.0/bin/cdt-cpp",
+    "-abigen",
+    "-contract=eosio.token",
+    "-O2",
+    "-I/opt/pureeos-cap-veto-20261104-r1/source/include",
+    "-o",
+    "/opt/pureeos-cap-veto-20261104-r1/artifacts/generated/eosio.token.wasm",
+    "/opt/pureeos-cap-veto-20261104-r1/source/src/eosio.token.cpp"
+  ]
+}

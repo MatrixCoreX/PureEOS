@@ -1,0 +1,9 @@
+{
+  "status": "MATURE",
+  "proposal_id": 3,
+  "chain_time": "2026-11-04T09:23:23.500",
+  "remaining_seconds": 0,
+  "effective_vetoes": 24,
+  "effective_voters": 24,
+  "threshold": 16
+}

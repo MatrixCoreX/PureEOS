@@ -1,0 +1,11 @@
+{
+  "voter": "italyharbors",
+  "authorization": "italyharbors@active",
+  "transaction_id": "b6d5f20bb7c8a1dceec2c778a8431f284fe067392e39d3e5e4d7d04506472d6b",
+  "canonical_receipt": {
+    "transaction_id": "b6d5f20bb7c8a1dceec2c778a8431f284fe067392e39d3e5e4d7d04506472d6b",
+    "block_num": 170449,
+    "block_id": "000299d1917e72c3883b1a1dd7d621267d3b4b70f5122e0ccb16ca871c73b2bd",
+    "observed_lib": 170449
+  }
+}

@@ -1,0 +1,12 @@
+Local test directory: /opt/pureeos-cap-veto-20261104-r1/private-qualification-r1/local-tests/integer-v2-woato4f1
+FAIL cleos ['wallet', 'create', '-n'] failed: [31mError 3200000: http exception[0m
+[33mError Details:
+Couldn't resolve host name[0m
+
+PRIVATE CAP QUALIFICATION FAIL
+Traceback (most recent call last):
+  File "/opt/pureeos-cap-veto-20261104-r1/qualify-after-build.py", line 9, in <module>
+    subprocess.run(["python3","-B",str(K/"qualify_candidate.py")],check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '-B', '/opt/pureeos-cap-veto-20261104-r1/qualify_candidate.py']' returned non-zero exit status 1.

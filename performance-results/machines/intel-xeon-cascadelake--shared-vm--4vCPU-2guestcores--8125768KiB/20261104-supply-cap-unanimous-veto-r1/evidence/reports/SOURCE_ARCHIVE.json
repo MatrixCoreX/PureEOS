@@ -1,0 +1,5 @@
+{
+  "sha256": "2b1e2d50e7a2843727c3cbc1d1236457a37f88b65facceae0d952f23e789ebd0",
+  "source": "/opt/pureeos-cap-veto-20261104-r1/source",
+  "fix": "Compare quantity.symbol including precision; sym is only symbol_code"
+}
