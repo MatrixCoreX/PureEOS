@@ -86,6 +86,12 @@ CDT_ROOT=/path/to/verified/cdt bash scripts/build.sh /isolated/output
 通知合约没有直接调用动作或业务表，因此提供显式通知结构ABI，`actions`
 和`tables`保持空数组。WASM已检查存在apply及预期导入；尚未执行其apply。
 
+后续原生隔离验证见 [remote-native-r7.json](qualification/remote-native-r7.json)：
+节点O1 TEST候选已编译；治理31/32、真实合约2/3、无签名原生线格式1/1通过。
+创建成功路径在入队后续动作时失败，因为新账号尚不存在。真实注册流程未到达，
+不能宣称K1/R1注册、实际RAM/质押和签名通过。原始ABI171字节，已由原生
+序列化与无签名工具交叉比较；完整候选仍未验证通过，也未部署。
+
 必须完成实际K1/R1/旧EOS注册、分离owner/active签名、资金与质押归属、
 重复账号、非法附言/校验和/曲线、错误token来源、资源不足、通知注入、
 部署RAM不足和原子回滚验证，随后才能提交精确代码/原始ABI/审核文档摘要。
