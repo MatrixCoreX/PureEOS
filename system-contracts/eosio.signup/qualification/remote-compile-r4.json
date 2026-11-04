@@ -1,0 +1,30 @@
+{
+  "status": "COMPILE_AND_STANDALONE_CHECKS_PASS_NOT_CHAIN_QUALIFIED",
+  "started_UTC": "2026-11-04T16:35:22.096539+00:00",
+  "finished_UTC": "2026-11-04T16:37:14.161849+00:00",
+  "source_archive_sha256": "181c8866756f7cf800ed63a0082d444f214d7ac65bd8fd8c489e01f24cfea89b",
+  "remote_only": true,
+  "standalone_codec_field_curve_checks": 1760,
+  "independent_backend": "OpenSSL BIGNUM, EC and RIPEMD160",
+  "cdt": "retained PureEOS CDT1.0.0",
+  "wasm": {
+    "bytes": 28690,
+    "sha256": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3"
+  },
+  "json_abi": {
+    "bytes": 826,
+    "sha256": "4584c0647691a2787c32e8e6d3c7b0f54e0ea46abed7279d41756a879fd13e85"
+  },
+  "module_inspection": "apply export and expected read_action_data/send_inline/mod_exp/get_code_hash imports present; no WASM apply execution",
+  "raw_abi_native_validation": "PENDING",
+  "native_system_creation_feature_build_tests": "PENDING",
+  "real_registration_governance_payment_RAM_stake_qualification": "PENDING",
+  "original26_node_pids_unchanged_during_attempt": true,
+  "live_transactions_or_deployment": false,
+  "preserved_attempts": {
+    "r1": "Standalone test compile failed on BN_ULONG cast syntax; corrected in later source",
+    "r2": "Stopped only this task's compiler after MemAvailable fell to52960KiB; no test result",
+    "r3": "1760 standalone checks and WASM compile succeeded; missing ABI because notification-only contract has no direct actions; attempt failed as a complete package",
+    "r4": "Explicit notification ABI packaged; compile,1760checks and module inspection passed"
+  }
+}
