@@ -54,4 +54,4 @@ License: repository [AIC noncommercial license](../../AIC_LICENSE.md).
 继续动态计费。本轮用户授权在远端验证后重建 TEST 链，封存前部署；新 TEST 节点的升级公示期为30分钟，正式版仍为七天。实际生效以执行报告为准。
 参见 [cleos 提现语义](docs/CLEOS.md)。
 
-本轮 TEST 新链已部署并通过公开验收，提案公示1800秒。领取中继收入免费且全额到账，公钥转账继续动态收费；见[实际交易与测试公钥](../../performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261103-claim-free-test30-r2/REPORT.md)。
+当前 TEST 已通过原生1800秒提案公示升级到可配置10%–30%中继费率，保留免费、全额领取收益。五项费率供浏览器比较，仅创世中继启用HTTP；公式默认折叠。新版SDK锁定具体报价费率，原生cleos兼容旧请求和总额上限。见[实际部署、交易与验证](../../performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261104-relay-rates-r1/REPORT.md)。

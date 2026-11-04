@@ -1,0 +1,1 @@
+{"status": "DISPLAY_RELAYS_CONFIGURED", "rates": [{"bp": "canadaboreal", "fee_bps": 1000}, {"bp": "cosmicgarden", "fee_bps": 1500}, {"bp": "deepseekcore", "fee_bps": 2000}, {"bp": "finlandhaven", "fee_bps": 2500}, {"bp": "gptgenesisbp", "fee_bps": 3000}], "active_HTTP": "https://aic-test.matrixai.one/relay", "new_HTTP_services": 0, "new_relay_keys": 0}

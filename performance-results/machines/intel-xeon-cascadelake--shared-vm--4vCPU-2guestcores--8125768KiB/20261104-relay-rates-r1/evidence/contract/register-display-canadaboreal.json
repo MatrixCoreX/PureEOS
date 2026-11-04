@@ -1,0 +1,1 @@
+{"actions": [{"account": "eosio.key", "name": "regrelay", "authorization": [{"actor": "canadaboreal", "permission": "active"}], "data": {"bp": "canadaboreal", "permission": "keyrelay", "endpoint": ""}}, {"account": "eosio.key", "name": "setrate", "authorization": [{"actor": "canadaboreal", "permission": "active"}], "data": {"bp": "canadaboreal", "fee_bps": 1000}}]}

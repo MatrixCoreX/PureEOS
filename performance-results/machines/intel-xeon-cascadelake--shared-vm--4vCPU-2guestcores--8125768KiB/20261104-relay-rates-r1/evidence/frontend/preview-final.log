@@ -1,0 +1,4 @@
+INTEGRATION: bundle actual explorer API and fee model
+INTEGRATION: read actual chain pricing and compare60 cases
+{"status":"PASS","SDK_comparisons":60,"read_only":true}
+BROWSER PASS preview 4 variants

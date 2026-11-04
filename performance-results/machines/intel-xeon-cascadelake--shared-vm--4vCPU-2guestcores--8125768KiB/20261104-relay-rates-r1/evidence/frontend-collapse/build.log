@@ -1,0 +1,43 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run src/components/KeyFeeEstimate.test.tsx --config remote-vitest.config.ts --maxWorkers=1
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-explorer-key-rate-20261104-r4-collapse/source[39m
+
+ [32m✓[39m src/components/KeyFeeEstimate.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 2398[2mms[22m[39m
+   [33m[2m✓[22m[39m shows dynamic CPU/NET reference data and recalculates storage scenarios without new RPC calls[33m 1103[2mms[22m[39m
+   [33m[2m✓[22m[39m renders unavailable resources without presenting a zero fee[33m 646[2mms[22m[39m
+   [33m[2m✓[22m[39m defaults to the active relay and compares inactive registrations without suggesting a live service[33m 337[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 03:44:16
+[2m   Duration [22m 17.15s[2m (transform 32%, environment 31%, import 18%, tests 15%, setup 4%)[22m
+
+
+> pureeos-explorer@1.0.0 build
+> tsc -b && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2026 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.79 kB │ gzip:   0.50 kB
+dist/assets/index-DZUMizuY.css   54.90 kB │ gzip:  10.85 kB
+dist/assets/index-CLpjeyUx.js   685.82 kB │ gzip: 211.41 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.64s
+INTEGRATION: bundle actual explorer API and fee model
+INTEGRATION: read actual chain pricing and compare60 cases
+{"status":"PASS","SDK_comparisons":60,"read_only":true}
+BROWSER PASS preview 4 variants

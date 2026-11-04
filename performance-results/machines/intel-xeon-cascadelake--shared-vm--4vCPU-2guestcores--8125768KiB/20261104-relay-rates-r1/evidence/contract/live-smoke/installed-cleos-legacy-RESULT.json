@@ -1,0 +1,17 @@
+{
+  "kind": "installed-cleos-legacy",
+  "status": "PASS",
+  "transaction_id": "e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42",
+  "confirmation": {
+    "block_num": 132822,
+    "block_id": "000206d6cdbfc0f895c6264052cebf470b5af278a2ec0a4f75bb6efed85244c3",
+    "observed_lib": 132830
+  },
+  "base_atoms": "100",
+  "service_atoms": "30",
+  "total_atoms": "130",
+  "rate_bps": 3000,
+  "principal": "0.0001 USD",
+  "same_packet_retry": true,
+  "only_founder_used": true
+}

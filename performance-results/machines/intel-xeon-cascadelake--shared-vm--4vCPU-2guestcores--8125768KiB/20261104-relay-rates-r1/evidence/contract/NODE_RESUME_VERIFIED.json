@@ -1,0 +1,1211 @@
+{
+  "status": "NATIVE_FINALITY_RECOVERED",
+  "info": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 130672,
+    "last_irreversible_block_num": 130668,
+    "last_irreversible_block_id": "0001fe6ced575e9699610dd0e7b22f7c7ac90ffb4fe90638f79402c48238c10e",
+    "head_block_id": "0001fe70766415d718a60e0d93dce0c97febd245d6a8a2d8b4bdf54a9a3738ff",
+    "head_block_time": "2026-11-04T03:12:53.000",
+    "head_block_producer": "maplecascade",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 130672,
+    "fork_db_head_block_id": "0001fe70766415d718a60e0d93dce0c97febd245d6a8a2d8b4bdf54a9a3738ff",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-04T03:12:51.000"
+  },
+  "candidates": [
+    {
+      "owner": "anthropiclab",
+      "rank": "340282366920497032844612603246427786352",
+      "previous_rank": "340282366920497032844612603246427786352",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 218,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "brazilamazon",
+      "rank": "340282366920734626890473372146778761520",
+      "previous_rank": "340282366920734626890473372146778761520",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 217,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "canadaboreal",
+      "rank": "340282366920556246857110948294149442832",
+      "previous_rank": "340282366920556246857110948294149442832",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 195,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cobaltspring",
+      "rank": "340282366920662131149892747960015103680",
+      "previous_rank": "340282366920662131149892747960015103680",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 216,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "coherevision",
+      "rank": "340282366920665636012823459811907840304",
+      "previous_rank": "340282366920665636012823459811907840304",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 215,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cosmicgarden",
+      "rank": "340282366920773549447214244811777922352",
+      "previous_rank": "340282366920773549447214244811777922352",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 214,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "rank": "340282366920690908015705775722251759264",
+      "previous_rank": "340282366920690908015705775722251759264",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 213,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "egyptpyramid",
+      "rank": "340282366920635383298220915196157009040",
+      "previous_rank": "340282366920635383298220915196157009040",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 212,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "finlandhaven",
+      "rank": "340282366920605868489862452079790314800",
+      "previous_rank": "340282366920605868489862452079790314800",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 211,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "francegarden",
+      "rank": "340282366920604392732044658609909028144",
+      "previous_rank": "340282366920604392732044658609909028144",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 210,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "germanycrest",
+      "rank": "340282366920938463452038804520277029264",
+      "previous_rank": "340282366920938463452038804520277029264",
+      "frozen_epoch": 0,
+      "seen_epoch": 181,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694131824,
+        1694144916,
+        1694145168
+      ],
+      "evidence_policies": [
+        163,
+        181,
+        181
+      ],
+      "ban_final_block": 125869
+    },
+    {
+      "owner": "glaciercrest",
+      "rank": "340282366920764325966738416426674729360",
+      "previous_rank": "340282366920764325966738416426674729360",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 208,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "rank": "340282366918440036434894763768350642000",
+      "previous_rank": "340282366918440036434894763768350642000",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 194,
+      "penalty_epoch": 1,
+      "zero_windows": 2,
+      "banned": 0,
+      "evidence_slots": [
+        1694149236,
+        1694149488,
+        0
+      ],
+      "evidence_policies": [
+        187,
+        187,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "italyharbors",
+      "rank": "340282366920498139432605247384252657536",
+      "previous_rank": "340282366920498139432605247384252657536",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 207,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "kenyasavanna",
+      "rank": "340282366920674490288393406193675331168",
+      "previous_rank": "340282366920674490288393406193675331168",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 206,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "lunarcompass",
+      "rank": "340282366920758976358668529860700909952",
+      "previous_rank": "340282366920758976358668529860700909952",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 205,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "maplecascade",
+      "rank": "340282366920570081681124485020262699680",
+      "previous_rank": "340282366920570081681124485020262699680",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 204,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "rank": "340282366920295594111006894712039486608",
+      "previous_rank": "340282366920295594111006894712039486608",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 196,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "moonlitgrove",
+      "rank": "340282366920653091992814367630044247712",
+      "previous_rank": "340282366920653091992814367630044247712",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 200,
+      "penalty_epoch": 1,
+      "zero_windows": 1,
+      "banned": 0,
+      "evidence_slots": [
+        1694151072,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        189,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "nebularlight",
+      "rank": "340282366920644053070160627300725627792",
+      "previous_rank": "340282366920644053070160627300725627792",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 199,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "silverstream",
+      "rank": "340282366920703082635709758683905428768",
+      "previous_rank": "340282366920703082635709758683905428768",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 201,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "stellarhaven",
+      "rank": "340282366920823908791139857540836676912",
+      "previous_rank": "340282366920823908791139857540836676912",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 202,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "velvetforest",
+      "rank": "340282366920857297380929807078164967824",
+      "previous_rank": "340282366920857297380929807078164967824",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 203,
+      "penalty_epoch": 1,
+      "zero_windows": 1,
+      "banned": 0,
+      "evidence_slots": [
+        1694148084,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        185,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "willowgarden",
+      "rank": "340282366920350196368545135404412196144",
+      "previous_rank": "340282366920350196368545135404412196144",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 197,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "xaineuralnet",
+      "rank": "340282366920375099455028585598108358032",
+      "previous_rank": "340282366920375099455028585598108358032",
+      "frozen_epoch": 0,
+      "seen_epoch": 190,
+      "ticket": 198,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    }
+  ],
+  "finalizers": {
+    "active_finalizer_policy": {
+      "generation": 191,
+      "threshold": 15,
+      "finalizers": [
+        {
+          "description": "anthropiclab",
+          "weight": 1,
+          "public_key": "PUB_BLS_VzuYH4Lqp3M2LDdJ2kdCTagrOIpAGRHVzBzGosgZqEwdsmTdHNW-aQ28WMr4XhoVaEfQZrZ2GiGruN-6fj0zwOaAR6P9sOBNUlrjuZwAISHq2yO_KgYjms569s-QEaYWtntlPw"
+        },
+        {
+          "description": "brazilamazon",
+          "weight": 1,
+          "public_key": "PUB_BLS_4aZdsbghn0woq4NDqTthE_jWSwvP_jI0gABnJmUZ7pgaDx1COmVwuccxRROHL5sZQl-z3IjL2rmX3jdatLrQ2aNv-1EZVviZgre0Jv1wSCqjYs_vXq_Hk4rI3blTqkMDtExGKA"
+        },
+        {
+          "description": "canadaboreal",
+          "weight": 1,
+          "public_key": "PUB_BLS_8FqhEKXdGWbAymMEtHzna5V94KY3josR_gKT4e7DXPRCRSsSE_cc8NEmFnddIt4LyDg5HUJuYNsAXifCz2X-VFiTamcrmAhOpdg2j-P6hE8JUEZ_T3T4zRiM7Di2cxsUhzfEOA"
+        },
+        {
+          "description": "cobaltspring",
+          "weight": 1,
+          "public_key": "PUB_BLS_Aqv7Ua6vBmfzUd3Sy_29AsocySNHSfCFl3ZvH6nWuO27gt437Re-NvltFI6E5JUIOGJKQmG9rmjN4GGHQb0yGOzPLNs-MWdPysJbv4lvrGSwlNO8s0uItuZOabHKNS4AN-Nyug"
+        },
+        {
+          "description": "coherevision",
+          "weight": 1,
+          "public_key": "PUB_BLS_1Rk2WULUp0jc4_hu1zFYmeHzh4Bc9EIosV-ebXgESV_hJ-Px7CoT9FPeGfZ7wtEPXuIwwOBMYdpoQob8Dt6G2P-hEaK5RU3KI2koVy6i_Xk0qrwsC2czsgRMNTUIDeUV6HRRTA"
+        },
+        {
+          "description": "cosmicgarden",
+          "weight": 1,
+          "public_key": "PUB_BLS_ZjpKrYAk1Vj-GGbwM5fJ-b1OW7sYre8flWyj7beWLgQWaugW8PD6WNawM8On_s0UYh9w9aaq7cxs16YQSfNTv7h7pdcdXMOzm2bsWt0DycNfsrwqdulGkkw94qqo5tcZgHPhgA"
+        },
+        {
+          "description": "deepseekcore",
+          "weight": 1,
+          "public_key": "PUB_BLS_TkWwHUDEHAWusodZUj5eYYj4JM3YNY8Z63JFKhAq14jk_DyF6el2I8Bd6MHzyGMKFX2NskP1zaptxzlXBGmG1bjST430oFd0Je1gvRFgbae2jWu5D_2lq3BrH-u3vQgF4Xn9Jg"
+        },
+        {
+          "description": "egyptpyramid",
+          "weight": 1,
+          "public_key": "PUB_BLS_8if4oGPUe8waBt6LJqSNrnowlacPCbDnHTL5Id8jATHfwNokLaG-QNo95QpgXIAM-bpwT0Ir2I_GzKU4AMWJr7JE2m9pMxkHxAP9qC04hqrS3zQEJVmiLNTK3yCgcdwFKTpttQ"
+        },
+        {
+          "description": "finlandhaven",
+          "weight": 1,
+          "public_key": "PUB_BLS_pdjqn7obclLJtV0PE-P9hp6k_0Il3bOLJpX2KrL1tjcwLUQ8o-sRdYBoCId8pf8ZO9rq60KaYSggKws29eGSccIFf09rcEUCQVR2iZsT8od25l1ZCr0rw7PJaIjXHXkQt_V6BQ"
+        },
+        {
+          "description": "francegarden",
+          "weight": 1,
+          "public_key": "PUB_BLS_WiNKpSjGt72qdV6TsXrC71qOAh0lJeI_IYoGDdsW8PNQtan_dFrXziC4CX4fT7kUZ3f2WDGY1acFdlcx57a668CQn7A3fJ82hUBQWRB1B_uApJWJA8yEAlLLyvYZVdoZIIA3lw"
+        },
+        {
+          "description": "glaciercrest",
+          "weight": 1,
+          "public_key": "PUB_BLS_bpB1dgvD7jILrkc8Q0UFxvH89YuCHk9neOZyDWoe8UbrknxO3xHuVeD0rk1KPdsKuomVXd08fwapsKX4TqSRtLVAX0y2r50NUzRSLAq26LClR_rBHner0AtP0K4hDmwYtQhZpw"
+        },
+        {
+          "description": "italyharbors",
+          "weight": 1,
+          "public_key": "PUB_BLS_GfrEfD0NM0ETBXB0iP2nHfwxuY_tYObwOcoCyULSMQGZc9I5Fw_lTWr5WAl21j0L5QHV19hRx_2G66MgQBnkulE-2ZrPk8-jGUKyhfZxmQUgBlxgI2BfkXhpohPY0LEWDqFqMw"
+        },
+        {
+          "description": "kenyasavanna",
+          "weight": 1,
+          "public_key": "PUB_BLS_8s_teDMxUxI33CEk69le9ze7NapwPQIDKoyCgwX_sOFRBTfTZkEMPfUPkut8Rf8N-fLJ47Tj1sQgBjUpvtrFsOUtNZuAx4z3VDnE7m0yDl_unntNLDRqV-OPs7d6l_EI19SuDw"
+        },
+        {
+          "description": "lunarcompass",
+          "weight": 1,
+          "public_key": "PUB_BLS_3oJOW-k2Locc21_tAvbTt0l9gUL3vqrP4p80FuA7V11W-GUoSJYpTk2XA2hI_a4D-kIu2oZidx340MimrLzIxbb0DARC2Yn9hrYu-21Pam-fvivPo8mwpXQHagwqh4IZZ3hbcg"
+        },
+        {
+          "description": "maplecascade",
+          "weight": 1,
+          "public_key": "PUB_BLS_JB3dKacLAzu4oGWKe9RVI1_OFKUDY08XqHPDuuoWH7FkUc5Bog_CIoHaWIJImEYIg8XJWhUQPWTmB4U0lh5LHY7Ssoa22YcxuUnnzX73bxdxg9n8dlOc2jWET8LjTckOvVK4RA"
+        },
+        {
+          "description": "mistralcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_CcyVNyrdpqRjvbEd_khjwYPXdnl236-6uQ9xt3evXOFSckJgnRcongOMfqo22rIIT2Omyx0ODpCTugaZoB2hmDzeB2Iu8n5jG5AC9s7Dqr_H_Ukt4H3ssmv5ZNpn8NYZ8Qb9JQ"
+        },
+        {
+          "description": "nebularlight",
+          "weight": 1,
+          "public_key": "PUB_BLS_D8bzH_tfmewukkmKN_42iiaiMSSFKMNMUmTRiB6uukqyyuJEaepdVkvJYnZHgOgHfkr1TRo-VSGW-1hrjaq5-5wq1yF2JQNZh86nvo76onTLb0OCjLoNlUk-LUsllUgVxRrnWQ"
+        },
+        {
+          "description": "silverstream",
+          "weight": 1,
+          "public_key": "PUB_BLS_rUgKKixnmjurwLgkRrPutoBoDixYJZTTinFv_1VLr3Jm_-b-Y7lUo6aFW5A6oNgOw_s3Zj0ylJ7eeQyVUq0dbufgpSitd-fVDazySP4wuAeJ3PhVeWKukwt6COF5BHMR_7Hq4g"
+        },
+        {
+          "description": "stellarhaven",
+          "weight": 1,
+          "public_key": "PUB_BLS_KRR7tOiF8g-kDpBbhZS7ZJ582udOOBXhu7XNeBHGrdN3AvWknyLmT3yFuaFzQdMOhWhZMeOSPnRCmj1cBq8jTSJHMcYqXWAyPg6CHOb26JvE8XGnXsvBtr-Gmp-Xw9QN0w0YJg"
+        },
+        {
+          "description": "willowgarden",
+          "weight": 1,
+          "public_key": "PUB_BLS_08Tbe2p_lMO3gCMESw_3mp-U_pJunpDm9jH-ObPoc9-JYZ-UPrd2-8BIILQykAUW6sNef1DvzbhrxZOJy3bNwE404e1SkRqaXshwRZRQ5rCbvUYMTpDRODseYb9bKrgQ24MYTw"
+        },
+        {
+          "description": "xaineuralnet",
+          "weight": 1,
+          "public_key": "PUB_BLS_FTCyEmvV8YShjorv5qKueExYCUXoMtafMEa2P9LZxX0YFn1SzTmWvr-uRiJe2y0FZpFVbCrsFwSIJqwLXe3YvVPN0Qo-M7IhF56Z9hUNRVv0Q1uk8ed7S5wwmu_XbGIFjmY3qw"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "anthropiclab",
+        "public_key": "PUB_BLS_VzuYH4Lqp3M2LDdJ2kdCTagrOIpAGRHVzBzGosgZqEwdsmTdHNW-aQ28WMr4XhoVaEfQZrZ2GiGruN-6fj0zwOaAR6P9sOBNUlrjuZwAISHq2yO_KgYjms569s-QEaYWtntlPw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "brazilamazon",
+        "public_key": "PUB_BLS_4aZdsbghn0woq4NDqTthE_jWSwvP_jI0gABnJmUZ7pgaDx1COmVwuccxRROHL5sZQl-z3IjL2rmX3jdatLrQ2aNv-1EZVviZgre0Jv1wSCqjYs_vXq_Hk4rI3blTqkMDtExGKA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "canadaboreal",
+        "public_key": "PUB_BLS_8FqhEKXdGWbAymMEtHzna5V94KY3josR_gKT4e7DXPRCRSsSE_cc8NEmFnddIt4LyDg5HUJuYNsAXifCz2X-VFiTamcrmAhOpdg2j-P6hE8JUEZ_T3T4zRiM7Di2cxsUhzfEOA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "cobaltspring",
+        "public_key": "PUB_BLS_Aqv7Ua6vBmfzUd3Sy_29AsocySNHSfCFl3ZvH6nWuO27gt437Re-NvltFI6E5JUIOGJKQmG9rmjN4GGHQb0yGOzPLNs-MWdPysJbv4lvrGSwlNO8s0uItuZOabHKNS4AN-Nyug",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "coherevision",
+        "public_key": "PUB_BLS_1Rk2WULUp0jc4_hu1zFYmeHzh4Bc9EIosV-ebXgESV_hJ-Px7CoT9FPeGfZ7wtEPXuIwwOBMYdpoQob8Dt6G2P-hEaK5RU3KI2koVy6i_Xk0qrwsC2czsgRMNTUIDeUV6HRRTA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "cosmicgarden",
+        "public_key": "PUB_BLS_ZjpKrYAk1Vj-GGbwM5fJ-b1OW7sYre8flWyj7beWLgQWaugW8PD6WNawM8On_s0UYh9w9aaq7cxs16YQSfNTv7h7pdcdXMOzm2bsWt0DycNfsrwqdulGkkw94qqo5tcZgHPhgA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "deepseekcore",
+        "public_key": "PUB_BLS_TkWwHUDEHAWusodZUj5eYYj4JM3YNY8Z63JFKhAq14jk_DyF6el2I8Bd6MHzyGMKFX2NskP1zaptxzlXBGmG1bjST430oFd0Je1gvRFgbae2jWu5D_2lq3BrH-u3vQgF4Xn9Jg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "egyptpyramid",
+        "public_key": "PUB_BLS_8if4oGPUe8waBt6LJqSNrnowlacPCbDnHTL5Id8jATHfwNokLaG-QNo95QpgXIAM-bpwT0Ir2I_GzKU4AMWJr7JE2m9pMxkHxAP9qC04hqrS3zQEJVmiLNTK3yCgcdwFKTpttQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "finlandhaven",
+        "public_key": "PUB_BLS_pdjqn7obclLJtV0PE-P9hp6k_0Il3bOLJpX2KrL1tjcwLUQ8o-sRdYBoCId8pf8ZO9rq60KaYSggKws29eGSccIFf09rcEUCQVR2iZsT8od25l1ZCr0rw7PJaIjXHXkQt_V6BQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "francegarden",
+        "public_key": "PUB_BLS_WiNKpSjGt72qdV6TsXrC71qOAh0lJeI_IYoGDdsW8PNQtan_dFrXziC4CX4fT7kUZ3f2WDGY1acFdlcx57a668CQn7A3fJ82hUBQWRB1B_uApJWJA8yEAlLLyvYZVdoZIIA3lw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6dc27ad72ceb90d0f07571bdbb4fb605628d7280c6c0f0e31822ab5c54",
+        "voted_for_block_num": 130669,
+        "voted_for_block_timestamp": "2026-11-04T03:12:51.500"
+      },
+      {
+        "description": "glaciercrest",
+        "public_key": "PUB_BLS_bpB1dgvD7jILrkc8Q0UFxvH89YuCHk9neOZyDWoe8UbrknxO3xHuVeD0rk1KPdsKuomVXd08fwapsKX4TqSRtLVAX0y2r50NUzRSLAq26LClR_rBHner0AtP0K4hDmwYtQhZpw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "italyharbors",
+        "public_key": "PUB_BLS_GfrEfD0NM0ETBXB0iP2nHfwxuY_tYObwOcoCyULSMQGZc9I5Fw_lTWr5WAl21j0L5QHV19hRx_2G66MgQBnkulE-2ZrPk8-jGUKyhfZxmQUgBlxgI2BfkXhpohPY0LEWDqFqMw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6dc27ad72ceb90d0f07571bdbb4fb605628d7280c6c0f0e31822ab5c54",
+        "voted_for_block_num": 130669,
+        "voted_for_block_timestamp": "2026-11-04T03:12:51.500"
+      },
+      {
+        "description": "kenyasavanna",
+        "public_key": "PUB_BLS_8s_teDMxUxI33CEk69le9ze7NapwPQIDKoyCgwX_sOFRBTfTZkEMPfUPkut8Rf8N-fLJ47Tj1sQgBjUpvtrFsOUtNZuAx4z3VDnE7m0yDl_unntNLDRqV-OPs7d6l_EI19SuDw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "lunarcompass",
+        "public_key": "PUB_BLS_3oJOW-k2Locc21_tAvbTt0l9gUL3vqrP4p80FuA7V11W-GUoSJYpTk2XA2hI_a4D-kIu2oZidx340MimrLzIxbb0DARC2Yn9hrYu-21Pam-fvivPo8mwpXQHagwqh4IZZ3hbcg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "maplecascade",
+        "public_key": "PUB_BLS_JB3dKacLAzu4oGWKe9RVI1_OFKUDY08XqHPDuuoWH7FkUc5Bog_CIoHaWIJImEYIg8XJWhUQPWTmB4U0lh5LHY7Ssoa22YcxuUnnzX73bxdxg9n8dlOc2jWET8LjTckOvVK4RA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "mistralcloud",
+        "public_key": "PUB_BLS_CcyVNyrdpqRjvbEd_khjwYPXdnl236-6uQ9xt3evXOFSckJgnRcongOMfqo22rIIT2Omyx0ODpCTugaZoB2hmDzeB2Iu8n5jG5AC9s7Dqr_H_Ukt4H3ssmv5ZNpn8NYZ8Qb9JQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "nebularlight",
+        "public_key": "PUB_BLS_D8bzH_tfmewukkmKN_42iiaiMSSFKMNMUmTRiB6uukqyyuJEaepdVkvJYnZHgOgHfkr1TRo-VSGW-1hrjaq5-5wq1yF2JQNZh86nvo76onTLb0OCjLoNlUk-LUsllUgVxRrnWQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "silverstream",
+        "public_key": "PUB_BLS_rUgKKixnmjurwLgkRrPutoBoDixYJZTTinFv_1VLr3Jm_-b-Y7lUo6aFW5A6oNgOw_s3Zj0ylJ7eeQyVUq0dbufgpSitd-fVDazySP4wuAeJ3PhVeWKukwt6COF5BHMR_7Hq4g",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "stellarhaven",
+        "public_key": "PUB_BLS_KRR7tOiF8g-kDpBbhZS7ZJ582udOOBXhu7XNeBHGrdN3AvWknyLmT3yFuaFzQdMOhWhZMeOSPnRCmj1cBq8jTSJHMcYqXWAyPg6CHOb26JvE8XGnXsvBtr-Gmp-Xw9QN0w0YJg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6bd47520a16ae5eda761c5364d191a3090290f896da509ed2330b31a3a",
+        "voted_for_block_num": 130667,
+        "voted_for_block_timestamp": "2026-11-04T03:12:50.500"
+      },
+      {
+        "description": "willowgarden",
+        "public_key": "PUB_BLS_08Tbe2p_lMO3gCMESw_3mp-U_pJunpDm9jH-ObPoc9-JYZ-UPrd2-8BIILQykAUW6sNef1DvzbhrxZOJy3bNwE404e1SkRqaXshwRZRQ5rCbvUYMTpDRODseYb9bKrgQ24MYTw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6e0d343bdfb9b749fe961bcb128f73020fc016bdbf0dd305f95f1048a6",
+        "voted_for_block_num": 130670,
+        "voted_for_block_timestamp": "2026-11-04T03:12:52.000"
+      },
+      {
+        "description": "xaineuralnet",
+        "public_key": "PUB_BLS_FTCyEmvV8YShjorv5qKueExYCUXoMtafMEa2P9LZxX0YFn1SzTmWvr-uRiJe2y0FZpFVbCrsFwSIJqwLXe3YvVPN0Qo-M7IhF56Z9hUNRVv0Q1uk8ed7S5wwmu_XbGIFjmY3qw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 191,
+        "voted_for_block_id": "0001fe6dc27ad72ceb90d0f07571bdbb4fb605628d7280c6c0f0e31822ab5c54",
+        "voted_for_block_num": 130669,
+        "voted_for_block_timestamp": "2026-11-04T03:12:51.500"
+      }
+    ]
+  },
+  "schedule": {
+    "active": {
+      "version": 190,
+      "producers": [
+        {
+          "producer_name": "anthropiclab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8kfXwa7krE7p56Y1qDRUV4iT879uTkcB2Jmcoj7dZwkURq2wP1",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "brazilamazon",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8N8xx9TAJFUsfVWPwK5Ld17dYS1kZsmMRsDB2QzYkM7iudcnAj",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "canadaboreal",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5cBHfhog76qhdeZfpLjQDzb17hqWFqZiEudybJvyRRVF7Mo5dJ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cobaltspring",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8kMvg2anUawyvabZ9QHtgTktEXYxx9JFnv6KuGoPvF6p7FdHWE",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "coherevision",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7u2HkSUn8AWHXouv3AEX635e3HvjtpnvACoCdRYWAAkwdrFsfV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cosmicgarden",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7xpwjju5mtL59Qiog2fgFddb4oCJAvE9NE3bcz3ND8HuJhwfUz",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "deepseekcore",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_84nNPtU2Z3ShKHbrHn5brEh3kuzaeeuj7bBbeCxNGbFkZZ41CL",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "egyptpyramid",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7P4V5MmgUBkFRZpor7oSsoMbKEacCzUeWUvwUdU6FD7yXt7Ljq",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "finlandhaven",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Gpf1xdAdfZgs8jhontW4vU9RAoPJPX4dHMX54x2BSqK9dcuFY",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "francegarden",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_544CsNvwVwh7uvHBPmzRp9PXyQfE9L1Quq4hHKKtwR3GtFDuPA",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "glaciercrest",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5vwC5PeJimtmuCiouJBM2FZaP6EBkA1uV5Q7xS29dF4pkvVHP6",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "italyharbors",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_81W8iUVFs2exXQM8cU3sWufoqhmgReHatwwJ9bFm1JnfcdpUpH",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "kenyasavanna",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6s2CwJoQjviFb61LDYPLC41fboAhzJeijZJB7dfeWhhY4rXzQW",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "lunarcompass",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5n9S6XbtmY14yYyzbD7BFrG9d6Rxx3GGuLzoxLJiaUW8QQ2EMZ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "maplecascade",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7m6C43Yc1wyo7aBcjmRB3HRKinXhL1MLvKGB3qNfnAnzFku9KU",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "mistralcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7A5Wjaw3X5sbMD462tQUVuJ5Mck7S6ACiX2LRTSKQGhP4qm8Es",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "nebularlight",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6yc1UBcL2URDFDM4c9uL55gYETj7i2kcAXXME6yJDFxNscVEAo",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "silverstream",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6g5urzXVjkbBCdvK4qwPDamjyFX2sBDFFa6oKAmAPHJsJ3GGTN",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "stellarhaven",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_83GHNYccYJZpGkpbS4WS9nsHf1K1JynSqH18FCii9v7a74NdeX",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "willowgarden",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8JRYesB7dffyxR9HXnGA785P8WtrdUUJxJf31VpgzEUJBBnRJi",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "xaineuralnet",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_73yaYagmanH25Gsei6ekgXJjkaJHwjr87cxDnK8wvTX1CET9FK",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pending": null,
+    "proposed": null
+  },
+  "UTC": "2026-11-04T03:12:53.154277+00:00",
+  "mem": [
+    "MemAvailable:    6796696 kB",
+    "SwapFree:        8272340 kB"
+  ]
+}

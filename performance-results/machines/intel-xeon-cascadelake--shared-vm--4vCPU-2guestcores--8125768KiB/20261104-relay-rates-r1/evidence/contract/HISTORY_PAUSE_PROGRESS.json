@@ -1,0 +1,20 @@
+{
+  "UTC": "2026-11-04T02:49:31.219883+00:00",
+  "user_authorization": "User permits pausing whole chain and history, asks agent to choose; select only history backend first.",
+  "units": {
+    "pureeos-key-history-20261103.service": "active",
+    "pureeos-keynet2-purehistory-indexer-20261103.service": "active",
+    "pureeos-keynet2-purehistory-api-20261103.service": "active"
+  },
+  "resume_required": [
+    "pureeos-key-history-20261103.service",
+    "pureeos-keynet2-purehistory-indexer-20261103.service",
+    "pureeos-keynet2-purehistory-api-20261103.service"
+  ],
+  "node_services_untouched": true,
+  "status": "WORKERS_PAUSED",
+  "mem": [
+    "MemAvailable:     528876 kB",
+    "SwapFree:         411348 kB"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "reason": "Vitest fork workers did not start within60000ms under25%-CPU cap; no test assertions ran. Retry with previous successful frontend build profile50% of one CPU; live chain caps unchanged.",
+  "old_log": "native-boolean-build.log",
+  "CPUQuota": "50%",
+  "Nice": 10,
+  "MemoryMax": "1G"
+}

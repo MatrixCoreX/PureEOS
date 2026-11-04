@@ -1,0 +1,72 @@
+{
+  "sdk-exact-rate": {
+    "total": {
+      "value": 3,
+      "relation": "eq"
+    },
+    "actions": [
+      {
+        "action_ordinal": 2,
+        "act": {
+          "account": "eosio.key",
+          "name": "ksend"
+        },
+        "block_num": 132124,
+        "global_sequence": 147596
+      },
+      {
+        "action_ordinal": 3,
+        "act": {
+          "account": "eosio.key",
+          "name": "receipt"
+        },
+        "block_num": 132124,
+        "global_sequence": 147597
+      },
+      {
+        "action_ordinal": 1,
+        "act": {
+          "account": "eosio.key",
+          "name": "prove"
+        },
+        "block_num": 132124,
+        "global_sequence": 147595
+      }
+    ]
+  },
+  "installed-cleos-legacy": {
+    "total": {
+      "value": 3,
+      "relation": "eq"
+    },
+    "actions": [
+      {
+        "action_ordinal": 1,
+        "act": {
+          "account": "eosio.key",
+          "name": "prove"
+        },
+        "block_num": 132822,
+        "global_sequence": 148296
+      },
+      {
+        "action_ordinal": 3,
+        "act": {
+          "account": "eosio.key",
+          "name": "receipt"
+        },
+        "block_num": 132822,
+        "global_sequence": 148298
+      },
+      {
+        "action_ordinal": 2,
+        "act": {
+          "account": "eosio.key",
+          "name": "ksend"
+        },
+        "block_num": 132822,
+        "global_sequence": 148297
+      }
+    ]
+  }
+}

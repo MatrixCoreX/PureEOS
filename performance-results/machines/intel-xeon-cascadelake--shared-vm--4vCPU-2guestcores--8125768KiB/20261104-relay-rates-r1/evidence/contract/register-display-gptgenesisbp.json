@@ -1,0 +1,1 @@
+{"actions": [{"account": "eosio.key", "name": "setrate", "authorization": [{"actor": "gptgenesisbp", "permission": "active"}], "data": {"bp": "gptgenesisbp", "fee_bps": 3000}}]}

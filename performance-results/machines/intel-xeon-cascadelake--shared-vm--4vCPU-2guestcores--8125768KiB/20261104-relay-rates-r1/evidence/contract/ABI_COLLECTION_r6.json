@@ -1,0 +1,6 @@
+{
+  "source": "/opt/krate-q/r6/local-tests/integer-v2-kttrfbnk/candidate.abi.bin",
+  "destination": "/opt/krate-q/r6/candidate.abi.bin",
+  "sha256": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+  "reason": "Collect ABI emitted by the actual private-chain test under its generated work directory"
+}

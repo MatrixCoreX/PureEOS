@@ -1,0 +1,4 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-rate-20261104-r1/qualify.py\", line 15, in <module>\n    result=json.loads((work/'RESULT.json').read_text());assert q.returncode==0 and result['status']=='PASS'\n                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

@@ -1,0 +1,1 @@
+{"actions": [{"account": "eosio.key", "name": "regrelay", "authorization": [{"actor": "deepseekcore", "permission": "active"}], "data": {"bp": "deepseekcore", "permission": "keyrelay", "endpoint": ""}}, {"account": "eosio.key", "name": "setrate", "authorization": [{"actor": "deepseekcore", "permission": "active"}], "data": {"bp": "deepseekcore", "fee_bps": 2000}}]}

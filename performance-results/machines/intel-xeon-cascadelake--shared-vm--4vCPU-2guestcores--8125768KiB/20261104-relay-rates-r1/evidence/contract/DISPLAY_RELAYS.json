@@ -1,0 +1,129 @@
+{
+  "status": "DISPLAY_RELAYS_CONFIGURED",
+  "steps": {
+    "canadaboreal": {
+      "status": "FINALIZED",
+      "fee_bps": 1000,
+      "transaction_id": "db6cb76b4c96488dd2b3bcf3c0dd0407d5726110738988ec9b872ff4965de082",
+      "receipt": {
+        "transaction_id": "db6cb76b4c96488dd2b3bcf3c0dd0407d5726110738988ec9b872ff4965de082",
+        "block_num": 131928,
+        "block_id": "00020358a22f99dc8df2cec4f2f665313b5a9978a1a286d897a92c9fbf2cc3e1",
+        "observed_lib": 131928,
+        "reported_block_num": 131927
+      }
+    },
+    "cosmicgarden": {
+      "status": "FINALIZED",
+      "fee_bps": 1500,
+      "transaction_id": "8c4628ede6ce50b2ae6ef5e76ae09b4082ea31ebe6f51d079f947eb70c7ce323",
+      "receipt": {
+        "transaction_id": "8c4628ede6ce50b2ae6ef5e76ae09b4082ea31ebe6f51d079f947eb70c7ce323",
+        "block_num": 131932,
+        "block_id": "0002035c1e3bfea21d83907278284896251bfa68cca441d4ea1e384d6d492ad2",
+        "observed_lib": 131932,
+        "reported_block_num": 131932
+      }
+    },
+    "deepseekcore": {
+      "status": "FINALIZED",
+      "fee_bps": 2000,
+      "transaction_id": "27665a01ca8a7b662645be60afe5d6bf327ad42184c302a96af6d3746b96b2c8",
+      "receipt": {
+        "transaction_id": "27665a01ca8a7b662645be60afe5d6bf327ad42184c302a96af6d3746b96b2c8",
+        "block_num": 131936,
+        "block_id": "0002036063ddf95c7101cfbe08e0f72a98239133dc04c851b19606c4f7e20ce0",
+        "observed_lib": 131936,
+        "reported_block_num": 131935
+      }
+    },
+    "finlandhaven": {
+      "status": "FINALIZED",
+      "fee_bps": 2500,
+      "transaction_id": "60987006c16ebdc713cb5a6e749a8b7bc93c53e85742e909e151e1fffcf3eab9",
+      "receipt": {
+        "transaction_id": "60987006c16ebdc713cb5a6e749a8b7bc93c53e85742e909e151e1fffcf3eab9",
+        "block_num": 131940,
+        "block_id": "000203645bf819b084f71cd2515de062283650313c44cf922005546fb525e6cf",
+        "observed_lib": 131940,
+        "reported_block_num": 131940
+      }
+    },
+    "gptgenesisbp": {
+      "status": "FINALIZED",
+      "fee_bps": 3000,
+      "transaction_id": "6dbc7dac198dac5cbbbd34dd6adee7a1142ba984caea502bc7e0486fe7a3aa9b",
+      "receipt": {
+        "transaction_id": "6dbc7dac198dac5cbbbd34dd6adee7a1142ba984caea502bc7e0486fe7a3aa9b",
+        "block_num": 131944,
+        "block_id": "00020368fae3b426ef5088c26b9068ff3653634ab5b33e4ac32c2b5b6c48f6c5",
+        "observed_lib": 131945,
+        "reported_block_num": 131944
+      }
+    }
+  },
+  "new_HTTP_services": 0,
+  "new_routes": 0,
+  "new_relay_keys": 0,
+  "new_child_permissions": 0,
+  "UTC": "2026-11-04T03:23:54.897289+00:00",
+  "registered": [
+    {
+      "bp": "canadaboreal",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "cosmicgarden",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "deepseekcore",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "finlandhaven",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "gptgenesisbp",
+      "permission": "keyrelay",
+      "endpoint": "https://aic-test.matrixai.one/relay",
+      "enabled": 1
+    }
+  ],
+  "rates": [
+    {
+      "bp": "canadaboreal",
+      "fee_bps": 1000
+    },
+    {
+      "bp": "cosmicgarden",
+      "fee_bps": 1500
+    },
+    {
+      "bp": "deepseekcore",
+      "fee_bps": 2000
+    },
+    {
+      "bp": "finlandhaven",
+      "fee_bps": 2500
+    },
+    {
+      "bp": "gptgenesisbp",
+      "fee_bps": 3000
+    }
+  ],
+  "code_hash": "1933629daab4d8fe3b64bfe0528b7d64b85dff97011b71301ba4122f590cf0f5",
+  "sole_HTTP_endpoint": "https://aic-test.matrixai.one/relay",
+  "permissions_unchanged": true,
+  "nginx_unchanged": true,
+  "native_client_unchanged": true
+}

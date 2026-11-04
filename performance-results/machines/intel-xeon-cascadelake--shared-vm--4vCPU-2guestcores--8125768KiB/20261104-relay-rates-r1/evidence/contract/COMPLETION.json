@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-04T04:01:26.574216+00:00",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "formula_default_collapsed": true,
+  "only_founder_HTTP": true,
+  "inactive_comparison_entries": 4,
+  "governance_review_seconds": 1800,
+  "all_original_services_restored": true,
+  "registered_BP_count": 25,
+  "eligible_BP_count": 24,
+  "preexisting_ban_preserved": "germanycrest",
+  "new_servers": 0,
+  "TPS": false,
+  "reset": false
+}

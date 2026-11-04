@@ -1,6 +1,6 @@
 # First-release API · owner protocol 2
 
-2026-11-03 最新范围：测试白名单为系统 AIC 与标准 `keyusdtoken1::4,USD`，绑定完整币种和审核代码哈希；后续新增通过受保护 eosio.key 代码的原生七天开发者提案/BP 否决流程。第三方文本收款账号必须先付 RAM open。RAM 登记与白名单相互独立；独立远端正常系统74项、替代表夹具74项与SDK/中继14项通过，现已部署公开测试链；旧风险复现保留，稳定版本未更新。详见 [白名单提案流程](TOKEN_ALLOWLIST.md)。
+The TEST allowlist is system AIC and standard `keyusdtoken1::4,USD`, pinned by full asset identity and reviewed code hash. Future additions require a protected eosio.key code proposal and BP veto review:1800seconds on this TEST chain, seven days for stable. Named USD recipients must fund their token balance row before withdrawal. RAM registration remains separate from code admission. Configurable relay rates are deployed through a mature native proposal; see the current deployment report linked from the module README and [token admission](TOKEN_ALLOWLIST.md).
 
 ## Funds and supported tokens
 

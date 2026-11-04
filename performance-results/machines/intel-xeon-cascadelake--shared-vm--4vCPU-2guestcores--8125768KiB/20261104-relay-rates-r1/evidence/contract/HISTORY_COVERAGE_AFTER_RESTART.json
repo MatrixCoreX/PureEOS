@@ -1,0 +1,13 @@
+{
+  "through": 134488,
+  "first": 2,
+  "expected": 134487,
+  "indexed_count": 134487,
+  "missing": 0,
+  "count_shards": {
+    "total": 2,
+    "successful": 2,
+    "skipped": 0,
+    "failed": 0
+  }
+}

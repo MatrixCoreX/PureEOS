@@ -1,0 +1,349 @@
+QUALIFICATION NODE v22.23.4
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 314.961712
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 2117.695502
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 174.671744
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 0.635555
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 1.058679
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 73.930439
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 7 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 53.967431
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 8 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 0.680918
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 9 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 329.860578
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 10 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 0.881524
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 11 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 0.610444
+  type: 'test'
+  ...
+# Subtest: fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+ok 12 - fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+  ---
+  duration_ms: 19.845807
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 13 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 623.017979
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 14 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 102.552903
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 15 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 45.924046
+  type: 'test'
+  ...
+# Subtest: relay rates are bounded, rounded upward and charged at least one AIC atom
+ok 16 - relay rates are bounded, rounded upward and charged at least one AIC atom
+  ---
+  duration_ms: 0.917741
+  type: 'test'
+  ...
+# Subtest: owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+ok 17 - owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+  ---
+  duration_ms: 132.871634
+  type: 'test'
+  ...
+# Subtest: relay rate reads validate identity and bounds; legacy registrations retain30%
+ok 18 - relay rate reads validate identity and bounds; legacy registrations retain30%
+  ---
+  duration_ms: 2.694096
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4155.040068
+Local test directory: /opt/krate-q/r4/local-tests/integer-v2-hwcvq2rk
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Governance protocol activation selects the same native review profile before sealing
+RETRY: atomic bootstrap CPU deadline; unchanged caps
+RETRY: atomic bootstrap CPU deadline; unchanged caps
+PASS: Native build rejects the other review profile before sealing
+PASS: Native governance sealed after eosio.key deployment with selected review 1800 seconds
+PASS: Wallet is explicitly protected by selected native governance review
+PASS: RAM1024 initialization preserved
+PASS: Wallet owner and active have no deployer private keys after initialization
+PASS: Actual deployed wallet WASM hash equals the selected production/fixture artifact
+PASS: AIC also requires paid RAM registration before accepting fee credit
+PASS: Native payer buys real RAM; registration credits only actual purchased bytes to AIC
+FAIL: Expected rejection (token RAM registration required), got 68: {
+  "transaction_id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+  "processed": {
+    "id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+    "block_num": 323,
+    "block_time": "2026-11-04T01:28:24.000",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 439399,
+    "net_usage": 260,
+    "scheduled": false,
+    "action_traces": [{
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": null,
+        "receiver": "keyusdtoken1",
+        "act": {
+          "account": "keyusdtoken1",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "keyusersolar",
+            "to": "eosio.key",
+            "quantity": "1.0000 USD",
+            "memo": "PK2|PUB_K1_5kcojUx3YHuuLb3KCJd3r1Vit6pV4X5eeKduf5nEpPBuXynSHi|100000|f0ddfdbaffbda5be3e07ab5f1ea9d28e0938667f40ff1b4e2efefbabdab6f5bd"
+          },
+          "hex_data": "704da4f82aacbd820000f00a02ea3055102700000000000004555344000000008501504b327c5055425f4b315f356b636f6a557833594875754c62334b434a6433723156697436705634583565654b647566356e457050427558796e5348697c3130303030307c66306464666462616666626461356265336530376162356631656139643238653039333836363766343066663162346532656665666261626461623666356264"
+        },
+        "context_free": false,
+        "elapsed": 439293,
+        "console": "",
+        "trx_id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+        "block_num": 323,
+        "block_time": "2026-11-04T01:28:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [{
+            "account": "keyusdtoken1",
+            "delta": -128
+          },{
+            "account": "keyusersolar",
+            "delta": 128
+          }
+        ],
+        "except": {
+          "code": 3080004,
+          "name": "tx_cpu_usage_exceeded",
+          "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+          "stack": [{
+              "context": {
+                "level": "error",
+                "file": "transaction_context.cpp",
+                "line": 603,
+                "method": "checktime",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T01:28:23.939"
+              },
+              "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+              "data": {
+                "id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+                "billing_timer": 439312,
+                "subjective": 0,
+                "limit": 150000
+              }
+            },{
+              "context": {
+                "level": "warn",
+                "file": "apply_context.cpp",
+                "line": 262,
+                "method": "exec_one",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T01:28:23.939"
+              },
+              "format": "${receiver} <= ${account}::${action} console output: ${console}",
+              "data": {
+                "console": "",
+                "account": "keyusdtoken1",
+                "action": "transfer",
+                "receiver": "keyusdtoken1"
+              }
+            }
+          ]
+        },
+        "error_code": "10000000000000000000",
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 2,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "keyusersolar",
+        "act": {
+          "account": "keyusdtoken1",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "keyusersolar",
+            "to": "eosio.key",
+            "quantity": "1.0000 USD",
+            "memo": "PK2|PUB_K1_5kcojUx3YHuuLb3KCJd3r1Vit6pV4X5eeKduf5nEpPBuXynSHi|100000|f0ddfdbaffbda5be3e07ab5f1ea9d28e0938667f40ff1b4e2efefbabdab6f5bd"
+          },
+          "hex_data": "704da4f82aacbd820000f00a02ea3055102700000000000004555344000000008501504b327c5055425f4b315f356b636f6a557833594875754c62334b434a6433723156697436705634583565654b647566356e457050427558796e5348697c3130303030307c66306464666462616666626461356265336530376162356631656139643238653039333836363766343066663162346532656665666261626461623666356264"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+        "block_num": 323,
+        "block_time": "2026-11-04T01:28:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 3,
+        "creator_action_ordinal": 1,
+        "closest_unnotified_ancestor_action_ordinal": 1,
+        "receipt": null,
+        "receiver": "eosio.key",
+        "act": {
+          "account": "keyusdtoken1",
+          "name": "transfer",
+          "authorization": [{
+              "actor": "keyusersolar",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "keyusersolar",
+            "to": "eosio.key",
+            "quantity": "1.0000 USD",
+            "memo": "PK2|PUB_K1_5kcojUx3YHuuLb3KCJd3r1Vit6pV4X5eeKduf5nEpPBuXynSHi|100000|f0ddfdbaffbda5be3e07ab5f1ea9d28e0938667f40ff1b4e2efefbabdab6f5bd"
+          },
+          "hex_data": "704da4f82aacbd820000f00a02ea3055102700000000000004555344000000008501504b327c5055425f4b315f356b636f6a557833594875754c62334b434a6433723156697436705634583565654b647566356e457050427558796e5348697c3130303030307c66306464666462616666626461356265336530376162356631656139643238653039333836363766343066663162346532656665666261626461623666356264"
+        },
+        "context_free": false,
+        "elapsed": 0,
+        "console": "",
+        "trx_id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+        "block_num": 323,
+        "block_time": "2026-11-04T01:28:24.000",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      }
+    ],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3080004,
+      "name": "tx_cpu_usage_exceeded",
+      "message": "Transaction exceeded the current CPU usage limit imposed on the transaction",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "transaction_context.cpp",
+            "line": 603,
+            "method": "checktime",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T01:28:23.939"
+          },
+          "format": "transaction ${id} was executing for too long ${billing_timer}us reached on chain max_transaction_cpu_usage ${limit}us",
+          "data": {
+            "id": "947d941d2d6b04b9bf7bf381a20e7c6328e539aeb7464110f7358267dfb930d6",
+            "billing_timer": 439312,
+            "subjective": 0,
+            "limit": 150000
+          }
+        },{
+          "context": {
+            "level": "warn",
+            "file": "apply_context.cpp",
+            "line": 262,
+            "method": "exec_one",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T01:28:23.939"
+          },
+          "format": "${receiver} <= ${account}::${action} console output: ${console}",
+          "data": {
+            "console": "",
+            "account": "keyusdtoken1",
+            "action": "transfer",
+            "receiver": "keyusdtoken1"
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}
+
+RESULT FAIL
+Traceback (most recent call last):
+  File "/opt/pureeos-key-rate-20261104-r1/qualify_r4.py", line 35, in <module>
+    assert completed.returncode == 0 and result['status'] == 'PASS'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

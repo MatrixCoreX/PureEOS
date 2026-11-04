@@ -1,0 +1,868 @@
+{
+  "UTC": "2026-11-04T02:42:30.492138+00:00",
+  "reason": "Idle host available memory fell to136MiB before lean attempt; stopped own test instead of continuing without headroom. No chain/cap/server change.",
+  "mem": [
+    "MemAvailable:     130016 kB",
+    "SwapFree:             16 kB"
+  ],
+  "stopped": "pureeos-explorer-key-rate-lean-tests-20261104.service",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "head": 130047,
+  "LIB": 130037,
+  "head_time": "2026-11-04T02:42:30.000",
+  "wallet_hash": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+  "rotcands": [
+    {
+      "owner": "anthropiclab",
+      "rank": "340282366920497032844612603246427786352",
+      "previous_rank": "340282366920497032844612603246427786352",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 193,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "brazilamazon",
+      "rank": "340282366920734626890473372146778761520",
+      "previous_rank": "340282366920734626890473372146778761520",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 217,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "canadaboreal",
+      "rank": "340282366920556246857110948294149442832",
+      "previous_rank": "340282366920556246857110948294149442832",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 195,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cobaltspring",
+      "rank": "340282366920662131149892747960015103680",
+      "previous_rank": "340282366920662131149892747960015103680",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 216,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "coherevision",
+      "rank": "340282366920665636012823459811907840304",
+      "previous_rank": "340282366920665636012823459811907840304",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 215,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cosmicgarden",
+      "rank": "340282366920773549447214244811777922352",
+      "previous_rank": "340282366920773549447214244811777922352",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 214,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "rank": "340282366920690908015705775722251759264",
+      "previous_rank": "340282366920690908015705775722251759264",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 213,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "egyptpyramid",
+      "rank": "340282366920635383298220915196157009040",
+      "previous_rank": "340282366920635383298220915196157009040",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 212,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "finlandhaven",
+      "rank": "340282366920605868489862452079790314800",
+      "previous_rank": "340282366920605868489862452079790314800",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 211,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "francegarden",
+      "rank": "340282366920604392732044658609909028144",
+      "previous_rank": "340282366920604392732044658609909028144",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 210,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "germanycrest",
+      "rank": "340282366920938463452038804520277029264",
+      "previous_rank": "340282366920938463452038804520277029264",
+      "frozen_epoch": 0,
+      "seen_epoch": 181,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694131824,
+        1694144916,
+        1694145168
+      ],
+      "evidence_policies": [
+        163,
+        181,
+        181
+      ],
+      "ban_final_block": 125869
+    },
+    {
+      "owner": "glaciercrest",
+      "rank": "340282366920764325966738416426674729360",
+      "previous_rank": "340282366920764325966738416426674729360",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 208,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "rank": "340282366918440036434894763768350642000",
+      "previous_rank": "340282366918440036434894763768350642000",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 194,
+      "penalty_epoch": 1,
+      "zero_windows": 2,
+      "banned": 0,
+      "evidence_slots": [
+        1694149236,
+        1694149488,
+        0
+      ],
+      "evidence_policies": [
+        187,
+        187,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "italyharbors",
+      "rank": "340282366920498139432605247384252657536",
+      "previous_rank": "340282366920498139432605247384252657536",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 207,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "kenyasavanna",
+      "rank": "340282366920674490288393406193675331168",
+      "previous_rank": "340282366920674490288393406193675331168",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 206,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "lunarcompass",
+      "rank": "340282366920758976358668529860700909952",
+      "previous_rank": "340282366920758976358668529860700909952",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 205,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "maplecascade",
+      "rank": "340282366920570081681124485020262699680",
+      "previous_rank": "340282366920570081681124485020262699680",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 204,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "rank": "340282366920295594111006894712039486608",
+      "previous_rank": "340282366920295594111006894712039486608",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 196,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "moonlitgrove",
+      "rank": "340282366920653091992814367630044247712",
+      "previous_rank": "340282366920653091992814367630044247712",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 200,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "nebularlight",
+      "rank": "340282366920644053070160627300725627792",
+      "previous_rank": "340282366920644053070160627300725627792",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 199,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "silverstream",
+      "rank": "340282366920703082635709758683905428768",
+      "previous_rank": "340282366920703082635709758683905428768",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 201,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "stellarhaven",
+      "rank": "340282366920823908791139857540836676912",
+      "previous_rank": "340282366920823908791139857540836676912",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 202,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "velvetforest",
+      "rank": "340282366920857297380929807078164967824",
+      "previous_rank": "340282366920857297380929807078164967824",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 203,
+      "penalty_epoch": 1,
+      "zero_windows": 1,
+      "banned": 0,
+      "evidence_slots": [
+        1694148084,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        185,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "willowgarden",
+      "rank": "340282366920350196368545135404412196144",
+      "previous_rank": "340282366920350196368545135404412196144",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 197,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "xaineuralnet",
+      "rank": "340282366920375099455028585598108358032",
+      "previous_rank": "340282366920375099455028585598108358032",
+      "frozen_epoch": 0,
+      "seen_epoch": 189,
+      "ticket": 198,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    }
+  ],
+  "bpbonds": [
+    {
+      "owner": "anthropiclab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692191,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "brazilamazon",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692198,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "canadaboreal",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692204,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "cobaltspring",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692211,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "coherevision",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692219,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "cosmicgarden",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692227,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692234,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "egyptpyramid",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692242,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "finlandhaven",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692250,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "francegarden",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692257,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "germanycrest",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793692265,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 125869,
+      "ban_record_block": 125872
+    },
+    {
+      "owner": "glaciercrest",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692274,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692156,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "italyharbors",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692282,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "kenyasavanna",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692290,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "lunarcompass",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692298,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "maplecascade",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692306,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692314,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "moonlitgrove",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692323,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "nebularlight",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692331,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "silverstream",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692341,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "stellarhaven",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692349,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "velvetforest",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692359,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "willowgarden",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692368,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "xaineuralnet",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793692377,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    }
+  ]
+}

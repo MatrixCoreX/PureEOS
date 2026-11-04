@@ -1,0 +1,16 @@
+{
+  "status": "DEPLOYED",
+  "UTC": "2026-11-04T03:34:27.406310+00:00",
+  "release": "/var/www/aic-test/releases/20261104T033427Z-relay-rates",
+  "rollback": "/var/www/aic-test/releases/20261103T095548Z-fee-estimate",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "files": {
+    "index.html": "4f6a355f8b5b7f7fd0bf2fbacb4c1e4c71c0065e57e6d149325412a2c1bfed04",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-Bdv5t6jG.js": "db474c556b0f852d147226e1358062d294aa919b491c630ed16f1df6076aca28",
+    "assets/index-CVGOLGx9.css": "90fec0df5a1a6b65716376dc3764bbd7d79efcf995a61c53e0661b05df2fdd0a"
+  },
+  "scope": "Public-key account introduction, real fee-rate selector and formulas; four inactive comparison entries, sole founder HTTP"
+}

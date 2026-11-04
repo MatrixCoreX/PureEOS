@@ -1,0 +1,14 @@
+{
+  "lines": [
+    "Nov 04 01:05:06 pureeos-test45-20261102-ac0414 kernel: cc1plus invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=900",
+    "Nov 04 01:05:06 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=pureeos-key-rate-client-build-r2-20261104.service,mems_allowed=0,oom_memcg=/system.slice/pureeos-key-rate-client-build-r2-20261104.service,task_memcg=/system.slice/pureeos-key-rate-client-build-r2-20261104.service,task=cc1plus,pid=230500,uid=0",
+    "Nov 04 01:05:06 pureeos-test45-20261102-ac0414 kernel: Memory cgroup out of memory: Killed process 230500 (cc1plus) total-vm:1113544kB, anon-rss:916128kB, file-rss:2176kB, shmem-rss:0kB, UID:0 pgtables:2180kB oom_score_adj:900",
+    "Nov 04 02:37:14 pureeos-test45-20261102-ac0414 kernel: systemd invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0",
+    "Nov 04 02:37:46 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=init.scope,mems_allowed=0,global_oom,task_memcg=/system.slice/pureeos-key-rate-finish-20261104.service,task=python3,pid=248718,uid=0",
+    "Nov 04 02:37:46 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 248718 (python3) total-vm:30428kB, anon-rss:10496kB, file-rss:2688kB, shmem-rss:0kB, UID:0 pgtables:100kB oom_score_adj:900",
+    "Nov 04 02:37:46 pureeos-test45-20261102-ac0414 kernel: systemd invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0",
+    "Nov 04 02:37:46 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=init.scope,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-663cfecc112762a2a52f7e71b77040bef8887ce4fcc72b81c6ac5cce96ef9076.scope,task=java,pid=166452,uid=1000",
+    "Nov 04 02:37:46 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 166452 (java) total-vm:5090288kB, anon-rss:876268kB, file-rss:24kB, shmem-rss:0kB, UID:1000 pgtables:3624kB oom_score_adj:0"
+  ],
+  "scope": "Actual host evidence; no assertions about unproven causes"
+}

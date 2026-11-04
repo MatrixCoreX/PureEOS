@@ -1,0 +1,266 @@
+{
+  "UTC": "2026-11-04T03:07:29.612307+00:00",
+  "nodes": [
+    {
+      "unit": "pureeos-keynet2-bp-anthropiclab-20261103.service",
+      "port": 12001,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/anthropiclab/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-brazilamazon-20261103.service",
+      "port": 12002,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/brazilamazon/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-canadaboreal-20261103.service",
+      "port": 12003,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/canadaboreal/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-cobaltspring-20261103.service",
+      "port": 12004,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/cobaltspring/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-coherevision-20261103.service",
+      "port": 12005,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/coherevision/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-cosmicgarden-20261103.service",
+      "port": 12006,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/cosmicgarden/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-deepseekcore-20261103.service",
+      "port": 12007,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-egyptpyramid-20261103.service",
+      "port": 12008,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/egyptpyramid/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-finlandhaven-20261103.service",
+      "port": 12009,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/finlandhaven/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-francegarden-20261103.service",
+      "port": 12010,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/francegarden/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-germanycrest-20261103.service",
+      "port": 12011,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/germanycrest/config/config.ini",
+      "head": 112934,
+      "head_id": "0001b9264daa1b7c53aea9bc2e418835a37a300a74f81ebda82c76cad51b271d",
+      "LIB": 112919,
+      "LIB_id": "0001b917ff71c518956a74e87c3d64bfa5b7317993f36c27ba0dc0f9ad3b4a4b",
+      "head_time": "2026-11-04T00:05:17.500"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-glaciercrest-20261103.service",
+      "port": 12012,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/glaciercrest/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-italyharbors-20261103.service",
+      "port": 12013,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/italyharbors/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-kenyasavanna-20261103.service",
+      "port": 12014,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/kenyasavanna/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-lunarcompass-20261103.service",
+      "port": 12015,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/lunarcompass/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-maplecascade-20261103.service",
+      "port": 12016,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/maplecascade/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-mistralcloud-20261103.service",
+      "port": 12017,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/mistralcloud/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-moonlitgrove-20261103.service",
+      "port": 12018,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/moonlitgrove/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-nebularlight-20261103.service",
+      "port": 12019,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/nebularlight/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-silverstream-20261103.service",
+      "port": 12020,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/silverstream/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-stellarhaven-20261103.service",
+      "port": 12021,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/stellarhaven/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-velvetforest-20261103.service",
+      "port": 12022,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/velvetforest/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-willowgarden-20261103.service",
+      "port": 12023,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/willowgarden/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-xaineuralnet-20261103.service",
+      "port": 12024,
+      "config": "/opt/pureeos-keynet-20261103-r2/bps/xaineuralnet/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-founder-20261103.service",
+      "port": 8888,
+      "config": "/opt/pureeos-keynet-20261103-r2/founder/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    },
+    {
+      "unit": "pureeos-keynet2-history-20261103.service",
+      "port": 8890,
+      "config": "/opt/pureeos-keynet-20261103-r2/history/config/config.ini",
+      "head": 130495,
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB": 130491,
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+      "head_time": "2026-11-04T02:50:34.000"
+    }
+  ],
+  "one_LIB_identity": false
+}

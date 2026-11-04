@@ -1,0 +1,28 @@
+node:internal/modules/cjs/loader:1430
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module 'esbuild'
+Require stack:
+- /opt/pureeos-explorer-key-rate-20261104-r3/source/package.json
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at file:///opt/pureeos-key-rate-20261104-r1/integration-r2.mjs:7:53
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/opt/pureeos-explorer-key-rate-20261104-r3/source/package.json' ]
+}
+
+Node.js v22.23.4
+Traceback (most recent call last):
+  File "/opt/pureeos-key-rate-20261104-r1/preview-r2.py", line 6, in <module>
+    subprocess.run([node,str(K/'integration-r2.mjs')],env=env,check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/pureeos-keynet-20261103-r2/tools/node-current/bin/node', '/opt/pureeos-key-rate-20261104-r1/integration-r2.mjs']' returned non-zero exit status 1.

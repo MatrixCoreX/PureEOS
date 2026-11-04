@@ -1,0 +1,10 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run src/lib/key-fees.test.ts src/components/KeyFeeEstimate.test.tsx --config remote-vitest.config.ts --maxWorkers=1 --pool=threads --no-file-parallelism
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-explorer-key-rate-20261104-r3/source[39m
+

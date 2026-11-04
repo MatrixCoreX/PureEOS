@@ -1,0 +1,6 @@
+{
+  "UTC": "2026-11-04T01:08:20.329538+00:00",
+  "status": "NATIVE_CLI_REBUILD_CANCELLED_FOR_RESOURCE_PRESSURE",
+  "reason": "Only founder HTTP is requested; retain installed native cleos and its signed total cap. New SDK binds exact quote rates. Legacy rate ceiling remains30%, so lower operator rates remain backward compatible. No client binary deployed.",
+  "installed_client_unchanged": true
+}

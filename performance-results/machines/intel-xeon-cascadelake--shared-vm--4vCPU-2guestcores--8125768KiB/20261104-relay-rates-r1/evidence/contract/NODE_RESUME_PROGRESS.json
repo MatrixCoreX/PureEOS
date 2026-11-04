@@ -1,0 +1,33 @@
+{
+  "status": "NODE_SERVICES_STARTED",
+  "UTC": "2026-11-04T02:56:16.949444+00:00",
+  "units": [
+    "pureeos-keynet2-bp-anthropiclab-20261103.service",
+    "pureeos-keynet2-bp-brazilamazon-20261103.service",
+    "pureeos-keynet2-bp-canadaboreal-20261103.service",
+    "pureeos-keynet2-bp-cobaltspring-20261103.service",
+    "pureeos-keynet2-bp-coherevision-20261103.service",
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service",
+    "pureeos-keynet2-bp-deepseekcore-20261103.service",
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service",
+    "pureeos-keynet2-bp-finlandhaven-20261103.service",
+    "pureeos-keynet2-bp-francegarden-20261103.service",
+    "pureeos-keynet2-bp-germanycrest-20261103.service",
+    "pureeos-keynet2-bp-glaciercrest-20261103.service",
+    "pureeos-keynet2-bp-italyharbors-20261103.service",
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service",
+    "pureeos-keynet2-bp-lunarcompass-20261103.service",
+    "pureeos-keynet2-bp-maplecascade-20261103.service",
+    "pureeos-keynet2-bp-mistralcloud-20261103.service",
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service",
+    "pureeos-keynet2-bp-nebularlight-20261103.service",
+    "pureeos-keynet2-bp-silverstream-20261103.service",
+    "pureeos-keynet2-bp-stellarhaven-20261103.service",
+    "pureeos-keynet2-bp-velvetforest-20261103.service",
+    "pureeos-keynet2-bp-willowgarden-20261103.service",
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service",
+    "pureeos-keynet2-founder-20261103.service",
+    "pureeos-keynet2-history-20261103.service"
+  ],
+  "ordinary_activity_and_history_backends_still_paused": true
+}

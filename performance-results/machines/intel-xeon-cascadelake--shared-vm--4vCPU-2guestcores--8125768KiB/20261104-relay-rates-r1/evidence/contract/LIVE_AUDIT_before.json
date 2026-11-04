@@ -1,0 +1,2459 @@
+{
+  "status": "PASS",
+  "phase": "before",
+  "UTC": "2026-11-04T02:18:02.528180+00:00",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "head": 128368,
+  "LIB": 128363,
+  "stable": {
+    "nodehash": "0be5282d1d5a5eb72081e1d1374931d5e79cff139de728f8d230e29df50534e7",
+    "node_unit_hashes": {
+      "pureeos-keynet2-bp-anthropiclab-20261103.service": "e7738e585b79a94a2e1963e2099ddab886d9a69af1fc875ecec5f2659db2198d",
+      "pureeos-keynet2-bp-brazilamazon-20261103.service": "810adaa54b4b69f5decea8be8aea03652a472382b7e5e6605b3be60eb9b7d24d",
+      "pureeos-keynet2-bp-canadaboreal-20261103.service": "eefea00489c7b667fc5727ddc63241afbf81459668cd9c82da5519710467a05d",
+      "pureeos-keynet2-bp-cobaltspring-20261103.service": "25ced7c3e118e8a2dfdbc4aace713de359b7abbcd922af44879cc9da368a80a6",
+      "pureeos-keynet2-bp-coherevision-20261103.service": "bbf21b6a89b16716e8da3e916bd5144db90a102d11f57c686bee14828100b74f",
+      "pureeos-keynet2-bp-cosmicgarden-20261103.service": "f72e0c1c56250b93b9f1f99c3b79bad775cfe687892a61e5a3edaf78f51572fc",
+      "pureeos-keynet2-bp-deepseekcore-20261103.service": "2a0ce832fa76efadfcbe7fbf5547571afb5d8bbb898595ca02991bd21be9c547",
+      "pureeos-keynet2-bp-egyptpyramid-20261103.service": "f490141c8e0f1c6a85e98161799e11d571261aeef13fd108b06cc5bbbd93ea73",
+      "pureeos-keynet2-bp-finlandhaven-20261103.service": "8a12a4894e021e032114b9112422331be7285da8b835ac81a518c3529c0a424e",
+      "pureeos-keynet2-bp-francegarden-20261103.service": "9f48c6ca1d23b0932c903acdf41de95173d80c0891815eb75edc5626ab4fbce7",
+      "pureeos-keynet2-bp-germanycrest-20261103.service": "a1e9807f704f65ce7cca0693c83afb82e19f4b8d84cda6c3d917e0429441848d",
+      "pureeos-keynet2-bp-glaciercrest-20261103.service": "d50c7f78c89c7d5e38869b80eb56ff88b80bec18ca1f74d118ea68252a11111c",
+      "pureeos-keynet2-bp-italyharbors-20261103.service": "d918047b65f1ddb74fea7eca479fda216457f4e13fd75e5d5c7c62311dd72a4c",
+      "pureeos-keynet2-bp-kenyasavanna-20261103.service": "b5a97f1a0915f4599132ce1c946593307ce77474e11d8a174bda7d5b0ed6034c",
+      "pureeos-keynet2-bp-lunarcompass-20261103.service": "db2fc13d3b5e03475cea21c39bf6d8639ed96bb42cd84178f38773451142a173",
+      "pureeos-keynet2-bp-maplecascade-20261103.service": "ba2412d9e8ffb903efae60a4d2d9eca550b2ded037eaca8cc9e2e10268eaaa4b",
+      "pureeos-keynet2-bp-mistralcloud-20261103.service": "3765f84d0f23b913f95c48d8fce0d712498e83786c1ee4e0d7c2cba8c6ff0ce4",
+      "pureeos-keynet2-bp-moonlitgrove-20261103.service": "a1b470193188b2706692b2611ce0202c9a669515be39e024855b911b0eef80fd",
+      "pureeos-keynet2-bp-nebularlight-20261103.service": "afcf4b2907f3087aec56909a6d087a3217c71fcf5f53070dea5f86a995c3b7bb",
+      "pureeos-keynet2-bp-silverstream-20261103.service": "f374fc09b6d19de599b6dfb02d1d9be973f7922fc4c0e3fff79aeb50f3965ac1",
+      "pureeos-keynet2-bp-stellarhaven-20261103.service": "e8bbd91903e4f85f67d77eda18a9898b0b1ec2a485cd4eebcc971204e82637b7",
+      "pureeos-keynet2-bp-velvetforest-20261103.service": "1b8af6126f3f7fa688dc1818f8cf0647c9c099dd375003f5eee78dec9eacc0d2",
+      "pureeos-keynet2-bp-willowgarden-20261103.service": "50ad98c88add056da2f9a59bbe5af9f77a0b4b167fc378166d944aaca5c5660f",
+      "pureeos-keynet2-bp-xaineuralnet-20261103.service": "10aaeb78c46ccee1092a062fadb6c695a07dabdaa47b20109224ee24b01aca30",
+      "pureeos-keynet2-founder-20261103.service": "64b838aea49d89bb05e6cd4187c9e5cc7d81a49cd0cc214da27428358782d502",
+      "pureeos-keynet2-history-20261103.service": "2cf22f6e904eef7902d61cc6448ae759fe6291b32e3c4fb9c49d5ac7d317e7e1"
+    },
+    "producers": [
+      {
+        "owner": "anthropiclab",
+        "producer_key": "PUB_K1_8kfXwa7krE7p56Y1qDRUV4iT879uTkcB2Jmcoj7dZwkURq2wP1",
+        "is_active": 1,
+        "total_votes": 23930001
+      },
+      {
+        "owner": "brazilamazon",
+        "producer_key": "PUB_K1_8N8xx9TAJFUsfVWPwK5Ld17dYS1kZsmMRsDB2QzYkM7iudcnAj",
+        "is_active": 1,
+        "total_votes": 11050002
+      },
+      {
+        "owner": "canadaboreal",
+        "producer_key": "PUB_K1_5cBHfhog76qhdeZfpLjQDzb17hqWFqZiEudybJvyRRVF7Mo5dJ",
+        "is_active": 1,
+        "total_votes": 20720003
+      },
+      {
+        "owner": "cobaltspring",
+        "producer_key": "PUB_K1_8kMvg2anUawyvabZ9QHtgTktEXYxx9JFnv6KuGoPvF6p7FdHWE",
+        "is_active": 1,
+        "total_votes": 14980004
+      },
+      {
+        "owner": "coherevision",
+        "producer_key": "PUB_K1_7u2HkSUn8AWHXouv3AEX635e3HvjtpnvACoCdRYWAAkwdrFsfV",
+        "is_active": 1,
+        "total_votes": 14790005
+      },
+      {
+        "owner": "cosmicgarden",
+        "producer_key": "PUB_K1_7xpwjju5mtL59Qiog2fgFddb4oCJAvE9NE3bcz3ND8HuJhwfUz",
+        "is_active": 1,
+        "total_votes": 8940006
+      },
+      {
+        "owner": "deepseekcore",
+        "producer_key": "PUB_K1_84nNPtU2Z3ShKHbrHn5brEh3kuzaeeuj7bBbeCxNGbFkZZ41CL",
+        "is_active": 1,
+        "total_votes": 13420007
+      },
+      {
+        "owner": "egyptpyramid",
+        "producer_key": "PUB_K1_7P4V5MmgUBkFRZpor7oSsoMbKEacCzUeWUvwUdU6FD7yXt7Ljq",
+        "is_active": 1,
+        "total_votes": 16430008
+      },
+      {
+        "owner": "finlandhaven",
+        "producer_key": "PUB_K1_8Gpf1xdAdfZgs8jhontW4vU9RAoPJPX4dHMX54x2BSqK9dcuFY",
+        "is_active": 1,
+        "total_votes": 18030009
+      },
+      {
+        "owner": "francegarden",
+        "producer_key": "PUB_K1_544CsNvwVwh7uvHBPmzRp9PXyQfE9L1Quq4hHKKtwR3GtFDuPA",
+        "is_active": 1,
+        "total_votes": 18110010
+      },
+      {
+        "owner": "germanycrest",
+        "producer_key": "PUB_K1_5327jtS2KofevpRRyjiSPwmE2ztm1McyLhMg9nuzS1dwUy6vhX",
+        "is_active": 1,
+        "total_votes": 26430011
+      },
+      {
+        "owner": "glaciercrest",
+        "producer_key": "PUB_K1_5vwC5PeJimtmuCiouJBM2FZaP6EBkA1uV5Q7xS29dF4pkvVHP6",
+        "is_active": 1,
+        "total_votes": 9440012
+      },
+      {
+        "owner": "gptgenesisbp",
+        "producer_key": "PUB_K1_5PkGu74dadBcnNgsnDyWMWZ1HpwdLFqkgKwEEFnTsnyzwhbWL3",
+        "is_active": 1,
+        "total_votes": 135440000
+      },
+      {
+        "owner": "italyharbors",
+        "producer_key": "PUB_K1_81W8iUVFs2exXQM8cU3sWufoqhmgReHatwwJ9bFm1JnfcdpUpH",
+        "is_active": 1,
+        "total_votes": 23870013
+      },
+      {
+        "owner": "kenyasavanna",
+        "producer_key": "PUB_K1_6s2CwJoQjviFb61LDYPLC41fboAhzJeijZJB7dfeWhhY4rXzQW",
+        "is_active": 1,
+        "total_votes": 14310014
+      },
+      {
+        "owner": "lunarcompass",
+        "producer_key": "PUB_K1_5n9S6XbtmY14yYyzbD7BFrG9d6Rxx3GGuLzoxLJiaUW8QQ2EMZ",
+        "is_active": 1,
+        "total_votes": 9730015
+      },
+      {
+        "owner": "maplecascade",
+        "producer_key": "PUB_K1_7m6C43Yc1wyo7aBcjmRB3HRKinXhL1MLvKGB3qNfnAnzFku9KU",
+        "is_active": 1,
+        "total_votes": 19970016
+      },
+      {
+        "owner": "mistralcloud",
+        "producer_key": "PUB_K1_7A5Wjaw3X5sbMD462tQUVuJ5Mck7S6ACiX2LRTSKQGhP4qm8Es",
+        "is_active": 1,
+        "total_votes": 34850017
+      },
+      {
+        "owner": "moonlitgrove",
+        "producer_key": "PUB_K1_7fmSvhTevKcDfHAXNFVVPnPe4PJtZstzZpxp2yoHK1Y1tgNQm2",
+        "is_active": 1,
+        "total_votes": 15470018
+      },
+      {
+        "owner": "nebularlight",
+        "producer_key": "PUB_K1_6yc1UBcL2URDFDM4c9uL55gYETj7i2kcAXXME6yJDFxNscVEAo",
+        "is_active": 1,
+        "total_votes": 15960019
+      },
+      {
+        "owner": "silverstream",
+        "producer_key": "PUB_K1_6g5urzXVjkbBCdvK4qwPDamjyFX2sBDFFa6oKAmAPHJsJ3GGTN",
+        "is_active": 1,
+        "total_votes": 12760020
+      },
+      {
+        "owner": "stellarhaven",
+        "producer_key": "PUB_K1_83GHNYccYJZpGkpbS4WS9nsHf1K1JynSqH18FCii9v7a74NdeX",
+        "is_active": 1,
+        "total_votes": 6210021
+      },
+      {
+        "owner": "velvetforest",
+        "producer_key": "PUB_K1_8kAPkFGu4aH8VUS8Kbqikr7pPzggauhHYNJmjJrTvrKwPx4Tkk",
+        "is_active": 1,
+        "total_votes": 4400022
+      },
+      {
+        "owner": "willowgarden",
+        "producer_key": "PUB_K1_8JRYesB7dffyxR9HXnGA785P8WtrdUUJxJf31VpgzEUJBBnRJi",
+        "is_active": 1,
+        "total_votes": 31890023
+      },
+      {
+        "owner": "xaineuralnet",
+        "producer_key": "PUB_K1_73yaYagmanH25Gsei6ekgXJjkaJHwjr87cxDnK8wvTX1CET9FK",
+        "is_active": 1,
+        "total_votes": 30540024
+      }
+    ],
+    "voters": [
+      {
+        "owner": "anthropiclab",
+        "proxy": "",
+        "producers": [
+          "anthropiclab"
+        ],
+        "staked": 1100001,
+        "last_vote_amount": 1100001,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "arcaneflower",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 7450000,
+        "last_vote_amount": 7450000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "arcanemeadow",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 4130000,
+        "last_vote_amount": 4130000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "arcanewillow",
+        "proxy": "",
+        "producers": [
+          "egyptpyramid"
+        ],
+        "staked": 2370000,
+        "last_vote_amount": 2370000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "astralstream",
+        "proxy": "",
+        "producers": [
+          "nebularlight"
+        ],
+        "staked": 5160000,
+        "last_vote_amount": 5160000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "astralvalley",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 7940000,
+        "last_vote_amount": 7940000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "autumnbreeze",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 2270000,
+        "last_vote_amount": 2270000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "autumncomets",
+        "proxy": "",
+        "producers": [
+          "lunarcompass"
+        ],
+        "staked": 2890000,
+        "last_vote_amount": 2890000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "autumnfalcon",
+        "proxy": "",
+        "producers": [
+          "kenyasavanna"
+        ],
+        "staked": 1850000,
+        "last_vote_amount": 1850000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "autumnflower",
+        "proxy": "",
+        "producers": [
+          "germanycrest"
+        ],
+        "staked": 5210000,
+        "last_vote_amount": 5210000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "autumnforest",
+        "proxy": "",
+        "producers": [
+          "italyharbors"
+        ],
+        "staked": 3080000,
+        "last_vote_amount": 3080000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "autumnvalley",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 6410000,
+        "last_vote_amount": 6410000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "brazilamazon",
+        "proxy": "",
+        "producers": [
+          "brazilamazon"
+        ],
+        "staked": 1100002,
+        "last_vote_amount": 1100002,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "brightcanyon",
+        "proxy": "",
+        "producers": [
+          "stellarhaven"
+        ],
+        "staked": 3470000,
+        "last_vote_amount": 3470000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "brightcomets",
+        "proxy": "",
+        "producers": [
+          "francegarden"
+        ],
+        "staked": 6210000,
+        "last_vote_amount": 6210000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "brightgarden",
+        "proxy": "",
+        "producers": [
+          "kenyasavanna"
+        ],
+        "staked": 1240000,
+        "last_vote_amount": 1240000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "brightharbor",
+        "proxy": "",
+        "producers": [
+          "italyharbors"
+        ],
+        "staked": 4330000,
+        "last_vote_amount": 4330000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "canadaboreal",
+        "proxy": "",
+        "producers": [
+          "canadaboreal"
+        ],
+        "staked": 2200003,
+        "last_vote_amount": 2200003,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "civicbankers",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 110000000,
+        "last_vote_amount": 110000000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "civiccounter",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "civicgovlead",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "civicrenters",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "civicuserone",
+        "proxy": "",
+        "producers": [
+          "cobaltspring"
+        ],
+        "staked": 6320000,
+        "last_vote_amount": 6320000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "civicusertwo",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 8750000,
+        "last_vote_amount": 8750000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltaurora",
+        "proxy": "",
+        "producers": [
+          "coherevision"
+        ],
+        "staked": 8850000,
+        "last_vote_amount": 8850000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltbreeze",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 3590000,
+        "last_vote_amount": 3590000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltcanyon",
+        "proxy": "",
+        "producers": [
+          "kenyasavanna"
+        ],
+        "staked": 4730000,
+        "last_vote_amount": 4730000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltflower",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 9060000,
+        "last_vote_amount": 9060000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltforest",
+        "proxy": "",
+        "producers": [
+          "cosmicgarden"
+        ],
+        "staked": 4070000,
+        "last_vote_amount": 4070000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltgarden",
+        "proxy": "",
+        "producers": [
+          "canadaboreal"
+        ],
+        "staked": 8440000,
+        "last_vote_amount": 8440000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltmeadow",
+        "proxy": "",
+        "producers": [
+          "finlandhaven"
+        ],
+        "staked": 1100000,
+        "last_vote_amount": 1100000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltspring",
+        "proxy": "",
+        "producers": [
+          "cobaltspring"
+        ],
+        "staked": 1100004,
+        "last_vote_amount": 1100004,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltstream",
+        "proxy": "",
+        "producers": [
+          "glaciercrest"
+        ],
+        "staked": 5320000,
+        "last_vote_amount": 5320000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cobaltvalley",
+        "proxy": "",
+        "producers": [
+          "deepseekcore"
+        ],
+        "staked": 5210000,
+        "last_vote_amount": 5210000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "coherevision",
+        "proxy": "",
+        "producers": [
+          "coherevision"
+        ],
+        "staked": 1100005,
+        "last_vote_amount": 1100005,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicaurora",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 7480000,
+        "last_vote_amount": 7480000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicbreeze",
+        "proxy": "",
+        "producers": [
+          "brazilamazon"
+        ],
+        "staked": 3550000,
+        "last_vote_amount": 3550000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmiccomets",
+        "proxy": "",
+        "producers": [
+          "anthropiclab"
+        ],
+        "staked": 4890000,
+        "last_vote_amount": 4890000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicfalcon",
+        "proxy": "",
+        "producers": [
+          "finlandhaven"
+        ],
+        "staked": 4860000,
+        "last_vote_amount": 4860000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicflower",
+        "proxy": "",
+        "producers": [
+          "stellarhaven"
+        ],
+        "staked": 1640000,
+        "last_vote_amount": 1640000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicgarden",
+        "proxy": "",
+        "producers": [
+          "cosmicgarden"
+        ],
+        "staked": 1100006,
+        "last_vote_amount": 1100006,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicmeadow",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 2540000,
+        "last_vote_amount": 2540000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "cosmicwillow",
+        "proxy": "",
+        "producers": [
+          "nebularlight"
+        ],
+        "staked": 4330000,
+        "last_vote_amount": 4330000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "deepseekcore",
+        "proxy": "",
+        "producers": [
+          "deepseekcore"
+        ],
+        "staked": 1100007,
+        "last_vote_amount": 1100007,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "egyptpyramid",
+        "proxy": "",
+        "producers": [
+          "egyptpyramid"
+        ],
+        "staked": 1100008,
+        "last_vote_amount": 1100008,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "eosio.key",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "finlandhaven",
+        "proxy": "",
+        "producers": [
+          "finlandhaven"
+        ],
+        "staked": 1100009,
+        "last_vote_amount": 1100009,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "francegarden",
+        "proxy": "",
+        "producers": [
+          "francegarden"
+        ],
+        "staked": 1100010,
+        "last_vote_amount": 1100010,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "frozenaurora",
+        "proxy": "",
+        "producers": [
+          "kenyasavanna"
+        ],
+        "staked": 5390000,
+        "last_vote_amount": 5390000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "frozenbreeze",
+        "proxy": "",
+        "producers": [
+          "canadaboreal"
+        ],
+        "staked": 6700000,
+        "last_vote_amount": 6700000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "frozencanyon",
+        "proxy": "",
+        "producers": [
+          "velvetforest"
+        ],
+        "staked": 3300000,
+        "last_vote_amount": 3300000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "frozencomets",
+        "proxy": "",
+        "producers": [
+          "cobaltspring"
+        ],
+        "staked": 7560000,
+        "last_vote_amount": 7560000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "frozenstream",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 4750000,
+        "last_vote_amount": 4750000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "gentleaurora",
+        "proxy": "",
+        "producers": [
+          "italyharbors"
+        ],
+        "staked": 5430000,
+        "last_vote_amount": 5430000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "gentlegarden",
+        "proxy": "",
+        "producers": [
+          "francegarden"
+        ],
+        "staked": 1880000,
+        "last_vote_amount": 1880000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "gentlemeadow",
+        "proxy": "",
+        "producers": [
+          "deepseekcore"
+        ],
+        "staked": 7110000,
+        "last_vote_amount": 7110000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "gentlestream",
+        "proxy": "",
+        "producers": [
+          "germanycrest"
+        ],
+        "staked": 8090000,
+        "last_vote_amount": 8090000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "gentlevalley",
+        "proxy": "",
+        "producers": [
+          "moonlitgrove"
+        ],
+        "staked": 3700000,
+        "last_vote_amount": 3700000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "germanycrest",
+        "proxy": "",
+        "producers": [
+          "germanycrest"
+        ],
+        "staked": 1100011,
+        "last_vote_amount": 1100011,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "glaciercrest",
+        "proxy": "",
+        "producers": [
+          "glaciercrest"
+        ],
+        "staked": 1100012,
+        "last_vote_amount": 1100012,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "goldenbreeze",
+        "proxy": "",
+        "producers": [
+          "brazilamazon"
+        ],
+        "staked": 3320000,
+        "last_vote_amount": 3320000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "goldencanyon",
+        "proxy": "",
+        "producers": [
+          "silverstream"
+        ],
+        "staked": 3480000,
+        "last_vote_amount": 3480000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "goldengarden",
+        "proxy": "",
+        "producers": [
+          "italyharbors"
+        ],
+        "staked": 6820000,
+        "last_vote_amount": 6820000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "goldenvalley",
+        "proxy": "",
+        "producers": [
+          "moonlitgrove"
+        ],
+        "staked": 4960000,
+        "last_vote_amount": 4960000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "goldenwillow",
+        "proxy": "",
+        "producers": [
+          "lunarcompass"
+        ],
+        "staked": 2620000,
+        "last_vote_amount": 2620000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "gptgenesisbp",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 1100000,
+        "last_vote_amount": 1100000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "italyharbors",
+        "proxy": "",
+        "producers": [
+          "italyharbors"
+        ],
+        "staked": 1100013,
+        "last_vote_amount": 1100013,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "kenyasavanna",
+        "proxy": "",
+        "producers": [
+          "kenyasavanna"
+        ],
+        "staked": 1100014,
+        "last_vote_amount": 1100014,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "keymapleseed",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "keyriverbank",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "keystarlight",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "keyusdtoken1",
+        "proxy": "",
+        "producers": [],
+        "staked": 1100000,
+        "last_vote_amount": 0,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "lunarcompass",
+        "proxy": "",
+        "producers": [
+          "lunarcompass"
+        ],
+        "staked": 1100015,
+        "last_vote_amount": 1100015,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "maplecascade",
+        "proxy": "",
+        "producers": [
+          "maplecascade"
+        ],
+        "staked": 1100016,
+        "last_vote_amount": 1100016,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "mellowcomets",
+        "proxy": "",
+        "producers": [
+          "maplecascade"
+        ],
+        "staked": 2660000,
+        "last_vote_amount": 2660000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "mellowflower",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 6000000,
+        "last_vote_amount": 6000000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "mellowmeadow",
+        "proxy": "",
+        "producers": [
+          "francegarden"
+        ],
+        "staked": 4530000,
+        "last_vote_amount": 4530000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "mellowwillow",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 1790000,
+        "last_vote_amount": 1790000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "mistralcloud",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 1100017,
+        "last_vote_amount": 1100017,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "moonlitgrove",
+        "proxy": "",
+        "producers": [
+          "moonlitgrove"
+        ],
+        "staked": 1100018,
+        "last_vote_amount": 1100018,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "nebularlight",
+        "proxy": "",
+        "producers": [
+          "nebularlight"
+        ],
+        "staked": 1100019,
+        "last_vote_amount": 1100019,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "purpleaurora",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 5670000,
+        "last_vote_amount": 5670000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "purplebreeze",
+        "proxy": "",
+        "producers": [
+          "maplecascade"
+        ],
+        "staked": 2860000,
+        "last_vote_amount": 2860000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "purplecanyon",
+        "proxy": "",
+        "producers": [
+          "lunarcompass"
+        ],
+        "staked": 3120000,
+        "last_vote_amount": 3120000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "purplevalley",
+        "proxy": "",
+        "producers": [
+          "anthropiclab"
+        ],
+        "staked": 6220000,
+        "last_vote_amount": 6220000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "purplewillow",
+        "proxy": "",
+        "producers": [
+          "finlandhaven"
+        ],
+        "staked": 4650000,
+        "last_vote_amount": 4650000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "serenecanyon",
+        "proxy": "",
+        "producers": [
+          "egyptpyramid"
+        ],
+        "staked": 8970000,
+        "last_vote_amount": 8970000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "serenefalcon",
+        "proxy": "",
+        "producers": [
+          "maplecascade"
+        ],
+        "staked": 5430000,
+        "last_vote_amount": 5430000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "sereneflower",
+        "proxy": "",
+        "producers": [
+          "egyptpyramid"
+        ],
+        "staked": 3990000,
+        "last_vote_amount": 3990000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "serenestream",
+        "proxy": "",
+        "producers": [
+          "moonlitgrove"
+        ],
+        "staked": 3160000,
+        "last_vote_amount": 3160000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "serenewillow",
+        "proxy": "",
+        "producers": [
+          "italyharbors"
+        ],
+        "staked": 3110000,
+        "last_vote_amount": 3110000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silentcanyon",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 7600000,
+        "last_vote_amount": 7600000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silentcomets",
+        "proxy": "",
+        "producers": [
+          "moonlitgrove"
+        ],
+        "staked": 2550000,
+        "last_vote_amount": 2550000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silentflower",
+        "proxy": "",
+        "producers": [
+          "mistralcloud"
+        ],
+        "staked": 2360000,
+        "last_vote_amount": 2360000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silentharbor",
+        "proxy": "",
+        "producers": [
+          "glaciercrest"
+        ],
+        "staked": 3020000,
+        "last_vote_amount": 3020000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silentvalley",
+        "proxy": "",
+        "producers": [
+          "anthropiclab"
+        ],
+        "staked": 4650000,
+        "last_vote_amount": 4650000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silveraurora",
+        "proxy": "",
+        "producers": [
+          "germanycrest"
+        ],
+        "staked": 8000000,
+        "last_vote_amount": 8000000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silvercomets",
+        "proxy": "",
+        "producers": [
+          "nebularlight"
+        ],
+        "staked": 5370000,
+        "last_vote_amount": 5370000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silverfalcon",
+        "proxy": "",
+        "producers": [
+          "germanycrest"
+        ],
+        "staked": 2480000,
+        "last_vote_amount": 2480000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silvermeadow",
+        "proxy": "",
+        "producers": [
+          "francegarden"
+        ],
+        "staked": 4390000,
+        "last_vote_amount": 4390000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silverstream",
+        "proxy": "",
+        "producers": [
+          "silverstream"
+        ],
+        "staked": 1100020,
+        "last_vote_amount": 1100020,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silvervalley",
+        "proxy": "",
+        "producers": [
+          "cosmicgarden"
+        ],
+        "staked": 1750000,
+        "last_vote_amount": 1750000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "silverwillow",
+        "proxy": "",
+        "producers": [
+          "coherevision"
+        ],
+        "staked": 4840000,
+        "last_vote_amount": 4840000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "springbreeze",
+        "proxy": "",
+        "producers": [
+          "germanycrest"
+        ],
+        "staked": 1550000,
+        "last_vote_amount": 1550000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "springcomets",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 4660000,
+        "last_vote_amount": 4660000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "springgarden",
+        "proxy": "",
+        "producers": [
+          "gptgenesisbp"
+        ],
+        "staked": 4060000,
+        "last_vote_amount": 4060000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "stellarhaven",
+        "proxy": "",
+        "producers": [
+          "stellarhaven"
+        ],
+        "staked": 1100021,
+        "last_vote_amount": 1100021,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "summercanyon",
+        "proxy": "",
+        "producers": [
+          "maplecascade"
+        ],
+        "staked": 3230000,
+        "last_vote_amount": 3230000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "summergarden",
+        "proxy": "",
+        "producers": [
+          "cosmicgarden"
+        ],
+        "staked": 2020000,
+        "last_vote_amount": 2020000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "sunlitcanyon",
+        "proxy": "",
+        "producers": [
+          "anthropiclab"
+        ],
+        "staked": 5710000,
+        "last_vote_amount": 5710000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "sunlitcomets",
+        "proxy": "",
+        "producers": [
+          "brazilamazon"
+        ],
+        "staked": 3080000,
+        "last_vote_amount": 3080000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "sunlitfalcon",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 8780000,
+        "last_vote_amount": 8780000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "sunlitflower",
+        "proxy": "",
+        "producers": [
+          "anthropiclab"
+        ],
+        "staked": 1360000,
+        "last_vote_amount": 1360000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "sunlitgarden",
+        "proxy": "",
+        "producers": [
+          "maplecascade"
+        ],
+        "staked": 4690000,
+        "last_vote_amount": 4690000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "velvetbreeze",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 1490000,
+        "last_vote_amount": 1490000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "velvetcanyon",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 1670000,
+        "last_vote_amount": 1670000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "velvetforest",
+        "proxy": "",
+        "producers": [
+          "velvetforest"
+        ],
+        "staked": 1100022,
+        "last_vote_amount": 1100022,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "velvetgarden",
+        "proxy": "",
+        "producers": [
+          "canadaboreal"
+        ],
+        "staked": 3380000,
+        "last_vote_amount": 3380000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "velvetwillow",
+        "proxy": "",
+        "producers": [
+          "silverstream"
+        ],
+        "staked": 8180000,
+        "last_vote_amount": 8180000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "willowgarden",
+        "proxy": "",
+        "producers": [
+          "willowgarden"
+        ],
+        "staked": 1100023,
+        "last_vote_amount": 1100023,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "wintercomets",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 6200000,
+        "last_vote_amount": 6200000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "winterflower",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 3670000,
+        "last_vote_amount": 3670000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "winterharbor",
+        "proxy": "",
+        "producers": [
+          "finlandhaven"
+        ],
+        "staked": 6320000,
+        "last_vote_amount": 6320000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      {
+        "owner": "xaineuralnet",
+        "proxy": "",
+        "producers": [
+          "xaineuralnet"
+        ],
+        "staked": 1100024,
+        "last_vote_amount": 1100024,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      }
+    ],
+    "bonds": [
+      {
+        "owner": "anthropiclab",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692191,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "brazilamazon",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692198,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "canadaboreal",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692204,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "cobaltspring",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692211,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "coherevision",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692219,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "cosmicgarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692227,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "deepseekcore",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692234,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "egyptpyramid",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692242,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "finlandhaven",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692250,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "francegarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692257,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "germanycrest",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793692265,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 125869,
+        "ban_record_block": 125872
+      },
+      {
+        "owner": "glaciercrest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692274,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "gptgenesisbp",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692156,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "italyharbors",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692282,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "kenyasavanna",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692290,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "lunarcompass",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692298,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "maplecascade",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692306,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "mistralcloud",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692314,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "moonlitgrove",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692323,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "nebularlight",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692331,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "silverstream",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692341,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "stellarhaven",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692349,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "velvetforest",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692359,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "willowgarden",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692368,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      {
+        "owner": "xaineuralnet",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793692377,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      }
+    ],
+    "permissions": {
+      "canadaboreal": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6Pzv8JDGN31VSCHmKZqNw6L8qEbUb6CadzwAdqWg5xFnSsa52C",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6Pzv8JDGN31VSCHmKZqNw6L8qEbUb6CadzwAdqWg5xFnSsa52C",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "cosmicgarden": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6UMEQhjRcpeXfdJVT7MdwW1ho9nrAUG61CC1jQo9fbLEiQMdMD",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6UMEQhjRcpeXfdJVT7MdwW1ho9nrAUG61CC1jQo9fbLEiQMdMD",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "deepseekcore": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7TAeu7Wn78AwibLrfgAwmW5mKyguP6ue8mFNi9mH7SUhChUFBA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7TAeu7Wn78AwibLrfgAwmW5mKyguP6ue8mFNi9mH7SUhChUFBA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "finlandhaven": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7Pie9bUEHd5tK9nMgGZcRGosnQKEQpG4uiNqXn91eQg5NHJAgA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7Pie9bUEHd5tK9nMgGZcRGosnQKEQpG4uiNqXn91eQg5NHJAgA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "gptgenesisbp": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8cCM3fU3SQ9K5gKgNFEGhAcswSnpyNsgxY9K5gc3mRstYyvYDc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "keyrelay",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5dSKo6nHL8AgiS9btNpSgr3DZ7n3Dha2uE4jkAMQJbbYK1qj9u",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio.key",
+              "action": "ksend"
+            },
+            {
+              "account": "eosio.key",
+              "action": "withdraw"
+            },
+            {
+              "account": "eosio.key",
+              "action": "cancel"
+            }
+          ]
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8cCM3fU3SQ9K5gKgNFEGhAcswSnpyNsgxY9K5gc3mRstYyvYDc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "system_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "token_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "permanent_bans": [
+      "germanycrest"
+    ]
+  },
+  "node_count": 26,
+  "business_units": [
+    "pureeos-keynet2-activity-wallet-20261103.service",
+    "pureeos-keynet2-ordinary-activity-20261103.service"
+  ],
+  "node_pids": {
+    "pureeos-keynet2-bp-anthropiclab-20261103.service": 160559,
+    "pureeos-keynet2-bp-brazilamazon-20261103.service": 160698,
+    "pureeos-keynet2-bp-canadaboreal-20261103.service": 160901,
+    "pureeos-keynet2-bp-cobaltspring-20261103.service": 161048,
+    "pureeos-keynet2-bp-coherevision-20261103.service": 161186,
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service": 161322,
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": 161457,
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service": 161593,
+    "pureeos-keynet2-bp-finlandhaven-20261103.service": 161732,
+    "pureeos-keynet2-bp-francegarden-20261103.service": 161867,
+    "pureeos-keynet2-bp-germanycrest-20261103.service": 162005,
+    "pureeos-keynet2-bp-glaciercrest-20261103.service": 162143,
+    "pureeos-keynet2-bp-italyharbors-20261103.service": 162278,
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service": 162414,
+    "pureeos-keynet2-bp-lunarcompass-20261103.service": 162551,
+    "pureeos-keynet2-bp-maplecascade-20261103.service": 162686,
+    "pureeos-keynet2-bp-mistralcloud-20261103.service": 162823,
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service": 162958,
+    "pureeos-keynet2-bp-nebularlight-20261103.service": 163096,
+    "pureeos-keynet2-bp-silverstream-20261103.service": 163233,
+    "pureeos-keynet2-bp-stellarhaven-20261103.service": 163370,
+    "pureeos-keynet2-bp-velvetforest-20261103.service": 163507,
+    "pureeos-keynet2-bp-willowgarden-20261103.service": 163646,
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service": 163783,
+    "pureeos-keynet2-founder-20261103.service": 160254,
+    "pureeos-keynet2-history-20261103.service": 160389
+  },
+  "wallet_hash": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+  "registered_count": 25,
+  "eligible_count": 24,
+  "ban_discovery": "GERMANYCREST_AUTO_BAN_DISCOVERY.json",
+  "resource_scope": "Functional checks only; no capacity/TPS claim"
+}

@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "kind": "sdk-exact-rate",
+      "status": "PASS",
+      "transaction_id": "c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf",
+      "confirmation": {
+        "block_num": 132124,
+        "block_id": "0002041c2f0aba0f574b57cf0d2ccfacc29dc4dc54db85c2291b5cb625d9878f",
+        "observed_lib": 132135
+      },
+      "base_atoms": "104",
+      "service_atoms": "32",
+      "total_atoms": "136",
+      "rate_bps": 3000,
+      "principal": "0.0001 AIC",
+      "same_packet_retry": true,
+      "only_founder_used": true
+    },
+    {
+      "kind": "installed-cleos-legacy",
+      "status": "PASS",
+      "transaction_id": "e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42",
+      "confirmation": {
+        "block_num": 132822,
+        "block_id": "000206d6cdbfc0f895c6264052cebf470b5af278a2ec0a4f75bb6efed85244c3",
+        "observed_lib": 132830
+      },
+      "base_atoms": "100",
+      "service_atoms": "30",
+      "total_atoms": "130",
+      "rate_bps": 3000,
+      "principal": "0.0001 USD",
+      "same_packet_retry": true,
+      "only_founder_used": true
+    }
+  ],
+  "history": [
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "transaction_id": "c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf",
+      "id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf:3:81a6574b57740f6d7da3f03a5a7c19b8dacb3301025feaba09df4a31e28c3054",
+      "block_id": "0002041c2f0aba0f574b57cf0d2ccfacc29dc4dc54db85c2291b5cb625d9878f"
+    },
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "transaction_id": "e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42",
+      "id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42:3:81a6574b57740f6d7da3f03a5a7c19b8dacb3301025feaba09df4a31e28c3054",
+      "block_id": "000206d6cdbfc0f895c6264052cebf470b5af278a2ec0a4f75bb6efed85244c3"
+    },
+    {
+      "public_key": "PUB_K1_6fiCBErzSTXToVKZAEpZWHT62NcCDTfTPUGFF2fFarHG7NGhjP",
+      "transaction_id": "c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf",
+      "id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf:3:633301e790d4cadb3e2d924677153640a73db7354d04d593ee31354c20b289f1",
+      "block_id": "0002041c2f0aba0f574b57cf0d2ccfacc29dc4dc54db85c2291b5cb625d9878f"
+    },
+    {
+      "public_key": "PUB_K1_6fiCBErzSTXToVKZAEpZWHT62NcCDTfTPUGFF2fFarHG7NGhjP",
+      "transaction_id": "e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42",
+      "id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42:3:633301e790d4cadb3e2d924677153640a73db7354d04d593ee31354c20b289f1",
+      "block_id": "000206d6cdbfc0f895c6264052cebf470b5af278a2ec0a4f75bb6efed85244c3"
+    }
+  ],
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "new_relay_endpoints_used": 0,
+  "UTC": "2026-11-04T03:48:23.909Z"
+}

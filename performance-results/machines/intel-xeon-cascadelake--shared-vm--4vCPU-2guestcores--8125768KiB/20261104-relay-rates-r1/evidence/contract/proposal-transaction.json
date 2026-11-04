@@ -1,0 +1,33 @@
+{
+  "actions": [
+    {
+      "account": "eosio",
+      "name": "refreshgov",
+      "authorization": [
+        {
+          "actor": "civicgovlead",
+          "permission": "upgrade"
+        }
+      ],
+      "data": {}
+    },
+    {
+      "account": "eosio",
+      "name": "devpropose",
+      "authorization": [
+        {
+          "actor": "civicgovlead",
+          "permission": "upgrade"
+        }
+      ],
+      "data": {
+        "target": "eosio.key",
+        "old_code_hash": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+        "old_abi_hash": "dde7b5e7d693787ceffbe1fea3c4a1b7f19e5a7abd1d9e96afcc9a36a2b31c7b",
+        "new_code_hash": "1933629daab4d8fe3b64bfe0528b7d64b85dff97011b71301ba4122f590cf0f5",
+        "new_abi_hash": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+        "review_document_hash": "3e390614707218dee5f7c0fc8ae2aa4dfc008d20c9d2ac6002c55489faedb1b2"
+      }
+    }
+  ]
+}

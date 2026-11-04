@@ -1,0 +1,29 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run src/lib/key-fees.test.ts src/components/KeyFeeEstimate.test.tsx --config remote-vitest.config.ts --maxWorkers=1
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-explorer-key-rate-20261104-r3/source[39m
+
+ [32m✓[39m src/components/KeyFeeEstimate.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 3660[2mms[22m[39m
+   [33m[2m✓[22m[39m shows dynamic CPU/NET reference data and recalculates storage scenarios without new RPC calls[33m 1058[2mms[22m[39m
+   [33m[2m✓[22m[39m renders unavailable resources without presenting a zero fee[33m 783[2mms[22m[39m
+   [33m[2m✓[22m[39m honors the overview pause and provides complete English pricing labels[33m 781[2mms[22m[39m
+   [33m[2m✓[22m[39m defaults to the active relay and compares inactive registrations without suggesting a live service[33m 1037[2mms[22m[39m
+ [32m✓[39m src/lib/key-fees.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 272[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 02:37:49
+[2m   Duration [22m 19.00s[2m (environment 27%, tests 24%, setup 18%, transform 17%, import 13%)[22m
+
+[2m    Isolate [22m [33m2 workers spawned[39m[2m · ~3.43s startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~3.43s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+
+
+> pureeos-explorer@1.0.0 build
+> tsc -b && vite build
+

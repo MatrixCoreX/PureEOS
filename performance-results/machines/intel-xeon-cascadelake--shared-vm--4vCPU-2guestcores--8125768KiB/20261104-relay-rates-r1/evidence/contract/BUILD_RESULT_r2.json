@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "source_archive_SHA256": "ac504b6c271dadeb28f50725c49f53b77d8a1b86787c6b8b2b042eaaa30bd766",
+  "reason": "Canonical omitted-extension serialization; original failed r1 preserved",
+  "files": {
+    "source-r2/src/eosio.key.cpp": "22d5c4e6469a1fad15f376d0992d6d0f50179eca97b3c81a6457356872867cfd",
+    "source-r2/include/eosio.key.hpp": "777166beb0af9018f1e71e1134f8ed6b944a1ffcfe54b1ec9e17449a2dbe6fa3",
+    "artifacts-r2/eosio.key.wasm": "c807607be6f586be473a9179bd9198411381122d640f7c246a60e360bec180a1",
+    "artifacts-r2/test-only-token/keybadtokenx.wasm": "8e656c4909be879b0e94b83867a3385b127b8b550585c4093d4c828d1187efdf",
+    "artifacts-r2/test-only-recipient/keyramattack.wasm": "6a86113be25e9982245549b3dd8ad163fc2ae271dab25dee254e6e83bb5cb96a",
+    "artifacts-r2/test-only-system/keysysmockup.wasm": "069cdcc856c0eb716af7c1b16f30c558ed3d6a48f63822cb4439e656f46413ed",
+    "artifacts-r2/eosio.key.abi": "fe3d3d7a5ff56c82e3a18c2153a2d3ced15c520eaea3e6a2ad90015dd5009fba",
+    "artifacts-r2/test-only-token/keybadtokenx.abi": "c8860fa45cfe56836412e730e9a7bbb8a0402760bbddb4c707328f948c8762a6",
+    "artifacts-r2/test-only-recipient/keyramattack.abi": "4944d4d383067446640618b42eb091d3e3052adfe8ecfd8dd09b796fc1384c34",
+    "artifacts-r2/test-only-system/keysysmockup.abi": "d74dbf0517bdc95e998d8776ef9ab62350bbf029beb7b91e45769cbc65d4ff44"
+  }
+}

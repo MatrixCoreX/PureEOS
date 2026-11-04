@@ -1,0 +1,68 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run --config remote-vitest.config.ts --maxWorkers=1
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-explorer-key-rate-20261104-r3/source[39m
+
+ [32m✓[39m src/App.test.tsx [2m([22m[2m49 tests[22m[2m)[22m[33m 5426[2mms[22m[39m
+   [32m✓[39m explorer workflows in a DOM test environment [2m(49)[22m
+     [33m[2m✓[22m[39m opens with live default data despite retired settings and offers no required setup[33m 320[2mms[22m[39m
+     [33m[2m✓[22m[39m shows all 500 ranked accounts below the account search and links each account[33m 417[2mms[22m[39m
+ [32m✓[39m src/Queries.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1503[2mms[22m[39m
+   [32m✓[39m read-only query workflows [2m(7)[22m
+     [33m[2m✓[22m[39m applies advanced history filters and preserves entered fields when switching language[33m 600[2mms[22m[39m
+ [32m✓[39m src/components/ActiveProducers.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 804[2mms[22m[39m
+   [32m✓[39m overview on-duty roster and global BP totals [2m(3)[22m
+     [33m[2m✓[22m[39m shows eligible BP totals excluding banned accounts independently from active membership, preserving markers and language[33m 365[2mms[22m[39m
+ [32m✓[39m src/components/PublicKeyHistory.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 354[2mms[22m[39m
+ [32m✓[39m src/components/KeyFeeEstimate.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 275[2mms[22m[39m
+ [32m✓[39m src/components/ProducerBlacklist.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 177[2mms[22m[39m
+ [32m✓[39m src/lib/language.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[32m 194[2mms[22m[39m
+ [32m✓[39m src/components/ProducerBond.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 144[2mms[22m[39m
+ [32m✓[39m src/components/PublicKeyWallet.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 83[2mms[22m[39m
+ [32m✓[39m src/lib/state.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 190[2mms[22m[39m
+ [32m✓[39m src/lib/api.test.ts [2m([22m[2m45 tests[22m[2m)[22m[32m 145[2mms[22m[39m
+ [32m✓[39m src/lib/key-fees.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m src/lib/queries.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 120[2mms[22m[39m
+ [32m✓[39m src/lib/producers.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m src/lib/bonds.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/lib/i18n.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/producer-votes.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/lib/holders.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/lib/rotation-history.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/lib/key-wallet.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m src/lib/peak-tps.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/lib/key-history.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m22 passed[39m[22m[90m (22)[39m
+[2m      Tests [22m [1m[32m237 passed[39m[22m[90m (237)[39m
+[2m   Start at [22m 02:54:19
+[2m   Duration [22m 23.42s[2m (tests 48%, environment 26%, import 14%, setup 9%, transform 2%, worker 1%)[22m
+
+[2m    Isolate [22m [33m22 workers spawned[39m[2m · ~377ms startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~7.92s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+
+
+> pureeos-explorer@1.0.0 build
+> tsc -b && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2026 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.79 kB │ gzip:   0.50 kB
+dist/assets/index-CVGOLGx9.css   54.96 kB │ gzip:  10.86 kB
+dist/assets/index-Bdv5t6jG.js   685.78 kB │ gzip: 211.38 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 603ms
+FINAL FULL FRONTEND BUILD PASS

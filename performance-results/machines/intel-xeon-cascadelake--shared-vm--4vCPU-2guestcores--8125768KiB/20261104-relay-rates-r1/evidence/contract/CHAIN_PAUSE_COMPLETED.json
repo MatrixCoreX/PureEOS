@@ -1,0 +1,155 @@
+{
+  "UTC": "2026-11-04T02:53:27.208590+00:00",
+  "authorization": "User permits whole-chain/history pause and agent judgment",
+  "nodes": {
+    "pureeos-keynet2-bp-anthropiclab-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-brazilamazon-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-canadaboreal-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-cobaltspring-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-coherevision-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-finlandhaven-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-francegarden-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-germanycrest-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-glaciercrest-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-italyharbors-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-lunarcompass-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-maplecascade-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-mistralcloud-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-nebularlight-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-silverstream-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-stellarhaven-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-velvetforest-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-willowgarden-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-founder-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n",
+    "pureeos-keynet2-history-20261103.service": "MainPID=0\nResult=success\nNRestarts=0\nExecMainStatus=0\nActiveState=inactive\n"
+  },
+  "containers": {
+    "pureeos-keynet2-history-rabbitmq": {
+      "id": "250d71f0dbbc52ee0a706e630cf5aecfd29758cef5c551133c7f4002ff3707b7",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 165747,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-11-03T07:54:39.886867537Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "restart_count": 0,
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    "pureeos-keynet2-history-redis": {
+      "id": "17b7768db51a2fb8c3ef905519307b6dac9a0cc82dbb94d01be0cedf354f8e79",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 165756,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-11-03T07:54:39.885826332Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "restart_count": 0,
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    "pureeos-keynet2-history-mongo": {
+      "id": "6316750f0512a76ca2143fea3075d65185a0f069b77ac0262b8002ad1e331e99",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 165758,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-11-03T07:54:39.905202962Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "restart_count": 0,
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    },
+    "pureeos-keynet2-history-elasticsearch": {
+      "id": "663cfecc112762a2a52f7e71b77040bef8887ce4fcc72b81c6ac5cce96ef9076",
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 251205,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-11-04T02:37:48.56762556Z",
+        "FinishedAt": "2026-11-04T02:37:48.434451504Z"
+      },
+      "restart_count": 1,
+      "restart_policy": {
+        "Name": "unless-stopped",
+        "MaximumRetryCount": 0
+      }
+    }
+  },
+  "resume_units": [
+    "pureeos-keynet2-bp-anthropiclab-20261103.service",
+    "pureeos-keynet2-bp-brazilamazon-20261103.service",
+    "pureeos-keynet2-bp-canadaboreal-20261103.service",
+    "pureeos-keynet2-bp-cobaltspring-20261103.service",
+    "pureeos-keynet2-bp-coherevision-20261103.service",
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service",
+    "pureeos-keynet2-bp-deepseekcore-20261103.service",
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service",
+    "pureeos-keynet2-bp-finlandhaven-20261103.service",
+    "pureeos-keynet2-bp-francegarden-20261103.service",
+    "pureeos-keynet2-bp-germanycrest-20261103.service",
+    "pureeos-keynet2-bp-glaciercrest-20261103.service",
+    "pureeos-keynet2-bp-italyharbors-20261103.service",
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service",
+    "pureeos-keynet2-bp-lunarcompass-20261103.service",
+    "pureeos-keynet2-bp-maplecascade-20261103.service",
+    "pureeos-keynet2-bp-mistralcloud-20261103.service",
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service",
+    "pureeos-keynet2-bp-nebularlight-20261103.service",
+    "pureeos-keynet2-bp-silverstream-20261103.service",
+    "pureeos-keynet2-bp-stellarhaven-20261103.service",
+    "pureeos-keynet2-bp-velvetforest-20261103.service",
+    "pureeos-keynet2-bp-willowgarden-20261103.service",
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service",
+    "pureeos-keynet2-founder-20261103.service",
+    "pureeos-keynet2-history-20261103.service",
+    "pureeos-keynet2-ordinary-activity-20261103.service",
+    "pureeos-key-history-20261103.service",
+    "pureeos-keynet2-purehistory-indexer-20261103.service",
+    "pureeos-keynet2-purehistory-api-20261103.service"
+  ],
+  "status": "CHAIN_AND_HISTORY_PAUSED",
+  "mem": [
+    "MemAvailable:    7503084 kB",
+    "SwapFree:        8271828 kB"
+  ]
+}

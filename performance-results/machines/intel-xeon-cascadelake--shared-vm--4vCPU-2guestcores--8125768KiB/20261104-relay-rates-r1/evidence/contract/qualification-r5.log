@@ -1,0 +1,168 @@
+QUALIFICATION NODE v22.23.4
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 145.991921
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 524.00627
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 247.465546
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 0.495227
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 19.329398
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 215.508455
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 7 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 24.400812
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 8 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 2.884841
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 9 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 216.791637
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 10 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 9.82784
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 11 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 0.57889
+  type: 'test'
+  ...
+# Subtest: fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+ok 12 - fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+  ---
+  duration_ms: 14.146575
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 13 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 551.924144
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 14 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 162.701497
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 15 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 94.593089
+  type: 'test'
+  ...
+# Subtest: relay rates are bounded, rounded upward and charged at least one AIC atom
+ok 16 - relay rates are bounded, rounded upward and charged at least one AIC atom
+  ---
+  duration_ms: 0.861868
+  type: 'test'
+  ...
+# Subtest: owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+ok 17 - owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+  ---
+  duration_ms: 231.55322
+  type: 'test'
+  ...
+# Subtest: relay rate reads validate identity and bounds; legacy registrations retain30%
+ok 18 - relay rate reads validate identity and bounds; legacy registrations retain30%
+  ---
+  duration_ms: 0.674994
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2396.788874
+Local test directory: /opt/krate-q/r5/local-tests/integer-v2-pda9cph4
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Governance protocol activation selects the same native review profile before sealing
+RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged
+FAIL: cleos ['push', 'transaction', '/opt/krate-q/r5/local-tests/integer-v2-pda9cph4/immutable-packets/54.json'] failed: {
+  "transaction_id": "6f724a8ffb382be8aa2621cf90efd873c7944cee6363109803c7b22ad0a2fb30",
+  "processed": {
+    "id": "6f724a8ffb382be8aa2621cf90efd873c7944cee6363109803c7b22ad0a2fb30",
+    "block_num": 187,
+    "block_time": "2026-11-04T02:02:34.500",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 289039,
+    "net_usage": 593009,
+    "scheduled": false,
+    "action_traces": [],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3080002,
+      "name": "tx_net_usage_exceeded",
+      "message": "Transaction exceeded the current network usage limit imposed on the transaction",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "transaction_context.cpp",
+            "line": 546,
+            "method": "check_net_usage",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T02:02:34.400"
+          },
+          "format": "transaction net usage is too high: ${net_usage} > ${net_limit}",
+          "data": {
+            "net_usage": 593009,
+            "net_limit": 524288
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}
+
+RESULT FAIL
+Traceback (most recent call last):
+  File "/opt/pureeos-key-rate-20261104-r1/qualify_r5.py", line 35, in <module>
+    assert completed.returncode == 0 and result['status'] == 'PASS'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,29 @@
+{
+  "UTC": "2026-11-04T02:39:57.284387+00:00",
+  "mem": [
+    "MemAvailable:     280752 kB",
+    "SwapFree:              0 kB"
+  ],
+  "pressure": "some avg10=0.38 avg60=11.51 avg300=48.50 total=973684531\nfull avg10=0.00 avg60=7.07 avg300=22.71 total=337042892\n",
+  "top": [
+    "    PID COMMAND           RSS",
+    " 251539 java            909188",
+    " 163370 ld-linux-x86-64 428584",
+    " 161732 ld-linux-x86-64 410060",
+    " 163646 ld-linux-x86-64 365864",
+    " 161048 ld-linux-x86-64 335872",
+    " 161867 ld-linux-x86-64 334104",
+    " 161593 ld-linux-x86-64 331784",
+    " 163507 ld-linux-x86-64 291684",
+    " 162143 ld-linux-x86-64 286468",
+    " 160559 ld-linux-x86-64 283252",
+    " 161186 ld-linux-x86-64 266324",
+    " 163783 ld-linux-x86-64 264436",
+    " 163233 ld-linux-x86-64 259736",
+    " 162686 ld-linux-x86-64 251552",
+    " 162414 ld-linux-x86-64 230928",
+    " 162958 ld-linux-x86-64 204636",
+    " 162823 ld-linux-x86-64 145924"
+  ],
+  "task_units": "pureeos-explorer-key-rate-build-20261104.service          loaded failed failed /usr/bin/python3 -B /opt/pureeos-explorer-key-rate-20261104-r1/build.py\npureeos-explorer-key-rate-build-r2-20261104.service       loaded failed failed /usr/bin/python3 -B /opt/pureeos-explorer-key-rate-20261104-r2/build.py\npureeos-explorer-key-rate-native-bool-20261104.service    loaded failed failed /usr/bin/python3 -B /opt/pureeos-explorer-key-rate-20261104-r3/build-native-boolean.py\npureeos-explorer-key-rate-native-bool-r2-20261104.service loaded failed failed /usr/bin/python3 -B /opt/pureeos-explorer-key-rate-20261104-r3/build-native-boolean.py\npureeos-key-rate-client-build-r1-20261104.service         loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/build-client.py\npureeos-key-rate-client-build-r2-20261104.service         loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/build-client-r2.py\npureeos-key-rate-client-finish-20261104.service           loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/finish_client.py\npureeos-key-rate-finish-20261104.service                  loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/finish-after-review.py\npureeos-key-rate-preview-20261104.service                 loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/preview.py\npureeos-key-rate-preview-r2-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/preview-r2.py\npureeos-key-rate-preview-r3-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/preview.py\npureeos-key-rate-qualify-r1-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/qualify.py\npureeos-key-rate-qualify-r2-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/qualify_r2.py\npureeos-key-rate-qualify-r3-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/qualify_r3.py\npureeos-key-rate-qualify-r4-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/qualify_r4.py\npureeos-key-rate-qualify-r5-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/qualify_r5.py\npureeos-key-rate-qualify-r6-20261104.service              loaded failed failed /usr/bin/python3 -B /opt/pureeos-key-rate-20261104-r1/qualify_r6.py\n"
+}

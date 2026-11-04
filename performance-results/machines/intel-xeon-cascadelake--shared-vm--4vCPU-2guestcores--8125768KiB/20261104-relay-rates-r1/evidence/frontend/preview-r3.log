@@ -1,0 +1,19 @@
+INTEGRATION: bundle actual explorer API and fee model
+INTEGRATION: read actual chain pricing and compare60 cases
+file:///opt/pureeos-explorer-key-rate-20261104-r3/source/remote-integration-build/key-fees.mjs:6
+var invalid = () => /* @__PURE__ */ new Error("手续费预估返回了无效的资源或计费数据。");
+                                    ^
+
+Error: 手续费预估返回了无效的资源或计费数据。
+    at invalid (file:///opt/pureeos-explorer-key-rate-20261104-r3/source/remote-integration-build/key-fees.mjs:6:37)
+    at Module.keyFeeMarket (file:///opt/pureeos-explorer-key-rate-20261104-r3/source/remote-integration-build/key-fees.mjs:144:126)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///opt/pureeos-key-rate-20261104-r1/integration.mjs:14:17
+
+Node.js v22.23.4
+Traceback (most recent call last):
+  File "/opt/pureeos-key-rate-20261104-r1/preview.py", line 6, in <module>
+    subprocess.run([node,str(K/'integration.mjs')],env=env,check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/pureeos-keynet-20261103-r2/tools/node-current/bin/node', '/opt/pureeos-key-rate-20261104-r1/integration.mjs']' returned non-zero exit status 1.

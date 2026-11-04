@@ -1,0 +1,7 @@
+{
+  "baseline_archive": "e0502cdb3dd4c1deac11a04aa2d2c24eefc257487a19fa6ac6f4d1a5e0c0d3c0",
+  "files": {
+    "src/lib/key-fees.ts": "f2b999eeb67fae0e32b9d38d31c8ddd35d88793275d9713afae23729876d2622",
+    "src/lib/key-fees.test.ts": "cf949c8952b15412896b8fb48387e57aa26ef6230bbf7b3c54a45b640b7e6d49"
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "change": "BP-owned relay service rates; signed quote binding; canonical legacy intent compatibility",
+  "claim": "full income, application-fee-free",
+  "consensus_change": false,
+  "legacy": "Signed total cap plus original30% rate ceiling; new SDK pins exact quote",
+  "legacy_default_bps": 3000,
+  "maximum_bps": 3000,
+  "minimum_bps": 1000,
+  "native_review_seconds": 1800,
+  "new_abi_hash": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+  "new_code_hash": "1933629daab4d8fe3b64bfe0528b7d64b85dff97011b71301ba4122f590cf0f5",
+  "qualification": {
+    "ABI_binary_sha256": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+    "CPU_cap_us": 150000,
+    "TPS": false,
+    "checks": 105,
+    "collection_note": "Test RESULT PASS; outer collector initially used wrong ABI path. Original QUALIFICATION_FAILURE_r6.json retained; collected actual chain ABI with byte equality. No contract or test rerun was needed.",
+    "native": true,
+    "new_live_peers": 0,
+    "relay_rates": {
+      "charges": [
+        {
+          "base_atoms": 100,
+          "bps": 1000,
+          "service_atoms": 10
+        },
+        {
+          "base_atoms": 100,
+          "bps": 1501,
+          "service_atoms": 16
+        },
+        {
+          "base_atoms": 100,
+          "bps": 3000,
+          "service_atoms": 30
+        }
+      ],
+      "legacy30_preserved": true,
+      "range_bps": [
+        1000,
+        3000
+      ],
+      "rounding": "ceil; min one atom",
+      "stale_quote_atomic_rejection": true
+    },
+    "resource_cpu_retries": [
+      {
+        "attempt": 1,
+        "bootstrap": true,
+        "canonical_absence": [
+          {
+            "block_id": "00000012b694a85a1a3f4d4054f6d103f11b69825162529408ea62fbe6cc7ccf",
+            "block_num": 18
+          },
+          {
+            "block_id": "000000138e4a3180949d722c3d11e04eb2e203e7355f8d2a18abe3da4073b596",
+            "block_num": 19
+          },
+          {
+            "block_id": "000000144163aac8b9b65bb7135c4982914f86607bd5defface4bcd093c7b862",
+            "block_num": 20
+          },
+          {
+            "block_id": "000000150a34494dea4b1b557116ad3e9327253f48adb38c0caad27dc75566e8",
+            "block_num": 21
+          },
+          {
+            "block_id": "00000016f3281fd1ad94a3c79b3961107636652793e4c814bc5481ef10632fb7",
+            "block_num": 22
+          }
+        ],
+        "error_log": "/opt/krate-q/r6/local-tests/integer-v2-kttrfbnk/cpu-failures/1.log",
+        "error_sha256": "a9c8efd9900f23e4809e79620cd4510a60ca16608cc78245767a322df0f5d2e6",
+        "exception": "tx_cpu_usage_exceeded",
+        "immutable_packet_sha256": "d10ba6719c5d5707f9a03dd175c6e66c20557eb2c37e4394a84787c8ecfbf6d9",
+        "receipt": null,
+        "same_native_id_retry": true,
+        "scope": "Private single-node namespace only; no live-chain retry or capacity claim",
+        "state_before_after_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "state_unchanged": true,
+        "transaction_id": "6215028bdcf0df3a882b54433ab961fba6043144d13a45927f38c99b9cb3621b",
+        "unchanged_CPU_cap_us": 150000
+      },
+      {
+        "attempt": 1,
+        "bootstrap": true,
+        "canonical_absence": [
+          {
+            "block_id": "000000db030baf83c618f7cffc5cdf887d0a6bb8d4a1d2f60c9cef3eac4fa35e",
+            "block_num": 219
+          },
+          {
+            "block_id": "000000dce9f527a215861d542c9a3609e420ccd1207d3e6b54163a7d6a56d0bf",
+            "block_num": 220
+          },
+          {
+            "block_id": "000000ddb95d2d187cc4a11c93a369b09eda97b7985f600bf3f249a962fa3f0c",
+            "block_num": 221
+          },
+          {
+            "block_id": "000000de757db6c6f8f57ce1fbb2a133a2e1d61beb93604dff62c512bc839a1f",
+            "block_num": 222
+          },
+          {
+            "block_id": "000000dfcd9a913a9c5d0c300c9ef1594528c7254009602d3caf241cb98ceba6",
+            "block_num": 223
+          }
+        ],
+        "error_log": "/opt/krate-q/r6/local-tests/integer-v2-kttrfbnk/cpu-failures/2.log",
+        "error_sha256": "8862b7247fabe57c97e7a00f4075d2aae23ac4a365aa7bd2b74f48843616ac0a",
+        "exception": "tx_cpu_usage_exceeded",
+        "immutable_packet_sha256": "a27d828685f6bca7debd0f15c51c4460eeb4261a3bd13a86664ac8c6ee23c698",
+        "receipt": null,
+        "same_native_id_retry": true,
+        "scope": "Private single-node namespace only; no live-chain retry or capacity claim",
+        "state_before_after_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "state_unchanged": true,
+        "transaction_id": "3cc9f4515534888c8255899f9071641e11244137d344a8a190be91e7175bd826",
+        "unchanged_CPU_cap_us": 150000
+      }
+    ],
+    "review_seconds": 1800,
+    "scope": "Functional checks; resource rejections retained, no capacity qualification",
+    "status": "PASS",
+    "test_result_sha256": "6a79ce23c0dee573f1c860eef8c75031013f6c567668f3f755c74ac436612ddb",
+    "work": "/opt/krate-q/r6"
+  },
+  "reset": false,
+  "retained_failure": "r1 omitted-extension repacking mismatch; fixed in signed request serializers",
+  "rounding": "ceil to one AIC atom",
+  "service_minimum_AIC": "0.0001",
+  "service_scope": "Only founder HTTP; four empty-endpoint inactive comparison registrations, no new service/route/hotkey/permission"
+}

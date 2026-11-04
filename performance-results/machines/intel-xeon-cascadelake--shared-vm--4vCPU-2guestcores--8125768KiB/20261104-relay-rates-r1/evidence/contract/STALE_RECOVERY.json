@@ -1,0 +1,205 @@
+{
+  "status": "RECOVERED",
+  "UTC": "2026-11-04T03:10:22.702640+00:00",
+  "unit": "pureeos-keynet2-bp-anthropiclab-20261103.service",
+  "original_config_sha256": "0da1ec844e38ede1cace5fa4b396fd3f7bb2208951a9a911fb391bf454981891",
+  "verified_24_eligible_BP_and_history": [
+    {
+      "unit": "pureeos-keynet2-bp-anthropiclab-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-brazilamazon-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-canadaboreal-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-cobaltspring-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-coherevision-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-cosmicgarden-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-deepseekcore-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-egyptpyramid-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-finlandhaven-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-francegarden-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-glaciercrest-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-italyharbors-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-kenyasavanna-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-lunarcompass-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-maplecascade-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-mistralcloud-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-moonlitgrove-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-nebularlight-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-silverstream-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-stellarhaven-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-velvetforest-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-willowgarden-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-bp-xaineuralnet-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-founder-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    },
+    {
+      "unit": "pureeos-keynet2-history-20261103.service",
+      "head_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+      "LIB_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4"
+    }
+  ],
+  "banned_node_excluded_from_recovery": [
+    "germanycrest"
+  ],
+  "starting_head": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 130495,
+    "last_irreversible_block_num": 130491,
+    "last_irreversible_block_id": "0001fdbbc7373c673fcb3a2cdf5cb3c8ccd036943348afedfa9eaa6369f81dd4",
+    "head_block_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+    "head_block_time": "2026-11-04T02:50:34.000",
+    "head_block_producer": "brazilamazon",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 130495,
+    "fork_db_head_block_id": "0001fdbf053768725e4b7eb51c7a8447fdf0c251728365ae051de476f57bcedb",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-04T02:50:32.000"
+  },
+  "native_schedule": [
+    "anthropiclab",
+    "brazilamazon",
+    "canadaboreal",
+    "cobaltspring",
+    "coherevision",
+    "cosmicgarden",
+    "deepseekcore",
+    "egyptpyramid",
+    "finlandhaven",
+    "francegarden",
+    "glaciercrest",
+    "italyharbors",
+    "kenyasavanna",
+    "lunarcompass",
+    "maplecascade",
+    "mistralcloud",
+    "nebularlight",
+    "silverstream",
+    "stellarhaven",
+    "willowgarden",
+    "xaineuralnet"
+  ],
+  "config_restored": true,
+  "scope": "One currently active BP proposes from the common durable branch; no key/safety/quorum/cap changes. Native21/15 remains required.",
+  "recovered_info": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 130505,
+    "last_irreversible_block_num": 130498,
+    "last_irreversible_block_id": "0001fdc2b8b6f47f2f50ed2653357a315cd871cfaf10ea9a68d47f4d0925ac25",
+    "head_block_id": "0001fdc9087262fec66f8f06e98b241cdede4f24a3cee590681feb9dd366933c",
+    "head_block_time": "2026-11-04T03:11:29.000",
+    "head_block_producer": "anthropiclab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 130505,
+    "fork_db_head_block_id": "0001fdc9087262fec66f8f06e98b241cdede4f24a3cee590681feb9dd366933c",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-04T03:11:25.500"
+  }
+}

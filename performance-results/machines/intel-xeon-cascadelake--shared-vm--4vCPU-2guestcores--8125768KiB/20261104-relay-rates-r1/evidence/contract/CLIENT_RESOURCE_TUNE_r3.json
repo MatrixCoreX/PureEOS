@@ -1,0 +1,9 @@
+{
+  "UTC": "2026-11-04T00:58:20.644809+00:00",
+  "before": "MemoryCurrent=805560320\nCPUUsageNSec=227130846000\nMemoryHigh=805306368\nMemoryMax=943718400\nActiveState=activating\n",
+  "MemoryHigh": "900M",
+  "MemoryMax": "900M unchanged",
+  "CPUQuota": "50% unchanged",
+  "CPUWeight": 1000,
+  "reason": "Avoid reclaim throttling below the observed805MiB working set; hard limit stays900MiB"
+}

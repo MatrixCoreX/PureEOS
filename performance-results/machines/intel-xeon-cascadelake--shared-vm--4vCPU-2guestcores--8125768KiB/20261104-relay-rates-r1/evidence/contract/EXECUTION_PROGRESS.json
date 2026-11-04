@@ -1,0 +1,7 @@
+{
+  "status": "SUBMITTING_IMMUTABLE_PACKET",
+  "transaction_id": "b67dec38d9abc09174d7f11742ccadfe59d23a74b4444f2d405168cf194ea305",
+  "packet_sha256": "5107693b93e34fa96c22de03b37b54b0456a0d3049a5467470cfe7fffbbfa463",
+  "proposal_id": 1,
+  "CPU_cap_us": 150000
+}

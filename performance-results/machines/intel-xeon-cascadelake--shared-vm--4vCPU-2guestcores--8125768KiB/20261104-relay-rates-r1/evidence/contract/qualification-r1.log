@@ -1,0 +1,320 @@
+QUALIFICATION NODE v22.23.4
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 662.106005
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 1598.784771
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 604.049079
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 0.476549
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 19.068119
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 701.852067
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 7 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 228.938348
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 8 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 15.211591
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 9 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 1381.233372
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 10 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 0.987055
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 11 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 80.387236
+  type: 'test'
+  ...
+# Subtest: fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+ok 12 - fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+  ---
+  duration_ms: 50.399509
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 13 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 2175.622857
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 14 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 681.594732
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 15 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 204.925353
+  type: 'test'
+  ...
+# Subtest: relay rates are bounded, rounded upward and charged at least one AIC atom
+ok 16 - relay rates are bounded, rounded upward and charged at least one AIC atom
+  ---
+  duration_ms: 52.131797
+  type: 'test'
+  ...
+# Subtest: owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+ok 17 - owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+  ---
+  duration_ms: 825.300748
+  type: 'test'
+  ...
+# Subtest: relay rate reads validate identity and bounds; legacy registrations retain30%
+ok 18 - relay rate reads validate identity and bounds; legacy registrations retain30%
+  ---
+  duration_ms: 0.683074
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10162.612044
+Local test directory: /opt/krate-q/r1/local-tests/integer-v2-_sxxvy3r
+RETRY: atomic bootstrap CPU deadline; unchanged caps
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Governance protocol activation selects the same native review profile before sealing
+PASS: Native build rejects the other review profile before sealing
+PASS: Native governance sealed after eosio.key deployment with selected review 1800 seconds
+PASS: Wallet is explicitly protected by selected native governance review
+PASS: RAM1024 initialization preserved
+PASS: Wallet owner and active have no deployer private keys after initialization
+PASS: Actual deployed wallet WASM hash equals the selected production/fixture artifact
+PASS: AIC also requires paid RAM registration before accepting fee credit
+PASS: Native payer buys real RAM; registration credits only actual purchased bytes to AIC
+PASS: Unregistered other token deposit rolls back principal, fees and all rows
+PASS: Failed registration atomically refunds native RAM purchase and leaves no token admission
+PASS: Wrong token precision cannot obtain admission and refunds the paired RAM purchase
+PASS: Another account cannot register against a different RAM payer authorization
+PASS: Permissionless sponsor registers full issuer, precision and symbol without recipient opening
+PASS: Native deposits create one canonical wallet and distinct multi-token reserves
+PASS: AIC deposit sender pays additional new-recipient fee; receiving key gets full principal and no account prerequisite
+PASS: Existing AIC recipient is not charged a repeated new-row fee or another RAM allocation
+FAIL: cleos ['push', 'transaction', '{"expiration": "2026-11-04T00:40:30", "ref_block_num": 351, "ref_block_prefix": 3243455321, "max_net_usage_words": 0, "max_cpu_usage_ms": 0, "delay_sec": 0, "context_free_actions": [{"account": "eosio.key", "name": "prove", "authorization": [], "data": "0003e27938124752af7f6fdbee2551f8b5219d0b267390ac9de121e4a02b1a232feeb289725bee3e05b607f8332c90794ec94d8fdb3ed36f0f5ac4606c90269b0793be1825aa4ea9b409ccde140306cdb98fa5bd95f003ebb0767f9e1ecb32fdcbc85f010000"}], "actions": [{"account": "eosio.key", "name": "ksend", "authorization": [{"actor": "keyrelaymoon", "permission": "keyrelay"}], "data": "0003e27938124752af7f6fdbee2551f8b5219d0b267390ac9de121e4a02b1a232fee0002515850700642de58fe2a749a750e981deee26506fa7ac4eb493b4c093e5a829800a6823403ea305510270000000000000441494300000000236e6174697665206163636f756e742072656365697665732066756c6c20616d6f756e740000000000000000a78966dab9b0d6d7509a74d277e4cbd7479115453214b3a63605aa11f60ed56f302995de4475bd82302995de4475bd82a0860100000000000441494300000000"}], "transaction_extensions": [], "signatures": ["SIG_K1_K2YNUMdi3aRWQppBTzEZ3YkpiqSemmf7gijx95k75tGgwxQWsiBtGeyiEJ9pJpEstWhQprGTBuUij3LV8aoyL9p5yTtnXz"], "context_free_data": ["001f156343bc554e58298fd86a99c7d9cf14e89db20fc630e7366778c79813ec1b517dcf64c32119d62cb11e32b34a6f30716105f1aba7f05a5700d8ab4b38f22ce8"]}'] failed: {
+  "transaction_id": "d9f470b4e731ac76b18bff008615a9ff6113dfb3dbfdb21820df9e3d1cf2ce59",
+  "processed": {
+    "id": "d9f470b4e731ac76b18bff008615a9ff6113dfb3dbfdb21820df9e3d1cf2ce59",
+    "block_num": 361,
+    "block_time": "2026-11-04T00:38:34.500",
+    "producer_block_id": null,
+    "receipt": null,
+    "elapsed": 573,
+    "net_usage": 426,
+    "scheduled": false,
+    "action_traces": [{
+        "action_ordinal": 1,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": {
+          "receiver": "eosio.key",
+          "act_digest": "7aed61e094b17df838b29d989aedd75ce670338a255d186f1aae11fcd3037a1f",
+          "global_sequence": 850,
+          "recv_sequence": 24,
+          "auth_sequence": [],
+          "code_sequence": 1,
+          "abi_sequence": 1
+        },
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio.key",
+          "name": "prove",
+          "authorization": [],
+          "data": {
+            "owner": "PUB_K1_8YyVVBMdq8pBVheJZP3WwykRntvS5BJ1cFvyXbwh2rT2pcTJns",
+            "chain_id": "b289725bee3e05b607f8332c90794ec94d8fdb3ed36f0f5ac4606c90269b0793",
+            "deployment": "be1825aa4ea9b409ccde140306cdb98fa5bd95f003ebb0767f9e1ecb32fdcbc8",
+            "reference_block_num": 351
+          },
+          "hex_data": "0003e27938124752af7f6fdbee2551f8b5219d0b267390ac9de121e4a02b1a232feeb289725bee3e05b607f8332c90794ec94d8fdb3ed36f0f5ac4606c90269b0793be1825aa4ea9b409ccde140306cdb98fa5bd95f003ebb0767f9e1ecb32fdcbc85f010000"
+        },
+        "context_free": true,
+        "elapsed": 252,
+        "console": "",
+        "trx_id": "d9f470b4e731ac76b18bff008615a9ff6113dfb3dbfdb21820df9e3d1cf2ce59",
+        "block_num": 361,
+        "block_time": "2026-11-04T00:38:34.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": null,
+        "error_code": null,
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      },{
+        "action_ordinal": 2,
+        "creator_action_ordinal": 0,
+        "closest_unnotified_ancestor_action_ordinal": 0,
+        "receipt": null,
+        "receiver": "eosio.key",
+        "act": {
+          "account": "eosio.key",
+          "name": "ksend",
+          "authorization": [{
+              "actor": "keyrelaymoon",
+              "permission": "keyrelay"
+            }
+          ],
+          "data": {
+            "request": {
+              "from": "PUB_K1_8YyVVBMdq8pBVheJZP3WwykRntvS5BJ1cFvyXbwh2rT2pcTJns",
+              "to": "PUB_K1_5WKCfUrPKfdSQU7QFrVRHw7XVrhKpDvbTvBcVA57jz3B8enBv2",
+              "token_contract": "eosio.token",
+              "quantity": "1.0000 AIC",
+              "memo": "native account receives full amount",
+              "auth_epoch": 0,
+              "request_id": "a78966dab9b0d6d7509a74d277e4cbd7479115453214b3a63605aa11f60ed56f",
+              "relayer": "keyrelaymoon",
+              "reward_to": "keyrelaymoon",
+              "max_fee": "10.0000 AIC"
+            }
+          },
+          "hex_data": "0003e27938124752af7f6fdbee2551f8b5219d0b267390ac9de121e4a02b1a232fee0002515850700642de58fe2a749a750e981deee26506fa7ac4eb493b4c093e5a829800a6823403ea305510270000000000000441494300000000236e6174697665206163636f756e742072656365697665732066756c6c20616d6f756e740000000000000000a78966dab9b0d6d7509a74d277e4cbd7479115453214b3a63605aa11f60ed56f302995de4475bd82302995de4475bd82a0860100000000000441494300000000"
+        },
+        "context_free": false,
+        "elapsed": 178,
+        "console": "",
+        "trx_id": "d9f470b4e731ac76b18bff008615a9ff6113dfb3dbfdb21820df9e3d1cf2ce59",
+        "block_num": 361,
+        "block_time": "2026-11-04T00:38:34.500",
+        "producer_block_id": null,
+        "account_ram_deltas": [],
+        "except": {
+          "code": 3050003,
+          "name": "eosio_assert_message_exception",
+          "message": "eosio_assert_message assertion failure",
+          "stack": [{
+              "context": {
+                "level": "error",
+                "file": "cf_system.cpp",
+                "line": 14,
+                "method": "eosio_assert",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T00:38:33.763"
+              },
+              "format": "assertion failure with message: ${s}",
+              "data": {
+                "s": "owner proof root operation mismatch"
+              }
+            },{
+              "context": {
+                "level": "warn",
+                "file": "apply_context.cpp",
+                "line": 262,
+                "method": "exec_one",
+                "hostname": "",
+                "thread_name": "ld-linux-x86-64.so.2",
+                "timestamp": "2026-11-04T00:38:33.763"
+              },
+              "format": "${receiver} <= ${account}::${action} console output: ${console}",
+              "data": {
+                "console": "",
+                "account": "eosio.key",
+                "action": "ksend",
+                "receiver": "eosio.key"
+              }
+            }
+          ]
+        },
+        "error_code": "10000000000000000000",
+        "return_value_hex_data": "",
+        "call_traces": [],
+        "console_markers": []
+      }
+    ],
+    "account_ram_delta": null,
+    "except": {
+      "code": 3050003,
+      "name": "eosio_assert_message_exception",
+      "message": "eosio_assert_message assertion failure",
+      "stack": [{
+          "context": {
+            "level": "error",
+            "file": "cf_system.cpp",
+            "line": 14,
+            "method": "eosio_assert",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T00:38:33.763"
+          },
+          "format": "assertion failure with message: ${s}",
+          "data": {
+            "s": "owner proof root operation mismatch"
+          }
+        },{
+          "context": {
+            "level": "warn",
+            "file": "apply_context.cpp",
+            "line": 262,
+            "method": "exec_one",
+            "hostname": "",
+            "thread_name": "ld-linux-x86-64.so.2",
+            "timestamp": "2026-11-04T00:38:33.763"
+          },
+          "format": "${receiver} <= ${account}::${action} console output: ${console}",
+          "data": {
+            "console": "",
+            "account": "eosio.key",
+            "action": "ksend",
+            "receiver": "eosio.key"
+          }
+        }
+      ]
+    },
+    "error_code": "10000000000000000000"
+  }
+}
+
+RESULT FAIL
+Traceback (most recent call last):
+  File "/opt/pureeos-key-rate-20261104-r1/qualify.py", line 15, in <module>
+    result=json.loads((work/'RESULT.json').read_text());assert q.returncode==0 and result['status']=='PASS'
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,8 @@
+{
+  "UTC": "2026-11-04T00:31:49.778198+00:00",
+  "unit": "pureeos-key-rate-build-r1-20261104.service",
+  "before": "CPUUsageNSec=2908044000\nCPUWeight=1\nCPUQuotaPerSecUSec=500ms\n",
+  "CPUWeight": 100,
+  "CPUQuota": "50% unchanged",
+  "reason": "Weight1 starved isolated build on busy host; no chain services changed"
+}

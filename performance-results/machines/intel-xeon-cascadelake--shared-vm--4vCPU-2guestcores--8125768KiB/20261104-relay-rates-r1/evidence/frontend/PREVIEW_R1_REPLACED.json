@@ -1,0 +1,4 @@
+{
+  "reason": "Replace Vite SSR verification harness with direct esbuild bundles of same actual API/fee model; retain25% CPU cap",
+  "previous_status": "MemoryCurrent=151900160\nCPUUsageNSec=10765477000\nActiveState=activating\n"
+}

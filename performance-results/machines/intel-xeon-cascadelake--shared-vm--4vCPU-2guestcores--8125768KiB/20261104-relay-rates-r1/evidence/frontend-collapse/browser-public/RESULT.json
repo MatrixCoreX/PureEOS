@@ -1,0 +1,162 @@
+{
+  "status": "PASS",
+  "phase": "public",
+  "UTC": "2026-11-04T03:56:08.936Z",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440
+      },
+      "operators": [
+        {
+          "bp": "canadaboreal",
+          "text": "canadaboreal · 10.00% · 未启用"
+        },
+        {
+          "bp": "cosmicgarden",
+          "text": "cosmicgarden · 15.00% · 未启用"
+        },
+        {
+          "bp": "deepseekcore",
+          "text": "deepseekcore · 20.00% · 未启用"
+        },
+        {
+          "bp": "finlandhaven",
+          "text": "finlandhaven · 25.00% · 未启用"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "formula_cases": 15,
+      "formula_default_collapsed": true,
+      "formula_expand_collapse": true,
+      "collapsedHeight": 478.984375,
+      "expandedHeight": 685.171875
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "layout": {
+        "width": 375,
+        "viewport": 390
+      },
+      "operators": [
+        {
+          "bp": "canadaboreal",
+          "text": "canadaboreal · 10.00% · 未启用"
+        },
+        {
+          "bp": "cosmicgarden",
+          "text": "cosmicgarden · 15.00% · 未启用"
+        },
+        {
+          "bp": "deepseekcore",
+          "text": "deepseekcore · 20.00% · 未启用"
+        },
+        {
+          "bp": "finlandhaven",
+          "text": "finlandhaven · 25.00% · 未启用"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "formula_cases": 15,
+      "formula_default_collapsed": true,
+      "formula_expand_collapse": true,
+      "collapsedHeight": 919.75,
+      "expandedHeight": 1199.734375
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "layout": {
+        "width": 375,
+        "viewport": 390
+      },
+      "operators": [
+        {
+          "bp": "canadaboreal",
+          "text": "canadaboreal · 10.00% · Inactive"
+        },
+        {
+          "bp": "cosmicgarden",
+          "text": "cosmicgarden · 15.00% · Inactive"
+        },
+        {
+          "bp": "deepseekcore",
+          "text": "deepseekcore · 20.00% · Inactive"
+        },
+        {
+          "bp": "finlandhaven",
+          "text": "finlandhaven · 25.00% · Inactive"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "formula_cases": 15,
+      "formula_default_collapsed": true,
+      "formula_expand_collapse": true,
+      "collapsedHeight": 963.734375,
+      "expandedHeight": 1317.515625
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "layout": {
+        "width": 1425,
+        "viewport": 1440
+      },
+      "operators": [
+        {
+          "bp": "canadaboreal",
+          "text": "canadaboreal · 10.00% · Inactive"
+        },
+        {
+          "bp": "cosmicgarden",
+          "text": "cosmicgarden · 15.00% · Inactive"
+        },
+        {
+          "bp": "deepseekcore",
+          "text": "deepseekcore · 20.00% · Inactive"
+        },
+        {
+          "bp": "finlandhaven",
+          "text": "finlandhaven · 25.00% · Inactive"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "formula_cases": 15,
+      "formula_default_collapsed": true,
+      "formula_expand_collapse": true,
+      "collapsedHeight": 510.578125,
+      "expandedHeight": 752.765625
+    }
+  ],
+  "errors": [],
+  "failure_clears_quote": true,
+  "recovery": true,
+  "build_files": {
+    "index.html": "afdbce36affb781ca025443973be45a5c1d3f7f6c3b86d892d5fe875177b3fcd",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-DZUMizuY.css": "7ef753587c7572a46b2a40286b4e79ad289bdd7ee96a9b429a2f0b50aa95b615",
+    "assets/index-CLpjeyUx.js": "937a073aef50b1f1fd2f23b6a37615279ddfd0cd39162445573c9727359d6ebb"
+  }
+}

@@ -1,0 +1,17 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: HTTP 400
+    at json (file:///opt/pureeos-key-rate-20261104-r1/live-smoke.mjs:14:190)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///opt/pureeos-key-rate-20261104-r1/live-smoke.mjs:40:14 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.23.4

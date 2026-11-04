@@ -1,0 +1,51 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run src/lib/key-fees.test.ts src/components/KeyFeeEstimate.test.tsx --config remote-vitest.config.ts --maxWorkers=1
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-explorer-key-rate-20261104-r3/source[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /opt/pureeos-explorer-key-rate-20261104-r3/source/src/components/KeyFeeEstimate.test.tsx.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/index.1TqnEahn.js:[2m5921:94[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/index.1TqnEahn.js:[2m5921:5[22m[39m
+
+[31m[1mCaused by: Error[22m: [vitest-pool-runner]: Timeout waiting for worker to respond[39m
+[90m [2m❯[22m Timeout.<anonymous> node_modules/vitest/dist/chunks/index.1TqnEahn.js:[2m5418:58[22m[39m
+[90m [2m❯[22m listOnTimeout node:internal/timers:[2m585:17[22m[39m
+[90m [2m❯[22m process.processTimers node:internal/timers:[2m521:7[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Failed to start forks worker for test files /opt/pureeos-explorer-key-rate-20261104-r3/source/src/lib/key-fees.test.ts.[39m
+[90m [2m❯[22m node_modules/vitest/dist/chunks/index.1TqnEahn.js:[2m5921:94[22m[39m
+[90m [2m❯[22m Pool.schedule node_modules/vitest/dist/chunks/index.1TqnEahn.js:[2m5921:5[22m[39m
+
+[31m[1mCaused by: Error[22m: [vitest-pool-runner]: Timeout waiting for worker to respond[39m
+[90m [2m❯[22m Timeout.<anonymous> node_modules/vitest/dist/chunks/index.1TqnEahn.js:[2m5418:58[22m[39m
+[90m [2m❯[22m listOnTimeout node:internal/timers:[2m585:17[22m[39m
+[90m [2m❯[22m process.processTimers node:internal/timers:[2m521:7[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [2mno tests[22m
+[2m      Tests [22m [2mno tests[22m
+[2m     Errors [22m [1m[31m2 errors[39m[22m
+[2m   Start at [22m 02:30:38
+[2m   Duration [22m 128.52s
+
+Traceback (most recent call last):
+  File "/opt/pureeos-explorer-key-rate-20261104-r3/build-native-boolean.py", line 5, in <module>
+    subprocess.run(['npm','test','--','src/lib/key-fees.test.ts','src/components/KeyFeeEstimate.test.tsx','--config','remote-vitest.config.ts','--maxWorkers=1'],cwd=S,env=env,check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['npm', 'test', '--', 'src/lib/key-fees.test.ts', 'src/components/KeyFeeEstimate.test.tsx', '--config', 'remote-vitest.config.ts', '--maxWorkers=1']' returned non-zero exit status 1.

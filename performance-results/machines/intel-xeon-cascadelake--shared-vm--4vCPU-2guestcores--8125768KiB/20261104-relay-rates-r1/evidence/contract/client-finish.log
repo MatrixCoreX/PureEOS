@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-key-rate-20261104-r1/finish_client.py", line 17, in <module>
+    assert 'CLIENT link-argv.json' in log, 'Compilation failed; preserve the failed attempt'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Compilation failed; preserve the failed attempt

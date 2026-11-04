@@ -1,0 +1,9 @@
+{
+  "UTC": "2026-11-04T01:05:02.316256+00:00",
+  "selection": "Only founder HTTP remains;4other registrations/rates are inactive comparison metadata; no extra service/endpoint/hotkey",
+  "superseded_waiters_stopped": true,
+  "memory": {
+    "MemAvailable": 151704,
+    "SwapFree": 72
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "UTC": "2026-11-04T03:03:55.558837+00:00",
+  "head_before": 130495,
+  "schedule": {
+    "active": {
+      "version": 190,
+      "producers": [
+        {
+          "producer_name": "anthropiclab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8kfXwa7krE7p56Y1qDRUV4iT879uTkcB2Jmcoj7dZwkURq2wP1",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "brazilamazon",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8N8xx9TAJFUsfVWPwK5Ld17dYS1kZsmMRsDB2QzYkM7iudcnAj",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "canadaboreal",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5cBHfhog76qhdeZfpLjQDzb17hqWFqZiEudybJvyRRVF7Mo5dJ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cobaltspring",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8kMvg2anUawyvabZ9QHtgTktEXYxx9JFnv6KuGoPvF6p7FdHWE",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "coherevision",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7u2HkSUn8AWHXouv3AEX635e3HvjtpnvACoCdRYWAAkwdrFsfV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cosmicgarden",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7xpwjju5mtL59Qiog2fgFddb4oCJAvE9NE3bcz3ND8HuJhwfUz",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "deepseekcore",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_84nNPtU2Z3ShKHbrHn5brEh3kuzaeeuj7bBbeCxNGbFkZZ41CL",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "egyptpyramid",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7P4V5MmgUBkFRZpor7oSsoMbKEacCzUeWUvwUdU6FD7yXt7Ljq",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "finlandhaven",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Gpf1xdAdfZgs8jhontW4vU9RAoPJPX4dHMX54x2BSqK9dcuFY",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "francegarden",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_544CsNvwVwh7uvHBPmzRp9PXyQfE9L1Quq4hHKKtwR3GtFDuPA",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "glaciercrest",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5vwC5PeJimtmuCiouJBM2FZaP6EBkA1uV5Q7xS29dF4pkvVHP6",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "italyharbors",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_81W8iUVFs2exXQM8cU3sWufoqhmgReHatwwJ9bFm1JnfcdpUpH",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "kenyasavanna",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6s2CwJoQjviFb61LDYPLC41fboAhzJeijZJB7dfeWhhY4rXzQW",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "lunarcompass",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5n9S6XbtmY14yYyzbD7BFrG9d6Rxx3GGuLzoxLJiaUW8QQ2EMZ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "maplecascade",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7m6C43Yc1wyo7aBcjmRB3HRKinXhL1MLvKGB3qNfnAnzFku9KU",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "mistralcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7A5Wjaw3X5sbMD462tQUVuJ5Mck7S6ACiX2LRTSKQGhP4qm8Es",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "nebularlight",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6yc1UBcL2URDFDM4c9uL55gYETj7i2kcAXXME6yJDFxNscVEAo",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "silverstream",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6g5urzXVjkbBCdvK4qwPDamjyFX2sBDFFa6oKAmAPHJsJ3GGTN",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "stellarhaven",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_83GHNYccYJZpGkpbS4WS9nsHf1K1JynSqH18FCii9v7a74NdeX",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "willowgarden",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8JRYesB7dffyxR9HXnGA785P8WtrdUUJxJf31VpgzEUJBBnRJi",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "xaineuralnet",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_73yaYagmanH25Gsei6ekgXJjkaJHwjr87cxDnK8wvTX1CET9FK",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pending": null,
+    "proposed": null
+  },
+  "paused_before": false,
+  "resume_result": {
+    "result": "ok"
+  }
+}

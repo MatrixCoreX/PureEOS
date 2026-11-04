@@ -1,0 +1,118 @@
+{
+  "product": "PureHistory",
+  "version": "4.1.0-purehistory.1-dirty",
+  "version_hash": "custom",
+  "host": "aic-test.matrixai.one/history",
+  "health": [
+    {
+      "service": "StateHistory",
+      "status": "OK",
+      "cached": false,
+      "query_time_ms": 122.214382,
+      "service_data": {
+        "nodes": [
+          {
+            "label": "independent-nonproducing-TEST-history",
+            "active": true,
+            "range": {
+              "from": 2,
+              "to": 133049
+            }
+          }
+        ]
+      }
+    },
+    {
+      "service": "RabbitMq",
+      "status": "OK",
+      "cached": false,
+      "query_time_ms": 213.155273,
+      "service_data": null
+    },
+    {
+      "service": "NodeosRPC",
+      "status": "OK",
+      "cached": false,
+      "query_time_ms": 11.102446,
+      "service_data": {
+        "head_block_num": 133048,
+        "head_block_time": "2026-11-04T03:33:03.500",
+        "time_offset": 104,
+        "last_irreversible_block": 133044,
+        "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0"
+      }
+    },
+    {
+      "service": "Elasticsearch",
+      "status": "OK",
+      "cached": true,
+      "query_time_ms": 239.317788,
+      "service_data": {
+        "active_shards": "100.0%",
+        "disk_status": "green",
+        "head_offset": 8,
+        "first_indexed_block": 2,
+        "last_indexed_block": 133040,
+        "total_indexed_blocks": 131492,
+        "missing_blocks": 1546,
+        "missing_pct": "1.16%",
+        "times": [
+          {
+            "phase": "cluster_health",
+            "phase_time_ms": 0.054931,
+            "cache": true
+          },
+          {
+            "phase": "first_indexed_block",
+            "phase_time_ms": 0.729546,
+            "cache": true
+          },
+          {
+            "phase": "last_indexed_block",
+            "phase_time_ms": 238.467124,
+            "cache": false
+          }
+        ]
+      }
+    }
+  ],
+  "limits": {
+    "get_actions": 100,
+    "get_voters": 100,
+    "get_links": 1000,
+    "get_deltas": 100,
+    "get_trx_actions": 1000
+  },
+  "features": {
+    "streaming": {
+      "enable": false,
+      "traces": false,
+      "deltas": false
+    },
+    "tables": {
+      "proposals": true,
+      "accounts": true,
+      "voters": true,
+      "permissions": true,
+      "user_resources": false
+    },
+    "contract_state": {
+      "contracts": {}
+    },
+    "index_deltas": true,
+    "index_transfer_memo": true,
+    "index_all_deltas": true,
+    "index_deltas_deletions": false,
+    "deferred_trx": false,
+    "failed_trx": false,
+    "resource_limits": false,
+    "resource_usage": false
+  },
+  "pruning": {
+    "auto_pruning_enabled": false,
+    "max_retained_blocks": 0
+  },
+  "query_time_ms": 771.362,
+  "last_indexed_block": 133045,
+  "last_indexed_block_time": "2026-11-04T03:33:02.000"
+}

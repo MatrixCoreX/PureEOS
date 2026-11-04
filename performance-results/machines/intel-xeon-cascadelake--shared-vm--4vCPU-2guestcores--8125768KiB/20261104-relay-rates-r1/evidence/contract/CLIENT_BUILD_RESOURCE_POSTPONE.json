@@ -1,0 +1,13 @@
+{
+  "UTC": "2026-11-04T00:35:28.320618+00:00",
+  "status": "POSTPONED_FOR_MEMORY",
+  "unit": "pureeos-key-rate-client-build-r1-20261104.service",
+  "reason": "Available RAM about1.3GiB and swap nearly exhausted; serialize new build workloads and use tighter memory bound",
+  "compilers": {
+    "c++": "/usr/bin/c++",
+    "clang++": null,
+    "clang++-18": null,
+    "clang++-19": null,
+    "g++-14": null
+  }
+}

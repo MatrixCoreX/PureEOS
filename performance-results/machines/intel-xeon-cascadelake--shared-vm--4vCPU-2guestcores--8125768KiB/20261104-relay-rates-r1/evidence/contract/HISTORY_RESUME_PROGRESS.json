@@ -1,0 +1,15 @@
+{
+  "status": "HISTORY_SERVICES_STARTED",
+  "UTC": "2026-11-04T03:14:06.157629+00:00",
+  "containers": [
+    "pureeos-keynet2-history-rabbitmq",
+    "pureeos-keynet2-history-redis",
+    "pureeos-keynet2-history-mongo",
+    "pureeos-keynet2-history-elasticsearch"
+  ],
+  "units": [
+    "pureeos-keynet2-purehistory-indexer-20261103.service",
+    "pureeos-keynet2-purehistory-api-20261103.service",
+    "pureeos-key-history-20261103.service"
+  ]
+}

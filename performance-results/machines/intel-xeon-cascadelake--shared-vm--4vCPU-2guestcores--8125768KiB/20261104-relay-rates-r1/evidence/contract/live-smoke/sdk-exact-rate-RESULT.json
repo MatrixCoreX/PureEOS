@@ -1,0 +1,17 @@
+{
+  "kind": "sdk-exact-rate",
+  "status": "PASS",
+  "transaction_id": "c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf",
+  "confirmation": {
+    "block_num": 132124,
+    "block_id": "0002041c2f0aba0f574b57cf0d2ccfacc29dc4dc54db85c2291b5cb625d9878f",
+    "observed_lib": 132135
+  },
+  "base_atoms": "104",
+  "service_atoms": "32",
+  "total_atoms": "136",
+  "rate_bps": 3000,
+  "principal": "0.0001 AIC",
+  "same_packet_retry": true,
+  "only_founder_used": true
+}
