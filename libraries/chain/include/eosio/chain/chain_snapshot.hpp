@@ -37,7 +37,9 @@ struct chain_snapshot_header {
    // Version 10 adds the native upgrade_governance_object section. Older
    // snapshots restore with no governance row and retain legacy governance.
    static constexpr uint32_t minimum_compatible_version = 2;
-   static constexpr uint32_t current_version = 10;
+   // Version 11 adds the independent reviewed system-account creation lane.
+   // Existing snapshots restore the new lane empty without changing old rows.
+   static constexpr uint32_t current_version = 11;
 
    static constexpr uint32_t first_version_with_split_table_sections = 7;
 

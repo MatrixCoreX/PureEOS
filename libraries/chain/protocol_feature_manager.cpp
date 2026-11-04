@@ -374,6 +374,12 @@ host function call will trigger a transition to the Savanna consensus algorithm.
             {builtin_protocol_feature_t::pureeos_rotation_context},
             {time_point{}, false, true}
          } )
+         (  builtin_protocol_feature_t::pureeos_system_account_governance, builtin_protocol_feature_spec{
+            "PUREEOS_SYSTEM_ACCOUNT_GOVERNANCE",
+            digest_type::hash(std::string("PureEOS system account governance v1: separate bounded creation proposals; designated developer; full native review; effective frozen BP veto; exact code/ABI and sponsor-bound RAM payment; new nonprivileged eosio.* accounts only; sealed owner and code-only active; single-use native creation capability; atomic execution; preserve legacy pending upgrades.")),
+            {builtin_protocol_feature_t::pureeos_seven_day_governance},
+            {time_point{}, false, true}
+         } )
          (  builtin_protocol_feature_t::sync_call, builtin_protocol_feature_spec{
             "SYNC_CALL",
             fc::variant("49f6fbc4fee045bc5c8b09a96b2b5c096afdc320ac29b54e0f3805c660b88483").as<digest_type>(),

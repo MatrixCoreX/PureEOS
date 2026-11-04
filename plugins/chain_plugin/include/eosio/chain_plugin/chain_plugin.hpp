@@ -191,6 +191,9 @@ public:
    using get_upgrade_state_params = empty;
    fc::variant get_upgrade_state(const get_upgrade_state_params&, const fc::time_point& deadline) const;
 
+   using get_system_account_state_params = empty;
+   fc::variant get_system_account_state(const get_system_account_state_params&, const fc::time_point& deadline) const;
+
    struct get_transaction_status_params {
       chain::transaction_id_type           id;
    };

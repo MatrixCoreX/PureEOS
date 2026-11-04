@@ -1,5 +1,6 @@
 #include <eosio/chain/eosio_contract.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
+#include <eosio/chain/system_account_proposal.hpp>
 #include <eosio/chain/contract_table_objects.hpp>
 
 #include <eosio/chain/controller.hpp>
@@ -70,9 +71,11 @@ void apply_eosio_newaccount(apply_context& context) {
    EOS_ASSERT( !context.is_read_only(), action_validate_exception, "newaccount not allowed in read-only transaction" );
    auto create = context.get_action().data_as<newaccount>();
    if (const auto* governance = find_upgrade_governance(context.db); governance && governance->developer != account_name{}) {
-      EOS_ASSERT(!create.name.to_string().starts_with("eosio."), action_validate_exception,
+      const bool system_name=create.name.to_string().starts_with("eosio.");
+      const bool reviewed_creation=system_name && consume_system_account_creation(context,create);
+      EOS_ASSERT(!system_name || reviewed_creation, action_validate_exception,
                  "new eosio.* accounts are disabled after governance sealing");
-      check_system_permission_change(context, create.name);
+      if(!reviewed_creation)check_system_permission_change(context, create.name);
    }
    try {
    context.require_authorization(create.creator);

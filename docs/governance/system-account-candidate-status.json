@@ -1,0 +1,23 @@
+{
+  "status": "DRAFT_SOURCE_ONLY_NOT_COMPILED_NOT_ACTIVATED",
+  "base_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+  "feature": "PUREEOS_SYSTEM_ACCOUNT_GOVERNANCE",
+  "enum": 500003,
+  "native_build": "PENDING_REMOTE_RESOURCE_WINDOW",
+  "native_test_execution": "NOT_RUN",
+  "live_node_changes": false,
+  "live_transactions": false,
+  "live_account_creation_or_deployment": false,
+  "old_upgrade_proposal3": "Preserve pending/vetoed state; independent bounded creation lane",
+  "privileged_policy": "New accounts always nonprivileged; existing sealed set_privileged guard untouched",
+  "snapshot_version": 11,
+  "existing_object_type_ids": "Append-only new type; layouts of existing objects and actions unchanged",
+  "review_profiles": {"TEST_seconds":1800,"production_seconds":604800},
+  "required_followup": [
+    "Remote full native compile and actual boundary/replay/snapshot tests",
+    "Real-contract sponsor, RAM, sealed-authority and rollback qualification",
+    "Native ABI/wire cross-validation of unsigned action-bundle helper",
+    "Current-chain compatibility and controlled all-node rollout plan",
+    "Irreversible feature activation, exact public review, full native review and effective veto check before execution"
+  ]
+}

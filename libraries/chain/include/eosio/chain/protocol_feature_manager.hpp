@@ -44,6 +44,7 @@ enum class builtin_protocol_feature_t : uint32_t {
    reserved_private_fork_protocol_features = 500000,
    pureeos_rotation_context = 500001,
    pureeos_seven_day_governance = 500002,
+   pureeos_system_account_governance = 500003,
 };
 
 struct protocol_feature_subjective_restrictions {

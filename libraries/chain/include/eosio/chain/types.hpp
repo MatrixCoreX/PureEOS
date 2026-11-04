@@ -178,6 +178,7 @@ namespace eosio::chain {
       code_object_type,
       database_header_object_type,
       upgrade_governance_object_type,
+      system_account_proposal_object_type,
       OBJECT_TYPE_COUNT ///< Sentry value which contains the number of different object types
    };
 

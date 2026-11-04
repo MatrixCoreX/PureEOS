@@ -1,6 +1,8 @@
 #include <eosio/testing/tester.hpp>
 #include <eosio/testing/bls_utils.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
+#include <eosio/chain/system_account_proposal.hpp>
+#include <eosio/chain/contract_table_objects.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/permission_object.hpp>
 #include <eosio/chain/authorization_manager.hpp>
@@ -38,8 +40,11 @@ std::string fixture_wat() {
      (import "env" "set_upgrade_voters" (func $voters (param i32 i32)))
      (import "env" "send_inline" (func $send (param i32 i32)))
      (import "env" "set_privileged" (func $priv (param i64 i32)))
+     (import "env" "preactivate_feature" (func $activate (param i32)))
      (memory 1)
      (func (export "apply") (param $receiver i64) (param $code i64) (param $action i64) (local $size i32)
+       (if (i64.eq (get_local $action) (i64.const )" + std::to_string("activate"_n.to_uint64_t()) + R"())
+         (then (drop (call $read (i32.const 0) (i32.const 32))) (call $activate (i32.const 0))))
        (if (i64.eq (get_local $action) (i64.const )" + std::to_string("govinit"_n.to_uint64_t()) + R"())
          (then (i64.store (i32.const 0) (i64.const )" + std::to_string("eosio"_n.to_uint64_t()) + R"())
                (call $voters (i32.const 0) (i32.const 8))))
@@ -470,6 +475,8 @@ BOOST_AUTO_TEST_CASE(sealed_governance_replays_from_genesis) {
    BOOST_CHECK(replay.head().id() == lib_id);
    BOOST_CHECK(fc::raw::pack(*find_upgrade_governance(replay.control->db())) == expected);
 }
+
+#include "pureeos_system_account_tests.inc"
 
 BOOST_AUTO_TEST_SUITE_END()
 

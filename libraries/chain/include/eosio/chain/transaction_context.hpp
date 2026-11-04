@@ -128,6 +128,9 @@ namespace eosio::chain {
             uint32_t parent_action_ordinal = 0;
             bool code_used = false;
             bool abi_used = false;
+            bool account_creation_authorized = false;
+            bool account_created = false;
+            uint64_t creation_proposal_id = 0;
          };
          std::optional<system_upgrade_execution> system_upgrade;
          // Filled only by the profile-2 eosio::refreshgov host call. Consumed by

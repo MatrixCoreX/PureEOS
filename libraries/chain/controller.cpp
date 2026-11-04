@@ -31,6 +31,7 @@
 #include <eosio/chain/whitelisted_intrinsics.hpp>
 #include <eosio/chain/database_header_object.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
+#include <eosio/chain/system_account_proposal.hpp>
 
 #include <eosio/chain/protocol_feature_manager.hpp>
 #include <eosio/chain/authorization_manager.hpp>
@@ -80,7 +81,8 @@ using controller_index_set = index_set<
    table_id_multi_index,
    code_index,
    database_header_multi_index,
-   upgrade_governance_index
+   upgrade_governance_index,
+   system_account_proposal_index
 >;
 
 using contract_database_index_set = index_set<
@@ -1461,6 +1463,11 @@ struct controller_impl {
    SET_APP_HANDLER( eosio, eosio, devveto );
    SET_APP_HANDLER( eosio, eosio, devcancel );
    SET_APP_HANDLER( eosio, eosio, devexec );
+   SET_APP_HANDLER( eosio, eosio, syspropose );
+   SET_APP_HANDLER( eosio, eosio, sysveto );
+   SET_APP_HANDLER( eosio, eosio, syscancel );
+   SET_APP_HANDLER( eosio, eosio, sysexec );
+   SET_APP_HANDLER( eosio, eosio, sysfinish );
    }
 
    void open_fork_db() {
@@ -2626,6 +2633,9 @@ struct controller_impl {
          if (header.version < 10 && std::is_same_v<value_t, upgrade_governance_object>) {
             return;
          }
+         if (header.version < 11 && std::is_same_v<value_t, system_account_proposal_object>) {
+            return;
+         }
          if (header.version < chain_snapshot_header::first_version_with_split_table_sections && std::is_same_v<value_t, table_id_object>) {
             return;
          }
@@ -2735,6 +2745,20 @@ struct controller_impl {
       snapshot_load_workqueue.run(snapshot_load_threads, std::chrono::seconds(5), [&]() {
          ilog("Snapshot initialization ${pct}% complete", ("pct",(unsigned)(((double)rows_loaded/total_snapshot_rows)*100)));
       });
+
+      // Older formats have no creation-proposal section. They remain usable
+      // before feature activation, but cannot discard activated governance state
+      // merely by advertising an older header version.
+      if (header.version < 11) {
+         const auto creation_feature = protocol_features.get_protocol_feature_set().get_builtin_digest(
+            builtin_protocol_feature_t::pureeos_system_account_governance);
+         const auto& activated = db.get<protocol_state_object>().activated_protocol_features;
+         EOS_ASSERT(!creation_feature || std::none_of(activated.begin(), activated.end(), [&](const auto& feature) {
+            return feature.feature_digest == *creation_feature;
+         }), snapshot_exception, "Activated system-account governance requires snapshot version11 or later");
+      }
+      EOS_ASSERT((db.get_index<system_account_proposal_index, by_id>().size() <= 1),
+                 snapshot_exception, "System-account proposal snapshot must contain at most one state row");
 
       db.set_revision( chain_head.block_num() );
       db.create<database_header_object>([](const auto& header){

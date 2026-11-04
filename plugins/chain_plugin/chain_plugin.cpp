@@ -20,6 +20,7 @@
 #include <eosio/chain/permission_link_object.hpp>
 #include <eosio/chain/global_property_object.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
+#include <eosio/chain/system_account_proposal.hpp>
 #include <eosio/chain/chainbase_environment.hpp>
 #include <eosio/chain/block_header_state_utils.hpp>
 
@@ -1477,6 +1478,25 @@ fc::variant read_only::get_upgrade_state(const get_upgrade_state_params&, const 
    const bool v2=db.is_builtin_activated(chain::builtin_protocol_feature_t::pureeos_seven_day_governance);
    const auto tally=state ? chain::get_upgrade_effective_tally(db.db(),*state,v2) : chain::upgrade_effective_tally{};
    result("governance_v2_activated",v2)
+         ("effective_proposal_voters",tally.voters)("effective_vetoes",tally.vetoes)
+         ("excluded_banned_voters",tally.excluded_banned_voters)
+         ("effective_voter_count",tally.voters.size())("effective_veto_count",tally.vetoes.size())
+         ("required_vetoes",tally.voters.empty()?0:chain::upgrade_veto_threshold(tally.voters.size()))
+         ("execution_blocked_no_electorate",state && state->pending && tally.voters.empty());
+   return result;
+}
+
+fc::variant read_only::get_system_account_state(const get_system_account_state_params&, const fc::time_point&) const {
+   const auto* state=chain::find_system_account_proposal(db.db());
+   const auto* gov=chain::find_upgrade_governance(db.db());
+   const auto tally=state?chain::get_system_account_effective_tally(db.db(),*state):chain::upgrade_effective_tally{};
+   fc::mutable_variant_object result;
+   if(state)result=fc::mutable_variant_object(fc::variant(*state).get_object());
+   result("proposal_exists",state!=nullptr)
+         ("feature_activated",db.is_builtin_activated(chain::builtin_protocol_feature_t::pureeos_system_account_governance))
+         ("sealed",gov && gov->developer!=chain::account_name{})
+         ("developer",gov?gov->developer:chain::account_name{})
+         ("head_block_num",db.head().block_num())("head_block_id",db.head().id())
          ("effective_proposal_voters",tally.voters)("effective_vetoes",tally.vetoes)
          ("excluded_banned_voters",tally.excluded_banned_voters)
          ("effective_voter_count",tally.voters.size())("effective_veto_count",tally.vetoes.size())

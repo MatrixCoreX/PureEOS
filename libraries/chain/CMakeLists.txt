@@ -131,6 +131,7 @@ add_library( eosio_chain
              transaction_context.cpp
              eosio_contract.cpp
              upgrade_governance.cpp
+             system_account_proposal.cpp
              eosio_contract_abi.cpp
              eosio_contract_abi_bin.cpp
              chain_config.cpp
