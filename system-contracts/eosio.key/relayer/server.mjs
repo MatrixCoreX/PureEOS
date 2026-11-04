@@ -144,7 +144,7 @@ export function createServer(relay,{host='127.0.0.1',port=8787}={}){
     }
     if(++rate.count>30)return send(429,{error:'Rate limit exceeded'});
     try{
-      if(req.method==='GET'&&req.url==='/health')return send(200,{bp:relay.bp,permission:relay.permission,contract:'eosio.key'});
+      if(req.method==='GET'&&req.url==='/health')return send(200,{bp:relay.bp,permission:relay.permission,contract:'eosio.key',fee_bps:await relay.client.relayRate(relay.bp),minimum_fee_bps:1000,maximum_fee_bps:3000,minimum_service_fee:'0.0001 AIC'});
       if(req.method==='GET'&&/^\/status\/[0-9a-f]{64}$/.test(req.url)){
         const job=relay.journal.jobs[req.url.slice(8)];return send(job?200:404,job?publicJob(job):{error:'Unknown intent'});
       }

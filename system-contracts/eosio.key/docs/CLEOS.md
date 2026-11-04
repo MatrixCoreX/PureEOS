@@ -89,7 +89,7 @@ External relay submission uses a separate HTTP configuration, forwards no RPC cr
 
 ## 中继收入领取 / Claim relay earnings
 
-成功商业执行把基础费记入网络费用桶，把基础费的 30% 加价记入指定 BP 的
+成功商业执行把基础费记入网络费用桶，把基础费的10%–30%服务费记入指定 BP 的
 `feebuckets.relay_earned`。例如基础费 0.0100 AIC、加价 0.0030 AIC，发送方共付
 0.0130 AIC；这不是总费用按 70%/30% 分成。失败整笔回滚，不产生可领取收入。
 
@@ -102,7 +102,7 @@ symbol=4,AIC,ram_payer=领取BP)` 支付 RAM；可以在同一原子交易先 op
 停用/维护/失去中继资格不抹去已赚收益，原生权限、余额上限和失败回滚规则保留。
 
 公钥转公钥（包括已有余额行之间的内部划转）、公钥提币和充值仍按原有 PowerUp
-CPU/NET 市场占用曲线收费，商业中继另有基础费30%加价；领取免手续费不适用于转账。
+CPU/NET 市场占用曲线收费，商业中继按本人设置的基础费10%–30%收取服务费；领取免手续费不适用于转账。
 此前收益内扣费方案已被本选择取代。本轮授权远端验证后重建 TEST 链，治理封存前部署。
 新 TEST 节点公示1800秒，正式版仍为604800秒；其他已封存链须遵守其原生治理期限。
 实际部署状态以执行报告为准。
@@ -128,3 +128,7 @@ cleos -u https://YOUR-RPC push action eosio.key claim \
 `key push signed.json -d` 只签署资源付款部分并导出，不广播；`-d -s` 只导出未附资源签名的原生交易。广播必须继续使用原始正文，不得更新 TAPOS、过期时间或增加强制唯一 action。修改原生字段需要持有人重新复核并签名；不能用通用 push 自动更新未附原生签名的交易头。
 
 `key push signed.json -d` signs the resource envelope and exports without broadcasting. `-d -s` exports without a resource signature. Never refresh the original header or append a uniqueness action. A resource-unsigned export must be signed without mutating its header before submission; generic push may refresh an unsigned transaction and invalidate the owner proof.
+
+### 中继费率设置
+
+由BP本人签名，例如 `cleos -u NODE push action eosio.key setrate '{"bp":"gptgenesisbp","fee_bps":1000}' -p gptgenesisbp@active` 设置10%；3000表示30%，区间外拒绝。服务费向上取整到0.0001 AIC，最低0.0001 AIC。现有 `key prepare` 保留已签名总费用上限和原30%费率上限，可按更低费率执行。新版SDK会额外签名锁定具体费率，改价后须重新准备并签名。正常部署必须遵守该链已生效的原生治理期限。

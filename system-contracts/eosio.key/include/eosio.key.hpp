@@ -4,6 +4,7 @@
 #include <eosio/asset.hpp>
 #include <eosio/crypto.hpp>
 #include <eosio/singleton.hpp>
+#include <eosio/binary_extension.hpp>
 #include <string>
 #include "system_view.hpp"
 
@@ -31,7 +32,17 @@ struct transfer_request {
    checksum256 request_id;
    name relayer, reward_to;
    asset max_fee;
-   EOSLIB_SERIALIZE(transfer_request, (from)(to)(token_contract)(quantity)(memo)(auth_epoch)(request_id)(relayer)(reward_to)(max_fee))
+   binary_extension<uint16_t> relay_fee_bps;
+   // Preserve canonical legacy bytes: this CDT serializes an empty binary
+   // extension as its default value, so signed requests handle omission here.
+   template<typename Stream> friend Stream& operator<<(Stream& ds, const transfer_request& r) {
+      ds  << r.from << r.to << r.token_contract << r.quantity << r.memo << r.auth_epoch << r.request_id << r.relayer << r.reward_to << r.max_fee;
+      if (r.relay_fee_bps.has_value()) ds << r.relay_fee_bps.value();
+      return ds;
+   }
+   template<typename Stream> friend Stream& operator>>(Stream& ds, transfer_request& r) {
+      return ds  >> r.from >> r.to >> r.token_contract >> r.quantity >> r.memo >> r.auth_epoch >> r.request_id >> r.relayer >> r.reward_to >> r.max_fee >> r.relay_fee_bps;
+   }
 };
 struct withdrawal_request {
    public_key from;
@@ -42,7 +53,17 @@ struct withdrawal_request {
    checksum256 request_id;
    name relayer, reward_to;
    asset max_fee;
-   EOSLIB_SERIALIZE(withdrawal_request, (from)(token_contract)(to)(quantity)(memo)(auth_epoch)(request_id)(relayer)(reward_to)(max_fee))
+   binary_extension<uint16_t> relay_fee_bps;
+   // Preserve canonical legacy bytes: this CDT serializes an empty binary
+   // extension as its default value, so signed requests handle omission here.
+   template<typename Stream> friend Stream& operator<<(Stream& ds, const withdrawal_request& r) {
+      ds  << r.from << r.token_contract << r.to << r.quantity << r.memo << r.auth_epoch << r.request_id << r.relayer << r.reward_to << r.max_fee;
+      if (r.relay_fee_bps.has_value()) ds << r.relay_fee_bps.value();
+      return ds;
+   }
+   template<typename Stream> friend Stream& operator>>(Stream& ds, withdrawal_request& r) {
+      return ds  >> r.from >> r.token_contract >> r.to >> r.quantity >> r.memo >> r.auth_epoch >> r.request_id >> r.relayer >> r.reward_to >> r.max_fee >> r.relay_fee_bps;
+   }
 };
 struct cancellation_request {
    public_key from;
@@ -50,7 +71,17 @@ struct cancellation_request {
    checksum256 request_id;
    name relayer, reward_to;
    asset max_fee;
-   EOSLIB_SERIALIZE(cancellation_request, (from)(auth_epoch)(next_epoch)(request_id)(relayer)(reward_to)(max_fee))
+   binary_extension<uint16_t> relay_fee_bps;
+   // Preserve canonical legacy bytes: this CDT serializes an empty binary
+   // extension as its default value, so signed requests handle omission here.
+   template<typename Stream> friend Stream& operator<<(Stream& ds, const cancellation_request& r) {
+      ds  << r.from << r.auth_epoch << r.next_epoch << r.request_id << r.relayer << r.reward_to << r.max_fee;
+      if (r.relay_fee_bps.has_value()) ds << r.relay_fee_bps.value();
+      return ds;
+   }
+   template<typename Stream> friend Stream& operator>>(Stream& ds, cancellation_request& r) {
+      return ds  >> r.from >> r.auth_epoch >> r.next_epoch >> r.request_id >> r.relayer >> r.reward_to >> r.max_fee >> r.relay_fee_bps;
+   }
 };
 
 class [[eosio::contract("eosio.key")]] key_contract : public contract {
@@ -65,6 +96,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    void onbuyram(name payer, name receiver, asset quantity, int64_t bytes, int64_t ram_bytes, asset fee);
    [[eosio::action]] void regrelay(name bp, name permission, std::string endpoint);
    [[eosio::action]] void setrelay(name bp, bool enabled);
+   [[eosio::action]] void setrate(name bp, uint16_t fee_bps);
    [[eosio::action]] void prove(public_key owner, checksum256 chain_id, checksum256 deployment, uint32_t reference_block_num);
    [[eosio::action]] void ksend(transfer_request request);
    [[eosio::action]] void withdraw(withdrawal_request request);
@@ -153,6 +185,13 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
       EOSLIB_SERIALIZE(relay, (bp)(permission)(endpoint)(enabled))
    };
    using relays = multi_index<"relays"_n, relay>;
+   struct [[eosio::table]] relay_rate {
+      name bp;
+      uint16_t fee_bps;
+      uint64_t primary_key() const { return bp.value; }
+      EOSLIB_SERIALIZE(relay_rate, (bp)(fee_bps))
+   };
+   using relay_rates = multi_index<"relayrates"_n, relay_rate>;
    struct [[eosio::table("pricing")]] pricing {
       uint64_t epoch = 0;
       uint32_t multiplier_bps = 10000, cpu_occupancy_bps = 0, net_occupancy_bps = 0;
@@ -185,7 +224,8 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    void epoch(uint64_t wallet_id, uint64_t expected, uint64_t next);
    uint32_t rows_for(const public_key& key, uint64_t asset_id) const;
    uint32_t multiplier(const configuration& cfg, bool exit_path);
-   charge quote(const configuration& cfg, uint32_t units, uint32_t rows, bool relayed, bool exit_path = false);
+   uint16_t relay_fee(name bp, const binary_extension<uint16_t>& signed_bps) const;
+   charge quote(const configuration& cfg, uint32_t units, uint32_t rows, uint16_t relay_bps, bool exit_path = false);
    void credit_fee_bucket(name owner, const charge& fee);
    void charge_native(name owner, const charge& fee, const asset& maximum);
    void charge_key(uint64_t wallet_id, name bp, const charge& fee, const asset& maximum);

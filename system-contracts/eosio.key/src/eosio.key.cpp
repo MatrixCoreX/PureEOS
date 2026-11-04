@@ -294,11 +294,11 @@ void key_contract::regrelay(name bp, name permission, std::string endpoint) {
    auto cfg = config(); check_bp(bp, cfg);
    check(permission.value && permission != "owner"_n && permission != "active"_n && permission != "eosio.code"_n,
          "use a dedicated child relay permission");
-   check(endpoint.size() >= 9 && endpoint.size() <= 200 && endpoint.rfind("https://", 0) == 0,
-         "relay endpoint must be bounded HTTPS URL");
+   check(endpoint.empty() || (endpoint.size() >= 9 && endpoint.size() <= 200 && endpoint.rfind("https://", 0) == 0),
+         "relay endpoint must be empty or bounded HTTPS URL");
    relays table(get_self(), get_self().value);
    auto it = table.find(bp.value);
-   auto update = [&](auto& row) { row.bp = bp; row.permission = permission; row.endpoint = endpoint; row.enabled = true; };
+   auto update = [&](auto& row) { row.bp = bp; row.permission = permission; row.endpoint = endpoint; row.enabled = !endpoint.empty(); };
    if (it == table.end()) table.emplace(bp, update); else table.modify(it, same_payer, update);
    fee_buckets buckets(get_self(), get_self().value);
    if (buckets.find(bp.value) == buckets.end()) buckets.emplace(bp, [&](auto& row) { row.owner = bp; });
@@ -308,7 +308,34 @@ void key_contract::setrelay(name bp, bool enabled) {
    if (enabled) check_bp(bp, config());
    relays table(get_self(), get_self().value);
    auto it = table.require_find(bp.value, "relay not registered");
+   check(!enabled || !it->endpoint.empty(), "relay endpoint not configured");
    table.modify(it, same_payer, [&](auto& row) { row.enabled = enabled; });
+}
+void key_contract::setrate(name bp, uint16_t fee_bps) {
+   require_auth(bp);
+   check(fee_bps >= 1000 && fee_bps <= 3000, "relay fee must be between 10% and 30%");
+   check_bp(bp, config());
+   relays registered(get_self(), get_self().value);
+   registered.require_find(bp.value, "relay not registered");
+   relay_rates rates(get_self(), get_self().value);
+   auto it = rates.find(bp.value);
+   auto update = [&](auto& row) { row.bp = bp; row.fee_bps = fee_bps; };
+   if (it == rates.end()) rates.emplace(bp, update); else rates.modify(it, same_payer, update);
+}
+uint16_t key_contract::relay_fee(name bp, const binary_extension<uint16_t>& signed_bps) const {
+   if (!bp.value) {
+      check(!signed_bps.has_value() || signed_bps.value() == 0, "self operation has no relay fee");
+      return 0;
+   }
+   relay_rates rates(get_self(), get_self().value);
+   auto it = rates.find(bp.value);
+   const uint16_t rate = it == rates.end() ? 3000 : it->fee_bps;
+   check(rate >= 1000 && rate <= 3000, "invalid registered relay fee");
+   // Legacy envelopes authorize at most the original30% rate and retain the
+   // signed total fee cap. New envelopes also bind the exact quote rate.
+   if (signed_bps.has_value()) check(signed_bps.value() == rate, "relay rate changed; sign an updated quote");
+   else check(rate <= 3000, "relay fee exceeds legacy signed rate ceiling");
+   return rate;
 }
 void key_contract::check_relay(name bp, name reward_to, const configuration& cfg) const {
    check(bp.value && reward_to == bp, "relay reward must belong to selected BP");
@@ -474,11 +501,12 @@ uint32_t key_contract::multiplier(const configuration& cfg, bool exit_path) {
    return next.multiplier_bps;
 }
 key_contract::charge key_contract::quote(const configuration& cfg, uint32_t units, uint32_t rows,
-                                         bool relayed, bool exit_path) {
+                                         uint16_t relay_bps, bool exit_path) {
    check(units <= 128 && rows <= 4, "fee work bound exceeded");
    auto value = (__int128(cfg.policy.unit_fee) * units + __int128(cfg.policy.new_row_fee) * rows) * multiplier(cfg, exit_path);
    int64_t base = std::max(cfg.policy.minimum_fee, checked((value + 9999) / 10000));
-   int64_t premium = relayed ? checked((__int128(base) * 30 + 99) / 100) : 0;
+   check(relay_bps == 0 || (relay_bps >= 1000 && relay_bps <= 3000), "invalid relay fee rate");
+   int64_t premium = relay_bps ? std::max(int64_t(1), checked((__int128(base) * relay_bps + 9999) / 10000)) : 0;
    return {base, premium, checked(__int128(base) + premium)};
 }
 void key_contract::check_max(const configuration& cfg, const charge& fee, const asset& maximum) const {
@@ -586,7 +614,7 @@ void key_contract::ksend(transfer_request request) {
    auto id = find_asset(request.token_contract, request.quantity.symbol); check_asset(id); check_asset(1);
    check_token(request.token_contract, request.quantity.symbol);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   auto fee = quote(cfg, 4 + (request.memo.size() + 63) / 64, rows_for(request.to, id), true);
+   auto fee = quote(cfg, 4 + (request.memo.size() + 63) / 64, rows_for(request.to, id), relay_fee(request.relayer, request.relay_fee_bps));
    check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, id) >= checked(__int128(request.quantity.amount) + (id == 1 ? fee.total : 0)), "insufficient principal balance");
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
@@ -647,7 +675,7 @@ void key_contract::perform_withdraw(name payer, const withdrawal_request& reques
          "recipient must open the third-party token balance before withdrawal");
    auto id = find_asset(request.token_contract, request.quantity.symbol); check_asset(id); check_asset(1);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
-   auto fee = quote(cfg, 6 + (request.memo.size() + 63) / 64, outgoing_rows(request.token_contract, request.to, request.quantity.symbol), !direct, direct);
+   auto fee = quote(cfg, 6 + (request.memo.size() + 63) / 64, outgoing_rows(request.token_contract, request.to, request.quantity.symbol), relay_fee(direct ? name{} : request.relayer, request.relay_fee_bps), direct);
    check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, id) >= checked(__int128(request.quantity.amount) + (id == 1 ? fee.total : 0)), "insufficient principal balance");
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
@@ -667,7 +695,7 @@ void key_contract::perform_cancel(name payer, const cancellation_request& reques
    else check_relay(request.relayer, request.reward_to, cfg);
    auto sender = find_wallet(request.from); check(sender, "sender wallet missing");
    check(request.next_epoch > request.auth_epoch, "authorization epoch must increase");
-   auto fee = quote(cfg, 3, 0, !direct, direct); check_max(cfg, fee, request.max_fee);
+   auto fee = quote(cfg, 3, 0, relay_fee(direct ? name{} : request.relayer, request.relay_fee_bps), direct); check_max(cfg, fee, request.max_fee);
    check(balance_of(sender, 1) >= fee.total, "insufficient additional AIC fee balance");
    epoch(sender, request.auth_epoch, request.next_epoch);
    charge_key(sender, direct ? get_self() : request.relayer, fee, request.max_fee);

@@ -99,3 +99,32 @@ test('self withdrawal binds explicit native payer and has no BP premium',()=>{
  assert.throws(()=>prepareEnvelope(config,info,'selfout',r));
  const q={...p,payer:'keyuserlunar'};assert.throws(()=>verifyPrepared(q,config));
 });
+
+test('relay rates are bounded, rounded upward and charged at least one AIC atom',()=>{
+ const p={unit_fee:1,minimum_fee:1,new_row_fee:7,maximum_multiplier_bps:100000};
+ for(const rate of [1000,1501,2000,3000]){
+  assert.equal(calculateFee(p,10000n,1,0,true,rate).premium,1n);
+  const q=calculateFee(p,10000n,101,0,true,rate);
+  assert.equal(q.premium,(101n*BigInt(rate)+9999n)/10000n);
+  assert(q.premium<=calculateFee(p,10000n,101,0,true,3000).premium);
+ }
+ for(const rate of [0,999,3001,1000.5,NaN])assert.throws(()=>calculateFee(p,10000n,1,0,true,rate));
+ assert.equal(calculateFee(p,10000n,1,0,false).premium,0n);
+});
+test('owner signatures bind the selected relay rate for sends, withdrawals and cancellations',()=>{
+ const cases=[['ksend',{...request}],['withdraw',{...request,to:'keyuserlunar'}],['cancel',{from:request.from,auth_epoch:request.auth_epoch,next_epoch:'9007199254741000',request_id:request.request_id,relayer:request.relayer,reward_to:request.reward_to,max_fee:request.max_fee}]];
+ for(const [operation,r]of cases){
+  const prepared=prepareEnvelope(config,info,operation,{...r,relay_fee_bps:1000}),signed=signPrepared(prepared,config,owner);
+  assert(verifySigned(signed,config));
+  const changed=prepareEnvelope(config,info,operation,{...r,relay_fee_bps:3000});
+  assert.notEqual(prepared.transaction_id,changed.transaction_id);
+  assert.throws(()=>verifySigned({prepared:changed,owner_signature:signed.owner_signature},config),/signature/);
+  for(const rate of [999,3001,1000.5])assert.throws(()=>prepareEnvelope(config,info,operation,{...r,relay_fee_bps:rate}));
+ }
+});
+test('relay rate reads validate identity and bounds; legacy registrations retain30%',async()=>{
+ const client=new KeyWalletClient('http://127.0.0.1:1');let rows=[];client.rows=async()=>rows;
+ assert.equal(await client.relayRate('keyrelaymoon'),3000);
+ rows=[{bp:'keyrelaymoon',fee_bps:1000}];assert.equal(await client.relayRate('keyrelaymoon'),1000);
+ for(const row of [{bp:'keyusersolar',fee_bps:1000},{bp:'keyrelaymoon',fee_bps:999},{bp:'keyrelaymoon',fee_bps:3001}]){rows=[row];await assert.rejects(client.relayRate('keyrelaymoon'));}
+});

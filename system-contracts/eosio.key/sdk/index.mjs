@@ -4,11 +4,11 @@ import {Asset,Name,Checksum256,PrivateKey,PublicKey,Serializer,Signature,Transac
 export const CONTRACT='eosio.key',TAG='PureEOS:eosio.key:transaction';
 const LIMIT=(1n<<62n)-1n;
 const REQUESTS={ksend:'transfer_request',withdraw:'withdrawal_request',selfout:'withdrawal_request',cancel:'cancellation_request',selfcancel:'cancellation_request'};
-const common=[['auth_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset']];
+const common=[['auth_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset'],['relay_fee_bps','uint16$']];
 const schema={
  transfer_request:[['from','public_key'],['to','public_key'],['token_contract','name'],['quantity','asset'],['memo','string'],...common],
  withdrawal_request:[['from','public_key'],['token_contract','name'],['to','name'],['quantity','asset'],['memo','string'],...common],
- cancellation_request:[['from','public_key'],['auth_epoch','uint64'],['next_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset']],
+ cancellation_request:[['from','public_key'],['auth_epoch','uint64'],['next_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset'],['relay_fee_bps','uint16$']],
  prove:[['owner','public_key'],['chain_id','checksum256'],['deployment','checksum256'],['reference_block_num','uint32']],
  proof_envelope:[['tag','string'],['version','uint32'],['chain_id','checksum256'],['contract','name'],['deployment','checksum256'],['transaction_id','checksum256']],
 };
@@ -40,7 +40,7 @@ export function ramRegistrationActions(payer,tokenContract,tokenSymbol,ramPaymen
   return [{account:'eosio',name:'buyram',authorization,data:{payer,receiver:contract,quant:payment.text}},
           {account:contract,name:'regtoken',authorization:[...authorization],data:{payer,token_contract:tokenContract,token_symbol:tokenSymbol,min_bytes:minimumBytes}}];
 }
-export function validateRequest(operation,request){const type=REQUESTS[operation];if(!type)throw new Error('Unsupported wallet operation');exact(request,schema[type].map(x=>x[0]));normalizePublicKey(request.from);if(operation==='ksend')normalizePublicKey(request.to);u64(request.auth_epoch);hash(request.request_id);nativeName(request.relayer,true);nativeName(request.reward_to,true);if(type!=='cancellation_request'){nativeName(request.token_contract);if(operation!=='ksend')nativeName(request.to);}const cap=atomicAsset(request.max_fee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('Invalid AIC fee cap');if(type==='cancellation_request'){if(u64(request.next_epoch)<=u64(request.auth_epoch))throw new Error('Invalid next epoch');}else{if(atomicAsset(request.quantity).units<=0n||typeof request.memo!=='string'||Buffer.byteLength(request.memo)>128)throw new Error('Invalid principal or memo');}if(operation.startsWith('self')){if(request.relayer||request.reward_to)throw new Error('Self operation cannot pay relay');}else if(!request.relayer||request.reward_to!==request.relayer)throw new Error('Selected BP and reward identity must match');return type;}
+export function validateRequest(operation,request){const type=REQUESTS[operation];if(!type)throw new Error('Unsupported wallet operation');exact(request,schema[type].filter(([name,type])=>!type.endsWith('$')||Object.hasOwn(request,name)).map(x=>x[0]));if(Object.hasOwn(request,'relay_fee_bps')){const b=request.relay_fee_bps;if(!Number.isInteger(b)||(operation.startsWith('self')?b!==0:b<1000||b>3000))throw new Error('Relay fee must be 10% to 30%, or zero for self operations');}normalizePublicKey(request.from);if(operation==='ksend')normalizePublicKey(request.to);u64(request.auth_epoch);hash(request.request_id);nativeName(request.relayer,true);nativeName(request.reward_to,true);if(type!=='cancellation_request'){nativeName(request.token_contract);if(operation!=='ksend')nativeName(request.to);}const cap=atomicAsset(request.max_fee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('Invalid AIC fee cap');if(type==='cancellation_request'){if(u64(request.next_epoch)<=u64(request.auth_epoch))throw new Error('Invalid next epoch');}else{if(atomicAsset(request.quantity).units<=0n||typeof request.memo!=='string'||Buffer.byteLength(request.memo)>128)throw new Error('Invalid principal or memo');}if(operation.startsWith('self')){if(request.relayer||request.reward_to)throw new Error('Self operation cannot pay relay');}else if(!request.relayer||request.reward_to!==request.relayer)throw new Error('Selected BP and reward identity must match');return type;}
 export function ownerDigest(config,transaction,contract=CONTRACT){if(Number(config.version)!==2)throw new Error('Unsupported owner proof version');return Checksum256.from(sha(encode('proof_envelope',{tag:TAG,version:2,chain_id:hash(config.chain_id),contract,deployment:hash(config.deployment),transaction_id:Transaction.from(transaction).id}).array));}
 export function prepareEnvelope(config,info,operation,request,{payer='',permission='keyrelay',validSeconds=120,contract=CONTRACT}={}){
  validateRequest(operation,request);if(info.chain_id!==config.chain_id)throw new Error('Node chain mismatch');if(!Number.isInteger(validSeconds)||validSeconds<1||validSeconds>3500)throw new Error('Invalid transaction lifetime');
@@ -79,12 +79,13 @@ export function marketMultiplier(policy,market) {
   const cpu = fraction(market.cpu),net=fraction(market.net),use=cpu>net?cpu:net;
   return {multiplier:10000n+(BigInt(policy.maximum_multiplier_bps)-10000n)*use*use/100000000n,cpu,net};
 }
-export function calculateFee(policy,multiplier,units,rows,relayed) {
+export function calculateFee(policy,multiplier,units,rows,relayed,relayFeeBps=3000) {
+  if(relayed&&(!Number.isInteger(relayFeeBps)||relayFeeBps<1000||relayFeeBps>3000))throw new Error('Relay fee must be 10% to 30%');
   if (!Number.isInteger(units)||units<0||units>128||!Number.isInteger(rows)||rows<0||rows>4) throw new Error('Invalid work bound');
   const numerator=(BigInt(policy.unit_fee)*BigInt(units)+BigInt(policy.new_row_fee)*BigInt(rows))*BigInt(multiplier);
   const computed=(numerator+9999n)/10000n;
   const base=computed>BigInt(policy.minimum_fee)?computed:BigInt(policy.minimum_fee);
-  const premium=relayed?(base*30n+99n)/100n:0n;
+  const premium=relayed?(base*BigInt(relayFeeBps)+9999n)/10000n:0n;
   if(base<=0n||base+premium>LIMIT)throw new Error('Fee out of range');
   return {base,premium,total:base+premium,base_asset:formatFee(base),premium_asset:formatFee(premium),total_asset:formatFee(base+premium)};
 }
@@ -107,6 +108,14 @@ export class KeyWalletClient {
     const [info,configs]=await Promise.all([this.rpc('get_info'),this.rows('config')]);
     if(configs.length!==1||configs[0].chain_id!==info.chain_id||Number(configs[0].version)!==2)throw new Error('Wallet domain does not match actual node chain');
     this.config=configs[0];this.abi=CORE_ABI;return this;
+  }
+  async relayRate(bp) {
+    nativeName(bp);
+    const rows=await this.rows('relayrates',this.contract,{lower_bound:bp,upper_bound:bp,limit:2});
+    if(rows.length>1||rows.length&&rows[0].bp!==bp)throw new Error('Invalid relay rate identity');
+    const rate=rows.length?Number(rows[0].fee_bps):3000;
+    if(!Number.isInteger(rate)||rate<1000||rate>3000)throw new Error('Relay fee must be 10% to 30%');
+    return rate;
   }
   async wallet(key) {
     const hash=keyHash(key);
@@ -166,9 +175,11 @@ export class KeyWalletClient {
     else if(operation==='cancel'||operation==='selfcancel')units=3;
     else if(operation==='refundfee'){units=4;rows=await this.nativeRows(cfg.fee_contract,request.to,request.quantity);}
     else throw new Error('Unsupported fee operation');
-    return {...calculateFee(cfg.policy,multiplier,units,rows,['ksend','withdraw','cancel'].includes(operation)),multiplier,units,rows,head:info.head_block_num};
+    const relayed=['ksend','withdraw','cancel'].includes(operation),rate=relayed?await this.relayRate(request.relayer):0;
+    if(Object.hasOwn(request,'relay_fee_bps')&&request.relay_fee_bps!==rate)throw new Error('Relay rate changed; sign an updated quote');
+    return {...calculateFee(cfg.policy,multiplier,units,rows,relayed,rate),relay_fee_bps:rate,multiplier,units,rows,head:info.head_block_num};
   }
   async nativeRows(token,recipient,quantity){const symbol=atomicAsset(quantity).symbol.split(',')[1],raw=BigInt('0x'+Buffer.from(symbol,'ascii').reverse().toString('hex')).toString();const result=await this.rpc('get_table_rows',{json:true,code:token,scope:recipient,table:'accounts',lower_bound:raw,upper_bound:raw,limit:1});return result.rows.length?0:1;}
-  async prepare(operation,request,options={}){if(!this.config)await this.load();return prepareEnvelope(this.config,await this.rpc('get_info'),operation,request,{contract:this.contract,...options});}
+  async prepare(operation,request,options={}){if(!this.config)await this.load();if(['ksend','withdraw','cancel'].includes(operation)&&!Object.hasOwn(request,'relay_fee_bps'))request={...request,relay_fee_bps:await this.relayRate(request.relayer)};return prepareEnvelope(this.config,await this.rpc('get_info'),operation,request,{contract:this.contract,...options});}
   async prepareRelayTransaction(body,bp,permission,relayPrivateKey){if(!this.config)await this.load();verifySigned(body,this.config,this.contract);const p=body.prepared;if(p.operation.startsWith('self')||p.request.relayer!==bp||p.permission!==permission)throw new Error('Wrong BP permission');return resourcePacket(body,this.config,relayPrivateKey,this.contract);}
 }

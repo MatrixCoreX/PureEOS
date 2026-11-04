@@ -34,14 +34,95 @@ def main():
             self.report['chain_test_SHA256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
             self.report['node_runtime']=subprocess.check_output(['node','--version'],text=True).strip()
             if args.native_cleos:self.cleos=args.native_cleos
+        def run(self,args,*,input_text=None,failure=None):
+            result=subprocess.run([str(self.cleos),'--no-auto-keosd','--url',self.url,
+                '--wallet-url',f'unix://{self.root}/wallet/keosd.sock',*args],input=input_text,
+                capture_output=True,text=True,timeout=40)
+            output=self.redact(result.stdout+result.stderr)
+            self.last_cpu_response=None
+            if result.returncode and 'tx_cpu_usage_exceeded'in output:
+                try:
+                    value=json.JSONDecoder().raw_decode(output.lstrip())[0]
+                    if value.get('processed',{}).get('receipt')is None and value['processed'].get('except',{}).get('name')=='tx_cpu_usage_exceeded':
+                        self.last_cpu_response=(value,output)
+                except (ValueError,KeyError,TypeError):pass
+            diagnostic=output if len(output)<=10000 else output[:4000]+'\n... middle omitted ...\n'+output[-6000:]
+            if self.last_cpu_response is not None:raise RuntimeError('Definitive tx_cpu_usage_exceeded: '+diagnostic)
+            if failure is not None:
+                if result.returncode==0 or failure.lower()not in output.lower():
+                    raise RuntimeError(f'Expected rejection ({failure}), got {result.returncode}: {diagnostic}')
+            elif result.returncode:raise RuntimeError(f'cleos {args[:3]} failed: {diagnostic}')
+            return result.stdout
+        def audit_state(self):
+            state={'wallet':self.state(),'governance':self.governance(),'code':{},'native':{},'RAM':{}}
+            standard=self.report['artifacts']['eosio.token/eosio.token.wasm']
+            for code in ['eosio','eosio.key','eosio.token','keyusdtoken1']:
+                state['code'][code]=self.rpc('get_code_hash',{'account_name':code})['code_hash']
+            for owner in ['eosio.key','keyusersolar','keyuserlunar','keyrelaymoon','keyusdtoken1']:
+                state['RAM'][owner]=self.rpc('get_account',{'account_name':owner})['ram_usage']
+                for contract,symbol in [('eosio.token','AIC'),('keyusdtoken1','USD')]:
+                    if state['code'][contract]==standard:
+                        state['native'][owner+':'+symbol]=self.rpc('get_currency_balance',{'code':contract,'account':owner,'symbol':symbol})
+            return state
         def tx(self,args,*,failure=None):
+            # Freeze/sign exactly once. CPU retries resend identical bytes and
+            # the same native ID; they never create another payment intent.
+            self.nonce+=1
+            folder=self.root/'immutable-packets';folder.mkdir(exist_ok=True)
+            path=folder/(str(self.nonce)+'.json')
+            try:exported=self.run([*args,'-j','-x',str(120+self.nonce),'--dont-broadcast'])
+            except RuntimeError as error:
+                if failure is not None and failure.lower()in str(error).lower():return None
+                raise
+            signed=json.loads(exported);assert 'actions'in signed and 'signatures'in signed
+            path.write_text(json.dumps(signed))
+            packed=json.loads(self.run(['convert','pack_transaction',str(path)]))
+            assert packed['compression']in ['none',0]
+            transaction_id=hashlib.sha256(bytes.fromhex(packed['packed_trx'])).hexdigest()
+            packet_hash=hashlib.sha256(json.dumps(packed,sort_keys=True).encode()).hexdigest()
+            # Preserve native set-contract's default wire compression. Replaying
+            # its signed export without zlib changes NET billing and can reject
+            # a valid deployment at the unchanged per-transaction NET cap.
+            compression=args[args.index('--compression')+1]if '--compression'in args else(
+                'zlib'if args[:2]==['set','contract']else 'none')
             for attempt in range(1,6):
-                try:return super().tx(args,failure=failure)
+                before=None if self.bootstrapping else self.audit_state()
+                info=self.rpc('get_info')
+                try:
+                    raw=self.run(['push','transaction',str(path),'-s','-j','--compression',compression],failure=failure)
+                    if failure is not None:return None
+                    result=json.loads(raw)
+                    assert result['transaction_id']==transaction_id,'Native client changed frozen transaction bytes'
+                    assert result['processed']['receipt']['status']=='executed'
+                    confirmed=self.wait_transaction(transaction_id,info['last_irreversible_block_num'])
+                    confirmed['reported_block_num']=result['processed']['block_num']
+                    self.report.setdefault('confirmed_transactions',[]).append(confirmed)
+                    return result
                 except RuntimeError as error:
-                    if failure is not None or not self.bootstrapping or'tx_cpu_usage_exceeded'not in str(error)or attempt==5:raise
-                    self.report.setdefault('deployment_cpu_retries',[]).append({'attempt':attempt,'command':args[:3],'error':'atomic bootstrap transaction exceeded unchanged 150ms CPU limit'})
-                    print('RETRY: atomic bootstrap CPU deadline; unchanged caps',flush=True)
-                    self.wait_lib(self.rpc('get_info')['head_block_num']+2)
+                    if 'tx_cpu_usage_exceeded'not in str(error)or attempt==5:raise
+                    response=getattr(self,'last_cpu_response',None)
+                    if not response:raise
+                    result,raw=response
+                    if result['transaction_id']!=transaction_id:raise RuntimeError('CPU failure native ID mismatch')
+                    finalized=self.wait_lib(max(info['head_block_num'],result['processed']['block_num'])+2)
+                    scanned=[]
+                    for n in range(info['last_irreversible_block_num']+1,finalized['last_irreversible_block_num']+1):
+                        block=self.rpc('get_block',{'block_num_or_id':n});scanned.append({'block_num':n,'block_id':block['id']})
+                        for receipt in block['transactions']:
+                            trx=receipt['trx'];actual=trx if isinstance(trx,str)else trx['id']
+                            if actual==transaction_id:raise RuntimeError('Retry stopped: original transaction is canonical; reconcile its receipt')
+                    after=None if self.bootstrapping else self.audit_state()
+                    if before!=after:raise RuntimeError('Retry stopped: wallet/native/RAM/governance state changed')
+                    errors=self.root/'cpu-failures';errors.mkdir(exist_ok=True)
+                    index=len(self.report.get('resource_cpu_retries',[]))+1;file=errors/(str(index)+'.log');file.write_text(raw)
+                    digest=hashlib.sha256(json.dumps(before,sort_keys=True).encode()).hexdigest()
+                    self.report.setdefault('resource_cpu_retries',[]).append({'attempt':attempt,'transaction_id':transaction_id,
+                        'exception':'tx_cpu_usage_exceeded','receipt':None,'unchanged_CPU_cap_us':150000,
+                        'state_before_after_sha256':digest,'state_unchanged':True,'canonical_absence':scanned,
+                        'immutable_packet_sha256':packet_hash,'same_native_id_retry':True,'bootstrap':self.bootstrapping,
+                        'error_log':str(file),'error_sha256':hashlib.sha256(raw.encode()).hexdigest(),
+                        'scope':'Private single-node namespace only; no live-chain retry or capacity claim'})
+                    print('RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged',flush=True)
         def start_node(self,phase,extra=()):
             super().start_node(phase,extra)
         def setup(self):
@@ -192,7 +273,7 @@ def main():
         def memo(self,key,cap='100000'):
             return 'PK2|'+key['Public key']+'|'+cap+'|'+os.urandom(32).hex()
         def state(self):
-            return {n:self.ktable(n)for n in ['config','wallets','assets','nativefees','feebuckets','pricing']}|{'balances':[
+            return {n:self.ktable(n)for n in ['config','wallets','assets','nativefees','feebuckets','pricing','relayrates','relays']}|{'balances':[
                 {'wallet':w['id'],'rows':self.ktable('balances',str(w['id']))}for w in self.ktable('wallets')]}
         def register_token(self,token='eosio.token',symbol='4,AIC',quantity='1.0000 AIC',minimum=4096,payer='keyusersolar',failure=None):
             actions=[{'account':'eosio','name':'buyram','authorization':[{'actor':payer,'permission':'active'}],
@@ -332,6 +413,48 @@ def main():
             self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(new),token='keyusdtoken1')
             self.check(int(row()['ram_used'])==used+1536 and row()['ram_sponsor']=='keyusersolar',
                        'Another native sponsor can top up; new key consumes its own token budget while retaining first-sponsor attribution')
+        def test_relay_rates(self):
+            import base64
+            (self.root/'candidate.abi.bin').write_bytes(base64.b64decode(self.rpc('get_raw_abi',{'account_name':'eosio.key'})['abi']))
+            def setrate(rate, actor='keyrelaymoon', failure=None):
+                return self.action('setrate',{'bp':'keyrelaymoon','fee_bps':rate},actor,contract='eosio.key',failure=failure)
+            for rate in [999,3001]:setrate(rate,failure='between 10% and 30%')
+            setrate(1000,actor='keyusersolar',failure='missing authority')
+            evidence=[]
+            for rate in [1000,1501,3000]:
+                setrate(rate)
+                before=next(b for b in self.ktable('feebuckets')if b['owner']=='keyrelaymoon')
+                self.execute('ksend',self.owner,self.request(self.owner,quantity='0.0001 AIC',relay_fee_bps=rate))
+                after=next(b for b in self.ktable('feebuckets')if b['owner']=='keyrelaymoon')
+                base=int(after['network'])-int(before['network']);premium=int(after['relay_earned'])-int(before['relay_earned'])
+                self.check(base>0 and premium==max(1,(base*rate+9999)//10000),'On-chain relay rate '+str(rate)+'bp charges exact ceil premium and preserves base bucket')
+                evidence.append({'bps':rate,'base_atoms':base,'service_atoms':premium})
+            setrate(1000)
+            old=self.request(self.owner,quantity='0.0001 AIC',relay_fee_bps=1000)
+            signed=self.signed('ksend',old,self.owner)
+            setrate(2000);before=self.state()
+            self.execute('ksend',self.owner,old,sig=signed,failure='relay rate changed')
+            self.check(self.state()==before,'Rate changes after owner signing reject atomically instead of increasing the signed rate')
+            self.execute('ksend',self.owner,self.request(self.owner,quantity='0.0001 AIC'))
+            self.check(True,'Legacy envelopes retain their signed total cap and accept rates below the original30% ceiling')
+            setrate(1000)
+            for operation in ['withdraw','cancel']:
+                patch={'relay_fee_bps':1000}
+                if operation=='withdraw':patch['quantity']='0.0001 AIC'
+                self.execute(operation,self.owner,self.request(self.owner,operation,**patch))
+            self.check(True,'Configurable signed rates work for both relayed withdrawal and cancellation')
+            setrate(3000)
+            self.action('regrelay',{'bp':'keyrelaymoon','permission':'keyrelay','endpoint':''},'keyrelaymoon',contract='eosio.key')
+            row=next(r for r in self.ktable('relays')if r['bp']=='keyrelaymoon')
+            self.check(row['endpoint']=='' and not row['enabled'],'Empty-endpoint registration is inactive metadata, without an HTTP service')
+            self.action('setrelay',{'bp':'keyrelaymoon','enabled':True},'keyrelaymoon',contract='eosio.key',failure='endpoint not configured')
+            setrate(1000);before=self.state()
+            self.execute('ksend',self.owner,self.request(self.owner,relay_fee_bps=1000),failure='relay disabled')
+            self.check(self.state()==before,'Display-only relay cannot execute owner transfers or consume fees')
+            self.action('regrelay',{'bp':'keyrelaymoon','permission':'keyrelay','endpoint':'https://relay.example.invalid'},'keyrelaymoon',contract='eosio.key')
+            self.check(next(r['fee_bps']for r in self.ktable('relayrates')if r['bp']=='keyrelaymoon')==1000,'Configuring an endpoint preserves the operator-owned rate')
+            setrate(3000)
+            self.report['relay_rates']={'range_bps':[1000,3000],'rounding':'ceil; min one atom','charges':evidence,'stale_quote_atomic_rejection':True,'legacy30_preserved':True}
         def signed(self,op,request,owner,original=None,actor=None,attack=None,ttl=120):
             payer=self.accounts[actor.split('@')[0]]if actor else(self.accounts['keyusersolar']if op.startswith('self')else self.hot)
             result=subprocess.run(['node',str(source/'tests/sign.mjs')],input=json.dumps({
@@ -368,6 +491,7 @@ def main():
             self.transfer('keyusersolar','eosio.key','100.0000 USD',self.memo(self.owner),token='keyusdtoken1')
             self.check(len(self.ktable('wallets'))==1 and len(self.ktable('assets'))==2,'Native deposits create one canonical wallet and distinct multi-token reserves')
             self.test_sender_ram_fees()
+            self.test_relay_rates()
             read=subprocess.run(['node',str(source/'tests/read.mjs')],input=json.dumps({'endpoint':self.url,'key':self.owner['Public key'],
                 'token':'keyusdtoken1','symbol':'4,USD'}),capture_output=True,text=True,timeout=30)
             assert read.returncode==0,self.redact(read.stderr)
@@ -715,6 +839,15 @@ def main():
             self.check(self.state()==before,'Configured wallet storage cap rejects RAM growth with atomic fee/principal rollback')
         def test_cli(self):
             self.run(['wallet','import','-n','localtest'],input_text=self.owner['Private key']+'\n')
+            self.action('setrate',{'bp':'keyrelaymoon','fee_bps':1000},'keyrelaymoon',contract='eosio.key')
+            old=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+            prepared=json.loads(self.run(['key','prepare',self.owner['Public key'],self.receiver['Public key'],'0.0001 AIC','--bp','keyrelaymoon','--max-fee','1.0000 AIC']))
+            signed=json.loads(self.run(['key','sign',json.dumps(prepared)]))
+            self.tx(['key','push',json.dumps(signed)])
+            now=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+            base=int(now['network'])-int(old['network']);premium=int(now['relay_earned'])-int(old['relay_earned'])
+            self.check('relay_fee_bps'not in prepared['request'] and premium==max(1,(base*1000+9999)//10000),'Unchanged native cleos completes legacy-cap transfers at a cheaper10% operator rate')
+            self.action('setrate',{'bp':'keyrelaymoon','fee_bps':3000},'keyrelaymoon',contract='eosio.key')
             native_before=self.token_balance('keyuserlunar')['AIC']
             self.tx(['transfer','keyusersolar',self.owner['Public key'],'1.0000 AIC',
                      '--max-key-fee','1.0000 AIC','--key-fee-fund','1.0000 AIC'])

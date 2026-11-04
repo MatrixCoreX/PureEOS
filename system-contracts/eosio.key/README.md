@@ -10,9 +10,9 @@ An independent multi-token public-key wallet contract. Native accounts can depos
 
 Every asset, including AIC, requires a native sponsor's real RAM purchase and `regtoken` admission first. Each full token identity has its own purchased-byte allocation budget, which any sponsor may top up. Unregistered or over-budget new allocations roll back. The transfer sender pays additional recipient-creation fees; existing rows pay no repeated creation fee. RAM funding does not grant whitelist admission. Arbitrary custom implementations remain outside this profile.
 
-第一版使用链上 PowerUp CPU/NET **资源市场占用**定价，商业中继仅允许已注册、押金正常、未维护且未永久拉黑的 BP。中继收入为基础费用的 30% 加价，合约每次执行都重新检查资格。用户指令在合约内验证签名，绑定完整原生交易、撤销代次、到期时间、收款方、代币、金额、指定 BP 和总费用上限。
+第一版使用链上 PowerUp CPU/NET **资源市场占用**定价，商业中继仅允许已注册、押金正常、未维护且未永久拉黑的 BP。中继收入为基础费用的10%–30%服务费，由中继BP自行设置；向上取整至0.0001 AIC，最低0.0001 AIC，合约每次执行都重新检查资格。用户指令在合约内验证签名，绑定完整原生交易、撤销代次、到期时间、收款方、代币、金额、指定 BP 和总费用上限。
 
-V1 prices fees from on-chain PowerUp CPU/NET **market occupancy**. Commercial relays must be registered, normally bonded BPs outside maintenance and the permanent blacklist. Relay revenue is a 30% markup on the base fee; eligibility is checked on every execution. The contract verifies the owner's signature, binding the complete native transaction, revocation epoch, expiration, destination, token, principal, selected BP and maximum total fee.
+V1 prices fees from on-chain PowerUp CPU/NET **market occupancy**. Commercial relays must be registered, normally bonded BPs outside maintenance and the permanent blacklist. Relays set a service rate of10%–30% of the base fee, rounded upward to0.0001 AIC with a minimum of0.0001 AIC; eligibility is checked on every execution. The contract verifies the owner's signature, binding the complete native transaction, revocation epoch, expiration, destination, token, principal, selected BP and maximum total fee.
 
 | 方向 / Direction | 合约路径 / Contract path | cleos |
 |---|---|---|

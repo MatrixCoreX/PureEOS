@@ -10,7 +10,7 @@
 | 文本账户给公钥 | token transfer，memo `PK2\|公钥\|费用上限原子数\|随机32字节十六进制ID` | 本金全额给公钥；额外扣原生发送者预存 AIC |
 | 公钥给公钥 | `ksend(request)` | 发送公钥承担本金及额外 AIC |
 | 公钥给文本账户 | `withdraw(request)` | 文本账户必须已经存在 |
-| 持有人自助转出 | `selfout(payer,request)` | 原生 payer 提供 CPU/NET；公钥付基础 AIC 费，无 30% 加价 |
+| 持有人自助转出 | `selfout(payer,request)` | 原生 payer 提供 CPU/NET；公钥付基础 AIC 费，无中继服务费 |
 | 撤销未执行授权 | `cancel` / `selfcancel` | 将 auth_epoch 提升到更大 next_epoch |
 | 提取过去中继收入 | `claim` | 已验收TEST：全额到账、无AIC应用手续费；领取BP承担原生资源及收款行RAM |
 | 退回费用预存 | `refundfee` | 原生费用所有者授权 |
@@ -60,7 +60,7 @@ SDK `ramRegistrationActions(payer, token, symbol, ramPayment, {minimumBytes})` �
 
 ## 动态费用和中继资格
 
-使用 eosio 的 `powup.state` 表、scope **0**，取 CPU/NET 两者较大的 `max(utilization, adjusted_utilization)/weight`，再按初始化的有界平方曲线计算基础费，向上取整。商业中继加收基础费 30%，原子数向上取整。它代表资源市场占用，不是区块实际 CPU、宿主机 CPU 或 TPS。报价是估计，实际扣费不得超过用户签名上限。
+使用 eosio 的 `powup.state` 表、scope **0**，取 CPU/NET 两者较大的 `max(utilization, adjusted_utilization)/weight`，再按初始化的有界平方曲线计算基础费，向上取整。商业中继由BP本人通过 `setrate(bp,fee_bps)` 设置1000–3000基点，即基础费的10%–30%。服务费原子数为 `max(1, ceil(基础费原子数 × fee_bps / 10000))`，即向上取整至0.0001 AIC且最低0.0001 AIC；总手续费等于基础费加服务费。它代表资源市场占用，不是区块实际 CPU、宿主机 CPU 或 TPS。报价是估计，实际扣费不得超过用户签名上限。
 
 每次商业执行重查：注册且有效 BP、正常足额 10,000 AIC 押金、未拉黑、无维护状态、中继启用、指定专用子权限授权。收益只记给选定 BP，换 worker 或密钥不能绕过 BP 黑名单。候补 BP 也可做中继。自助退出不依赖 BP，但仍需要原生资源付款人及额外 AIC；私钥丢失、链停机或代币合约故障不在该路径的恢复能力内。
 
@@ -88,3 +88,15 @@ BP 原生签名承担 CPU/NET；收款账号缺 AIC 余额行时，由领取 BP 
 `max_fee` 字段兼容保留，可填0.0000 AIC；不改ABI/表布局、收益归属、储备和原子回滚。
 所有转账（包括内部公钥转公钥）仍收动态 AIC 手续费，商业中继加价保留。
 此前收益内扣费方案已取代。本轮授权远端验证后重建 TEST 链并在封存前部署；新 TEST 节点公示1800秒，正式版仍604800秒。其他已封存链必须遵守各自原生治理期限。
+
+## 中继自主费率与签名约束
+
+`setrate` 由该BP的原生权限授权；新增 `relayrates` 行的RAM由BP本人支付。已登记中继缺少费率行时保留原30%，重新登记或开关服务不清除已设置的费率。依旧仅允许合格BP中继，不开放普通账号准入。
+
+`regrelay` 可用空endpoint登记未启用的比较条目。它不能执行中继转账，补充HTTPS入口前也不能通过 `setrelay(true)` 开启。当前测试仅创世中继运行HTTP；另四项仅展示费率，不配置额外热钥或权限。
+
+`ksend`、`withdraw`、`cancel` 请求末尾支持 `relay_fee_bps:uint16$` 二进制扩展。新版SDK准备交易时读取所选中继费率，费率随完整原生交易一起由持有人签名。执行时费率改变即拒绝，另保留 `max_fee` 总额上限。旧请求缺少扩展时保留原30%费率上限和已签名的总费用上限，可以按更低费率执行；现有cleos保持兼容。锁定具体报价费率须使用带扩展的新SDK请求。自助操作无中继服务费；领取收益继续全额、免应用费。
+
+浏览器按所选中继的实际链上费率预估并展示公式。报价仍受动态基础费、实际存储和执行时状态影响。此规则在本轮远端验证及原生治理升级完成后生效，实际代码/提案以部署报告为准。
+
+可仅登记费率用于页面比较：`regrelay` 的 endpoint 可为空，此时登记默认未启用，`setrelay(true)` 会拒绝没有入口的登记。配置真实HTTPS入口后才可启用服务。本轮仅创始BP运行HTTP中继，另四个登记只用于费率比较，不创建服务、入口或中继密钥。
