@@ -1,0 +1,886 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-04",
+  "snapshot_note": "Digests describe selected files at capture time, matching the recorded checkout commits. Later changes made by other ongoing tasks are outside this snapshot. No private source content is copied into this inventory.",
+  "scope": "Static review of selected security-sensitive paths, symbols, serialization and dependency boundaries; not an exhaustive audit or execution qualification. SHA-256 here is an archival checksum, not a proposed PQ security commitment.",
+  "authorization": "Two bilingual Markdown implementation plans and Git publication only. No builds, chain tests, deployment, payment, service change or provisioning.",
+  "repositories": {
+    "node": {
+      "local_checkout_label": "PureEOS-Test",
+      "commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+      "selected_files": 54
+    },
+    "key_contract_sdk_relay": {
+      "local_checkout_label": "PureEOS-Key",
+      "commit": "23fa32adb307b2a2f756703f6faef16b14313ab2",
+      "selected_files": 5
+    },
+    "retained_system_lineage": {
+      "local_checkout_label": "PureEOS-deployed-system-20261102",
+      "commit": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+      "selected_files": 4
+    },
+    "cdt_reference": {
+      "local_checkout_label": "cdt-v1-hardening",
+      "commit": "714543c5a001ac4a9f5b2baa4b55fb5064dadd62",
+      "selected_files": 2
+    },
+    "wallet_private_metadata_only": {
+      "local_checkout_label": "PureEOS-Wallet",
+      "commit": "397e40a856e3f1b0f2d63b4d6e9825a0ddf7609c",
+      "selected_files": 7
+    },
+    "history_private_metadata_only": {
+      "local_checkout_label": "PureHistory-key-history-20261103",
+      "commit": "83080a452b804424bf172e9f6ccb87543debec73",
+      "selected_files": 4
+    },
+    "explorer_private_metadata_only": {
+      "local_checkout_label": "PureEOS-explorer-key-history-20261103",
+      "commit": "8f601a7fef2f00285d5cb936d8da1fa0209659b4",
+      "selected_files": 4
+    }
+  },
+  "files": [
+    {
+      "group": "node",
+      "path": "libraries/libfc/include/fc/crypto/public_key.hpp",
+      "bytes": 2174,
+      "sha256": "3eb6bd1cd3664b504e47e34a63c8040f01c89c348cb4c3973dad42ae00dcea94",
+      "sha512": "27b6e451433b18d78d38089bdb90bc49676d131ed5a165147796cbc9c33c877e49ff99139cc48adc45ec7df5cbfa894e0b07d6f17742eca3407494572c17fec4",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "3eb6bd1cd3664b504e47e34a63c8040f01c89c348cb4c3973dad42ae00dcea94",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/libfc/include/fc/crypto/signature.hpp",
+      "bytes": 2342,
+      "sha256": "35609b869f4591cb8a3955b0acb0e6bc294deb66a65c73dc5554263b00863728",
+      "sha512": "ddb9f5acb5fba5db3959c4dd2ce42ae220019c6313bd3eec87c62cf0d30254cf8605c4260f83c4246ed50c3ff4add2f6038a0d3f5a89530a23113cc623a3ac5f",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "35609b869f4591cb8a3955b0acb0e6bc294deb66a65c73dc5554263b00863728",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/libfc/src/crypto/public_key.cpp",
+      "bytes": 4628,
+      "sha256": "ccafd293a9890d37d6e4ae02a8568753ef8997a59f0b751d74005df40ec10126",
+      "sha512": "fe821d918985fc7a43712567b950fcd67d6cea7dfecd9a25d4c1d44e25acd0fa12b486649b1ce21a1b1a044fb6b48a6f6a54a6d783ada3b6b5b994435266cfa7",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "node",
+      "path": "libraries/libfc/src/crypto/signature.cpp",
+      "bytes": 3503,
+      "sha256": "aa21647a985c87ba2e4d9a69183fc2291073e5af13300a4ba917f8a93eec54d8",
+      "sha512": "5a227590249b0ce766f2b7bf54f3dd58f1bce0d494a7583f83a24175525a59cdc5f6af14a6c44887897218edbb9504f51d1a10437541a20353601106a688728b",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "node",
+      "path": "libraries/libfc/CMakeLists.txt",
+      "bytes": 4218,
+      "sha256": "4222c548524bf985e91b42fc0a450f4ef5cb2883eff866537b64013144f8f9fe",
+      "sha512": "b49da4ab1d18b3b6a6076562988ee876812f7d8aeb618bb8c41a888d580835aa785cd88a899b71b5efa90130fd8689cc7a56b7b0cd2a6f6b5468be6377937b74",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "node",
+      "path": "libraries/libfc/libraries/boringssl/bssl/include/openssl/mldsa.h",
+      "bytes": 5739,
+      "sha256": "4245df8c5820a207cdbcd9a3dad8603a7cfc5d4d6fb1da2855bcaecd513e3aa3",
+      "sha512": "98430b7c5eb5a8c20956f849d7dfbc44fd0d09fb8c7b604e48d4b68ccfdc7d07fbeb50e6c181e3b74a1c0ec8828319c454d3a0b41822f4a7fcb6ab8ecb83294e",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "4245df8c5820a207cdbcd9a3dad8603a7cfc5d4d6fb1da2855bcaecd513e3aa3",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/libfc/libraries/boringssl/bssl/include/openssl/slhdsa.h",
+      "bytes": 3457,
+      "sha256": "09602b92bebc5a173115adb23422f9d1e3178332740c3fc3b092884e54f3f376",
+      "sha512": "bf77bd093a0c191d8b438d8455a016da5d9d8822fb00868dfe460b15b3b124df017a2e4a0a073c73c833df6da3067ff7607a6c90e2369e1e0a21238009a19b84",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "09602b92bebc5a173115adb23422f9d1e3178332740c3fc3b092884e54f3f376",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/types.hpp",
+      "bytes": 15767,
+      "sha256": "c0109287ce7a078c0ebb133b5dc05b62c4e4eb12b90748993a06b17df60511d2",
+      "sha512": "7487dc99346c968e939c4cd9a4d651dde1202e1fdd0a4bb1d3125e0a34b0e566111ecb79ab5023aff507179733baab702f6226fc1519a7dae6a2fa1e65624786",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "c0109287ce7a078c0ebb133b5dc05b62c4e4eb12b90748993a06b17df60511d2",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/authority.hpp",
+      "bytes": 12816,
+      "sha256": "3afb72a38c61b871d3ca427f467e3b227fd99c833e88d3e67198fdc22f3afef8",
+      "sha512": "46acd334d90590ea815a7189a65d38d268512db2f124983cec450aa35a5087bca74d2dfcae864c22ab2c1e9387a7b71be961f6b9bc23d1f01e42f467404bfbd2",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "3afb72a38c61b871d3ca427f467e3b227fd99c833e88d3e67198fdc22f3afef8",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/authorization_manager.cpp",
+      "bytes": 34478,
+      "sha256": "640c33206df424d1b00d70bc5e5a14fb71beb84c3ca42a89f579cc71c413325b",
+      "sha512": "c74c1710468d11c927a434484b5641d8e3e4fe840e3ce7b77e9af094e903208d9cd32dc60373f56eeca8a51d3260d03a435ba923b8d49a93989a7eac3aa6d2ca",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "640c33206df424d1b00d70bc5e5a14fb71beb84c3ca42a89f579cc71c413325b",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/eosio_contract.cpp",
+      "bytes": 21584,
+      "sha256": "1903cc53e55d287688da61850764468d927dfac4955c92cd39eabcd4aca05b21",
+      "sha512": "54229f38eb34155e36a9f3817d25e193e8889daa54225ae0d0e300e6c0d7b490c119ea3fdca07f3cfff89b5ed8edcd9c360f53738f18e1e60382b85b74f952d4",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "1903cc53e55d287688da61850764468d927dfac4955c92cd39eabcd4aca05b21",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/protocol_state_object.hpp",
+      "bytes": 3731,
+      "sha256": "cff8f91f3c15c613622b8603af208000187a51dc1d7b0bb31355bd99bee178b7",
+      "sha512": "f90e57687827fc5605c95c2a26bc2856fc99a7d390603894718c4ed59c7a05485235cef93967e90b25f7f8374153566f8ec44d8c24b4b2db3ae6e8737b58fbac",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "cff8f91f3c15c613622b8603af208000187a51dc1d7b0bb31355bd99bee178b7",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/protocol_state_object.cpp",
+      "bytes": 1775,
+      "sha256": "8c8c49f222a734af8a952e675a82c91b4c84ec2d1f7d6be6b5672411ffcf464f",
+      "sha512": "a8d6a8dba004e5fad28e6489aa6e9296523578df39d4ef73a8298db43e90485f28d2d287309d4a5f9f9a6a8e887fbe59f4eac391dbea93703f01def5096c57df",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "8c8c49f222a734af8a952e675a82c91b4c84ec2d1f7d6be6b5672411ffcf464f",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/transaction.hpp",
+      "bytes": 10782,
+      "sha256": "7fcc41432b650e91321afa73d9c4a7637055e9f3f096c05a83460e3b0d2bcbae",
+      "sha512": "e303b5a181cc0de4a599622368042045f6a98a4094b0ff34992b5424165ae37cbde617eac483f7e09bcc3c37bcba25e4e96d55f4c514876ea68d30df1e9fcee0",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "7fcc41432b650e91321afa73d9c4a7637055e9f3f096c05a83460e3b0d2bcbae",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/transaction.cpp",
+      "bytes": 14374,
+      "sha256": "3edbbc8b8868e2f8beba83d7d7c2eeffd2158e564681fd85f704a245d825fb49",
+      "sha512": "bee48d3f075300836740b5c6eadc1dccce615bc6d0bf10b28d87c4cc7367001ea4e141e1d6c7b95d1b605d7caa53a9406332047dc7b21ce8b7eaf2bae9ba73e7",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "3edbbc8b8868e2f8beba83d7d7c2eeffd2158e564681fd85f704a245d825fb49",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/transaction_metadata.hpp",
+      "bytes": 4623,
+      "sha256": "81d7c442f88f3deea58a82faf1786445de6feffe3a3f25656ec388c05dcbee26",
+      "sha512": "e94d4151d8719b182feda5208131f0e048efa4f765b5b522a26d73e4edf3f7cd9f5f6ed350383408058a6d504f2706b52befdb351873f03767bad14dd568f468",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "81d7c442f88f3deea58a82faf1786445de6feffe3a3f25656ec388c05dcbee26",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/transaction_metadata.cpp",
+      "bytes": 2421,
+      "sha256": "7c7d2a4c92c4717451f5dc6200acd94802d832a88901c2133aac7ca95a219129",
+      "sha512": "ad1ad0459a66ddd6a804abc5633fc2109282eab6dabd4dbc8cc8d6bced6fdc80c9851fb14fd867c80ead528dfb2686b6113cf169e83479d58c94d7feb536f837",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "7c7d2a4c92c4717451f5dc6200acd94802d832a88901c2133aac7ca95a219129",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/transaction_object.hpp",
+      "bytes": 1855,
+      "sha256": "74b423da1012f26351ed7213d700afde166bb5b9e56790a160e9f8e4d2c41962",
+      "sha512": "5fddba401d9da390ae5fb5152d1fb1a14d1b007947104cf182bde2adbfed632ee5f40e3b6bad50667166a560ca7018f9576e199cc0d0f90c8e503dd844b11a5b",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "74b423da1012f26351ed7213d700afde166bb5b9e56790a160e9f8e4d2c41962",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/block_header.hpp",
+      "bytes": 5112,
+      "sha256": "d13fdcab0fbb6f7c9ba3620c39917fb12dfcf23fe6a398beca547ce15cf63680",
+      "sha512": "437bc96bc8643156c0ab182f98734c047e884f91d4958dd57b128b6233be4c4aa1f054d7efa27b42cb7ef0db41058f79699dd476ac4e8136a238fd350ebc4258",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "d13fdcab0fbb6f7c9ba3620c39917fb12dfcf23fe6a398beca547ce15cf63680",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/block_header.cpp",
+      "bytes": 3556,
+      "sha256": "b5050266bdd8f648a0a0f28ccc9b047fd21fd7bcedd7e92234f7ee3478d1c146",
+      "sha512": "296afd7a8018716d40a70d6a91ced22643677b7a3ad8640208c4570b3df733090605f51520bfaba0909a784de8eebdca7d2c06bf76ebc4850dc395c18d33e6a4",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "b5050266bdd8f648a0a0f28ccc9b047fd21fd7bcedd7e92234f7ee3478d1c146",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/producer_schedule.hpp",
+      "bytes": 13201,
+      "sha256": "3795efb2012f9a69bc90f121b8f59884943b0c1a77a785728979a43711f89aff",
+      "sha512": "e931018a1dfb444571b544760b8e05a8ab3e7d3f173b97af6f49919cf9902b9febf13348136d1bc6742cab243cf84a01cec9114b15b2123a722f9dc559c27e32",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "3795efb2012f9a69bc90f121b8f59884943b0c1a77a785728979a43711f89aff",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/block_state.cpp",
+      "bytes": 22075,
+      "sha256": "4c35af37ce92d10e9118e511caeb14af8a9b39a5560dd863bef6b26f9cc07838",
+      "sha512": "6dcfe93039ae86df8656a90a70f2d227264782281d169986f26807f71682ee4ffca7b0fd865534502bb9a5655c1f48ba57887dcc788e7ba3f36e47d9fc8b2c8b",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "4c35af37ce92d10e9118e511caeb14af8a9b39a5560dd863bef6b26f9cc07838",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/block_header_state.cpp",
+      "bytes": 27704,
+      "sha256": "665f4c0fc37ef94a9ceb79b700f366beb7cbabc4d425cad6b222fab7a5edeb9c",
+      "sha512": "81c1a46b644dc9229be81a94e248f2e378368adb930a9706051c9db738a3d8a737a1400a9ef4096747e07b37cc37e7abd7b1c3109bafaac15f49c5804237cd5e",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "665f4c0fc37ef94a9ceb79b700f366beb7cbabc4d425cad6b222fab7a5edeb9c",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/merkle.hpp",
+      "bytes": 4325,
+      "sha256": "38adb74439ee10b66bdcdc692183535ca9ee4bc46c6fd845b29e0e378e00ec62",
+      "sha512": "47aa0c0154667d166ae538da2f11bbdf94142fa13bbf2040e0e3432c0bdb015fbf89efcf27d31118ff8b87807d11d03f7381c04b0a4bab7a2366e86fa009259d",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "38adb74439ee10b66bdcdc692183535ca9ee4bc46c6fd845b29e0e378e00ec62",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/finality_core.cpp",
+      "bytes": 17584,
+      "sha256": "8b09152d8c27f0da926db311b222c1bf16113ff99297a42db4e530cc10225543",
+      "sha512": "6dd59c7b14ddc7c46a5ba4df39110dd4818c54594f51104ba797d8187f1c3f903d6a0405d0162df3fda5167c87b4cc61d34ec4c219ac6cc2caa393b506219dd0",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "8b09152d8c27f0da926db311b222c1bf16113ff99297a42db4e530cc10225543",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/finalizer_authority.hpp",
+      "bytes": 1173,
+      "sha256": "732179e2dfe48b812263f04266e9eba84d7d6e8cdc7ef3946d4eaa3568b16174",
+      "sha512": "c77fe4431b5348193fa5b91ce074b48d524fabeba360c89365c49ebf14b6bc8af35000f4bc300658b5d54b989ba04338c3f23a8c4b6ecba302922669536c8991",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "732179e2dfe48b812263f04266e9eba84d7d6e8cdc7ef3946d4eaa3568b16174",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/finalizer_policy.hpp",
+      "bytes": 3789,
+      "sha256": "828484c6ed34ae420b91bea82a2b6017610a49a0577f193352c3bcb59e9fde9e",
+      "sha512": "789a2772c56f42d748fdeb0c10092dad48a8ced5d745254be03081eea9d1b5b43e0d1fe494dc7091f6dbc2287bd0d6a7bf06c8bc8232c4bad1ed26118bd500bf",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "828484c6ed34ae420b91bea82a2b6017610a49a0577f193352c3bcb59e9fde9e",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/vote_message.hpp",
+      "bytes": 811,
+      "sha256": "36b56c6d3be6093cacd13c450023e7261ebc3b09b386f92f4728feebeb8000d0",
+      "sha512": "ec376d4851893294db3ab5f006a27687463cb748f4ba028995e116b53a907704b50d09c5885e79cf6f4f8c1f822c520838931181720f4f1e91ffda12fa147d9e",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "36b56c6d3be6093cacd13c450023e7261ebc3b09b386f92f4728feebeb8000d0",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/qc.hpp",
+      "bytes": 12638,
+      "sha256": "5c37c810b9aaf0978d0ceab321a3b6283653aa4aa36dd75c680d865a276d077b",
+      "sha512": "fab9c81aeb04f8eb7e7a6967398cddc9f0f1cf272e707b2d3fa9e8c6c66e4b335d50ed6940489c2f1a02934d36af409baebabafbd6b25b35681806e368f54280",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "5c37c810b9aaf0978d0ceab321a3b6283653aa4aa36dd75c680d865a276d077b",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/qc.cpp",
+      "bytes": 25460,
+      "sha256": "8650b6395cebfa9fadeac37c0be70df469cb6ccd354dda8b83c9149e47b940e4",
+      "sha512": "7f0f97b5d49dc962410f4d33eb762f3be8b9d6bb6bbb99b5de72653d17cb32e5b167da202f73b687117cd72bfb2807a387d89fed16140190474d351eb31d0a59",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "8650b6395cebfa9fadeac37c0be70df469cb6ccd354dda8b83c9149e47b940e4",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/finalizer.cpp",
+      "bytes": 20470,
+      "sha256": "771ae543c7a0554650270dc108c01c87c3b3c253ec3115e0576464604a8a353b",
+      "sha512": "8a14ec9446889198a1d006ea026e3fccc9064d8a330205a4f6e5d4007da0864cf6b15ba6cf657311845b6df05ce45095e07aa515c2db72d5e31c85b3db7f1acc",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "771ae543c7a0554650270dc108c01c87c3b3c253ec3115e0576464604a8a353b",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/upgrade_governance.cpp",
+      "bytes": 19082,
+      "sha256": "2bec7b69ccf41d8567c7b9b99bb132ef91e449feb7943184d50aee8640c2846e",
+      "sha512": "f8da76d6eac96e919d87d842d868125724682f598f05915d1ae3aa4327eae0cbc7dbe2cceb5044daf347ad56054563fa40fa0e325a69318e0a3e30194e8e8720",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "2bec7b69ccf41d8567c7b9b99bb132ef91e449feb7943184d50aee8640c2846e",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/upgrade_governance.hpp",
+      "bytes": 5298,
+      "sha256": "c7911653500da9f9ec2eb1962ee300cd3e067df2c4e7b193409553c870a4efc5",
+      "sha512": "b97fbb25347c53b24614ba71f708e9b8d66f9e43545b0ef4bef96a35232373db4aa3ff8a645506a123a55c10a706b01ace4c83361b770957d5d5b0ce764dc529",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "c7911653500da9f9ec2eb1962ee300cd3e067df2c4e7b193409553c870a4efc5",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/protocol_feature_manager.cpp",
+      "bytes": 52878,
+      "sha256": "67e8fad1575db9e4afb898a8074bc2920c41f5fb0cea3ae148b9f29d6813492c",
+      "sha512": "7741e9f7b00d25893e59a896126c5afb3107933fbddd956faf7483acf584aa7b94eba101f22c80fffaed87f9cc83854c69fab2be3a3d720e7948ae24d822d6bf",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "67e8fad1575db9e4afb898a8074bc2920c41f5fb0cea3ae148b9f29d6813492c",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/webassembly/crypto.cpp",
+      "bytes": 21303,
+      "sha256": "ef5c6e4c200039be32ec613d0c3fc1dd53bb6eac428293a9dc88261ca8f21033",
+      "sha512": "917965acd224855b7406bc9b300685bba1a55ad277c5bed093bbab625a2093f16150185d2ec98f6a05ef63c03fc6bcfffc98a0663c170517821de0564ce1f03f",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "ef5c6e4c200039be32ec613d0c3fc1dd53bb6eac428293a9dc88261ca8f21033",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/webassembly/privileged.cpp",
+      "bytes": 16432,
+      "sha256": "9e4650e4cac638b595314bf0d4e130bcc452c6ffe26f1edc172f6d552534cebc",
+      "sha512": "bb7ee5752b2b9f674fa0d0226eb70d84689ba1320bc86a6ed2f91645810908d05db3b3436dd0ee4add20f2d1a6247716a95cd6061e0183f821c3b62071f5d156",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "9e4650e4cac638b595314bf0d4e130bcc452c6ffe26f1edc172f6d552534cebc",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/webassembly/interface.hpp",
+      "bytes": 108043,
+      "sha256": "554a19346cb292d96be4a22ac3f757efd946dee9bd1ab109faf0f5a4c5012892",
+      "sha512": "91e2d947c06768735881f6b20bc950a873966ec97467777e3604f40f8d98657d875c493a2aaa5e30e4bd1ee06cce93d93a5ec6e85c033e2043865b90d83ede47",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "554a19346cb292d96be4a22ac3f757efd946dee9bd1ab109faf0f5a4c5012892",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/controller.cpp",
+      "bytes": 396881,
+      "sha256": "01cba07393c1abff413d8c1ee827ed762a904ab9f4cd3c9f1cd46b3e3e75e08b",
+      "sha512": "45dd2df118e0a0c4867776e4110f9faed7ecda5b98790891ebcafa48848c276caac81bc973821c57c3e85aa1f2747a37a3505fe458b713fb92ff0964d9ecc8c8",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "0f079f9934f9949191233a7a228178cecf7dace12bac07843c64fc96f016d890",
+      "matches_retained_test_build_input": false,
+      "manifest_comparison_explanation": {
+        "parent_controller_sha256": "0f079f9934f9949191233a7a228178cecf7dace12bac07843c64fc96f016d890",
+        "matches_retained_manifest": true,
+        "final_commit_delta": "057e17316 changes the TEST governance feature activation callback from seven days to the explicit thirty-minute build profile; retained INPUTS.json predates this final controller patch. This documentation review does not reproduce the final binary."
+      }
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/genesis_state.cpp",
+      "bytes": 2616,
+      "sha256": "76492c32a697ef01ccb6e8769b3d803ad7713c30218fcda27fa64ae5c49e014a",
+      "sha512": "1c571bb2bcf989403bdb5340b32c8fdf608aae2ade87a59d0c7150b40492b064bce7c19b87e96d990f5588f71bb520136f5a31868333170ad505a4216eb8bb88",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "76492c32a697ef01ccb6e8769b3d803ad7713c30218fcda27fa64ae5c49e014a",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/genesis_state.hpp",
+      "bytes": 5072,
+      "sha256": "4a4be35270bd996decbce5c021c1d5bf4c6d20a994a758ebba8d65b1c62114e6",
+      "sha512": "34285d5f019ba9237b248477043c94ca090bb4280e0819ecd5994e2ed9fc7e2da4c2a07314654fddeba8bc8ceabc1dd2feb93d3970a02f1a7ce47cd56703d3a1",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "4a4be35270bd996decbce5c021c1d5bf4c6d20a994a758ebba8d65b1c62114e6",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/snapshot.cpp",
+      "bytes": 24709,
+      "sha256": "0b7728c06be8a82729546ee6b4e3badb43099b33286ed74b32f879358b77b505",
+      "sha512": "4adaa1665450c2afc0e327769af75562a7a646ed527fb5b13f65329640a9170da13cdbf57776a0d08f357b19a834eb1296b10181697323b6810768e8cfb4e628",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "0b7728c06be8a82729546ee6b4e3badb43099b33286ed74b32f879358b77b505",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/parallel_input_fingerprint.cpp",
+      "bytes": 5004,
+      "sha256": "8c8d2a46e7be8e6b9d8b3bfb2d21192888001b429667e287268df57df90da8f5",
+      "sha512": "1d298191b0714ddab94e339f3d2e78d1100f5f9a4b8ca4047569ff265b5da593ade8ef4fe1323c31ac19b8ab5a4f43e7a4647dc4cf6bdd1ecebefc6cd8dd3319",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "8c8d2a46e7be8e6b9d8b3bfb2d21192888001b429667e287268df57df90da8f5",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/parallel_input_fingerprint.hpp",
+      "bytes": 987,
+      "sha256": "d370cf6555f9520ab82479fd470deec7f385782fc60b5e0e083e07f7138adbcf",
+      "sha512": "a67366020d6239d047284d9a0e835e04f1e64b9c8c0d17acdb6239fbccc4a0b7f4264c93fc111ca61f71022364bb4d923e5f0494ddfbe5018c771342ddb4caaf",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "d370cf6555f9520ab82479fd470deec7f385782fc60b5e0e083e07f7138adbcf",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/parallel_ordered_batch.hpp",
+      "bytes": 10917,
+      "sha256": "cbee5539543c8c84dd380917f1220331341e9d3d844ea20546ba1e4abf20fbee",
+      "sha512": "33acc6109158f9561b068374c24163a04b302bf7c9605d50ea73f74be544781d9c6e5a61b0843f0d5ee1a6807a329454ea503e34e9858f6b49985c0540787cbe",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "cbee5539543c8c84dd380917f1220331341e9d3d844ea20546ba1e4abf20fbee",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/parallel_ordered_batch.cpp",
+      "bytes": 13353,
+      "sha256": "12700ea1b324dea5b937e60f320f78561fb4d29a7919fea48509a7775678c17c",
+      "sha512": "d77b8d48bb3f5651104f55a6a5dd0e6e351a61ae1550af2c5eecd4431604cff83dee30b6032ace1a6d26ce5aa8b63148cb8755595ada3e45bfdc57a7b11304ee",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "12700ea1b324dea5b937e60f320f78561fb4d29a7919fea48509a7775678c17c",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "plugins/net_plugin/net_plugin.cpp",
+      "bytes": 249532,
+      "sha256": "4abb3d709c5eb495ce38592bc2529b6dfcc24d44431d64f0e954fb6cbe14dee1",
+      "sha512": "ae7718cce60a942d1ca8f9c1d7292059e50f7773645eda17fcb459bcefd0e90a699955365f72e77b7eb6576acba08ff9184eca56e47651dbfbcbbcc222249fdd",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "4abb3d709c5eb495ce38592bc2529b6dfcc24d44431d64f0e954fb6cbe14dee1",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "plugins/net_plugin/include/eosio/net_plugin/protocol.hpp",
+      "bytes": 13110,
+      "sha256": "14366201557565b22ddfff2a8f831cf3b754bf7b47eee07df22cb7af74a3d31c",
+      "sha512": "d14f6699e622446d34b34bf984ddb32c960f11adeda8952d0620793bc6e2051842bb2575c14415f07ed293d81643eb34f978171e57f046363db6ced7c8fbdde9",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "14366201557565b22ddfff2a8f831cf3b754bf7b47eee07df22cb7af74a3d31c",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "plugins/producer_plugin/producer_plugin.cpp",
+      "bytes": 173748,
+      "sha256": "9bfeda76d3c65543bfe6a1f7f42371e33ed65160b04bacd88e1f558762ef52c2",
+      "sha512": "7c229e1186aba49f2928ba9e157eeba21baca246894cda55749acd4995a9a38eb5c434ee297d7b5a08c32af729174e6103851caebc422eec1ef611d69cd23256",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "9bfeda76d3c65543bfe6a1f7f42371e33ed65160b04bacd88e1f558762ef52c2",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "plugins/chain_plugin/chain_plugin.cpp",
+      "bytes": 155152,
+      "sha256": "d13fec233ff14b2b4729e8328402feeec7a158c4af5aa0d0821516ff7e7fc6e0",
+      "sha512": "cfcdbcc4cb45b395d1a5707d973a90b2d5f0acf00aebaef811b38e0636db5387fb66b0666c7071858eed3264f2f295c005c1f424d29fc101a5dfd5b32a33a5b2",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "d13fec233ff14b2b4729e8328402feeec7a158c4af5aa0d0821516ff7e7fc6e0",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "plugins/signature_provider_plugin/signature_provider_plugin.cpp",
+      "bytes": 6293,
+      "sha256": "c38071969027b1511d25dd267342cd7463d3a4c10dbd9fca89d6fac32651af14",
+      "sha512": "f04d7564e1ae9a8edf87c4ad398b134e1079d5a25c8aaae110c8865ee54518ca851bab17903784d8427ee73c1cdf68a9a0b8cfce78e3f259cd4b6437b9d1e3e3",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "c38071969027b1511d25dd267342cd7463d3a4c10dbd9fca89d6fac32651af14",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "plugins/wallet_plugin/wallet.cpp",
+      "bytes": 12149,
+      "sha256": "93dc250fccea768320479d9a7ab670d7193b1f96bf3fdf6c023be26a7da21f76",
+      "sha512": "2da9fb79dee298c3565d0613b6b1658c506271d3370d84d91a7b4f34bc8021ef46558801cc7962f61901a056f26610858441abee4f44aa443d981b31566bfe4a",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "node",
+      "path": "plugins/state_history_plugin/state_history_plugin.cpp",
+      "bytes": 19639,
+      "sha256": "6b550f92c9990c23687cfeb5e60ec2add64fe07f948cb631cc055f7a02d01a73",
+      "sha512": "9a5e9a372a4b29964ad5658660cbcd8a2f5ae3d534183b9130f03d664ec8c82d0035f957975fc988035be7aab8f16568516fe166e12f7f3d888714bcb7490b9e",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "6b550f92c9990c23687cfeb5e60ec2add64fe07f948cb631cc055f7a02d01a73",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/state_history/include/eosio/state_history/types.hpp",
+      "bytes": 7031,
+      "sha256": "3c957185f65cf4d8a674e021a88b2f7394da7db5d57e85cd43da9cb2664bbe3f",
+      "sha512": "dc892a21fa7d9f67c742f5e7a6c1dd2afaf29ad82192f09a50123e8aee420c87c23a53db184b3bb0279955528f3594542fd6b2a2fe79abdc6ca119a76643e55f",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "3c957185f65cf4d8a674e021a88b2f7394da7db5d57e85cd43da9cb2664bbe3f",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "node",
+      "path": "libraries/chain/include/eosio/chain/config.hpp",
+      "bytes": 9944,
+      "sha256": "afbe7b2983c1323533a81781ac9e1b1126926a3f7394b42f12da25fb69e17a64",
+      "sha512": "f6ed5153c65501e07f317db443912eebea01ff267f628c19fcecf28a5d3190ce50fb7e263bc4e1770f177cb3f9cc99fd1cbe521b3a8b1c0d7c0ed7374f48d1a8",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory.",
+      "retained_test_build_input_sha256": "afbe7b2983c1323533a81781ac9e1b1126926a3f7394b42f12da25fb69e17a64",
+      "matches_retained_test_build_input": true
+    },
+    {
+      "group": "key_contract_sdk_relay",
+      "path": "system-contracts/eosio.key/include/eosio.key.hpp",
+      "bytes": 12192,
+      "sha256": "75a602098cd525cf8fd22b87a822a0d0522acdb2ccb2a6f5df157581f78c23d8",
+      "sha512": "10c860fc5e7dafe4b1a6e9518822d01c0295f583c143932a621730ab3b5fb5da2cc8dde6fac3208809adfe0e8746d78ee986b2af2994ec456a972e8134dcd127",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "key_contract_sdk_relay",
+      "path": "system-contracts/eosio.key/src/eosio.key.cpp",
+      "bytes": 48635,
+      "sha256": "568318e394f3b7a5b92d4a637f8910d562ab09f427b96803fab0e4d4ebcfab96",
+      "sha512": "2fd5d3625789ec7b0e26642b8adfca5bc70559a1c558a3404363828645faf9b573fc3998d0b12577349e7fe53fee4eec8a5203dd6d6be3a3d49cbd156c6febdc",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "key_contract_sdk_relay",
+      "path": "system-contracts/eosio.key/sdk/index.mjs",
+      "bytes": 25722,
+      "sha256": "1383a2461e662ea7f2f23e7058815c1276ecb57d9db2568021d7538b4ba259a1",
+      "sha512": "cba9e4ff4e79108e3af6de015ca7262cc94ea8458b9aee39843c8f3084853f9a3ee4ad5052b1d953cb8af48d3cda57b919c3bd0c2739b48c46375fe5c67a8b09",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "key_contract_sdk_relay",
+      "path": "system-contracts/eosio.key/sdk/fee-profiles.mjs",
+      "bytes": 735,
+      "sha256": "471d6f4d28c40977cf9e94bf32d699c901dce0ebb92a8abcf7ff91445cd6b8da",
+      "sha512": "fe9e4871c472c13e2f9594f3f1dfbde5657a74db5d7e7fe24a25465202a8b6601e8120aff55b374ec12a6e1bf922d2cdc0e5fd501762a7f1987b856b8e11b4a1",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "key_contract_sdk_relay",
+      "path": "system-contracts/eosio.key/relayer/server.mjs",
+      "bytes": 13271,
+      "sha256": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44",
+      "sha512": "f772a5db243927f9000209e667cbb2f8321e873bf3d334d760746230ebb007157a87880327a303dc732a19b88a1fe7cf7802b6630d21df9f1dca6732be2d2b87",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "retained_system_lineage",
+      "path": "contracts/eosio.system/src/finalizer_key.cpp",
+      "bytes": 15466,
+      "sha256": "20b655eb8a99e22a0ea9c0a3a3c7061da43def461760cc53896138d7f77853c1",
+      "sha512": "5a90d97aa72286c25dde34a99cf290ab4a376ba7a7b1f99e71a8f78aaa6fb109ec25a3dc33d6ddb5f7b41394c29b7fd97801975b8a6cf2c1746ca813b322298c",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "retained_system_lineage",
+      "path": "contracts/eosio.system/src/rotation.cpp",
+      "bytes": 11347,
+      "sha256": "c67363f075cdbccf72529bac33c5c44583e210c1d6edef406431e2f126306efd",
+      "sha512": "6d168b1b5062df56c63c14eef31982d73c84eee541a05f9c59d92310c360987b045434454b3d6eb529aede888ec4159a048b5ad5f0fbbda697eae2f3ae5de283",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "retained_system_lineage",
+      "path": "contracts/eosio.system/src/voting.cpp",
+      "bytes": 24128,
+      "sha256": "35f5f738f66e6ef0a43d98af43e93158141bcb0c153fd75628718a9ad8c4ff38",
+      "sha512": "3ccdeaa9b1723560a79ece6a00ca54252d5ce2ad4d8326c2769a8aecef8c8998099e41c409de4a9fef0e4bfcee4901e6f108b690962de97c6091c4863f16485a",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "retained_system_lineage",
+      "path": "contracts/eosio.system/include/eosio.system/eosio.system.hpp",
+      "bytes": 112691,
+      "sha256": "972d9acc4d5f7cd7f80c84fbe287cb5fe26375c00d4901c1834d349199ae8301",
+      "sha512": "69baad6e60353630bf48f9bd5bd74eb4aa0af78d722f65c96d0659f2838c485d8501f14ebff6abf68bae2e7e75b5b90568dbcd92f7ddcc3ded74ce0209cc4d31",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "cdt_reference",
+      "path": "libraries/eosiolib/core/eosio/crypto.hpp",
+      "bytes": 10618,
+      "sha256": "6919b0b386caf725a83f48dab8fe5cf9712265f815838bd646889ab1c05a4185",
+      "sha512": "0839022b704cad263828d8ad4dabd46d58464f5d294da7352e6e0daf5166b54bd55d59dd7a766f359be9dea6765b46034a9c7db1c91933ef555b7d397275806c",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "cdt_reference",
+      "path": "libraries/eosiolib/capi/eosio/crypto.h",
+      "bytes": 7154,
+      "sha256": "cb92d81b40659c4f568686d4fc833c150f1866364253afe6f9aaeffbfe61077a",
+      "sha512": "642e8624f62064ae0bd7cc11f402575922159bdf7fcb6bbd5181485cf508fb1a419cc3dc831cdf161dc5a39f5aaa664046a20e4f1d859b05e4f3c0fb135699a5",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "app/src/main/java/one/matrixai/wallet/Crypto.java",
+      "bytes": 8120,
+      "sha256": "c79df7549fc65eee57e49fbdcd7eb12da35bd970509cf70e6aa4204c8d026c20",
+      "sha512": "44304d5dc3b3d29f6a41fa941c768f6852b15342d0541f4706e47980d46c6429edb816b76a76ac177ed7f6440399914094d9cb8e53dc8d9d7393a49f5fe77e44",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "app/src/main/java/one/matrixai/wallet/Wire.java",
+      "bytes": 9147,
+      "sha256": "026383f1df412ca3acfd3791eae5d16aaa042cfa93827044351ce775e3127e5d",
+      "sha512": "0dcfcd8738d25617ae9faa7bfafffdbf0a58bf20c4752646cc84dbc208ae1e3c2ebda6d05fac738b8a054f4c0ac9459e343a352e69e20d94c5cc953ec792f3eb",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "app/src/main/java/one/matrixai/wallet/Vault.java",
+      "bytes": 9817,
+      "sha256": "23865f12331fd71b9bb8ce7662f110e8f0c4b640049bd101c9594963355d41b5",
+      "sha512": "bec7fe11e490ea6ae1b3c3d7e5cfc2a69ad5eba80c38d9ac3c3503d172555a0a14c49b04d8ecc45f3f1011de003a6df846687b3633ef7d0e1c206b27d0b8b7f4",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "app/src/main/java/one/matrixai/wallet/Network.java",
+      "bytes": 23877,
+      "sha256": "0c706dca575223392bb6b18bb2823a91be57269b28117d9d8736fa87e138d307",
+      "sha512": "cdaa26ad1f6f34088637500a90dd046877843481dcf8d6c8fd8fa950585bba93b087e0d58b7585b92057bb745107a1e282489f6f5e422c9344d307f6977e0422",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "app/src/main/java/one/matrixai/wallet/TxStore.java",
+      "bytes": 2856,
+      "sha256": "055417afc2423f4a1b6d646d40de7dda41a5f849bd979e2a09781cf585b51862",
+      "sha512": "c31b54a25c89fc12bb7efd8eb0b8eba5efe81531a6c98a91ef1f7b976077550f7e19baeaacda10c53110e4e05aac70ff68cf1e581c1bbc780363c8e0fae39bfe",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "app/build.gradle",
+      "bytes": 635,
+      "sha256": "f19b1953b5f2d24166c0bd6426f92a884a01f10fe0f19eab96314c0982419e80",
+      "sha512": "607f8cdeee75b569baadb16f17f4067ac96aa0eff44cae38d9686311a1e8872dc6e5b079c53f44ea4e642706d4d876e2f71b991e1632026c2643ef3312f706f3",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "wallet_private_metadata_only",
+      "path": "README.md",
+      "bytes": 2745,
+      "sha256": "9a8fe5442bbd66106d259fb4161a7f202b195c7611a2525f2e1907825eb68932",
+      "sha512": "4e98183ef9dbd58de8a9701ea8f9773cdaeb329828a2d76f8cd5134f4f9686d89e5eb411a166333c5d149790d777d8e78db46c805b4293fca14029188be386f0",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "history_private_metadata_only",
+      "path": "src/key-history/model.ts",
+      "bytes": 10050,
+      "sha256": "307903f6fad477b481cf2df814ce61246515b050b5128976dc0c22593a76138d",
+      "sha512": "43e155d065e595263c8a1b6b1de6b464a2957e05f9866d7be079c5b8dc602184a3890982fc6d8baecc2038e48c29912df2e201565a158a35abc8f07d75d83cd8",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "history_private_metadata_only",
+      "path": "src/key-history/query.ts",
+      "bytes": 3451,
+      "sha256": "251cec26493d88256122ff7179b430aa30b696b8a3c6dbe3801186458dd2cb80",
+      "sha512": "10bb7a73e67b2effb6a5748e05c43ea523e07ff418fa286fe12cb1ee4704942a958cc4dc4f446bad0f5c4ce7e23f282c230c10a7f7a46e755795c436a6687fef",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "history_private_metadata_only",
+      "path": "src/upgrade-history/query.ts",
+      "bytes": 13123,
+      "sha256": "cfc0153a05bc37483a082a0f5853c9d3cb7dcabdd0320fdb029305ca88795f6a",
+      "sha512": "81299d145debf87117c555ec9b0f4022aeb012b55d64a6526a6eef627f76a20acbf16926bc9c3df3379b3c69317bbe24d31c6b0fb3284d34b5752653421c78ba",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "history_private_metadata_only",
+      "path": "src/indexer/connections/state-history.ts",
+      "bytes": 8742,
+      "sha256": "15d3d306f2d1ca9e92bb5a1008b9d2d351685014cb1519554d3eef2dfa4016b9",
+      "sha512": "88e8cff0df760009ceda890a89b2b3a64d6c140591b090ad8ea448a584c7d4b5234176cf167880ddb8d63fd01ac1076c9148762fc294a5a205d97cb5b00a88c3",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "explorer_private_metadata_only",
+      "path": "src/lib/public-key.ts",
+      "bytes": 620,
+      "sha256": "0919292c07bdc752199b708aca64ead405b66dd89cbe761162946680d56e670c",
+      "sha512": "16edf0587922cc8b51c1ac5cf141c954de52df6a082af6d1a54c4e050dadc6b0e045e48cc48a7b9c3706e64758cd174f38098ff44cbd1b99e7b0e6e24fb979db",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "explorer_private_metadata_only",
+      "path": "src/lib/key-wallet.ts",
+      "bytes": 4756,
+      "sha256": "1eeb75c07fedf3eb472412bc2164a41f9f2eab5d6814658e3b7ac40e41bc82b7",
+      "sha512": "0b56efc5cbe2a2275bbf3580f5c46865de518bf9bf5c8307284cfd720e628153114afb29512f4e3706724ba2de4bd51a61cefa3e64a368d9d13dfad6ed7d45eb",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "explorer_private_metadata_only",
+      "path": "src/lib/key-history.ts",
+      "bytes": 6834,
+      "sha256": "70ebb462592cc9f6aef097a3f3237bcb827a7800dd47ba3f7a77a041eb0dfd32",
+      "sha512": "18030db817e8ea6e454d14b6401a3b6e3269f88d691a8950fdc9a74fcee209cde1112dbe8d44fafdc245cd43ede6eeede91e6d3f0c9c011835124dce6bf90fc6",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    },
+    {
+      "group": "explorer_private_metadata_only",
+      "path": "src/lib/upgrades.ts",
+      "bytes": 6167,
+      "sha256": "37e17fc0d77af8fd54450c0ae8a636a3b2f189f922ff655412d88935af6277df",
+      "sha512": "568e6b2798e71cc3b429e68008271ab48023503ecd76caa4ff3ce0753c254c8d82ed1b69ffe2ea15f2cc4b94a39fd1fe091c72d73bb2cf542db936c65d6ea099",
+      "matches_checkout_commit": true,
+      "review_mode": "Selected code-path reads and symbol/serialization tracing; supporting dependency inventory."
+    }
+  ],
+  "baseline_limitations": [
+    "Node build-input comparisons establish selected source matches against the retained TEST build manifest; this run did not contact live nodes or reproduce a binary.",
+    "Retained system lineage is not asserted to be the complete exact source of current b591ca66 WASM; reproducible source-to-WASM mapping is a phase-P0 gate.",
+    "Private wallet, explorer and history source is not included; records contain only repository-relative paths and digests.",
+    "Existing wallet instrumentation changes and other unrelated working-tree changes are excluded.",
+    "Some source commit objects are local archival identities and are not resolvable as public GitHub commits. Use path plus digest, not an assumed remote link.",
+    "Retained INPUTS.json contains the parent controller.cpp revision. The sole selected-file mismatch is explained by final TEST governance correction 057e17316; it is not evidence of a runtime alteration by this task."
+  ],
+  "summary": {
+    "files": 80,
+    "groups": 7,
+    "selected_files_differing_from_checkout_commit": [],
+    "node_files_with_build_manifest_match": 49,
+    "node_files_with_build_manifest_mismatch": 1
+  }
+}
