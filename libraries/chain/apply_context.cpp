@@ -86,7 +86,10 @@ void apply_context::exec_one()
       try {
          action_return_value.clear();
          if (trx_context.upgrade_voters_action_ordinal &&
-             !(receiver == "eosio"_n && act->account == "eosio"_n && act->name == "devpropose"_n &&
+             !(receiver == "eosio"_n && act->account == "eosio"_n &&
+               (act->name == "devpropose"_n ||
+                (act->name == "syspropose"_n &&
+                 control.is_builtin_activated(builtin_protocol_feature_t::pureeos_system_account_governance))) &&
                action_ordinal == *trx_context.upgrade_voters_action_ordinal + 1 &&
                get_current_action_trace().creator_action_ordinal.value == 0)) {
             // A notification/inline action in between also invalidates freshness.

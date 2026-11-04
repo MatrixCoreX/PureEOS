@@ -1,0 +1,565 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-04T19:35:14.274116+00:00",
+  "scope": "Read-only TLS origin checks via loopback; no public-browser or external-path claim",
+  "checks": {
+    "/api/v1/chain/get_info": {
+      "HTTP_status": 200,
+      "bytes": 990,
+      "sha256": "34ca5ac31c8440b79430185094255cd4317974180a5c90866cc87387ade9d49c"
+    },
+    "/": {
+      "HTTP_status": 200,
+      "bytes": 794,
+      "sha256": "59b3f1f02493bfe9767dcf61bad7a126a073500cc9440a0a1bf11ac6de04152f"
+    },
+    "/relay/health": {
+      "HTTP_status": 200,
+      "bytes": 164,
+      "sha256": "e984e941bb7a862639088de14dc38a8296cc77177c2f0fa03183b9d7f6643d03"
+    },
+    "/history/v2/health": {
+      "HTTP_status": 200,
+      "bytes": 1910,
+      "sha256": "3ef574599ef92255a227bf1511aedc5fd7aac6b813352876b13f2750f696bd3c"
+    },
+    "/history/v2/history/get_upgrade_proposals?offset=0&limit=20": {
+      "HTTP_status": 200,
+      "bytes": 11682,
+      "sha256": "a629765b991ad7b4b973d19bc1fdc7e761850b1beb005c111e6942a9ed6ade60"
+    },
+    "/api/v1/chain/get_table_rows": {
+      "HTTP_status": 200,
+      "bytes": 205,
+      "sha256": "938a616e9d189f8ef03a915ae051d7d03be8c9157eed870acb8a6fba28243cda"
+    },
+    "/history/v2/history/get_key_transactions?public_key=PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd": {
+      "HTTP_status": 200,
+      "bytes": 21704,
+      "sha256": "c165aa1f41c063e53d283505e13a1c77e78e7c6adc32b7686bb60f9a19fc4f3b"
+    }
+  },
+  "relay": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "history_health": {
+    "product": "PureHistory",
+    "version": "4.1.0-purehistory.1-dirty",
+    "version_hash": "custom",
+    "host": "aic-test.matrixai.one/history",
+    "health": [
+      {
+        "service": "StateHistory",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 324.008541,
+        "service_data": {
+          "nodes": [
+            {
+              "label": "independent-nonproducing-TEST-history",
+              "active": true,
+              "range": {
+                "from": 2,
+                "to": 232475
+              }
+            }
+          ]
+        }
+      },
+      {
+        "service": "RabbitMq",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 682.908803,
+        "service_data": null
+      },
+      {
+        "service": "NodeosRPC",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 113.405192,
+        "service_data": {
+          "head_block_num": 232474,
+          "head_block_time": "2026-11-04T19:35:14.500",
+          "time_offset": 105,
+          "last_irreversible_block": 232469,
+          "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0"
+        }
+      },
+      {
+        "service": "Elasticsearch",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 643.971865,
+        "service_data": {
+          "active_shards": "100.0%",
+          "disk_status": "green",
+          "head_offset": 401,
+          "first_indexed_block": 2,
+          "last_indexed_block": 232073,
+          "total_indexed_blocks": 231161,
+          "missing_blocks": 910,
+          "missing_pct": "0.39%",
+          "times": [
+            {
+              "phase": "cluster_health",
+              "phase_time_ms": 0.015118,
+              "cache": true
+            },
+            {
+              "phase": "first_indexed_block",
+              "phase_time_ms": 93.776621,
+              "cache": true
+            },
+            {
+              "phase": "last_indexed_block",
+              "phase_time_ms": 550.149663,
+              "cache": false
+            }
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "get_actions": 100,
+      "get_voters": 100,
+      "get_links": 1000,
+      "get_deltas": 100,
+      "get_trx_actions": 1000
+    },
+    "features": {
+      "streaming": {
+        "enable": false,
+        "traces": false,
+        "deltas": false
+      },
+      "tables": {
+        "proposals": true,
+        "accounts": true,
+        "voters": true,
+        "permissions": true,
+        "user_resources": false
+      },
+      "contract_state": {
+        "contracts": {}
+      },
+      "index_deltas": true,
+      "index_transfer_memo": true,
+      "index_all_deltas": true,
+      "index_deltas_deletions": false,
+      "deferred_trx": false,
+      "failed_trx": false,
+      "resource_limits": false,
+      "resource_usage": false
+    },
+    "pruning": {
+      "auto_pruning_enabled": false,
+      "max_retained_blocks": 0
+    },
+    "query_time_ms": 717.794,
+    "last_indexed_block": 232129,
+    "last_indexed_block_time": "2026-11-04T19:32:12.500"
+  },
+  "observed_index_progress": {
+    "from": 230919,
+    "to": 232073,
+    "since_UTC": "2026-11-04T19:32:55.572127+00:00"
+  },
+  "canonical_proposals": {
+    "schema_version": 1,
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "native_latest_proposal_id": "3",
+    "total_proposals": 3,
+    "offset": 0,
+    "limit": 20,
+    "entries": [
+      {
+        "proposal_id": "3",
+        "target": "eosio.token",
+        "old_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "old_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+        "new_code_hash": "bee8320e5e761703f469fb6b0f8c0744479b0bf329f709867bb613855808845a",
+        "new_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+        "review_document_hash": "c0fad5db3925292275eac787e1a0bef7beb57be00fc918971d75fd6e95f78caf",
+        "authorization": [
+          {
+            "actor": "civicgovlead",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "6dbeaaff8bbc848c935a9daeba3f3c1fdc1f14eef11e4662e4f6ee8a5b27a850",
+          "block_num": 170344,
+          "block_id": "000299683b4be4c67732ae68b5dac7a8f3294f599718b9a66910ea5fc92b0bfa",
+          "timestamp": "2026-11-04T08:53:23.500Z",
+          "action_ordinal": 2
+        },
+        "status": "pending",
+        "vetoes": [
+          {
+            "voter": "anthropiclab",
+            "transaction_id": "3a152240906ab02d110eb6964b53238cbbd7a552ecfe84f4ba68c8ea3936fc0c",
+            "block_num": 170351,
+            "block_id": "0002996fd71f7f9453f0cbc85908500f78d6eed3a5d29ee8618088c7ccc23b6c",
+            "timestamp": "2026-11-04T08:53:27.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "brazilamazon",
+            "transaction_id": "1cb59f604685fdb527e1cdbee9f66e87fe42e651cb1f9482760e517ae29fba77",
+            "block_num": 170357,
+            "block_id": "00029975c6a8da875286a7bf1e4538f8ac605b929a1134c79d02db09e32b0167",
+            "timestamp": "2026-11-04T08:53:30.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "canadaboreal",
+            "transaction_id": "4942d4fe8c6f8937898333d33be8e66f8c5a69f0c57ba803a7ff34c4b66f7dfa",
+            "block_num": 170364,
+            "block_id": "0002997cbdbfd46b6beeefcce0c7a8cc9fe448bc21fd4ffcfecc9ac300b2490e",
+            "timestamp": "2026-11-04T08:53:33.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 3,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "cobaltspring",
+            "transaction_id": "bbfa19f9476256c6127c6eaa7689d257a404cdef00d631bd24145897447db111",
+            "block_num": 170373,
+            "block_id": "00029985683640b2ea9fb45d7f159532ce60de2ed107a8f79343fed0afa54a76",
+            "timestamp": "2026-11-04T08:53:38.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "coherevision",
+            "transaction_id": "f45f621e00b98adb978627be0bcf6204de23fde5af9e2a46d3a037001dac6615",
+            "block_num": 170384,
+            "block_id": "00029990911db221fb34470369d61f29f054e81fb0432899ed8a1dd2ec308ee4",
+            "timestamp": "2026-11-04T08:53:43.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "cosmicgarden",
+            "transaction_id": "a7f30d14c6381572d34f1c7e5b5aa0082780f614ef087c91f0bdc78d0b417ea6",
+            "block_num": 170395,
+            "block_id": "0002999baa9d37339d98d2ba2561253df6ba3f9c888f96678375b56b49cd5bb2",
+            "timestamp": "2026-11-04T08:53:49.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "deepseekcore",
+            "transaction_id": "46f4d84c9f220d6a52328285793c0b9eeeac64726244c2db24c945cbbdf42a1d",
+            "block_num": 170407,
+            "block_id": "000299a769bfcdbda8daf072d06ad6413a9fc58c5a583aa91004c6fadcbec3f5",
+            "timestamp": "2026-11-04T08:53:55.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "egyptpyramid",
+            "transaction_id": "a3591f44b927a2a509d71ef0769a60c654868c19f2e2057e5412b04b69eae898",
+            "block_num": 170415,
+            "block_id": "000299af4d49699d261f924f47d746a31efa3607de1f0ddc7a0dea571c952a37",
+            "timestamp": "2026-11-04T08:53:59.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "finlandhaven",
+            "transaction_id": "29fef65fd1530bd3d26aa478fe8c4a3708f42d88d4ebc47101b528a603ceeaf4",
+            "block_num": 170421,
+            "block_id": "000299b52eb60acf1185c52b06c6409699e3045f4470c782cede7cb1f0460046",
+            "timestamp": "2026-11-04T08:54:02.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "francegarden",
+            "transaction_id": "b85241b1a8d6a9c7d3bbacbb158bf103788467bfe2594f4bf01ef56fc1837de1",
+            "block_num": 170429,
+            "block_id": "000299bd2f95e7344705aee6597580fc9bc1e366d2a3ed28d448d5c4c7455621",
+            "timestamp": "2026-11-04T08:54:06.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "glaciercrest",
+            "transaction_id": "e32253beb7094a7503c09ecff52440dbeba8c0159e2cd908bd90d6809d777c51",
+            "block_num": 170437,
+            "block_id": "000299c534e94b88ed5eda89c67743ce32a1477f52cf16d0278950584d08f351",
+            "timestamp": "2026-11-04T08:54:10.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "gptgenesisbp",
+            "transaction_id": "dc0fd36abc7108aeae91f9542df19eb1f64f92395871cd9a16a742463991c684",
+            "block_num": 170443,
+            "block_id": "000299cb1de2e0aa671733dddd8c75e871e411c6ae9098106a81559048a8e25d",
+            "timestamp": "2026-11-04T08:54:13.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "italyharbors",
+            "transaction_id": "b6d5f20bb7c8a1dceec2c778a8431f284fe067392e39d3e5e4d7d04506472d6b",
+            "block_num": 170449,
+            "block_id": "000299d1917e72c3883b1a1dd7d621267d3b4b70f5122e0ccb16ca871c73b2bd",
+            "timestamp": "2026-11-04T08:54:16.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "kenyasavanna",
+            "transaction_id": "40ee595df3ca9f799fff9b435763ab453f9d5fbc8914b8c717612626979672ec",
+            "block_num": 170458,
+            "block_id": "000299dad69f355075cef78f9ad5c5b178e0ea9721427e13338e1cf46496c33e",
+            "timestamp": "2026-11-04T08:54:20.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "lunarcompass",
+            "transaction_id": "ee65205df99512c4c07f627c3c9374275020ec97c80e8db0201eb51ea13789d5",
+            "block_num": 170467,
+            "block_id": "000299e3baebcb477ffb444fbbe307860f5ec3136f3172fade3ca8ec109dd8da",
+            "timestamp": "2026-11-04T08:54:25.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "maplecascade",
+            "transaction_id": "5dd3c16c846b5458ad7a5e6825eacd935c3a04ade7eb989e38ea254b296f1ac9",
+            "block_num": 170474,
+            "block_id": "000299eae411045bd4444fb06f39e75a40468e23729370c2849e0111dd42f724",
+            "timestamp": "2026-11-04T08:54:28.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "mistralcloud",
+            "transaction_id": "d53d0d4dbc77cdd900b472e0c898872a53a0c717f52a44c05d6706085b8e13e5",
+            "block_num": 170479,
+            "block_id": "000299efdc723b917a57dda61a590b47599e1c1173ce539e05aa15f16b14876e",
+            "timestamp": "2026-11-04T08:54:31.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "moonlitgrove",
+            "transaction_id": "fb081ab1f3fe7db77aa5c56606572934d09b36062d2237ea2d17705a0479f53f",
+            "block_num": 170486,
+            "block_id": "000299f6655557ef9af5e35b14b8507411ea910ca3d668bc983ee3083b0a33c4",
+            "timestamp": "2026-11-04T08:54:34.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "nebularlight",
+            "transaction_id": "96d294d9283125c4868fec1642e103a27c95896ad57bfb6ba6bb68db8c824d4a",
+            "block_num": 170494,
+            "block_id": "000299fef337ad26d7b1fdd62ef9bf6530eaae9ad24f340e0925662c505d539d",
+            "timestamp": "2026-11-04T08:54:38.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "silverstream",
+            "transaction_id": "887b677d63bd23e563e6d679219f57f291db3dfe65e7c4f24dd63ea154f5712e",
+            "block_num": 170501,
+            "block_id": "00029a0566a9b5e26fa108de92fe3ea5064ac5bc3c79ff0e4976a60a6855157e",
+            "timestamp": "2026-11-04T08:54:42.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "stellarhaven",
+            "transaction_id": "5ae2c35b73324eeafed9683d8f927c0ff9403b5c2855d700f463ad4b3c5c90c4",
+            "block_num": 170508,
+            "block_id": "00029a0c889c8b38c172df7c68e10910cef59c3732cb897120378439b85361f0",
+            "timestamp": "2026-11-04T08:54:45.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "velvetforest",
+            "transaction_id": "dd46b7a9cc81ff695f94eca891ab002a11e4556b25119851ba57e9fb56a57dd6",
+            "block_num": 170519,
+            "block_id": "00029a17c31b675e3086cf311182b77d5b4237f55d622bf89bec919f3e7c1770",
+            "timestamp": "2026-11-04T08:54:51.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "willowgarden",
+            "transaction_id": "0669760bb1237f1602bfdf52f1bc2c7f384da3c2ff87351dd282fcab47f4f7ad",
+            "block_num": 170527,
+            "block_id": "00029a1fe307cef6abb8f6f80ba655c6a6140892af877f82c9bbbf9a88c237e0",
+            "timestamp": "2026-11-04T08:54:56.000Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          },
+          {
+            "voter": "xaineuralnet",
+            "transaction_id": "eb2099a359ff7db5fcdce8ba5efc1c16261e3733fc9d731d4a43de08e7ba584b",
+            "block_num": 170534,
+            "block_id": "00029a2687d9069d510464ea3b6c20792e7c0946d018c3dfcd75c5c149b3b2cd",
+            "timestamp": "2026-11-04T08:54:59.500Z",
+            "action_ordinal": 1,
+            "transaction_index": 0,
+            "root_index": 0,
+            "verification": "canonical_root_action"
+          }
+        ]
+      },
+      {
+        "proposal_id": "2",
+        "target": "eosio.key",
+        "old_code_hash": "1933629daab4d8fe3b64bfe0528b7d64b85dff97011b71301ba4122f590cf0f5",
+        "old_abi_hash": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+        "new_code_hash": "bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1",
+        "new_abi_hash": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+        "review_document_hash": "2017aefa3bce4421a02f3634018d33337e78599925ab00adc5e04f93bde47f7f",
+        "authorization": [
+          {
+            "actor": "civicgovlead",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "f5cabd10e12c3e55ac0b8fcaeeff9662617a4807a954d1f3edfda079c532985b",
+          "block_num": 160808,
+          "block_id": "000274280e1216ab7dd56a0b12882a9ac5bb04259e2041cbc480c2a64b7b8297",
+          "timestamp": "2026-11-04T07:31:10.500Z",
+          "action_ordinal": 2
+        },
+        "status": "executed",
+        "vetoes": [],
+        "executed": {
+          "transaction_id": "b029b9947a608a679baf6445a0e2d106fe2bc8601e59db58a98f5d963f45ff33",
+          "block_num": 164544,
+          "block_id": "000282c0aa964712343224c2b34a6fafd58d40cc44c063aa0fba18e9fb17dcdc",
+          "timestamp": "2026-11-04T08:03:18.000Z",
+          "action_ordinal": 1,
+          "transaction_index": 0,
+          "root_index": 0,
+          "verification": "canonical_root_action"
+        }
+      },
+      {
+        "proposal_id": "1",
+        "target": "eosio.key",
+        "old_code_hash": "b6509dfb14fe2f23c97e8019a355cc0354a3de2d919f135bce20ddb51cdcf7f2",
+        "old_abi_hash": "dde7b5e7d693787ceffbe1fea3c4a1b7f19e5a7abd1d9e96afcc9a36a2b31c7b",
+        "new_code_hash": "1933629daab4d8fe3b64bfe0528b7d64b85dff97011b71301ba4122f590cf0f5",
+        "new_abi_hash": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+        "review_document_hash": "3e390614707218dee5f7c0fc8ae2aa4dfc008d20c9d2ac6002c55489faedb1b2",
+        "authorization": [
+          {
+            "actor": "civicgovlead",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "65e9f2c086d03c9a8919e45d591842adb57a3a3eda314cd99e3f6a21ffa852d9",
+          "block_num": 128460,
+          "block_id": "0001f5ccce8e9d75a329140a5bf7b90412b50981220531cb241b33e8f6238b87",
+          "timestamp": "2026-11-04T02:18:48.500Z",
+          "action_ordinal": 2
+        },
+        "status": "executed",
+        "vetoes": [],
+        "executed": {
+          "transaction_id": "b67dec38d9abc09174d7f11742ccadfe59d23a74b4444f2d405168cf194ea305",
+          "block_num": 131730,
+          "block_id": "00020292c199b8f1851b79f2fa7145319e06eef1ecec95688f13370162f0badc",
+          "timestamp": "2026-11-04T03:21:48.000Z",
+          "action_ordinal": 1,
+          "transaction_index": 0,
+          "root_index": 0,
+          "verification": "canonical_root_action"
+        }
+      }
+    ],
+    "has_more": false,
+    "indexing": {
+      "irreversible_block": 232473,
+      "complete_proposal_sequence": true,
+      "vote_counts": "indexed_irreversible_actions",
+      "historical_deadlines_and_electorates": "not_inferred",
+      "source": "native_actions_and_canonical_block_receipts"
+    }
+  },
+  "key_history_indexing": {
+    "scanned_irreversible_block": 230919,
+    "last_success_utc": "2026-11-04T19:34:26.292Z",
+    "irreversible_block": 232475,
+    "coverage": "indexed_receipts",
+    "stale": false,
+    "paused": false,
+    "complete_lifetime_history": false
+  },
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "head": 232473,
+  "LIB": 232469,
+  "indexed_block": 232073,
+  "frontend_release": "/var/www/aic-test/releases/20261104T094326Z-upgrade-history-nav-spacing",
+  "frontend_files_unchanged": true,
+  "finished_UTC": "2026-11-04T19:35:18.404276+00:00"
+}

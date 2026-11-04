@@ -1,23 +1,67 @@
 {
-  "status": "DRAFT_SOURCE_ONLY_NOT_COMPILED_NOT_ACTIVATED",
+  "status": "REMOTE_O1_TEST_BUILD_SUCCESS_QUALIFICATION_FAILED_NOT_ACTIVATED",
   "base_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
   "feature": "PUREEOS_SYSTEM_ACCOUNT_GOVERNANCE",
   "enum": 500003,
-  "native_build": "PENDING_REMOTE_RESOURCE_WINDOW",
-  "native_test_execution": "NOT_RUN",
-  "live_node_changes": false,
+  "native_build": {
+    "status": "BUILT",
+    "attempt": 7,
+    "optimization": "O1",
+    "project_translation_units": 144,
+    "source_base": "504ca353cec0ddba692f8f2d4a26f74ea6498baa",
+    "overlay_manifest": "qualification evidence PATCHES.json",
+    "nodeos_sha256": "19d2ce7fea2a4f83a228c99aeb50a50a5e76e485e5dfc89e0700d0e27248f334",
+    "production_release_qualification": false
+  },
+  "native_test_execution": {
+    "status": "FAIL",
+    "attempt": 7,
+    "suites": {
+      "native_governance": {
+        "exit_code": 201,
+        "cases": 32,
+        "passed": 31,
+        "failed": [
+          "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account"
+        ]
+      },
+      "real_contracts": {
+        "exit_code": 201,
+        "cases": 3,
+        "passed": 2,
+        "failed": [
+          "actual_native_creation_K1_R1_legacy_and_atomic_failures"
+        ]
+      },
+      "unsigned_wire": {
+        "exit_code": 0,
+        "cases": 1,
+        "passed": 1,
+        "failed": []
+      }
+    }
+  },
+  "live_node_changes": "Authorized temporary maintenance restart of original programs only; no candidate installed",
   "live_transactions": false,
   "live_account_creation_or_deployment": false,
   "old_upgrade_proposal3": "Preserve pending/vetoed state; independent bounded creation lane",
   "privileged_policy": "New accounts always nonprivileged; existing sealed set_privileged guard untouched",
   "snapshot_version": 11,
   "existing_object_type_ids": "Append-only new type; layouts of existing objects and actions unchanged",
-  "review_profiles": {"TEST_seconds":1800,"production_seconds":604800},
+  "review_profiles": {
+    "TEST_seconds": 1800,
+    "production_seconds": 604800
+  },
   "required_followup": [
-    "Remote full native compile and actual boundary/replay/snapshot tests",
-    "Real-contract sponsor, RAM, sealed-authority and rollback qualification",
-    "Native ABI/wire cross-validation of unsigned action-bundle helper",
-    "Current-chain compatibility and controlled all-node rollout plan",
-    "Irreversible feature activation, exact public review, full native review and effective veto check before execution"
-  ]
+    "Implement and remotely qualify the internal native continuation described in system-account-execution-followup.md",
+    "Pass successful creation and all actual signup/resource/signature/rollback checks; these were not reached",
+    "Qualify production review and build plus broader current-chain compatibility",
+    "Separate controlled validator rollout authorization, feature activation, exact published review and full native review before actual creation"
+  ],
+  "native_raw_abi_wire_comparison": {
+    "status": "PASS",
+    "sha256": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+    "bytes": 171
+  },
+  "blocking_defect": "Queued inline deployment actions authorize an account that has not yet been created; require atomic native continuation without weakening actor/permission existence checks"
 }

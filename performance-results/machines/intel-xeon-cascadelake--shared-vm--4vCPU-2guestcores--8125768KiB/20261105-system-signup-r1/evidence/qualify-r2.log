@@ -1,0 +1,96 @@
+compile-real
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 37, in <module>
+    run(args,'compile-real',900);result['real_compile_argv']=args;save()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 16, in run
+    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-5500:])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: compile-real failed: [m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/types.hpp:17[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/database_utils.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/code_object.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/wasm_interface.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/config.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_timestamp.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_header.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_header_state_legacy.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_state_legacy.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/controller.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/testing/include/eosio/testing/tester.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp:1[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:3[m[K:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:7:17:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kstd::string fc::[01;32m[Kto_base58[m[K(const char*, std::size_t, const yield_function_t&)[m[K’
+    7 |     std::string [01;36m[Kto_base58[m[K( const char* d, size_t s, const fc::yield_function_t& yield );
+      |                 [01;36m[K^~~~~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:7:17:[m[K [01;36m[Knote: [m[K  candidate expects 3 arguments, 2 provided
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:8:17:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kstd::string fc::[01;32m[Kto_base58[m[K(const std::vector<char>&, const yield_function_t&)[m[K’
+    8 |     std::string [01;36m[Kto_base58[m[K( const std::vector<char>& data, const fc::yield_function_t& yield );
+      |                 [01;36m[K^~~~~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:8:53:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kchar*[m[K’ to ‘[01m[Kconst std::vector<char>&[m[K’
+    8 |     std::string to_base58( [01;36m[Kconst std::vector<char>& data[m[K, const fc::yield_function_t& yield );
+      |                            [01;36m[K~~~~~~~~~~~~~~~~~~~~~~~~~^~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:[m[K In member function ‘[01m[Kvoid pureeos_signup_real_tests::actual_native_creation_K1_R1_legacy_and_atomic_failures::[01;32m[Ktest_method[m[K()[m[K’:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:120:77:[m[K [01;31m[Kerror: [m[Kreference to ‘[01m[Klegacy[m[K’ is ambiguous
+  120 |    f.registration("signupkeyaac-"+po+"-"+p2);f.registration("signupkeyaad "+[01;31m[Klegacy[m[K(k1.get_public_key()));
+      |                                                                             [01;31m[K^~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:75:13:[m[K [01;36m[Knote: [m[Kcandidates are: ‘[01m[Kstd::string {anonymous}::[01;32m[Klegacy[m[K(const eosio::chain::public_key_type&)[m[K’
+   75 | std::string [01;36m[Klegacy[m[K(const public_key_type& key) {
+      |             [01;36m[K^~~~~~[m[K
+In file included from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/types.hpp:3[m[K:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/chain_id_type.hpp:18:14:[m[K [01;36m[Knote: [m[K                ‘[01m[Knamespace eosio::chain::legacy { }[m[K’
+   18 |    namespace [01;36m[Klegacy[m[K {
+      |              [01;36m[K^~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:[m[K At global scope:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:75:13:[m[K [01;35m[Kwarning: [m[K‘[01m[Kstd::string {anonymous}::[01;32m[Klegacy[m[K(const eosio::chain::public_key_type&)[m[K’ defined but not used [[01;35m[K-Wunused-function[m[K]
+   75 | std::string [01;35m[Klegacy[m[K(const public_key_type& key) {
+      |             [01;35m[K^~~~~~[m[K
+
+
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 37, in <module>
+    run(args,'compile-real',900);result['real_compile_argv']=args;save()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 16, in run
+    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-5500:])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: compile-real failed: [m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/types.hpp:17[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/database_utils.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/code_object.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/wasm_interface.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/config.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_timestamp.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_header.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_header_state_legacy.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/block_state_legacy.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/controller.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/testing/include/eosio/testing/tester.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp:1[m[K,
+                 from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:3[m[K:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:7:17:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kstd::string fc::[01;32m[Kto_base58[m[K(const char*, std::size_t, const yield_function_t&)[m[K’
+    7 |     std::string [01;36m[Kto_base58[m[K( const char* d, size_t s, const fc::yield_function_t& yield );
+      |                 [01;36m[K^~~~~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:7:17:[m[K [01;36m[Knote: [m[K  candidate expects 3 arguments, 2 provided
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:8:17:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kstd::string fc::[01;32m[Kto_base58[m[K(const std::vector<char>&, const yield_function_t&)[m[K’
+    8 |     std::string [01;36m[Kto_base58[m[K( const std::vector<char>& data, const fc::yield_function_t& yield );
+      |                 [01;36m[K^~~~~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/libfc/include/fc/crypto/base58.hpp:8:53:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kchar*[m[K’ to ‘[01m[Kconst std::vector<char>&[m[K’
+    8 |     std::string to_base58( [01;36m[Kconst std::vector<char>& data[m[K, const fc::yield_function_t& yield );
+      |                            [01;36m[K~~~~~~~~~~~~~~~~~~~~~~~~~^~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:[m[K In member function ‘[01m[Kvoid pureeos_signup_real_tests::actual_native_creation_K1_R1_legacy_and_atomic_failures::[01;32m[Ktest_method[m[K()[m[K’:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:120:77:[m[K [01;31m[Kerror: [m[Kreference to ‘[01m[Klegacy[m[K’ is ambiguous
+  120 |    f.registration("signupkeyaac-"+po+"-"+p2);f.registration("signupkeyaad "+[01;31m[Klegacy[m[K(k1.get_public_key()));
+      |                                                                             [01;31m[K^~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:75:13:[m[K [01;36m[Knote: [m[Kcandidates are: ‘[01m[Kstd::string {anonymous}::[01;32m[Klegacy[m[K(const eosio::chain::public_key_type&)[m[K’
+   75 | std::string [01;36m[Klegacy[m[K(const public_key_type& key) {
+      |             [01;36m[K^~~~~~[m[K
+In file included from [01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/types.hpp:3[m[K:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/libraries/chain/include/eosio/chain/chain_id_type.hpp:18:14:[m[K [01;36m[Knote: [m[K                ‘[01m[Knamespace eosio::chain::legacy { }[m[K’
+   18 |    namespace [01;36m[Klegacy[m[K {
+      |              [01;36m[K^~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:[m[K At global scope:
+[01m[K/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp:75:13:[m[K [01;35m[Kwarning: [m[K‘[01m[Kstd::string {anonymous}::[01;32m[Klegacy[m[K(const eosio::chain::public_key_type&)[m[K’ defined but not used [[01;35m[K-Wunused-function[m[K]
+   75 | std::string [01;35m[Klegacy[m[K(const public_key_type& key) {
+      |             [01;35m[K^~~~~~[m[K
+

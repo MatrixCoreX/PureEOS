@@ -1,0 +1,31 @@
+{
+  "UTC": "2026-11-04T19:23:42.754997+00:00",
+  "checks": [
+    {
+      "url": "http://127.0.0.1:7000/v2/health",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "url": "http://127.0.0.1:8787/health",
+      "status": 200,
+      "bytes": 164,
+      "response": {
+        "bp": "gptgenesisbp",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 3000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    },
+    {
+      "url": "https://aic-test.matrixai.one/",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "url": "https://aic-test.matrixai.one/history/v2/health",
+      "error": "HTTP Error 403: Forbidden"
+    }
+  ]
+}

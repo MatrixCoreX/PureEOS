@@ -72,6 +72,7 @@ add_custom_command(
 ### BUILD UNIT TEST EXECUTABLE ###
 file(GLOB UNIT_TESTS "*.cpp") # find all unit test suites
 set(PUREEOS_STANDALONE_FIXTURE_SOURCES
+  "${CMAKE_CURRENT_SOURCE_DIR}/pureeos_signup_real_tests.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/thread_cpu_billing_tests.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/chain_config_tests.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/native_vm_guard_tests.cpp"
@@ -591,6 +592,18 @@ foreach(target native_savanna_test unit_test)
   target_compile_definitions(${target} PRIVATE
     PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS=${PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS})
 endforeach()
+set(PUREEOS_SIGNUP_REAL_CONTRACTS_DIR "" CACHE PATH "Hash-pinned current AIC contracts and candidate signup for isolated native tests")
+if(PUREEOS_SIGNUP_REAL_CONTRACTS_DIR)
+  add_executable(system_signup_native_test main.cpp pureeos_signup_real_tests.cpp)
+  target_link_libraries(system_signup_native_test PRIVATE eosio_chain_wrap state_history chainbase eosio_testing fc custom_appbase chain_plugin ${PLATFORM_SPECIFIC_LIBS})
+  target_compile_options(system_signup_native_test PRIVATE -DDISABLE_EOSLIB_SERIALIZE)
+  target_compile_definitions(system_signup_native_test PRIVATE
+    PUREEOS_SIGNUP_REAL_CONTRACTS_DIR="${PUREEOS_SIGNUP_REAL_CONTRACTS_DIR}"
+    PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS=${PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS})
+  target_include_directories(system_signup_native_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/libraries/testing/include)
+  add_test(NAME system_signup_native_real_contract COMMAND system_signup_native_test
+    --run_test=pureeos_governance_tests,pureeos_signup_real_tests --report_level=detailed --color_output=no)
+endif()
 set(PUREEOS_GOVERNANCE_CONTRACTS_DIR "" CACHE PATH "CDT profile-2 contract build directory for real WASM integration tests")
 if(PUREEOS_GOVERNANCE_CONTRACTS_DIR)
   target_compile_definitions(native_savanna_test PRIVATE PUREEOS_GOVERNANCE_CONTRACTS_DIR="${PUREEOS_GOVERNANCE_CONTRACTS_DIR}")

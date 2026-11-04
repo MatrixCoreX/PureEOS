@@ -1,0 +1,87 @@
+Random number generator seeded to 1793819583
+Running 32 test cases...
+Entering test module "Master Test Suite"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(153): Entering test suite "pureeos_governance_tests"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(155): Entering test case "profile_and_thresholds"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(155): Leaving test case "profile_and_thresholds"; testing time: 6681us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(169): Entering test case "bootstrap_rejects_wrong_contract_without_locking_accounts"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(169): Leaving test case "bootstrap_rejects_wrong_contract_without_locking_accounts"; testing time: 513003us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(180): Entering test case "review_period_is_fixed_at_fourteen_days"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(180): Leaving test case "review_period_is_fixed_at_fourteen_days"; testing time: 56746us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(196): Entering test case "bootstrap_seals_management_and_preserves_normal_accounts"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(196): Leaving test case "bootstrap_seals_management_and_preserves_normal_accounts"; testing time: 79948us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(213): Entering test case "developer_only_and_no_stale_electorate"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(213): Leaving test case "developer_only_and_no_stale_electorate"; testing time: 56968us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(226): Entering test case "dedicated_upgrade_key_needs_no_active_key"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(226): Leaving test case "dedicated_upgrade_key_needs_no_active_key"; testing time: 65055us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(238): Entering test case "electorate_validation_and_snapshot_immutability"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(238): Leaving test case "electorate_validation_and_snapshot_immutability"; testing time: 56581us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(253): Entering test case "full_review_then_atomic_code_and_abi_upgrade"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(253): Leaving test case "full_review_then_atomic_code_and_abi_upgrade"; testing time: 67917us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(268): Entering test case "no_objections_allows_execution_only_after_fourteen_days"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(268): Leaving test case "no_objections_allows_execution_only_after_fourteen_days"; testing time: 80350us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(285): Entering test case "one_two_three_four_nodes_veto_threshold"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(285): Leaving test case "one_two_three_four_nodes_veto_threshold"; testing time: 276014us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(297): Entering test case "two_of_four_objections_do_not_block"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(297): Leaving test case "two_of_four_objections_do_not_block"; testing time: 75555us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(307): Entering test case "exact_deadline_ends_veto_and_allows_execution"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(307): Leaving test case "exact_deadline_ends_veto_and_allows_execution"; testing time: 77685us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(319): Entering test case "abi_only_upgrade_requires_a_new_full_review"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(319): Leaving test case "abi_only_upgrade_requires_a_new_full_review"; testing time: 90540us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(336): Entering test case "genesis_producer_has_only_narrow_veto"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(336): Leaving test case "genesis_producer_has_only_narrow_veto"; testing time: 75945us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(345): Entering test case "privileged_forwarding_cannot_forge_governance_or_management"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(345): Leaving test case "privileged_forwarding_cannot_forge_governance_or_management"; testing time: 73911us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(359): Entering test case "cancel_and_resubmit_restarts_review"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(359): Leaving test case "cancel_and_resubmit_restarts_review"; testing time: 96561us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(381): Entering test case "execution_failure_rolls_back_proposal"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(381): Leaving test case "execution_failure_rolls_back_proposal"; testing time: 64519us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(391): Entering test case "transaction_retry_discards_single_use_upgrade_capability"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(391): Leaving test case "transaction_retry_discards_single_use_upgrade_capability"; testing time: 65413us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(414): Entering test case "two_hundred_ten_nodes_require_140_not_141"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(414): Leaving test case "two_hundred_ten_nodes_require_140_not_141"; testing time: 222239us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(424): Entering test case "snapshot_binary_json_and_restart_preserve_frozen_proposal"
+[33m3240000 snapshot_exception: Snapshot exception
+Unsupported block_state version
+    {}
+    ld-linux-x86-64.so.2  controller.cpp:2584 read_from_snapshot
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/snapshot_binary_json_and_restart_preserve_frozen_proposal": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(435): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(424): Leaving test case "snapshot_binary_json_and_restart_preserve_frozen_proposal"; testing time: 120030us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(450): Entering test case "legacy_v9_snapshot_does_not_enable_governance"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(450): Leaving test case "legacy_v9_snapshot_does_not_enable_governance"; testing time: 55350us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(460): Entering test case "sealed_governance_replays_from_genesis"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(460): Leaving test case "sealed_governance_replays_from_genesis"; testing time: 125313us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(64): Entering test case "system_creation_requires_feature_and_native_parent"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(64): Leaving test case "system_creation_requires_feature_and_native_parent"; testing time: 132661us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(77): Entering test case "system_creation_validates_exact_manifest_and_fresh_electorate"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(77): Leaving test case "system_creation_validates_exact_manifest_and_fresh_electorate"; testing time: 77707us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(101): Entering test case "system_creation_preserves_existing_pending_upgrade"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(101): Leaving test case "system_creation_preserves_existing_pending_upgrade"; testing time: 78433us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(115): Entering test case "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(127): fatal error: in "pureeos_governance_tests/system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account": unexpected exception thrown by f.execute_creation()
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(115): Leaving test case "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account"; testing time: 138653us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(144): Entering test case "system_creation_failure_rolls_back_account_protection_and_execution"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(144): Leaving test case "system_creation_failure_rolls_back_account_protection_and_execution"; testing time: 92295us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(155): Entering test case "system_creation_effective_veto_and_cancellation_boundaries"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(155): Leaving test case "system_creation_effective_veto_and_cancellation_boundaries"; testing time: 94305us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(173): Entering test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"
+[33m3240000 snapshot_exception: Snapshot exception
+Unsupported block_state version
+    {}
+    ld-linux-x86-64.so.2  controller.cpp:2584 read_from_snapshot
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_snapshot_restart_and_replay_preserve_both_lanes": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(178): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(173): Leaving test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"; testing time: 152471us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(198): Entering test case "system_creation_native_ban_reader_recomputes_effective_threshold"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(198): Leaving test case "system_creation_native_ban_reader_recomputes_effective_threshold"; testing time: 117913us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(210): Entering test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(210): Leaving test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"; testing time: 99854us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(219): Entering test case "system_creation_activated_snapshot_rejects_downgraded_header"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(219): Leaving test case "system_creation_activated_snapshot_rejects_downgraded_header"; testing time: 245403us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(153): Leaving test suite "pureeos_governance_tests"; testing time: 3632947us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(81): Test suite "pureeos_signup_real_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(159): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 3632985us

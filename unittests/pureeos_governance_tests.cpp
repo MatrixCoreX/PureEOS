@@ -44,7 +44,7 @@ std::string fixture_wat() {
      (memory 1)
      (func (export "apply") (param $receiver i64) (param $code i64) (param $action i64) (local $size i32)
        (if (i64.eq (get_local $action) (i64.const )" + std::to_string("activate"_n.to_uint64_t()) + R"())
-         (then (drop (call $read (i32.const 0) (i32.const 32))) (call $activate (i32.const 0))))
+         (then (drop (call $read (i32.const 32) (i32.const 32))) (call $activate (i32.const 32))))
        (if (i64.eq (get_local $action) (i64.const )" + std::to_string("govinit"_n.to_uint64_t()) + R"())
          (then (i64.store (i32.const 0) (i64.const )" + std::to_string("eosio"_n.to_uint64_t()) + R"())
                (call $voters (i32.const 0) (i32.const 8))))

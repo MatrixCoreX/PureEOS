@@ -1,0 +1,6 @@
+{
+  "CPU_model": "Intel Xeon Processor (Cascadelake)",
+  "logical_CPUs": 4,
+  "MemTotal": "MemTotal:        8125768 kB",
+  "scope": "Actual retained shared VM; guest-visible topology does not prove dedicated physical CPU capacity; no performance qualification"
+}

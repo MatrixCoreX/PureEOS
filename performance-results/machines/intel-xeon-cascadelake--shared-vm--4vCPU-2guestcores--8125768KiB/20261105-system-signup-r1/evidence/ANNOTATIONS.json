@@ -1,0 +1,10 @@
+{
+  "scope": "Annotations preserve original report bytes; do not rewrite earlier failures",
+  "items": [
+    {
+      "file": "native-r1/qualification-6-extra/RESULT.json",
+      "original_sha256": "a676bc1332435c4c35186f22c58f61225dea35037ecc522a707d01e65ce34089",
+      "correction": "Auxiliary driver inherited snapshot11-failure wording from qualification4. Qualification6 uses the rebuilt snapshot fix; its primary native_governance.xml passes both snapshot cases and fails successful creation. Use primary XML and final qualification7 results for actual scope."
+    }
+  ]
+}

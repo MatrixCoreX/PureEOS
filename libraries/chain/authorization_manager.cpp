@@ -315,6 +315,13 @@ namespace eosio { namespace chain {
       }
 
       try {
+         // govinit sealed eosio before this action existed, so it cannot add a
+         // new permission link later. Bind ONLY the new native veto action to
+         // the existing narrow veto permission after feature activation.
+         if (authorizer_account == config::system_account_name && scope == config::system_account_name &&
+             act_name == "sysveto"_n &&
+             _control.is_builtin_activated(builtin_protocol_feature_t::pureeos_system_account_governance))
+            return "veto"_n;
          std::optional<permission_name> linked_permission = lookup_linked_permission(authorizer_account, scope, act_name);
          if( !linked_permission )
             return config::active_name;

@@ -1,0 +1,270 @@
+{
+  "status": "FAIL",
+  "attempt": 1,
+  "UTC": "2026-11-04T18:59:43.082802+00:00",
+  "scope": "Isolated native controller tests; controlled tester time; no live chain action",
+  "native_governance": {
+    "exit_code": 201,
+    "binary_sha256": "eedb2c4083a3d48526a802a1f8873db4c720ba42dd89ee4b05bf0db6116cc081",
+    "cases": [
+      {
+        "name": "profile_and_thresholds",
+        "result": "passed",
+        "assertions_passed": "423",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "bootstrap_rejects_wrong_contract_without_locking_accounts",
+        "result": "passed",
+        "assertions_passed": "6",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "review_period_is_fixed_at_fourteen_days",
+        "result": "passed",
+        "assertions_passed": "30",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "bootstrap_seals_management_and_preserves_normal_accounts",
+        "result": "passed",
+        "assertions_passed": "21",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "developer_only_and_no_stale_electorate",
+        "result": "passed",
+        "assertions_passed": "10",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "dedicated_upgrade_key_needs_no_active_key",
+        "result": "passed",
+        "assertions_passed": "5",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "electorate_validation_and_snapshot_immutability",
+        "result": "passed",
+        "assertions_passed": "12",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "full_review_then_atomic_code_and_abi_upgrade",
+        "result": "passed",
+        "assertions_passed": "12",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "no_objections_allows_execution_only_after_fourteen_days",
+        "result": "passed",
+        "assertions_passed": "14",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "one_two_three_four_nodes_veto_threshold",
+        "result": "passed",
+        "assertions_passed": "26",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "two_of_four_objections_do_not_block",
+        "result": "passed",
+        "assertions_passed": "8",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "exact_deadline_ends_veto_and_allows_execution",
+        "result": "passed",
+        "assertions_passed": "10",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "abi_only_upgrade_requires_a_new_full_review",
+        "result": "passed",
+        "assertions_passed": "12",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "genesis_producer_has_only_narrow_veto",
+        "result": "passed",
+        "assertions_passed": "5",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "privileged_forwarding_cannot_forge_governance_or_management",
+        "result": "passed",
+        "assertions_passed": "13",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "cancel_and_resubmit_restarts_review",
+        "result": "passed",
+        "assertions_passed": "19",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "execution_failure_rolls_back_proposal",
+        "result": "passed",
+        "assertions_passed": "9",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "transaction_retry_discards_single_use_upgrade_capability",
+        "result": "passed",
+        "assertions_passed": "10",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "two_hundred_ten_nodes_require_140_not_141",
+        "result": "passed",
+        "assertions_passed": "214",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "snapshot_binary_json_and_restart_preserve_frozen_proposal",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "legacy_v9_snapshot_does_not_enable_governance",
+        "result": "passed",
+        "assertions_passed": "1",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "sealed_governance_replays_from_genesis",
+        "result": "passed",
+        "assertions_passed": "6",
+        "assertions_failed": "0",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_requires_feature_and_native_parent",
+        "result": "aborted",
+        "assertions_passed": "11",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_validates_exact_manifest_and_fresh_electorate",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_preserves_existing_pending_upgrade",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_failure_rolls_back_account_protection_and_execution",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_effective_veto_and_cancellation_boundaries",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_snapshot_restart_and_replay_preserve_both_lanes",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_native_ban_reader_recomputes_effective_threshold",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate",
+        "result": "aborted",
+        "assertions_passed": "2",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      },
+      {
+        "name": "system_creation_activated_snapshot_rejects_downgraded_header",
+        "result": "aborted",
+        "assertions_passed": "5",
+        "assertions_failed": "1",
+        "warnings_failed": "0",
+        "expected_failures": "0"
+      }
+    ],
+    "xml_sha256": "f975c409aca81c4cfa7c557e7f0d56f0de2d3163e8d3f3e686b903cf79842519"
+  },
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-system-signup-20261105-r1/qualify_native.py\", line 32, in <module>\n    execute(N/'native_savanna_test','native_governance','pureeos_governance_tests')\n  File \"/opt/pureeos-system-signup-20261105-r1/qualify_native.py\", line 30, in execute\n    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-6500:])\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: native_governance failed: : Runtime Error Processing WASM\nreferences cannot be created for null pointers\n    {}\n    ld-linux-x86-64.so.2  common.hpp:100 from_wasm\neosio <= eosio::activate console output: \n    {\"console\":\"\",\"account\":\"eosio\",\"action\":\"activate\",\"receiver\":\"eosio\"}\n    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one\ntransaction_header: {\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0}, billed_cpu_time_us: 2000\n    {\"header\":{\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0},\"billed\":2000}\n    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction\n\u001b[0m\nunknown location(0): fatal error: in \"pureeos_governance_tests/system_creation_snapshot_restart_and_replay_preserve_both_lanes\": std::runtime_error: Caught Unexpected Exception\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(173): Leaving test case \"system_creation_snapshot_restart_and_replay_preserve_both_lanes\"; testing time: 54178us\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(198): Entering test case \"system_creation_native_ban_reader_recomputes_effective_threshold\"\n\u001b[33m3070002 wasm_execution_error: Runtime Error Processing WASM\nreferences cannot be created for null pointers\n    {}\n    ld-linux-x86-64.so.2  common.hpp:100 from_wasm\neosio <= eosio::activate console output: \n    {\"console\":\"\",\"account\":\"eosio\",\"action\":\"activate\",\"receiver\":\"eosio\"}\n    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one\ntransaction_header: {\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0}, billed_cpu_time_us: 2000\n    {\"header\":{\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0},\"billed\":2000}\n    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction\n\u001b[0m\nunknown location(0): fatal error: in \"pureeos_governance_tests/system_creation_native_ban_reader_recomputes_effective_threshold\": std::runtime_error: Caught Unexpected Exception\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(198): Leaving test case \"system_creation_native_ban_reader_recomputes_effective_threshold\"; testing time: 53487us\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(210): Entering test case \"system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate\"\n\u001b[33m3070002 wasm_execution_error: Runtime Error Processing WASM\nreferences cannot be created for null pointers\n    {}\n    ld-linux-x86-64.so.2  common.hpp:100 from_wasm\neosio <= eosio::activate console output: \n    {\"console\":\"\",\"account\":\"eosio\",\"action\":\"activate\",\"receiver\":\"eosio\"}\n    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one\ntransaction_header: {\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0}, billed_cpu_time_us: 2000\n    {\"header\":{\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0},\"billed\":2000}\n    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction\n\u001b[0m\nunknown location(0): fatal error: in \"pureeos_governance_tests/system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate\": std::runtime_error: Caught Unexpected Exception\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(210): Leaving test case \"system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate\"; testing time: 53694us\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(219): Entering test case \"system_creation_activated_snapshot_rejects_downgraded_header\"\n\u001b[33m3070002 wasm_execution_error: Runtime Error Processing WASM\nreferences cannot be created for null pointers\n    {}\n    ld-linux-x86-64.so.2  common.hpp:100 from_wasm\neosio <= eosio::activate console output: \n    {\"console\":\"\",\"account\":\"eosio\",\"action\":\"activate\",\"receiver\":\"eosio\"}\n    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one\ntransaction_header: {\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0}, billed_cpu_time_us: 2000\n    {\"header\":{\"expiration\":\"2020-01-01T00:01:02\",\"ref_block_num\":3,\"ref_block_prefix\":1354375446,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0},\"billed\":2000}\n    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction\n\u001b[0m\nunknown location(0): fatal error: in \"pureeos_governance_tests/system_creation_activated_snapshot_rejects_downgraded_header\": std::runtime_error: Caught Unexpected Exception\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(219): Leaving test case \"system_creation_activated_snapshot_rejects_downgraded_header\"; testing time: 57520us\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_governance_tests.cpp(153): Leaving test suite \"pureeos_governance_tests\"; testing time: 3127718us\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/performance_metrics_tests.cpp(10): Test suite \"performance_metrics_tests\" is skipped because disabled\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/block_log_extract.cpp(50): Test suite \"block_log_extraction_tests\" is skipped because disabled\n/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/block_log.cpp(140): Test suite \"blog_file_tests\" is skipped because disabled\nLeaving test module \"Master Test Suite\"; testing time: 3127774us\n\n"
+}

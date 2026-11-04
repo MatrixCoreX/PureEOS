@@ -1,0 +1,143 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 32, in <module>
+    execute(N/'native_savanna_test','native_governance','pureeos_governance_tests')
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 30, in execute
+    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-6500:])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: native_governance failed: : Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_snapshot_restart_and_replay_preserve_both_lanes": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(173): Leaving test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"; testing time: 54178us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(198): Entering test case "system_creation_native_ban_reader_recomputes_effective_threshold"
+[33m3070002 wasm_execution_error: Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_recomputes_effective_threshold": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(198): Leaving test case "system_creation_native_ban_reader_recomputes_effective_threshold"; testing time: 53487us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(210): Entering test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"
+[33m3070002 wasm_execution_error: Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(210): Leaving test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"; testing time: 53694us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(219): Entering test case "system_creation_activated_snapshot_rejects_downgraded_header"
+[33m3070002 wasm_execution_error: Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_activated_snapshot_rejects_downgraded_header": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(219): Leaving test case "system_creation_activated_snapshot_rejects_downgraded_header"; testing time: 57520us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_governance_tests.cpp(153): Leaving test suite "pureeos_governance_tests"; testing time: 3127718us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/performance_metrics_tests.cpp(10): Test suite "performance_metrics_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/block_log_extract.cpp(50): Test suite "block_log_extraction_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/block_log.cpp(140): Test suite "blog_file_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 3127774us
+
+
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 32, in <module>
+    execute(N/'native_savanna_test','native_governance','pureeos_governance_tests')
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 30, in execute
+    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-6500:])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: native_governance failed: : Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_snapshot_restart_and_replay_preserve_both_lanes": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(173): Leaving test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"; testing time: 54178us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(198): Entering test case "system_creation_native_ban_reader_recomputes_effective_threshold"
+[33m3070002 wasm_execution_error: Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_recomputes_effective_threshold": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(198): Leaving test case "system_creation_native_ban_reader_recomputes_effective_threshold"; testing time: 53487us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(210): Entering test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"
+[33m3070002 wasm_execution_error: Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(210): Leaving test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"; testing time: 53694us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(219): Entering test case "system_creation_activated_snapshot_rejects_downgraded_header"
+[33m3070002 wasm_execution_error: Runtime Error Processing WASM
+references cannot be created for null pointers
+    {}
+    ld-linux-x86-64.so.2  common.hpp:100 from_wasm
+eosio <= eosio::activate console output: 
+    {"console":"","account":"eosio","action":"activate","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:02","ref_block_num":3,"ref_block_prefix":1354375446,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_activated_snapshot_rejects_downgraded_header": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_system_account_tests.inc(219): Leaving test case "system_creation_activated_snapshot_rejects_downgraded_header"; testing time: 57520us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/../unittests/pureeos_governance_tests.cpp(153): Leaving test suite "pureeos_governance_tests"; testing time: 3127718us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/performance_metrics_tests.cpp(10): Test suite "performance_metrics_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/block_log_extract.cpp(50): Test suite "block_log_extraction_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/tests/block_log.cpp(140): Test suite "blog_file_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 3127774us
+

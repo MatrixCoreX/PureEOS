@@ -2559,7 +2559,10 @@ struct controller_impl {
       if (header.version >= v8::minimum_version) {
          // loading a snapshot saved by Helios 1.0.1 and above.
          // ---------------------------------------------------
-         if (std::clamp(header.version, v8::minimum_version, v8::maximum_version) == header.version ) {
+         // Version11 adds only the creation-proposal index; its block-state
+         // section retains the version8-10 encoding.
+         if (header.version == 11 ||
+             std::clamp(header.version, v8::minimum_version, v8::maximum_version) == header.version ) {
             snapshot->read_section("eosio::chain::block_state", [this, &result]( auto &section ){
                v8 block_state_data;
                section.read_row(block_state_data, db);

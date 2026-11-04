@@ -1,0 +1,43 @@
+{
+  "status": "SOURCE_BYTES_MATCH_REMOTE_QUALIFICATION_INPUTS",
+  "scope": "Source provenance only; final qualification failed; no live candidate deployment",
+  "native_branch": "feature/system-account-proposals-20261105",
+  "signup_branch": "feature/system-signup-20261104",
+  "native_files": {
+    "docs/governance/system-account-candidate-status.json": "418a1119adf869791594715c00c5b58402a1c5a8c95324f5e899a0323a21fce9",
+    "docs/governance/system-account-execution-followup.md": "523fd08157d4f44da11c895ef53f530450298288ddd8a54a34bb072fb4c1cdba",
+    "docs/governance/system-account-proposals.md": "fed04c2f1e13a8da135a1ae4a03fb31e83d1a4f69db78fefb7cb08679e201c1c",
+    "libraries/chain/CMakeLists.txt": "1118d5eee2662c98b2dc57cba49a70b67162561541494e6625ec15ec575df91e",
+    "libraries/chain/apply_context.cpp": "988e395248e120b37aa0e05e27af3821bae92b966c651e0dd38e17cc158f1b23",
+    "libraries/chain/authorization_manager.cpp": "ef876cb308489ef508c6abb14c8810f0288c0ee3e1b5c0c69e52586c7a57b825",
+    "libraries/chain/controller.cpp": "02d02245df3f7a176c80757a90ec77ddcc2da6e507b5b276f11c7eb03a323a38",
+    "libraries/chain/eosio_contract.cpp": "d4e375dd211c9898d0cb0fcb810ecbc687a11107c81841e3940151f2db9d2083",
+    "libraries/chain/include/eosio/chain/chain_snapshot.hpp": "0ee35b9293520b2a32d848a2e8cac744d53c0ef455fd18cfdca09f0807972ff0",
+    "libraries/chain/include/eosio/chain/protocol_feature_manager.hpp": "ee24459dcd92ecf2d19f7bafdbdc01166d9fd8a58cab8c1242d811b68b5aa3ab",
+    "libraries/chain/include/eosio/chain/system_account_proposal.hpp": "89eb5ee51d8ca28e8959ac59a0fc27109c928087f5c3a71f78115af650342f29",
+    "libraries/chain/include/eosio/chain/transaction_context.hpp": "f90bb359fe0a6c44b64484ce564040ade60c2f70d87acc14774bb9444075b465",
+    "libraries/chain/include/eosio/chain/types.hpp": "c596bf76cd965bebfbda9e17b3c3083dfc80f5cd07a92b2ee25ec0cf1a71f3a2",
+    "libraries/chain/protocol_feature_manager.cpp": "6a736893b99866949e26479296258a34b22ad65fa7e27d40677d23d0a0a56600",
+    "libraries/chain/system_account_proposal.cpp": "69ae70663c366390df10f4a9afae56b13fb45cf1ad60eeceed1db3dcb08a4dc1",
+    "plugins/chain_api_plugin/chain_api_plugin.cpp": "c163f246d28a8482c4129240fcfb9d6bd4499cfe54820c2c88eb80d5684ed566",
+    "plugins/chain_plugin/chain_plugin.cpp": "582780c1539a7f3d39eeb92701d700906b63da6810bff8d4f92f69c58725eb1a",
+    "plugins/chain_plugin/include/eosio/chain_plugin/chain_plugin.hpp": "21b85cdf5bf1de34e07085fbb84ed55bf204b32a54bed880054941301b9443f7",
+    "tools/governance/system_account_bundle.py": "ed9469834c181ac1d064e31575d9b51c1455c4ae4e5d2def0274e255d87254ad",
+    "unittests/CMakeLists.txt": "2edc2bcab96d9a1b387336bd7ab078ec66f0b75d84f4179faca128830dd66ef0",
+    "unittests/pureeos_governance_tests.cpp": "3df13463f0fd9a95fbe68ced1ddf9e084e5dd22e1ed1740fbb59820827a03604",
+    "unittests/pureeos_signup_real_tests.cpp": "8236dce8f905f1e10c1952e900a4300cf6a682d47521534c950b826aea1a3c60",
+    "unittests/pureeos_system_account_tests.inc": "2d4db6f8d667869af8f0ecafb1111c024959710abcfdde7fe9e5cfd5e6d85630"
+  },
+  "signup_files": {
+    "system-contracts/eosio.signup/AGENTS.md": "710fffa694cf7b5c90112fda8a6879d2556b097a7943af58a32eb9ba17de42f9",
+    "system-contracts/eosio.signup/README.md": "925156c3d72f7fd654eaa54f28727300005b707106ebdbb7c9095a43dbec0d55",
+    "system-contracts/eosio.signup/eosio.signup.abi": "4584c0647691a2787c32e8e6d3c7b0f54e0ea46abed7279d41756a879fd13e85",
+    "system-contracts/eosio.signup/include/curve_check.hpp": "4d14fbc21da5f80293b0db389943d866146c59ca855d60447e41a71b7c134b4c",
+    "system-contracts/eosio.signup/include/key_codec.hpp": "4fb88ee98e9f5329ce335e0f465f7ca56ced89570f07ef6558429134bb1bad26",
+    "system-contracts/eosio.signup/qualification/remote-compile-r4.json": "454f52740ec89fb6ade63a02296afa5acd5fec8fc207709a587da13109e995eb",
+    "system-contracts/eosio.signup/qualification/remote-native-r7.json": "f75dc9c52a306058db924eebf6cf1a05fb89711fc4f1260fdd9f595e00ec8944",
+    "system-contracts/eosio.signup/scripts/build.sh": "42e484ca8eb837ad3c25e1d2ab06b1c09aae3125ec04cbb1e90202543dd0c6ef",
+    "system-contracts/eosio.signup/src/eosio.signup.cpp": "ea919dc1de691a101c26a5ec660a363040ae158ec43dd39ac5069e1bb84d3ac5",
+    "system-contracts/eosio.signup/tests/codec_tests.cpp": "f45580fd828a8362dfab73c60712c6dc94afbaafa2ea6c2a17ac54157312e873"
+  }
+}

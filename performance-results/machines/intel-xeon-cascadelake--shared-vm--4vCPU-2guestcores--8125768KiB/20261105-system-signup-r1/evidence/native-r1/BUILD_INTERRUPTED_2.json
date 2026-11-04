@@ -1,0 +1,6 @@
+{
+  "status": "BUILD_ONLY_INTERRUPTED_FOR_REVIEWED_SOURCE_CORRECTION",
+  "cause": "Bind new eosio sysveto to existing narrow veto permission and feature description before tests; no live modification",
+  "completed_objects": 74,
+  "remaining_seconds": 3512
+}

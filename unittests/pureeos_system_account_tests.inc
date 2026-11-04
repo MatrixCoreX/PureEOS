@@ -38,7 +38,8 @@ struct system_account_fixture : governance_fixture {
    void execute_creation(bool sponsor=true,bytes code={}) {
       std::vector<permission_level> auth{{"developer"_n,"upgrade"_n}};
       if(sponsor)auth.push_back({"developer"_n,"active"_n});
-      push({action(auth,sysexec{creation().proposal_id,code.empty()?upgrade_code:code,upgrade_abi})},"developer"_n);
+      try {push({action(auth,sysexec{creation().proposal_id,code.empty()?upgrade_code:code,upgrade_abi})},"developer"_n);}
+      catch(const fc::exception& error){BOOST_TEST_MESSAGE(error.to_detail_string());throw;}
    }
    void veto_creation(account_name voter) {native(sysveto{voter,creation().proposal_id},voter);}
    bool exists(account_name name="eosio.signup"_n)const{return chain.control->db().find<account_object,by_name>(name);}

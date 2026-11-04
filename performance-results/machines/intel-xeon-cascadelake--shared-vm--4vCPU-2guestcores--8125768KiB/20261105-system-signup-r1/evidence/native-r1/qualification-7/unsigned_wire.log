@@ -1,0 +1,10 @@
+Random number generator seeded to 1793820035
+Running 1 test case...
+Entering test module "Master Test Suite"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(153): Test suite "pureeos_governance_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(81): Test suite "pureeos_signup_real_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(159): Entering test suite "pureeos_signup_wire_tests"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(160): Entering test case "unsigned_helper_matches_native_action_serialization"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(160): Leaving test case "unsigned_helper_matches_native_action_serialization"; testing time: 1405us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(159): Leaving test suite "pureeos_signup_wire_tests"; testing time: 1421us
+Leaving test module "Master Test Suite"; testing time: 1436us

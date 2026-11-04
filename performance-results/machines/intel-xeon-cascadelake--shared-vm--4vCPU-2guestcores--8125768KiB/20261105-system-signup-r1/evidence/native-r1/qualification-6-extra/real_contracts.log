@@ -1,0 +1,15 @@
+Random number generator seeded to 1793820000
+Running 3 test cases...
+Entering test module "Master Test Suite"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(153): Test suite "pureeos_governance_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(81): Entering test suite "pureeos_signup_real_tests"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(82): Entering test case "genesis_BP_has_only_narrow_system_creation_veto"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(82): Leaving test case "genesis_BP_has_only_narrow_system_creation_veto"; testing time: 519822us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(89): Entering test case "pre_feature_v10_snapshot_preserves_vetoed_upgrade3"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(89): Leaving test case "pre_feature_v10_snapshot_preserves_vetoed_upgrade3"; testing time: 250320us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(112): Entering test case "actual_native_creation_K1_R1_legacy_and_atomic_failures"
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(114): fatal error: in "pureeos_signup_real_tests/actual_native_creation_K1_R1_legacy_and_atomic_failures": unexpected exception thrown by f.execute()
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(112): Leaving test case "actual_native_creation_K1_R1_legacy_and_atomic_failures"; testing time: 351607us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(81): Leaving test suite "pureeos_signup_real_tests"; testing time: 1121838us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(159): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 1121861us

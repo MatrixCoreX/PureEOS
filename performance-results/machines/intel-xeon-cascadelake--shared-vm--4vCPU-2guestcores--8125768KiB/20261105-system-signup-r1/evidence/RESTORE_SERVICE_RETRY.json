@@ -1,0 +1,14 @@
+{
+  "UTC": "2026-11-04T19:30:52.440081+00:00",
+  "reason": "Original API/indexer exited their bounded Elasticsearch startup wait before cold-start cluster became GREEN; start only these original inactive application services after database recovery",
+  "units": [
+    "pureeos-keynet2-purehistory-api-20261103.service",
+    "pureeos-keynet2-purehistory-indexer-20261103.service"
+  ],
+  "before": {
+    "pureeos-keynet2-purehistory-api-20261103.service": "MainPID=0\nActiveState=inactive",
+    "pureeos-keynet2-purehistory-indexer-20261103.service": "MainPID=0\nActiveState=inactive"
+  },
+  "node_actions": false,
+  "configuration_changes": false
+}

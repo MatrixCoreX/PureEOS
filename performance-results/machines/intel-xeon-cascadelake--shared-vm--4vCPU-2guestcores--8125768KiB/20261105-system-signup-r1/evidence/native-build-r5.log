@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/native_build.py", line 19, in <module>
+    assert sha(N/name)==expected,'Input mismatch: '+name
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Input mismatch: source/unittests/pureeos_governance_tests.cpp

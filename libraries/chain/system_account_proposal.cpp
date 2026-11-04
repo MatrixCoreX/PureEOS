@@ -130,7 +130,7 @@ void apply_eosio_sysveto(apply_context& ctx) {
               !is_upgrade_voter_permanently_banned(ctx.db,args.voter),action_validate_exception,"voter is not an effective frozen BP");
    EOS_ASSERT(std::find(state->vetoes.begin(),state->vetoes.end(),args.voter)==state->vetoes.end(),
               action_validate_exception,"BP already vetoed this system account proposal");
-   ctx.db.modify(*state,[&](auto& s){s.vetoes.push_back(args.voter);});
+   ctx.db.modify(*state,[&](auto& s){s.vetoes.emplace_back(args.voter);});
 }
 void apply_eosio_syscancel(apply_context& ctx) {
    if(!activated(ctx))return;
@@ -161,7 +161,9 @@ void apply_eosio_sysexec(apply_context& ctx) {
               action_validate_exception,"creation payload differs from reviewed code/ABI");
    EOS_ASSERT(!ctx.trx_context.system_upgrade,action_validate_exception,"only one reviewed system capability per transaction");
    const auto target=state->target;
-   ctx.db.modify(gov,[&](auto& s){s.protected_accounts.push_back(target);std::sort(s.protected_accounts.begin(),s.protected_accounts.end());});
+   std::vector<account_name> protected_accounts(gov.protected_accounts.begin(),gov.protected_accounts.end());
+   protected_accounts.insert(std::lower_bound(protected_accounts.begin(),protected_accounts.end(),target),target);
+   ctx.db.modify(gov,[&](auto& s){s.protected_accounts=protected_accounts;});
    auto& permit=ctx.trx_context.system_upgrade.emplace();permit.target=target;permit.code_hash=state->code_hash;permit.abi_hash=state->abi_hash;
    permit.parent_action_ordinal=ctx.get_current_action_trace().action_ordinal.value;
    permit.account_creation_authorized=true;permit.creation_proposal_id=state->proposal_id;

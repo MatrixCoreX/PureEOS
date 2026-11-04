@@ -1,0 +1,8 @@
+{
+  "status": "INTERRUPTED_BY_OWN_CGROUP_MEMORY_LIMIT",
+  "attempt": 5,
+  "limit_bytes": 2147483648,
+  "native_tests_executed": false,
+  "systemd_result": "oom-kill",
+  "UTC": "2026-11-04T19:17:29.755936+00:00"
+}

@@ -1,0 +1,42 @@
+{
+  "status": "NATIVE_CREATION_EXECUTION_FAILED_SIGNUP_NOT_EXECUTED",
+  "scope": "Remote isolated controller tests; O1 TEST, controlled tester time; no live proposal or deployment",
+  "attempt": 7,
+  "UTC": "2026-11-04T19:20:35.233474+00:00",
+  "native_suite_results": {
+    "native_governance": {
+      "exit_code": 201,
+      "cases": 32,
+      "passed": 31,
+      "failed": [
+        "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account"
+      ]
+    },
+    "real_contracts": {
+      "exit_code": 201,
+      "cases": 3,
+      "passed": 2,
+      "failed": [
+        "actual_native_creation_K1_R1_legacy_and_atomic_failures"
+      ]
+    },
+    "unsigned_wire": {
+      "exit_code": 0,
+      "cases": 1,
+      "passed": 1,
+      "failed": []
+    }
+  },
+  "raw_abi": {
+    "bytes": 171,
+    "sha256": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+    "native_action_wire_comparison": "PASS"
+  },
+  "wasm_sha256": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+  "standalone_codec_checks": 1760,
+  "actual_registration_RAM_stake_signing_rollback": "NOT_REACHED",
+  "failure": "inline action authorizing actor eosio.signup does not exist while newaccount is only queued",
+  "correction_plan": "Native-only atomic continuation after newaccount; preserve existence checks and exact single-use parent capability",
+  "live_candidate_installed": false,
+  "live_transactions": false
+}

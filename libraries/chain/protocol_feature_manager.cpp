@@ -376,7 +376,7 @@ host function call will trigger a transition to the Savanna consensus algorithm.
          } )
          (  builtin_protocol_feature_t::pureeos_system_account_governance, builtin_protocol_feature_spec{
             "PUREEOS_SYSTEM_ACCOUNT_GOVERNANCE",
-            digest_type::hash(std::string("PureEOS system account governance v1: separate bounded creation proposals; designated developer; full native review; effective frozen BP veto; exact code/ABI and sponsor-bound RAM payment; new nonprivileged eosio.* accounts only; sealed owner and code-only active; single-use native creation capability; atomic execution; preserve legacy pending upgrades.")),
+            digest_type::hash(std::string("PureEOS system account governance v1: separate bounded creation proposals; designated developer; full native review; effective frozen BP veto including the existing narrow eosio veto permission; exact code/ABI and sponsor-bound RAM payment; new nonprivileged eosio.* accounts only; sealed owner and code-only active; single-use native creation capability; atomic execution; preserve legacy pending upgrades.")),
             {builtin_protocol_feature_t::pureeos_seven_day_governance},
             {time_point{}, false, true}
          } )

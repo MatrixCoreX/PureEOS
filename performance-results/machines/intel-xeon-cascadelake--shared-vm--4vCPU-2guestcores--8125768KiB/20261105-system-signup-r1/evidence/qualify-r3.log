@@ -1,0 +1,145 @@
+compile-real
+link-real
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 40, in <module>
+    if attempt>1:execute(binary,'native_governance','pureeos_governance_tests')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 30, in execute
+    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-6500:])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: native_governance failed: on_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:10","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:10","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_snapshot_restart_and_replay_preserve_both_lanes": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(173): Leaving test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"; testing time: 102836us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(198): Entering test case "system_creation_native_ban_reader_recomputes_effective_threshold"
+[33m3050000 action_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_recomputes_effective_threshold": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(198): Leaving test case "system_creation_native_ban_reader_recomputes_effective_threshold"; testing time: 82865us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(210): Entering test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"
+[33m3050000 action_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":3037536837,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":3037536837,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(210): Leaving test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"; testing time: 85746us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(219): Entering test case "system_creation_activated_snapshot_rejects_downgraded_header"
+[33m3050000 action_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_activated_snapshot_rejects_downgraded_header": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(219): Leaving test case "system_creation_activated_snapshot_rejects_downgraded_header"; testing time: 86141us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(153): Leaving test suite "pureeos_governance_tests"; testing time: 3365013us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(81): Test suite "pureeos_signup_real_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(159): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 3365045us
+
+
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 40, in <module>
+    if attempt>1:execute(binary,'native_governance','pureeos_governance_tests')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-system-signup-20261105-r1/qualify_native.py", line 30, in execute
+    if code:raise RuntimeError(label+' failed: '+(out/(label+'.log')).read_text()[-6500:])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: native_governance failed: on_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:10","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:10","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_snapshot_restart_and_replay_preserve_both_lanes": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(173): Leaving test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"; testing time: 102836us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(198): Entering test case "system_creation_native_ban_reader_recomputes_effective_threshold"
+[33m3050000 action_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_recomputes_effective_threshold": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(198): Leaving test case "system_creation_native_ban_reader_recomputes_effective_threshold"; testing time: 82865us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(210): Entering test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"
+[33m3050000 action_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":3037536837,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":3037536837,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(210): Leaving test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"; testing time: 85746us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(219): Entering test case "system_creation_activated_snapshot_rejects_downgraded_header"
+[33m3050000 action_validate_exception: Action validate exception
+syspropose must immediately follow refreshgov in the same transaction
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:83 apply_eosio_syspropose
+eosio <= eosio::syspropose console output: 
+    {"console":"","account":"eosio","action":"syspropose","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:262 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:09","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+[0m
+unknown location(0): fatal error: in "pureeos_governance_tests/system_creation_activated_snapshot_rejects_downgraded_header": std::runtime_error: Caught Unexpected Exception
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(11): last checkpoint
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_system_account_tests.inc(219): Leaving test case "system_creation_activated_snapshot_rejects_downgraded_header"; testing time: 86141us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_governance_tests.cpp(153): Leaving test suite "pureeos_governance_tests"; testing time: 3365013us
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(81): Test suite "pureeos_signup_real_tests" is skipped because disabled
+/opt/pureeos-system-signup-20261105-r1/native-r1/source/unittests/pureeos_signup_real_tests.cpp(159): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 3365045us
+

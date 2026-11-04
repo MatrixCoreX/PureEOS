@@ -1,6 +1,6 @@
 # System-account creation candidate / 系统账号创建候选
 
-Status: **DRAFT, NOT QUALIFIED, NOT ACTIVATED**. This branch is based on
+Status: **BUILT REMOTELY, QUALIFICATION FAILED, NOT ACTIVATED**. This branch is based on
 `057e1731660d3b8423c960cb81fe1758ae9c29f6`. Installing source or a binary is
 insufficient to activate this protocol feature. No reset is part of this design.
 
@@ -47,6 +47,10 @@ tally. The blocking threshold is `ceil(2*N/3)`, distinct from finality quorum.
 An empty effective electorate blocks execution. Duplicate vetoes and vetoes at
 or after the native deadline fail. `eosio` retains its narrow `veto` permission
 only where it is itself an eligible frozen bootstrap voter.
+After feature activation, the native minimum permission for eosio's `sysveto`
+is explicitly its existing `veto` permission. Old sealed eosio accounts cannot
+add a permission link themselves; this fixed action mapping neither rewrites
+their permission rows nor authorizes another governance or management action.
 
 `syscancel` requires `developer@upgrade`. Resubmission receives a new id and a
 new full review period. The existing contract-upgrade lane is not cancelled.
@@ -114,11 +118,20 @@ manifest bounds, exact electorate refresh, pending-lane isolation, full review,
 sponsor authorization, mismatched payloads, invalid-WASM rollback, vetoes,
 cancellation, final nonprivileged sealing, snapshot/restart and genesis replay.
 Their permissive token/RAM fixture cannot qualify production economics.
-**The added cases have not yet passed a remote build/run.**
+Remote O1 TEST compilation rebuilt144 project translation units using verified
+retained dependencies. In the final isolated attempt7,31/32 governance cases,
+2/3 real-contract cases and1/1 unsigned wire case passed. The successful creation
+case and real signup case failed before deployment because inline authorization
+is checked while the new account is still queued for creation. No actual K1/R1
+registration result can be inferred. See the [failure and correction plan](system-account-execution-followup.md).
+The candidate is not qualified for rollout. The production review profile,
+production build and broader current-chain compatibility remain unqualified.
 
 Before any rollout:
 
-1. Build and run the native tests remotely; qualify TEST and production review
+1. Correct the native continuation ordering without relaxing missing-actor or
+   missing-permission checks, then build and run the native tests remotely;
+   qualify TEST and production review
    profiles, legacy replay, pre-feature behavior, current-format snapshots and
    rejection of downgraded snapshot headers. The simulated ban-reader cases are
    distinct from real-contract permanent-ban/empty-electorate and resource

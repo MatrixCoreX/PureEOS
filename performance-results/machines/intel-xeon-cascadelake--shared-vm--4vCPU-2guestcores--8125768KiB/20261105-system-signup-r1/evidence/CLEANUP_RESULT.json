@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-04T19:34:57.009681+00:00",
+  "scope": "Only stopped, owned, isolated qualification temporary chain directories; public reports verified off-host first. Preserve live data/config/keys, candidate source/build objects/binaries, failures and all old evidence.",
+  "public_reports_hash_verified": 33,
+  "removed": [
+    "native-r1/qualification-1/native_governance-private-tmp",
+    "native-r1/qualification-4/native_governance-private-tmp",
+    "native-r1/qualification-4-extra/private-tmp",
+    "native-r1/qualification-3/native_governance-private-tmp",
+    "native-r1/qualification-6-extra/private-tmp",
+    "native-r1/qualification-7/real_contracts-private-tmp",
+    "native-r1/qualification-7/unsigned_wire-private-tmp",
+    "native-r1/qualification-7/native_governance-private-tmp",
+    "native-r1/qualification-6/native_governance-private-tmp"
+  ],
+  "allocated_removed_bytes": 0,
+  "free_bytes_after": 104008024064,
+  "net_free_increase_bytes": 36864
+}
