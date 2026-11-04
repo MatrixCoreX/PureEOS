@@ -1,6 +1,6 @@
 # eosio.key · 公钥转账 / Public-key transfers
 
-2026-11-04 RAM 市场计费候选 / market-priced RAM candidate: see [规则、公式与兼容 / rules and compatibility](docs/RAM_MARKET_FEES.md). New source prices approved bytes from current RAM reserves; old deployed hashes retain fixed row pricing. Public activation is not included in this development task.
+2026-11-04 RAM 市场计费已在 TEST 链完成原生提案升级 / market-priced RAM fees activated on TEST after native review. See [规则、公式与兼容 / rules and compatibility](docs/RAM_MARKET_FEES.md). Qualified code bc3358d7 prices approved bytes from current RAM reserves; old reviewed hashes retain fixed row pricing. Production release defaults are unchanged.
 
 
 开发测试版本，已部署至 [公开测试链](https://aic-test.matrixai.one/)，未发布为稳定版。当前测试范围为系统 AIC 与标准 USD；只接入绑定完整币种及审核代码哈希的白名单，见 [白名单提案流程](docs/TOKEN_ALLOWLIST.md)。 / Development TEST deployment; not a stable release. The test profile admits native AIC and standard USD through an exact-identity/code-hash whitelist; see the proposal workflow.

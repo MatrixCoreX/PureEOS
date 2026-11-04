@@ -127,15 +127,18 @@ export function calculateMarketFee(policy,multiplier,units,bytes,market,relayed,
     base_asset:formatFee(base),premium_asset:formatFee(premium),total_asset:formatFee(base+premium)};
 }
 
+const READ_RPC_METHODS=new Set(['get_info','get_block','get_account','get_abi','get_code_hash','get_table_rows','get_currency_balance','get_currency_stats','get_required_keys','get_transaction_status']);
 export class KeyWalletClient {
-  constructor(endpoint,{contract=CONTRACT,fetchImpl=globalThis.fetch}={}) {
-    this.endpoint=endpoint.replace(/\/+$/,'');this.contract=contract;this.fetch=fetchImpl;
+  constructor(endpoint,{contract=CONTRACT,readEndpoint=endpoint,fetchImpl=globalThis.fetch}={}) {
+    this.endpoint=endpoint.replace(/\/+$/,'');this.readEndpoint=readEndpoint.replace(/\/+$/,'');this.contract=contract;this.fetch=fetchImpl;
   }
-  async rpc(method,data={}) {
-    const result=await this.fetch(this.endpoint+'/v1/chain/'+method,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(20000)});
+  async rpcAt(endpoint,method,data={}) {
+    const result=await this.fetch(endpoint+'/v1/chain/'+method,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(20000)});
     if(!result.ok)throw new Error(`RPC ${method}: HTTP ${result.status}`);
     return parseRPCJSON(await result.text());
   }
+  async rpc(method,data={}) {return this.rpcAt(READ_RPC_METHODS.has(method)?this.readEndpoint:this.endpoint,method,data);}
+  async rpcWriter(method,data={}) {return this.rpcAt(this.endpoint,method,data);}
   async rows(table,scope=this.contract,extra={}) {
     const value=await this.rpc('get_table_rows',{json:true,code:this.contract,scope,table,limit:1000,...extra});
     if(value.more)throw new Error('Truncated wallet query; explicit pagination required');
@@ -144,6 +147,7 @@ export class KeyWalletClient {
   async load() {
     const [info,configs]=await Promise.all([this.rpc('get_info'),this.rows('config')]);
     if(configs.length!==1||configs[0].chain_id!==info.chain_id||Number(configs[0].version)!==2)throw new Error('Wallet domain does not match actual node chain');
+    if(this.readEndpoint!==this.endpoint&&(await this.rpcWriter('get_info')).chain_id!==info.chain_id)throw new Error('Read and write RPC chain IDs differ');
     this.config=configs[0];this.abi=CORE_ABI;return this;
   }
   async relayRate(bp) {

@@ -28,9 +28,9 @@ const terminal=job=>['finalized','expired'].includes(job.status);
 const publicJob=job=>({intent:job.intent,transaction_id:job.id,status:job.status,
   ...(job.confirmation?{confirmation:job.confirmation}:{}),...(job.last_error?{last_error:job.last_error}:{})});
 export class Relay {
-  constructor({endpoint,bp,permission,key,expectedHash,journal,client,allowedTokens=[]}){
+  constructor({endpoint,readEndpoint,bp,permission,key,expectedHash,journal,client,allowedTokens=[]}){
     if(!/^[0-9a-f]{64}$/.test(expectedHash||''))throw new Error('Pin the qualified eosio.key code hash');
-    this.client=client||new KeyWalletClient(endpoint);this.bp=bp;this.permission=permission;
+    this.client=client||new KeyWalletClient(endpoint,{readEndpoint});this.bp=bp;this.permission=permission;
     this.allowedTokens=new Set(allowedTokens);this.key=PrivateKey.from(key);this.expectedHash=expectedHash;this.journal=journal;this.queue=Promise.resolve();this.pending=0;
   }
   exclusive(fn){
@@ -42,6 +42,7 @@ export class Relay {
     await this.client.load();
     const code=await this.client.rpc('get_code_hash',{account_name:this.client.contract});
     if(code.code_hash!==this.expectedHash)throw new Error('Wallet code changed; review required');
+    if(this.client.readEndpoint!==this.client.endpoint&&(await this.client.rpcWriter('get_code_hash',{account_name:this.client.contract})).code_hash!==this.expectedHash)throw new Error('Writer wallet code changed; review required');
     const relay=(await this.client.rows('relays',this.client.contract,{lower_bound:this.bp,upper_bound:this.bp,limit:2}))[0];
     if(!relay||relay.bp!==this.bp||!relay.enabled||relay.permission!==this.permission)throw new Error('BP relay is not enabled with the configured permission');
     const rows=async table=>(await this.client.rpc('get_table_rows',{json:true,code:'eosio',scope:'eosio',table,
@@ -162,7 +163,7 @@ export function createServer(relay,{host='127.0.0.1',port=8787}={}){
 async function main(){
   const path=process.env.RELAY_KEY_FILE;if(!path||statSync(path).mode&0o077)throw new Error('RELAY_KEY_FILE must be readable only by its owner');
   const journal=new Journal(process.env.RELAY_STATE||'./state');
-  const relay=new Relay({endpoint:process.env.NODEOS_URL,bp:process.env.BP_ACCOUNT,permission:process.env.BP_PERMISSION||'keyrelay',
+  const relay=new Relay({endpoint:process.env.NODEOS_URL,readEndpoint:process.env.NODEOS_READ_URL,bp:process.env.BP_ACCOUNT,permission:process.env.BP_PERMISSION||'keyrelay',
     key:readFileSync(path,'utf8').trim(),allowedTokens:(process.env.RELAY_ALLOWED_TOKENS||'').split(',').filter(Boolean),expectedHash:process.env.KEY_CODE_HASH,journal});
   await relay.profile();const server=createServer(relay,{port:Number(process.env.PORT||8787)});
   const timer=setInterval(()=>relay.reconcile().catch(e=>process.stderr.write(`Relay reconciliation paused: ${e.message}\n`)),2000);

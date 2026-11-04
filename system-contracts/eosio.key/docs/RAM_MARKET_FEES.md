@@ -1,6 +1,6 @@
 # RAM 市场计费 / RAM market pricing
 
-2026-11-04 开发选择。此文描述候选代码；当前公网是否已启用应以部署报告及实际 WASM 哈希为准。旧 `b6509d…` / `1933629d…` 仍按定额行费计价。SDK 与浏览器按审核代码哈希选择规则，未知版本不报价。本轮没有提交公开链升级提案。
+2026-11-04 开发及 TEST 激活完成。提案2完整公示1800秒后，经原生 devexec 不可逆启用 `bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1`；ABI不变。旧 `b6509d…` / `1933629d…` 仍按定额行费计价。SDK 与浏览器按审核代码哈希选择规则，未知版本不报价。实际升级交易与三笔收费验证见实际Cascadelake机器的 `20261104-dev-proposals-ram-activation-r1/REPORT.md`。
 
 ## 计价规则
 
@@ -44,10 +44,12 @@ total = base + relay
 
 ## English
 
-This candidate replaces the fixed new-row charge with the integer RAM curve quote above. All values are AIC atoms. The approved allocation budget is 1536 bytes for a new key plus balance, 512 for a new balance or supported native AIC recipient, and zero for existing balances. The quote includes the native rounded 0.5% RAM buy fee; transfers do not purchase RAM. These are conservative allocation budgets, not exact measurements of native RAM usage.
+This TEST-activated version replaces the fixed new-row charge with the integer RAM curve quote above. All values are AIC atoms. The approved allocation budget is 1536 bytes for a new key plus balance, 512 for a new balance or supported native AIC recipient, and zero for existing balances. The quote includes the native rounded 0.5% RAM buy fee; transfers do not purchase RAM. These are conservative allocation budgets, not exact measurements of native RAM usage.
 
 RAM reserves are read afresh for each nonzero-byte charge from the reviewed system `rammarket`; CPU/NET retains its existing epoch cache and multiplier, applied only to execution. RAM price changes affect storage charges, subject to the unchanged 0.0100 AIC base floor. Relay fees remain 10%–30% with upward rounding and a one-atom minimum. Signed total fee caps still reject over-budget execution atomically.
 
 Existing table/request wire layouts are preserved. The serialized `new_row_fee` field remains for legacy profiles and is ignored by the market-priced WASM. The SDK and explorer select reviewed code profiles and reject unknown pricing code. New pricing is not an automatic RAM replenishment mechanism: separately sponsored per-token budgets, allocation limits, exact token-code whitelist and USD named-recipient pre-open remain mandatory. Free income claims remain independent of both markets, with claimant-paid native resources and recipient opening.
 
-Qualification runs remotely on an isolated private chain, with real native RAM buy/sell observations plus clearly labeled malformed-market fixtures. This document alone does not establish public activation; use the deployment report and actual code hash. No live upgrade was submitted for this development task.
+Qualification runs remotely on an isolated private chain, with real native RAM buy/sell observations plus clearly labeled malformed-market fixtures. The same qualified bytes completed native TEST proposal2 and irreversible execution b029b9947a608a679baf6445a0e2d106fe2bc8601e59db58a98f5d963f45ff33 after the full review. See the deployment report and actual code hash; production release defaults are unchanged.
+
+SDK/relay may use a separate readEndpoint / NODEOS_READ_URL for queries. Broadcast remains on the configured writer; both chain IDs and the writer code pin are checked. Default single-endpoint behavior is preserved. This is not automatic transaction retry.
