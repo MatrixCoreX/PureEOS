@@ -1,0 +1,174 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "status": "PASS",
+      "kind": "new-key-AIC",
+      "transaction_id": "33db3c92dbb38803d477e5c317827516d1af1ee30d0bda997740939e1adb52b1",
+      "confirmation": {
+        "block_num": 164879,
+        "block_id": "0002840ffb09db92840aa3edf47c88cd9275abd369916a950223525449b03e4e",
+        "observed_lib": 164880
+      },
+      "quote": {
+        "base": "120",
+        "premium": "36",
+        "total": "156",
+        "execution": "83",
+        "storage": "37",
+        "supplement": "0",
+        "ram_bytes": 1536,
+        "base_asset": "0.0120 AIC",
+        "premium_asset": "0.0036 AIC",
+        "total_asset": "0.0156 AIC",
+        "ram_pricing": "market",
+        "relay_fee_bps": 3000,
+        "multiplier": "20712",
+        "units": 4,
+        "rows": 2,
+        "head": 164869
+      },
+      "base_atoms": "120",
+      "service_atoms": "36",
+      "total_atoms": "156",
+      "ram_budget_bytes": 1536,
+      "principal": "0.0001 AIC",
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "full_principal": true,
+      "same_packet_retry": true,
+      "only_founder_used": true,
+      "no_automatic_RAM_purchase": true
+    },
+    {
+      "status": "PASS",
+      "kind": "new-balance-USD",
+      "transaction_id": "6863aa95f72d8807d79011e24778e4e56343409a0448ec34bb93a9c7258d4bb3",
+      "confirmation": {
+        "block_num": 165599,
+        "block_id": "000286dff6e8b9354342f155a13385de4300ca14bff68e211ef9f5014fd3ba2b",
+        "observed_lib": 165634
+      },
+      "quote": {
+        "base": "100",
+        "premium": "30",
+        "total": "130",
+        "execution": "83",
+        "storage": "13",
+        "supplement": "4",
+        "ram_bytes": 512,
+        "base_asset": "0.0100 AIC",
+        "premium_asset": "0.0030 AIC",
+        "total_asset": "0.0130 AIC",
+        "ram_pricing": "market",
+        "relay_fee_bps": 3000,
+        "multiplier": "20712",
+        "units": 4,
+        "rows": 1,
+        "head": 164904
+      },
+      "base_atoms": "100",
+      "service_atoms": "30",
+      "total_atoms": "130",
+      "ram_budget_bytes": 512,
+      "principal": "0.0001 USD",
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "full_principal": true,
+      "same_packet_retry": true,
+      "only_founder_used": true,
+      "no_automatic_RAM_purchase": true
+    },
+    {
+      "status": "PASS",
+      "kind": "existing-AIC-cleos",
+      "transaction_id": "e02036832fbc852f3968a983df249201e362b4b4478666e34b64228affddc9a5",
+      "confirmation": {
+        "block_num": 167672,
+        "block_id": "00028ef8355fccb0c22ec5059d7fb2ae005b4f617c163017ba794c44926ef5d2",
+        "observed_lib": 167672
+      },
+      "quote": {
+        "base": "100",
+        "premium": "30",
+        "total": "130",
+        "execution": "83",
+        "storage": "0",
+        "supplement": "17",
+        "ram_bytes": 0,
+        "base_asset": "0.0100 AIC",
+        "premium_asset": "0.0030 AIC",
+        "total_asset": "0.0130 AIC",
+        "ram_pricing": "market",
+        "relay_fee_bps": 3000,
+        "multiplier": "20712",
+        "units": 4,
+        "rows": 0,
+        "head": 167668
+      },
+      "base_atoms": "100",
+      "service_atoms": "30",
+      "total_atoms": "130",
+      "ram_budget_bytes": 0,
+      "principal": "0.0001 AIC",
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "full_principal": true,
+      "same_packet_retry": true,
+      "only_founder_used": true,
+      "no_automatic_RAM_purchase": true
+    }
+  ],
+  "histories": [
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "transaction_id": "33db3c92dbb38803d477e5c317827516d1af1ee30d0bda997740939e1adb52b1",
+      "entry_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:33db3c92dbb38803d477e5c317827516d1af1ee30d0bda997740939e1adb52b1:3:81a6574b57740f6d7da3f03a5a7c19b8dacb3301025feaba09df4a31e28c3054",
+      "block_id": "0002840ffb09db92840aa3edf47c88cd9275abd369916a950223525449b03e4e"
+    },
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "transaction_id": "6863aa95f72d8807d79011e24778e4e56343409a0448ec34bb93a9c7258d4bb3",
+      "entry_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:6863aa95f72d8807d79011e24778e4e56343409a0448ec34bb93a9c7258d4bb3:3:81a6574b57740f6d7da3f03a5a7c19b8dacb3301025feaba09df4a31e28c3054",
+      "block_id": "000286dff6e8b9354342f155a13385de4300ca14bff68e211ef9f5014fd3ba2b"
+    },
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "transaction_id": "e02036832fbc852f3968a983df249201e362b4b4478666e34b64228affddc9a5",
+      "entry_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:e02036832fbc852f3968a983df249201e362b4b4478666e34b64228affddc9a5:3:81a6574b57740f6d7da3f03a5a7c19b8dacb3301025feaba09df4a31e28c3054",
+      "block_id": "00028ef8355fccb0c22ec5059d7fb2ae005b4f617c163017ba794c44926ef5d2"
+    },
+    {
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "transaction_id": "33db3c92dbb38803d477e5c317827516d1af1ee30d0bda997740939e1adb52b1",
+      "entry_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:33db3c92dbb38803d477e5c317827516d1af1ee30d0bda997740939e1adb52b1:3:3e08506b2f2e25a6e70548c8c08638abd3b55ac7491026665107482924a5018d",
+      "block_id": "0002840ffb09db92840aa3edf47c88cd9275abd369916a950223525449b03e4e"
+    },
+    {
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "transaction_id": "6863aa95f72d8807d79011e24778e4e56343409a0448ec34bb93a9c7258d4bb3",
+      "entry_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:6863aa95f72d8807d79011e24778e4e56343409a0448ec34bb93a9c7258d4bb3:3:3e08506b2f2e25a6e70548c8c08638abd3b55ac7491026665107482924a5018d",
+      "block_id": "000286dff6e8b9354342f155a13385de4300ca14bff68e211ef9f5014fd3ba2b"
+    },
+    {
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "transaction_id": "e02036832fbc852f3968a983df249201e362b4b4478666e34b64228affddc9a5",
+      "entry_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0:e02036832fbc852f3968a983df249201e362b4b4478666e34b64228affddc9a5:3:3e08506b2f2e25a6e70548c8c08638abd3b55ac7491026665107482924a5018d",
+      "block_id": "00028ef8355fccb0c22ec5059d7fb2ae005b4f617c163017ba794c44926ef5d2"
+    }
+  ],
+  "reserves": [
+    {
+      "token": "eosio.token",
+      "symbol": "4,AIC",
+      "reserve_atoms": "2098973",
+      "liability_atoms": "2098973"
+    },
+    {
+      "token": "keyusdtoken1",
+      "symbol": "4,USD",
+      "reserve_atoms": "1695000",
+      "liability_atoms": "1695000"
+    }
+  ],
+  "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "UTC": "2026-11-04T08:31:30.234Z"
+}

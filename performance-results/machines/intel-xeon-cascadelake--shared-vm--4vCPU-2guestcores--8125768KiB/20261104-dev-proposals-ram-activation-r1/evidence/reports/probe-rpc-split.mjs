@@ -1,0 +1,4 @@
+import fs from 'node:fs';import {Relay} from './runtime-rpcsplit/relayer/server.mjs';
+const k='/opt/pureeos-dev-proposals-20261104-r1',r='/opt/pureeos-keynet-20261103-r2';
+const relay=new Relay({endpoint:'http://127.0.0.1:8888',readEndpoint:'http://127.0.0.1:8890',bp:'gptgenesisbp',permission:'keyrelay',key:fs.readFileSync(r+'/relay-private/hot-key.txt','utf8').trim(),expectedHash:'bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1',journal:{jobs:{}},allowedTokens:['keyusdtoken1']});
+await relay.profile();fs.writeFileSync(k+'/RPC_SPLIT_LIVE_PROFILE.json',JSON.stringify({status:'PASS',chain_id:relay.client.config.chain_id,read:'http://127.0.0.1:8890',writer:'http://127.0.0.1:8888',writer_code_pin_checked:true},null,2)+'\n');

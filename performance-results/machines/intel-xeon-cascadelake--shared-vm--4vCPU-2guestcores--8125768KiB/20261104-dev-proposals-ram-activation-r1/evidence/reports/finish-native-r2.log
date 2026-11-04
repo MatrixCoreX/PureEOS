@@ -1,0 +1,5 @@
+{"status": "PASS", "phase": "before", "wallets": 8, "assets": 2, "native_RAM": 1478416}
+{"status": "UPGRADED_IRREVERSIBLE", "transaction_id": "b029b9947a608a679baf6445a0e2d106fe2bc8601e59db58a98f5d963f45ff33", "new_code_hash": "bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1"}
+{"status": "PASS", "phase": "after-upgrade", "wallets": 8, "assets": 2, "native_RAM": 1504566}
+Relay and projector use the reviewed RAM code; original journal and keys preserved
+Reviewed native upgrade and matching application switch complete

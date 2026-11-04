@@ -1,0 +1,9 @@
+{
+  "status": "NATIVE_TIME_MATURE",
+  "chain_time": "2026-11-04T08:02:59.000",
+  "remaining_seconds": 0,
+  "proposal_id": 2,
+  "vetoes": 0,
+  "required_vetoes": 16,
+  "UTC": "2026-11-04T08:02:59.350348+00:00"
+}

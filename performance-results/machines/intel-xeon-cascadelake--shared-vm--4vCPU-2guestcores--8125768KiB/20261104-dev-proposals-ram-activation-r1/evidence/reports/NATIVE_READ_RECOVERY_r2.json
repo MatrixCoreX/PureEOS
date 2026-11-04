@@ -1,0 +1,6 @@
+{
+  "read_only_failure_before_signing": true,
+  "upgrade_transaction_not_prepared_or_broadcast": true,
+  "all_six_repeat_account_reads_passed": true,
+  "fix": "Read-only history RPC and bounded5xx read retries; no node/API/cap changes"
+}

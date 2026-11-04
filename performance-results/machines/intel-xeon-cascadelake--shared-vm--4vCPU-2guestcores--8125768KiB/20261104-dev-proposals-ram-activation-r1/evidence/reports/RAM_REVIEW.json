@@ -1,0 +1,39 @@
+{
+  "RAM_buy_fee_percent": "0.5",
+  "RAM_formula": "ceil(ceil(AIC_reserve * bytes / (RAM_reserve - bytes)) * 200 / 199); bytes=0 costs0",
+  "SDK_UI_comparisons": 480,
+  "SDK_tests": 21,
+  "approved_bytes": {
+    "existing_balance": 0,
+    "new_balance_or_native_AIC_recipient": 512,
+    "new_key_and_balance": 1536
+  },
+  "automatic_RAM_purchase": false,
+  "base_formula": "max(existing_minimum, ceil(unit_fee * work_units * CPU_NET_multiplier_bps / 10000) + RAM_quote)",
+  "change": "Market-priced RAM allocation fees",
+  "exact_RAM_metering": false,
+  "fee_UI_Chrome_variants": 8,
+  "fee_UI_tests": 241,
+  "fee_free_claim_preserved": true,
+  "fixture_checks": 115,
+  "minimum_base_AIC": "0.0100",
+  "native_checks": 114,
+  "native_review_seconds": 1800,
+  "new_abi_hash": "3470a5e243680c4c93e7ef4b481bcd54cb4f626ed3d92331f414386bb5bb0043",
+  "new_code_hash": "bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1",
+  "node_or_system_change": false,
+  "only_founder_HTTP": true,
+  "production_review_seconds_unchanged": 604800,
+  "proposal_UI_source_sha256": "57821f0dc0155a0a1c370707ea378ec804fa9be0b3360ec08db1cbf05d98f137",
+  "relay_bps": [
+    1000,
+    3000
+  ],
+  "reset": false,
+  "signed_total_cap": true,
+  "source_commit": "d5c176e7d9f14ad98129c5631f3bbdece8a3ba3e",
+  "source_kit_sha256": "6d1e987f8d5dbb3f65c763d348954ab7b8c002d302d76ef11f56754f8a7250a6",
+  "sponsored_budgets_and_AIC_USD_whitelist_preserved": true,
+  "state_and_request_ABI_unchanged": true,
+  "third_party_named_recipient_must_preopen": true
+}

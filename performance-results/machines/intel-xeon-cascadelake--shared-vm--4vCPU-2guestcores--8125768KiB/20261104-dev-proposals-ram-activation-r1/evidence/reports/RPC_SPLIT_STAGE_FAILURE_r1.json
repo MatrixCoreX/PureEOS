@@ -1,0 +1,7 @@
+{
+  "stage": "orchestration Python parse",
+  "error": "Nested placeholder replacement generated duplicate quotes",
+  "tests_started": false,
+  "service_changed": false,
+  "fix": "Use a standalone uploaded worker without nested substitutions"
+}

@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "kind": "existing-AIC-cleos",
+  "transaction_id": "e02036832fbc852f3968a983df249201e362b4b4478666e34b64228affddc9a5",
+  "confirmation": {
+    "block_num": 167672,
+    "block_id": "00028ef8355fccb0c22ec5059d7fb2ae005b4f617c163017ba794c44926ef5d2",
+    "observed_lib": 167672
+  },
+  "quote": {
+    "base": "100",
+    "premium": "30",
+    "total": "130",
+    "execution": "83",
+    "storage": "0",
+    "supplement": "17",
+    "ram_bytes": 0,
+    "base_asset": "0.0100 AIC",
+    "premium_asset": "0.0030 AIC",
+    "total_asset": "0.0130 AIC",
+    "ram_pricing": "market",
+    "relay_fee_bps": 3000,
+    "multiplier": "20712",
+    "units": 4,
+    "rows": 0,
+    "head": 167668
+  },
+  "base_atoms": "100",
+  "service_atoms": "30",
+  "total_atoms": "130",
+  "ram_budget_bytes": 0,
+  "principal": "0.0001 AIC",
+  "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+  "full_principal": true,
+  "same_packet_retry": true,
+  "only_founder_used": true,
+  "no_automatic_RAM_purchase": true
+}

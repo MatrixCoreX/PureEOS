@@ -1,0 +1,8 @@
+{
+  "status": "UPGRADED_AND_APPS_SWITCHED",
+  "proposal_id": 2,
+  "UTC": "2026-11-04T08:03:53.220644+00:00",
+  "test_payments_sent": false,
+  "chain_paused_or_restarted": false,
+  "native_review_bypassed": false
+}

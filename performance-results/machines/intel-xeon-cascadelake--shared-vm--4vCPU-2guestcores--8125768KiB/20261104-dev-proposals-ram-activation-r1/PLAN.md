@@ -1,0 +1,18 @@
+# Dev proposal display, then RAM fee activation — 2026-11-04
+
+Latest user: show dev proposals in the explorer; finish development first, then upgrade. This explicitly authorizes publishing the read-only proposal display, followed by submitting/executing the already-qualified bc3358d7 RAM fee candidate through native TEST 1800-second governance.
+
+- Read native `get_upgrade_state` on the configured chain. Display the latest stored proposal, developer/target, review times, effective electorate/veto tally, current target-code match and exact proposal/document hashes. The native RPC retains only the latest proposal and does not distinguish execution from cancellation once pending=false; label this honestly. No invented complete history or wallet/veto controls.
+- Add a discoverable developer-proposal route and governance-page panel, with bilingual/theme/mobile support, read-only method whitelist and existing HTTPS RPC route. Quote maturity from the observed chain timestamp; passing a deadline is not execution.
+- Remote-only tests/build/real Chrome/API checks on retained 66.245.194.132. Do not pause/reset BPs/history/business, create servers, run TPS, restart excluded BPs or alter system/token/node bytes, caps, votes/bonds/blacklists. Keep only original founder relay; other four remain comparison metadata.
+- Publish the qualified UI first. Preserve old source/static release/evidence. Submit immutable signed refreshgov+devpropose for eosio.key BC/ABI3470 with source/review hashes; verify canonical irreversibility and exact1800s review. No direct setcode or timing bypass.
+- During the review window prepare only the matching SDK/relay/projector pins and verify existing balances/journal/history. After native maturity, recheck frozen proposal, effective vetoes/electorate, old/new hashes and execute the identical reviewed bytes. Confirm canonical irreversible execution before switching runtime pins. Keep fee-free claims and signed caps.
+- Verify actual RAM new/existing row transfers via sole founder, exact fees/principal/reserves and public-key history preservation. Finish actual public browser checks after activation; retain failures, source/artifact hashes and transaction links.
+- User also requested disk cleanup: preserve final artifacts/reports/failures and source kits, remove only inactive owned temporary data/copies after checks and verified backups; never touch current chain/history, active runtime dependencies or immutable archives.
+
+Progress:251 tests/TS/build and actual native RPC passed; proposal page published and public Chrome verified. Proposal2 is irreversible in block160808, tx f5cabd10e12c3e55ac0b8fcaeeff9662617a4807a954d1f3edfda079c532985b, native deadline2026-11-04T08:01:10.500UTC. No execution yet.
+
+User steering during review: remove the navigation's visible scrollbar. Apply scoped CSS and short-height spacing, preserve all route access and page/table scrolling, qualify remotely and publish; do not alter the pending contract bytes, review document, native deadline or upgrade sequence.
+
+
+Completed2026-11-04: proposal2 canonically executed at164544 after1927.5seconds, same qualifiedbc3358d7/raw3470a5e2; frontend251tests/build, actual native browser/market60case+15SDK comparisons, three real irreversible0/512/1536budget AIC/USD payments and complete preservation audit passed. SDK/relay optional read8890/write8888 routing24tests passed and original sole relay switched. Evidence175files locally hash-verified before1.992MiB inactive-work cleanup. Public core excludes private explorer source/static archives. Later proposal3/history/navbar36px are separately reported. Do not rerun completed controllers.

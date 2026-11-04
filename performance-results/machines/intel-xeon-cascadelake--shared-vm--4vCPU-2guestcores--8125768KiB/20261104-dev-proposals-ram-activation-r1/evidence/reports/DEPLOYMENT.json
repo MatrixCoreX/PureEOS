@@ -1,0 +1,34 @@
+{
+  "status": "PUBLISHED",
+  "release": "/var/www/aic-test/releases/20261104T074327Z-dev-proposals-ram-fees",
+  "previous_release": "/var/www/aic-test/releases/20261104T072853Z-dev-proposals-ram-fees",
+  "files": {
+    "index.html": "3b3183d9016961ec07049f5d8b47ecfebb352a2b721fa8c9965e464bf1f73f00",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-DaaswTTl.js": "7d4096009c47ca42f2129344fa8d4ec09b49253e9d06252286af4e9990cc54ab",
+    "assets/index-DaUgseZc.css": "196432c4e6daa828d47f127b71bc8e4d9a1d5f548983eff64c4017e2fd7e622b"
+  },
+  "public_verified": {
+    "index.html": "3b3183d9016961ec07049f5d8b47ecfebb352a2b721fa8c9965e464bf1f73f00",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-DaaswTTl.js": "7d4096009c47ca42f2129344fa8d4ec09b49253e9d06252286af4e9990cc54ab",
+    "assets/index-DaUgseZc.css": "196432c4e6daa828d47f127b71bc8e4d9a1d5f548983eff64c4017e2fd7e622b"
+  },
+  "previous_files": {
+    "index.html": "44e8eefd3ec5f8f1fffcc4b99cc1271e42bac81f4095de9e34e8115fd6234bdf",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-Duw7xZCh.css": "a74def801ba18ce16f32f961b6bad7353ebe42fa5ce051320af97b9a7749c54d",
+    "assets/index-CMWvMlb9.js": "7d4096009c47ca42f2129344fa8d4ec09b49253e9d06252286af4e9990cc54ab"
+  },
+  "source_sha256": "80ad955b35218680568deb4627785b452bd14212118cc1cf84cfab521f76a99a",
+  "UTC": "2026-11-04T07:43:27.550449+00:00",
+  "read_only": true,
+  "nginx_changed": false,
+  "chain_changed": false
+}

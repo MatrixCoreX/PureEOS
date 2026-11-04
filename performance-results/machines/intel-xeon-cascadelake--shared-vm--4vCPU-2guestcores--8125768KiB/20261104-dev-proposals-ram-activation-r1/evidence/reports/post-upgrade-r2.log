@@ -1,0 +1,20 @@
+file:///opt/pureeos-dev-proposals-20261104-r1/runtime/sdk/index.mjs:141
+    if(value.more)throw new Error('Truncated wallet query; explicit pagination required');
+                        ^
+
+Error: Truncated wallet query; explicit pagination required
+    at KeyWalletClient.rows (file:///opt/pureeos-dev-proposals-20261104-r1/runtime/sdk/index.mjs:141:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async KeyWalletClient.wallet (file:///opt/pureeos-dev-proposals-20261104-r1/runtime/sdk/index.mjs:159:16)
+    at async Promise.all (index 0)
+    at async KeyWalletClient.quote (file:///opt/pureeos-dev-proposals-20261104-r1/runtime/sdk/index.mjs:210:28)
+    at async file:///opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs:43:15
+
+Node.js v22.23.4
+Traceback (most recent call last):
+  File "/opt/pureeos-dev-proposals-20261104-r1/post-upgrade-r2.py", line 5, in <module>
+    for command in commands:subprocess.run(command,check=True)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/pureeos-keynet-20261103-r2/tools/node-current/bin/node', '/opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs']' returned non-zero exit status 1.

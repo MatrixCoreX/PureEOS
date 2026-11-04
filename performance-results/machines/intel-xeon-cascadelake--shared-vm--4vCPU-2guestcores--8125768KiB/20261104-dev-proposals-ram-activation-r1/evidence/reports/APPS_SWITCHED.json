@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "before_unit_hashes": {
+    "pureeos-keynet2-relay-20261103.service": "391c7ef946baaf25c46176299e0083ca9e782fe6c11ff54ff717ba697d36490c",
+    "pureeos-key-history-20261103.service": "52961217ece8e97e99a03f3b2fc35eb08262eb94d6478955cdd94a7b66da5ee9"
+  },
+  "old_journal_ids": [
+    "93100589173f25ae6e40e02129886d493863cf2fd3eee3502ce2e0f28c5c111f",
+    "9f37c55a85a73c108242a2340613b037de0a51600e16010b50b641e806831238",
+    "a344763b456d6e15ada249ba9f0556984667a08f4eab1c7f7bde38f6a266699f",
+    "c078f20fe41fdbb6903513c051fdd5d0572c74dc011fa98c68e161b0fe4848cf",
+    "e92a87a464a504fbf7552df9601d1b59df69cff6696401707ebfa00eef7c9d42"
+  ],
+  "old_journal_sha256": "d68e93516eb6a079bc2cffe50828afcbc1ee6a8df13cd859a55e5b4d7dc5fd05",
+  "only_application_units": [
+    "pureeos-keynet2-relay-20261103.service",
+    "pureeos-key-history-20261103.service"
+  ],
+  "health": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "original_journal_preserved": true,
+  "keys_unchanged": true,
+  "HTTP_routes_unchanged": true,
+  "UTC": "2026-11-04T08:03:52.869809+00:00"
+}

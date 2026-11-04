@@ -1,0 +1,26 @@
+{"status": "PASS", "transaction_id": "b029b9947a608a679baf6445a0e2d106fe2bc8601e59db58a98f5d963f45ff33", "block_num": 164544, "block_id": "000282c0aa964712343224c2b34a6fafd58d40cc44c063aa0fba18e9fb17dcdc", "timestamp": "2026-11-04T08:03:18.000", "observed_LIB": 164845, "review_elapsed_seconds": 1927.5, "review_seconds_required": 1800, "CPU_usage_us": 7132, "NET_usage_words": 5338, "native_receipt_status": "executed"}
+ACTUAL MARKET SDK/UI PASS 15
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: HTTP 400 {"error":"RPC get_table_rows: HTTP 500"}
+    at json (file:///opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs:17:190)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs:33:14 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.23.4
+Traceback (most recent call last):
+  File "/opt/pureeos-dev-proposals-20261104-r1/post-upgrade.py", line 5, in <module>
+    for command in commands:subprocess.run(command,check=True)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/pureeos-keynet-20261103-r2/tools/node-current/bin/node', '/opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs']' returned non-zero exit status 1.

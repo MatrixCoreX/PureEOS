@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "read": "http://127.0.0.1:8890",
+  "writer": "http://127.0.0.1:8888",
+  "writer_code_pin_checked": true
+}

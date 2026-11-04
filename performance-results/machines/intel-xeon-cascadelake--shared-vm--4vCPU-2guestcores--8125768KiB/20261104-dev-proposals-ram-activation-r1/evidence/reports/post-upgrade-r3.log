@@ -1,0 +1,17 @@
+file:///opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs:36
+const cli=args=>{const p=spawnSync(R+'/native-client/cleos',['--no-auto-keosd','--url','http://127.0.0.1:8890','--wallet-url','unix://'+R+'/founder/wallet/keosd.sock',...args],{encoding:'utf8',timeout:90000});if(p.status!==0)throw Error('Installed cleos failed; retain private diagnostics');return JSON.parse(p.stdout);};
+                                                                                                                                                                                                                                       ^
+
+Error: Installed cleos failed; retain private diagnostics
+    at cli (file:///opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs:36:232)
+    at file:///opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs:44:203
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.23.4
+Traceback (most recent call last):
+  File "/opt/pureeos-dev-proposals-20261104-r1/post-upgrade-r2.py", line 5, in <module>
+    for command in commands:subprocess.run(command,check=True)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/pureeos-keynet-20261103-r2/tools/node-current/bin/node', '/opt/pureeos-dev-proposals-20261104-r1/live-smoke.mjs']' returned non-zero exit status 1.

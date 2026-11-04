@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: resource signature preserves known native ID and carries exactly one owner proof
+ok 1 - resource signature preserves known native ID and carries exactly one owner proof
+  ---
+  duration_ms: 755.994848
+  type: 'test'
+  ...
+# Subtest: durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+ok 2 - durable immutable retry, independent same-epoch transactions, cross-worker recovery anchor and LIB proof
+  ---
+  duration_ms: 2224.093661
+  type: 'test'
+  ...
+# Subtest: disk persistence failure never broadcasts, including a repeated request
+ok 3 - disk persistence failure never broadcasts, including a repeated request
+  ---
+  duration_ms: 1540.141849
+  type: 'test'
+  ...
+# Subtest: automatic broadcasts are bounded while canonical reconciliation remains available
+ok 4 - automatic broadcasts are bounded while canonical reconciliation remains available
+  ---
+  duration_ms: 37.221103
+  type: 'test'
+  ...
+# Subtest: relay bounds queued work even when HTTP clients disconnect
+ok 5 - relay bounds queued work even when HTTP clients disconnect
+  ---
+  duration_ms: 1.11031
+  type: 'test'
+  ...
+# Subtest: HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+ok 6 - HTTP handles split UTF-8 correctly and rejects oversized bodies before submission
+  ---
+  duration_ms: 466.988354
+  type: 'test'
+  ...
+# Subtest: split RPC reads use reader; exact write packets and unknown methods stay on writer without hidden retries
+ok 7 - split RPC reads use reader; exact write packets and unknown methods stay on writer without hidden retries
+  ---
+  duration_ms: 329.635807
+  type: 'test'
+  ...
+# Subtest: split RPC load requires equal read/write chain IDs before accepting the wallet configuration
+ok 8 - split RPC load requires equal read/write chain IDs before accepting the wallet configuration
+  ---
+  duration_ms: 88.749881
+  type: 'test'
+  ...
+# Subtest: relay checks the writer wallet code as well as the read node before accepting a new intent
+ok 9 - relay checks the writer wallet code as well as the read node before accepting a new intent
+  ---
+  duration_ms: 61.789072
+  type: 'test'
+  ...
+# Subtest: market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes
+ok 10 - market RAM quote covers the native integer curve and rounded buy fee, with no charge for zero bytes
+  ---
+  duration_ms: 673.588183
+  type: 'test'
+  ...
+# Subtest: RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact
+ok 11 - RAM prices move with reserves independently of CPU, while floor and relay rounding remain intact
+  ---
+  duration_ms: 56.610093
+  type: 'test'
+  ...
+# Subtest: invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit
+ok 12 - invalid and depleted RAM markets fail closed; reviewed code profiles stay explicit
+  ---
+  duration_ms: 39.128486
+  type: 'test'
+  ...
+# Subtest: RAM admission binds actual native purchase and full token identity to the same sponsor
+ok 13 - RAM admission binds actual native purchase and full token identity to the same sponsor
+  ---
+  duration_ms: 81.07449
+  type: 'test'
+  ...
+# Subtest: RPC JSON retains exact uint64/int64 lexemes before number rounding
+ok 14 - RPC JSON retains exact uint64/int64 lexemes before number rounding
+  ---
+  duration_ms: 0.511219
+  type: 'test'
+  ...
+# Subtest: canonical K1 and contract+precision asset identities
+ok 15 - canonical K1 and contract+precision asset identities
+  ---
+  duration_ms: 1068.230565
+  type: 'test'
+  ...
+# Subtest: exact integers above JavaScript safe-number range and fee rounding
+ok 16 - exact integers above JavaScript safe-number range and fee rounding
+  ---
+  duration_ms: 0.786539
+  type: 'test'
+  ...
+# Subtest: market occupancy, monotonic bounded multiplier, invalid market fails
+ok 17 - market occupancy, monotonic bounded multiplier, invalid market fails
+  ---
+  duration_ms: 0.640642
+  type: 'test'
+  ...
+# Subtest: fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+ok 18 - fee-free income claim quotes zero without a market or prepayment and requires claimant-funded token RAM
+  ---
+  duration_ms: 37.665844
+  type: 'test'
+  ...
+# Subtest: complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+ok 19 - complete immutable envelope binds principal, recipient, fee, payer, epoch and native headers
+  ---
+  duration_ms: 2384.89277
+  type: 'test'
+  ...
+# Subtest: independent devices use the same epoch and different native IDs without reservations
+ok 20 - independent devices use the same epoch and different native IDs without reservations
+  ---
+  duration_ms: 671.367247
+  type: 'test'
+  ...
+# Subtest: self withdrawal binds explicit native payer and has no BP premium
+ok 21 - self withdrawal binds explicit native payer and has no BP premium
+  ---
+  duration_ms: 186.888736
+  type: 'test'
+  ...
+# Subtest: relay rates are bounded, rounded upward and charged at least one AIC atom
+ok 22 - relay rates are bounded, rounded upward and charged at least one AIC atom
+  ---
+  duration_ms: 0.765758
+  type: 'test'
+  ...
+# Subtest: owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+ok 23 - owner signatures bind the selected relay rate for sends, withdrawals and cancellations
+  ---
+  duration_ms: 851.325019
+  type: 'test'
+  ...
+# Subtest: relay rate reads validate identity and bounds; legacy registrations retain30%
+ok 24 - relay rate reads validate identity and bounds; legacy registrations retain30%
+  ---
+  duration_ms: 0.661586
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12198.513959

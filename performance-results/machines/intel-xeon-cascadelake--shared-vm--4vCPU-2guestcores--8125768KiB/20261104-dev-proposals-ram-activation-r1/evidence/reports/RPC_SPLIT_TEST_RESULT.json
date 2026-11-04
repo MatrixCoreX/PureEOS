@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "source_sha256": "4feeba4c2bd74469660ea0010df0c9df47737575f1b893404c0e9222417b5ee9",
+  "files": {
+    "sdk/index.mjs": "1383a2461e662ea7f2f23e7058815c1276ecb57d9db2568021d7538b4ba259a1",
+    "sdk/fee-profiles.mjs": "471d6f4d28c40977cf9e94bf32d699c901dce0ebb92a8abcf7ff91445cd6b8da",
+    "relayer/server.mjs": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44",
+    "package.json": "5d72ef49426d6e49049bf4beae43c30b7f4c49ed0eb97d670f722df66bc81ae7",
+    "package-lock.json": "a3511fe23b31dfb9f2034b6dccc0bd875f46a6c29967b600f441ae3988221fd9"
+  },
+  "runtime": "/opt/pureeos-dev-proposals-20261104-r1/runtime-rpcsplit",
+  "contract_bytes_changed": false,
+  "read_endpoint": "http://127.0.0.1:8890",
+  "write_endpoint": "http://127.0.0.1:8888",
+  "writer_identity_and_code_checked": true
+}

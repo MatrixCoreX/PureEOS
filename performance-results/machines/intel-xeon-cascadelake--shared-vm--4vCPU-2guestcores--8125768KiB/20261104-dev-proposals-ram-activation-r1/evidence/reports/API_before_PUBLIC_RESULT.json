@@ -1,0 +1,130 @@
+{
+  "status": "PASS",
+  "phase": "before",
+  "prior_receipts_preserved": false,
+  "origin": "https://aic-test.matrixai.one/history",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "wallets": 8,
+  "views": 25,
+  "unique_native_transactions": 20,
+  "samples": [
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "rows": 8,
+      "indexing": {
+        "scanned_irreversible_block": 160317,
+        "last_success_utc": "2026-11-04T07:26:59.288Z",
+        "irreversible_block": 160361,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 7
+    },
+    {
+      "public_key": "PUB_K1_6fiCBErzSTXToVKZAEpZWHT62NcCDTfTPUGFF2fFarHG7NGhjP",
+      "rows": 5,
+      "indexing": {
+        "scanned_irreversible_block": 160317,
+        "last_success_utc": "2026-11-04T07:26:59.288Z",
+        "irreversible_block": 160367,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 2
+    },
+    {
+      "public_key": "PUB_K1_7y1ttFMwRegZvahUzmJ7ykHKR2jmxfLkr3Xrx7uoJmXz2EhDEQ",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 160317,
+        "last_success_utc": "2026-11-04T07:26:59.288Z",
+        "irreversible_block": 160373,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_6W8FU4k6nypnX4cedeeoEkUaYAVzj2jJTszg8hgTS45EwPszzq",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 160317,
+        "last_success_utc": "2026-11-04T07:26:59.288Z",
+        "irreversible_block": 160379,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_8eZk9Cy8y79NqMVBotLVftHZihJegeXjVDrpE915KZ6HLPSY7Z",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 160317,
+        "last_success_utc": "2026-11-04T07:26:59.288Z",
+        "irreversible_block": 160384,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_5gfuS4139ESsBsh8fS4GsEu1PitGzHjaTa3knTpxFtxsUzAydm",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 160377,
+        "last_success_utc": "2026-11-04T07:27:33.700Z",
+        "irreversible_block": 160389,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_7SGTuWbkuTtmPyeDRCgRox1kVsYaYWydvogiKsyaWTtPkfmawY",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 160377,
+        "last_success_utc": "2026-11-04T07:27:33.700Z",
+        "irreversible_block": 160390,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_8SSd8pP8hCABQf5htfLsMgLkAAB6BgHqAv87QHPQ2skLrraRtt",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 160377,
+        "last_success_utc": "2026-11-04T07:27:33.700Z",
+        "irreversible_block": 160396,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    }
+  ],
+  "exact_receipt_comparison": true,
+  "legacy_alias": true,
+  "negative_filters": true,
+  "unknown_key_empty": true,
+  "native_claim_excluded": true,
+  "UTC": "2026-11-04T07:27:43.751Z"
+}

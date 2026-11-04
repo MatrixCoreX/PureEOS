@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
+const K='/opt/pureeos-dev-proposals-20261104-r1',S=K+'/frontend';
+const deps=createRequire(S+'/package.json'),{build}=await import(pathToFileURL(deps.resolve('vite')).href);
+await build({root:S,configFile:false,logLevel:'error',build:{outDir:S+'/integration-build',emptyOutDir:true,ssr:true,rollupOptions:{input:{api:S+'/src/lib/api.ts',upgrades:S+'/src/lib/upgrades.ts'},output:{entryFileNames:'[name].mjs'}}}});
+const {ExplorerApi}=await import(pathToFileURL(S+'/integration-build/api.mjs').href),m=await import(pathToFileURL(S+'/integration-build/upgrades.mjs').href);
+const api=new ExplorerApi({mode:'live',rpc:'http://127.0.0.1:8890',history:'http://127.0.0.1:7000',chainId:'116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0',symbol:'AIC'});
+const snapshot=await m.upgradeSnapshot(api),phase=m.upgradePhase(snapshot);
+assert(snapshot.state.enabled&&snapshot.state.sealed);assert.equal(snapshot.state.reviewSeconds,1800);assert.equal(snapshot.state.requiredVetoes,Math.ceil(snapshot.state.voters.length*2/3));
+fs.writeFileSync(K+'/NATIVE_UPGRADE_SNAPSHOT.json',JSON.stringify({status:'PASS',snapshot,phase,read_only:true,UTC:new Date().toISOString()},null,2)+'\n');
+console.log(JSON.stringify({status:'PASS',proposal:snapshot.state.proposalId,phase:phase.phase,voters:snapshot.state.voters.length,vetoes:snapshot.state.vetoes.length}));

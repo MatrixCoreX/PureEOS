@@ -1,0 +1,52 @@
+{
+  "transaction_id": "b029b9947a608a679baf6445a0e2d106fe2bc8601e59db58a98f5d963f45ff33",
+  "same_packet": true,
+  "canonical_absence": [
+    {
+      "block": 164512,
+      "id": "000282a0de1f31fddd4083b8cfa7f9a9a37a91f71ea734509cfb5a6e9599d78d"
+    },
+    {
+      "block": 164513,
+      "id": "000282a1c71880aa5a64f3a0bbde7b88955579ce8922984282f1c56bdfdba8f3"
+    },
+    {
+      "block": 164514,
+      "id": "000282a289d4b947f91f5c547dbe8d2a8fd9d1fc6b40f6477d368557a2c6c654"
+    },
+    {
+      "block": 164515,
+      "id": "000282a378bf7b11354d9cf883f46084588d4b6969fa17e0f2f6bf66c832dc6d"
+    },
+    {
+      "block": 164516,
+      "id": "000282a4bbe29bf82cbe5cba7a33ca967e94d01bd092acca963b0fa1944d262c"
+    },
+    {
+      "block": 164517,
+      "id": "000282a566a2b96904c6f5e327496022a9e86228ce35dfe8023e3a6e70236a95"
+    },
+    {
+      "block": 164518,
+      "id": "000282a6167d2a003b4fb9ed3c045104fa8079b1043ca9556ce355057cd6ae67"
+    },
+    {
+      "block": 164519,
+      "id": "000282a7e87b1e3f09b4eda386af86fe57a200ea13f7e8f53c970e9c2b269025"
+    },
+    {
+      "block": 164520,
+      "id": "000282a88d2b53a584da60d6a0cae72d674c7959d19928fa342550dfcdb0ee58"
+    },
+    {
+      "block": 164521,
+      "id": "000282a9762a31460b850714251ea9a2b114850b7e52579f3015db00f4efca68"
+    },
+    {
+      "block": 164522,
+      "id": "000282aa22aa5cbe5ef4d4de94c04b91fdb4570eee57ed11476b07ca0a6d35d3"
+    }
+  ],
+  "governance_and_code_unchanged": true,
+  "CPU_cap_us": 150000
+}

@@ -1,0 +1,8 @@
+{
+  "status": "CLIENT_HTTP_403",
+  "client": "Python urllib",
+  "files_already_published": true,
+  "Node_and_Chromium_HTTP_status": 200,
+  "resolution": "Reuse existing release; verify every public digest using the previous Node verifier client",
+  "UTC": "2026-11-04T07:29:56.926774+00:00"
+}

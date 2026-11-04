@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "runtime": "/opt/pureeos-dev-proposals-20261104-r1/runtime-rpcsplit",
+  "source_sha256": "4feeba4c2bd74469660ea0010df0c9df47737575f1b893404c0e9222417b5ee9",
+  "read_RPC": "http://127.0.0.1:8890",
+  "broadcast_RPC": "http://127.0.0.1:8888",
+  "same_chain_and_writer_code_verified": true,
+  "same_hot_key_permission_HTTP_endpoint_and_journal": true,
+  "node_processes_or_caps_changed": false,
+  "unit_dropin": "/etc/systemd/system/pureeos-keynet2-relay-20261103.service.d/zzz-relay-read-rpc-20261104.conf",
+  "UTC": "2026-11-04T08:24:01.962730+00:00"
+}

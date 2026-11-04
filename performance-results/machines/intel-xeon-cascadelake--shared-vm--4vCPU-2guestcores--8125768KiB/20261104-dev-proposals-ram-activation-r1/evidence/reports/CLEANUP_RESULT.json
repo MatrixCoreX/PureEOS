@@ -1,0 +1,18 @@
+{
+  "paths": [
+    "/opt/pureeos-dev-proposals-20261104-r1/frontend",
+    "/opt/pureeos-dev-proposals-20261104-r1/styles.css"
+  ],
+  "allocated_bytes": 2088960,
+  "verified_evidence_backup_sha256": "a79c22ff1ab88c5d6f0e0fccddd995135fde71418600f1f5b3ffb50b794f29e6",
+  "shared_dependency_target": "/opt/pureeos-keynet-20261103-r2/key-service/node_modules",
+  "current_static_runtime_keys_chain_history_preserved": true,
+  "UTC": "2026-11-04T08:45:22.826574+00:00",
+  "status": "PASS",
+  "allocated_removed_MiB": 1.992,
+  "filesystem_net_free_delta_MiB": 1.859,
+  "net_delta_includes_ongoing_chain_activity": true,
+  "available_GiB": 105.755,
+  "original_26_PIDs_preserved": true,
+  "active_runtime_and_shared_dependencies_preserved": true
+}

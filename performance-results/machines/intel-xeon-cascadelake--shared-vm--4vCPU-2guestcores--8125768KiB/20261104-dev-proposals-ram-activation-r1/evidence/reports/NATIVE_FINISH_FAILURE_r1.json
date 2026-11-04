@@ -1,0 +1,5 @@
+{
+  "status": "FAIL_STOPPED",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-dev-proposals-20261104-r1/finish_upgrade.py\", line 28, in <module>\n    subprocess.run(['python3','-B',str(K/script),*args],check=True)\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['python3', '-B', '/opt/pureeos-dev-proposals-20261104-r1/ledger_preservation.py', 'before']' returned non-zero exit status 1.\n",
+  "UTC": "2026-11-04T08:01:13.263476+00:00"
+}

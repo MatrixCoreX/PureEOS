@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "kind": "new-key-AIC",
+  "transaction_id": "33db3c92dbb38803d477e5c317827516d1af1ee30d0bda997740939e1adb52b1",
+  "confirmation": {
+    "block_num": 164879,
+    "block_id": "0002840ffb09db92840aa3edf47c88cd9275abd369916a950223525449b03e4e",
+    "observed_lib": 164880
+  },
+  "quote": {
+    "base": "120",
+    "premium": "36",
+    "total": "156",
+    "execution": "83",
+    "storage": "37",
+    "supplement": "0",
+    "ram_bytes": 1536,
+    "base_asset": "0.0120 AIC",
+    "premium_asset": "0.0036 AIC",
+    "total_asset": "0.0156 AIC",
+    "ram_pricing": "market",
+    "relay_fee_bps": 3000,
+    "multiplier": "20712",
+    "units": 4,
+    "rows": 2,
+    "head": 164869
+  },
+  "base_atoms": "120",
+  "service_atoms": "36",
+  "total_atoms": "156",
+  "ram_budget_bytes": 1536,
+  "principal": "0.0001 AIC",
+  "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+  "full_principal": true,
+  "same_packet_retry": true,
+  "only_founder_used": true,
+  "no_automatic_RAM_purchase": true
+}

@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "kind": "new-balance-USD",
+  "transaction_id": "6863aa95f72d8807d79011e24778e4e56343409a0448ec34bb93a9c7258d4bb3",
+  "confirmation": {
+    "block_num": 165599,
+    "block_id": "000286dff6e8b9354342f155a13385de4300ca14bff68e211ef9f5014fd3ba2b",
+    "observed_lib": 165634
+  },
+  "quote": {
+    "base": "100",
+    "premium": "30",
+    "total": "130",
+    "execution": "83",
+    "storage": "13",
+    "supplement": "4",
+    "ram_bytes": 512,
+    "base_asset": "0.0100 AIC",
+    "premium_asset": "0.0030 AIC",
+    "total_asset": "0.0130 AIC",
+    "ram_pricing": "market",
+    "relay_fee_bps": 3000,
+    "multiplier": "20712",
+    "units": 4,
+    "rows": 1,
+    "head": 164904
+  },
+  "base_atoms": "100",
+  "service_atoms": "30",
+  "total_atoms": "130",
+  "ram_budget_bytes": 512,
+  "principal": "0.0001 USD",
+  "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+  "full_principal": true,
+  "same_packet_retry": true,
+  "only_founder_used": true,
+  "no_automatic_RAM_purchase": true
+}

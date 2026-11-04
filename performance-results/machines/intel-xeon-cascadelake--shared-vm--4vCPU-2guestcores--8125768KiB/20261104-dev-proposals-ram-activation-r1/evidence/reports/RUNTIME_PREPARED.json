@@ -1,0 +1,13 @@
+{
+  "status": "PREPARED",
+  "qualified_source": "/opt/pureeos-key-ram-market-20261104-r1/source-r3",
+  "runtime": "/opt/pureeos-dev-proposals-20261104-r1/runtime",
+  "files": {
+    "package.json": "5d72ef49426d6e49049bf4beae43c30b7f4c49ed0eb97d670f722df66bc81ae7",
+    "package-lock.json": "a3511fe23b31dfb9f2034b6dccc0bd875f46a6c29967b600f441ae3988221fd9",
+    "sdk/index.mjs": "22d8698448e154ed27f27c0b382f8d4a572145138e74d10c758326d19154233b",
+    "sdk/fee-profiles.mjs": "471d6f4d28c40977cf9e94bf32d699c901dce0ebb92a8abcf7ff91445cd6b8da",
+    "relayer/server.mjs": "5fdae358d49e70d8cbec2b30c408656ffe25edefdf1e35dac9000c912d5b4476"
+  },
+  "services_changed": false
+}

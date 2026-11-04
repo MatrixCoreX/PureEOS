@@ -1,0 +1,144 @@
+{
+  "status": "PASS",
+  "phase": "after",
+  "prior_receipts_preserved": true,
+  "origin": "https://aic-test.matrixai.one/history",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "wallets": 9,
+  "views": 31,
+  "unique_native_transactions": 23,
+  "samples": [
+    {
+      "public_key": "PUB_K1_5s6zXnSMNEK9ZPpg9xWNPkfAJnb44hYpBbz4LWyqmjaAyWJ2Qd",
+      "rows": 11,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167800,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 10
+    },
+    {
+      "public_key": "PUB_K1_6fiCBErzSTXToVKZAEpZWHT62NcCDTfTPUGFF2fFarHG7NGhjP",
+      "rows": 5,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167808,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 2
+    },
+    {
+      "public_key": "PUB_K1_7y1ttFMwRegZvahUzmJ7ykHKR2jmxfLkr3Xrx7uoJmXz2EhDEQ",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167810,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_6W8FU4k6nypnX4cedeeoEkUaYAVzj2jJTszg8hgTS45EwPszzq",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167813,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_8eZk9Cy8y79NqMVBotLVftHZihJegeXjVDrpE915KZ6HLPSY7Z",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167821,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_5gfuS4139ESsBsh8fS4GsEu1PitGzHjaTa3knTpxFtxsUzAydm",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167825,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_7SGTuWbkuTtmPyeDRCgRox1kVsYaYWydvogiKsyaWTtPkfmawY",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167828,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_8SSd8pP8hCABQf5htfLsMgLkAAB6BgHqAv87QHPQ2skLrraRtt",
+      "rows": 2,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167837,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 1
+    },
+    {
+      "public_key": "PUB_K1_5vgQggb1u83oiAVWgzkojGwhty9QBXiBQyTBTHmzsDZCBZDrA8",
+      "rows": 3,
+      "indexing": {
+        "scanned_irreversible_block": 167761,
+        "last_success_utc": "2026-11-04T08:31:24.814Z",
+        "irreversible_block": 167842,
+        "coverage": "indexed_receipts",
+        "stale": false,
+        "paused": false,
+        "complete_lifetime_history": false
+      },
+      "AIC_filter_rows": 2
+    }
+  ],
+  "exact_receipt_comparison": true,
+  "legacy_alias": true,
+  "negative_filters": true,
+  "unknown_key_empty": true,
+  "native_claim_excluded": true,
+  "UTC": "2026-11-04T08:31:54.855Z"
+}
