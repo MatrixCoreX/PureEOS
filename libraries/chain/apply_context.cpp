@@ -364,7 +364,9 @@ void apply_context::exec()
       act->account == config::system_account_name && act->name == "sysstage"_n &&
       get_sender() == config::system_account_name && creation_permit &&
       creation_permit->account_creation_authorized && creation_permit->account_created &&
-      get_current_action_trace().creator_action_ordinal.value == creation_permit->parent_action_ordinal;
+      // sysstage has consumed the sysexec parent and rebound the permit to
+      // its own ordinal before returning from exec_one().
+      get_current_action_trace().action_ordinal.value == creation_permit->parent_action_ordinal;
    for( uint32_t i = 1; i < _notified.size(); ++i ) {
       std::tie( receiver, action_ordinal ) = _notified[i];
       exec_one();

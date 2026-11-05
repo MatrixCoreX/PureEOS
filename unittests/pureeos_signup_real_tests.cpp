@@ -82,7 +82,10 @@ struct signup_real_fixture:governance_fixture {
       args.review_document_hash=review;
       push({action({permission_level{"developer"_n,"upgrade"_n}},"eosio"_n,"refreshgov"_n,bytes{}),action({permission_level{"developer"_n,"upgrade"_n}},args)},"developer"_n);
    }
-   transaction_trace_ptr execute() {return push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},sysexec{creation().proposal_id,signup_code,signup_abi,init_data,init_review_hash})},"developer"_n);}
+   transaction_trace_ptr execute() {
+      try { return push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},sysexec{creation().proposal_id,signup_code,signup_abi,init_data,init_review_hash})},"developer"_n); }
+      catch(const fc::exception& e) { std::cerr << "reviewed creation exception: " << e.to_detail_string() << '\n'; throw; }
+   }
    int64_t balance(account_name account)const {
       auto row=chain.get_row_by_account("eosio.token"_n,account,"accounts"_n,name{uint64_t(0x434941)});if(row.empty())return 0;
       fc::datastream<const char*> stream(row.data(),row.size());asset value;fc::raw::unpack(stream,value);return value.get_amount();
