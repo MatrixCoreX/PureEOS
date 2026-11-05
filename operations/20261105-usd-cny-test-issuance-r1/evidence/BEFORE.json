@@ -1,0 +1,596 @@
+{
+  "UTC": "2026-11-05T11:23:21.080196+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "tokens": {
+    "usd": {
+      "stats": {
+        "supply": "10000.0000 USD",
+        "max_supply": "1000000.0000 USD",
+        "issuer": "usd"
+      },
+      "raw_ABI": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "usd",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "issuer_balance_atoms": 0,
+      "recipient_balance_atoms": 97960000,
+      "KEY_balance_atoms": 2010000
+    },
+    "cny": {
+      "stats": {
+        "supply": "10000.0000 CNY",
+        "max_supply": "1000000.0000 CNY",
+        "issuer": "cny"
+      },
+      "raw_ABI": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "cny",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "issuer_balance_atoms": 0,
+      "recipient_balance_atoms": 98000000,
+      "KEY_balance_atoms": 1980000
+    }
+  },
+  "AIC_stats": {
+    "AIC": {
+      "supply": "100000000.0000 AIC",
+      "max_supply": "2100000000.0000 AIC",
+      "issuer": "eosio"
+    }
+  },
+  "KEY_snapshot": {
+    "config": [
+      {
+        "version": 2,
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+        "system_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "fee_contract": "eosio.token",
+        "fee_symbol": "4,AIC",
+        "policy": {
+          "minimum_fee": 100,
+          "unit_fee": 10,
+          "new_row_fee": 500,
+          "maximum_multiplier_bps": 100000,
+          "epoch_seconds": 1,
+          "max_wallets": 1000,
+          "max_balances": 4000,
+          "max_assets": 32,
+          "max_native_payers": 1000
+        },
+        "next_wallet": 7,
+        "next_asset": 4,
+        "wallet_count": 6,
+        "balance_count": 20,
+        "asset_count": 3,
+        "native_payer_count": 0,
+        "token_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      }
+    ],
+    "assets": [
+      {
+        "id": 1,
+        "token_contract": "eosio.token",
+        "token_symbol": "4,AIC",
+        "identity": "fb9e99db61fa57b4b209dadff455ea409f62443ffa22670891950711d13efe3b",
+        "reserve": 378342,
+        "busy": 0,
+        "notified": 0,
+        "out_ticket": 12,
+        "out_to": "",
+        "out_amount": 0,
+        "receiver_before": 0,
+        "ram_sponsor": "eosio.key",
+        "ram_purchased": 5497,
+        "ram_used": 5120,
+        "funding_tx": "90dfe0b7af8f02154f119b487400e9ef98358a6528f411e090c2a2395a1c234e"
+      },
+      {
+        "id": 2,
+        "token_contract": "usd",
+        "token_symbol": "4,USD",
+        "identity": "3a45df29983e94c2dd05a8dc0474be47f470f604bb59ffb778c21d3482b30afa",
+        "reserve": 2010000,
+        "busy": 0,
+        "notified": 0,
+        "out_ticket": 4,
+        "out_to": "",
+        "out_amount": 0,
+        "receiver_before": 0,
+        "ram_sponsor": "eosio.key",
+        "ram_purchased": 10731,
+        "ram_used": 10240,
+        "funding_tx": "3ff39cfe3afeff40d4e9ecd9fa1e6742d2156500550c7d716d75b28ec6c0f6a0"
+      },
+      {
+        "id": 3,
+        "token_contract": "cny",
+        "token_symbol": "4,CNY",
+        "identity": "7bd7bb0448754bf09c1c935e792cab91b1592898fd78afc50451e9737f2d52d9",
+        "reserve": 1980000,
+        "busy": 0,
+        "notified": 0,
+        "out_ticket": 2,
+        "out_to": "",
+        "out_amount": 0,
+        "receiver_before": 0,
+        "ram_sponsor": "eosio.key",
+        "ram_purchased": 5497,
+        "ram_used": 5120,
+        "funding_tx": "5554f57760bb5451deadd661e79bd2b68b331c7885fce5c536ee6a639ca140d9"
+      }
+    ],
+    "wallets": [
+      {
+        "id": 1,
+        "key": "PUB_K1_5ys66qeRfL9x4PQq8VV8evDJsv1j6zb2NyqyN3417bgJjrTGNh",
+        "key_hash": "84ff44411ec63dcba357bcf1bc23a15f887ce97609b2f19015e55f753cc55fb4",
+        "auth_epoch": 0
+      },
+      {
+        "id": 2,
+        "key": "PUB_K1_74dJFhF9f41ZA1xzH4xzmQpenu8LuPwq5Y7NQJxupG4gwukPtB",
+        "key_hash": "9cb6c9cf0c0b068bf08cbf02b18f1c534c3ec04217d4f6071f718c4a2694638c",
+        "auth_epoch": 0
+      },
+      {
+        "id": 3,
+        "key": "PUB_K1_8DjrbATAxSZ8XtGUCtkXxiMexeEZ2FdC6MfcbBnPGdYj47hZNY",
+        "key_hash": "8968870a71885793b741d55eae8c9a36fd037920cdc90fd35776d313ca0c2bd6",
+        "auth_epoch": 0
+      },
+      {
+        "id": 4,
+        "key": "PUB_K1_6uF7CtYsjW1V78PBc5NGvFpNjmdkJbx8xoFU7ctc5oCEnba3Nc",
+        "key_hash": "199775e11da31aa54a6683a17b0f1a82f9b551f696afe0e8d8906411b1888181",
+        "auth_epoch": 0
+      },
+      {
+        "id": 5,
+        "key": "PUB_K1_7uApqkx42W6rxMmA49v6nhKhDnRefKKHYbQCeTVzo1WzaWvaev",
+        "key_hash": "1b9d9c2f618d1e2ac81dabac56ffa163714dfd4ed4ab89fd504e905fd3c7ed19",
+        "auth_epoch": 0
+      },
+      {
+        "id": 6,
+        "key": "PUB_K1_8ZGAaxvpavEa38Ytgf73boMeBcyikZqiKcWSciw7mwrUpvEv6j",
+        "key_hash": "19211a186fd095b26ab42a7e898fc0264f8969016c4f86c43b2fa50de23bb34f",
+        "auth_epoch": 0
+      }
+    ],
+    "balances": {
+      "1": [
+        {
+          "asset_id": 1,
+          "amount": 147674
+        },
+        {
+          "asset_id": 2,
+          "amount": 965000
+        },
+        {
+          "asset_id": 3,
+          "amount": 970000
+        }
+      ],
+      "2": [
+        {
+          "asset_id": 1,
+          "amount": 40000
+        },
+        {
+          "asset_id": 2,
+          "amount": 20000
+        },
+        {
+          "asset_id": 3,
+          "amount": 20000
+        }
+      ],
+      "3": [
+        {
+          "asset_id": 2,
+          "amount": 20000
+        }
+      ],
+      "4": [
+        {
+          "asset_id": 1,
+          "amount": 147632
+        },
+        {
+          "asset_id": 2,
+          "amount": 965000
+        },
+        {
+          "asset_id": 3,
+          "amount": 970000
+        }
+      ],
+      "5": [
+        {
+          "asset_id": 1,
+          "amount": 40000
+        },
+        {
+          "asset_id": 2,
+          "amount": 20000
+        },
+        {
+          "asset_id": 3,
+          "amount": 20000
+        }
+      ],
+      "6": [
+        {
+          "asset_id": 2,
+          "amount": 20000
+        }
+      ]
+    },
+    "buckets": [
+      {
+        "owner": "anthropiclab",
+        "network": 0,
+        "relay_earned": 0
+      },
+      {
+        "owner": "canadamilaai",
+        "network": 0,
+        "relay_earned": 0
+      },
+      {
+        "owner": "deepseekcore",
+        "network": 0,
+        "relay_earned": 0
+      },
+      {
+        "owner": "eosio.key",
+        "network": 1356,
+        "relay_earned": 0
+      },
+      {
+        "owner": "gptgenesisbp",
+        "network": 1680,
+        "relay_earned": 0
+      },
+      {
+        "owner": "singaporentu",
+        "network": 0,
+        "relay_earned": 0
+      }
+    ],
+    "nativefees": [],
+    "pending": [],
+    "quota": 2213632
+  },
+  "developer_permissions": [
+    {
+      "perm_name": "active",
+      "parent": "owner",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "civicgovlead",
+              "permission": "active"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": []
+    },
+    {
+      "perm_name": "owner",
+      "parent": "",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "civicgovlead",
+              "permission": "owner"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": []
+    },
+    {
+      "perm_name": "upgrade",
+      "parent": "active",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "civicgovauth",
+              "permission": "active"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": [
+        {
+          "account": "eosio",
+          "action": "refreshgov"
+        },
+        {
+          "account": "eosio",
+          "action": "devpropose"
+        },
+        {
+          "account": "eosio",
+          "action": "devcancel"
+        },
+        {
+          "account": "eosio",
+          "action": "devexec"
+        },
+        {
+          "account": "eosio",
+          "action": "syspropose"
+        },
+        {
+          "account": "eosio",
+          "action": "syscancel"
+        },
+        {
+          "account": "eosio",
+          "action": "sysexec"
+        }
+      ]
+    }
+  ],
+  "node_pids": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 415990,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 415049,
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": 416139,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 417069,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 416219,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 417139,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 415319,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 415177,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 415113,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 416566,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 416292,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 415241,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 416362,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 415917,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 414985,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 417001,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 415567,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 416876,
+    "pureeos-devnet-bp-singaporentu-20261105.service": 416429,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 415780,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 416057,
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": 416689,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 416500,
+    "pureeos-devnet-founder-20261105.service": 417216,
+    "pureeos-devnet-history-20261105.service": 414916
+  },
+  "governance": {
+    "developer": "eosio.dev",
+    "review_seconds": 1800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.signup",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "singaporentu",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai",
+      "zurichethlab"
+    ],
+    "voters_updated_at": "2026-11-05T09:43:25.500",
+    "proposal_id": 1,
+    "pending": false,
+    "target": "eosio.key",
+    "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+    "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+    "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+    "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+    "review_document_hash": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+    "proposed_at": "2026-11-05T09:43:25.500",
+    "execute_after": "2026-11-05T10:13:25.500",
+    "proposal_voters": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "singaporentu",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai",
+      "zurichethlab"
+    ],
+    "vetoes": [],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 16,
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "singaporentu",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai",
+      "zurichethlab"
+    ],
+    "effective_vetoes": [],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 24,
+    "effective_veto_count": 0,
+    "execution_blocked_no_electorate": false
+  }
+}

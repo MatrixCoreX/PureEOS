@@ -1,0 +1,375 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T11:25:23.296300+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "transaction_id": "c899dcd45d5694f601c602e2e26d4403e8acb47f30224279a4e02dab81e1fef2",
+  "canonical_receipt": {
+    "transaction_id": "c899dcd45d5694f601c602e2e26d4403e8acb47f30224279a4e02dab81e1fef2",
+    "block_num": 42769,
+    "block_id": "0000a711e6868b30df906e72338490e25bd08669ffb08f6759ecb88a8f1cf36a",
+    "observed_LIB": 42769,
+    "CPU_us": 228,
+    "NET_words": 84,
+    "rechecked_LIB": 42996
+  },
+  "actions": [
+    {
+      "account": "usd",
+      "name": "setmaxsupply",
+      "authorization": [
+        {
+          "actor": "eosio.dev",
+          "permission": "active"
+        },
+        {
+          "actor": "usd",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "issuer": "usd",
+        "maximum_supply": "1000000000.0000 USD"
+      }
+    },
+    {
+      "account": "usd",
+      "name": "issue",
+      "authorization": [
+        {
+          "actor": "usd",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "to": "usd",
+        "quantity": "100000000.0000 USD",
+        "memo": "User-authorized TEST transfer allocation; no fiat backing claim"
+      }
+    },
+    {
+      "account": "usd",
+      "name": "transfer",
+      "authorization": [
+        {
+          "actor": "usd",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "from": "usd",
+        "to": "gptgenesisbp",
+        "quantity": "100000000.0000 USD",
+        "memo": "TEST transfer funding; 100 million additional USD"
+      }
+    },
+    {
+      "account": "cny",
+      "name": "setmaxsupply",
+      "authorization": [
+        {
+          "actor": "cny",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "issuer": "cny",
+        "maximum_supply": "1000000000.0000 CNY"
+      }
+    },
+    {
+      "account": "cny",
+      "name": "issue",
+      "authorization": [
+        {
+          "actor": "cny",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "to": "cny",
+        "quantity": "100000000.0000 CNY",
+        "memo": "User-authorized TEST transfer allocation; no fiat backing claim"
+      }
+    },
+    {
+      "account": "cny",
+      "name": "transfer",
+      "authorization": [
+        {
+          "actor": "cny",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "from": "cny",
+        "to": "gptgenesisbp",
+        "quantity": "100000000.0000 CNY",
+        "memo": "TEST transfer funding; 100 million additional CNY"
+      }
+    }
+  ],
+  "before": {
+    "usd": {
+      "stats": {
+        "supply": "10000.0000 USD",
+        "max_supply": "1000000.0000 USD",
+        "issuer": "usd"
+      },
+      "raw_ABI": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "usd",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "issuer_balance_atoms": 0,
+      "recipient_balance_atoms": 97960000,
+      "KEY_balance_atoms": 2010000
+    },
+    "cny": {
+      "stats": {
+        "supply": "10000.0000 CNY",
+        "max_supply": "1000000.0000 CNY",
+        "issuer": "cny"
+      },
+      "raw_ABI": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "cny",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "issuer_balance_atoms": 0,
+      "recipient_balance_atoms": 98000000,
+      "KEY_balance_atoms": 1980000
+    }
+  },
+  "after": {
+    "usd": {
+      "stats": {
+        "supply": "100010000.0000 USD",
+        "max_supply": "1000000000.0000 USD",
+        "issuer": "usd"
+      },
+      "raw_ABI": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "usd",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "issuer_balance_atoms": 0,
+      "recipient_balance_atoms": 1000097960000,
+      "KEY_balance_atoms": 2010000
+    },
+    "cny": {
+      "stats": {
+        "supply": "100010000.0000 CNY",
+        "max_supply": "1000000000.0000 CNY",
+        "issuer": "cny"
+      },
+      "raw_ABI": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "cny",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "issuer_balance_atoms": 0,
+      "recipient_balance_atoms": 1000098000000,
+      "KEY_balance_atoms": 1980000
+    }
+  },
+  "additional_issued_each": "100000000.0000",
+  "cap_each": "1000000000.0000",
+  "issued_supply_each": "100010000.0000",
+  "recipient": "gptgenesisbp",
+  "native_CPU_NET_payer": "eosio.dev",
+  "original25_node_PIDs_unchanged": true,
+  "AIC_stats_unchanged": {
+    "AIC": {
+      "supply": "100000000.0000 AIC",
+      "max_supply": "2100000000.0000 AIC",
+      "issuer": "eosio"
+    }
+  },
+  "KEY_ledger_reserves_RAM_unchanged": true,
+  "code_ABI_authorities_unchanged": true,
+  "developer_authority_used": true,
+  "single_atomic_transaction": true,
+  "no_governance_proposal": true,
+  "native_history_actions_match": true,
+  "signing_packet_exported": false,
+  "temporary_signer_stopped": true,
+  "initial_verification_failure": "Traceback (most recent call last):\n  File \"/opt/pureeos-usd-cny-test-issuance-20261105-r1/issue.py\", line 144, in <module>\n    selected=[x for x in entries if x['receiver']==x['act']['account']and x.get('creator_action_ordinal',0)==0]\n                                    ~^^^^^^^^^^^^\nKeyError: 'receiver'\n",
+  "reconciliation": "Read-only original immutable packet ID, irreversible native receipt, current stats/balances and six root actions. API uses notified rather than receiver and adds amount/symbol aliases to transfer data; aliases were separately validated. No re-sign, resubmit or repeat issuance.",
+  "scope": "Authorized issuer operations only. No AIC issuance/cap changes, node stop/reset, votes/bonds, contract upgrade, new server or TPS. No earlier successful payment replay."
+}

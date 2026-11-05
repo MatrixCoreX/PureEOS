@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T11:23:18.935610+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "recipient": "gptgenesisbp",
+  "cap_each": "1000000000.0000",
+  "additional_issuance_each": "100000000.0000",
+  "transaction_id": "c899dcd45d5694f601c602e2e26d4403e8acb47f30224279a4e02dab81e1fef2",
+  "start_LIB": 42761,
+  "packet_SHA256": "5f3014291c151a4fd977462d9075478d981252e1974af9468a4ce47b5a2dccde",
+  "expiration": "2026-11-05T11:53:21",
+  "required_key_count": 1,
+  "attempts": [],
+  "reported_block": 42766,
+  "canonical_receipt": {
+    "transaction_id": "c899dcd45d5694f601c602e2e26d4403e8acb47f30224279a4e02dab81e1fef2",
+    "block_num": 42769,
+    "block_id": "0000a711e6868b30df906e72338490e25bd08669ffb08f6759ecb88a8f1cf36a",
+    "observed_LIB": 42769,
+    "CPU_us": 228,
+    "NET_words": 84,
+    "rechecked_LIB": 42996
+  },
+  "initial_history_verification_error": "Traceback (most recent call last):\n  File \"/opt/pureeos-usd-cny-test-issuance-20261105-r1/issue.py\", line 144, in <module>\n    selected=[x for x in entries if x['receiver']==x['act']['account']and x.get('creator_action_ordinal',0)==0]\n                                    ~^^^^^^^^^^^^\nKeyError: 'receiver'\n",
+  "reconciliation": "Read-only original immutable packet ID, irreversible native receipt, current stats/balances and six root actions. API uses notified rather than receiver and adds amount/symbol aliases to transfer data; aliases were separately validated. No re-sign, resubmit or repeat issuance."
+}

@@ -1,0 +1,104 @@
+{
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "actions": [
+    {
+      "account": "usd",
+      "name": "setmaxsupply",
+      "authorization": [
+        {
+          "actor": "eosio.dev",
+          "permission": "active"
+        },
+        {
+          "actor": "usd",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "issuer": "usd",
+        "maximum_supply": "1000000000.0000 USD"
+      }
+    },
+    {
+      "account": "usd",
+      "name": "issue",
+      "authorization": [
+        {
+          "actor": "usd",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "to": "usd",
+        "quantity": "100000000.0000 USD",
+        "memo": "User-authorized TEST transfer allocation; no fiat backing claim"
+      }
+    },
+    {
+      "account": "usd",
+      "name": "transfer",
+      "authorization": [
+        {
+          "actor": "usd",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "from": "usd",
+        "to": "gptgenesisbp",
+        "quantity": "100000000.0000 USD",
+        "memo": "TEST transfer funding; 100 million additional USD"
+      }
+    },
+    {
+      "account": "cny",
+      "name": "setmaxsupply",
+      "authorization": [
+        {
+          "actor": "cny",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "issuer": "cny",
+        "maximum_supply": "1000000000.0000 CNY"
+      }
+    },
+    {
+      "account": "cny",
+      "name": "issue",
+      "authorization": [
+        {
+          "actor": "cny",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "to": "cny",
+        "quantity": "100000000.0000 CNY",
+        "memo": "User-authorized TEST transfer allocation; no fiat backing claim"
+      }
+    },
+    {
+      "account": "cny",
+      "name": "transfer",
+      "authorization": [
+        {
+          "actor": "cny",
+          "permission": "active"
+        }
+      ],
+      "data": {
+        "from": "cny",
+        "to": "gptgenesisbp",
+        "quantity": "100000000.0000 CNY",
+        "memo": "TEST transfer funding; 100 million additional CNY"
+      }
+    }
+  ],
+  "recipient": "gptgenesisbp",
+  "expected_supply_each": "100010000.0000",
+  "native_CPU_NET_payer": "eosio.dev",
+  "existing_first_authorizer_feature": true,
+  "scope": "Latest user cap10yi and additional issue1yi for EACH token. Single atomic six-root-action transaction; no contract/authority/AIC changes."
+}

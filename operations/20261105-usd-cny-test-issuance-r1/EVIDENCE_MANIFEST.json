@@ -1,0 +1,30 @@
+{
+  "BEFORE.json": {
+    "sha256": "f18e95720351cd9fed5a5816cc607dc252659624fa83cc649fd90ff600043fa7",
+    "bytes": 15822
+  },
+  "INTENT.json": {
+    "sha256": "138127cfb64d377d61616abd0054df127b779c65df59d2f69aae8a5c4fae9c2a",
+    "bytes": 2465
+  },
+  "PROGRESS.json": {
+    "sha256": "fd9c99684c5256e188a67425261dc97e2f4981f74618f2b9902beae893cf5fc1",
+    "bytes": 1550
+  },
+  "RESULT.json": {
+    "sha256": "0908b1a97ee801a4ec3492c119898b2a20372210a4f60df093be29a5eae3f73c",
+    "bytes": 10522
+  },
+  "TEMP_SIGNER_CLOSED.json": {
+    "sha256": "9e7523a9c27f7fb835202c75cd86676601968fe834c9982d2456a4e7f106de37",
+    "bytes": 170
+  },
+  "SOURCE_MANIFEST.json": {
+    "sha256": "e961d98467eaecb7e187c0483898dcefb54848fbcb70c93303e03186d4751888",
+    "bytes": 166
+  },
+  "INITIAL_PROGRESS_FAILURE.json": {
+    "sha256": "49d32916a412a4679b863479a2c19467e6ec5307905466df7399261ab00c066d",
+    "bytes": 1218
+  }
+}
