@@ -321,7 +321,8 @@ BOOST_AUTO_TEST_CASE(new_ordinary_issuers_delegate_to_account_owner_without_syst
    // treasury marker pays for a new holder's first self-resource operation.
    auto owner_paid=[&](action operation,const std::string& key) {
       const auto marker=fc::raw::pack(std::make_tuple("developer"_n,"usd"_n,asset::from_string("0.0001 AIC"),std::string("explicit issuer transaction resource payer")));
-      try {return f.push({action({permission_level{"developer"_n,"active"_n}},"eosio.token"_n,"transfer"_n,marker),std::move(operation)},"developer"_n,key);}
+      const auto payer_permission=key=="owner"?"owner"_n:"active"_n;
+      try {return f.push({action({permission_level{"developer"_n,payer_permission}},"eosio.token"_n,"transfer"_n,marker),std::move(operation)},"developer"_n,key);}
       catch(const fc::exception& e){BOOST_TEST_MESSAGE(e.to_detail_string());throw;}
    };
    BOOST_REQUIRE_NO_THROW(owner_paid(action({permission_level{"usd"_n,"active"_n}},"usd"_n,"issue"_n,issue),"active"));
