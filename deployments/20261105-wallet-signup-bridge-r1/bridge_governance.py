@@ -39,7 +39,7 @@ P=G/'private';P.mkdir(mode=0o700,exist_ok=True);W=Path('/opt')/('wsbgov-'+kind+'
 class UnixHTTP(http.client.HTTPConnection):
  def connect(self):self.sock=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);self.sock.settimeout(10);self.sock.connect(str(socket_path))
 def wallet_rpc(method,data):
- c=UnixHTTP('localhost');c.request('POST','/v1/wallet/'+method,json.dumps(data),{'Content-Type':'application/json'});r=c.getresponse();b=r.read();c.close();assert r.status==200,'Own developer wallet RPC refused';return json.loads(b)if b else None
+ c=UnixHTTP('localhost');c.request('POST','/v1/wallet/'+method,(''if method in ['list_wallets','get_public_keys']else json.dumps(data)),{'Content-Type':'application/json'});r=c.getresponse();b=r.read();c.close();assert r.status==200,'Own developer wallet RPC refused';return json.loads(b)if b else None
 def run(args,input_text=None):
  p=subprocess.run([str(cleos),'--no-auto-keosd','--url','http://127.0.0.1:8888','--wallet-url','unix://'+str(socket_path),*args],input=input_text,capture_output=True,text=True,timeout=90)
  
@@ -96,7 +96,7 @@ with (P/'keosd.log').open('a')as log:
   password=W/'password.txt'
   if not password.exists():run(['wallet','create','-n','bridge','--file',str(password)]);wallet_rpc('import_key',['bridge',devkey['Private key']])
   else:run(['wallet','open','-n','bridge']);wallet_rpc('unlock',['bridge',password.read_text().strip()])
-  public_key=devkey['Public key'];devkey=None;keys=wallet_rpc('get_public_keys',[]);assert len(keys)==1 and public_key in run(['convert','public_key',keys[0]]),'Only the developer key may be loaded';wallet_rpc('set_timeout',7200)
+  public_key=devkey['Public key'];devkey=None;keys=wallet_rpc('get_public_keys',[]);assert len(keys)==1 and public_key in run(['convert','public_key',keys[0]]),'Only the developer key may be loaded'
   fields={k:review[k]for k in ['target','old_code_hash','old_abi_hash','new_code_hash','new_abi_hash']};fields['review_document_hash']=sha(review_bytes)
   if operation=='propose':
    prefix=[]
