@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "atoms": 2261,
+  "canonical_receipt": {
+    "transaction_id": "1eee7ffeb5e7414841fbb732c0e910d01fd6043714fc28981093164bbe9a2881",
+    "block_num": 37478,
+    "block_id": "0000926643c0173e4b3c7e2601202c2e937c1933f9289027a654df9a541aae3a",
+    "observed_lib": 38485
+  },
+  "native_balance_before_atoms": 897340860,
+  "native_balance_after_atoms": 897343121,
+  "application_fee_atoms": 0,
+  "network_atoms_before": 3036,
+  "network_atoms_after": 3036,
+  "receipt": {
+    "kind": "claim",
+    "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+    "transaction_id": "1EEE7FFEB5E7414841FBB732C0E910D01FD6043714FC28981093164BBE9A2881",
+    "native_from": "gptgenesisbp",
+    "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+    "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+    "token_contract": "eosio.token",
+    "quantity": "0.2261 AIC",
+    "fee": "0.0000 AIC",
+    "relayer": "gptgenesisbp",
+    "auth_epoch": "0"
+  },
+  "CPU_us": 430,
+  "NET_words": 18,
+  "actual_claim_not_resent": true
+}

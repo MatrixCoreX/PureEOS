@@ -1,0 +1,8 @@
+locator.waitFor: Timeout 60000ms exceeded.
+Call log:
+  - waiting for locator('.key-history a[href*="/transaction/"]').first() to be visible
+    109 × locator resolved to hidden <a class="" href="#/transaction/ed790b1c223f71c2234a0f06d10291936684aac0b18367d8fc9e7bafa3383757?receipt=7">查看交易与对应收据</a>
+
+    at /opt/pureeos-relay-execution-income-20261105-r1/check_public_ui.cjs:23:160 {
+  name: 'TimeoutError'
+}

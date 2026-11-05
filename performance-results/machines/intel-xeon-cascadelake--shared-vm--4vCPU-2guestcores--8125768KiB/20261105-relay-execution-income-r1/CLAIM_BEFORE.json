@@ -1,0 +1,37 @@
+{
+  "earned_atoms": 2261,
+  "native_balance_atoms": 897340860,
+  "network_atoms": 0,
+  "fee_buckets": [
+    {
+      "owner": "anthropiclab",
+      "network": 0,
+      "relay_earned": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "network": 0,
+      "relay_earned": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "network": 0,
+      "relay_earned": 0
+    },
+    {
+      "owner": "eosio.key",
+      "network": 1356,
+      "relay_earned": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "network": 1680,
+      "relay_earned": 2261
+    },
+    {
+      "owner": "singaporentu",
+      "network": 0,
+      "relay_earned": 0
+    }
+  ]
+}

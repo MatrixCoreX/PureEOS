@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "before_unit_hashes": {
+    "pureeos-devnet-relay-20261105.service": "eb6ccc85ec0540de8acf2ae824df0b84507d7aaed4897df57782cd0500d82e1a",
+    "pureeos-devnet-key-history-20261105.service": "bc804acc116ccd11e90bbb9eb9d18594e131f334d40c37386b0db0ad1de64bb4"
+  },
+  "original_journal_sha256": "2fe3a5d4181dc1ecdff84be322357c222fc5522b18f3118879670edc9e40cabb",
+  "original_journal_ids": [
+    "3fdb6932b1737da209fc2940af414ea02e86af3e7c97894645155e1bcaf7f29c",
+    "6e977f65d39b51864fee96f9516e8be403d93ec8e283d730eedcc3402af188c6",
+    "7072af411aade0fba37900052a71208238725392cd12bb5167fe2ccd7f250b38",
+    "82495ef2b3bfbc7832d9a9289eb679119631670f0350eee5285f7d690261d2c5",
+    "891aee2216b1bcef12f2c2ad6a2327fc5c8b54f13db86576a6d5ec9d00ee80c2",
+    "c6403622508b3ef8c3c5224cc5d1c5a693366f34fbb2701a2f8cfce23ee33d55",
+    "e2d91953fc146231a54f524425b2e06b20f9b4e249969c0459a971324bbe062c",
+    "ec052f92feb16356fac2faca0c3ba004e000f252a355050a32e655d1a2d00d3a"
+  ],
+  "units": [
+    "pureeos-devnet-relay-20261105.service",
+    "pureeos-devnet-key-history-20261105.service"
+  ],
+  "UTC": "2026-11-05T10:18:10.220538+00:00",
+  "health": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "existing_keys_and_journal_preserved": true,
+  "sole_HTTP_unchanged": true
+}

@@ -1,6 +1,6 @@
 # Atomic RAM transfers: deployed TEST routes, fees and actual evidence
 
-Candidate execution-income change: see [execution fees earned by the relay](RELAY_EXECUTION_INCOME.en.md). The public transaction table below retains its actual pre-upgrade allocation.
+Execution-income change active on the current TEST chain: see [execution fees earned by the relay](RELAY_EXECUTION_INCOME.en.md). The public transaction table below retains its actual pre-upgrade allocation.
 
 On2026-11-05,chain`09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532` deployed after fresh5–8 full1800-secondreviews/BPveto checks and separate irreversible executions. KEYWASM`7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`. Native58/KEY238/SDK26,public55transferchecks/12payments,signup19,4preview/4publicvariants and6receiptpages passed. HistoricalE006/237omittedactualfees/fundedREX; reviews1–4were cancelled and evidence retained.
 

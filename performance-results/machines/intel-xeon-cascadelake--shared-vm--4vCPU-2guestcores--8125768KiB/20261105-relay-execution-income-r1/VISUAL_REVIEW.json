@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:54:55.314505+00:00",
+  "scope": "Actually viewed all four final home variants plus mobile owned-key ledger/history and executed proposal page. Fee labels/formula controls, balances/history, responsive layout and legibility checked. No additional product changes needed.",
+  "screenshots": {
+    "final-preview-home-zh-dark-1440.png": "31952c6313e195d7cfdd12eb33087d846af64ae5ae57e2fcfdb4dd78ecd3d597",
+    "final-preview-home-en-light-1440.png": "45e067af092804d34201c33717e94a86def23ce7abbacd45e787bff2dd616803",
+    "final-preview-home-zh-light-390.png": "92c424dc9f7656d85e9d1cbeb88c4c332cdea68aca237954c7bd64f95966aead",
+    "final-preview-home-en-dark-390.png": "ed82a09ed3c130e40717613e0120b768e643ca33c09b8f1a4d4aa14aa9725036",
+    "final-preview-A-zh-light-390.png": "34d47a97b009f3c2cc99751be9c31f8aabb3ecf9ea179c66c663a6c53ff36bbd",
+    "final-preview-upgrades-en-light-1440.png": "c37af573b686b331582a375461301df37cb94c82b766f347f59b65047a579f31"
+  }
+}

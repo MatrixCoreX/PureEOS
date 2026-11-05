@@ -1,0 +1,604 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:54:18.001Z",
+  "origin": "http://127.0.0.1:9075",
+  "scope": "Actual remote Chrome, real current chain/ledger/irreversible receipts/history, four variants; public normal DNS/HTTPS, preview fixed read-only proxy. No fabricated data.",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "estimates": [
+        {
+          "rows": "0",
+          "total": "0.0223 AIC",
+          "base": "0.0171 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0052 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0241 AIC",
+          "base": "0.0185 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0056 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0271 AIC",
+          "base": "0.0208 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        }
+      ],
+      "recent": [
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        }
+      ],
+      "views": [
+        {
+          "label": "A",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "147632"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "965000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "970000"
+            }
+          ],
+          "history_entries": 11,
+          "indexing": {
+            "scanned_irreversible_block": 39298,
+            "last_success_utc": "2026-11-05T10:50:52.043Z",
+            "irreversible_block": 39328,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "B",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "40000"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 4,
+          "indexing": {
+            "scanned_irreversible_block": 39298,
+            "last_success_utc": "2026-11-05T10:50:52.043Z",
+            "irreversible_block": 39350,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "USDonly",
+          "holdings": [
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 1,
+          "indexing": {
+            "scanned_irreversible_block": 39298,
+            "last_success_utc": "2026-11-05T10:50:52.043Z",
+            "irreversible_block": 39356,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "named",
+          "holdings": [],
+          "history_entries": 0,
+          "indexing": {
+            "scanned_irreversible_block": 39298,
+            "last_success_utc": "2026-11-05T10:50:52.043Z",
+            "irreversible_block": 39371,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        }
+      ],
+      "canonical_cases": 12,
+      "errors": []
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "estimates": [
+        {
+          "rows": "0",
+          "total": "0.0223 AIC",
+          "base": "0.0171 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0052 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0241 AIC",
+          "base": "0.0185 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0056 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0271 AIC",
+          "base": "0.0208 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        }
+      ],
+      "recent": [
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        }
+      ],
+      "views": [
+        {
+          "label": "A",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "147632"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "965000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "970000"
+            }
+          ],
+          "history_entries": 11,
+          "indexing": {
+            "scanned_irreversible_block": 39382,
+            "last_success_utc": "2026-11-05T10:51:35.538Z",
+            "irreversible_block": 39464,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "B",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "40000"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 4,
+          "indexing": {
+            "scanned_irreversible_block": 39382,
+            "last_success_utc": "2026-11-05T10:51:35.538Z",
+            "irreversible_block": 39481,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "USDonly",
+          "holdings": [
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 1,
+          "indexing": {
+            "scanned_irreversible_block": 39464,
+            "last_success_utc": "2026-11-05T10:52:19.300Z",
+            "irreversible_block": 39493,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "named",
+          "holdings": [],
+          "history_entries": 0,
+          "indexing": {
+            "scanned_irreversible_block": 39464,
+            "last_success_utc": "2026-11-05T10:52:19.300Z",
+            "irreversible_block": 39499,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        }
+      ],
+      "canonical_cases": 12,
+      "errors": []
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "estimates": [
+        {
+          "rows": "0",
+          "total": "0.0223 AIC",
+          "base": "0.0171 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0052 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0241 AIC",
+          "base": "0.0185 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0056 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0271 AIC",
+          "base": "0.0208 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        }
+      ],
+      "recent": [
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        }
+      ],
+      "views": [
+        {
+          "label": "A",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "147632"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "965000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "970000"
+            }
+          ],
+          "history_entries": 11,
+          "indexing": {
+            "scanned_irreversible_block": 39464,
+            "last_success_utc": "2026-11-05T10:52:19.300Z",
+            "irreversible_block": 39559,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "B",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "40000"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 4,
+          "indexing": {
+            "scanned_irreversible_block": 39464,
+            "last_success_utc": "2026-11-05T10:52:19.300Z",
+            "irreversible_block": 39573,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "USDonly",
+          "holdings": [
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 1,
+          "indexing": {
+            "scanned_irreversible_block": 39552,
+            "last_success_utc": "2026-11-05T10:53:03.485Z",
+            "irreversible_block": 39580,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "named",
+          "holdings": [],
+          "history_entries": 0,
+          "indexing": {
+            "scanned_irreversible_block": 39552,
+            "last_success_utc": "2026-11-05T10:53:03.485Z",
+            "irreversible_block": 39587,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        }
+      ],
+      "canonical_cases": 12,
+      "errors": []
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "estimates": [
+        {
+          "rows": "0",
+          "total": "0.0223 AIC",
+          "base": "0.0171 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0052 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0241 AIC",
+          "base": "0.0185 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0056 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0271 AIC",
+          "base": "0.0208 AIC",
+          "execution": "0.0171 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        }
+      ],
+      "recent": [
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        },
+        {
+          "status": 200,
+          "actions": 5
+        }
+      ],
+      "views": [
+        {
+          "label": "A",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "147632"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "965000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "970000"
+            }
+          ],
+          "history_entries": 11,
+          "indexing": {
+            "scanned_irreversible_block": 39552,
+            "last_success_utc": "2026-11-05T10:53:03.485Z",
+            "irreversible_block": 39641,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "B",
+          "holdings": [
+            {
+              "contract": "eosio.token",
+              "symbol": "AIC",
+              "amount": "40000"
+            },
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            },
+            {
+              "contract": "cny",
+              "symbol": "CNY",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 4,
+          "indexing": {
+            "scanned_irreversible_block": 39631,
+            "last_success_utc": "2026-11-05T10:53:53.485Z",
+            "irreversible_block": 39654,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "USDonly",
+          "holdings": [
+            {
+              "contract": "usd",
+              "symbol": "USD",
+              "amount": "20000"
+            }
+          ],
+          "history_entries": 1,
+          "indexing": {
+            "scanned_irreversible_block": 39631,
+            "last_success_utc": "2026-11-05T10:53:53.485Z",
+            "irreversible_block": 39665,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        },
+        {
+          "label": "named",
+          "holdings": [],
+          "history_entries": 0,
+          "indexing": {
+            "scanned_irreversible_block": 39631,
+            "last_success_utc": "2026-11-05T10:53:53.485Z",
+            "irreversible_block": 39683,
+            "coverage": "indexed_receipts",
+            "stale": false,
+            "paused": false,
+            "complete_lifetime_history": false
+          }
+        }
+      ],
+      "canonical_cases": 12,
+      "errors": []
+    }
+  ]
+}

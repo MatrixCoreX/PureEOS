@@ -1,0 +1,521 @@
+{
+  "status": "PASS",
+  "root_free_before": 1600811008,
+  "archive_root": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105",
+  "files": [
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-baseline-2026.10.30-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/33deea578e6007d74bf45e32179f7141879591efafd10fb90667c89b297de2f9/pureeos-baseline-2026.10.30-source.tar.gz",
+      "bytes": 235289903,
+      "allocated_bytes_before": 235298816,
+      "original_inode": 4865038,
+      "original_links": 1,
+      "sha256": "33deea578e6007d74bf45e32179f7141879591efafd10fb90667c89b297de2f9",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-cdt-1.0.0-baseline-2026.10.30-ubuntu26.10-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/1562873a37f28296efae0d2366211984bd2541f3601bf031099fefa4b9f11e4c/pureeos-cdt-1.0.0-baseline-2026.10.30-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 220081790,
+      "allocated_bytes_before": 220090368,
+      "original_inode": 4865339,
+      "original_links": 1,
+      "sha256": "1562873a37f28296efae0d2366211984bd2541f3601bf031099fefa4b9f11e4c",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution-failed-cli-smoke-1/aic-cdt-1.0.0-ubuntu26.10-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/850702115a53e511c90402294fe95a6484f5c4905ad82bb40b0d4aa617e71ba5/aic-cdt-1.0.0-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 219723590,
+      "allocated_bytes_before": 219729920,
+      "original_inode": 3461979,
+      "original_links": 1,
+      "sha256": "850702115a53e511c90402294fe95a6484f5c4905ad82bb40b0d4aa617e71ba5",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution/aic-cdt-1.0.0-ubuntu26.10-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/850702115a53e511c90402294fe95a6484f5c4905ad82bb40b0d4aa617e71ba5/aic-cdt-1.0.0-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 219723590,
+      "allocated_bytes_before": 219729920,
+      "original_inode": 3462688,
+      "original_links": 1,
+      "sha256": "850702115a53e511c90402294fe95a6484f5c4905ad82bb40b0d4aa617e71ba5",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 209679602,
+      "allocated_bytes_before": 209694720,
+      "original_inode": 4873777,
+      "original_links": 5,
+      "sha256": "e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 209679602,
+      "allocated_bytes_before": 209694720,
+      "original_inode": 4873777,
+      "original_links": 4,
+      "sha256": "e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS-CDT/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 209679602,
+      "allocated_bytes_before": 209694720,
+      "original_inode": 4873777,
+      "original_links": 3,
+      "sha256": "e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 209679602,
+      "allocated_bytes_before": 209694720,
+      "original_inode": 4873777,
+      "original_links": 2,
+      "sha256": "e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS-CDT/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a/pureeos-cdt-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 209679602,
+      "allocated_bytes_before": 209694720,
+      "original_inode": 4873777,
+      "original_links": 1,
+      "sha256": "e423f3391e19ea6284fa7703daa935a6346c5587cb2c314779e26f1bf9e6c91a",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261102/test-release-cpu4-r1/dist/pureeos-test-1.0.0-test.1-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/cf7ce8234150a4461a812874ef5533b92b33d09351f91eb7fc7beb11a83ed421/pureeos-test-1.0.0-test.1-source.tar.gz",
+      "bytes": 207028081,
+      "allocated_bytes_before": 207032320,
+      "original_inode": 3202136,
+      "original_links": 1,
+      "sha256": "cf7ce8234150a4461a812874ef5533b92b33d09351f91eb7fc7beb11a83ed421",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/9ab84230293be2fdb83b28fd20a4f7e5836212070b404b1326c9443d22f01861/pureeos-1.0.0-source.tar.gz",
+      "bytes": 207014411,
+      "allocated_bytes_before": 207024128,
+      "original_inode": 4873780,
+      "original_links": 2,
+      "sha256": "9ab84230293be2fdb83b28fd20a4f7e5836212070b404b1326c9443d22f01861",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/9ab84230293be2fdb83b28fd20a4f7e5836212070b404b1326c9443d22f01861/pureeos-1.0.0-source.tar.gz",
+      "bytes": 207014411,
+      "allocated_bytes_before": 207024128,
+      "original_inode": 4873780,
+      "original_links": 1,
+      "sha256": "9ab84230293be2fdb83b28fd20a4f7e5836212070b404b1326c9443d22f01861",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/readme-r1/dist/pureeos-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/6ab010e96d273b739f462e050020946c36ec53fe534b09b5d8ae0aeaac794a64/pureeos-1.0.0-source.tar.gz",
+      "bytes": 207010091,
+      "allocated_bytes_before": 207028224,
+      "original_inode": 4873833,
+      "original_links": 2,
+      "sha256": "6ab010e96d273b739f462e050020946c36ec53fe534b09b5d8ae0aeaac794a64",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/6ab010e96d273b739f462e050020946c36ec53fe534b09b5d8ae0aeaac794a64/pureeos-1.0.0-source.tar.gz",
+      "bytes": 207010091,
+      "allocated_bytes_before": 207028224,
+      "original_inode": 4873833,
+      "original_links": 1,
+      "sha256": "6ab010e96d273b739f462e050020946c36ec53fe534b09b5d8ae0aeaac794a64",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-baseline-2026.10.30-runtime-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe/pureeos-baseline-2026.10.30-runtime-source.tar.gz",
+      "bytes": 141069271,
+      "allocated_bytes_before": 141074432,
+      "original_inode": 4865037,
+      "original_links": 1,
+      "sha256": "2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-1.0.0-runtime-sources.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe/pureeos-1.0.0-runtime-sources.tar.gz",
+      "bytes": 141069271,
+      "allocated_bytes_before": 141078528,
+      "original_inode": 4873785,
+      "original_links": 3,
+      "sha256": "2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-1.0.0-runtime-sources.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe/pureeos-1.0.0-runtime-sources.tar.gz",
+      "bytes": 141069271,
+      "allocated_bytes_before": 141078528,
+      "original_inode": 4873785,
+      "original_links": 2,
+      "sha256": "2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-1.0.0-runtime-sources.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe/pureeos-1.0.0-runtime-sources.tar.gz",
+      "bytes": 141069271,
+      "allocated_bytes_before": 141078528,
+      "original_inode": 4873785,
+      "original_links": 1,
+      "sha256": "2d73bf581338cb9dd7286bef506f85a92fd88701ca072f81360de464e5316dfe",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261102/test-release-cpu4-r1/dist/pureeos-test-1.0.0-test.1-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/02fffeb7ef2156f6b8ec0fc36d8cd21b51a58e4aeabe8e510cc0ba1007d25a25/pureeos-test-1.0.0-test.1-linux-x86_64.tar.gz",
+      "bytes": 44309552,
+      "allocated_bytes_before": 44314624,
+      "original_inode": 3202135,
+      "original_links": 1,
+      "sha256": "02fffeb7ef2156f6b8ec0fc36d8cd21b51a58e4aeabe8e510cc0ba1007d25a25",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/readme-r1/dist/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/ab311a293ff179b73ec49ba9239a1a8f768e336e8ae039e82004ec48a29690af/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 44028296,
+      "allocated_bytes_before": 44036096,
+      "original_inode": 4873835,
+      "original_links": 2,
+      "sha256": "ab311a293ff179b73ec49ba9239a1a8f768e336e8ae039e82004ec48a29690af",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/ab311a293ff179b73ec49ba9239a1a8f768e336e8ae039e82004ec48a29690af/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 44028296,
+      "allocated_bytes_before": 44036096,
+      "original_inode": 4873835,
+      "original_links": 1,
+      "sha256": "ab311a293ff179b73ec49ba9239a1a8f768e336e8ae039e82004ec48a29690af",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/112fda4155fba60043ea1c2f1c970b6575f0b1f82bef5e91dc009784582a40a7/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 44021474,
+      "allocated_bytes_before": 44027904,
+      "original_inode": 4872824,
+      "original_links": 2,
+      "sha256": "112fda4155fba60043ea1c2f1c970b6575f0b1f82bef5e91dc009784582a40a7",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/112fda4155fba60043ea1c2f1c970b6575f0b1f82bef5e91dc009784582a40a7/pureeos-1.0.0-linux-x86_64.tar.gz",
+      "bytes": 44021474,
+      "allocated_bytes_before": 44027904,
+      "original_inode": 4872824,
+      "original_links": 1,
+      "sha256": "112fda4155fba60043ea1c2f1c970b6575f0b1f82bef5e91dc009784582a40a7",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-baseline-2026.10.30-linux-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/970e58b453bb3151e8b8fabb29512bdc11f92bd91fa106e512cac31c32822b68/pureeos-baseline-2026.10.30-linux-x86_64.tar.gz",
+      "bytes": 42990244,
+      "allocated_bytes_before": 42995712,
+      "original_inode": 4865036,
+      "original_links": 1,
+      "sha256": "970e58b453bb3151e8b8fabb29512bdc11f92bd91fa106e512cac31c32822b68",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution/pureeos-v2.0.0-ubuntu26.10-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/a3b3c8bd147f8202fea9ea2c8b33a36bd4fc2602e29114236a4971541af295c7/pureeos-v2.0.0-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 39181570,
+      "allocated_bytes_before": 39186432,
+      "original_inode": 3462439,
+      "original_links": 1,
+      "sha256": "a3b3c8bd147f8202fea9ea2c8b33a36bd4fc2602e29114236a4971541af295c7",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution-failed-cli-smoke-1/pureeos-v2.0.0-ubuntu26.10-x86_64.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/a3b3c8bd147f8202fea9ea2c8b33a36bd4fc2602e29114236a4971541af295c7/pureeos-v2.0.0-ubuntu26.10-x86_64.tar.gz",
+      "bytes": 39181570,
+      "allocated_bytes_before": 39182336,
+      "original_inode": 3461526,
+      "original_links": 1,
+      "sha256": "a3b3c8bd147f8202fea9ea2c8b33a36bd4fc2602e29114236a4971541af295c7",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution/aic-cdt-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/44b45eab8a7a52f87fb113eca83e3ce30e41b2c877082d581300c2874a35bc93/aic-cdt-1.0.0-source.tar.gz",
+      "bytes": 5428098,
+      "allocated_bytes_before": 5435392,
+      "original_inode": 3462691,
+      "original_links": 1,
+      "sha256": "44b45eab8a7a52f87fb113eca83e3ce30e41b2c877082d581300c2874a35bc93",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-cdt-1.0.0-baseline-2026.10.30-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/dc43168171eeca1688def2fe3400aa9ba28eab37497afcef9eb929d7ba5b0f1a/pureeos-cdt-1.0.0-baseline-2026.10.30-source.tar.gz",
+      "bytes": 5173097,
+      "allocated_bytes_before": 5177344,
+      "original_inode": 4865338,
+      "original_links": 1,
+      "sha256": "dc43168171eeca1688def2fe3400aa9ba28eab37497afcef9eb929d7ba5b0f1a",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution/pureeos-v2.0.0-acceptance-evidence.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/ac4372159642fb70e90750b24c9dac2460f8cf5c569db9685a2dd9a414bbe8ac/pureeos-v2.0.0-acceptance-evidence.tar.gz",
+      "bytes": 4668407,
+      "allocated_bytes_before": 4673536,
+      "original_inode": 3462757,
+      "original_links": 1,
+      "sha256": "ac4372159642fb70e90750b24c9dac2460f8cf5c569db9685a2dd9a414bbe8ac",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-cdt-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d/pureeos-cdt-1.0.0-source.tar.gz",
+      "bytes": 3791828,
+      "allocated_bytes_before": 3796992,
+      "original_inode": 4873778,
+      "original_links": 5,
+      "sha256": "f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-cdt-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d/pureeos-cdt-1.0.0-source.tar.gz",
+      "bytes": 3791828,
+      "allocated_bytes_before": 3796992,
+      "original_inode": 4873778,
+      "original_links": 4,
+      "sha256": "f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-cdt-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d/pureeos-cdt-1.0.0-source.tar.gz",
+      "bytes": 3791828,
+      "allocated_bytes_before": 3796992,
+      "original_inode": 4873778,
+      "original_links": 3,
+      "sha256": "f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS-CDT/pureeos-cdt-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d/pureeos-cdt-1.0.0-source.tar.gz",
+      "bytes": 3791828,
+      "allocated_bytes_before": 3796992,
+      "original_inode": 4873778,
+      "original_links": 2,
+      "sha256": "f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS-CDT/pureeos-cdt-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d/pureeos-cdt-1.0.0-source.tar.gz",
+      "bytes": 3791828,
+      "allocated_bytes_before": 3796992,
+      "original_inode": 4873778,
+      "original_links": 1,
+      "sha256": "f3b3135c1b230426ac23c5a5827a35a70ded7fdced5f4864955e18159969dd6d",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-baseline-2026.10.30-system-contracts.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/9941f9f7477fc6132605b183f95255bfbf96124a74df0b5d0a7c3e7c43ce7b71/pureeos-baseline-2026.10.30-system-contracts.tar.gz",
+      "bytes": 1312985,
+      "allocated_bytes_before": 1318912,
+      "original_inode": 4865337,
+      "original_links": 1,
+      "sha256": "9941f9f7477fc6132605b183f95255bfbf96124a74df0b5d0a7c3e7c43ce7b71",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-1.0.0-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/59db693842a33605bf56148595f586dee51beb4ef344c3bb60a31442af9aa016/pureeos-1.0.0-qualification.tar.gz",
+      "bytes": 1274437,
+      "allocated_bytes_before": 1277952,
+      "original_inode": 4873834,
+      "original_links": 3,
+      "sha256": "59db693842a33605bf56148595f586dee51beb4ef344c3bb60a31442af9aa016",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/readme-r1/dist/pureeos-1.0.0-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/59db693842a33605bf56148595f586dee51beb4ef344c3bb60a31442af9aa016/pureeos-1.0.0-qualification.tar.gz",
+      "bytes": 1274437,
+      "allocated_bytes_before": 1277952,
+      "original_inode": 4873834,
+      "original_links": 2,
+      "sha256": "59db693842a33605bf56148595f586dee51beb4ef344c3bb60a31442af9aa016",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS-CDT/pureeos-1.0.0-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/59db693842a33605bf56148595f586dee51beb4ef344c3bb60a31442af9aa016/pureeos-1.0.0-qualification.tar.gz",
+      "bytes": 1274437,
+      "allocated_bytes_before": 1277952,
+      "original_inode": 4873834,
+      "original_links": 1,
+      "sha256": "59db693842a33605bf56148595f586dee51beb4ef344c3bb60a31442af9aa016",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS-CDT/pureeos-1.0.0-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/61f88ce54fedd8669e6267d3d6da7bd428d98e0e53f54b56e515caf9fd4a342c/pureeos-1.0.0-qualification.tar.gz",
+      "bytes": 1203670,
+      "allocated_bytes_before": 1208320,
+      "original_inode": 4873781,
+      "original_links": 3,
+      "sha256": "61f88ce54fedd8669e6267d3d6da7bd428d98e0e53f54b56e515caf9fd4a342c",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-1.0.0-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/61f88ce54fedd8669e6267d3d6da7bd428d98e0e53f54b56e515caf9fd4a342c/pureeos-1.0.0-qualification.tar.gz",
+      "bytes": 1203670,
+      "allocated_bytes_before": 1208320,
+      "original_inode": 4873781,
+      "original_links": 2,
+      "sha256": "61f88ce54fedd8669e6267d3d6da7bd428d98e0e53f54b56e515caf9fd4a342c",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-1.0.0-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/61f88ce54fedd8669e6267d3d6da7bd428d98e0e53f54b56e515caf9fd4a342c/pureeos-1.0.0-qualification.tar.gz",
+      "bytes": 1203670,
+      "allocated_bytes_before": 1208320,
+      "original_inode": 4873781,
+      "original_links": 1,
+      "sha256": "61f88ce54fedd8669e6267d3d6da7bd428d98e0e53f54b56e515caf9fd4a342c",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage/PureEOS/pureeos-system-1.0.0.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/d67bf3ca9874cd2b2077f5ff9d75426a4be55ee8951ef2cf4cf88ec17da25398/pureeos-system-1.0.0.tar.gz",
+      "bytes": 712824,
+      "allocated_bytes_before": 716800,
+      "original_inode": 4873779,
+      "original_links": 3,
+      "sha256": "d67bf3ca9874cd2b2077f5ff9d75426a4be55ee8951ef2cf4cf88ec17da25398",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/stage-final/PureEOS/pureeos-system-1.0.0.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/d67bf3ca9874cd2b2077f5ff9d75426a4be55ee8951ef2cf4cf88ec17da25398/pureeos-system-1.0.0.tar.gz",
+      "bytes": 712824,
+      "allocated_bytes_before": 716800,
+      "original_inode": 4873779,
+      "original_links": 2,
+      "sha256": "d67bf3ca9874cd2b2077f5ff9d75426a4be55ee8951ef2cf4cf88ec17da25398",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-system-1.0.0.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/d67bf3ca9874cd2b2077f5ff9d75426a4be55ee8951ef2cf4cf88ec17da25398/pureeos-system-1.0.0.tar.gz",
+      "bytes": 712824,
+      "allocated_bytes_before": 716800,
+      "original_inode": 4873779,
+      "original_links": 1,
+      "sha256": "d67bf3ca9874cd2b2077f5ff9d75426a4be55ee8951ef2cf4cf88ec17da25398",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261025/stable-distribution/pureeos-v2.0.0-contract-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/05764d2ed85db85406bb19f9df0fd1a2fcb00eed2e978fb0208f586b3e12415c/pureeos-v2.0.0-contract-source.tar.gz",
+      "bytes": 573413,
+      "allocated_bytes_before": 573440,
+      "original_inode": 3462692,
+      "original_links": 1,
+      "sha256": "05764d2ed85db85406bb19f9df0fd1a2fcb00eed2e978fb0208f586b3e12415c",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/purehistory-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/74e437fc91ede346190d580d1e9bc4812330c1064066eccf1a998a6c606da9ed/purehistory-1.0.0-source.tar.gz",
+      "bytes": 496868,
+      "allocated_bytes_before": 499712,
+      "original_inode": 4873765,
+      "original_links": 3,
+      "sha256": "74e437fc91ede346190d580d1e9bc4812330c1064066eccf1a998a6c606da9ed",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/purehistory-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/74e437fc91ede346190d580d1e9bc4812330c1064066eccf1a998a6c606da9ed/purehistory-1.0.0-source.tar.gz",
+      "bytes": 496868,
+      "allocated_bytes_before": 499712,
+      "original_inode": 4873616,
+      "original_links": 1,
+      "sha256": "74e437fc91ede346190d580d1e9bc4812330c1064066eccf1a998a6c606da9ed",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-explorer-1.0.0-source.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/87c6617e9ee93e2afcef4750247cfa0c3119c1f916eb0659cce477bfba4e5700/pureeos-explorer-1.0.0-source.tar.gz",
+      "bytes": 184545,
+      "allocated_bytes_before": 188416,
+      "original_inode": 4873764,
+      "original_links": 3,
+      "sha256": "87c6617e9ee93e2afcef4750247cfa0c3119c1f916eb0659cce477bfba4e5700",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261101/first-release-v1-r1/dist/pureeos-explorer-1.0.0-web.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/a5b447ed2489e133823531482042c785674bce87a51f5eb388dbfe1c75e4f3b7/pureeos-explorer-1.0.0-web.tar.gz",
+      "bytes": 143202,
+      "allocated_bytes_before": 143360,
+      "original_inode": 4873766,
+      "original_links": 3,
+      "sha256": "a5b447ed2489e133823531482042c785674bce87a51f5eb388dbfe1c75e4f3b7",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261030/baseline-review-1/dist/pureeos-baseline-2026.10.30-acceptance-evidence.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/167d2731681e9e36f1295598f143911742870234f0f3ff8cecff957f2957cda0/pureeos-baseline-2026.10.30-acceptance-evidence.tar.gz",
+      "bytes": 49543,
+      "allocated_bytes_before": 53248,
+      "original_inode": 4865035,
+      "original_links": 1,
+      "sha256": "167d2731681e9e36f1295598f143911742870234f0f3ff8cecff957f2957cda0",
+      "verified_original_path_link": true
+    },
+    {
+      "path": "release-work-20261102/test-release-cpu4-r1/dist/pureeos-test-1.0.0-test.1-qualification.tar.gz",
+      "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts/51f776a003c881630dcc48192b76aec9eb81d260fca87dd458c0a3b4f28dbd65/pureeos-test-1.0.0-test.1-qualification.tar.gz",
+      "bytes": 36206,
+      "allocated_bytes_before": 36864,
+      "original_inode": 3202134,
+      "original_links": 1,
+      "sha256": "51f776a003c881630dcc48192b76aec9eb81d260fca87dd458c0a3b4f28dbd65",
+      "verified_original_path_link": true
+    }
+  ],
+  "scope": "Public historical release archives only; exact bytes preserved externally and original paths become symlinks. No source/Git/current work/chain data removed.",
+  "root_free_now": 3886280704,
+  "root_free_after": 3886280704,
+  "root_net_free_increase": 2285469696
+}

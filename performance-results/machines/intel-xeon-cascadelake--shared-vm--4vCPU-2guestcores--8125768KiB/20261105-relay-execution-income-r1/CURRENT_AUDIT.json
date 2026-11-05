@@ -1,0 +1,3752 @@
+{
+  "status": "PASS",
+  "phase": "relay-income-final",
+  "UTC": "2026-11-05T10:47:41.904548+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "start": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 38956,
+    "last_irreversible_block_num": 38953,
+    "last_irreversible_block_id": "00009829d53437bfa76fd2cbe708cf046c3e5a123d4f38843edafbaede4b4b25",
+    "head_block_id": "0000982c670b561c6d438c0c77d7be65b6707c190cc25763c8de0fca9c1768e7",
+    "head_block_time": "2026-11-05T10:47:36.500",
+    "head_block_producer": "zurichethlab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 38956,
+    "fork_db_head_block_id": "0000982c670b561c6d438c0c77d7be65b6707c190cc25763c8de0fca9c1768e7",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6018132760",
+    "total_net_weight": 224030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T10:47:35.000"
+  },
+  "end": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 38966,
+    "last_irreversible_block_num": 38961,
+    "last_irreversible_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+    "head_block_id": "000098367401449dfdd81c7a4b75a260dd036f6e74abf8019b65ab356a0663ae",
+    "head_block_time": "2026-11-05T10:47:41.500",
+    "head_block_producer": "zurichethlab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 38966,
+    "fork_db_head_block_id": "000098367401449dfdd81c7a4b75a260dd036f6e74abf8019b65ab356a0663ae",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6018132760",
+    "total_net_weight": 224030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T10:47:39.000"
+  },
+  "governance": {
+    "developer": "eosio.dev",
+    "review_seconds": 1800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.signup",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "singaporentu",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai",
+      "zurichethlab"
+    ],
+    "voters_updated_at": "2026-11-05T09:43:25.500",
+    "proposal_id": 1,
+    "pending": false,
+    "target": "eosio.key",
+    "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+    "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+    "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+    "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+    "review_document_hash": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+    "proposed_at": "2026-11-05T09:43:25.500",
+    "execute_after": "2026-11-05T10:13:25.500",
+    "proposal_voters": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "singaporentu",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai",
+      "zurichethlab"
+    ],
+    "vetoes": [],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 16,
+    "head_block_num": 38956,
+    "head_block_id": "0000982c670b561c6d438c0c77d7be65b6707c190cc25763c8de0fca9c1768e7",
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "singaporentu",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai",
+      "zurichethlab"
+    ],
+    "effective_vetoes": [],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 24,
+    "effective_veto_count": 0,
+    "execution_blocked_no_electorate": false
+  },
+  "accounts": {
+    "eosio": {
+      "privileged": true,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "veto",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6GEbTpdpsfhdUMQbtaAUdcqbb83Mr99bv7DPRmvEwWXCEiMcPH",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio",
+              "action": "devveto"
+            }
+          ]
+        }
+      ]
+    },
+    "eosio.bond": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.bond",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.bpay": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.bpay",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.bslash": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.bslash",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.fees": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.fees",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.key": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.key",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.msig": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.null": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.prods": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "prod.major",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "prod.minor",
+          "parent": "prod.major",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.ram": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.ram",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.ramfee": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.ramfee",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.reserv": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.reserv",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.rex": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.rex",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.saving": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.saving",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.signup": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.signup",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.stake": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.stake",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.token": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.token",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.vpay": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.vpay",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.wrap": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.dev": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "civicgovlead",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "civicgovlead",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "upgrade",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "civicgovauth",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio",
+              "action": "refreshgov"
+            },
+            {
+              "account": "eosio",
+              "action": "devpropose"
+            },
+            {
+              "account": "eosio",
+              "action": "devcancel"
+            },
+            {
+              "account": "eosio",
+              "action": "devexec"
+            },
+            {
+              "account": "eosio",
+              "action": "syspropose"
+            },
+            {
+              "account": "eosio",
+              "action": "syscancel"
+            },
+            {
+              "account": "eosio",
+              "action": "sysexec"
+            }
+          ]
+        }
+      ]
+    },
+    "gptgenesisbp": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6fSHMPz79SRbYHvSGB425d93XmHAdVChUyH5LPXtpn1s9PaVsL",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "keyrelay",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6nTk4tSUrWxjVvE3NgyNkErxiHt2nLp4QGaobZik7EnviWSCRC",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio.key",
+              "action": "ksend"
+            },
+            {
+              "account": "eosio.key",
+              "action": "withdraw"
+            },
+            {
+              "account": "eosio.key",
+              "action": "cancel"
+            }
+          ]
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6fSHMPz79SRbYHvSGB425d93XmHAdVChUyH5LPXtpn1s9PaVsL",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "openaiclouds": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7uquA27uF1XnA6NXqknf5GdaBhvSMqESmoh3zWyKk6s2csqybs",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7uquA27uF1XnA6NXqknf5GdaBhvSMqESmoh3zWyKk6s2csqybs",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "anthropiclab": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6kkY7FWQjTZTz6ryHR6yR7gHtFfMi6zUNpWF63neNcazhowNgL",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6kkY7FWQjTZTz6ryHR6yR7gHtFfMi6zUNpWF63neNcazhowNgL",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "deepseekcore": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7am5Uh6bqXzvSeoAwPp2d7ofv3RfhaBtp5BsSSFpsR66kJEhHn",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7am5Uh6bqXzvSeoAwPp2d7ofv3RfhaBtp5BsSSFpsR66kJEhHn",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "deepmindlabs": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5KMjoj5yR1o6R1GTZLXWtTjNa9f5Mz72WJdfydzPeiuXe3LzrX",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5KMjoj5yR1o6R1GTZLXWtTjNa9f5Mz72WJdfydzPeiuXe3LzrX",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "mistralcloud": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5r4tb7qTBTNuvTzMF2yoYEvEgzZhcgAeDhAEMmuS3dLc8sZ6Z9",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5r4tb7qTBTNuvTzMF2yoYEvEgzZhcgAeDhAEMmuS3dLc8sZ6Z9",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "cohereclouds": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6NF75gZPmsc9vr6TLYEGVw8BrzxPQymc6AMaqv8fdjTB3hDP38",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6NF75gZPmsc9vr6TLYEGVw8BrzxPQymc6AMaqv8fdjTB3hDP38",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "perplexityai": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8djUH8aVtzdHjjPpFnZtgdQ1sCh82WXDDW32EQ1oDAnmXyF7jH",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8djUH8aVtzdHjjPpFnZtgdQ1sCh82WXDDW32EQ1oDAnmXyF7jH",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "stabilityhub": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_51cbvzRevVetTB944mHZeqxfQMRwz2U54vZuNMe56Xesv3prNc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_51cbvzRevVetTB944mHZeqxfQMRwz2U54vZuNMe56Xesv3prNc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "nvidiaclouds": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5upN7wiWhkPPVh2JdSnPh2DxXdkxez37iUMQkwZFhtMQsaAT3r",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5upN7wiWhkPPVh2JdSnPh2DxXdkxez37iUMQkwZFhtMQsaAT3r",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "alibabacloud": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_73DUEMhtyTgU5BsAidVFsR6yJ7BpbM1N91aunzsEikyLfVkjCw",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_73DUEMhtyTgU5BsAidVFsR6yJ7BpbM1N91aunzsEikyLfVkjCw",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "tencentcloud": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7vV1AgSQAovwZG9PWi5nEAXujbwZzZZNv9vqyG2VguEuZhV598",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7vV1AgSQAovwZG9PWi5nEAXujbwZzZZNv9vqyG2VguEuZhV598",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "baiduaiworks": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7gkpPNSauh78kLKiuiun96E4qBwhqjXFc3MFUopvgt6nw5bfWw",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7gkpPNSauh78kLKiuiun96E4qBwhqjXFc3MFUopvgt6nw5bfWw",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "bytedancelab": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6RKbTxmVYHd95s8Crq6PH1jPgoKgeJr7YAajWgBnrAg1BmwMdx",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6RKbTxmVYHd95s8Crq6PH1jPgoKgeJr7YAajWgBnrAg1BmwMdx",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "minimaxcloud": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5a94wN64VZqxBzF9Gs9jt8of9inkfS5PbcEyfSXu7BXpDA8KJQ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5a94wN64VZqxBzF9Gs9jt8of9inkfS5PbcEyfSXu7BXpDA8KJQ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "moonshotlabs": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5LJBbYCk6Q4F9TZymKsLGCnvS1AJ6pF7rGJVH9jwKLAF87swKF",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5LJBbYCk6Q4F9TZymKsLGCnvS1AJ6pF7rGJVH9jwKLAF87swKF",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "singaporentu": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5anq6crpFxPDAuCVFToktycUJiFKaXau57zmHB5BSzWNTVJooQ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5anq6crpFxPDAuCVFToktycUJiFKaXau57zmHB5BSzWNTVJooQ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "zurichethlab": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6zkcwiMUi2Xk8X9Z85VzHdWAZ3BC3e7mV9F2BkbpQiH9o4TuDb",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6zkcwiMUi2Xk8X9Z85VzHdWAZ3BC3e7mV9F2BkbpQiH9o4TuDb",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "londonucllab": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5NutPE9bybYxuhqZANYTxELi9oYYdf4HdSZTaKw8E4DMduaXGC",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5NutPE9bybYxuhqZANYTxELi9oYYdf4HdSZTaKw8E4DMduaXGC",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "tokyorikenai": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_74EcjX1eJvR86xTs57MxsGg3vQXeX6ebH2LPpAjTBA7HUbTPBz",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_74EcjX1eJvR86xTs57MxsGg3vQXeX6ebH2LPpAjTBA7HUbTPBz",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "seoulkaistai": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5fnHzzbiMk5JLMfr3f4Dxr7vks6YVPFEQUnrRHaDL58ZiKt3aJ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5fnHzzbiMk5JLMfr3f4Dxr7vks6YVPFEQUnrRHaDL58ZiKt3aJ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "parisinriaai": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_83jWwAM4fBQmRR7gAm1ri7ynoKLcjsM2Vkrknfyozzq9BvvUyZ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_83jWwAM4fBQmRR7gAm1ri7ynoKLcjsM2Vkrknfyozzq9BvvUyZ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "berlintulabs": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5d2LDvbq6NwtVpU3KrXU6dFN8wo5TMsjz5va6WJH1MY8BTcjmJ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5d2LDvbq6NwtVpU3KrXU6dFN8wo5TMsjz5va6WJH1MY8BTcjmJ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "canadamilaai": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6vzvwfsm6CzGJUeoyakEZbs5qBrMWWRJ23jzJCXF1AJJMn7SRv",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6vzvwfsm6CzGJUeoyakEZbs5qBrMWWRJ23jzJCXF1AJJMn7SRv",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "usd": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "usd",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "cny": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "cny",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    }
+  },
+  "read_retries": [
+    {
+      "method": "get_account",
+      "account": "eosio.signup",
+      "HTTP": 500,
+      "body": "{\"code\":500,\"message\":\"Internal Service Error\",\"error\":{\"code\":3015010,\"name\":\"abi_serialization_deadline_exception\",\"what\":\"ABI serialization time has exceeded the deadline\",\"details\":[{\"message\":\"serialization time limit 15000us exceeded\",\"file\":\"abi_serializer.hpp\",\"line_number\":138,\"method\":\"operator()\"},{\"message\":\"\",\"file\":\"abi_serializer.cpp\",\"line_number\":337,\"method\":\"validate\"}]}}",
+      "attempt": 1
+    },
+    {
+      "method": "get_account",
+      "account": "eosio.dev",
+      "HTTP": 500,
+      "body": "{\"code\":500,\"message\":\"Internal Service Error\",\"error\":{\"code\":3015010,\"name\":\"abi_serialization_deadline_exception\",\"what\":\"ABI serialization time has exceeded the deadline\",\"details\":[{\"message\":\"serialization time limit 15000us exceeded\",\"file\":\"abi_serializer.hpp\",\"line_number\":138,\"method\":\"operator()\"}]}}",
+      "attempt": 1
+    },
+    {
+      "method": "get_account",
+      "account": "cny",
+      "HTTP": 500,
+      "body": "{\"code\":500,\"message\":\"Internal Service Error\",\"error\":{\"code\":3015010,\"name\":\"abi_serialization_deadline_exception\",\"what\":\"ABI serialization time has exceeded the deadline\",\"details\":[{\"message\":\"serialization time limit 15000us exceeded\",\"file\":\"abi_serializer.hpp\",\"line_number\":138,\"method\":\"operator()\"},{\"message\":\"\",\"file\":\"abi_serializer.cpp\",\"line_number\":326,\"method\":\"validate\"},{\"message\":\"\",\"file\":\"abi_serializer.cpp\",\"line_number\":327,\"method\":\"validate\"}]}}",
+      "attempt": 1
+    }
+  ],
+  "nodes": [
+    {
+      "name": "history",
+      "unit": "pureeos-devnet-history-20261105.service",
+      "process": {
+        "MainPID": "414916",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "openaiclouds",
+      "unit": "pureeos-devnet-bp-openaiclouds-20261105.service",
+      "process": {
+        "MainPID": "414985",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "anthropiclab",
+      "unit": "pureeos-devnet-bp-anthropiclab-20261105.service",
+      "process": {
+        "MainPID": "415049",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "deepseekcore",
+      "unit": "pureeos-devnet-bp-deepseekcore-20261105.service",
+      "process": {
+        "MainPID": "415113",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "deepmindlabs",
+      "unit": "pureeos-devnet-bp-deepmindlabs-20261105.service",
+      "process": {
+        "MainPID": "415177",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "mistralcloud",
+      "unit": "pureeos-devnet-bp-mistralcloud-20261105.service",
+      "process": {
+        "MainPID": "415241",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "cohereclouds",
+      "unit": "pureeos-devnet-bp-cohereclouds-20261105.service",
+      "process": {
+        "MainPID": "415319",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "perplexityai",
+      "unit": "pureeos-devnet-bp-perplexityai-20261105.service",
+      "process": {
+        "MainPID": "415567",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "stabilityhub",
+      "unit": "pureeos-devnet-bp-stabilityhub-20261105.service",
+      "process": {
+        "MainPID": "415780",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "nvidiaclouds",
+      "unit": "pureeos-devnet-bp-nvidiaclouds-20261105.service",
+      "process": {
+        "MainPID": "415917",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "alibabacloud",
+      "unit": "pureeos-devnet-bp-alibabacloud-20261105.service",
+      "process": {
+        "MainPID": "415990",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "tencentcloud",
+      "unit": "pureeos-devnet-bp-tencentcloud-20261105.service",
+      "process": {
+        "MainPID": "416057",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38961,
+        "last_irreversible_block_num": 38957,
+        "last_irreversible_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "head_block_time": "2026-11-05T10:47:39.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38961,
+        "fork_db_head_block_id": "0000983187aba66f111268650e83da9373725cf38f74275f78deb45ba8fbcfcc",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.000"
+      }
+    },
+    {
+      "name": "baiduaiworks",
+      "unit": "pureeos-devnet-bp-baiduaiworks-20261105.service",
+      "process": {
+        "MainPID": "416139",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "bytedancelab",
+      "unit": "pureeos-devnet-bp-bytedancelab-20261105.service",
+      "process": {
+        "MainPID": "416219",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "minimaxcloud",
+      "unit": "pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "process": {
+        "MainPID": "416292",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "moonshotlabs",
+      "unit": "pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "process": {
+        "MainPID": "416362",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "singaporentu",
+      "unit": "pureeos-devnet-bp-singaporentu-20261105.service",
+      "process": {
+        "MainPID": "416429",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "zurichethlab",
+      "unit": "pureeos-devnet-bp-zurichethlab-20261105.service",
+      "process": {
+        "MainPID": "416500",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38963,
+        "last_irreversible_block_num": 38959,
+        "last_irreversible_block_id": "0000982f4a214417b7e114ffe1c55d94b528f4c0a8208a728ee78231e169b1b5",
+        "head_block_id": "00009833f36ce1ef098f64d9fe479f3a12ecb9da567e193a32ffa7f53328eded",
+        "head_block_time": "2026-11-05T10:47:40.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38963,
+        "fork_db_head_block_id": "00009833f36ce1ef098f64d9fe479f3a12ecb9da567e193a32ffa7f53328eded",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:38.000"
+      }
+    },
+    {
+      "name": "londonucllab",
+      "unit": "pureeos-devnet-bp-londonucllab-20261105.service",
+      "process": {
+        "MainPID": "416566",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "tokyorikenai",
+      "unit": "pureeos-devnet-bp-tokyorikenai-20261105.service",
+      "process": {
+        "MainPID": "416689",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "seoulkaistai",
+      "unit": "pureeos-devnet-bp-seoulkaistai-20261105.service",
+      "process": {
+        "MainPID": "416876",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "parisinriaai",
+      "unit": "pureeos-devnet-bp-parisinriaai-20261105.service",
+      "process": {
+        "MainPID": "417001",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "berlintulabs",
+      "unit": "pureeos-devnet-bp-berlintulabs-20261105.service",
+      "process": {
+        "MainPID": "417069",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "canadamilaai",
+      "unit": "pureeos-devnet-bp-canadamilaai-20261105.service",
+      "process": {
+        "MainPID": "417139",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38962,
+        "last_irreversible_block_num": 38958,
+        "last_irreversible_block_id": "0000982e57db186cfa0b0f506fd31b000688e81ac38cf14ce04a24df6b180c0d",
+        "head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "head_block_time": "2026-11-05T10:47:39.500",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38962,
+        "fork_db_head_block_id": "000098323f8ec61f963d7c72fee1ea4b241827c2ffd9cf589fca19a331072e32",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:37.500"
+      }
+    },
+    {
+      "name": "gptgenesisbp",
+      "unit": "pureeos-devnet-founder-20261105.service",
+      "process": {
+        "MainPID": "417216",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 38963,
+        "last_irreversible_block_num": 38959,
+        "last_irreversible_block_id": "0000982f4a214417b7e114ffe1c55d94b528f4c0a8208a728ee78231e169b1b5",
+        "head_block_id": "00009833f36ce1ef098f64d9fe479f3a12ecb9da567e193a32ffa7f53328eded",
+        "head_block_time": "2026-11-05T10:47:40.000",
+        "head_block_producer": "zurichethlab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 38963,
+        "fork_db_head_block_id": "00009833f36ce1ef098f64d9fe479f3a12ecb9da567e193a32ffa7f53328eded",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6018132760",
+        "total_net_weight": 224030000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-05T10:47:38.000"
+      }
+    }
+  ],
+  "actual_native_finalizers": {
+    "active_finalizer_policy": {
+      "generation": 62,
+      "threshold": 15,
+      "finalizers": [
+        {
+          "description": "alibabacloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_k9LV0TDa2wMQRlDBGdRqVKOmALuvJ5g_OprZb3oTv8ycmN2mSrAXn6tRt85INdgJjEZuIClYFJf1yzLl_V9NkfXn4yg7PONa0_hscN4R2yM9tTBloYoFJnMNCtPR3TUAOkUp6Q"
+        },
+        {
+          "description": "baiduaiworks",
+          "weight": 1,
+          "public_key": "PUB_BLS_vf57FOez1YfApcG1C6baqmUwJuSreH1imLLRbY6og0FzxvKGK3uOyloJn-ARoO4YZ0hhLzcxKmCo6b33pMUMa5tUHkldgHSlWNLN1U68XFv-S4173eCoTPy-FPCdJnYYE13cvw"
+        },
+        {
+          "description": "berlintulabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_rEePesA4CmdXzGLTxyRknF74GieIBN-XTzppgA85LJQ7yLS19vnv3dOqIAud2iwDDZow5fs5YrVbQrq8ZNk2G119sOPn00gCk0T46y5EVltFZe5tFybV9eTs16Sb7loQ591nkQ"
+        },
+        {
+          "description": "bytedancelab",
+          "weight": 1,
+          "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA"
+        },
+        {
+          "description": "canadamilaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w"
+        },
+        {
+          "description": "cohereclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA"
+        },
+        {
+          "description": "deepseekcore",
+          "weight": 1,
+          "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA"
+        },
+        {
+          "description": "gptgenesisbp",
+          "weight": 1,
+          "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg"
+        },
+        {
+          "description": "londonucllab",
+          "weight": 1,
+          "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ"
+        },
+        {
+          "description": "minimaxcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A"
+        },
+        {
+          "description": "moonshotlabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ"
+        },
+        {
+          "description": "nvidiaclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS_0nd8jTQkprwClDxe6a5xChMhDDFIBPCqSiLMiz3DrCVv_9IgnsFw67nO1RNYFh8YDRZqNXAbgtReiaRcCWvwmjCjIO5owymxyZo6Knt-GZ13SFMgH0ur2uwPrqGFOCkFI7LKfQ"
+        },
+        {
+          "description": "openaiclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS__ItsCrWEuqbcsZS9WyGOQO8CNIjsg7avESKdj-SOCCesdC81r1OCrD53t4SCqzwMVkLK-lPkSVKriqSUVolfY3XwLLpBVrsT_jDRc-k_bUW-oG9Z1I7FIBmBj4fT0zELCxgLvw"
+        },
+        {
+          "description": "parisinriaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ"
+        },
+        {
+          "description": "perplexityai",
+          "weight": 1,
+          "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA"
+        },
+        {
+          "description": "seoulkaistai",
+          "weight": 1,
+          "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA"
+        },
+        {
+          "description": "singaporentu",
+          "weight": 1,
+          "public_key": "PUB_BLS_Uq_AC9wrzsP3hQ53FiVVUCyPqU3sjxtk3TBqJ76_cTdIs9B__tSe8iYAyo-8n38MA4Et8EUCbxx51qTSQ2V6A6COAqfpeHQMVd9IKc0CMam2rBBCvIcvSo5IEgx7UGUQowS9vA"
+        },
+        {
+          "description": "stabilityhub",
+          "weight": 1,
+          "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug"
+        },
+        {
+          "description": "tencentcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_qnTv-Ma-qS5JAAdirtJdCN0O6Lu1_2JjwGh8lPJIE9BMuzmUn4KR7q-UhT_lW4APHsDjUTIeiIRNYU6AHJZ9jz2WHGypqWINZBYhjFMGEk_8P1-FBOgCqHlSaHtq50IQFeCJPw"
+        },
+        {
+          "description": "tokyorikenai",
+          "weight": 1,
+          "public_key": "PUB_BLS_WA9JneGQncMhbX3w-dIeAGRJJlheAzmvKJuCuszgaUl1lBtfhgSJ6VtohnhFVwAShWoOjG7umfICUemfsdL3prC1sc_41R1CRJ4rH3HXltHPn8VPadeLTCoJyEGVHhoYazzgug"
+        },
+        {
+          "description": "zurichethlab",
+          "weight": 1,
+          "public_key": "PUB_BLS_Nhkw_5dnw07V5pDSAk4y7C6ZUoyfgxGugTybT3-TfzsqbAzexIss4dH5KWGt7QsNcu7eyc7iP9SvE1GwdLWEMcS5jTqdXzKLnwWKewcR7jWUuGtNkweXz8mRWR-b2cMNVEDwIQ"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "alibabacloud",
+        "public_key": "PUB_BLS_k9LV0TDa2wMQRlDBGdRqVKOmALuvJ5g_OprZb3oTv8ycmN2mSrAXn6tRt85INdgJjEZuIClYFJf1yzLl_V9NkfXn4yg7PONa0_hscN4R2yM9tTBloYoFJnMNCtPR3TUAOkUp6Q",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "baiduaiworks",
+        "public_key": "PUB_BLS_vf57FOez1YfApcG1C6baqmUwJuSreH1imLLRbY6og0FzxvKGK3uOyloJn-ARoO4YZ0hhLzcxKmCo6b33pMUMa5tUHkldgHSlWNLN1U68XFv-S4173eCoTPy-FPCdJnYYE13cvw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "berlintulabs",
+        "public_key": "PUB_BLS_rEePesA4CmdXzGLTxyRknF74GieIBN-XTzppgA85LJQ7yLS19vnv3dOqIAud2iwDDZow5fs5YrVbQrq8ZNk2G119sOPn00gCk0T46y5EVltFZe5tFybV9eTs16Sb7loQ591nkQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "bytedancelab",
+        "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "canadamilaai",
+        "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "cohereclouds",
+        "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "deepseekcore",
+        "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "gptgenesisbp",
+        "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "londonucllab",
+        "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "minimaxcloud",
+        "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "moonshotlabs",
+        "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "nvidiaclouds",
+        "public_key": "PUB_BLS_0nd8jTQkprwClDxe6a5xChMhDDFIBPCqSiLMiz3DrCVv_9IgnsFw67nO1RNYFh8YDRZqNXAbgtReiaRcCWvwmjCjIO5owymxyZo6Knt-GZ13SFMgH0ur2uwPrqGFOCkFI7LKfQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "openaiclouds",
+        "public_key": "PUB_BLS__ItsCrWEuqbcsZS9WyGOQO8CNIjsg7avESKdj-SOCCesdC81r1OCrD53t4SCqzwMVkLK-lPkSVKriqSUVolfY3XwLLpBVrsT_jDRc-k_bUW-oG9Z1I7FIBmBj4fT0zELCxgLvw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "parisinriaai",
+        "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "perplexityai",
+        "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "seoulkaistai",
+        "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "singaporentu",
+        "public_key": "PUB_BLS_Uq_AC9wrzsP3hQ53FiVVUCyPqU3sjxtk3TBqJ76_cTdIs9B__tSe8iYAyo-8n38MA4Et8EUCbxx51qTSQ2V6A6COAqfpeHQMVd9IKc0CMam2rBBCvIcvSo5IEgx7UGUQowS9vA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "stabilityhub",
+        "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "tencentcloud",
+        "public_key": "PUB_BLS_qnTv-Ma-qS5JAAdirtJdCN0O6Lu1_2JjwGh8lPJIE9BMuzmUn4KR7q-UhT_lW4APHsDjUTIeiIRNYU6AHJZ9jz2WHGypqWINZBYhjFMGEk_8P1-FBOgCqHlSaHtq50IQFeCJPw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "tokyorikenai",
+        "public_key": "PUB_BLS_WA9JneGQncMhbX3w-dIeAGRJJlheAzmvKJuCuszgaUl1lBtfhgSJ6VtohnhFVwAShWoOjG7umfICUemfsdL3prC1sc_41R1CRJ4rH3HXltHPn8VPadeLTCoJyEGVHhoYazzgug",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      },
+      {
+        "description": "zurichethlab",
+        "public_key": "PUB_BLS_Nhkw_5dnw07V5pDSAk4y7C6ZUoyfgxGugTybT3-TfzsqbAzexIss4dH5KWGt7QsNcu7eyc7iP9SvE1GwdLWEMcS5jTqdXzKLnwWKewcR7jWUuGtNkweXz8mRWR-b2cMNVEDwIQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 62,
+        "voted_for_block_id": "0000982d270e7f98129a082b1372d03e2abdf1489a2b60dced456a9937230df6",
+        "voted_for_block_num": 38957,
+        "voted_for_block_timestamp": "2026-11-05T10:47:37.000"
+      }
+    ]
+  },
+  "consensus_parameters": {
+    "chain_config": {
+      "max_block_net_usage": 1048576,
+      "target_block_net_usage_pct": 1000,
+      "max_transaction_net_usage": 524288,
+      "base_per_transaction_net_usage": 12,
+      "net_usage_leeway": 500,
+      "context_free_discount_net_usage_num": 20,
+      "context_free_discount_net_usage_den": 100,
+      "max_block_cpu_usage": 800000,
+      "target_block_cpu_usage_pct": 1000,
+      "max_transaction_cpu_usage": 150000,
+      "min_transaction_cpu_usage": 100,
+      "max_transaction_lifetime": 3600,
+      "deferred_trx_expiration_window": 600,
+      "max_transaction_delay": 3888000,
+      "max_inline_action_size": 524288,
+      "max_inline_action_depth": 4,
+      "max_authority_depth": 6,
+      "max_action_return_value_size": 256
+    },
+    "wasm_config": {
+      "max_mutable_global_bytes": 1024,
+      "max_table_elements": 1024,
+      "max_section_elements": 8192,
+      "max_linear_memory_init": 65536,
+      "max_func_local_bytes": 8192,
+      "max_nested_structures": 1024,
+      "max_symbol_bytes": 8192,
+      "max_module_bytes": 20971520,
+      "max_code_bytes": 20971520,
+      "max_pages": 528,
+      "max_call_depth": 251
+    }
+  },
+  "BP_bonds": [
+    {
+      "owner": "alibabacloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855594,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "anthropiclab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855540,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "baiduaiworks",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855608,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "berlintulabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855685,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "bytedancelab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855615,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855694,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "cohereclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855565,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepmindlabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855552,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855545,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855500,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "londonucllab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855653,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "minimaxcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855622,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855559,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "moonshotlabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855630,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "nvidiaclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855586,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "openaiclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855533,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "parisinriaai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855677,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "perplexityai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855572,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "seoulkaistai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855668,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "singaporentu",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855637,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "stabilityhub",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855579,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "tencentcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855601,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "tokyorikenai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855661,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "zurichethlab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855645,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    }
+  ],
+  "self_and_ordinary_votes": {
+    "BPs": 24,
+    "ordinary": 90,
+    "all_BPs_covered": true,
+    "pairwise_distinct_totals": true
+  },
+  "AIC_stats": {
+    "supply": "100000000.0000 AIC",
+    "max_supply": "2100000000.0000 AIC",
+    "issuer": "eosio"
+  },
+  "archived_old26_disabled": {
+    "pureeos-keynet2-bp-brazilamazon-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-canadaboreal-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-cobaltspring-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-coherevision-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-finlandhaven-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-francegarden-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-germanycrest-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-glaciercrest-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-italyharbors-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-lunarcompass-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-maplecascade-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-mistralcloud-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-nebularlight-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-silverstream-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-stellarhaven-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-velvetforest-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-willowgarden-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-founder-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-history-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-keynet2-bp-anthropiclab-20261103.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    }
+  },
+  "old_receipt_SHA256": "6505ddeeb02aaace9973565f734e37784860bab31da7463ad4f18c7dabdf7678",
+  "ordinary": {
+    "status": "RUNNING",
+    "completed_batches": 336,
+    "business_transactions": 674,
+    "transfers": 605,
+    "ticks": 39,
+    "notes": 30,
+    "empty_blocks": 1942,
+    "batch_sizes": {
+      "2": 124,
+      "1": 105,
+      "3": 107
+    },
+    "UTC": "2026-11-05T10:47:01.794305+00:00"
+  },
+  "scope": "Read-only, no real-user mutation attempts; current controls supported by native58 real/hostile private fixtures. No TPS/capacity/absolute consensus-censorship guarantee."
+}

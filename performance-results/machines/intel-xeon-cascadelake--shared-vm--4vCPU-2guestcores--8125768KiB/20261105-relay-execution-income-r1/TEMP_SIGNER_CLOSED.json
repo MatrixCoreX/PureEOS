@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:53:38.854144+00:00",
+  "stopped_only_founder_signing_wallet": "pureeos-devnet-wallet-20261105.service",
+  "original25_node_PIDs_unchanged": true,
+  "ordinary_sender_relay_key_projection_active": true,
+  "claim_not_repeated": true
+}

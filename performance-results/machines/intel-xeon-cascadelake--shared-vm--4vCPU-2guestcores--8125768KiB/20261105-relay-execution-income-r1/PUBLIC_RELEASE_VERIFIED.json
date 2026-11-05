@@ -1,0 +1,172 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T11:03:36.923187+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "head": 40617,
+  "LIB": 40599,
+  "node_pids": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 415990,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 415049,
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": 416139,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 417069,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 416219,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 417139,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 415319,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 415177,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 415113,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 416566,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 416292,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 415241,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 416362,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 415917,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 414985,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 417001,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 415567,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 416876,
+    "pureeos-devnet-bp-singaporentu-20261105.service": 416429,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 415780,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 416057,
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": 416689,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 416500,
+    "pureeos-devnet-founder-20261105.service": 417216,
+    "pureeos-devnet-history-20261105.service": 414916
+  },
+  "original25_PIDs_unchanged": true,
+  "actual_native_policy": "21/15",
+  "AIC_stats": {
+    "supply": "100000000.0000 AIC",
+    "max_supply": "2100000000.0000 AIC",
+    "issuer": "eosio"
+  },
+  "live_units_observations": [
+    {
+      "pureeos-devnet-ordinary-activity-20261105.service": {
+        "MainPID": "451344",
+        "NRestarts": "10",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-purehistory-api-20261105.service": {
+        "MainPID": "398116",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-purehistory-indexer-20261105.service": {
+        "MainPID": "398008",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-key-history-20261105.service": {
+        "MainPID": "443928",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-relay-20261105.service": {
+        "MainPID": "443902",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    {
+      "pureeos-devnet-ordinary-activity-20261105.service": {
+        "MainPID": "451344",
+        "NRestarts": "10",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-purehistory-api-20261105.service": {
+        "MainPID": "398116",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-purehistory-indexer-20261105.service": {
+        "MainPID": "398008",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-key-history-20261105.service": {
+        "MainPID": "443928",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-relay-20261105.service": {
+        "MainPID": "443902",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    {
+      "pureeos-devnet-ordinary-activity-20261105.service": {
+        "MainPID": "451344",
+        "NRestarts": "10",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-purehistory-api-20261105.service": {
+        "MainPID": "398116",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-purehistory-indexer-20261105.service": {
+        "MainPID": "398008",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-key-history-20261105.service": {
+        "MainPID": "443928",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "pureeos-devnet-relay-20261105.service": {
+        "MainPID": "443902",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    }
+  ],
+  "ordinary_activity": {
+    "status": "RUNNING",
+    "completed_batches": 353,
+    "business_transactions": 704,
+    "UTC": "2026-11-05T11:03:36.723372+00:00",
+    "pending_batch": 354
+  },
+  "ordinary_last_rejection": {
+    "UTC": "2026-11-05T11:01:17.672346+00:00",
+    "batch": 352,
+    "rejected": [
+      {
+        "id": "846ec918e473f46b658a496a128b72dc3ca716ddb82bf09c2996fc4476da613e",
+        "status": "rejected",
+        "error": "{\"code\":500,\"message\":\"Internal Service Error\",\"error\":{\"code\":3080004,\"name\":\"tx_cpu_usage_exceeded\",\"what\":\"Transaction exceeded the current CPU usage limit imposed on the transaction\",\"details\":[{\"message\":\"transaction 846ec918e473f46b658a496a128b72dc3ca716ddb82bf09c2996fc4476da613e was executing for too long 366956us reached on chain max_transaction_cpu_usage 150000us\",\"file\":\"transaction_context.cpp\",\"line_number\":603,\"method\":\"checktime\"}]}}"
+      }
+    ]
+  },
+  "temporary_preview_and_founder_signer_stopped": true,
+  "release": "/var/www/aic-test/releases/20261105T105459Z-relay-execution-income-r1",
+  "public_variants": 4,
+  "public_views": 16,
+  "canonical_payment_cases": 12,
+  "public_asset_digests": {
+    "index.html": "6bee3d9a11d89f71df572b82d4c407fa136915b0e431d8792d544e34927436c6",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-Druvq4vp.js": "2229fd1551cbd0458e0676ce81307a4506971693fe987c415ce10ddc659ebeea",
+    "assets/index-DUbnafJU.css": "3e00623702907f32fab832b45930fbe8422dc4933e57dc33d4260d7339ac084a"
+  },
+  "retained_observation": "Initial one-shot all-services-active assertion failed during an ordinary sender transition. Follow-up sampled services active and completed batch >=351. Existing rejection/restart history retained; no controller or payment replay by this verifier.",
+  "scope": "Read-only current state after publication. No governance/payment replay, node reset/pause or new servers. Not a no-rejections/capacity qualification."
+}

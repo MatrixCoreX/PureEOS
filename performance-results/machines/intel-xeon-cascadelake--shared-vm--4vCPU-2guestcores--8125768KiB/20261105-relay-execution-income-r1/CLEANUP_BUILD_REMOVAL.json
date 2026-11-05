@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T11:04:25.850553+00:00",
+  "removed_path": "/home/guagua/AntelopeIO/cdt/build-pureeos",
+  "scope": "Only inactive ignored generated build. Full verified restore archive retained on local mounted Windows partition on the same NVMe. CDT source/Git, current remote toolchain, chain data and user worktrees retained.",
+  "archive": "/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/cdt-build-pureeos-20261105.tar.gz",
+  "archive_SHA256": "2b2851c9c371d2732e820702bf22422b14b968e80f973e04482be3dad257f392",
+  "entries_reverified": 23185,
+  "tracked_files": 0,
+  "process_references": [],
+  "removed_allocated_bytes": 2037272576,
+  "root_free_before": 23277387776,
+  "root_free_after": 25314652160,
+  "net_free_increase": 2037264384
+}

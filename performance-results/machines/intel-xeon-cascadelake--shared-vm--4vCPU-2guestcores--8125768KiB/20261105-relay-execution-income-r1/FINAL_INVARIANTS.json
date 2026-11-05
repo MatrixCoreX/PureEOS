@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:47:49.272935+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+  "raw_ABI_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+  "node_pids": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 415990,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 415049,
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": 416139,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 417069,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 416219,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 417139,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 415319,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 415177,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 415113,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 416566,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 416292,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 415241,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 416362,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 415917,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 414985,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 417001,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 415567,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 416876,
+    "pureeos-devnet-bp-singaporentu-20261105.service": 416429,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 415780,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 416057,
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": 416689,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 416500,
+    "pureeos-devnet-founder-20261105.service": 417216,
+    "pureeos-devnet-history-20261105.service": 414916
+  },
+  "original25PIDs_unchanged": true,
+  "upgrade_transaction_id": "b5a4334925216a1ceb068fa4a11e9fb694e4dc45d203ee53a7e2d4d4b26e05bb",
+  "upgrade_block": 35304,
+  "upgrade_block_id": "000089e84fedd94e71c91a737955e2419c1fd9ce2d34dce23b833a5ca12cfde1",
+  "review_elapsed_chain_seconds": 1869.5,
+  "native_CPU_us": 8191,
+  "native_NET_words": 6252,
+  "historical_founder_network_reserve_atoms": 1680,
+  "current_fee_buckets": [
+    {
+      "owner": "anthropiclab",
+      "network": 0,
+      "relay_earned": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "network": 0,
+      "relay_earned": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "network": 0,
+      "relay_earned": 0
+    },
+    {
+      "owner": "eosio.key",
+      "network": 1356,
+      "relay_earned": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "network": 1680,
+      "relay_earned": 0
+    },
+    {
+      "owner": "singaporentu",
+      "network": 0,
+      "relay_earned": 0
+    }
+  ],
+  "sole_relay_and_ordinary_history_running": true,
+  "scope": "Application-only TEST upgrade; no reset, TPS, BP/vote/bond/cap/native-system changes",
+  "complete_table_pages": [
+    {
+      "table": "feebuckets",
+      "lower_bound": "",
+      "rows": 6,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "pending",
+      "lower_bound": "",
+      "rows": 0,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "nativefees",
+      "lower_bound": "",
+      "rows": 0,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "relays",
+      "lower_bound": "",
+      "rows": 5,
+      "more": false,
+      "next_key": ""
+    }
+  ]
+}

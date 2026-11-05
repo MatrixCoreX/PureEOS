@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "same_original_packet": true,
+  "transaction_id": "c99b01485feb6dc98d6907ddaede89ecfacbdd22a351514b06b13994b513ce15",
+  "packet_SHA256": "6601da997705985c19de58709c9af372ceef2daedb1fed50ee68b2f5801015ec",
+  "explicit_native_rejection": true,
+  "canonical_absence": [
+    {
+      "block": 37468,
+      "id": "0000925c579a343270331597f7f836608680f9e11f6dfd3ff5e2b5dd363d9448"
+    },
+    {
+      "block": 37469,
+      "id": "0000925dfbd4eca478c44a5883b21260a0287addbc024c4fc0f09162a6298936"
+    },
+    {
+      "block": 37470,
+      "id": "0000925e89d71f8aade506a092313c09bee4586a3b195caa63c037891dcdc7eb"
+    },
+    {
+      "block": 37471,
+      "id": "0000925f0e2279665c62486e2fbe74407e60c53c7a2e9ea992cc37aacace391e"
+    },
+    {
+      "block": 37472,
+      "id": "000092606c8b4b78bc79709221956ae6972d60c1582f1a4c7eeede798d501047"
+    },
+    {
+      "block": 37473,
+      "id": "00009261e7bb2afce8ac6fbdb764afe254c8194eccd015f2e52ef24cd22015cc"
+    }
+  ],
+  "differences": {},
+  "confirmed_existing_successful_payments": [
+    "0ba4f4cd3b35c7e6fa2554512956c17f2528c347d64e97f1d3cb3e3fe46243ee",
+    "3ff39cfe3afeff40d4e9ecd9fa1e6742d2156500550c7d716d75b28ec6c0f6a0",
+    "432ce4c2e222d6e3045ed79710e5d0b2f5a1bd47a7dac6d1622782e9c7963622",
+    "4417881f2a85ffd17bb27b5f9fbc2c82840ad9a3b3390956336d10b2d51533cb",
+    "5554f57760bb5451deadd661e79bd2b68b331c7885fce5c536ee6a639ca140d9",
+    "5cc52ecdff0661246ac6933684f1d8aaf96060b3d2cf116024800612b6ab7486",
+    "7d30df90a87fb88a04f3ba465d9ca1b43298cf75ed1ef82eaf0240b54b2614a5",
+    "81c2dae037c9874934b95c7094cc5fb654c4ca94839f6cf32dbe4f677933fe7c",
+    "90dfe0b7af8f02154f119b487400e9ef98358a6528f411e090c2a2395a1c234e",
+    "a4155df20e49db9fef6172d5e30fd58b8274c6a880c7a55a2feb4313094b7055",
+    "e6de44b8fb2080a641eddc891b79d9d36e474170ca0aa34ebfa49447488a26c2",
+    "ed790b1c223f71c2234a0f06d10291936684aac0b18367d8fc9e7bafa3383757"
+  ]
+}

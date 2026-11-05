@@ -1,0 +1,721 @@
+{
+  "status": "PASS",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "cases": [
+    {
+      "label": "named-to-key first USD",
+      "transaction_id": "432ce4c2e222d6e3045ed79710e5d0b2f5a1bd47a7dac6d1622782e9c7963622",
+      "canonical_receipt": {
+        "transaction_id": "432ce4c2e222d6e3045ed79710e5d0b2f5a1bd47a7dac6d1622782e9c7963622",
+        "block_num": 35861,
+        "block_id": "00008c157e097dbb0be1a44771062b046fd0bd8e3bcb5a1a43126df10632e517",
+        "observed_lib": 35862,
+        "reported_block_num": 35860
+      },
+      "fee": {
+        "ticket": "432CE4C2E222D6E3045ED79710E5D0B2F5A1BD47A7DAC6D1622782E9C7963622",
+        "request_id": "76A17069E239D831AA11F3C79DC2E7B9768239DF44BF1110FE781AB7C035F8EB",
+        "total": "0.0208 AIC",
+        "ram_payment": "0.0037 AIC",
+        "retained_base": "0.0171 AIC",
+        "relay_fee": "0.0000 AIC",
+        "allocated_bytes": 1536,
+        "purchased_bytes": "1597"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0037 AIC",
+          "bytes": "1597",
+          "ram_bytes": "2205006",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 1597,
+      "SDK_quote": {
+        "base": "208",
+        "premium": "0",
+        "total": "208",
+        "execution": "171",
+        "storage": "37",
+        "supplement": "0",
+        "ram_bytes": 1536,
+        "base_asset": "0.0208 AIC",
+        "premium_asset": "0.0000 AIC",
+        "total_asset": "0.0208 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 0,
+        "multiplier": "21335",
+        "units": 8,
+        "rows": 2,
+        "head": 35856
+      }
+    },
+    {
+      "label": "named-to-key first AIC",
+      "transaction_id": "81c2dae037c9874934b95c7094cc5fb654c4ca94839f6cf32dbe4f677933fe7c",
+      "canonical_receipt": {
+        "transaction_id": "81c2dae037c9874934b95c7094cc5fb654c4ca94839f6cf32dbe4f677933fe7c",
+        "block_num": 35880,
+        "block_id": "00008c2897bd620b19e9d729b803f41828605136093dce854f79aad8e2b9e929",
+        "observed_lib": 35880,
+        "reported_block_num": 35878
+      },
+      "fee": {
+        "ticket": "81C2DAE037C9874934B95C7094CC5FB654C4CA94839F6CF32DBE4F677933FE7C",
+        "request_id": "3E4E04222BF38E09458C478F390A77DD5EE4372B08CE1BAFBB69E3C412A781B3",
+        "total": "0.0185 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0171 AIC",
+        "relay_fee": "0.0000 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2205582",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "185",
+        "premium": "0",
+        "total": "185",
+        "execution": "171",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0185 AIC",
+        "premium_asset": "0.0000 AIC",
+        "total_asset": "0.0185 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 0,
+        "multiplier": "21335",
+        "units": 8,
+        "rows": 1,
+        "head": 35875
+      }
+    },
+    {
+      "label": "named-to-key first CNY",
+      "transaction_id": "a4155df20e49db9fef6172d5e30fd58b8274c6a880c7a55a2feb4313094b7055",
+      "canonical_receipt": {
+        "transaction_id": "a4155df20e49db9fef6172d5e30fd58b8274c6a880c7a55a2feb4313094b7055",
+        "block_num": 35899,
+        "block_id": "00008c3b94bf8aa568d4b44d99a3f163c1034727cff50036c3ff44c8db4b1823",
+        "observed_lib": 35903,
+        "reported_block_num": 35896
+      },
+      "fee": {
+        "ticket": "A4155DF20E49DB9FEF6172D5E30FD58B8274C6A880C7A55A2FEB4313094B7055",
+        "request_id": "80997526B48291A1AA57DC5B242F8C26E26B1393A45CA1E60DAE2FD3011C298B",
+        "total": "0.0185 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0171 AIC",
+        "relay_fee": "0.0000 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2206158",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "185",
+        "premium": "0",
+        "total": "185",
+        "execution": "171",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0185 AIC",
+        "premium_asset": "0.0000 AIC",
+        "total_asset": "0.0185 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 0,
+        "multiplier": "21335",
+        "units": 8,
+        "rows": 1,
+        "head": 35893
+      }
+    },
+    {
+      "label": "key-to-key AIC new",
+      "transaction_id": "4417881f2a85ffd17bb27b5f9fbc2c82840ad9a3b3390956336d10b2d51533cb",
+      "canonical_receipt": {
+        "transaction_id": "4417881f2a85ffd17bb27b5f9fbc2c82840ad9a3b3390956336d10b2d51533cb",
+        "block_num": 35922,
+        "block_id": "00008c520872f73f49b1c10c07ed8c45e938e52e26c0fb4d1269940c0e9e9253",
+        "observed_lib": 35926
+      },
+      "fee": {
+        "ticket": "4417881F2A85FFD17BB27B5F9FBC2C82840AD9A3B3390956336D10B2D51533CB",
+        "request_id": "7E8A340E4F30A9D6B70CBE520818F718793864C0A80414F409A7B024714DACD2",
+        "total": "0.0299 AIC",
+        "ram_payment": "0.0037 AIC",
+        "retained_base": "0.0193 AIC",
+        "relay_fee": "0.0069 AIC",
+        "allocated_bytes": 1536,
+        "purchased_bytes": "1597"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0037 AIC",
+          "bytes": "1597",
+          "ram_bytes": "2207755",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 1597,
+      "SDK_quote": {
+        "base": "230",
+        "premium": "69",
+        "total": "299",
+        "execution": "193",
+        "storage": "37",
+        "supplement": "0",
+        "ram_bytes": 1536,
+        "base_asset": "0.0230 AIC",
+        "premium_asset": "0.0069 AIC",
+        "total_asset": "0.0299 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 9,
+        "rows": 2,
+        "head": 35915
+      }
+    },
+    {
+      "label": "key-to-key USD new",
+      "transaction_id": "e6de44b8fb2080a641eddc891b79d9d36e474170ca0aa34ebfa49447488a26c2",
+      "canonical_receipt": {
+        "transaction_id": "e6de44b8fb2080a641eddc891b79d9d36e474170ca0aa34ebfa49447488a26c2",
+        "block_num": 35959,
+        "block_id": "00008c7722259fa783c51555c9145ecfa4f6b23b2954bb09a3ffd244a35377f6",
+        "observed_lib": 35959
+      },
+      "fee": {
+        "ticket": "E6DE44B8FB2080A641EDDC891B79D9D36E474170CA0AA34EBFA49447488A26C2",
+        "request_id": "85C2F430EDFE38E48936B576B68CB6FC4837077BBB2C378950704158952FE6C5",
+        "total": "0.0270 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0193 AIC",
+        "relay_fee": "0.0063 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2208331",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "207",
+        "premium": "63",
+        "total": "270",
+        "execution": "193",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0207 AIC",
+        "premium_asset": "0.0063 AIC",
+        "total_asset": "0.0270 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 9,
+        "rows": 1,
+        "head": 35950
+      }
+    },
+    {
+      "label": "key-to-key CNY new",
+      "transaction_id": "7d30df90a87fb88a04f3ba465d9ca1b43298cf75ed1ef82eaf0240b54b2614a5",
+      "canonical_receipt": {
+        "transaction_id": "7d30df90a87fb88a04f3ba465d9ca1b43298cf75ed1ef82eaf0240b54b2614a5",
+        "block_num": 35993,
+        "block_id": "00008c99511560930bb8cd02574876f749270a5ac563b02765ed6128579b6db9",
+        "observed_lib": 35993
+      },
+      "fee": {
+        "ticket": "7D30DF90A87FB88A04F3BA465D9CA1B43298CF75ED1EF82EAF0240B54B2614A5",
+        "request_id": "AAA32097D5148C5306B2D9D1658FE7B0A57AFE58534798847145655F14336D7D",
+        "total": "0.0270 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0193 AIC",
+        "relay_fee": "0.0063 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2208907",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "207",
+        "premium": "63",
+        "total": "270",
+        "execution": "193",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0207 AIC",
+        "premium_asset": "0.0063 AIC",
+        "total_asset": "0.0270 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 9,
+        "rows": 1,
+        "head": 35990
+      }
+    },
+    {
+      "label": "key-to-key AIC existing",
+      "transaction_id": "5cc52ecdff0661246ac6933684f1d8aaf96060b3d2cf116024800612b6ab7486",
+      "canonical_receipt": {
+        "transaction_id": "5cc52ecdff0661246ac6933684f1d8aaf96060b3d2cf116024800612b6ab7486",
+        "block_num": 36013,
+        "block_id": "00008cad972a4b11267f4d854f9eb5bd5fd4bd78b5ae94f58922bc465b0fa761",
+        "observed_lib": 36013
+      },
+      "fee": {
+        "ticket": "5CC52ECDFF0661246AC6933684F1D8AAF96060B3D2CF116024800612B6AB7486",
+        "request_id": "B40642F4CAC923F8798F95EFCE12848861EDB9B45249484B555D8D31B56048E4",
+        "total": "0.0251 AIC",
+        "ram_payment": "0.0000 AIC",
+        "retained_base": "0.0193 AIC",
+        "relay_fee": "0.0058 AIC",
+        "allocated_bytes": 0,
+        "purchased_bytes": "0"
+      },
+      "native_RAM_purchase": [],
+      "quota_delta": 0,
+      "SDK_quote": {
+        "base": "193",
+        "premium": "58",
+        "total": "251",
+        "execution": "193",
+        "storage": "0",
+        "supplement": "0",
+        "ram_bytes": 0,
+        "base_asset": "0.0193 AIC",
+        "premium_asset": "0.0058 AIC",
+        "total_asset": "0.0251 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 9,
+        "rows": 0,
+        "head": 36009
+      }
+    },
+    {
+      "label": "key-to-named AIC unopened",
+      "transaction_id": "90dfe0b7af8f02154f119b487400e9ef98358a6528f411e090c2a2395a1c234e",
+      "canonical_receipt": {
+        "transaction_id": "90dfe0b7af8f02154f119b487400e9ef98358a6528f411e090c2a2395a1c234e",
+        "block_num": 36037,
+        "block_id": "00008cc5559689a9d351ac3b94355a8c092247abd26df2bac910fb40b620f88f",
+        "observed_lib": 36039
+      },
+      "fee": {
+        "ticket": "90DFE0B7AF8F02154F119B487400E9EF98358A6528F411E090C2A2395A1C234E",
+        "request_id": "34E9344CDC480FCDE2EDDF1EDAE84833639C00CA651A7CFB2107E8A99E7A1661",
+        "total": "0.0324 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0235 AIC",
+        "relay_fee": "0.0075 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2209483",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "249",
+        "premium": "75",
+        "total": "324",
+        "execution": "235",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0249 AIC",
+        "premium_asset": "0.0075 AIC",
+        "total_asset": "0.0324 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 11,
+        "rows": 1,
+        "head": 36033
+      }
+    },
+    {
+      "label": "key-to-named USD unopened",
+      "transaction_id": "0ba4f4cd3b35c7e6fa2554512956c17f2528c347d64e97f1d3cb3e3fe46243ee",
+      "canonical_receipt": {
+        "transaction_id": "0ba4f4cd3b35c7e6fa2554512956c17f2528c347d64e97f1d3cb3e3fe46243ee",
+        "block_num": 36068,
+        "block_id": "00008ce42f361d6ffb42d34ab6a79aedb2ea63e117b55c0d4f278b707f9a6b0e",
+        "observed_lib": 36069
+      },
+      "fee": {
+        "ticket": "0BA4F4CD3B35C7E6FA2554512956C17F2528C347D64E97F1D3CB3E3FE46243EE",
+        "request_id": "6B7C285D610DE87C23B18429EFAB4D3725B2CAF02A39AFFC7CEC969B0E4FA94B",
+        "total": "0.0324 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0235 AIC",
+        "relay_fee": "0.0075 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2210059",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "249",
+        "premium": "75",
+        "total": "324",
+        "execution": "235",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0249 AIC",
+        "premium_asset": "0.0075 AIC",
+        "total_asset": "0.0324 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 11,
+        "rows": 1,
+        "head": 36064
+      }
+    },
+    {
+      "label": "key-to-named CNY unopened",
+      "transaction_id": "5554f57760bb5451deadd661e79bd2b68b331c7885fce5c536ee6a639ca140d9",
+      "canonical_receipt": {
+        "transaction_id": "5554f57760bb5451deadd661e79bd2b68b331c7885fce5c536ee6a639ca140d9",
+        "block_num": 36095,
+        "block_id": "00008cffd3a6238f871d3367ad2473b7cd2cefcfb8756f260da43439f4ac496f",
+        "observed_lib": 36095
+      },
+      "fee": {
+        "ticket": "5554F57760BB5451DEADD661E79BD2B68B331C7885FCE5C536EE6A639CA140D9",
+        "request_id": "3C4D30CB0ACFD8D42F73832C352ACF63E94DCF4A9D9DD9746E09D6BE9896596B",
+        "total": "0.0324 AIC",
+        "ram_payment": "0.0014 AIC",
+        "retained_base": "0.0235 AIC",
+        "relay_fee": "0.0075 AIC",
+        "allocated_bytes": 512,
+        "purchased_bytes": "576"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0014 AIC",
+          "bytes": "576",
+          "ram_bytes": "2210635",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 576,
+      "SDK_quote": {
+        "base": "249",
+        "premium": "75",
+        "total": "324",
+        "execution": "235",
+        "storage": "14",
+        "supplement": "0",
+        "ram_bytes": 512,
+        "base_asset": "0.0249 AIC",
+        "premium_asset": "0.0075 AIC",
+        "total_asset": "0.0324 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 11,
+        "rows": 1,
+        "head": 36091
+      }
+    },
+    {
+      "label": "key-to-named USD existing",
+      "transaction_id": "ed790b1c223f71c2234a0f06d10291936684aac0b18367d8fc9e7bafa3383757",
+      "canonical_receipt": {
+        "transaction_id": "ed790b1c223f71c2234a0f06d10291936684aac0b18367d8fc9e7bafa3383757",
+        "block_num": 36124,
+        "block_id": "00008d1c97cb8e756b0180d0c3b54c6fa7346b0e34c0ab329447f097288461e3",
+        "observed_lib": 36124
+      },
+      "fee": {
+        "ticket": "ED790B1C223F71C2234A0F06D10291936684AAC0B18367D8FC9E7BAFA3383757",
+        "request_id": "943E227C3E928AAE7F3BF329DEFB0DB728149ECA23D32CE32F1E1F2E6DB1718E",
+        "total": "0.0306 AIC",
+        "ram_payment": "0.0000 AIC",
+        "retained_base": "0.0235 AIC",
+        "relay_fee": "0.0071 AIC",
+        "allocated_bytes": 0,
+        "purchased_bytes": "0"
+      },
+      "native_RAM_purchase": [],
+      "quota_delta": 0,
+      "SDK_quote": {
+        "base": "235",
+        "premium": "71",
+        "total": "306",
+        "execution": "235",
+        "storage": "0",
+        "supplement": "0",
+        "ram_bytes": 0,
+        "base_asset": "0.0235 AIC",
+        "premium_asset": "0.0071 AIC",
+        "total_asset": "0.0306 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 3000,
+        "multiplier": "21335",
+        "units": 11,
+        "rows": 0,
+        "head": 36121
+      }
+    },
+    {
+      "label": "named-to-USD-only key",
+      "transaction_id": "3ff39cfe3afeff40d4e9ecd9fa1e6742d2156500550c7d716d75b28ec6c0f6a0",
+      "canonical_receipt": {
+        "transaction_id": "3ff39cfe3afeff40d4e9ecd9fa1e6742d2156500550c7d716d75b28ec6c0f6a0",
+        "block_num": 36150,
+        "block_id": "00008d3633b811524104c56cd206c7f4a15a70af36a321c5d962766f0e6bbf03",
+        "observed_lib": 36150,
+        "reported_block_num": 36146
+      },
+      "fee": {
+        "ticket": "3FF39CFE3AFEFF40D4E9ECD9FA1E6742D2156500550C7D716D75B28EC6C0F6A0",
+        "request_id": "5C40D760F9698E3B0237C37FA361B84B8D6FBC2DD3CE8CB3F3B263DCEAE7A4C3",
+        "total": "0.0208 AIC",
+        "ram_payment": "0.0037 AIC",
+        "retained_base": "0.0171 AIC",
+        "relay_fee": "0.0000 AIC",
+        "allocated_bytes": 1536,
+        "purchased_bytes": "1597"
+      },
+      "native_RAM_purchase": [
+        {
+          "payer": "eosio.key",
+          "receiver": "eosio.key",
+          "quantity": "0.0037 AIC",
+          "bytes": "1597",
+          "ram_bytes": "2212232",
+          "fee": "0.0001 AIC"
+        }
+      ],
+      "quota_delta": 1597,
+      "SDK_quote": {
+        "base": "208",
+        "premium": "0",
+        "total": "208",
+        "execution": "171",
+        "storage": "37",
+        "supplement": "0",
+        "ram_bytes": 1536,
+        "base_asset": "0.0208 AIC",
+        "premium_asset": "0.0000 AIC",
+        "total_asset": "0.0208 AIC",
+        "ram_pricing": "atomic",
+        "relay_fee_bps": 0,
+        "multiplier": "21335",
+        "units": 8,
+        "rows": 2,
+        "head": 36143
+      }
+    }
+  ],
+  "checks": [
+    "named-to-key first USD conservative byte budget",
+    "named-to-key first USD exact fee equation",
+    "named-to-key first USD actual native RAM quota/cost",
+    "named-to-key first USD actual execution plus relay income and historical reserve preservation",
+    "named-to-key first USD unrelated fee buckets unchanged",
+    "Full named-to-key principal USD",
+    "Named sender additional actual AIC fee USD",
+    "named-to-key first AIC conservative byte budget",
+    "named-to-key first AIC exact fee equation",
+    "named-to-key first AIC actual native RAM quota/cost",
+    "named-to-key first AIC actual execution plus relay income and historical reserve preservation",
+    "named-to-key first AIC unrelated fee buckets unchanged",
+    "Full named-to-key principal AIC",
+    "Named sender additional actual AIC fee AIC",
+    "named-to-key first CNY conservative byte budget",
+    "named-to-key first CNY exact fee equation",
+    "named-to-key first CNY actual native RAM quota/cost",
+    "named-to-key first CNY actual execution plus relay income and historical reserve preservation",
+    "named-to-key first CNY unrelated fee buckets unchanged",
+    "Full named-to-key principal CNY",
+    "Named sender additional actual AIC fee CNY",
+    "key-to-key AIC new conservative byte budget",
+    "key-to-key AIC new exact fee equation",
+    "key-to-key AIC new actual native RAM quota/cost",
+    "key-to-key AIC new actual execution plus relay income and historical reserve preservation",
+    "key-to-key AIC new unrelated fee buckets unchanged",
+    "Full key-to-key principal AIC",
+    "key-to-key USD new conservative byte budget",
+    "key-to-key USD new exact fee equation",
+    "key-to-key USD new actual native RAM quota/cost",
+    "key-to-key USD new actual execution plus relay income and historical reserve preservation",
+    "key-to-key USD new unrelated fee buckets unchanged",
+    "Full key-to-key principal USD",
+    "key-to-key CNY new conservative byte budget",
+    "key-to-key CNY new exact fee equation",
+    "key-to-key CNY new actual native RAM quota/cost",
+    "key-to-key CNY new actual execution plus relay income and historical reserve preservation",
+    "key-to-key CNY new unrelated fee buckets unchanged",
+    "Full key-to-key principal CNY",
+    "key-to-key AIC existing conservative byte budget",
+    "key-to-key AIC existing exact fee equation",
+    "key-to-key AIC existing existing row buys no RAM",
+    "key-to-key AIC existing actual execution plus relay income and historical reserve preservation",
+    "key-to-key AIC existing unrelated fee buckets unchanged",
+    "Full key-to-key principal AIC",
+    "key-to-named AIC unopened conservative byte budget",
+    "key-to-named AIC unopened exact fee equation",
+    "key-to-named AIC unopened actual native RAM quota/cost",
+    "key-to-named AIC unopened actual execution plus relay income and historical reserve preservation",
+    "key-to-named AIC unopened unrelated fee buckets unchanged",
+    "Full key-to-named principal AIC",
+    "key-to-named USD unopened conservative byte budget",
+    "key-to-named USD unopened exact fee equation",
+    "key-to-named USD unopened actual native RAM quota/cost",
+    "key-to-named USD unopened actual execution plus relay income and historical reserve preservation",
+    "key-to-named USD unopened unrelated fee buckets unchanged",
+    "Full key-to-named principal USD",
+    "key-to-named CNY unopened conservative byte budget",
+    "key-to-named CNY unopened exact fee equation",
+    "key-to-named CNY unopened actual native RAM quota/cost",
+    "key-to-named CNY unopened actual execution plus relay income and historical reserve preservation",
+    "key-to-named CNY unopened unrelated fee buckets unchanged",
+    "Full key-to-named principal CNY",
+    "key-to-named USD existing conservative byte budget",
+    "key-to-named USD existing exact fee equation",
+    "key-to-named USD existing existing row buys no RAM",
+    "key-to-named USD existing actual execution plus relay income and historical reserve preservation",
+    "key-to-named USD existing unrelated fee buckets unchanged",
+    "Full key-to-named principal USD",
+    "named-to-USD-only key conservative byte budget",
+    "named-to-USD-only key exact fee equation",
+    "named-to-USD-only key actual native RAM quota/cost",
+    "named-to-USD-only key actual execution plus relay income and historical reserve preservation",
+    "named-to-USD-only key unrelated fee buckets unchanged",
+    "USD recipient needs no AIC",
+    "USD sender without AIC rejected without ledger/RAM/reserve mutation",
+    "Actual native signed fee-cap rejection atomically preserves ledger, quota and reserves",
+    "Legacy standalone fee transfer rejected with original immutable packet; no canonical receipt and full state unchanged",
+    "Full execution-plus-relay income irreversibly claimed once in full; zero application fee; complete network reserve unchanged"
+  ],
+  "scope": "New owned demo keys and bounded functional cases only, no TPS benchmark; ordinary90 keeps running with separate accounts/wallet, transfers only among its own voters and civiccounter calls, no KEY/issuer/founder balance or RAM mutations",
+  "ordinary_business_retained": true,
+  "public_keys": {
+    "A": "PUB_K1_6uF7CtYsjW1V78PBc5NGvFpNjmdkJbx8xoFU7ctc5oCEnba3Nc",
+    "B": "PUB_K1_7uApqkx42W6rxMmA49v6nhKhDnRefKKHYbQCeTVzo1WzaWvaev",
+    "USDonly": "PUB_K1_8ZGAaxvpavEa38Ytgf73boMeBcyikZqiKcWSciw7mwrUpvEv6j",
+    "named": "PUB_K1_5PimBodijqskt8EN3pbRn3tjc3SxPQcjDfQZ9C6nGokCsPBmek"
+  },
+  "named_recipient": "keyincomeqa1",
+  "bootstrap_RAM": {
+    "ram_quota": 2204809,
+    "ram_usage": 1766434
+  },
+  "native_cap_rejection": {
+    "transaction_id": "4432ca29e7cc7a4a40054aacd2734c86dcd90790968773e5ea819906c582db21",
+    "status": "native rejection; no successful canonical receipt",
+    "packet_SHA256": "4525843a6b69e06d06c4bf21ea921523ed0657bdd5cecea2f8ab338d424cd11b"
+  },
+  "initial_failure": "Traceback (most recent call last):\n  File \"/opt/pureeos-relay-execution-income-20261105-r1/verify_public_income.py\", line 121, in <module>\n    before=stable();f.tx(['transfer','gptgenesisbp','eosio.key','0.0100 AIC','fee'],failure='use atomic deposit');check(stable()==before,'Legacy standalone fee transfer atomically rejected')\n                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-relay-execution-income-20261105-r1/verify_public_income.py\", line 18, in check\n    assert ok,label;record['checks'].append(label);save();print('PASS '+label,flush=True)\n           ^^\nAssertionError: Legacy standalone fee transfer atomically rejected\n",
+  "reconciliation": {
+    "proof": "NEGATIVE_RECONCILIATION.json",
+    "same_original_packet": true,
+    "existing_12_payments_verified_not_resent": true,
+    "initial_snapshot_cause": "Not established; exact original-packet native rejection, canonical absence and full current snapshot verified",
+    "table_read_issue": "Legacy LocalTest.table ignores more/next_key. Captured network_atoms0 contradicted the complete captured six-row fee_buckets sum3036. Paginated complete reads and canonical receipt reconciliation correct verification without another claim.",
+    "original_claim_not_resent": true
+  },
+  "claim_verification_failure": "Traceback (most recent call last):\n  File \"/opt/pureeos-relay-execution-income-20261105-r1/reconcile_negative_and_claim.py\", line 47, in <module>\n    check(native('gptgenesisbp')-before_balance==earned and next(int(b['relay_earned'])for b in table('feebuckets')if b['owner']=='gptgenesisbp')==0 and sum(int(b['network'])for b in table('feebuckets'))==network,'Full execution-plus-relay income claimed with zero application fee; historical network reserve unchanged')\n  File \"public-income-helpers-only\", line 18, in check\n    reserves()\n           ^^\nAssertionError: Full execution-plus-relay income claimed with zero application fee; historical network reserve unchanged\n",
+  "free_claim": {
+    "atoms": 2261,
+    "canonical_receipt": {
+      "transaction_id": "1eee7ffeb5e7414841fbb732c0e910d01fd6043714fc28981093164bbe9a2881",
+      "block_num": 37478,
+      "block_id": "0000926643c0173e4b3c7e2601202c2e937c1933f9289027a654df9a541aae3a",
+      "observed_lib": 38485
+    },
+    "native_balance_before_atoms": 897340860,
+    "native_balance_after_atoms": 897343121,
+    "application_fee_atoms": 0,
+    "network_atoms_before": 3036,
+    "network_atoms_after": 3036,
+    "receipt": {
+      "kind": "claim",
+      "request_id": "0000000000000000000000000000000000000000000000000000000000000000",
+      "transaction_id": "1EEE7FFEB5E7414841FBB732C0E910D01FD6043714FC28981093164BBE9A2881",
+      "native_from": "gptgenesisbp",
+      "from_key": "0000000000000000000000000000000000000000000000000000000000000000",
+      "to_key": "0000000000000000000000000000000000000000000000000000000000000000",
+      "token_contract": "eosio.token",
+      "quantity": "0.2261 AIC",
+      "fee": "0.0000 AIC",
+      "relayer": "gptgenesisbp",
+      "auth_epoch": "0"
+    }
+  },
+  "finished_UTC": "2026-11-05T10:42:54.747305+00:00",
+  "nativefee_credit_rows": 0,
+  "reserves_exact": true,
+  "all_three_routes_all_three_tokens": true,
+  "HTTP_replay_same_native_ID": true
+}

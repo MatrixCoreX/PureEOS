@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:58:07.790615+00:00",
+  "stopped_only_temporary_preview": "pureeos-relay-income-preview-20261105.service",
+  "preview_variants": 4,
+  "scope": "Preview QA complete. Published static site/public QA and all live chain/application services retained."
+}

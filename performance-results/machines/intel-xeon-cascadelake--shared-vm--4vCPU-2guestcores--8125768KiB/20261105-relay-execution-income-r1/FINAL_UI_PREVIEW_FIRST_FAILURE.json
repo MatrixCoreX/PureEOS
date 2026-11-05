@@ -1,0 +1,5 @@
+{
+  "status": "FAIL",
+  "error": "TimeoutError: locator.waitFor: Timeout 60000ms exceeded.\nCall log:\n  - waiting for locator('.key-history a[href*=\"/transaction/\"]').first() to be visible\n    109 × locator resolved to hidden <a class=\"\" href=\"#/transaction/ed790b1c223f71c2234a0f06d10291936684aac0b18367d8fc9e7bafa3383757?receipt=7\">查看交易与对应收据</a>\n",
+  "variants": []
+}

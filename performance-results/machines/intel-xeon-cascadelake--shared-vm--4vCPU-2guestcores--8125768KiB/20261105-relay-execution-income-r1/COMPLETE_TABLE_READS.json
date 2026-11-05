@@ -1,0 +1,158 @@
+{
+  "status": "PASS",
+  "pages": [
+    {
+      "table": "feebuckets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 6,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "relays",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 5,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "config",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 1,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "wallets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 6,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "config",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 1,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "assets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 3,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "wallets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 6,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "balances",
+      "scope": "1",
+      "lower_bound": "",
+      "rows": 3,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "balances",
+      "scope": "2",
+      "lower_bound": "",
+      "rows": 3,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "balances",
+      "scope": "3",
+      "lower_bound": "",
+      "rows": 1,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "balances",
+      "scope": "4",
+      "lower_bound": "",
+      "rows": 3,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "balances",
+      "scope": "5",
+      "lower_bound": "",
+      "rows": 3,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "balances",
+      "scope": "6",
+      "lower_bound": "",
+      "rows": 1,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "assets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 3,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "nativefees",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 0,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "feebuckets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 6,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "pending",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 0,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "nativefees",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 0,
+      "more": false,
+      "next_key": ""
+    },
+    {
+      "table": "feebuckets",
+      "scope": "eosio.key",
+      "lower_bound": "",
+      "rows": 6,
+      "more": false,
+      "next_key": ""
+    }
+  ],
+  "no_incomplete_results_used": true
+}

@@ -1,0 +1,163 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T09:55:15.448Z",
+  "scope": "Actual normal public Chrome and canonical irreversible submission; no historical electorate/deadline inference",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "proposal_id": 1,
+      "native_vetoes": 0,
+      "history": {
+        "proposal_id": "1",
+        "target": "eosio.key",
+        "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+        "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+        "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "review_document_hash": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+        "authorization": [
+          {
+            "actor": "eosio.dev",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "2c2d8a7674fb7e961559d0beffbbd28a5eed7b7c0d1fe38074e0f058ccd09ffa",
+          "block_num": 31732,
+          "block_id": "00007bf49d6a4a5caa7f77081dce1489a0bd907d285b0c6673e0aa32ebb1260e",
+          "timestamp": "2026-11-05T09:43:25.500Z",
+          "action_ordinal": 2
+        },
+        "status": "pending",
+        "vetoes": []
+      },
+      "indexing": {
+        "irreversible_block": 32986,
+        "complete_proposal_sequence": true,
+        "vote_counts": "indexed_irreversible_actions",
+        "historical_deadlines_and_electorates": "not_inferred",
+        "source": "native_actions_and_canonical_block_receipts"
+      },
+      "errors": []
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "proposal_id": 1,
+      "native_vetoes": 0,
+      "history": {
+        "proposal_id": "1",
+        "target": "eosio.key",
+        "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+        "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+        "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "review_document_hash": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+        "authorization": [
+          {
+            "actor": "eosio.dev",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "2c2d8a7674fb7e961559d0beffbbd28a5eed7b7c0d1fe38074e0f058ccd09ffa",
+          "block_num": 31732,
+          "block_id": "00007bf49d6a4a5caa7f77081dce1489a0bd907d285b0c6673e0aa32ebb1260e",
+          "timestamp": "2026-11-05T09:43:25.500Z",
+          "action_ordinal": 2
+        },
+        "status": "pending",
+        "vetoes": []
+      },
+      "indexing": {
+        "irreversible_block": 33013,
+        "complete_proposal_sequence": true,
+        "vote_counts": "indexed_irreversible_actions",
+        "historical_deadlines_and_electorates": "not_inferred",
+        "source": "native_actions_and_canonical_block_receipts"
+      },
+      "errors": []
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "proposal_id": 1,
+      "native_vetoes": 0,
+      "history": {
+        "proposal_id": "1",
+        "target": "eosio.key",
+        "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+        "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+        "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "review_document_hash": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+        "authorization": [
+          {
+            "actor": "eosio.dev",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "2c2d8a7674fb7e961559d0beffbbd28a5eed7b7c0d1fe38074e0f058ccd09ffa",
+          "block_num": 31732,
+          "block_id": "00007bf49d6a4a5caa7f77081dce1489a0bd907d285b0c6673e0aa32ebb1260e",
+          "timestamp": "2026-11-05T09:43:25.500Z",
+          "action_ordinal": 2
+        },
+        "status": "pending",
+        "vetoes": []
+      },
+      "indexing": {
+        "irreversible_block": 33042,
+        "complete_proposal_sequence": true,
+        "vote_counts": "indexed_irreversible_actions",
+        "historical_deadlines_and_electorates": "not_inferred",
+        "source": "native_actions_and_canonical_block_receipts"
+      },
+      "errors": []
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "proposal_id": 1,
+      "native_vetoes": 0,
+      "history": {
+        "proposal_id": "1",
+        "target": "eosio.key",
+        "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+        "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+        "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+        "review_document_hash": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+        "authorization": [
+          {
+            "actor": "eosio.dev",
+            "permission": "upgrade"
+          }
+        ],
+        "submitted": {
+          "transaction_id": "2c2d8a7674fb7e961559d0beffbbd28a5eed7b7c0d1fe38074e0f058ccd09ffa",
+          "block_num": 31732,
+          "block_id": "00007bf49d6a4a5caa7f77081dce1489a0bd907d285b0c6673e0aa32ebb1260e",
+          "timestamp": "2026-11-05T09:43:25.500Z",
+          "action_ordinal": 2
+        },
+        "status": "pending",
+        "vetoes": []
+      },
+      "indexing": {
+        "irreversible_block": 33059,
+        "complete_proposal_sequence": true,
+        "vote_counts": "indexed_irreversible_actions",
+        "historical_deadlines_and_electorates": "not_inferred",
+        "source": "native_actions_and_canonical_block_receipts"
+      },
+      "errors": []
+    }
+  ]
+}

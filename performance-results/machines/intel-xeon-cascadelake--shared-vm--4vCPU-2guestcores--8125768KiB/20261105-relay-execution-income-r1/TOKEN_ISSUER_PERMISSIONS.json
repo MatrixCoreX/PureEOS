@@ -1,0 +1,211 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:54:34.231694+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "observed_LIB": 39728,
+  "tokens": {
+    "usd": {
+      "stats": {
+        "USD": {
+          "supply": "10000.0000 USD",
+          "max_supply": "1000000.0000 USD",
+          "issuer": "usd"
+        }
+      },
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "usd",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "privileged": false
+    },
+    "cny": {
+      "stats": {
+        "CNY": {
+          "supply": "10000.0000 CNY",
+          "max_supply": "1000000.0000 CNY",
+          "issuer": "cny"
+        }
+      },
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "cny",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ],
+      "privileged": false
+    }
+  },
+  "developer_permissions": [
+    {
+      "perm_name": "active",
+      "parent": "owner",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "civicgovlead",
+              "permission": "active"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": []
+    },
+    {
+      "perm_name": "owner",
+      "parent": "",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "civicgovlead",
+              "permission": "owner"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": []
+    },
+    {
+      "perm_name": "upgrade",
+      "parent": "active",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "civicgovauth",
+              "permission": "active"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": [
+        {
+          "account": "eosio",
+          "action": "refreshgov"
+        },
+        {
+          "account": "eosio",
+          "action": "devpropose"
+        },
+        {
+          "account": "eosio",
+          "action": "devcancel"
+        },
+        {
+          "account": "eosio",
+          "action": "devexec"
+        },
+        {
+          "account": "eosio",
+          "action": "syspropose"
+        },
+        {
+          "account": "eosio",
+          "action": "syscancel"
+        },
+        {
+          "account": "eosio",
+          "action": "sysexec"
+        }
+      ]
+    }
+  ],
+  "scope": "Read-only current issuer/account authority. No issuance, cap or permission mutation."
+}

@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T10:47:51.500Z",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "views": [
+    {
+      "label": "A",
+      "holdings": [
+        {
+          "contract": "eosio.token",
+          "symbol": "AIC",
+          "amount": "147674"
+        },
+        {
+          "contract": "usd",
+          "symbol": "USD",
+          "amount": "965000"
+        },
+        {
+          "contract": "cny",
+          "symbol": "CNY",
+          "amount": "970000"
+        }
+      ],
+      "history_entries": 11
+    },
+    {
+      "label": "B",
+      "holdings": [
+        {
+          "contract": "eosio.token",
+          "symbol": "AIC",
+          "amount": "40000"
+        },
+        {
+          "contract": "usd",
+          "symbol": "USD",
+          "amount": "20000"
+        },
+        {
+          "contract": "cny",
+          "symbol": "CNY",
+          "amount": "20000"
+        }
+      ],
+      "history_entries": 4
+    },
+    {
+      "label": "USDonly",
+      "holdings": [
+        {
+          "contract": "usd",
+          "symbol": "USD",
+          "amount": "20000"
+        }
+      ],
+      "history_entries": 1
+    },
+    {
+      "label": "named",
+      "holdings": [],
+      "history_entries": 0
+    }
+  ],
+  "canonical_transactions": 12,
+  "scope": "Read-only; no historical payment or claim resent; unchanged old balances and original per-receipt fees."
+}

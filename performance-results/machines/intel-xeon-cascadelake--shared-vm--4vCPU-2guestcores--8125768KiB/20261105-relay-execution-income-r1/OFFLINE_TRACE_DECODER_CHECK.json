@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "action": "logbuyram",
+      "ABI_SHA256": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+      "actual_public_case_roundtrip": true,
+      "JSON_integer_and_hash_case_normalized": true
+    },
+    {
+      "action": "feereceipt",
+      "ABI_SHA256": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+      "actual_public_case_roundtrip": true,
+      "JSON_integer_and_hash_case_normalized": true
+    }
+  ]
+}
