@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_
    f.init_data=usd;f.propose("gold"_n,10000);const auto id3=f.creation().proposal_id;f.advance_to(f.creation().execute_after);
    const auto funds=f.balance("developer"_n);const auto state=fc::raw::pack(f.creation());
    BOOST_CHECK_THROW(execute(id3,usd),fc::exception);
-   BOOST_CHECK(!f.chain.control->db().find<account_object,by_name>("gold"_n));
+   BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("gold"_n)));
    BOOST_CHECK(!is_protected_system_account(f.chain.control->db(),"gold"_n));
    BOOST_CHECK_EQUAL(f.balance("developer"_n),funds);BOOST_CHECK(fc::raw::pack(f.creation())==state);
    inspect("usd"_n,0x445355,"4,USD");inspect("cny"_n,0x594e43,"4,CNY");
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(new_ordinary_issuers_delegate_to_account_owner_without_syst
    BOOST_CHECK_THROW(execute(id1,usd),fc::exception);f.advance_to(f.creation().execute_after);
    const auto funds=f.balance("developer"_n);auto changed=usd;changed.back()^=1;
    BOOST_CHECK_THROW(execute(id1,changed),fc::exception);BOOST_CHECK_EQUAL(f.balance("developer"_n),funds);
-   BOOST_CHECK(!f.chain.control->db().find<account_object,by_name>("usd"_n));
+   BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("usd"_n)));
    BOOST_REQUIRE_NO_THROW(execute(id1,usd));BOOST_REQUIRE_NO_THROW(execute(id2,cny));
    for(auto target:{"usd"_n,"cny"_n}) {
       const auto& manager=f.chain.control->get_authorization_manager();
