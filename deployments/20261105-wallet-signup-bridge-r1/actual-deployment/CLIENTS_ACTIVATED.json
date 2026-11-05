@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T15:09:40.353765+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "codes": {
+    "8888": {
+      "eosio.key": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+      "eosio.signup": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "eosio": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "eosio.token": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+    },
+    "8890": {
+      "eosio.key": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+      "eosio.signup": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "eosio": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "eosio.token": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+    }
+  },
+  "observed_LIB": 62356,
+  "units": [
+    "pureeos-devnet-relay-20261105.service",
+    "pureeos-devnet-key-history-20261105.service"
+  ],
+  "health": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "original_terminal_jobs_preserved": 18,
+  "sole_relay_registration_and_authority_unchanged": true,
+  "original_native_processes_unchanged": true,
+  "runtime_manifest_sha256": "6114a2fae9e23d6706e232ae1a9ede82b1333034fcf6e8f01a5cb231ad3aecc6"
+}

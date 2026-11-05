@@ -1,0 +1,14 @@
+{
+  "status": "STAGED_QUALIFIED_NOT_ACTIVATED",
+  "archive_SHA256": "473424989d4afc2e898a4583ddeae2b97577780140a045404d0d473ab2f9465b",
+  "files": {
+    "package.json": "1a46d3230ac24669a3a7fc9a91cae2c5699bc059eb3da08bc5c3eb0b5c191833",
+    "package-lock.json": "d014f448c11bc9cca4d3e2b4b71c72d6d18ca7c5a42639e0334c3ed3c24bd0b2",
+    "sdk/index.mjs": "44c77658a5b8bc1113bfe8f2de4123337dbfdc6253afb15e8dc60616f938d1c9",
+    "sdk/fee-profiles.mjs": "023cb6f6a50fd9bf9907dee6162713b43b606cf6fbe31f534ed15db0c63b613f",
+    "abi/eosio.key.abi": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+    "relayer/server.mjs": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44"
+  },
+  "exact_shipped_SDK28_source_equal": true,
+  "ABI_unchanged": true
+}

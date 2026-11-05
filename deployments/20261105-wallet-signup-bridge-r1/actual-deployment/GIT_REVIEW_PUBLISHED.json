@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "reviews": {
+    "signup": {
+      "sha256": "8af42831bfcd3a55151624ffc247d5e241a178bce5683b9e712b19b7724ac2de",
+      "new_code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "raw_ABI_hash": "6858916070985e06486fe9131ae6fec06079963699beaea93840adedb2c6020c"
+    },
+    "key": {
+      "sha256": "6c076a5bb3e23781fbf1cdb295ecb5f8dfcedde484596b85d6a66954e3d50487",
+      "new_code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+      "raw_ABI_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83"
+    }
+  },
+  "published_refs": {
+    "key": {
+      "commit": "1aef2b6e68c6471b6002a2e374f7cd8562f08901",
+      "branch": "feature/key-signup-bridge-20261105",
+      "review_url": "https://github.com/MatrixCoreX/PureEOS/blob/1aef2b6e68c6471b6002a2e374f7cd8562f08901/deployments/20261105-wallet-signup-bridge-r1/REVIEW.json"
+    },
+    "signup": {
+      "commit": "d2cc3d3f0446caf2c26c085f09e6ee277e317814",
+      "branch": "feature/signup-key-bridge-20261105",
+      "review_url": "https://github.com/MatrixCoreX/PureEOS/blob/d2cc3d3f0446caf2c26c085f09e6ee277e317814/deployments/20261105-wallet-signup-bridge-r1/REVIEW.json"
+    }
+  },
+  "source_commits": {
+    "key": "e148b039d2b8759e9336dd1b4fd50167f70cb085",
+    "signup": "d28a5c5b21f2d8ed8dc3bf15ae70a00688267c35"
+  },
+  "operational_revision": 4
+}
