@@ -16,6 +16,7 @@ constexpr uint32_t creation_authority_version = 1;
 constexpr uint32_t max_creation_code_bytes = 16 * 1024 * 1024;
 constexpr uint32_t max_creation_abi_bytes = 1024 * 1024;
 constexpr int64_t max_creation_ram_payment = 10000 * 10000ll; // Reviewed bounded bootstrap, never a treasury permission.
+constexpr int64_t proposal_ram_reservation = 1024 + 16 * max_upgrade_voters;
 
 bool activated(const apply_context& ctx) {
    return ctx.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_system_account_governance);
@@ -99,7 +100,25 @@ bool exact_parent_action(const apply_context& ctx,uint32_t ordinal,action_name n
 }
 
 const system_account_proposal_object* find_system_account_proposal(const chainbase::database& db) {
-   const auto& index=db.get_index<system_account_proposal_index,by_id>();return index.empty()?nullptr:&*index.begin();
+   const auto& index=db.get_index<system_account_proposal_index,by_id>();return index.empty()?nullptr:&*index.rbegin();
+}
+const system_account_proposal_object* find_system_account_proposal(const chainbase::database& db,uint64_t id) {
+   const auto& index=db.get_index<system_account_proposal_index,by_id>();
+   for(const auto& state:index)if(state.proposal_id==id)return &state;
+   return nullptr;
+}
+namespace {
+void prune_completed(apply_context& ctx) {
+   const auto* latest=find_system_account_proposal(ctx.db);
+   const auto& index=ctx.db.get_index<system_account_proposal_index,by_id>();
+   for(auto it=index.begin();it!=index.end();) {
+      const auto& state=*it++;
+      if(&state!=latest && !state.pending) {
+         ctx.db.remove(state);
+         ctx.add_ram_usage(find_upgrade_governance(ctx.db)->developer,-proposal_ram_reservation);
+      }
+   }
+}
 }
 upgrade_effective_tally get_system_account_effective_tally(const chainbase::database& db,const system_account_proposal_object& state) {
    upgrade_effective_tally tally;
@@ -120,12 +139,19 @@ void apply_eosio_syspropose(apply_context& ctx) {
    EOS_ASSERT(ctx.trx_context.upgrade_voters_action_ordinal && ordinal==*ctx.trx_context.upgrade_voters_action_ordinal+1,
               action_validate_exception,"syspropose must immediately follow refreshgov in the same transaction");
    ctx.trx_context.upgrade_voters_action_ordinal.reset();
-   const auto* state=find_system_account_proposal(ctx.db);
-   EOS_ASSERT(!state || !state->pending,action_validate_exception,"cancel or execute the previous system account proposal first");
+   const auto* latest=find_system_account_proposal(ctx.db);
+   const auto next_id=latest?latest->proposal_id+1:1;
+   EOS_ASSERT(!latest || latest->proposal_id<std::numeric_limits<uint64_t>::max(),action_validate_exception,"creation proposal id exhausted");
+   uint32_t active_count=0;
+   for(const auto& active:ctx.db.get_index<system_account_proposal_index,by_id>())if(active.pending) {
+      ++active_count;
+      EOS_ASSERT(active.target!=args.target,action_validate_exception,"target already has a pending system account proposal");
+   }
+   EOS_ASSERT(active_count<max_pending_system_account_proposals,action_validate_exception,"parallel system account proposal capacity exhausted");
    EOS_ASSERT((valid_target(args.target) && !ctx.db.find<account_object,by_name>(args.target)),
               action_validate_exception,"target must be a new permitted eosio.* or ordinary short account");
    check_short_name_auction(ctx,args.target);
-   EOS_ASSERT(gov.protected_accounts.size()<64 && !is_protected_system_account(ctx.db,args.target),
+   EOS_ASSERT(gov.protected_accounts.size()+active_count<64 && !is_protected_system_account(ctx.db,args.target),
               action_validate_exception,"protected account capacity exhausted or target already protected");
    EOS_ASSERT(args.resource_payer!=account_name{} && !is_protected_system_account(ctx.db,args.resource_payer),
               action_validate_exception,"resource payer must be an existing non-system account");
@@ -142,14 +168,10 @@ void apply_eosio_syspropose(apply_context& ctx) {
    const auto token_hash=ctx.db.get<account_metadata_object,by_name>("eosio.token"_n).code_hash;
    EOS_ASSERT(system_hash!=digest_type{} && token_hash!=digest_type{},action_validate_exception,
               "reviewed system and fee-token code must exist");
-   if(!state) {
-      state=&ctx.db.create<system_account_proposal_object>([](auto&){});
-      // Fixed logical reservation, independent of compiler object layout.
-      ctx.add_ram_usage(gov.developer,1024+16*max_upgrade_voters);
-   }
-   EOS_ASSERT(state->proposal_id<std::numeric_limits<uint64_t>::max(),action_validate_exception,"creation proposal id exhausted");
+   const auto* state=&ctx.db.create<system_account_proposal_object>([](auto&){});
+   ctx.add_ram_usage(gov.developer,proposal_ram_reservation);
    ctx.db.modify(*state,[&](auto& s){
-      ++s.proposal_id;s.pending=true;s.outcome=0;s.completed_at=time_point{};
+      s.proposal_id=next_id;s.pending=true;s.outcome=0;s.completed_at=time_point{};
       s.target=args.target;s.resource_payer=args.resource_payer;s.ram_payment=args.ram_payment;
       s.authority_version=args.authority_version;s.code_bytes=args.code_bytes;s.abi_bytes=args.abi_bytes;
       s.code_hash=args.code_hash;s.abi_hash=args.abi_hash;s.review_document_hash=args.review_document_hash;
@@ -157,11 +179,12 @@ void apply_eosio_syspropose(apply_context& ctx) {
       s.review_seconds=review_seconds(ctx);s.proposed_at=ctx.control.pending_block_time();s.execute_after=s.proposed_at+fc::seconds(s.review_seconds);
       s.proposal_voters=gov.current_voters;s.vetoes.clear();
    });
+   prune_completed(ctx);
 }
 
 void apply_eosio_sysveto(apply_context& ctx) {
    if(!activated(ctx))return;
-   enabled(ctx);const auto args=ctx.get_action().data_as<sysveto>();const auto* state=find_system_account_proposal(ctx.db);pending(state,args.proposal_id);
+   enabled(ctx);const auto args=ctx.get_action().data_as<sysveto>();const auto* state=find_system_account_proposal(ctx.db,args.proposal_id);pending(state,args.proposal_id);
    if(args.voter=="eosio"_n)ctx.require_authorization(args.voter,"veto"_n);else ctx.require_authorization(args.voter);
    EOS_ASSERT(ctx.control.pending_block_time()<state->execute_after,action_validate_exception,"system account veto period has ended");
    EOS_ASSERT(std::binary_search(state->proposal_voters.begin(),state->proposal_voters.end(),args.voter) &&
@@ -172,15 +195,17 @@ void apply_eosio_sysveto(apply_context& ctx) {
 }
 void apply_eosio_syscancel(apply_context& ctx) {
    if(!activated(ctx))return;
-   const auto& gov=enabled(ctx);require_developer(ctx,gov);const auto* state=find_system_account_proposal(ctx.db);
-   pending(state,ctx.get_action().data_as<syscancel>().proposal_id);
+   const auto& gov=enabled(ctx);require_developer(ctx,gov);
+   const auto id=ctx.get_action().data_as<syscancel>().proposal_id;
+   const auto* state=find_system_account_proposal(ctx.db,id);pending(state,id);
    ctx.db.modify(*state,[&](auto& s){s.pending=false;s.outcome=2;s.completed_at=ctx.control.pending_block_time();});
+   prune_completed(ctx);
 }
 
 void apply_eosio_sysexec(apply_context& ctx) {
    if(!activated(ctx))return;
    const auto& gov=enabled(ctx);require_developer(ctx,gov);const auto args=ctx.get_action().data_as<sysexec>();
-   const auto* state=find_system_account_proposal(ctx.db);pending(state,args.proposal_id);
+   const auto* state=find_system_account_proposal(ctx.db,args.proposal_id);pending(state,args.proposal_id);
    // The sponsor explicitly signs execution; a developer proposal cannot debit
    // an arbitrary account or spend unbounded system treasury funds.
    ctx.require_authorization(state->resource_payer,config::active_name);
@@ -223,7 +248,7 @@ void apply_eosio_sysstage(apply_context& ctx) {
    const auto& root=ctx.trx_context.trace->action_traces[permit->parent_action_ordinal-1];
    EOS_ASSERT(root.creator_action_ordinal.value==0,action_validate_exception,"system account staging parent must be top-level sysexec");
    const auto args=ctx.get_action().data_as<sysstage>();
-   const auto* state=find_system_account_proposal(ctx.db);pending(state,args.proposal_id);
+   const auto* state=find_system_account_proposal(ctx.db,args.proposal_id);pending(state,args.proposal_id);
    EOS_ASSERT(permit->creation_proposal_id==args.proposal_id && permit->target==state->target &&
               permit->code_hash==state->code_hash && permit->abi_hash==state->abi_hash,
               action_validate_exception,"system account staging proposal or capability mismatch");
@@ -269,7 +294,7 @@ bool consume_system_account_creation(apply_context& ctx,const newaccount& args) 
               ctx.get_current_action_trace().creator_action_ordinal.value==permit->parent_action_ordinal &&
               fc::raw::pack(args.owner)==fc::raw::pack(creation_owner()) && fc::raw::pack(args.active)==fc::raw::pack(creation_active(args.name)),
               action_validate_exception,"system account creation does not match its single-use reviewed capability");
-   const auto* state=find_system_account_proposal(ctx.db);pending(state,permit->creation_proposal_id);
+   const auto* state=find_system_account_proposal(ctx.db,permit->creation_proposal_id);pending(state,permit->creation_proposal_id);
    EOS_ASSERT(state->target==args.name,action_validate_exception,"system account creation target mismatch");
    permit->account_created=true;return true;
 }
@@ -282,7 +307,7 @@ void apply_eosio_sysfinish(apply_context& ctx) {
               exact_parent_action(ctx,permit->parent_action_ordinal,"sysstage"_n),
               action_validate_exception,"system account finalization requires its exact reviewed native parent");
    ctx.require_authorization("eosio"_n,config::active_name);
-   const auto* state=find_system_account_proposal(ctx.db);pending(state,args.proposal_id);
+   const auto* state=find_system_account_proposal(ctx.db,args.proposal_id);pending(state,args.proposal_id);
    const auto& metadata=ctx.db.get<account_metadata_object,by_name>(state->target);
    const auto& account=ctx.db.get<account_object,by_name>(state->target);
    EOS_ASSERT(!metadata.is_privileged() && metadata.code_hash==state->code_hash &&
@@ -299,5 +324,6 @@ void apply_eosio_sysfinish(apply_context& ctx) {
    ctx.add_ram_usage(state->target,int64_t(owner.auth.get_billable_size())-int64_t(old));
    ctx.db.modify(*state,[&](auto& s){s.pending=false;s.outcome=1;s.completed_at=ctx.control.pending_block_time();});
    permit->account_creation_authorized=false;
+   prune_completed(ctx);
 }
 }

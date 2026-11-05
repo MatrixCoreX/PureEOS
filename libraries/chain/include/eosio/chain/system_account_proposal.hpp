@@ -6,6 +6,7 @@ namespace eosio::chain {
 // Version2 keeps sealed authorities and binds one target::init payload plus
 // the human review hash into the existing native review commitment.
 constexpr uint32_t max_system_account_init_bytes = 4096;
+constexpr uint32_t max_pending_system_account_proposals = 4;
 
 // A separate, bounded proposal lane preserves any existing reviewed contract
 // upgrade (including a vetoed pending proposal). All actions require the new
@@ -76,6 +77,7 @@ using system_account_proposal_index = chainbase::shared_multi_index_container<sy
       system_account_proposal_object::id_type, &system_account_proposal_object::id>>>>;
 
 const system_account_proposal_object* find_system_account_proposal(const chainbase::database&);
+const system_account_proposal_object* find_system_account_proposal(const chainbase::database&, uint64_t proposal_id);
 upgrade_effective_tally get_system_account_effective_tally(const chainbase::database&, const system_account_proposal_object&);
 bool consume_system_account_creation(apply_context&, const newaccount&);
 void apply_eosio_syspropose(apply_context&);

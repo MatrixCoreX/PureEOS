@@ -380,3 +380,105 @@ BOOST_AUTO_TEST_CASE(system_creation_activated_snapshot_rejects_downgraded_heade
    BOOST_CHECK_EXCEPTION(restored.init(cfg,variant_snapshot_suite::get_reader(downgraded)),snapshot_exception,
       [](const auto& error){return error.to_detail_string().find("requires snapshot version11")!=std::string::npos;});
 }
+
+namespace {
+std::vector<std::pair<uint64_t,bytes>> creation_records(const system_account_fixture& f) {
+   std::vector<std::pair<uint64_t,bytes>> rows;
+   for(const auto& s:f.chain.control->db().get_index<system_account_proposal_index,by_id>())
+      rows.emplace_back(s.proposal_id,fc::raw::pack(s));
+   return rows;
+}
+const system_account_proposal_object& creation_by_id(const system_account_fixture& f,uint64_t id) {
+   const auto* p=find_system_account_proposal(f.chain.control->db(),id);BOOST_REQUIRE(p);return *p;
+}
+void propose_four(system_account_fixture& f) {
+   std::vector<action> actions;
+   for(auto target:{"eosio.key"_n,"usd"_n,"cny"_n,"eosio.signup"_n}) {
+      actions.push_back(f.refresh(f.nodes));
+      actions.emplace_back(std::vector<permission_level>{{"developer"_n,"upgrade"_n}},f.creation_args(target));
+   }
+   f.push(std::move(actions),"developer"_n);
+}
+transaction_trace_ptr execute_id(system_account_fixture& f,uint64_t id) {
+   return f.push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},
+      sysexec{id,f.upgrade_code,f.upgrade_abi})},"developer"_n);
+}
+}
+
+BOOST_AUTO_TEST_CASE(system_creation_parallel_four_have_independent_frozen_reviews_and_bounded_slots) {
+   system_account_fixture f;f.propose();f.veto(f.nodes[0]);const auto legacy=fc::raw::pack(f.state());
+   BOOST_REQUIRE_NO_THROW(propose_four(f));BOOST_CHECK_EQUAL(f.creation().proposal_id,4u);
+   const auto deadline=creation_by_id(f,1).execute_after;
+   BOOST_CHECK_EQUAL(creation_records(f).size(),4u);
+   for(uint64_t id=1;id<=4;++id) {
+      const auto& s=creation_by_id(f,id);BOOST_CHECK(s.pending&&s.execute_after==deadline);
+      BOOST_CHECK(s.proposal_voters==creation_by_id(f,1).proposal_voters);
+      BOOST_CHECK(s.execute_after-s.proposed_at==fc::seconds(PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS));
+      BOOST_CHECK_THROW(execute_id(f,id),fc::exception);
+   }
+   const auto before=creation_records(f);
+   BOOST_CHECK_THROW(f.propose_creation(f.creation_args("gold"_n)),fc::exception);
+   BOOST_CHECK_THROW(f.propose_creation(f.creation_args("usd"_n)),fc::exception);
+   BOOST_CHECK(creation_records(f)==before&&fc::raw::pack(f.state())==legacy);
+}
+
+BOOST_AUTO_TEST_CASE(system_creation_parallel_veto_cancel_and_execution_are_per_id) {
+   system_account_fixture f;propose_four(f);
+   for(size_t i=0;i<3;++i)f.native(sysveto{f.nodes[i],1},f.nodes[i]);
+   f.native(sysveto{f.nodes[0],3},f.nodes[0]);
+   BOOST_CHECK_EQUAL(creation_by_id(f,1).vetoes.size(),3u);
+   BOOST_CHECK(creation_by_id(f,2).vetoes.empty()&&creation_by_id(f,4).vetoes.empty());
+   f.advance_to(creation_by_id(f,1).execute_after);
+   BOOST_CHECK_THROW(execute_id(f,1),fc::exception);
+   const auto one=fc::raw::pack(creation_by_id(f,1)),four=fc::raw::pack(creation_by_id(f,4));
+   BOOST_REQUIRE_NO_THROW(execute_id(f,2));BOOST_CHECK(f.exists("usd"_n));
+   BOOST_CHECK(!find_system_account_proposal(f.chain.control->db(),2));
+   BOOST_CHECK(fc::raw::pack(creation_by_id(f,1))==one&&fc::raw::pack(creation_by_id(f,4))==four);
+   f.native(syscancel{3},"developer"_n,"upgrade"_n);
+   BOOST_CHECK(!find_system_account_proposal(f.chain.control->db(),3));
+   f.propose_creation(f.creation_args("cny"_n));BOOST_CHECK_EQUAL(f.creation().proposal_id,5u);
+   BOOST_CHECK(f.creation().vetoes.empty());BOOST_CHECK_THROW(execute_id(f,5),fc::exception);
+   BOOST_CHECK_THROW(f.native(sysveto{f.nodes[0],2},f.nodes[0]),fc::exception);
+   BOOST_CHECK_THROW(f.native(syscancel{4},"alice"_n),fc::exception);
+   BOOST_REQUIRE_NO_THROW(execute_id(f,4));BOOST_CHECK(f.exists("eosio.signup"_n));
+   BOOST_CHECK(creation_by_id(f,1).pending&&creation_by_id(f,5).pending);
+}
+
+BOOST_AUTO_TEST_CASE(system_creation_parallel_atomic_failures_and_completed_state_pruning) {
+   system_account_fixture f;propose_four(f);f.advance_to(creation_by_id(f,4).execute_after);
+   const auto before=creation_records(f);const auto legacy=fc::raw::pack(f.state());
+   auto bad=f.upgrade_code;bad.push_back(0);
+   BOOST_CHECK_THROW(f.push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},
+      sysexec{1,bad,f.upgrade_abi})},"developer"_n),fc::exception);
+   BOOST_CHECK_THROW(f.push({
+      action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},sysexec{1,f.upgrade_code,f.upgrade_abi}),
+      action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},sysexec{2,f.upgrade_code,f.upgrade_abi})},"developer"_n),fc::exception);
+   BOOST_CHECK(creation_records(f)==before&&fc::raw::pack(f.state())==legacy);
+   BOOST_CHECK(!f.exists("eosio.key"_n)&&!f.exists("usd"_n));
+   for(uint64_t id=1;id<=4;++id)BOOST_REQUIRE_NO_THROW(execute_id(f,id));
+   BOOST_CHECK_EQUAL(creation_records(f).size(),1u);BOOST_CHECK_EQUAL(f.creation().proposal_id,4u);
+   BOOST_CHECK(!f.creation().pending&&f.creation().outcome==1);
+   f.propose_creation(f.creation_args("gold"_n));BOOST_CHECK_EQUAL(f.creation().proposal_id,5u);
+   BOOST_CHECK_EQUAL(creation_records(f).size(),1u);BOOST_CHECK(f.creation().pending);
+}
+
+BOOST_AUTO_TEST_CASE(system_creation_parallel_snapshot_restart_and_replay_keep_all_pending_ids) {
+   system_account_fixture f;propose_four(f);f.native(sysveto{f.nodes[0],2},f.nodes[0]);
+   f.chain.produce_blocks(8);f.chain.control->abort_block();const auto expected=creation_records(f);
+   auto writer=buffered_snapshot_suite::get_writer();f.chain.control->write_snapshot(writer);
+   auto snapshot=buffered_snapshot_suite::finalize(writer);
+   fc::temp_directory restored_dir;const auto cfg=base_tester::default_config(restored_dir).first;
+   tester restored(cfg,f.genesis,call_startup_t::no);restored.close();restored.init(cfg,buffered_snapshot_suite::get_reader(snapshot));
+   for(const auto& [id,packed]:expected) {
+      const auto* p=find_system_account_proposal(restored.control->db(),id);BOOST_REQUIRE(p);BOOST_CHECK(fc::raw::pack(*p)==packed);
+   }
+   const auto lib_id=f.chain.last_irreversible_block_id();const auto source_cfg=base_tester::default_config(f.dir).first;
+   f.chain.close();f.chain.open();BOOST_CHECK(creation_records(f)==expected);f.chain.close();
+   fc::temp_directory replay_dir;const auto replay_cfg=base_tester::default_config(replay_dir).first;
+   std::filesystem::create_directories(replay_cfg.blocks_dir);
+   for(const char* name:{"blocks.log","blocks.index"})std::filesystem::copy_file(source_cfg.blocks_dir/name,replay_cfg.blocks_dir/name);
+   tester replay(replay_cfg,f.genesis);BOOST_CHECK(replay.head().id()==lib_id);
+   for(const auto& [id,packed]:expected) {
+      const auto* p=find_system_account_proposal(replay.control->db(),id);BOOST_REQUIRE(p);BOOST_CHECK(fc::raw::pack(*p)==packed);
+   }
+}

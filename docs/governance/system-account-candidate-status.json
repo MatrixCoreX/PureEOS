@@ -1,14 +1,15 @@
 {
-  "status": "EXTENDED_SHORT_NAMES_NAMED_DEV_INITIALIZATION_REMOTE_REQUALIFICATION_PENDING",
+  "status": "PARALLEL_FOUR_CREATION_REMOTE_REQUALIFICATION_PENDING",
   "base_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
   "feature": "PUREEOS_SYSTEM_ACCOUNT_GOVERNANCE",
   "enum": 500003,
   "native_build": {
-    "status": "EXTENDED_SOURCE_REBUILD_PENDING"
+    "status": "PARALLEL_SOURCE_REBUILD_PENDING"
   },
   "native_test_execution": {
-    "status": "WRITTEN_NOT_RUN_FOR_EXTENDED_SCOPE",
-    "planned_cases": 50
+    "status": "WRITTEN_NOT_RUN_FOR_PARALLEL_SCOPE",
+    "planned_cases": 54,
+    "groups": "46governance+5real+3wire"
   },
   "live_node_changes": "Approved60minute build/validation window; original programs restored; candidate never installed",
   "live_transactions": false,
@@ -124,5 +125,26 @@
     "initializer": "Version2 reviewed commitment; fixed target::init <=4096bytes; no snapshot layout/rawABI changes",
     "services": "eosio.key/eosio.signup created+deployed after startup through separate complete native reviews",
     "old_chain_reset": "Explicitly selected by user; preserve separate old evidence; fresh chainID/keys/history"
+  },
+  "previous_extended_qualification": {
+    "status": "PASS",
+    "source_commit": "d7b3a441c78cd2889c8d3465129e6c72ad03435e",
+    "test_overlay": "68106189d1e9ca2028868796e1d33a6c8076d038",
+    "groups": "42governance+5real+3wire",
+    "native_SHA256": "67834ee29c8c63b83c536da813a547817913ee95b780653feba8f54d175d664a",
+    "scope": "Not parallel-proposal qualification"
+  },
+  "parallel_creation": {
+    "max_pending": 4,
+    "review": "Independent full TEST1800s / production604800s",
+    "targets": [
+      "eosio.key",
+      "usd",
+      "cny",
+      "eosio.signup"
+    ],
+    "object_wire_snapshot_layout": "unchanged",
+    "retention": "pending plus latest counter; bounded4",
+    "key_policy": "System custody for USD/CNY, no external issuer keys or standalone rotation proposal"
   }
 }

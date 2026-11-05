@@ -1,6 +1,6 @@
 # System-account creation candidate / 系统账号创建候选
 
-Status: **EXTENDED SHORT-NAME/ACCOUNT-DEVELOPER/INITIALIZATION SOURCE; REMOTE REQUALIFICATION PENDING; NOT ACTIVATED**. This branch is based on
+Status: **FOUR PARALLEL CREATION PROPOSALS; REMOTE REQUALIFICATION PENDING; NOT ACTIVATED**. This branch is based on
 `057e1731660d3b8423c960cb81fe1758ae9c29f6`. Installing source or a binary is
 insufficient to activate this protocol feature. The user selected a fresh TEST genesis on November5. The earlier38/38 repair results cover the previous scope only. Obtain the new description digest after qualification; never reuse a previous candidate digest.
 
@@ -42,16 +42,20 @@ Version1 requires empty/zero values. Version2 checks the commitment before any
 creation/staging capability is consumed, then queues only target::init after
 setabi and before final sealing. Any initialization failure rolls back everything.
 There is no arbitrary target/action forwarding or direct developer admin grant.
-Code/rawABI hashes and snapshot object layouts remain unchanged. Publish both
+The target raw ABI is passed through unchanged; application candidates may have
+new reviewed ABIs. Native proposal object/action layouts and snapshot version11
+remain unchanged. Publish both
 human-review/initializer hashes and the native commitment. The offline helper
 prepare_creation_initializer.py uses a hash-pinned native converter;
 system_account_bundle.py --init-data prepares version2 unsigned actions.
 
-The user selected post-startup creation/deployment of eosio.key and eosio.signup
-through separate full native TEST1800second reviews. Neither is precreated or
-preinstalled at genesis. Production review remains seven days. This extended
-source requires fresh remote qualification; previous repair38/38 is not a pass
-for the new namespace, named identity or initialization.
+The user selected post-startup creation/deployment of eosio.key, usd, cny and
+eosio.signup. All four are separately proposed with parallel full TEST1800s
+reviews, independent frozen electorates, per-id vetoes and separate executions.
+None is precreated at genesis. USD/CNY use system custody: sealed owner, code-only
+active and issuer self; no external issuer keys or standalone authority-rotation
+proposal is added. Production review remains seven days. Earlier50/50 qualifies
+the short-name/developer/initializer version, not this parallel extension.
 
 ## Reviewed manifest and actions
 
@@ -61,7 +65,7 @@ must be obtained from the qualified binary, never guessed from its codename.
 Before activation the handlers preserve historical unknown-action behavior;
 they grant no creation capability and change no creation-proposal state.
 
-Only one creation proposal can be pending. The native singleton records:
+At most four distinct targets can have pending proposals. Each native record stores:
 
 - target, existing resource payer, exact RAM payment in4-decimal AIC;
 - authority-schema version1/2, exact code/ABI sizes and SHA256 hashes;
@@ -213,3 +217,27 @@ Before any rollout:
 No live transaction, binary rollout, feature activation or deployment is implied
 by this document. No new server, TPS run, cap/vote/bond/ban mutation, key change or
 BP interruption is authorized by staging the candidate.
+
+## Parallel review bounds and retention (November5)
+
+The same developer may submit four refreshgov/syspropose pairs in one transaction.
+Each pair independently freezes its reviewed target, code/ABI sizes and hashes,
+initializer commitment, RAM payer/amount, electorate and full review deadline.
+Duplicate pending targets and a fifth pending proposal reject atomically. Reserve
+protected-account capacity for all pending targets. Veto/cancel/execute select by
+proposal_id, including older pending IDs; changing one never changes another.
+The existing one-reviewed-capability-per-transaction execution guard remains:
+execute mature proposals in separate transactions. No deadline or veto bypass.
+
+Retain active records plus the latest proposal counter/outcome only, at most four
+records after an action. Remove older completed/cancelled records and refund their
+fixed logical RAM reservation to the developer. Full historical outcomes require
+canonical irreversible actions, not inference from retained state. Object/index
+and action wire layouts are unchanged, so snapshot version11 still stores the
+bounded collection; old single-row snapshots remain structurally compatible.
+
+get_system_account_state retains latest-proposal fields and adds pending_count,
+max_pending_proposals and pending_proposals (each with effective tally/deadline).
+A false latest pending flag does not imply zero older pending proposals. Clients
+must select by ID from the pending list. Obtain the new feature description digest
+from the newly qualified binary before first public activation.

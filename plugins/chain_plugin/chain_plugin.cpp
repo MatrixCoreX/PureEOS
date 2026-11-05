@@ -1490,6 +1490,17 @@ fc::variant read_only::get_system_account_state(const get_system_account_state_p
    const auto* state=chain::find_system_account_proposal(db.db());
    const auto* gov=chain::find_upgrade_governance(db.db());
    const auto tally=state?chain::get_system_account_effective_tally(db.db(),*state):chain::upgrade_effective_tally{};
+   fc::variants pending_proposals;
+   for(const auto& proposal:db.db().get_index<chain::system_account_proposal_index,chain::by_id>())if(proposal.pending) {
+      const auto effective=chain::get_system_account_effective_tally(db.db(),proposal);
+      fc::mutable_variant_object item(fc::variant(proposal).get_object());
+      item("effective_proposal_voters",effective.voters)("effective_vetoes",effective.vetoes)
+          ("excluded_banned_voters",effective.excluded_banned_voters)
+          ("effective_voter_count",effective.voters.size())("effective_veto_count",effective.vetoes.size())
+          ("required_vetoes",effective.voters.empty()?0:chain::upgrade_veto_threshold(effective.voters.size()))
+          ("review_mature",db.head().block_time()>=proposal.execute_after);
+      pending_proposals.emplace_back(std::move(item));
+   }
    fc::mutable_variant_object result;
    if(state)result=fc::mutable_variant_object(fc::variant(*state).get_object());
    result("proposal_exists",state!=nullptr)
@@ -1497,6 +1508,11 @@ fc::variant read_only::get_system_account_state(const get_system_account_state_p
          ("sealed",gov && gov->developer!=chain::account_name{})
          ("developer",gov?gov->developer:chain::account_name{})
          ("head_block_num",db.head().block_num())("head_block_id",db.head().id())
+         ("head_block_time",db.head().block_time())
+         ("latest_proposal_id",state?state->proposal_id:uint64_t(0))
+         ("pending_count",pending_proposals.size())
+         ("max_pending_proposals",chain::max_pending_system_account_proposals)
+         ("pending_proposals",std::move(pending_proposals))
          ("effective_proposal_voters",tally.voters)("effective_vetoes",tally.vetoes)
          ("excluded_banned_voters",tally.excluded_banned_voters)
          ("effective_voter_count",tally.voters.size())("effective_veto_count",tally.vetoes.size())
