@@ -1,0 +1,2099 @@
+{
+  "UTC": "2026-11-05T04:00:08.607618+00:00",
+  "chain": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 289884,
+    "last_irreversible_block_num": 289880,
+    "last_irreversible_block_id": "00046c58cc003a4017790f195a8b353c18efb3b15efe68c9400404bf4e13d121",
+    "head_block_id": "00046c5c0d8afae5c90fa97fc1376572be8363812414ca6eb32f99a06013ffc3",
+    "head_block_time": "2026-11-05T04:00:08.000",
+    "head_block_producer": "velvetforest",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 289884,
+    "fork_db_head_block_id": "00046c5c0d8afae5c90fa97fc1376572be8363812414ca6eb32f99a06013ffc3",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T04:00:06.000"
+  },
+  "governance": {
+    "developer": "civicgovlead",
+    "review_seconds": 1800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "voters_updated_at": "2026-11-04T08:53:23.500",
+    "proposal_id": 3,
+    "pending": true,
+    "target": "eosio.token",
+    "old_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "old_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+    "new_code_hash": "bee8320e5e761703f469fb6b0f8c0744479b0bf329f709867bb613855808845a",
+    "new_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+    "review_document_hash": "c0fad5db3925292275eac787e1a0bef7beb57be00fc918971d75fd6e95f78caf",
+    "proposed_at": "2026-11-04T08:53:23.500",
+    "execute_after": "2026-11-04T09:23:23.500",
+    "proposal_voters": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "vetoes": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 16,
+    "head_block_num": 289884,
+    "head_block_id": "00046c5c0d8afae5c90fa97fc1376572be8363812414ca6eb32f99a06013ffc3",
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "effective_vetoes": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 24,
+    "effective_veto_count": 24,
+    "execution_blocked_no_electorate": false
+  },
+  "accounts": {
+    "civicgovlead": {
+      "account_name": "civicgovlead",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5s4Gj6D7dfupfUBjo4QCoTp3W1jhAQQxKRsh4i3DKyJkdUcqFN",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5LzCmic2X4hQt6ZycGWYgBVUmrgMtt1t4pq52ZKjmMzfzzzpy1",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "upgrade",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6j2JnmGSqYUySoLs4msLqVWQXBtNnoRbjLNLArfQEFGqSD3g1D",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio",
+              "action": "refreshgov"
+            },
+            {
+              "account": "eosio",
+              "action": "devpropose"
+            },
+            {
+              "account": "eosio",
+              "action": "devcancel"
+            },
+            {
+              "account": "eosio",
+              "action": "devexec"
+            }
+          ]
+        }
+      ]
+    },
+    "eosio": {
+      "account_name": "eosio",
+      "privileged": true,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "veto",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6SzXkL6JQcHy4g2ZR9pVsQaJCBYXPcAXwUjnibm2G2C91rAhyH",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio",
+              "action": "devveto"
+            }
+          ]
+        }
+      ]
+    },
+    "eosio.bond": {
+      "account_name": "eosio.bond",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.bond",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.bpay": {
+      "account_name": "eosio.bpay",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.bpay",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.bslash": {
+      "account_name": "eosio.bslash",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.bslash",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.fees": {
+      "account_name": "eosio.fees",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.fees",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.key": {
+      "account_name": "eosio.key",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.key",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.msig": {
+      "account_name": "eosio.msig",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.null": {
+      "account_name": "eosio.null",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.prods": {
+      "account_name": "eosio.prods",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "prod.major",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "prod.minor",
+          "parent": "prod.major",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.ram": {
+      "account_name": "eosio.ram",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.ram",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.ramfee": {
+      "account_name": "eosio.ramfee",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.ramfee",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.reserv": {
+      "account_name": "eosio.reserv",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.reserv",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.rex": {
+      "account_name": "eosio.rex",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.rex",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.saving": {
+      "account_name": "eosio.saving",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.saving",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.signup": {
+      "error": "HTTP Error 400: Bad Request"
+    },
+    "eosio.stake": {
+      "account_name": "eosio.stake",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.stake",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.token": {
+      "account_name": "eosio.token",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.token",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.vpay": {
+      "account_name": "eosio.vpay",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.vpay",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.wrap": {
+      "account_name": "eosio.wrap",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "gptgenesisbp": {
+      "account_name": "gptgenesisbp",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8cCM3fU3SQ9K5gKgNFEGhAcswSnpyNsgxY9K5gc3mRstYyvYDc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "keyrelay",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5dSKo6nHL8AgiS9btNpSgr3DZ7n3Dha2uE4jkAMQJbbYK1qj9u",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio.key",
+              "action": "ksend"
+            },
+            {
+              "account": "eosio.key",
+              "action": "withdraw"
+            },
+            {
+              "account": "eosio.key",
+              "action": "cancel"
+            }
+          ]
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8cCM3fU3SQ9K5gKgNFEGhAcswSnpyNsgxY9K5gc3mRstYyvYDc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    }
+  },
+  "scope": "read-only; no real-user freeze/auth/asset attempts",
+  "all_registered_producers": {
+    "gptgenesisbp": {
+      "account_name": "gptgenesisbp",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8cCM3fU3SQ9K5gKgNFEGhAcswSnpyNsgxY9K5gc3mRstYyvYDc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "keyrelay",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5dSKo6nHL8AgiS9btNpSgr3DZ7n3Dha2uE4jkAMQJbbYK1qj9u",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio.key",
+              "action": "ksend"
+            },
+            {
+              "account": "eosio.key",
+              "action": "withdraw"
+            },
+            {
+              "account": "eosio.key",
+              "action": "cancel"
+            }
+          ]
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8cCM3fU3SQ9K5gKgNFEGhAcswSnpyNsgxY9K5gc3mRstYyvYDc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "mistralcloud": {
+      "account_name": "mistralcloud",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7Vz3t3rp1nYUvmTdCMDiyQ5MWchcAsmxn8zYncgYxE7zXsa9vA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7Vz3t3rp1nYUvmTdCMDiyQ5MWchcAsmxn8zYncgYxE7zXsa9vA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "willowgarden": {
+      "account_name": "willowgarden",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5noZKEUy6yptFtTMcPL4sALruqb5wYmL9eecsTH87y2Xfiz9oA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5noZKEUy6yptFtTMcPL4sALruqb5wYmL9eecsTH87y2Xfiz9oA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "xaineuralnet": {
+      "account_name": "xaineuralnet",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6iQRCxXTTr339dv4TGsz22fSPrTq724czTgbhM6fEtNDJ244kY",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6iQRCxXTTr339dv4TGsz22fSPrTq724czTgbhM6fEtNDJ244kY",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "germanycrest": {
+      "account_name": "germanycrest",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5ftDAKCHwaBHkxY9wpMjycaC2dXut4Rat5omGNbbxPLsnozioQ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5ftDAKCHwaBHkxY9wpMjycaC2dXut4Rat5omGNbbxPLsnozioQ",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "anthropiclab": {
+      "account_name": "anthropiclab",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_77HwKSCvJiMLx7rpp9nGn5f6SWbKTqPRBa25WEV2H8BDBxs7rU",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_77HwKSCvJiMLx7rpp9nGn5f6SWbKTqPRBa25WEV2H8BDBxs7rU",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "italyharbors": {
+      "account_name": "italyharbors",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_75udorJEJRgQiRB8PPkSRHxk3f4CHhrhg54n9Bvaj3Nbv1CxBi",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_75udorJEJRgQiRB8PPkSRHxk3f4CHhrhg54n9Bvaj3Nbv1CxBi",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "canadaboreal": {
+      "account_name": "canadaboreal",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6Pzv8JDGN31VSCHmKZqNw6L8qEbUb6CadzwAdqWg5xFnSsa52C",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6Pzv8JDGN31VSCHmKZqNw6L8qEbUb6CadzwAdqWg5xFnSsa52C",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "maplecascade": {
+      "account_name": "maplecascade",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8R4JVLmPcmzfQW6KS8rKFhTqGnHc4eNku3Kk8CjM5V4VwiHnx4",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8R4JVLmPcmzfQW6KS8rKFhTqGnHc4eNku3Kk8CjM5V4VwiHnx4",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "francegarden": {
+      "account_name": "francegarden",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5C7RkGzNSFqWLdepqdSMUzC7GcCbJTY8eFRXxD5tTo5Lxd8b8a",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5C7RkGzNSFqWLdepqdSMUzC7GcCbJTY8eFRXxD5tTo5Lxd8b8a",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "finlandhaven": {
+      "account_name": "finlandhaven",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7Pie9bUEHd5tK9nMgGZcRGosnQKEQpG4uiNqXn91eQg5NHJAgA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7Pie9bUEHd5tK9nMgGZcRGosnQKEQpG4uiNqXn91eQg5NHJAgA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "egyptpyramid": {
+      "account_name": "egyptpyramid",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_87QdE8yuxevRioHewXX5HkSuJeoM7XeC3ugzKLkCqecPtYfi8p",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_87QdE8yuxevRioHewXX5HkSuJeoM7XeC3ugzKLkCqecPtYfi8p",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "nebularlight": {
+      "account_name": "nebularlight",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5D2Y4EDB1Tm7w1e6h6bfdbsspzn7GV8P1xt4SFYdVprcvDh9FB",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5D2Y4EDB1Tm7w1e6h6bfdbsspzn7GV8P1xt4SFYdVprcvDh9FB",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "moonlitgrove": {
+      "account_name": "moonlitgrove",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_791NkgCHiNB5qYCCL2WKUakenx2e8J9WbrS1z15M1Md8Vqjmkc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_791NkgCHiNB5qYCCL2WKUakenx2e8J9WbrS1z15M1Md8Vqjmkc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "cobaltspring": {
+      "account_name": "cobaltspring",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8Yj57EZNq9kdwRC4F4KRihJ4exxaqZAcX5STfrPTFHcc7euhZc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8Yj57EZNq9kdwRC4F4KRihJ4exxaqZAcX5STfrPTFHcc7euhZc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "coherevision": {
+      "account_name": "coherevision",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5D4wYW41r6QUrEjkh8CedH8T68i9HG2DUea3iSjAPE6Q36sgWa",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5D4wYW41r6QUrEjkh8CedH8T68i9HG2DUea3iSjAPE6Q36sgWa",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "kenyasavanna": {
+      "account_name": "kenyasavanna",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_4wNZMDM7RVw45uNhdHBCbDo8wpL7BQM4CkpFmwsNgAGj8mdJLc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_4wNZMDM7RVw45uNhdHBCbDo8wpL7BQM4CkpFmwsNgAGj8mdJLc",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "deepseekcore": {
+      "account_name": "deepseekcore",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7TAeu7Wn78AwibLrfgAwmW5mKyguP6ue8mFNi9mH7SUhChUFBA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7TAeu7Wn78AwibLrfgAwmW5mKyguP6ue8mFNi9mH7SUhChUFBA",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "silverstream": {
+      "account_name": "silverstream",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6NfPsi45YAMCsBu39LnYBA7MjnSx6u1nSKY4mCHz3B8SJAudUT",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6NfPsi45YAMCsBu39LnYBA7MjnSx6u1nSKY4mCHz3B8SJAudUT",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "brazilamazon": {
+      "account_name": "brazilamazon",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7VGWD5jHxaWtNJrXdGBxXQAqwJsdNgfjdHsafCgy9h5G9Vt3ZU",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7VGWD5jHxaWtNJrXdGBxXQAqwJsdNgfjdHsafCgy9h5G9Vt3ZU",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "lunarcompass": {
+      "account_name": "lunarcompass",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7adKXx45GdEXNAb6fqe4KWZDu3qotRxbFdFfa8S64KZKw3xTyq",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7adKXx45GdEXNAb6fqe4KWZDu3qotRxbFdFfa8S64KZKw3xTyq",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "glaciercrest": {
+      "account_name": "glaciercrest",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5uYJG5Fm8VsAr5rpZ1C76GNq3FCMbZvA7mpopgrhn5sahZFudd",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_5uYJG5Fm8VsAr5rpZ1C76GNq3FCMbZvA7mpopgrhn5sahZFudd",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "cosmicgarden": {
+      "account_name": "cosmicgarden",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6UMEQhjRcpeXfdJVT7MdwW1ho9nrAUG61CC1jQo9fbLEiQMdMD",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6UMEQhjRcpeXfdJVT7MdwW1ho9nrAUG61CC1jQo9fbLEiQMdMD",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "stellarhaven": {
+      "account_name": "stellarhaven",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8juhUaE8zupnh8TuNYgrZHwb865jAdC9oNuCFAKLkQSfJcVf8z",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8juhUaE8zupnh8TuNYgrZHwb865jAdC9oNuCFAKLkQSfJcVf8z",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "velvetforest": {
+      "account_name": "velvetforest",
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_87YJoe6YFRMZEax8ZSZsPVC63xRBRoJRfrkgLJ5mxGmSsMaD8U",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_87YJoe6YFRMZEax8ZSZsPVC63xRBRoJRfrkgLJ5mxGmSsMaD8U",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    }
+  },
+  "all_registered_BP_privileged_false": true,
+  "audit_UTC": "2026-11-05T04:00:55.720667+00:00",
+  "chain_end": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 289975,
+    "last_irreversible_block_num": 289969,
+    "last_irreversible_block_id": "00046cb1553ad9c92b2865a3b66c8f1d85de92cad87cd14231167f533070c67d",
+    "head_block_id": "00046cb7212d665a5f80350af5522e1859914fe53374b740f03988d9000149bb",
+    "head_block_time": "2026-11-05T04:00:55.500",
+    "head_block_producer": "deepseekcore",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 289975,
+    "fork_db_head_block_id": "00046cb7212d665a5f80350af5522e1859914fe53374b740f03988d9000149bb",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T04:00:52.500"
+  }
+}
