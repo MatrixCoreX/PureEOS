@@ -1,0 +1,174 @@
+{
+  "status": "EXACT_UNSIGNED_REVIEWS_PREPARED_NOT_SUBMITTED",
+  "UTC": "2026-11-05T05:16:21.762532+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "proposals": [
+    {
+      "target": "eosio.key",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "expected_proposal_id": 1,
+      "authority_version": 2,
+      "RAM_payment_atoms": 36532,
+      "RAM_minimum_bytes_estimate": 1827800,
+      "RAM_quote_atoms": 30360,
+      "RAM_market": {
+        "supply": "10000000000.0000 RAMCORE",
+        "base": {
+          "balance": "64485217577 RAM",
+          "weight": "0.50000000000000000"
+        },
+        "quote": {
+          "balance": "106567.0236 AIC",
+          "weight": "0.50000000000000000"
+        }
+      },
+      "code_SHA256": "e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442",
+      "JSON_ABI_SHA256": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+      "raw_ABI_SHA256": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+      "initializer": {
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "deployment": "67be345079e5bfec47f1914b49d52685313703e073ee38a238c92d4175380154",
+        "fee_contract": "eosio.token",
+        "fee_symbol": "4,AIC",
+        "system_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "policy": {
+          "minimum_fee": 100,
+          "unit_fee": 10,
+          "new_row_fee": 500,
+          "maximum_multiplier_bps": 100000,
+          "epoch_seconds": 1,
+          "max_wallets": 1000,
+          "max_balances": 4000,
+          "max_assets": 32,
+          "max_native_payers": 1000
+        }
+      },
+      "initializer_SHA256": "754aa1a281767b12b07ef3ca5aac55a753018f49fa7d65ffe6684913c4eee8a8",
+      "review_seconds": 1800,
+      "sponsor": "gptgenesisbp",
+      "developer": "eosio.dev",
+      "native_SHA256": "e2724552b19803956292bc738b7a104000e6539c5f9a53c9dce7d1e035a0bde0"
+    },
+    {
+      "target": "usd",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "expected_proposal_id": 2,
+      "authority_version": 3,
+      "RAM_payment_atoms": 6343,
+      "RAM_minimum_bytes_estimate": 313050,
+      "RAM_quote_atoms": 5202,
+      "RAM_market": {
+        "supply": "10000000000.0000 RAMCORE",
+        "base": {
+          "balance": "64485217577 RAM",
+          "weight": "0.50000000000000000"
+        },
+        "quote": {
+          "balance": "106567.0236 AIC",
+          "weight": "0.50000000000000000"
+        }
+      },
+      "code_SHA256": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "JSON_ABI_SHA256": "9846bb35be03e80a831872f1cbd0aff9732df4abeecfcc76e062d8f38960b4e4",
+      "raw_ABI_SHA256": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "initializer": {
+        "recipient": "gptgenesisbp",
+        "maximum_supply": "1000000.0000 USD",
+        "initial_supply": "10000.0000 USD"
+      },
+      "initializer_SHA256": "17dd429d4167f530c1a943ce2c62b2236da04f1233ae8e2e9e1d94d552975c45",
+      "review_seconds": 1800,
+      "sponsor": "gptgenesisbp",
+      "developer": "eosio.dev",
+      "native_SHA256": "e2724552b19803956292bc738b7a104000e6539c5f9a53c9dce7d1e035a0bde0"
+    },
+    {
+      "target": "cny",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "expected_proposal_id": 3,
+      "authority_version": 3,
+      "RAM_payment_atoms": 6343,
+      "RAM_minimum_bytes_estimate": 313050,
+      "RAM_quote_atoms": 5202,
+      "RAM_market": {
+        "supply": "10000000000.0000 RAMCORE",
+        "base": {
+          "balance": "64485217577 RAM",
+          "weight": "0.50000000000000000"
+        },
+        "quote": {
+          "balance": "106567.0236 AIC",
+          "weight": "0.50000000000000000"
+        }
+      },
+      "code_SHA256": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "JSON_ABI_SHA256": "9846bb35be03e80a831872f1cbd0aff9732df4abeecfcc76e062d8f38960b4e4",
+      "raw_ABI_SHA256": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "initializer": {
+        "recipient": "gptgenesisbp",
+        "maximum_supply": "1000000.0000 CNY",
+        "initial_supply": "10000.0000 CNY"
+      },
+      "initializer_SHA256": "d9e4aae6bc9727a3bb6e4f68f578490c379d660036822e372d779a9656213b08",
+      "review_seconds": 1800,
+      "sponsor": "gptgenesisbp",
+      "developer": "eosio.dev",
+      "native_SHA256": "e2724552b19803956292bc738b7a104000e6539c5f9a53c9dce7d1e035a0bde0"
+    },
+    {
+      "target": "eosio.signup",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "expected_proposal_id": 4,
+      "authority_version": 1,
+      "RAM_payment_atoms": 7131,
+      "RAM_minimum_bytes_estimate": 352607,
+      "RAM_quote_atoms": 5859,
+      "RAM_market": {
+        "supply": "10000000000.0000 RAMCORE",
+        "base": {
+          "balance": "64485217577 RAM",
+          "weight": "0.50000000000000000"
+        },
+        "quote": {
+          "balance": "106567.0236 AIC",
+          "weight": "0.50000000000000000"
+        }
+      },
+      "code_SHA256": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+      "JSON_ABI_SHA256": "4584c0647691a2787c32e8e6d3c7b0f54e0ea46abed7279d41756a879fd13e85",
+      "raw_ABI_SHA256": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+      "initializer": null,
+      "initializer_SHA256": null,
+      "review_seconds": 1800,
+      "sponsor": "gptgenesisbp",
+      "developer": "eosio.dev",
+      "native_SHA256": "e2724552b19803956292bc738b7a104000e6539c5f9a53c9dce7d1e035a0bde0"
+    }
+  ],
+  "files": {
+    "eosio.signup.bundle.json": "d54ab344b88da943fa471b68ca0dc8c0101a21187d22c42f76c2cb23c6838c32",
+    "cny.init.json": "5d614cd07ed2be6f28cd96b6e8f19060c1331a1ee9759703d6b6c8b85a3681be",
+    "usd.init.json": "147890ed726f3c920b64f630791626b5094e68f0319b8b5f9464b9e6a65f1c9b",
+    "usd.review.md": "9a6276bebd2f753b8772f625c959940afa7374ffc7fb03335fccb634660f95e9",
+    "eosio.key.review.md": "a37ede7e782cb79edd21d4098a551ea822c3892fa008fd6a2d357fae74703282",
+    "usd.init.bin": "17dd429d4167f530c1a943ce2c62b2236da04f1233ae8e2e9e1d94d552975c45",
+    "eosio.key.init.json": "e4fe153d88295223a4322ac28fbec500420897de4b71a372e81c5d059960a5d0",
+    "eosio.key.init.bin": "754aa1a281767b12b07ef3ca5aac55a753018f49fa7d65ffe6684913c4eee8a8",
+    "cny.bundle.json": "d798082f57a3fb3248a1997bfad5503a0011f7c182db8fc8b90e9369eb537dbb",
+    "usd.bundle.json": "616b7d6ff9f8a2b86ca35d0e4b595f39cd79ef83d2b3fb93d85ae8b9d3c0dc24",
+    "eosio.signup.review.md": "a05a2f48863c57687b221c54fb564852a1c98c0f0a6cd3db1d5ae342987c3ffe",
+    "cny.review.md": "1d35ae955ff6c8baeedef70495923b08d92d773698a7b1fc69d24244ef555e29",
+    "eosio.key.bundle.json": "eae7a1229088b6814044263396c30f68161e70fe8cc60e53c0e173efbd11a85a",
+    "cny.init.bin": "d9e4aae6bc9727a3bb6e4f68f578490c379d660036822e372d779a9656213b08",
+    "artifacts/eosio.key.wasm": "e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442",
+    "artifacts/eosio.signup.abi": "4584c0647691a2787c32e8e6d3c7b0f54e0ea46abed7279d41756a879fd13e85",
+    "artifacts/custody.token.raw.abi": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+    "artifacts/custody.token.wasm": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+    "artifacts/eosio.key.raw.abi": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+    "artifacts/eosio.key.abi": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+    "artifacts/eosio.signup.wasm": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+    "artifacts/custody.token.abi": "9846bb35be03e80a831872f1cbd0aff9732df4abeecfcc76e062d8f38960b4e4",
+    "artifacts/eosio.signup.raw.abi": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9"
+  },
+  "scope": "Must publish exact review/artifacts and verify remote Git before submission; four full1800s reviews; separate executions"
+}
