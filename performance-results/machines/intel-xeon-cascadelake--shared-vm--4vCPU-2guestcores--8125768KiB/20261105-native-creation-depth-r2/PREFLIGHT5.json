@@ -1,0 +1,31 @@
+{
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "node_pids": {
+    "pureeos-devnet-founder-20261105.service": 399472,
+    "pureeos-devnet-history-20261105.service": 393983,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 403478,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 403495,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 403512,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 403529,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 403549,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 403567,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 403593,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 403611,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 403628,
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 403647,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 403666,
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": 403684,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 403701,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 403718,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 403736,
+    "pureeos-devnet-bp-singaporentu-20261105.service": 403757,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 403775,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 403792,
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": 403811,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 403828,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 403846,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 403864,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 403883
+  },
+  "head_age_seconds": 3.580568
+}

@@ -1,0 +1,100 @@
+Random number generator seeded to 1793860796
+Running 8 test cases...
+Entering test module "Master Test Suite"
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_governance_tests.cpp(161): Test suite "pureeos_governance_tests" is skipped because disabled
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(109): Entering test suite "pureeos_signup_real_tests"
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(110): Entering test case "genesis_BP_has_only_narrow_system_creation_veto"
+3050000 action_validate_exception: Action validate exception
+system account creation vetoed or effective electorate empty
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:228 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":2280287837,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":2280287837,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(110): Leaving test case "genesis_BP_has_only_narrow_system_creation_veto"; testing time: 3190035us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(117): Entering test case "pre_feature_v10_snapshot_preserves_vetoed_upgrade3"
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(117): Leaving test case "pre_feature_v10_snapshot_preserves_vetoed_upgrade3"; testing time: 2227577us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(140): Entering test case "actual_native_creation_K1_R1_legacy_and_atomic_failures"
+reviewed creation exception: 3050000 action_validate_exception: Action validate exception
+system account review period has not ended
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:226 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:22","ref_block_num":30,"ref_block_prefix":2346774763,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:22","ref_block_num":30,"ref_block_prefix":2346774763,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+reviewed creation exception: 3040000 transaction_exception: Transaction exception
+max inline action depth per transaction reached
+    {}
+    ld-linux-x86-64.so.2  apply_context.cpp:374 exec
+transaction_header: {"expiration":"2020-01-01T00:31:23","ref_block_num":32,"ref_block_prefix":585294249,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:23","ref_block_num":32,"ref_block_prefix":585294249,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(142): fatal error: in "pureeos_signup_real_tests/actual_native_creation_K1_R1_legacy_and_atomic_failures": unexpected exception thrown by f.execute()
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(140): Leaving test case "actual_native_creation_K1_R1_legacy_and_atomic_failures"; testing time: 3199525us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(186): Entering test case "short_service_creation_preserves_real_auction_and_contract_account_guards"
+reviewed creation exception: 3040000 transaction_exception: Transaction exception
+max inline action depth per transaction reached
+    {}
+    ld-linux-x86-64.so.2  apply_context.cpp:374 exec
+transaction_header: {"expiration":"2020-01-01T00:31:23","ref_block_num":32,"ref_block_prefix":2227805515,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:23","ref_block_num":32,"ref_block_prefix":2227805515,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(190): fatal error: in "pureeos_signup_real_tests/short_service_creation_preserves_real_auction_and_contract_account_guards": unexpected exception thrown by f.execute()
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(186): Leaving test case "short_service_creation_preserves_real_auction_and_contract_account_guards"; testing time: 2538980us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(210): Entering test case "key_service_reviewed_initializer_runs_after_deployment_and_rolls_back_atomically"
+reviewed creation exception: 3040000 transaction_exception: Transaction exception
+max inline action depth per transaction reached
+    {}
+    ld-linux-x86-64.so.2  apply_context.cpp:374 exec
+transaction_header: {"expiration":"2020-01-01T00:31:22","ref_block_num":32,"ref_block_prefix":1998150949,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:22","ref_block_num":32,"ref_block_prefix":1998150949,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+reviewed creation exception: 3040000 transaction_exception: Transaction exception
+max inline action depth per transaction reached
+    {}
+    ld-linux-x86-64.so.2  apply_context.cpp:374 exec
+transaction_header: {"expiration":"2020-01-01T01:01:25","ref_block_num":34,"ref_block_prefix":3404093458,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T01:01:25","ref_block_num":34,"ref_block_prefix":3404093458,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(233): fatal error: in "pureeos_signup_real_tests/key_service_reviewed_initializer_runs_after_deployment_and_rolls_back_atomically": unexpected exception thrown by trace=f.execute()
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(210): Leaving test case "key_service_reviewed_initializer_runs_after_deployment_and_rolls_back_atomically"; testing time: 5272012us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(248): Entering test case "atomic_key_initializer_with_full_fee_REX_route_preserves_depth4"
+reviewed creation exception: 3040000 transaction_exception: Transaction exception
+max inline action depth per transaction reached
+    {}
+    ld-linux-x86-64.so.2  apply_context.cpp:374 exec
+transaction_header: {"expiration":"2020-01-01T00:31:22","ref_block_num":32,"ref_block_prefix":203310392,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:22","ref_block_num":32,"ref_block_prefix":203310392,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+reviewed creation exception: 3040000 transaction_exception: Transaction exception
+max inline action depth per transaction reached
+    {}
+    ld-linux-x86-64.so.2  apply_context.cpp:374 exec
+transaction_header: {"expiration":"2020-01-01T01:01:25","ref_block_num":34,"ref_block_prefix":2385693699,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T01:01:25","ref_block_num":34,"ref_block_prefix":2385693699,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(271): fatal error: in "pureeos_signup_real_tests/atomic_key_initializer_with_full_fee_REX_route_preserves_depth4": unexpected exception thrown by trace=f.execute()
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(248): Leaving test case "atomic_key_initializer_with_full_fee_REX_route_preserves_depth4"; testing time: 3187429us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(288): Entering test case "actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_target_rolls_back"
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(305): fatal error: in "pureeos_signup_real_tests/actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_target_rolls_back": unexpected exception thrown by execute(id1,usd)
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(288): Leaving test case "actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_target_rolls_back"; testing time: 1598771us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(334): Entering test case "new_ordinary_issuers_delegate_to_account_owner_without_system_or_BP_control"
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(358): fatal error: in "pureeos_signup_real_tests/new_ordinary_issuers_delegate_to_account_owner_without_system_or_BP_control": unexpected exception thrown by execute(id1,usd)
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(334): Leaving test case "new_ordinary_issuers_delegate_to_account_owner_without_system_or_BP_control"; testing time: 4690707us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(109): Leaving test suite "pureeos_signup_real_tests"; testing time: 25905364us
+/opt/pureeos-dev-account-genesis-20261105-r1/test-source-8/unittests/pureeos_signup_real_tests.cpp(393): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 25905393us

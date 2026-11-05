@@ -1,3 +1,5 @@
+> Follow-up: the historical57 checks below omitted actual fee WASM/fundedREX. Public creation failed atomically and four proposals were cancelled. Repaired58-case full-route qualification is in20261105-native-creation-depth-r2 under the actual-machine directory. Historical qualification is not a public deployment receipt.
+
 # Parallel creation proposals and fresh TEST qualification
 
 Remote Intel Cascadelake shared4vCPU/~8GiB qualification passed on2026-11-05. This is functional qualification, not production security, capacity, TPS or post-quantum qualification.

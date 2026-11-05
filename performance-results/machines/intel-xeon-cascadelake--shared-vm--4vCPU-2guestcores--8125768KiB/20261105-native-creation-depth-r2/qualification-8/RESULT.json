@@ -1,0 +1,496 @@
+{
+  "status": "FAIL",
+  "UTC": "2026-11-05T06:38:35.145670+00:00",
+  "scope": "Remote isolated native controllers; full actual fees/REX at depth4; no live deployment in qualification",
+  "build": 4,
+  "binary_sha256": "d086d9713e4d0955007a06d7a786a8a739a58932cc692c8b6567af9aa9d4b46d",
+  "suites": {
+    "native_governance": {
+      "status": "PASS",
+      "exit_code": 0,
+      "cases": [
+        {
+          "name": "profile_and_thresholds",
+          "result": "passed",
+          "assertions_passed": "423",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "bootstrap_rejects_wrong_contract_without_locking_accounts",
+          "result": "passed",
+          "assertions_passed": "6",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "review_period_is_fixed_at_fourteen_days",
+          "result": "passed",
+          "assertions_passed": "30",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "bootstrap_seals_management_and_preserves_normal_accounts",
+          "result": "passed",
+          "assertions_passed": "21",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "developer_only_and_no_stale_electorate",
+          "result": "passed",
+          "assertions_passed": "10",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "dedicated_upgrade_key_needs_no_active_key",
+          "result": "passed",
+          "assertions_passed": "5",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "electorate_validation_and_snapshot_immutability",
+          "result": "passed",
+          "assertions_passed": "12",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "full_review_then_atomic_code_and_abi_upgrade",
+          "result": "passed",
+          "assertions_passed": "12",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "no_objections_allows_execution_only_after_fourteen_days",
+          "result": "passed",
+          "assertions_passed": "14",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "one_two_three_four_nodes_veto_threshold",
+          "result": "passed",
+          "assertions_passed": "26",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "two_of_four_objections_do_not_block",
+          "result": "passed",
+          "assertions_passed": "8",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "exact_deadline_ends_veto_and_allows_execution",
+          "result": "passed",
+          "assertions_passed": "10",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "abi_only_upgrade_requires_a_new_full_review",
+          "result": "passed",
+          "assertions_passed": "12",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "genesis_producer_has_only_narrow_veto",
+          "result": "passed",
+          "assertions_passed": "5",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "privileged_forwarding_cannot_forge_governance_or_management",
+          "result": "passed",
+          "assertions_passed": "13",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "cancel_and_resubmit_restarts_review",
+          "result": "passed",
+          "assertions_passed": "19",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "execution_failure_rolls_back_proposal",
+          "result": "passed",
+          "assertions_passed": "9",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "transaction_retry_discards_single_use_upgrade_capability",
+          "result": "passed",
+          "assertions_passed": "10",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "two_hundred_ten_nodes_require_140_not_141",
+          "result": "passed",
+          "assertions_passed": "214",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "snapshot_binary_json_and_restart_preserve_frozen_proposal",
+          "result": "passed",
+          "assertions_passed": "7",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "legacy_v9_snapshot_does_not_enable_governance",
+          "result": "passed",
+          "assertions_passed": "1",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "sealed_governance_replays_from_genesis",
+          "result": "passed",
+          "assertions_passed": "6",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_requires_feature_and_native_parent",
+          "result": "passed",
+          "assertions_passed": "17",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_validates_exact_manifest_and_fresh_electorate",
+          "result": "passed",
+          "assertions_passed": "29",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_preserves_existing_pending_upgrade",
+          "result": "passed",
+          "assertions_passed": "12",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_short_services_share_review_sealing_and_namespace_boundaries",
+          "result": "passed",
+          "assertions_passed": "67",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_short_services_do_not_take_pending_or_awarded_auction_names",
+          "result": "passed",
+          "assertions_passed": "31",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_initializer_commitment_requires_exact_data_and_review",
+          "result": "passed",
+          "assertions_passed": "23",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_initializer_bounds_and_version1_forbid_unreviewed_calls",
+          "result": "passed",
+          "assertions_passed": "25",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account",
+          "result": "passed",
+          "assertions_passed": "46",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_internal_stage_preserves_pre_feature_and_inline_authorization_checks",
+          "result": "passed",
+          "assertions_passed": "17",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_rejects_nested_and_duplicate_native_continuations_atomically",
+          "result": "passed",
+          "assertions_passed": "56",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_failure_rolls_back_account_protection_and_execution",
+          "result": "passed",
+          "assertions_passed": "15",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_effective_veto_and_cancellation_boundaries",
+          "result": "passed",
+          "assertions_passed": "31",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_snapshot_restart_and_replay_preserve_both_lanes",
+          "result": "passed",
+          "assertions_passed": "16",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_native_ban_reader_recomputes_effective_threshold",
+          "result": "passed",
+          "assertions_passed": "19",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate",
+          "result": "passed",
+          "assertions_passed": "11",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_activated_snapshot_rejects_downgraded_header",
+          "result": "passed",
+          "assertions_passed": "8",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_parallel_four_have_independent_frozen_reviews_and_bounded_slots",
+          "result": "passed",
+          "assertions_passed": "37",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_parallel_veto_cancel_and_execution_are_per_id",
+          "result": "passed",
+          "assertions_passed": "35",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_parallel_atomic_failures_and_completed_state_pruning",
+          "result": "passed",
+          "assertions_passed": "27",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "system_creation_parallel_snapshot_restart_and_replay_keep_all_pending_ids",
+          "result": "passed",
+          "assertions_passed": "23",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "developer_named_identity_requires_feature_and_account_delegates",
+          "result": "passed",
+          "assertions_passed": "16",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "developer_named_identity_two_of_three_controls_creation_and_deployment",
+          "result": "passed",
+          "assertions_passed": "10",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "developer_named_identity_management_cannot_weaken_or_embed_direct_keys",
+          "result": "passed",
+          "assertions_passed": "9",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "developer_named_identity_multisig_transition_covers_parent_permissions",
+          "result": "passed",
+          "assertions_passed": "7",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        }
+      ],
+      "xml_sha256": "48172f5615d65417a56a3d7c4c1044bf1b59d83f019bd03a17a86eabf05b6cf3"
+    },
+    "real_contracts": {
+      "status": "FAIL",
+      "exit_code": 201,
+      "cases": [
+        {
+          "name": "genesis_BP_has_only_narrow_system_creation_veto",
+          "result": "passed",
+          "assertions_passed": "15",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "pre_feature_v10_snapshot_preserves_vetoed_upgrade3",
+          "result": "passed",
+          "assertions_passed": "10",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "actual_native_creation_K1_R1_legacy_and_atomic_failures",
+          "result": "aborted",
+          "assertions_passed": "8",
+          "assertions_failed": "1",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "short_service_creation_preserves_real_auction_and_contract_account_guards",
+          "result": "aborted",
+          "assertions_passed": "9",
+          "assertions_failed": "1",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "key_service_reviewed_initializer_runs_after_deployment_and_rolls_back_atomically",
+          "result": "aborted",
+          "assertions_passed": "15",
+          "assertions_failed": "1",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "atomic_key_initializer_with_full_fee_REX_route_preserves_depth4",
+          "result": "aborted",
+          "assertions_passed": "15",
+          "assertions_failed": "1",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_target_rolls_back",
+          "result": "aborted",
+          "assertions_passed": "9",
+          "assertions_failed": "1",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "new_ordinary_issuers_delegate_to_account_owner_without_system_or_BP_control",
+          "result": "aborted",
+          "assertions_passed": "15",
+          "assertions_failed": "1",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        }
+      ],
+      "xml_sha256": "ffe7d2288cd0f776c5be5ae2ad030457f5ef91027aab4e1f0e1a5af90c2c189d"
+    },
+    "unsigned_wire": {
+      "status": "PASS",
+      "exit_code": 0,
+      "cases": [
+        {
+          "name": "unsigned_helper_matches_native_action_serialization",
+          "result": "passed",
+          "assertions_passed": "5",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "unsigned_short_helper_matches_native_action_serialization",
+          "result": "passed",
+          "assertions_passed": "2",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "unsigned_initializer_helper_matches_native_action_serialization",
+          "result": "passed",
+          "assertions_passed": "2",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        },
+        {
+          "name": "unsigned_ordinary_issuer_helper_binds_distinct_policy_and_native_wire",
+          "result": "passed",
+          "assertions_passed": "4",
+          "assertions_failed": "0",
+          "warnings_failed": "0",
+          "expected_failures": "0"
+        }
+      ],
+      "xml_sha256": "aba21a44d9fced11ef3359826800a7536d1a991bea34b978215ad3da3f2c2409"
+    }
+  },
+  "finished_UTC": "2026-11-05T06:40:24.624835+00:00",
+  "current25PIDs_preserved": true
+}

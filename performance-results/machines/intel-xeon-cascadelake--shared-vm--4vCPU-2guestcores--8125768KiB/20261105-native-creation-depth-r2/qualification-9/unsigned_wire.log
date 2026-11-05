@@ -1,0 +1,16 @@
+Random number generator seeded to 1793861096
+Running 4 test cases...
+Entering test module "Master Test Suite"
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_governance_tests.cpp(161): Test suite "pureeos_governance_tests" is skipped because disabled
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(109): Test suite "pureeos_signup_real_tests" is skipped because disabled
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(393): Entering test suite "pureeos_signup_wire_tests"
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(394): Entering test case "unsigned_helper_matches_native_action_serialization"
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(394): Leaving test case "unsigned_helper_matches_native_action_serialization"; testing time: 10697us
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(407): Entering test case "unsigned_short_helper_matches_native_action_serialization"
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(407): Leaving test case "unsigned_short_helper_matches_native_action_serialization"; testing time: 5342us
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(416): Entering test case "unsigned_initializer_helper_matches_native_action_serialization"
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(416): Leaving test case "unsigned_initializer_helper_matches_native_action_serialization"; testing time: 29327us
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(427): Entering test case "unsigned_ordinary_issuer_helper_binds_distinct_policy_and_native_wire"
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(427): Leaving test case "unsigned_ordinary_issuer_helper_binds_distinct_policy_and_native_wire"; testing time: 9653us
+/opt/pureeos-dev-account-genesis-20261105-r1/source-5/unittests/pureeos_signup_real_tests.cpp(393): Leaving test suite "pureeos_signup_wire_tests"; testing time: 55162us
+Leaving test module "Master Test Suite"; testing time: 55180us

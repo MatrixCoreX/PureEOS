@@ -1,0 +1,22 @@
+{
+  "commit": "42dda604af169845b9ea9b9835fe0d25ecc126a8",
+  "files": {
+    "libraries/chain/apply_context.cpp": "e8defaa511001b33c23857fe375f6643d2896a323395c61dc87658608fd03dba",
+    "libraries/chain/controller.cpp": "285e871ff20b66381933ad11667ce8e1abd0567b8fc93fcd48e7d09565fdbf7f",
+    "libraries/chain/eosio_contract.cpp": "87358ee879dd2a4e3fa4bc6e47d9c1b85365a287bdee44cf8932455921032455",
+    "libraries/chain/include/eosio/chain/system_account_proposal.hpp": "295e72a5c351a3a8fa7080134eda972a90ab868f5a8930a5d454ebb4e98f8106",
+    "libraries/chain/include/eosio/chain/upgrade_governance.hpp": "a939e7f4f0cbeb8539a70efc0a003270c74b413cad18f3ac424353dd776babbe",
+    "libraries/chain/protocol_feature_manager.cpp": "a8ee61e3fdbe994661ba6d44cca93b67327cba88dc74b5d756e1d4db19b7b30e",
+    "libraries/chain/system_account_proposal.cpp": "522c382b1d7ebab1de66e3842afafcd92c69ed3444b119b8bb2aa29ec5048832",
+    "libraries/chain/upgrade_governance.cpp": "83dbbe46eb04a54a57e6f0546e757aaa5f74ecd0bedbbaa338a6435278e21c1f",
+    "plugins/chain_plugin/chain_plugin.cpp": "ab47834a8d6d4c0929479560707932b80d02e720ac8f541ec6471dd0334277ad",
+    "tools/governance/prepare_creation_initializer.py": "baec33f09eaf718c758f08db2ec11aefdc472902c707cf9ab0d92f0757b11a98",
+    "tools/governance/system_account_bundle.py": "991586c153db722cb708e9303bf575d7ce881ce585c9534202b4a20892930089",
+    "tools/testing/testnet_reset.py": "86835ff6bf37f0819bb4e8448faa0bba340a55aa4997f5bd1824ce2b019b32ca",
+    "unittests/pureeos_developer_identity_tests.inc": "4be3655ed435493c93c9801ea15f280ddcd1f4fe086b9086c58b2dfff8ea5d1f",
+    "unittests/pureeos_governance_tests.cpp": "34f41d3dbbe03d787293b9a244025ef34cfa4a1dd4d7ce93f1cd03b0fc1e39f3",
+    "unittests/pureeos_signup_real_tests.cpp": "df9f114ef3abcb35ef4a8eb50eecc67fd079705d8c84585b6e442b4ac57d89e4",
+    "unittests/pureeos_system_account_tests.inc": "0e4508a37e4762e8d512f3f57c4e57377c3947b011a1aba65bcc692a5bd9125f"
+  },
+  "scope": "Correct consumed native-stage permit ordinal; full fee/REX cap4 qualification required"
+}
