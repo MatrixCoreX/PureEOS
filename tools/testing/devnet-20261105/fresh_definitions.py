@@ -1,7 +1,7 @@
 from pathlib import Path
 import ast,datetime,hashlib,json,os,subprocess,sys,time,traceback,decimal
 os.umask(0o077)
-R=Path(os.environ['PUREEOS_GENESIS_ROOT']);V=Path('/opt/pureeos-dev-account-genesis-20261105-r1/runtime-3');PRIVATE=os.environ.get('PUREEOS_PRIVATE_GENESIS')=='1'
+R=Path(os.environ['PUREEOS_GENESIS_ROOT']);V=Path('/opt/pureeos-dev-account-genesis-20261105-r1/runtime-5');PRIVATE=os.environ.get('PUREEOS_PRIVATE_GENESIS')=='1'
 sys.path.insert(0,str(R/'harness'))
 from pureeos_single_choice_local_test import LocalTest
 class TestChain(LocalTest):
@@ -237,7 +237,16 @@ def run(self,args,*,input_text=None,failure=None):
         capture_output=True,text=True,timeout=40)
     output=self.redact(result.stdout+result.stderr)
     self.last_cpu_response=None
-    if result.returncode and 'tx_cpu_usage_exceeded'in output:
+    native_error=None
+    try:
+        decoded=json.JSONDecoder().raw_decode(output.lstrip())[0]
+        native_error=(decoded.get('processed')or{}).get('except')
+    except (ValueError,AttributeError,TypeError):pass
+    failed=bool(result.returncode)or native_error is not None
+    if native_error is not None:
+        folder=self.root/'native-failures';folder.mkdir(mode=0o700,exist_ok=True)
+        (folder/(str(getattr(self,'nonce',0))+'-'+str(time.monotonic_ns())+'.json')).write_text(json.dumps(decoded,indent=2)+'\n')
+    if 'tx_cpu_usage_exceeded'in output:
         try:
             value=json.JSONDecoder().raw_decode(output.lstrip())[0]
             if value.get('processed',{}).get('receipt')is None and value['processed'].get('except',{}).get('name')=='tx_cpu_usage_exceeded':
@@ -246,9 +255,9 @@ def run(self,args,*,input_text=None,failure=None):
     diagnostic=output if len(output)<=10000 else output[:4000]+'\n... middle omitted ...\n'+output[-6000:]
     if self.last_cpu_response is not None:raise RuntimeError('Definitive tx_cpu_usage_exceeded: '+diagnostic)
     if failure is not None:
-        if result.returncode==0 or failure.lower()not in output.lower():
+        if not failed or failure.lower()not in output.lower():
             raise RuntimeError(f'Expected rejection ({failure}), got {result.returncode}: {diagnostic}')
-    elif result.returncode:raise RuntimeError(f'cleos {args[:3]} failed: {diagnostic}')
+    elif failed:raise RuntimeError(f'cleos {args[:3]} rejected ({native_error.get("name") if native_error else result.returncode}): {diagnostic}')
     return result.stdout
 TestChain.run=run
 
@@ -281,7 +290,9 @@ def tx(self,args,*,failure=None):
             if failure is not None:return None
             result=json.loads(raw)
             assert result['transaction_id']==transaction_id,'Native client changed frozen transaction bytes'
-            assert result['processed']['receipt']['status']=='executed'
+            receipt=(result.get('processed')or{}).get('receipt')
+            if not receipt or receipt.get('status')!='executed':raise RuntimeError('Native response has no successful receipt; reconcile exact frozen ID '+transaction_id)
+            assert receipt['status']=='executed'
             confirmed=self.wait_transaction(transaction_id,info['last_irreversible_block_num'])
             confirmed['reported_block_num']=result['processed']['block_num']
             self.report.setdefault('confirmed_transactions',[]).append(confirmed)

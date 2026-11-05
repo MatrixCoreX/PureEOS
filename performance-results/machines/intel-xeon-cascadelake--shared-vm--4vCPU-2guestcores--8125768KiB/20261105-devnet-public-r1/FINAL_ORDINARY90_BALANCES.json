@@ -1,0 +1,230 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T08:05:02.061573+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "ordinary_accounts": 90,
+  "completed_batches": 140,
+  "business_transactions": 279,
+  "mix": {
+    "transfers": 247,
+    "ticks": 18,
+    "notes": 14
+  },
+  "balances": {
+    "civicuserone": 1002289419,
+    "civicusertwo": 1006739420,
+    "winterflower": 7599429,
+    "summercanyon": 10509085,
+    "arcanemeadow": 12249765,
+    "autumnflower": 5959479,
+    "goldenvalley": 9639156,
+    "mellowwillow": 9469408,
+    "purplewillow": 10929376,
+    "velvetcanyon": 10569372,
+    "springcomets": 7029321,
+    "gentlevalley": 4999318,
+    "silverwillow": 10779420,
+    "mellowmeadow": 5379581,
+    "cobaltmeadow": 11419457,
+    "cosmicfalcon": 8409148,
+    "cobaltflower": 9249457,
+    "purpleaurora": 7279360,
+    "astralvalley": 12529404,
+    "silvervalley": 9219320,
+    "velvetgarden": 6279372,
+    "sunlitcomets": 6099676,
+    "silentvalley": 12149259,
+    "frozenaurora": 10459302,
+    "purplebreeze": 11669325,
+    "silentcanyon": 9819417,
+    "frozenstream": 7549438,
+    "cobaltcanyon": 7229292,
+    "cosmiccomets": 5229261,
+    "gentlestream": 11859172,
+    "velvetwillow": 6759277,
+    "cosmicwillow": 10539148,
+    "silentflower": 12459299,
+    "brightharbor": 11629263,
+    "cobaltvalley": 6449070,
+    "wintercomets": 8749267,
+    "velvetbreeze": 6709433,
+    "frozencanyon": 8659246,
+    "silveraurora": 11278897,
+    "astralstream": 10569141,
+    "goldengarden": 8819159,
+    "frozenbreeze": 6139207,
+    "silverfalcon": 10489157,
+    "goldenbreeze": 9399025,
+    "cobaltaurora": 9049249,
+    "springbreeze": 6569141,
+    "arcaneflower": 6869334,
+    "purplecanyon": 5879212,
+    "cosmicaurora": 11309283,
+    "goldenwillow": 5269104,
+    "serenefalcon": 11369118,
+    "cosmicmeadow": 5279129,
+    "cobaltbreeze": 10349109,
+    "cosmicflower": 6569041,
+    "purplevalley": 6258947,
+    "brightgarden": 6718912,
+    "goldencanyon": 11009011,
+    "sunlitcanyon": 5189106,
+    "autumnfalcon": 9048972,
+    "autumnbreeze": 11669092,
+    "frozencomets": 10788904,
+    "silentharbor": 11379302,
+    "summergarden": 8598886,
+    "cosmicbreeze": 12459025,
+    "serenecanyon": 7948834,
+    "springgarden": 10808972,
+    "sunlitfalcon": 7919030,
+    "cobaltgarden": 6969043,
+    "cobaltforest": 9338880,
+    "silentcomets": 8898723,
+    "autumnforest": 8258681,
+    "sereneflower": 7458976,
+    "mellowcomets": 11759058,
+    "cobaltstream": 7609131,
+    "gentlemeadow": 7518921,
+    "arcanewillow": 5228781,
+    "gentleaurora": 7338851,
+    "winterharbor": 11938858,
+    "autumncomets": 8369009,
+    "sunlitflower": 11558901,
+    "mellowflower": 8758933,
+    "serenestream": 8668891,
+    "silvercomets": 7168932,
+    "serenewillow": 7148833,
+    "autumnvalley": 9728626,
+    "silvermeadow": 9348705,
+    "sunlitgarden": 10868722,
+    "brightcomets": 5908875,
+    "brightcanyon": 6468861,
+    "gentlegarden": 4948864
+  },
+  "exact_liquid_total_smallest_units": 2778812566,
+  "original_initial_total_smallest_units": 2778812565,
+  "known_external_credit_smallest_units": 1,
+  "external_adjustments": [
+    {
+      "transaction_id": "09f0eb17fd5be203b25f4b0b80c5552dc46178780096ff51385cbad9e092fec4",
+      "block_num": 11818,
+      "block_id": "00002e2aa3b07ad6e71b430e6b2f1e24e4d653665dff124ed14684e277271937",
+      "action_ordinal": 1,
+      "from": "gptgenesisbp",
+      "to": "civicuserone",
+      "amount_atomic": 1,
+      "quantity": "0.0001 AIC"
+    }
+  ],
+  "ordinary_source_SHA256": "204304472d597628613f2ce439cc1113e377ace47f9d9ac88545f60986188687",
+  "last_completed_batch": {
+    "batch": 140,
+    "created_UTC": "2026-11-05T08:04:54.674692+00:00",
+    "planned_size": 3,
+    "receipts": {
+      "4d29edb80ebf8ac6acec7e87bbb450d577072df547887cbd6319a0c951b323ba": {
+        "height": 20437,
+        "id": "00004fd50b97da9c4ff4c647fddb4141d437ae4bcfa0de2ff330a82cac50c8e7",
+        "timestamp": "2026-11-05T08:04:55.000",
+        "receipt_status": "executed",
+        "whole_block_receipt_count": 3
+      },
+      "3cf70c5a5c4f06ed23b81b2840a6455ab4a3d66dd483edb0f902ddbe4590ac71": {
+        "height": 20437,
+        "id": "00004fd50b97da9c4ff4c647fddb4141d437ae4bcfa0de2ff330a82cac50c8e7",
+        "timestamp": "2026-11-05T08:04:55.000",
+        "receipt_status": "executed",
+        "whole_block_receipt_count": 3
+      },
+      "3f3bc7903056e635cd32758ff7c68e6dba5cf177d5541c52872982706fc1b6aa": {
+        "height": 20437,
+        "id": "00004fd50b97da9c4ff4c647fddb4141d437ae4bcfa0de2ff330a82cac50c8e7",
+        "timestamp": "2026-11-05T08:04:55.000",
+        "receipt_status": "executed",
+        "whole_block_receipt_count": 3
+      }
+    },
+    "source_SHA256": "204304472d597628613f2ce439cc1113e377ace47f9d9ac88545f60986188687",
+    "expiry_recovery": null,
+    "finalized_UTC": "2026-11-05T08:04:58.409938+00:00",
+    "transactions": [
+      {
+        "id": "4d29edb80ebf8ac6acec7e87bbb450d577072df547887cbd6319a0c951b323ba",
+        "metadata": {
+          "kind": "transfer",
+          "actor": "gentlemeadow",
+          "to": "frozenaurora",
+          "quantity_smallest_units": 1
+        },
+        "action": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "gentlemeadow",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "gentlemeadow",
+            "to": "frozenaurora",
+            "quantity": "0.0001 AIC",
+            "memo": "Compute credits 140"
+          }
+        }
+      },
+      {
+        "id": "3cf70c5a5c4f06ed23b81b2840a6455ab4a3d66dd483edb0f902ddbe4590ac71",
+        "metadata": {
+          "kind": "transfer",
+          "actor": "winterharbor",
+          "to": "sunlitcomets",
+          "quantity_smallest_units": 74
+        },
+        "action": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "winterharbor",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "winterharbor",
+            "to": "sunlitcomets",
+            "quantity": "0.0074 AIC",
+            "memo": "Storage share 140"
+          }
+        }
+      },
+      {
+        "id": "3f3bc7903056e635cd32758ff7c68e6dba5cf177d5541c52872982706fc1b6aa",
+        "metadata": {
+          "kind": "transfer",
+          "actor": "autumncomets",
+          "to": "sunlitfalcon",
+          "quantity_smallest_units": 98
+        },
+        "action": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "autumncomets",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "autumncomets",
+            "to": "sunlitfalcon",
+            "quantity": "0.0098 AIC",
+            "memo": "Daily transfer 140"
+          }
+        }
+      }
+    ]
+  },
+  "scope": "Stable pending=None before/after same completed counter; all90 actual native balances equal sender journal, sum equals preserved initial total plus explicitly proven external credit. No BP/business pause, no payment replay or TPS claim."
+}

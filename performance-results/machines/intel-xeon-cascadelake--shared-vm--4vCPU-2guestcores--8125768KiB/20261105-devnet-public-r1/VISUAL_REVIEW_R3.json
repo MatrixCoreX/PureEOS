@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T07:53:57.779645+00:00",
+  "scope": "Actual remote preview screenshots exported and visually inspected: desktop/mobile layout, fee selector/formula area, exact3asset balances and mobile history cards; internal table scrolling contained. Full-page capture scroll is normalized before public screenshots; no application CSS change.",
+  "screenshots": {
+    "final-preview-home-zh-dark-1440.png": "817d1f8203c5eb1f97c94290f1dcaf5d3c1e398bff0ccd632fa63f53d06759ec",
+    "final-preview-home-zh-light-390.png": "856c8cfd327d047717c1d28fa19c991e408738f3fba8fdfe3e624e22fe026cc2",
+    "final-preview-A-zh-light-390.png": "dc0c226b07d9dc6c7e0fcfa2a65fc635adfc67276bb7f676befeb69af7418c66"
+  }
+}

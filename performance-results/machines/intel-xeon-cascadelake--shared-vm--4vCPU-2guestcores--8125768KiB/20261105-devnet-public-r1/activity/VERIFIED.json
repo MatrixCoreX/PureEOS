@@ -1,0 +1,380 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T06:26:54.533037+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "source_SHA256": "8cbf7fb4169823e832aba4abbd6dc5c3821eaebea03032b453cc5e8db09b97c1",
+  "WASM_SHA256": "8a0c9b48dd7044199fa38a184a6287e0f79350462f909aa9d8afb2437de84108",
+  "completed_batches": 25,
+  "business_transactions": 50,
+  "transfers": 44,
+  "ticks": 4,
+  "notes": 2,
+  "observed_batch_sizes": {
+    "2": 11,
+    "1": 7,
+    "3": 7
+  },
+  "actual_empty_blocks": 146,
+  "canonical_empty_samples": [
+    {
+      "height": 8417,
+      "id": "000020e187ee342b1bfe98f00537eb42f41239dc266b093166caf1c1cfe3479c",
+      "timestamp": "2026-11-05T06:19:56.000"
+    },
+    {
+      "height": 8418,
+      "id": "000020e2e5e633ddc89c35b54d0e19d73f2a439db277d3c7e93c787fa184d67a",
+      "timestamp": "2026-11-05T06:19:56.500"
+    },
+    {
+      "height": 8419,
+      "id": "000020e344922a4ea2dfd35ef7aed1b1aba8b6e8c6a559411f15fd8130339057",
+      "timestamp": "2026-11-05T06:19:57.000"
+    },
+    {
+      "height": 8506,
+      "id": "0000213aa08eb4592d049cc6a90d1b1236614a05c27d56bdd031943cb252ef08",
+      "timestamp": "2026-11-05T06:20:40.500"
+    },
+    {
+      "height": 8507,
+      "id": "0000213bfac2904867fa07e110a06bccc7606e1b4dc2c4c9d373927b6c752c7c",
+      "timestamp": "2026-11-05T06:20:41.000"
+    },
+    {
+      "height": 8508,
+      "id": "0000213c00438124e9a09e8a3b6a2f6277ae6b6009335b1520027d2fa0df75ca",
+      "timestamp": "2026-11-05T06:20:41.500"
+    },
+    {
+      "height": 8509,
+      "id": "0000213d2cad1ca9a5e8c5fdca093e4ce85864ab5a9a8bcef26557586d0e61ec",
+      "timestamp": "2026-11-05T06:20:42.000"
+    },
+    {
+      "height": 8510,
+      "id": "0000213e5e91ef21d8552a336d3e02660850c16952233124e32a4da07ff5349b",
+      "timestamp": "2026-11-05T06:20:42.500"
+    },
+    {
+      "height": 8511,
+      "id": "0000213f168dde3071cc173442da37bff161648e4e6b32f7118288f4c0992557",
+      "timestamp": "2026-11-05T06:20:43.000"
+    },
+    {
+      "height": 8512,
+      "id": "00002140c639d48b323cad3c23b2787bb80e020d2756f6f59baf0674057120a2",
+      "timestamp": "2026-11-05T06:20:43.500"
+    },
+    {
+      "height": 8513,
+      "id": "000021416775071e291ba60011c89160df228be9daad57bd5d31b42d7aa4ae7a",
+      "timestamp": "2026-11-05T06:20:44.000"
+    },
+    {
+      "height": 8606,
+      "id": "0000219e5f0cc9ba08d5f98c551ad16c162337c1db364eb9d3590f97502c48fe",
+      "timestamp": "2026-11-05T06:21:30.500"
+    },
+    {
+      "height": 8607,
+      "id": "0000219fd47d33be5194acef0d0a37d5c9c191f52f67282f3529393d36a8bb03",
+      "timestamp": "2026-11-05T06:21:31.000"
+    },
+    {
+      "height": 8608,
+      "id": "000021a040739dda8ea4ab903f006bb81827c7cf5fb2750775c5b39d0582c50d",
+      "timestamp": "2026-11-05T06:21:31.500"
+    },
+    {
+      "height": 8609,
+      "id": "000021a1032377b0d6a6d90940b3624bd4947e9d64f36996ce02ce5a49c2663d",
+      "timestamp": "2026-11-05T06:21:32.000"
+    },
+    {
+      "height": 8610,
+      "id": "000021a2c3a23741aaa9eea334390440bf647ba77ec957a47a28f3963077695a",
+      "timestamp": "2026-11-05T06:21:32.500"
+    },
+    {
+      "height": 8611,
+      "id": "000021a328f10a4fafb7bad304fb32569dc233ce8a5afd8939086d4eeacaf0bb",
+      "timestamp": "2026-11-05T06:21:33.000"
+    },
+    {
+      "height": 8612,
+      "id": "000021a49e0d927f81124730337bcc9e30f78f0707bc8382d49173463951b12a",
+      "timestamp": "2026-11-05T06:21:33.500"
+    },
+    {
+      "height": 8613,
+      "id": "000021a5f6a8300f1b120e383fbb8d4147856fb5512ba88403e559f0e92a007d",
+      "timestamp": "2026-11-05T06:21:34.000"
+    },
+    {
+      "height": 8614,
+      "id": "000021a6c36be8ffdd052773a41c23176a45af98065442d1edce21f6143770bf",
+      "timestamp": "2026-11-05T06:21:34.500"
+    },
+    {
+      "height": 8675,
+      "id": "000021e3c208ff4fcb23f9030e0927c759a044ab37de8a67d23c3749f287758c",
+      "timestamp": "2026-11-05T06:22:05.000"
+    },
+    {
+      "height": 8676,
+      "id": "000021e4f9427ae6463713a8b087912f9558ccdd8b8f9b3d7e3b517296d8afbf",
+      "timestamp": "2026-11-05T06:22:05.500"
+    },
+    {
+      "height": 8677,
+      "id": "000021e579c8b682705ce5c4f86538b367f2c78ed4e5dde857ba5774543640da",
+      "timestamp": "2026-11-05T06:22:06.000"
+    },
+    {
+      "height": 8678,
+      "id": "000021e64d85c2bea2f3b4614767c1de991d251ced45c7bdd0c4c94477cb40f3",
+      "timestamp": "2026-11-05T06:22:06.500"
+    },
+    {
+      "height": 8786,
+      "id": "00002252734bfd647a0cbef77d6e043d909357d58a7adc15906db053c0ad7867",
+      "timestamp": "2026-11-05T06:23:00.500"
+    },
+    {
+      "height": 8787,
+      "id": "00002253bf0c4f090f6b7ed7c658c18af478e0d55b85faae2208dbf8bb7e25f2",
+      "timestamp": "2026-11-05T06:23:01.000"
+    },
+    {
+      "height": 8788,
+      "id": "000022548c7e00053f1b4715d76d9e79ddcd84202eb016afb4bffb08ebae2afa",
+      "timestamp": "2026-11-05T06:23:01.500"
+    },
+    {
+      "height": 8789,
+      "id": "000022551ea7f89151d75b137893fe8b5b0332633308b747553e898b088ee3c9",
+      "timestamp": "2026-11-05T06:23:02.000"
+    },
+    {
+      "height": 8790,
+      "id": "00002256c806ac4e68536594ef51ad8ef2c19945ebb2a0dc351770301b17073a",
+      "timestamp": "2026-11-05T06:23:02.500"
+    },
+    {
+      "height": 8791,
+      "id": "0000225741b0b0beed7e59db6d4b4e9c16d19760ca8325c5704e262e97cf4fee",
+      "timestamp": "2026-11-05T06:23:03.000"
+    },
+    {
+      "height": 8792,
+      "id": "00002258b632782cddc339ff5b1201bcbaad32dff2398ab682104294fd2f1f09",
+      "timestamp": "2026-11-05T06:23:03.500"
+    },
+    {
+      "height": 8793,
+      "id": "0000225962c80ed603655fae234e130ca63d4b69c81c6a67e2373d24512c18a9",
+      "timestamp": "2026-11-05T06:23:04.000"
+    },
+    {
+      "height": 8794,
+      "id": "0000225a387405cfe24a96ab01bf7e9d2572c69c6ecc18ddcb36175604ef5621",
+      "timestamp": "2026-11-05T06:23:04.500"
+    },
+    {
+      "height": 8855,
+      "id": "000022975b66dba6ea23a3210206f8c8499790cd7779c81f1de61fb54bf82051",
+      "timestamp": "2026-11-05T06:23:35.000"
+    },
+    {
+      "height": 8856,
+      "id": "0000229823f97987c3153f50ec40a03309f9ed50c1f46b956a622414ffb8f221",
+      "timestamp": "2026-11-05T06:23:35.500"
+    },
+    {
+      "height": 8857,
+      "id": "0000229913a99b77c3436213be5b8e04a3b18e12406a04f9ee3a9af6260e503e",
+      "timestamp": "2026-11-05T06:23:36.000"
+    },
+    {
+      "height": 8966,
+      "id": "000023069cf587a36ff3ab440e5a9c3332e425f24c060c3921553718997df737",
+      "timestamp": "2026-11-05T06:24:30.500"
+    },
+    {
+      "height": 8967,
+      "id": "00002307b22c9438f17f55d237bdc0fbbde8065f4a050820a8af7fdf15473f9d",
+      "timestamp": "2026-11-05T06:24:31.000"
+    },
+    {
+      "height": 8968,
+      "id": "00002308ad6cbf6583cf6049e447b92c051c0787c39d1d2b44df2fd1a8ab77b3",
+      "timestamp": "2026-11-05T06:24:31.500"
+    },
+    {
+      "height": 8969,
+      "id": "00002309d9ea91a739695bd710028f15e1cd4e7bdfd8e85471b4257ced62d04f",
+      "timestamp": "2026-11-05T06:24:32.000"
+    },
+    {
+      "height": 9080,
+      "id": "00002378aed827e533f827b46bbeae135009fb61ba3e9d383e50adcd95b96eb9",
+      "timestamp": "2026-11-05T06:25:27.500"
+    },
+    {
+      "height": 9081,
+      "id": "00002379eb7397df16d3c784b29636f8abfe5ce979f2ff85abd47ee050c90975",
+      "timestamp": "2026-11-05T06:25:28.000"
+    },
+    {
+      "height": 9082,
+      "id": "0000237a0ab6bd1a1a5a32dcdca21220d3ac56079cd696bb46a43f34968c29c3",
+      "timestamp": "2026-11-05T06:25:28.500"
+    },
+    {
+      "height": 9083,
+      "id": "0000237b08c022e5e881fb1d13d3e16461fa2566d414ca2e8af5535df869f7f4",
+      "timestamp": "2026-11-05T06:25:29.000"
+    },
+    {
+      "height": 9084,
+      "id": "0000237cdd6ba8761c3a6cb55dc6ee0457b17334a4d1d70b0a2153780fb3ceac",
+      "timestamp": "2026-11-05T06:25:29.500"
+    },
+    {
+      "height": 9150,
+      "id": "000023be7e4384037ff548a3c553e75a2f4802c81630a93955b4cc2c29a08c3c",
+      "timestamp": "2026-11-05T06:26:02.500"
+    },
+    {
+      "height": 9151,
+      "id": "000023bfff8886cd4c2efd7d0063a997d322963c5007d345cdb144349abbbe14",
+      "timestamp": "2026-11-05T06:26:03.000"
+    },
+    {
+      "height": 9152,
+      "id": "000023c0602a2c906da2341bdeb308b023950f33abe5156b2ca52d805de16096",
+      "timestamp": "2026-11-05T06:26:03.500"
+    },
+    {
+      "height": 9153,
+      "id": "000023c17ad97cf95e6cd99391a81a28ac28c40c521692399792c200d2e5c0db",
+      "timestamp": "2026-11-05T06:26:04.000"
+    },
+    {
+      "height": 9154,
+      "id": "000023c285b5cf5d103cf0a1e6c178d5c2b23c53074a1b2dd171df5aa59015b2",
+      "timestamp": "2026-11-05T06:26:04.500"
+    }
+  ],
+  "sample_last_batch": {
+    "batch": 25,
+    "created_UTC": "2026-11-05T06:26:01.392086+00:00",
+    "planned_size": 3,
+    "receipts": {
+      "8c009ba8d464af197c7a2b6834ddad567b92f7403b345e3131e2773996ead4db": {
+        "height": 9149,
+        "id": "000023bda82c122bdc304fb4ffd7f6b4d1182b66a5ce78383bca2a63fe4c9e5c",
+        "timestamp": "2026-11-05T06:26:02.000",
+        "receipt_status": "executed",
+        "whole_block_receipt_count": 3
+      },
+      "593cd868c4d3ab2f40d285893797cc7f20cc8699fba405eb09df76774dd4451d": {
+        "height": 9149,
+        "id": "000023bda82c122bdc304fb4ffd7f6b4d1182b66a5ce78383bca2a63fe4c9e5c",
+        "timestamp": "2026-11-05T06:26:02.000",
+        "receipt_status": "executed",
+        "whole_block_receipt_count": 3
+      },
+      "c081090ce3eaa1ccbc12daf88cba8e6a14892101fb06096f26c751ef8afcb050": {
+        "height": 9149,
+        "id": "000023bda82c122bdc304fb4ffd7f6b4d1182b66a5ce78383bca2a63fe4c9e5c",
+        "timestamp": "2026-11-05T06:26:02.000",
+        "receipt_status": "executed",
+        "whole_block_receipt_count": 3
+      }
+    },
+    "source_SHA256": "8cbf7fb4169823e832aba4abbd6dc5c3821eaebea03032b453cc5e8db09b97c1",
+    "expiry_recovery": null,
+    "finalized_UTC": "2026-11-05T06:26:03.533885+00:00",
+    "transactions": [
+      {
+        "id": "8c009ba8d464af197c7a2b6834ddad567b92f7403b345e3131e2773996ead4db",
+        "metadata": {
+          "kind": "transfer",
+          "actor": "autumnvalley",
+          "to": "sunlitcomets",
+          "quantity_smallest_units": 39
+        },
+        "action": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "autumnvalley",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "autumnvalley",
+            "to": "sunlitcomets",
+            "quantity": "0.0039 AIC",
+            "memo": "Storage share 25"
+          }
+        }
+      },
+      {
+        "id": "c081090ce3eaa1ccbc12daf88cba8e6a14892101fb06096f26c751ef8afcb050",
+        "metadata": {
+          "kind": "transfer",
+          "actor": "silentcanyon",
+          "to": "serenecanyon",
+          "quantity_smallest_units": 41
+        },
+        "action": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "silentcanyon",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "silentcanyon",
+            "to": "serenecanyon",
+            "quantity": "0.0041 AIC",
+            "memo": "Daily transfer 25"
+          }
+        }
+      },
+      {
+        "id": "593cd868c4d3ab2f40d285893797cc7f20cc8699fba405eb09df76774dd4451d",
+        "metadata": {
+          "kind": "transfer",
+          "actor": "cobaltaurora",
+          "to": "arcaneflower",
+          "quantity_smallest_units": 74
+        },
+        "action": {
+          "account": "eosio.token",
+          "name": "transfer",
+          "authorization": [
+            {
+              "actor": "cobaltaurora",
+              "permission": "active"
+            }
+          ],
+          "data": {
+            "from": "cobaltaurora",
+            "to": "arcaneflower",
+            "quantity": "0.0074 AIC",
+            "memo": "Compute credits 25"
+          }
+        }
+      }
+    ]
+  },
+  "ordinary_liquid_total_unchanged": true,
+  "not_TPS": true
+}

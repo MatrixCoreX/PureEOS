@@ -1,0 +1,10 @@
+{
+  "status": "STARTED",
+  "UTC": "2026-11-05T07:33:41.219361+00:00",
+  "unit": "pureeos-devnet-key-history-20261105.service",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+  "derived_namespace": "New Elasticsearch cluster aic-key-history-v1; no old-chain records",
+  "source_SHA256": "077d5ff5d237f081b410fe848cc9f7343f9aa4ea66b628b03350c6c1a8cf2916",
+  "scope": "Same reviewed receipt-v2 wire fields; actual 7523 transfer/history integration verification follows"
+}

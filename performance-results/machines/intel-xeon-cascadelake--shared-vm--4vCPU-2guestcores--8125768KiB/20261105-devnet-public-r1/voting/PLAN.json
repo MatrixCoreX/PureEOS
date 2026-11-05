@@ -1,0 +1,637 @@
+{
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "seed": "1799cf5e179d5f865414b5d568e2056920795f4df7e2cf4cc2ea106a690bff96",
+  "scope": "90 ordinary self-funded single-choice voters; key generation independent of seed",
+  "voters": [
+    {
+      "name": "civicuserone",
+      "producer": "tokyorikenai",
+      "CPU_AIC": 841,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_51Fz975PaJDgaQELMh77XD7g7riNiz6pjCQocwZbbJtsNhBWCQ"
+    },
+    {
+      "name": "civicusertwo",
+      "producer": "deepseekcore",
+      "CPU_AIC": 606,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6APn7MmCRrUHb2k7K5yM9xkKJ7391Ey75o1oof4gD1iXuc46Hs"
+    },
+    {
+      "name": "winterflower",
+      "producer": "zurichethlab",
+      "CPU_AIC": 630,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_71LsiS2CucJsTN7qFMqYSq5qonrKVkTuzGJh2HFv11iQxvQ18S"
+    },
+    {
+      "name": "summercanyon",
+      "producer": "anthropiclab",
+      "CPU_AIC": 339,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8LJzccee4CsvD7QXJ25Lngn31ZQomyP1xH5pFXMvJXrqEp8ctC"
+    },
+    {
+      "name": "arcanemeadow",
+      "producer": "parisinriaai",
+      "CPU_AIC": 165,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6jCctQjj5bUNKzGQmbfmDsUV1TCUkaB44kyTEf2xwRW7hkcAzi"
+    },
+    {
+      "name": "autumnflower",
+      "producer": "tokyorikenai",
+      "CPU_AIC": 794,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5xt32eD5p7qcXKKME4obX6UfLLyvo1Lc1pMk9t4SKKWnALu1Lk"
+    },
+    {
+      "name": "goldenvalley",
+      "producer": "bytedancelab",
+      "CPU_AIC": 426,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_52UMag8bRZb11HELsmvxtQ8n9bizoePsdmZ73ogGt5Nj753oZX"
+    },
+    {
+      "name": "mellowwillow",
+      "producer": "anthropiclab",
+      "CPU_AIC": 443,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6QwZSpZp2Nnr182tVwZV6X4R2bNeJpJJEnznjUnAkq7Bb1fcYL"
+    },
+    {
+      "name": "purplewillow",
+      "producer": "cohereclouds",
+      "CPU_AIC": 297,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5YL7e6eQffydbhnUJAZYmNghPuXf6ASQuwzbDQx54aE3v6wayr"
+    },
+    {
+      "name": "velvetcanyon",
+      "producer": "seoulkaistai",
+      "CPU_AIC": 333,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6rTAwhmdYyowq9hk89e7mVfSRC7WCqFmRu9jKKjRH6CkTcE3Kn"
+    },
+    {
+      "name": "springcomets",
+      "producer": "openaiclouds",
+      "CPU_AIC": 687,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7TMYu53rLHXHWqrQpxm51LhFfaCd9wCKh1S49QBh9tZwsencT7"
+    },
+    {
+      "name": "gentlevalley",
+      "producer": "baiduaiworks",
+      "CPU_AIC": 890,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5ViNLLUukMzo7K1sJ6JT6ZAjRGftjhB9RyQxeVMbfBJgxp8wpL"
+    },
+    {
+      "name": "silverwillow",
+      "producer": "stabilityhub",
+      "CPU_AIC": 312,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8PDryzTgGRnyR9dgPkGmMBXrxvZ848Rtvh1F48QppLs31m7Xtw"
+    },
+    {
+      "name": "mellowmeadow",
+      "producer": "nvidiaclouds",
+      "CPU_AIC": 852,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8DaKrxJF5gTnk17GqUujRku9xyDKvRN58Z15uVS9XvDYofLGfZ"
+    },
+    {
+      "name": "cobaltmeadow",
+      "producer": "tencentcloud",
+      "CPU_AIC": 248,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7eK5FDHaYkaNzrRWemsCthUXC4RnfqQGNXLYgtgQQLbygBjwKt"
+    },
+    {
+      "name": "cosmicfalcon",
+      "producer": "openaiclouds",
+      "CPU_AIC": 549,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5hfZiv7JJAPXHhe1LZmZYMQfviooMBfU12r7zBEbcuR62oH3Vj"
+    },
+    {
+      "name": "cobaltflower",
+      "producer": "zurichethlab",
+      "CPU_AIC": 465,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8CQnjnb2kXdP4BticUp4vnFNDxMprowpEKaMnEBzvCjehfEtew"
+    },
+    {
+      "name": "purpleaurora",
+      "producer": "minimaxcloud",
+      "CPU_AIC": 662,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5RjBcizgRMErBpp1oT8ZBcTeahL65pvx2o49kQbBmM9y2fLrm6"
+    },
+    {
+      "name": "astralvalley",
+      "producer": "moonshotlabs",
+      "CPU_AIC": 137,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5xpRy5g7oV7ZCFkQg3apw1k7oBKtW5oDrKwGUiUb8vwHgc54kJ"
+    },
+    {
+      "name": "silvervalley",
+      "producer": "cohereclouds",
+      "CPU_AIC": 468,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6qHTppsyoQ6G9s9gRBqKYYWfqxuMYLzaXcWKyWWYcCfG8jGxDK"
+    },
+    {
+      "name": "velvetgarden",
+      "producer": "gptgenesisbp",
+      "CPU_AIC": 762,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8RyGBvg4DdaWxCCatarLrZyBXA8yprDuk4dUAv7Dgo3x7u2FmD"
+    },
+    {
+      "name": "sunlitcomets",
+      "producer": "perplexityai",
+      "CPU_AIC": 780,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5H93prZiuHDcQEDb5YbAQT8BvWSVjsmT4WYfPswPnvoTjxUaZq"
+    },
+    {
+      "name": "silentvalley",
+      "producer": "minimaxcloud",
+      "CPU_AIC": 175,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_64Cv1BmzXuFP3R9TZ9GhfUWqFHee6fTr2ezYXQJ7gRw4NtMHxx"
+    },
+    {
+      "name": "frozenaurora",
+      "producer": "tencentcloud",
+      "CPU_AIC": 344,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_81h8RfJPagBosUSDTRukWfqVzgwgZxNA4YbKNhyEb3M5Vco1pE"
+    },
+    {
+      "name": "purplebreeze",
+      "producer": "tencentcloud",
+      "CPU_AIC": 223,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_68c4ApNtSJpmJCSfz37S1ePDYrfYJ6YUX4iwRdU1NozCT9Wdii"
+    },
+    {
+      "name": "silentcanyon",
+      "producer": "minimaxcloud",
+      "CPU_AIC": 408,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6PoZ73iYuaG5Hah1cxAmFKMNZdW9CWkqA4tQFddwKc4h1stkAr"
+    },
+    {
+      "name": "frozenstream",
+      "producer": "gptgenesisbp",
+      "CPU_AIC": 635,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7fPTwMo9ArSLREgReTYbu4aftvZ6h8KTEEsJpceByBbMj2LYYz"
+    },
+    {
+      "name": "cobaltcanyon",
+      "producer": "moonshotlabs",
+      "CPU_AIC": 667,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8JnsV5KNpPyVi7T3tN8BWb3NXFkN8wLH6qMWeGkNhMbDLAAjrL"
+    },
+    {
+      "name": "cosmiccomets",
+      "producer": "canadamilaai",
+      "CPU_AIC": 867,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_67Lxq2FLD7exM6dwYAYTq8br9xRDrp7gy4bYrtbhSTa95382ue"
+    },
+    {
+      "name": "gentlestream",
+      "producer": "canadamilaai",
+      "CPU_AIC": 204,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6gLyP3LXgQenJWXcCngGLUnzhacEEdGRt2JWesvmsJtR67T5Fm"
+    },
+    {
+      "name": "velvetwillow",
+      "producer": "berlintulabs",
+      "CPU_AIC": 714,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_4yDvX8Jc7buu5pkcsz2N7M7iKseQwtsR66PVz2Aziqr2M8yRfx"
+    },
+    {
+      "name": "cosmicwillow",
+      "producer": "nvidiaclouds",
+      "CPU_AIC": 336,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7UmvQgxhLeDs8cRFCRoUChipREAb8ZbRnydoUd3pQjexrHbBSF"
+    },
+    {
+      "name": "silentflower",
+      "producer": "tencentcloud",
+      "CPU_AIC": 144,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7J1zXyBX7NwvSLWyfFzk9aWPHQWWLFoDNdJz9TqEca6qjcywZ5"
+    },
+    {
+      "name": "brightharbor",
+      "producer": "deepmindlabs",
+      "CPU_AIC": 227,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_81hxZ3YjyEARj912xxhxAxojy8DBm8DcgVHVrQ8Z3AG7gZZG51"
+    },
+    {
+      "name": "cobaltvalley",
+      "producer": "mistralcloud",
+      "CPU_AIC": 745,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8KoMSQRADLH7gozuc2rckLcpdJZ67aNXaW2qDcqyGMNKpp5ANi"
+    },
+    {
+      "name": "wintercomets",
+      "producer": "gptgenesisbp",
+      "CPU_AIC": 515,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5VzeuvKvTHuwthv6neRk28GMCUedD1nHfT7v2xX6KSiyjZDmgC"
+    },
+    {
+      "name": "velvetbreeze",
+      "producer": "gptgenesisbp",
+      "CPU_AIC": 719,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7k8TAHR93pFE6aeqdNr7aUgQuu7eo7FzWiQcu3G4zS2MnvyRHw"
+    },
+    {
+      "name": "frozencanyon",
+      "producer": "openaiclouds",
+      "CPU_AIC": 524,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7VZKKBeYCox6Ek5e1t8qACABsQP58zFrDPe1sS4zViM3LXpxnX"
+    },
+    {
+      "name": "silveraurora",
+      "producer": "deepseekcore",
+      "CPU_AIC": 262,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6xVCVHbBjTv6Wuarn7T2wFZGvQqhutaTFaFXgyrbgQ6wPdizTw"
+    },
+    {
+      "name": "astralstream",
+      "producer": "deepseekcore",
+      "CPU_AIC": 333,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5wi4XJUiTpmmbKsJn4Dh1M6PzJfEBM5CGEdzwFomKxiMgv1JTQ"
+    },
+    {
+      "name": "goldengarden",
+      "producer": "stabilityhub",
+      "CPU_AIC": 508,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7ZfruQ2um4M8UmqdYrHAdjzzbKtNTvtbXSCfCPFwQpjZ2BWR8o"
+    },
+    {
+      "name": "frozenbreeze",
+      "producer": "tokyorikenai",
+      "CPU_AIC": 776,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7ikSdyrWvtAcuTTU4AGqVkS9uMTiYjLfxD5ks7KwRxXMcjFsWz"
+    },
+    {
+      "name": "silverfalcon",
+      "producer": "minimaxcloud",
+      "CPU_AIC": 341,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7YkxdXTXhHGuDQ1Zezn5B3ptnknqYqMy5syx8nN5BGkEdXkVnB"
+    },
+    {
+      "name": "goldenbreeze",
+      "producer": "seoulkaistai",
+      "CPU_AIC": 450,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7J2cqvzA4PCWv4dCD8M3BP97NeKxHn8QW9cWxj5xfKAmAvNU8j"
+    },
+    {
+      "name": "cobaltaurora",
+      "producer": "tencentcloud",
+      "CPU_AIC": 485,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6DvHiCXSgCu8gXnYYZk29C2B2NQ6oN7yo1pLd73FcHoWLKSVAm"
+    },
+    {
+      "name": "springbreeze",
+      "producer": "singaporentu",
+      "CPU_AIC": 733,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6LUbSHQZV4FXhs5mYYiMJU91bjCrCWfigomdJ9svnshu1JXmeN"
+    },
+    {
+      "name": "arcaneflower",
+      "producer": "stabilityhub",
+      "CPU_AIC": 703,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_73bXWMT1omXKQdGFdZLELRJM8THPVSGCmeFdHjmNhaMksbZCPX"
+    },
+    {
+      "name": "purplecanyon",
+      "producer": "mistralcloud",
+      "CPU_AIC": 802,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_4xGa9xfP75xfPh6z1NgvpK68vcgrsT5NFSRSQqEEKmV6DkwzNQ"
+    },
+    {
+      "name": "cosmicaurora",
+      "producer": "alibabacloud",
+      "CPU_AIC": 259,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6faKS8ctLhVUUJaB1EezaffNnTQPeiaXUcd5aEXMdfkcg4ziUL"
+    },
+    {
+      "name": "goldenwillow",
+      "producer": "gptgenesisbp",
+      "CPU_AIC": 863,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5Kpno34vFKGynkfmgqbzcQtAXYqUs8TQyadihz7o6paBw14w3i"
+    },
+    {
+      "name": "serenefalcon",
+      "producer": "deepmindlabs",
+      "CPU_AIC": 253,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_76TL5k9Vab5BiNeP4kLs22jNyUCY7o7Hopp3BvqhEk79XhMQdz"
+    },
+    {
+      "name": "cosmicmeadow",
+      "producer": "baiduaiworks",
+      "CPU_AIC": 862,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8MNytc8mrcQZtoBvvKAaV17fLwg5x8mh9tKS1GVHeLTg92a4yn"
+    },
+    {
+      "name": "cobaltbreeze",
+      "producer": "parisinriaai",
+      "CPU_AIC": 355,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_64gmYwkygr11vLBTvFPpGijxuL1rpsCFn8HGbaLMDZu5kicEqC"
+    },
+    {
+      "name": "cosmicflower",
+      "producer": "canadamilaai",
+      "CPU_AIC": 733,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5KWbXFq4Nz3DMA5iZ5KzbSYxfpMpbfqX9cbXH8G6jALTnX16NH"
+    },
+    {
+      "name": "purplevalley",
+      "producer": "cohereclouds",
+      "CPU_AIC": 764,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7mTCvzyMKQ9FSFxzspYLWm4EPAA1XMGmZkwEmuGAcYDQeSjVZV"
+    },
+    {
+      "name": "brightgarden",
+      "producer": "baiduaiworks",
+      "CPU_AIC": 718,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7HAM9Dg3DXaCL4deLVWouMLSiGj7A5rRF4ughWA7RvdjimmVMY"
+    },
+    {
+      "name": "goldencanyon",
+      "producer": "parisinriaai",
+      "CPU_AIC": 289,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6GBW7ZygqCCkTYAjbvdbiZXGp4tBbtY5uUt33XzVJqppfw3HVs"
+    },
+    {
+      "name": "sunlitcanyon",
+      "producer": "stabilityhub",
+      "CPU_AIC": 871,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5yDmsTQArMbcaMegD5Km6wiGeqbSQNCwRGN6XjunbbLuiSULdF"
+    },
+    {
+      "name": "autumnfalcon",
+      "producer": "cohereclouds",
+      "CPU_AIC": 485,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7oommHybNPzcSkXt5QNnnk3wzdpzQAp9HX2YnKsNnykiwKakha"
+    },
+    {
+      "name": "autumnbreeze",
+      "producer": "bytedancelab",
+      "CPU_AIC": 223,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6FZU3J2GNfYtfVNUDBdfJexkgTrs5kcex2wHr3zoU2NrZ5qcyQ"
+    },
+    {
+      "name": "frozencomets",
+      "producer": "alibabacloud",
+      "CPU_AIC": 311,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6wRMizUXPyScvkaszFecLu4wjLjQKMQSfune3MkkTxBCTmW9gF"
+    },
+    {
+      "name": "silentharbor",
+      "producer": "moonshotlabs",
+      "CPU_AIC": 252,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7hJesXYE3jdD7RwB974rt8u7hGcdFavMx1XyvaszypT35N3vxG"
+    },
+    {
+      "name": "summergarden",
+      "producer": "tokyorikenai",
+      "CPU_AIC": 530,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8KYNPWQLUHZk4DZdRScfK7vmKdn7DMigZvNWCuz54EFvHpCYJk"
+    },
+    {
+      "name": "cosmicbreeze",
+      "producer": "deepmindlabs",
+      "CPU_AIC": 144,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8mAab9xEFojrBRTXV42KMRqBKTpNAzw45ajQD2cdVGjn6CUbD6"
+    },
+    {
+      "name": "serenecanyon",
+      "producer": "moonshotlabs",
+      "CPU_AIC": 595,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7cME59YUPzqTM1tFbWRgroNSpyyTQWa5sSm41ambc2S9v7qYGt"
+    },
+    {
+      "name": "springgarden",
+      "producer": "parisinriaai",
+      "CPU_AIC": 309,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_4x2Qpego6fpx7s6iwpZuSV8QB1rb1ApG7UrrHGJa9FC1woJssp"
+    },
+    {
+      "name": "sunlitfalcon",
+      "producer": "alibabacloud",
+      "CPU_AIC": 598,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5jaJCiJoqftHrD11vfm2gVVezLjUpxGzDHPjfA3QF721eAsbqc"
+    },
+    {
+      "name": "cobaltgarden",
+      "producer": "gptgenesisbp",
+      "CPU_AIC": 693,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7XbyJtZuTDPxsHMpsxtrBdDWQCiuXBjTfFnDD4AtPyoDhnd4N6"
+    },
+    {
+      "name": "cobaltforest",
+      "producer": "stabilityhub",
+      "CPU_AIC": 456,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8aoQMXziBfzDfNdKu73YaxiuGixbqqH7EoF3d3CDpgRUi1QwLx"
+    },
+    {
+      "name": "silentcomets",
+      "producer": "singaporentu",
+      "CPU_AIC": 500,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_84fLCoyaMFKeKKEXj1N3A9Bm94SwEhH4kVXcvVmuKtQTh217s5"
+    },
+    {
+      "name": "autumnforest",
+      "producer": "londonucllab",
+      "CPU_AIC": 564,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5QZunRNgtoJZGgM5N2Cw7jeHqXAr4SQjjMj4gkYuyX99QPUgDj"
+    },
+    {
+      "name": "sereneflower",
+      "producer": "zurichethlab",
+      "CPU_AIC": 644,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6Nr1z6eWVr8Uz6maTRVH71Z4ShHaz9oKbi3VGtyEuXChoTiNN8"
+    },
+    {
+      "name": "mellowcomets",
+      "producer": "parisinriaai",
+      "CPU_AIC": 214,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7unFeQdoTww5dN4vPwx6kmoM9LT4TMfFsqGgvBRve4MqwToBn3"
+    },
+    {
+      "name": "cobaltstream",
+      "producer": "anthropiclab",
+      "CPU_AIC": 629,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7s1r3BEVWgdqw7cof1ipBTrKGc48ZXo1LNc2PynTJLmMyFVFwD"
+    },
+    {
+      "name": "gentlemeadow",
+      "producer": "canadamilaai",
+      "CPU_AIC": 638,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5wRER5hyZuf2dewTBfzxsEJCcJq18wTHeXDujJmrUHnG3JaD6c"
+    },
+    {
+      "name": "arcanewillow",
+      "producer": "tencentcloud",
+      "CPU_AIC": 867,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_81eY7kAXMkhfgccEthwZTrTA7pPZrh57XdAcTq2ZX8roonfPyU"
+    },
+    {
+      "name": "gentleaurora",
+      "producer": "deepseekcore",
+      "CPU_AIC": 656,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8YhRsHDYy3WHpbuHqYYoPizbnMWwWzPSt1TsWKKFkK2A4X8RW7"
+    },
+    {
+      "name": "winterharbor",
+      "producer": "singaporentu",
+      "CPU_AIC": 196,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5uzotSxsSNw52fiTdhAzoyjvcPeCsxoTuBq2jwjUJAfVMMCff8"
+    },
+    {
+      "name": "autumncomets",
+      "producer": "perplexityai",
+      "CPU_AIC": 553,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_72zZtUVTm43ZBHG19QsGpZcc3FZ9R5GN8n4L8Zu3Z2LDcTccnL"
+    },
+    {
+      "name": "sunlitflower",
+      "producer": "alibabacloud",
+      "CPU_AIC": 234,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6eDTatMXN7vpBshESiHaRbvi5JXTwpsWyuquNira3cMqLyMGeA"
+    },
+    {
+      "name": "mellowflower",
+      "producer": "deepseekcore",
+      "CPU_AIC": 514,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7qyUDQjbQe8ukm3d3GfswEXhuDxFhJawuoAT8tkFh6MLs958vV"
+    },
+    {
+      "name": "serenestream",
+      "producer": "perplexityai",
+      "CPU_AIC": 523,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_83vWJui1sGzZEaWWdPzTSsSi9CEgdXsocrZTFtvmpE7NhXpBUj"
+    },
+    {
+      "name": "silvercomets",
+      "producer": "cohereclouds",
+      "CPU_AIC": 673,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_6JH56wJhxc3Xiy2q7Zpki7saQornYzKCFGsPXNmZvXXryqX328"
+    },
+    {
+      "name": "serenewillow",
+      "producer": "berlintulabs",
+      "CPU_AIC": 675,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_86RaZyLr9KUCU3ogXeiW8LPxdk9YsQruZBYCYndyMdnK3S4SL2"
+    },
+    {
+      "name": "autumnvalley",
+      "producer": "alibabacloud",
+      "CPU_AIC": 417,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_8SCJ6wgY2955zwZvzCs5wRj7BhWNSHuLB7iTMNHijbR6Mo5CG9"
+    },
+    {
+      "name": "silvermeadow",
+      "producer": "bytedancelab",
+      "CPU_AIC": 455,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_4ttfLhSZhpEMFekWDEXrUKwbjQZZkDs1YqWssi2tuGdXG9nQvg"
+    },
+    {
+      "name": "sunlitgarden",
+      "producer": "berlintulabs",
+      "CPU_AIC": 303,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_5vEjPtzSS17x8cGhcxVTyNBn5fdm6qMPQNcALRYTdKBUTucXHB"
+    },
+    {
+      "name": "brightcomets",
+      "producer": "stabilityhub",
+      "CPU_AIC": 799,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7dhgJaqu6jVqbSxbGD3k2mm2oJBJ9gvo1QyvR2tEUR2Zxjgmvc"
+    },
+    {
+      "name": "brightcanyon",
+      "producer": "seoulkaistai",
+      "CPU_AIC": 743,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_7ys3m692PXas7sgue2qd2CvpA4iCGL7zHwGyB7fNf8YoLD2Eg6"
+    },
+    {
+      "name": "gentlegarden",
+      "producer": "canadamilaai",
+      "CPU_AIC": 895,
+      "NET_AIC": 10,
+      "public_key": "PUB_K1_68LTG6rnFAJB5vk9D3vEdC6ca3zmzGKwLk5kz1sTMPeyLULtB5"
+    }
+  ]
+}

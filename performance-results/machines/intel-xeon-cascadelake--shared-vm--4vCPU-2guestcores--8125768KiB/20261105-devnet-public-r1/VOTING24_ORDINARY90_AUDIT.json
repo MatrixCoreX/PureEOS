@@ -1,0 +1,294 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T06:09:28.509716+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "public_random_seed": "1799cf5e179d5f865414b5d568e2056920795f4df7e2cf4cc2ea106a690bff96",
+  "BP_count": 24,
+  "ordinary_voters": 90,
+  "each_BP_self_votes": true,
+  "each_BP_has_ordinary_votes": true,
+  "all_total_vote_weights_distinct": true,
+  "BPs": [
+    {
+      "name": "alibabacloud",
+      "total_votes": "19790010",
+      "self_staked": "1100010",
+      "ordinary_voters": [
+        "cosmicaurora",
+        "frozencomets",
+        "sunlitfalcon",
+        "sunlitflower",
+        "autumnvalley"
+      ]
+    },
+    {
+      "name": "anthropiclab",
+      "total_votes": "15510002",
+      "self_staked": "1100002",
+      "ordinary_voters": [
+        "summercanyon",
+        "mellowwillow",
+        "cobaltstream"
+      ]
+    },
+    {
+      "name": "baiduaiworks",
+      "total_votes": "26100012",
+      "self_staked": "1100012",
+      "ordinary_voters": [
+        "gentlevalley",
+        "cosmicmeadow",
+        "brightgarden"
+      ]
+    },
+    {
+      "name": "berlintulabs",
+      "total_votes": "18320022",
+      "self_staked": "1100022",
+      "ordinary_voters": [
+        "velvetwillow",
+        "serenewillow",
+        "sunlitgarden"
+      ]
+    },
+    {
+      "name": "bytedancelab",
+      "total_votes": "12440013",
+      "self_staked": "1100013",
+      "ordinary_voters": [
+        "goldenvalley",
+        "autumnbreeze",
+        "silvermeadow"
+      ]
+    },
+    {
+      "name": "canadamilaai",
+      "total_votes": "34970023",
+      "self_staked": "1100023",
+      "ordinary_voters": [
+        "cosmiccomets",
+        "gentlestream",
+        "cosmicflower",
+        "gentlemeadow",
+        "gentlegarden"
+      ]
+    },
+    {
+      "name": "cohereclouds",
+      "total_votes": "28470006",
+      "self_staked": "1100006",
+      "ordinary_voters": [
+        "purplewillow",
+        "silvervalley",
+        "purplevalley",
+        "autumnfalcon",
+        "silvercomets"
+      ]
+    },
+    {
+      "name": "deepmindlabs",
+      "total_votes": "7640004",
+      "self_staked": "1100004",
+      "ordinary_voters": [
+        "brightharbor",
+        "serenefalcon",
+        "cosmicbreeze"
+      ]
+    },
+    {
+      "name": "deepseekcore",
+      "total_votes": "27510003",
+      "self_staked": "2200003",
+      "ordinary_voters": [
+        "civicusertwo",
+        "silveraurora",
+        "astralstream",
+        "gentleaurora",
+        "mellowflower"
+      ]
+    },
+    {
+      "name": "gptgenesisbp",
+      "total_votes": "153570000",
+      "self_staked": "1100000",
+      "ordinary_voters": [
+        "velvetgarden",
+        "frozenstream",
+        "wintercomets",
+        "velvetbreeze",
+        "goldenwillow",
+        "cobaltgarden"
+      ]
+    },
+    {
+      "name": "londonucllab",
+      "total_votes": "6840018",
+      "self_staked": "1100018",
+      "ordinary_voters": [
+        "autumnforest"
+      ]
+    },
+    {
+      "name": "minimaxcloud",
+      "total_votes": "17360014",
+      "self_staked": "1100014",
+      "ordinary_voters": [
+        "purpleaurora",
+        "silentvalley",
+        "silentcanyon",
+        "silverfalcon"
+      ]
+    },
+    {
+      "name": "mistralcloud",
+      "total_votes": "16770005",
+      "self_staked": "1100005",
+      "ordinary_voters": [
+        "cobaltvalley",
+        "purplecanyon"
+      ]
+    },
+    {
+      "name": "moonshotlabs",
+      "total_votes": "18010015",
+      "self_staked": "1100015",
+      "ordinary_voters": [
+        "astralvalley",
+        "cobaltcanyon",
+        "silentharbor",
+        "serenecanyon"
+      ]
+    },
+    {
+      "name": "nvidiaclouds",
+      "total_votes": "13180009",
+      "self_staked": "1100009",
+      "ordinary_voters": [
+        "mellowmeadow",
+        "cosmicwillow"
+      ]
+    },
+    {
+      "name": "openaiclouds",
+      "total_votes": "19000001",
+      "self_staked": "1100001",
+      "ordinary_voters": [
+        "springcomets",
+        "cosmicfalcon",
+        "frozencanyon"
+      ]
+    },
+    {
+      "name": "parisinriaai",
+      "total_votes": "14920021",
+      "self_staked": "1100021",
+      "ordinary_voters": [
+        "arcanemeadow",
+        "cobaltbreeze",
+        "goldencanyon",
+        "springgarden",
+        "mellowcomets"
+      ]
+    },
+    {
+      "name": "perplexityai",
+      "total_votes": "19960007",
+      "self_staked": "1100007",
+      "ordinary_voters": [
+        "sunlitcomets",
+        "autumncomets",
+        "serenestream"
+      ]
+    },
+    {
+      "name": "seoulkaistai",
+      "total_votes": "16660020",
+      "self_staked": "1100020",
+      "ordinary_voters": [
+        "velvetcanyon",
+        "goldenbreeze",
+        "brightcanyon"
+      ]
+    },
+    {
+      "name": "singaporentu",
+      "total_votes": "15690016",
+      "self_staked": "1100016",
+      "ordinary_voters": [
+        "springbreeze",
+        "silentcomets",
+        "winterharbor"
+      ]
+    },
+    {
+      "name": "stabilityhub",
+      "total_votes": "38190008",
+      "self_staked": "1100008",
+      "ordinary_voters": [
+        "silverwillow",
+        "goldengarden",
+        "arcaneflower",
+        "sunlitcanyon",
+        "cobaltforest",
+        "brightcomets"
+      ]
+    },
+    {
+      "name": "tencentcloud",
+      "total_votes": "24810011",
+      "self_staked": "1100011",
+      "ordinary_voters": [
+        "cobaltmeadow",
+        "frozenaurora",
+        "purplebreeze",
+        "silentflower",
+        "cobaltaurora",
+        "arcanewillow"
+      ]
+    },
+    {
+      "name": "tokyorikenai",
+      "total_votes": "34110019",
+      "self_staked": "1100019",
+      "ordinary_voters": [
+        "civicuserone",
+        "autumnflower",
+        "frozenbreeze",
+        "summergarden"
+      ]
+    },
+    {
+      "name": "zurichethlab",
+      "total_votes": "18790017",
+      "self_staked": "1100017",
+      "ordinary_voters": [
+        "winterflower",
+        "cobaltflower",
+        "sereneflower"
+      ]
+    }
+  ],
+  "current_snapshot": {
+    "server_version": "1f883392",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 7162,
+    "last_irreversible_block_num": 7160,
+    "last_irreversible_block_id": "00001bf8e35e7807f4d9d3b09fd5f7caee2011e34b8c3c92aa69f34088672206",
+    "head_block_id": "00001bfaa1d23a6032d9563add2ff2da6f72fac60b2f87db6542a31261ea5691",
+    "head_block_time": "2026-11-05T06:09:28.500",
+    "head_block_producer": "tencentcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 7162,
+    "fork_db_head_block_id": "00001bfaa1d23a6032d9563add2ff2da6f72fac60b2f87db6542a31261ea5691",
+    "server_full_version_string": "v1.0.0-src-1f883392d3d5d994b48c17ce87ee917e9b44b531 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6018102760",
+    "total_net_weight": 224000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T06:09:27.500"
+  },
+  "scope": "Actual owner-authorized single-choice votes, no fabricated vote values or protocol changes"
+}

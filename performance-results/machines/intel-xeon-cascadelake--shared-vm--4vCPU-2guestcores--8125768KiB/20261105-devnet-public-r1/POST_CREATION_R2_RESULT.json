@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "steps": [
+    {
+      "script": "setup_key_projection_r2.py",
+      "receipt": "KEY_PROJECTION_SETUP.json",
+      "status": "STARTED"
+    },
+    {
+      "script": "setup_key_service_r2.py",
+      "receipt": "KEY_SERVICE_RESULT.json",
+      "status": "PASS"
+    },
+    {
+      "script": "verify_public_transfers_r2.py",
+      "receipt": "PUBLIC_TRANSFER_RESULT.json",
+      "status": "PASS"
+    },
+    {
+      "script": "verify_public_signup_r2.py",
+      "receipt": "PUBLIC_SIGNUP_RESULT.json",
+      "status": "PASS"
+    }
+  ],
+  "scope": "Only new projection/sole founder relay and owned transfer/signup QA; preserve all current nodes/history/ordinary activity",
+  "UTC": "2026-11-05T07:38:20.609337+00:00",
+  "current_step": null
+}

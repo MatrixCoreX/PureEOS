@@ -1,0 +1,5 @@
+{
+  "status": "TEST_HARNESS_ONLY",
+  "original_failure": "First anchor was inside collapsed details and hidden; assert actual visible canonical link instead",
+  "new_script_SHA256": "388e4da6fe1139df5e9e855a3caef1f6e347b04a0ee09a6c605bf6a9dac1fb5f"
+}

@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "cases": [
+    {
+      "account": "signupkoneai",
+      "owner_public_key": "PUB_K1_5BXJnszBrEeX4g1GD94FWTLUCFnHW2xBxCZ83BVz3xd6WispTn",
+      "active_public_key": "PUB_K1_5BXJnszBrEeX4g1GD94FWTLUCFnHW2xBxCZ83BVz3xd6WispTn",
+      "registration": {
+        "transaction_id": "f76ab0b39d2e8b1fb7fa7b8f116c34412bc173b66e23606462663baa365e9188",
+        "block_num": 17356,
+        "block_id": "000043ccf7e5e09c9a7b457cd44b795cdd94486a8811abcb9f1c5b7c279a17f8",
+        "observed_lib": 17357,
+        "reported_block_num": 17356
+      },
+      "active_signature_transaction": {
+        "transaction_id": "89131e0a8d50868d6c489a41e415752c3cb536e654e45bd8fa3e74e5c367b609",
+        "block_num": 17368,
+        "block_id": "000043d832bf4d97edf1f2f47bdf7541cd7314303e1c5a57a6b2826e6b528b25",
+        "observed_lib": 17368,
+        "reported_block_num": 17367
+      },
+      "active_signature_types": [
+        "K1"
+      ],
+      "RAM_quota": 23446,
+      "resource_stake": [
+        {
+          "from": "signupkoneai",
+          "to": "signupkoneai",
+          "net_weight": "0.1000 AIC",
+          "cpu_weight": "0.1000 AIC"
+        }
+      ]
+    },
+    {
+      "account": "signuplegacy",
+      "owner_public_key": "PUB_K1_78pvVwatd15zaGyXXK1xNfJnBHiqSvowMAqH3ALpjb3fsXmoh8",
+      "active_public_key": "PUB_K1_78pvVwatd15zaGyXXK1xNfJnBHiqSvowMAqH3ALpjb3fsXmoh8",
+      "registration": {
+        "transaction_id": "289e2421fe90c8841da9fc223577cc005e9e1a7dbca30b92b485c809b8975cbc",
+        "block_num": 17373,
+        "block_id": "000043dd82fce8ee78f72f3d723938f71d64669c5385a8754f1f1ca2d0ec06c4",
+        "observed_lib": 17373,
+        "reported_block_num": 17373
+      },
+      "active_signature_transaction": {
+        "transaction_id": "72c75ff2c1bd199a47f85544baeb6dbff5a2978f3e32d4a968b07d813973ba3f",
+        "block_num": 17392,
+        "block_id": "000043f0a1acdd16fb64c50b4145e6baa5e7aaffd0600fcf6906cb106c4ff0e5",
+        "observed_lib": 17392,
+        "reported_block_num": 17390
+      },
+      "active_signature_types": [
+        "K1"
+      ],
+      "RAM_quota": 23446,
+      "resource_stake": [
+        {
+          "from": "signuplegacy",
+          "to": "signuplegacy",
+          "net_weight": "0.1000 AIC",
+          "cpu_weight": "0.1000 AIC"
+        }
+      ]
+    },
+    {
+      "account": "signupdualai",
+      "owner_public_key": "PUB_K1_4v6MpAQFFLraypC6NGU8APK4yTDt99vVB6uwBTaJeWzLSnnbBG",
+      "active_public_key": "PUB_R1_5WFAynqV41qFyDJSDMJAKdGdZLCV6XbfwYiDwhcFffDdBxAQBF",
+      "registration": {
+        "transaction_id": "fc95a5e6c51839a83d073190a6f858e4361b186eb7a3de52afb3133503e4426a",
+        "block_num": 17398,
+        "block_id": "000043f61e32330b905de97cfd96cf068999b752e641991ee3262407b495478f",
+        "observed_lib": 17398,
+        "reported_block_num": 17397
+      },
+      "active_signature_transaction": {
+        "transaction_id": "1b032955e26733b158fff8f4505d4b0cf61bf4b3163e900f0421e7c713278135",
+        "block_num": 17413,
+        "block_id": "00004405c1d00a7dfec40c29a4435ee93f3f89a544d834d684c3f4c2ab1889ba",
+        "observed_lib": 17414,
+        "reported_block_num": 17413
+      },
+      "active_signature_types": [
+        "R1"
+      ],
+      "RAM_quota": 23446,
+      "resource_stake": [
+        {
+          "from": "signupdualai",
+          "to": "signupdualai",
+          "net_weight": "0.1000 AIC",
+          "cpu_weight": "0.1000 AIC"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    "Actual registered account RAM and nonprivileged signupkoneai",
+    "Exact registered owner signupkoneai",
+    "Exact registered active signupkoneai",
+    "New account owns both resource stakes signupkoneai",
+    "Full registration payment consumed by owned stakes and actual RAM signupkoneai",
+    "Actual registered account RAM and nonprivileged signuplegacy",
+    "Exact registered owner signuplegacy",
+    "Exact registered active signuplegacy",
+    "New account owns both resource stakes signuplegacy",
+    "Full registration payment consumed by owned stakes and actual RAM signuplegacy",
+    "Actual registered account RAM and nonprivileged signupdualai",
+    "Exact registered owner signupdualai",
+    "Exact registered active signupdualai",
+    "New account owns both resource stakes signupdualai",
+    "Full registration payment consumed by owned stakes and actual RAM signupdualai",
+    "Actual native R1 active signature accepted",
+    "Native registration rollback signuplowram",
+    "Native registration rollback signupbadkey",
+    "Duplicate account rejects without charging"
+  ],
+  "finished_UTC": "2026-11-05T07:38:20.377392+00:00",
+  "formats": [
+    "PUB_K1",
+    "legacy EOS",
+    "split PUB_K1 owner / PUB_R1 active"
+  ],
+  "scope": "Actual public owned TEST registrations/signatures; no post-quantum key claim, no external wallet compatibility claim"
+}

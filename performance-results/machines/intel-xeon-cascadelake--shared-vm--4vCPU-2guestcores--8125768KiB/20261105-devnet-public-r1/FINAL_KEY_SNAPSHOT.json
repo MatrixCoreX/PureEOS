@@ -1,0 +1,65 @@
+{
+  "status": "PASS",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "UTC": "2026-11-05T07:38:24.433Z",
+  "wallets": {
+    "A": {
+      "public_key": "PUB_K1_5ys66qeRfL9x4PQq8VV8evDJsv1j6zb2NyqyN3417bgJjrTGNh",
+      "status": "active",
+      "holdings": [
+        {
+          "contract": "eosio.token",
+          "symbol": "AIC",
+          "amount": "147674"
+        },
+        {
+          "contract": "usd",
+          "symbol": "USD",
+          "amount": "965000"
+        },
+        {
+          "contract": "cny",
+          "symbol": "CNY",
+          "amount": "970000"
+        }
+      ]
+    },
+    "B": {
+      "public_key": "PUB_K1_74dJFhF9f41ZA1xzH4xzmQpenu8LuPwq5Y7NQJxupG4gwukPtB",
+      "status": "active",
+      "holdings": [
+        {
+          "contract": "eosio.token",
+          "symbol": "AIC",
+          "amount": "40000"
+        },
+        {
+          "contract": "usd",
+          "symbol": "USD",
+          "amount": "20000"
+        },
+        {
+          "contract": "cny",
+          "symbol": "CNY",
+          "amount": "20000"
+        }
+      ]
+    },
+    "USDonly": {
+      "public_key": "PUB_K1_8DjrbATAxSZ8XtGUCtkXxiMexeEZ2FdC6MfcbBnPGdYj47hZNY",
+      "status": "active",
+      "holdings": [
+        {
+          "contract": "usd",
+          "symbol": "USD",
+          "amount": "20000"
+        }
+      ]
+    },
+    "named": {
+      "public_key": "PUB_K1_8ESGXF2jzr96ebLQHUyZeUhFnzdqpusYTeixKoLwcJHs947TeJ",
+      "status": "unregistered",
+      "holdings": []
+    }
+  }
+}

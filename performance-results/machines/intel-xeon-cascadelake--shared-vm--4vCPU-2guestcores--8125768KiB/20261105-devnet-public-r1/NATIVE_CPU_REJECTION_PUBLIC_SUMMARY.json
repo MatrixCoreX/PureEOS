@@ -1,0 +1,120 @@
+{
+  "status": "PRESERVED_FAILURES_NOT_SUCCESSES",
+  "errors": [
+    {
+      "native_response_SHA256": "6ac7f3e846a67b53c99054f817bbe3c79b8a91c961192bc4e0dbf6cf472ce55c",
+      "transaction_id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+      "elapsed": 227117,
+      "receipt": null,
+      "exception": {
+        "code": 3080004,
+        "name": "tx_cpu_usage_exceeded",
+        "message": "Transaction exceeded the current CPU usage limit imposed on the transaction"
+      },
+      "limit_events": [
+        {
+          "id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+          "billing_timer": 226331,
+          "subjective": 0,
+          "limit": 150000
+        }
+      ]
+    },
+    {
+      "native_response_SHA256": "eb1f5a210d111aaf964ddaab0cf67d7c5967a1d708467a428c95e98554946b66",
+      "transaction_id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+      "elapsed": 155234,
+      "receipt": null,
+      "exception": {
+        "code": 3080004,
+        "name": "tx_cpu_usage_exceeded",
+        "message": "Transaction exceeded the current CPU usage limit imposed on the transaction"
+      },
+      "limit_events": [
+        {
+          "id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+          "billing_timer": 155068,
+          "subjective": 0,
+          "limit": 150000
+        }
+      ]
+    },
+    {
+      "native_response_SHA256": "34f1bcc70da6fe85e556a9b7fb416ee591da8fd021fc9531a3d44f8c089f920d",
+      "transaction_id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+      "elapsed": 169273,
+      "receipt": null,
+      "exception": {
+        "code": 3080004,
+        "name": "tx_cpu_usage_exceeded",
+        "message": "Transaction exceeded the current CPU usage limit imposed on the transaction"
+      },
+      "limit_events": [
+        {
+          "id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+          "billing_timer": 169180,
+          "subjective": 0,
+          "limit": 150000
+        }
+      ]
+    },
+    {
+      "native_response_SHA256": "448a96789c791bcdc958bbcdedfc669645a1386f8e80f0e0b35fc51d745d4447",
+      "transaction_id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+      "elapsed": 211579,
+      "receipt": null,
+      "exception": {
+        "code": 3080004,
+        "name": "tx_cpu_usage_exceeded",
+        "message": "Transaction exceeded the current CPU usage limit imposed on the transaction"
+      },
+      "limit_events": [
+        {
+          "id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+          "billing_timer": 211504,
+          "subjective": 0,
+          "limit": 150000
+        }
+      ]
+    },
+    {
+      "native_response_SHA256": "67ca0b54d88b565aa65dd501e2b73c4dc10f8ddbc420fd0289e173dcc07fc7a2",
+      "transaction_id": "0a73444a84caa03bf7fecc4bc32f1ffa42c6fbd26fb4ba1179ce849b2bea492f",
+      "elapsed": 242194,
+      "receipt": null,
+      "exception": {
+        "code": 3080004,
+        "name": "tx_cpu_usage_exceeded",
+        "message": "Transaction exceeded the current CPU usage limit imposed on the transaction"
+      },
+      "limit_events": [
+        {
+          "id": "0a73444a84caa03bf7fecc4bc32f1ffa42c6fbd26fb4ba1179ce849b2bea492f",
+          "billing_timer": 241996,
+          "subjective": 0,
+          "limit": 150000
+        }
+      ]
+    },
+    {
+      "native_response_SHA256": "d343d27e6ff7fa652262d6b995e3f31711a6ae44f2b8fc02f34ee862bd731bf3",
+      "transaction_id": "0d20edaf886cf83c7327d2518b3323d4504c1d6aba23253ee8391d55945d4c9c",
+      "elapsed": 174468,
+      "receipt": null,
+      "exception": {
+        "code": 3080004,
+        "name": "tx_cpu_usage_exceeded",
+        "message": "Transaction exceeded the current CPU usage limit imposed on the transaction"
+      },
+      "limit_events": [
+        {
+          "id": "0d20edaf886cf83c7327d2518b3323d4504c1d6aba23253ee8391d55945d4c9c",
+          "billing_timer": 174393,
+          "subjective": 0,
+          "limit": 150000
+        }
+      ]
+    }
+  ],
+  "scope": "Raw responses and signed packets remain remote. Same IDs later reconcile against positive canonical receipts; CPU limit150000 unchanged, no performance/capacity claim."
+}

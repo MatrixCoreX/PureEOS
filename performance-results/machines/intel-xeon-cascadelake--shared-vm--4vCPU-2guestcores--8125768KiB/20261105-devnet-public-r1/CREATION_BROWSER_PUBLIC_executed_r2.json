@@ -1,0 +1,129 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T07:58:47.896Z",
+  "origin": "https://aic-test.matrixai.one",
+  "phase": "executed",
+  "scope": "Actual remote Chrome and current native/indexed APIs; preview uses a fixed loopback read proxy and pinned custom-node URLs; public uses default normal DNS/HTTPS; no mocked chain data",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "ids": [
+        "8",
+        "7",
+        "6",
+        "5",
+        "4",
+        "3",
+        "2",
+        "1"
+      ],
+      "errors": [],
+      "responses": [
+        {
+          "url": "https://aic-test.matrixai.one/api/v1/chain/get_system_account_state",
+          "status": 200,
+          "pending": 0
+        },
+        {
+          "url": "https://aic-test.matrixai.one/history/v2/history/get_creation_proposals?offset=0&limit=20",
+          "status": 200,
+          "total": 8,
+          "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+        }
+      ],
+      "screenshot": "/opt/pureeos-devnet-20261105-r1/creation-public-executed-r2-zh-dark-1440.png"
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "ids": [
+        "8",
+        "7",
+        "6",
+        "5",
+        "4",
+        "3",
+        "2",
+        "1"
+      ],
+      "errors": [],
+      "responses": [
+        {
+          "url": "https://aic-test.matrixai.one/api/v1/chain/get_system_account_state",
+          "status": 200,
+          "pending": 0
+        },
+        {
+          "url": "https://aic-test.matrixai.one/history/v2/history/get_creation_proposals?offset=0&limit=20",
+          "status": 200,
+          "total": 8,
+          "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+        }
+      ],
+      "screenshot": "/opt/pureeos-devnet-20261105-r1/creation-public-executed-r2-en-light-1440.png"
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "ids": [
+        "8",
+        "7",
+        "6",
+        "5",
+        "4",
+        "3",
+        "2",
+        "1"
+      ],
+      "errors": [],
+      "responses": [
+        {
+          "url": "https://aic-test.matrixai.one/api/v1/chain/get_system_account_state",
+          "status": 200,
+          "pending": 0
+        },
+        {
+          "url": "https://aic-test.matrixai.one/history/v2/history/get_creation_proposals?offset=0&limit=20",
+          "status": 200,
+          "total": 8,
+          "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+        }
+      ],
+      "screenshot": "/opt/pureeos-devnet-20261105-r1/creation-public-executed-r2-zh-light-390.png"
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "ids": [
+        "8",
+        "7",
+        "6",
+        "5",
+        "4",
+        "3",
+        "2",
+        "1"
+      ],
+      "errors": [],
+      "responses": [
+        {
+          "url": "https://aic-test.matrixai.one/api/v1/chain/get_system_account_state",
+          "status": 200,
+          "pending": 0
+        },
+        {
+          "url": "https://aic-test.matrixai.one/history/v2/history/get_creation_proposals?offset=0&limit=20",
+          "status": 200,
+          "total": 8,
+          "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+        }
+      ],
+      "screenshot": "/opt/pureeos-devnet-20261105-r1/creation-public-executed-r2-en-dark-390.png"
+    }
+  ]
+}
