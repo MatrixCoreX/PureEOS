@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T23:26:45.276105+00:00",
+  "checks": 7,
+  "old_helper_SHA256": "e3efb7470ba7682fd521d6031ca2dc3884d3fbc83b26bd2745dc3c3f540b6888",
+  "new_helper_SHA256": "d2e3064144ddd2a86ed4b9325248fabb025daadfd0a21ed1fbe6ca082cfa4e4f",
+  "scope": "Read-only incomplete-page retry fix only. No partial row acceptance or duplicate rows. Tests ran remotely. Original PID and unexpected non-target ban guards remain; faulty campaign NOT resumed."
+}

@@ -1,0 +1,223 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T23:36:18.669350+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "five_datasets_verified": [
+    {
+      "node": "tokyorikenai",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data",
+      "only_remaining_files": [
+        "finalizers/safety.dat"
+      ]
+    },
+    {
+      "node": "singaporentu",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data",
+      "only_remaining_files": [
+        "finalizers/safety.dat"
+      ]
+    },
+    {
+      "node": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data",
+      "only_remaining_files": []
+    },
+    {
+      "node": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data-checkpoint",
+      "only_remaining_files": [
+        "finalizers/safety.dat"
+      ]
+    },
+    {
+      "node": "pariscnrslab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/data-checkpoint",
+      "only_remaining_files": [
+        "finalizers/safety.dat"
+      ]
+    },
+    {
+      "node": "londonturing",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/data-checkpoint",
+      "only_remaining_files": [
+        "finalizers/safety.dat"
+      ]
+    }
+  ],
+  "kept_new_node_processes": {
+    "genevacernai": {
+      "MainPID": "466849",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "sydneyunswai": {
+      "MainPID": "468675",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "montrealmila": {
+      "MainPID": "469732",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "sixth_maintenance": {
+    "owner": "montrealmila",
+    "state": 2,
+    "requested_slot": 1694404386,
+    "effective_slot": 1694404386,
+    "effective_block": 56840,
+    "resumed_slot": 0
+  },
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 105678,
+    "last_irreversible_block_num": 105676,
+    "last_irreversible_block_id": "00019cccaca1c3ce75188a8af6f8912cdf3beafd3d21076c17e20d189a45a12b",
+    "head_block_id": "00019cce17f6199b7c313d3ac471afbc7ff03a7079a642749577a30ec5249d3e",
+    "head_block_time": "2026-11-05T23:36:18.000",
+    "head_block_producer": "alibabacloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 105678,
+    "fork_db_head_block_id": "00019cce17f6199b7c313d3ac471afbc7ff03a7079a642749577a30ec5249d3e",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:36:11.000"
+  },
+  "native_blacklist_observation": {
+    "status": "WAITING_NATIVE_THREE_NEW_BANS",
+    "UTC": "2026-11-05T23:36:00.605078+00:00",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head": 105655,
+    "LIB": 105653,
+    "all_five_retired_nodes": [
+      {
+        "producer": "tokyorikenai",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694466876,
+          1694467128,
+          1694467380
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          172
+        ],
+        "ban_final_block": 100076,
+        "bond_record_block": 100079,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      },
+      {
+        "producer": "singaporentu",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694467068,
+          1694467320,
+          1694467584
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          173
+        ],
+        "ban_final_block": 100247,
+        "bond_record_block": 100251,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      },
+      {
+        "producer": "tokyoaistlab",
+        "banned": false,
+        "zero_windows": 1,
+        "evidence_slots": [
+          1694473692,
+          0,
+          0
+        ],
+        "evidence_policies": [
+          179,
+          0,
+          0
+        ],
+        "ban_final_block": 0,
+        "bond_record_block": 0,
+        "forfeited_atoms": 0,
+        "settled_atoms": 0,
+        "irreversible": false
+      },
+      {
+        "producer": "pariscnrslab",
+        "banned": false,
+        "zero_windows": 2,
+        "evidence_slots": [
+          1694473632,
+          1694473884,
+          0
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          0
+        ],
+        "ban_final_block": 0,
+        "bond_record_block": 0,
+        "forfeited_atoms": 0,
+        "settled_atoms": 0,
+        "irreversible": false
+      },
+      {
+        "producer": "londonturing",
+        "banned": false,
+        "zero_windows": 2,
+        "evidence_slots": [
+          1694473560,
+          1694473812,
+          0
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          0
+        ],
+        "ban_final_block": 0,
+        "bond_record_block": 0,
+        "forfeited_atoms": 0,
+        "settled_atoms": 0,
+        "irreversible": false
+      }
+    ],
+    "new_three_remaining": 3,
+    "global_banned": [
+      "singaporentu",
+      "tokyorikenai"
+    ],
+    "scope": "Read-only observation only, no stop/restart, data deletion, payment, settlement, key or native-state changes. Native windows and policy handovers govern timing."
+  },
+  "observer_unit": {
+    "MainPID": "556191",
+    "NRestarts": "0",
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "transient"
+  },
+  "scope": "Exact5units disabled/inactive,6datasets contain only5safety records, other3newnodes running, native maintenance preserved and finality advanced. No further native mutation or extra node cleanup."
+}

@@ -1,5 +1,5 @@
 {
-  "status": "SIXTH_NATIVE_MAINTENANCE_EFFECTIVE_FIVE_FAULTS_CONTINUE_BACKGROUND",
+  "status": "USER_THREE_STOP_AND_FIVE_DATA_CLEANUP_COMPLETE_NATIVE_THREE_BANS_PENDING",
   "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
   "remote_root": "/opt/pureeos-bp-demo-six-20261105-r1",
   "original_BPs": 24,
@@ -26,10 +26,9 @@
   "candidate_capacity_UI": "Replace not-online phrase with next native capacity increase UTC time from existing qualified read-only summary",
   "no_new_servers_reset_TPS_or_protocol_changes": true,
   "remaining": [
-    "five genuine native duties and irreversible production",
-    "stop only new5, native3zero-window bans/locked50000AIC settlement",
-    "final4publicChrome for5banned+1maintenance and read-only finalaudit",
-    "finalreports/Git/boundedcleanup"
+    "read-only native blacklist observation for new3; no foreground waiting",
+    "later report actual irreversible decisions, not assumed timing",
+    "Baidu recovery requires a separate scoped repair; no reset/key/safety/native rule bypass"
   ],
   "join_result": "PASS;30 registered, old votes retained",
   "capacity_publication": "20261105T123459Z-next-capacity-time",
@@ -44,7 +43,7 @@
   "current_monitor_rule": "Latest user waives sixth production prerequisite; owner maintenance already irreversible. Five fault targets still require real production, nativejointduty, zero prior misses and16healthyremaining votes.",
   "foreground_wait_ended_UTC": "2026-11-05T13:53:21.625594+00:00",
   "user_instruction": "你不用等待",
-  "background_campaign": "pureeos-bp-demo-six-campaign-r5-20261105.service",
+  "background_campaign": "SUPERSEDED: old five-target mutating controllers must not resume",
   "background_header_observer": "pureeos-bp-demo-six-headers-20261105.service",
   "background_final_readonly": "pureeos-bp-demo-six-final-readonly-20261105.service",
   "actual_native_demo_status": "Sixth maintenance irreversible; five blacklist targets still waiting genuine native duty. Do not foreground-poll.",
@@ -63,5 +62,46 @@
     "completed_production_turns_before_request": 0
   },
   "maintenance_public_Chrome_variants": 2,
-  "maintenance_public_browser_result": "PASS and visually reviewed; no visible errors"
+  "maintenance_public_browser_result": "PASS and visually reviewed; no visible errors",
+  "immediate_maintenance_Git_commit": "9c8981d7ff9bb7b48a09107cf08e1bd0059551da",
+  "immediate_maintenance_Git_remote_verified": true,
+  "worktree_clean": true,
+  "latest_user_instructions": [
+    "已经有2个节点进入黑名单了,你直接帮我另外3个停机",
+    "然后清除这5个节点所有区块数据 释放服务器"
+  ],
+  "current_retired_nodes": [
+    "tokyorikenai",
+    "singaporentu",
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "new_fault_targets": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "adopted_existing_bans": [
+    "tokyorikenai",
+    "singaporentu"
+  ],
+  "new_nodes_to_keep_online": [
+    "genevacernai",
+    "sydneyunswai",
+    "montrealmila"
+  ],
+  "datasets_deleted": 6,
+  "only_safety_bytes_retained": 1325,
+  "dataset_allocated_bytes_removed": 195850240,
+  "filesystem_net_available_delta": 194174976,
+  "filesystem_available_bytes": 89259159552,
+  "background_readonly": "pureeos-bp-demo-watch-three-bans-20261106.service",
+  "new_three_remaining_not_banned": 3,
+  "current_global_bans": [
+    "singaporentu",
+    "tokyorikenai"
+  ],
+  "read_helper_fix": "7remote regressions passed; incomplete pages discarded/retried without row duplication",
+  "known_unrepaired_node": "baiduaiworks dirty-database startup failure after OOM; not included in this five-node deletion"
 }

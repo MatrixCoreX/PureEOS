@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T23:32:10.244167+00:00",
+  "selected_new_three": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "already_banned_two": [
+    "tokyorikenai",
+    "singaporentu"
+  ],
+  "only_five_units": [
+    "pureeos-devnet-bp-tokyorikenai-20261105.service",
+    "pureeos-devnet-bp-singaporentu-20261105.service",
+    "pureeos-bp-demo-tokyoaistlab-20261105.service",
+    "pureeos-bp-demo-pariscnrslab-20261105.service",
+    "pureeos-bp-demo-londonturing-20261105.service"
+  ],
+  "processes": {
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    }
+  },
+  "quorum_guards": [
+    {
+      "generation": 180,
+      "threshold": 15,
+      "remaining_recent_strong_online": [
+        "alibabacloud",
+        "anthropiclab",
+        "bytedancelab",
+        "canadamilaai",
+        "cohereclouds",
+        "deepseekcore",
+        "genevacernai",
+        "minimaxcloud",
+        "mistralcloud",
+        "moonshotlabs",
+        "nvidiaclouds",
+        "openaiclouds",
+        "perplexityai",
+        "stabilityhub",
+        "sydneyunswai",
+        "tencentcloud"
+      ]
+    }
+  ],
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 105248,
+    "last_irreversible_block_num": 105237,
+    "last_irreversible_block_id": "00019b15250361041ed4989d5b244908c8c5221dc24267bdce9795ad09b079a2",
+    "head_block_id": "00019b206d6f08db5faa58cf33c88e22dede4c54abf95b3a860392381cfcc8dc",
+    "head_block_time": "2026-11-05T23:32:05.500",
+    "head_block_producer": "tokyoaistlab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 105248,
+    "fork_db_head_block_id": "00019b206d6f08db5faa58cf33c88e22dede4c54abf95b3a860392381cfcc8dc",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:32:00.000"
+  },
+  "scope": "Latest explicit user instruction supersedes the earlier five-new-node wait gate. Only these five processes were stopped/disabled. Data cleanup is a separate checked step.",
+  "after_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 105255,
+    "last_irreversible_block_num": 105248,
+    "last_irreversible_block_id": "00019b200994724c5cfde01275903dc91c050c26512248c8a010007033125e3f",
+    "head_block_id": "00019b27f774c7be65981142899b6b0d512a4cbdb62d3fc3a333de1414607389",
+    "head_block_time": "2026-11-05T23:32:10.000",
+    "head_block_producer": "alibabacloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 105255,
+    "fork_db_head_block_id": "00019b27f774c7be65981142899b6b0d512a4cbdb62d3fc3a333de1414607389",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:32:06.000"
+  },
+  "irreversible_progress_after_stop": true
+}

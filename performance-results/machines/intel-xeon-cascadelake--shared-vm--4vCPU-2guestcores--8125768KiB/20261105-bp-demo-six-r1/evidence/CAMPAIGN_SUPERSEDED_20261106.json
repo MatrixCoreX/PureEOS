@@ -1,0 +1,22 @@
+{
+  "UTC": "2026-11-05T23:34:59.045026+00:00",
+  "user_instructions": [
+    "已经有2个节点进入黑名单了,你直接帮我另外3个停机",
+    "然后清除这5个节点所有区块数据 释放服务器"
+  ],
+  "stopped_three": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "adopted_old_bans": [
+    "tokyorikenai",
+    "singaporentu"
+  ],
+  "remaining_new_nodes_to_keep_online": [
+    "genevacernai",
+    "sydneyunswai",
+    "montrealmila"
+  ],
+  "supersedes": "Old five-new-node campaign and old finalizer/PID-preservation assumptions; never restart it. Native bans and current authorities are retained."
+}

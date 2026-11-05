@@ -1,5 +1,7 @@
 # Current TEST network demonstration entry points
 
+Latest status: the user adopted existing bans tokyorikenai and singaporentu, stopped tokyoaistlab/pariscnrslab/londonturing, and cleared allfive node datasets. Genevacernai/sydneyunswai remain online. Earlier five-new-target/queue descriptions are historical; use REPORT.en.md and actual stop receipts.
+
 This guide covers existing state and the genuine states currently being generated. The sixth BP is already in native maintenance under the latest user instruction; the five fault targets still await native admission. Use the final report and irreversible receipts for blacklist completion claims. Never replay issuance, payments, bonds, income claims or governance execution merely to repeat a demonstration.
 
 ## Producers, votes and candidate capacity

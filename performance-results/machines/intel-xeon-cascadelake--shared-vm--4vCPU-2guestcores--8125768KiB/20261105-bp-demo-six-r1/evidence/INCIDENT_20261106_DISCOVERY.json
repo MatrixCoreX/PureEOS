@@ -1,0 +1,472 @@
+{
+  "status": "FAULT_DEMO_NOT_COMPLETE_HEALTH_RECOVERY_REQUIRED",
+  "UTC": "2026-11-05T23:26:50.594954+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "start": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 104696,
+    "last_irreversible_block_num": 104689,
+    "last_irreversible_block_id": "000198f15edfa230f12a02beeaeb4fdf2c9a3231a5a7f9273a8dfb09b92cd78f",
+    "head_block_id": "000198f877cf7fee1c6490175524f019d82abe194bd16ce7ce5c2871bd3ee3a2",
+    "head_block_time": "2026-11-05T23:26:48.000",
+    "head_block_producer": "minimaxcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 104696,
+    "fork_db_head_block_id": "000198f877cf7fee1c6490175524f019d82abe194bd16ce7ce5c2871bd3ee3a2",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:26:43.500"
+  },
+  "end": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 104699,
+    "last_irreversible_block_num": 104696,
+    "last_irreversible_block_id": "000198f877cf7fee1c6490175524f019d82abe194bd16ce7ce5c2871bd3ee3a2",
+    "head_block_id": "000198fb2db4f47d810cfbf9687123a451e8c8c96ed477d17eaede840209b01d",
+    "head_block_time": "2026-11-05T23:26:49.500",
+    "head_block_producer": "minimaxcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 104699,
+    "fork_db_head_block_id": "000198fb2db4f47d810cfbf9687123a451e8c8c96ed477d17eaede840209b01d",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:26:48.000"
+  },
+  "five_targets": [
+    {
+      "owner": "genevacernai",
+      "rank": "340282366920820957065097594942812638432",
+      "previous_rank": "340282366920820957065097594942812638432",
+      "frozen_epoch": 0,
+      "seen_epoch": 178,
+      "ticket": 199,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "londonturing",
+      "rank": "340282366920881462407168532884691330752",
+      "previous_rank": "340282366920881462407168532884691330752",
+      "frozen_epoch": 0,
+      "seen_epoch": 178,
+      "ticket": 196,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "pariscnrslab",
+      "rank": "340282366920751043947070133626074319984",
+      "previous_rank": "340282366920751043947070133626074319984",
+      "frozen_epoch": 0,
+      "seen_epoch": 178,
+      "ticket": 194,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "sydneyunswai",
+      "rank": "340282366920808966670275276564806962400",
+      "previous_rank": "340282366920808966670275276564806962400",
+      "frozen_epoch": 0,
+      "seen_epoch": 178,
+      "ticket": 198,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tokyoaistlab",
+      "rank": "340282366920795500621288900896777587824",
+      "previous_rank": "340282366920795500621288900896777587824",
+      "frozen_epoch": 0,
+      "seen_epoch": 178,
+      "ticket": 195,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    }
+  ],
+  "five_remaining_not_banned": 5,
+  "stop_receipt_exists": false,
+  "unexpected_irreversible_bans": [
+    {
+      "producer": "singaporentu",
+      "candidate": {
+        "owner": "singaporentu",
+        "rank": "340282366920938463459026033818262107040",
+        "previous_rank": "340282366920938463459026033818262107040",
+        "frozen_epoch": 0,
+        "seen_epoch": 173,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694467068,
+          1694467320,
+          1694467584
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          173
+        ],
+        "ban_final_block": 100247
+      },
+      "bond": {
+        "owner": "singaporentu",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855637,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 100247,
+        "ban_record_block": 100251
+      },
+      "ban_final_block_id": "000187974d52b692547ae9dc9fb57833215442c753b3c2929b755edd9412c918"
+    },
+    {
+      "producer": "tokyorikenai",
+      "candidate": {
+        "owner": "tokyorikenai",
+        "rank": "340282366920938463459709216498713414880",
+        "previous_rank": "340282366920938463459709216498713414880",
+        "frozen_epoch": 0,
+        "seen_epoch": 172,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694466876,
+          1694467128,
+          1694467380
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          172
+        ],
+        "ban_final_block": 100076
+      },
+      "bond": {
+        "owner": "tokyorikenai",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855661,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 100076,
+        "ban_record_block": 100079
+      },
+      "ban_final_block_id": "000186eccb8ba7e63ecca287fcdcd3c67cfebe010c70075db635b0c1f8d9b39b"
+    }
+  ],
+  "original_PID_changes": {
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "original_PID": 416139,
+      "current": {
+        "MainPID": "0",
+        "NRestarts": "53",
+        "ActiveState": "activating",
+        "SubState": "auto-restart",
+        "UnitFileState": "enabled"
+      }
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "original_PID": 416429,
+      "current": {
+        "MainPID": "0",
+        "NRestarts": "847",
+        "ActiveState": "activating",
+        "SubState": "auto-restart",
+        "UnitFileState": "enabled"
+      }
+    },
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "original_PID": 416689,
+      "current": {
+        "MainPID": "0",
+        "NRestarts": "899",
+        "ActiveState": "activating",
+        "SubState": "auto-restart",
+        "UnitFileState": "enabled"
+      }
+    }
+  },
+  "native_rotation": {
+    "version": 2,
+    "stage": 2,
+    "active": [
+      "moonshotlabs",
+      "pariscnrslab",
+      "tokyoaistlab",
+      "londonturing",
+      "minimaxcloud",
+      "sydneyunswai",
+      "genevacernai",
+      "bytedancelab",
+      "baiduaiworks",
+      "tencentcloud",
+      "alibabacloud",
+      "nvidiaclouds",
+      "stabilityhub",
+      "perplexityai",
+      "cohereclouds",
+      "mistralcloud",
+      "deepmindlabs",
+      "anthropiclab",
+      "openaiclouds",
+      "gptgenesisbp",
+      "deepseekcore"
+    ],
+    "target": [
+      "moonshotlabs",
+      "pariscnrslab",
+      "tokyoaistlab",
+      "londonturing",
+      "minimaxcloud",
+      "sydneyunswai",
+      "genevacernai",
+      "bytedancelab",
+      "baiduaiworks",
+      "tencentcloud",
+      "alibabacloud",
+      "nvidiaclouds",
+      "stabilityhub",
+      "perplexityai",
+      "cohereclouds",
+      "mistralcloud",
+      "deepmindlabs",
+      "anthropiclab",
+      "openaiclouds",
+      "gptgenesisbp",
+      "deepseekcore"
+    ],
+    "incoming": "deepseekcore",
+    "outgoing": "zurichethlab",
+    "proposer_version": 178,
+    "finalizer_generation": 179,
+    "proposer_digest": "015f740b0ee7268d29be38edf9a83e217d66715685dc32a8af0786302aaf24b2",
+    "finalizer_digest": "a8685801c87982897fac6d9572e45a8cde8c666ead0da2005f7175d93de34243",
+    "next_attempt_slot": 1694472231,
+    "observation_start": 1694472696,
+    "observation_end": 1694472947,
+    "produced_mask": 1787080,
+    "observation_block": 104695,
+    "completed": 177,
+    "stalled_windows": 1,
+    "growth_start_slot": 1694341313,
+    "capacity": 210,
+    "snapshot_capacity": 210,
+    "ranked_count": 28,
+    "snapshot_epoch": 178,
+    "published_epoch": 178,
+    "queue_tail": 214,
+    "scan_end_ticket": 213,
+    "ranking": 0,
+    "rank_started": 1,
+    "selecting": 0,
+    "rank_cursor": "340282366920881462407168532884691330752",
+    "penalty_epoch": 1,
+    "last_slot": 1694472814,
+    "window_start": 1694472804,
+    "penalty_paused": 0,
+    "window_produced": 1,
+    "window_policy": 178,
+    "window_members": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "bytedancelab",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "genevacernai",
+      "gptgenesisbp",
+      "londonturing",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaclouds",
+      "openaiclouds",
+      "pariscnrslab",
+      "perplexityai",
+      "stabilityhub",
+      "sydneyunswai",
+      "tencentcloud",
+      "tokyoaistlab"
+    ],
+    "pending_windows": [],
+    "failed_admissions": 0,
+    "total_banned": 2,
+    "blocked": 0,
+    "retry_outgoing": ""
+  },
+  "maintenance": [
+    {
+      "owner": "montrealmila",
+      "state": 2,
+      "requested_slot": 1694404386,
+      "effective_slot": 1694404386,
+      "effective_block": 56840,
+      "resumed_slot": 0
+    }
+  ],
+  "prior_campaign_failure": {
+    "status": "NEEDS_RECONCILIATION",
+    "started_UTC": "2026-11-05T13:56:49.543056+00:00",
+    "targets": [
+      "genevacernai",
+      "londonturing",
+      "pariscnrslab",
+      "sydneyunswai",
+      "tokyoaistlab"
+    ],
+    "maintenance_target": "montrealmila",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "UTC": "2026-11-05T14:45:49.173040+00:00",
+    "joint_fault_targets": [],
+    "completed_production_turns": {
+      "pariscnrslab": 0,
+      "genevacernai": 0,
+      "londonturing": 0,
+      "sydneyunswai": 0,
+      "montrealmila": 0,
+      "tokyoaistlab": 0
+    },
+    "head": 60423,
+    "LIB": 60415,
+    "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-bp-demo-six-20261105-r1/demonstrate.py\", line 44, in <module>\n    s=snapshot();p,f=members(s);proofs=read('DUTY_PROOFS.json')if(R/'DUTY_PROOFS.json').exists()else{};turns=proofs.get('complete_personal_production_turns',{})\n      ^^^^^^^^^^\n  File \"/opt/pureeos-bp-demo-six-20261105-r1/demonstrate.py\", line 11, in snapshot\n    return {'UTC':now(),'info':i,'schedule':schedule,'finalizers':fin,'candidates':cands,'bonds':bonds,'bond_config':table('bpbondcfg')[0],'maintenance':table('bpmaint'),'rotation':table('rotation')[0]}\n                                                                                                                                                         ^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-bp-demo-six-20261105-r1/common.py\", line 33, in table\n    assert following and following!=lower,'Incomplete native table '+name;lower=following\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Incomplete native table bpmaint\n",
+    "five_stop_performed": false
+  },
+  "production_proofs_summary": {
+    "status": "OBSERVING",
+    "started_UTC": "2026-11-05T12:01:36.378878+00:00",
+    "UTC": "2026-11-05T20:01:28.110128+00:00",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "scanned_through_block": 86049,
+    "native_LIB": 86049,
+    "reader_LIB": 86049,
+    "complete_personal_production_turns": {
+      "pariscnrslab": 119,
+      "genevacernai": 105,
+      "londonturing": 114,
+      "sydneyunswai": 107,
+      "montrealmila": 0,
+      "tokyoaistlab": 115
+    },
+    "scope": "Actual irreversible native block headers only. One turn is a distinct12-slot personal producer turn with at least one real block and finalized time past its end; actual produced block counts retained. No synthetic counters or inferred historical committees."
+  },
+  "kernel_OOM_records": "2026-11-05T22:26:58+00:00 pureeos-test45-20261102-ac0414 kernel: ld-linux-x86-64 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T22:26:58+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-bp-demo-londonturing-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,task=java,pid=397284,uid=1000\n2026-11-05T22:26:58+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 397284 (java) total-vm:4963792kB, anon-rss:1006668kB, file-rss:2636kB, shmem-rss:0kB, UID:1000 pgtables:3540kB oom_score_adj:0\n2026-11-05T22:32:04+00:00 pureeos-test45-20261102-ac0414 kernel: hyp-aic-master invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T22:32:04+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-purehistory-indexer-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,task=java,pid=542667,uid=1000\n2026-11-05T22:32:04+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 542667 (java) total-vm:4041320kB, anon-rss:969916kB, file-rss:6144kB, shmem-rss:0kB, UID:1000 pgtables:2344kB oom_score_adj:0\n2026-11-05T22:33:38+00:00 pureeos-test45-20261102-ac0414 kernel: erts_sched_1 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T22:33:38+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=docker-f0c03bbbeb1b9ba40b0d3aecfa30ec561a83aa21413fb999af057502a83ab4b6.scope,mems_allowed=0,global_oom,task_memcg=/system.slice/pureeos-devnet-bp-tokyorikenai-20261105.service,task=ld-linux-x86-64,pid=416689,uid=999\n2026-11-05T22:33:38+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 416689 (ld-linux-x86-64) total-vm:166652568kB, anon-rss:387476kB, file-rss:128kB, shmem-rss:0kB, UID:999 pgtables:36100kB oom_score_adj:0\n2026-11-05T22:35:31+00:00 pureeos-test45-20261102-ac0414 kernel: java invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T22:35:31+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,task=java,pid=543211,uid=1000\n2026-11-05T22:35:31+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 543211 (java) total-vm:3910136kB, anon-rss:891620kB, file-rss:1920kB, shmem-rss:0kB, UID:1000 pgtables:2068kB oom_score_adj:0\n2026-11-05T22:36:54+00:00 pureeos-test45-20261102-ac0414 kernel: vote-0 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T22:36:54+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-bp-singaporentu-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/pureeos-devnet-bp-singaporentu-20261105.service,task=ld-linux-x86-64,pid=416429,uid=999\n2026-11-05T22:36:54+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 416429 (ld-linux-x86-64) total-vm:166586716kB, anon-rss:395264kB, file-rss:256kB, shmem-rss:0kB, UID:999 pgtables:35796kB oom_score_adj:0\n2026-11-05T23:05:59+00:00 pureeos-test45-20261102-ac0414 kernel: net-1 invoked oom-killer: gfp_mask=0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO), order=0, oom_score_adj=0\n2026-11-05T23:05:59+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-bp-mistralcloud-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,task=java,pid=543788,uid=1000\n2026-11-05T23:05:59+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 543788 (java) total-vm:4970516kB, anon-rss:1236348kB, file-rss:5168kB, shmem-rss:0kB, UID:1000 pgtables:3400kB oom_score_adj:0\n2026-11-05T23:14:00+00:00 pureeos-test45-20261102-ac0414 kernel: ld-linux-x86-64 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T23:14:00+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-bp-moonshotlabs-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,task=java,pid=549264,uid=1000\n2026-11-05T23:14:00+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 549264 (java) total-vm:4578936kB, anon-rss:1090216kB, file-rss:3840kB, shmem-rss:0kB, UID:1000 pgtables:2648kB oom_score_adj:0\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: ld-linux-x86-64 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-bp-demo-montrealmila-20261105.service,mems_allowed=0,global_oom,task_memcg=/user.slice/user-0.slice/user@0.service/init.scope,task=systemd,pid=551943,uid=0\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 551943 (systemd) total-vm:20332kB, anon-rss:2048kB, file-rss:3200kB, shmem-rss:0kB, UID:0 pgtables:80kB oom_score_adj:100\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: hyp-aic-api invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-purehistory-api-20261105.service,mems_allowed=0,global_oom,task_memcg=/user.slice/user-0.slice/user@0.service/init.scope,task=(sd-pam),pid=551944,uid=0\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 551944 ((sd-pam)) total-vm:21300kB, anon-rss:1748kB, file-rss:1152kB, shmem-rss:0kB, UID:0 pgtables:72kB oom_score_adj:100\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: systemd invoked oom-killer: gfp_mask=0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), order=1, oom_score_adj=0\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=init.scope,mems_allowed=0,global_oom,task_memcg=/system.slice/docker-a82b52aaea180b02c70aafbe6dc0f21e22ad7ed808eb640c489915eaf9fdbd4a.scope,task=java,pid=550878,uid=1000\n2026-11-05T23:21:40+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 550878 (java) total-vm:4572776kB, anon-rss:1040236kB, file-rss:4736kB, shmem-rss:0kB, UID:1000 pgtables:2540kB oom_score_adj:0\n2026-11-05T23:23:46+00:00 pureeos-test45-20261102-ac0414 kernel: ld-linux-x86-64 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T23:23:46+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-bp-deepseekcore-20261105.service,mems_allowed=0,global_oom,task_memcg=/user.slice/user-0.slice/user@0.service/init.scope,task=systemd,pid=552530,uid=0\n2026-11-05T23:23:46+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 552530 (systemd) total-vm:20176kB, anon-rss:1920kB, file-rss:2944kB, shmem-rss:0kB, UID:0 pgtables:76kB oom_score_adj:100\n2026-11-05T23:23:46+00:00 pureeos-test45-20261102-ac0414 kernel: in:imklog invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T23:23:46+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=rsyslog.service,mems_allowed=0,global_oom,task_memcg=/user.slice/user-0.slice/user@0.service/init.scope,task=(sd-pam),pid=552531,uid=0\n2026-11-05T23:23:46+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 552531 ((sd-pam)) total-vm:21304kB, anon-rss:1752kB, file-rss:1024kB, shmem-rss:0kB, UID:0 pgtables:80kB oom_score_adj:100\n2026-11-05T23:23:48+00:00 pureeos-test45-20261102-ac0414 kernel: prod-0 invoked oom-killer: gfp_mask=0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), order=0, oom_score_adj=0\n2026-11-05T23:23:48+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-bp-parisinriaai-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/pureeos-devnet-bp-baiduaiworks-20261105.service,task=ld-linux-x86-64,pid=416139,uid=999\n2026-11-05T23:23:48+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 416139 (ld-linux-x86-64) total-vm:166449628kB, anon-rss:275668kB, file-rss:5248kB, shmem-rss:0kB, UID:999 pgtables:35692kB oom_score_adj:0\n",
+  "restart_failure_logs": {
+    "baiduaiworks": [
+      "warn  2026-11-05T23:26:48.288 ld-linux- chain_plugin.cpp:1262         plugin_initialize    ] 13 N5boost10wrapexceptISt12system_errorEE: Database dirty flag set",
+      "rethrow Database dirty flag set: ",
+      "    {\"what\":\"Database dirty flag set\"}",
+      "Database dirty flag set",
+      "error 2026-11-05T23:26:48.323 ld-linux- main.cpp:254                  main                 ] database dirty flag set (likely due to unclean shutdown): replay required"
+    ],
+    "singaporentu": [
+      "warn  2026-11-05T23:26:48.249 ld-linux- chain_plugin.cpp:1262         plugin_initialize    ] 13 N5boost10wrapexceptISt12system_errorEE: Database dirty flag set",
+      "rethrow Database dirty flag set: ",
+      "    {\"what\":\"Database dirty flag set\"}",
+      "Database dirty flag set",
+      "error 2026-11-05T23:26:48.258 ld-linux- main.cpp:254                  main                 ] database dirty flag set (likely due to unclean shutdown): replay required"
+    ],
+    "tokyorikenai": [
+      "warn  2026-11-05T23:26:48.560 ld-linux- chain_plugin.cpp:1262         plugin_initialize    ] 13 N5boost10wrapexceptISt12system_errorEE: Database dirty flag set",
+      "rethrow Database dirty flag set: ",
+      "    {\"what\":\"Database dirty flag set\"}",
+      "Database dirty flag set",
+      "error 2026-11-05T23:26:48.563 ld-linux- main.cpp:254                  main                 ] database dirty flag set (likely due to unclean shutdown): replay required"
+    ]
+  },
+  "memory": "               total        used        free      shared  buff/cache   available\nMem:            7935        7321         165           5         730         613\nSwap:           8191        8143          48\n",
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/vda2       150G   60G   84G  42% /\n",
+  "read_helper_fix": {
+    "status": "PASS",
+    "UTC": "2026-11-05T23:26:45.276105+00:00",
+    "checks": 7,
+    "old_helper_SHA256": "e3efb7470ba7682fd521d6031ca2dc3884d3fbc83b26bd2745dc3c3f540b6888",
+    "new_helper_SHA256": "d2e3064144ddd2a86ed4b9325248fabb025daadfd0a21ed1fbe6ca082cfa4e4f",
+    "scope": "Read-only incomplete-page retry fix only. No partial row acceptance or duplicate rows. Tests ran remotely. Original PID and unexpected non-target ban guards remain; faulty campaign NOT resumed."
+  },
+  "scope": "Read-only incident audit. All five intended fault targets are online/unbanned. Two original BPs have genuine irreversible native bans; three original PIDs changed after OOM and dirty-database failures. No unban, settlement, replay, safety deletion, BP stop/restart, key/config change, reset, server or TPS action performed. Campaign cannot resume under its original preservation/quorum guards."
+}

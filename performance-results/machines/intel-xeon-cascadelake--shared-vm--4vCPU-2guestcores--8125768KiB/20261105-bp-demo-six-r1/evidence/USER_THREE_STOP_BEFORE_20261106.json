@@ -1,0 +1,100 @@
+{
+  "UTC": "2026-11-05T23:32:08.614574+00:00",
+  "user_instructions": [
+    "已经有2个节点进入黑名单了,你直接帮我另外3个停机",
+    "然后清除这5个节点所有区块数据 释放服务器"
+  ],
+  "selected_new_three": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "already_banned_two": [
+    "tokyorikenai",
+    "singaporentu"
+  ],
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 105248,
+    "last_irreversible_block_num": 105237,
+    "last_irreversible_block_id": "00019b15250361041ed4989d5b244908c8c5221dc24267bdce9795ad09b079a2",
+    "head_block_id": "00019b206d6f08db5faa58cf33c88e22dede4c54abf95b3a860392381cfcc8dc",
+    "head_block_time": "2026-11-05T23:32:05.500",
+    "head_block_producer": "tokyoaistlab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 105248,
+    "fork_db_head_block_id": "00019b206d6f08db5faa58cf33c88e22dede4c54abf95b3a860392381cfcc8dc",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:32:00.000"
+  },
+  "quorum_guards": [
+    {
+      "generation": 180,
+      "threshold": 15,
+      "remaining_recent_strong_online": [
+        "alibabacloud",
+        "anthropiclab",
+        "bytedancelab",
+        "canadamilaai",
+        "cohereclouds",
+        "deepseekcore",
+        "genevacernai",
+        "minimaxcloud",
+        "mistralcloud",
+        "moonshotlabs",
+        "nvidiaclouds",
+        "openaiclouds",
+        "perplexityai",
+        "stabilityhub",
+        "sydneyunswai",
+        "tencentcloud"
+      ]
+    }
+  ],
+  "processes": {
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "990",
+      "ActiveState": "activating",
+      "SubState": "auto-restart",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "938",
+      "ActiveState": "activating",
+      "SubState": "auto-restart",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "MainPID": "464685",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "MainPID": "465556",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "MainPID": "466237",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "memory": "               total        used        free      shared  buff/cache   available\nMem:            7935        7474         173           5         558         460\nSwap:           8191        8189           2\n"
+}

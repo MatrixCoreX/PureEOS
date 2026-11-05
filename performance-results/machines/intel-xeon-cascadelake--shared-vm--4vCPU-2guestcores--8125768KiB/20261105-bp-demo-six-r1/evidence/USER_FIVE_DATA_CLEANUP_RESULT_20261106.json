@@ -1,0 +1,276 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T23:33:34.863700+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "only_nodes": [
+    "tokyorikenai",
+    "singaporentu",
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "new_stopped_three": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing"
+  ],
+  "already_banned_two": [
+    "tokyorikenai",
+    "singaporentu"
+  ],
+  "node_processes": {
+    "tokyorikenai": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "singaporentu": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "tokyoaistlab": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pariscnrslab": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "londonturing": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    }
+  },
+  "datasets": [
+    {
+      "node": "tokyorikenai",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data",
+      "before": {
+        "allocated_bytes": 46825472,
+        "logical_file_bytes": 4331888793,
+        "files": 694
+      },
+      "uid": 999,
+      "gid": 988,
+      "mode": 448,
+      "after": {
+        "allocated_bytes": 12288,
+        "logical_file_bytes": 265,
+        "files": 1
+      },
+      "safety": [
+        {
+          "relative_path": "finalizers/safety.dat",
+          "sha256": "7a3a2087cbf10b8ae9d556d2317238aa81922b1ce08e22143482bebd577ba6cd",
+          "bytes": 265
+        }
+      ]
+    },
+    {
+      "node": "singaporentu",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data",
+      "before": {
+        "allocated_bytes": 49348608,
+        "logical_file_bytes": 4332004248,
+        "files": 1047
+      },
+      "uid": 999,
+      "gid": 988,
+      "mode": 448,
+      "after": {
+        "allocated_bytes": 12288,
+        "logical_file_bytes": 265,
+        "files": 1
+      },
+      "safety": [
+        {
+          "relative_path": "finalizers/safety.dat",
+          "sha256": "15a884f1a0e80426b935244b49d26260ee95ee5ec9083e29c7d4826eb9be94dc",
+          "bytes": 265
+        }
+      ]
+    },
+    {
+      "node": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data",
+      "before": {
+        "allocated_bytes": 15466496,
+        "logical_file_bytes": 4303621696,
+        "files": 209
+      },
+      "uid": 999,
+      "gid": 988,
+      "mode": 448,
+      "after": {
+        "allocated_bytes": 4096,
+        "logical_file_bytes": 0,
+        "files": 0
+      },
+      "safety": []
+    },
+    {
+      "node": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data-checkpoint",
+      "before": {
+        "allocated_bytes": 28090368,
+        "logical_file_bytes": 4314446048,
+        "files": 74
+      },
+      "uid": 999,
+      "gid": 988,
+      "mode": 448,
+      "after": {
+        "allocated_bytes": 12288,
+        "logical_file_bytes": 265,
+        "files": 1
+      },
+      "safety": [
+        {
+          "relative_path": "finalizers/safety.dat",
+          "sha256": "e909385b7a3ca791840f1ef4fc1a460afbda1d0529ffccac80b9cbd720b40dfa",
+          "bytes": 265
+        }
+      ]
+    },
+    {
+      "node": "pariscnrslab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/data-checkpoint",
+      "before": {
+        "allocated_bytes": 28094464,
+        "logical_file_bytes": 4314445630,
+        "files": 74
+      },
+      "uid": 999,
+      "gid": 988,
+      "mode": 448,
+      "after": {
+        "allocated_bytes": 12288,
+        "logical_file_bytes": 265,
+        "files": 1
+      },
+      "safety": [
+        {
+          "relative_path": "finalizers/safety.dat",
+          "sha256": "a23b12594620f7340381066854fc40860d07518d5dc3af3d28d3096f80ddbefa",
+          "bytes": 265
+        }
+      ]
+    },
+    {
+      "node": "londonturing",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/data-checkpoint",
+      "before": {
+        "allocated_bytes": 28090368,
+        "logical_file_bytes": 4314446248,
+        "files": 74
+      },
+      "uid": 999,
+      "gid": 988,
+      "mode": 448,
+      "after": {
+        "allocated_bytes": 12288,
+        "logical_file_bytes": 265,
+        "files": 1
+      },
+      "safety": [
+        {
+          "relative_path": "finalizers/safety.dat",
+          "sha256": "8b40e1d9c6cb4807a6f9c680216ce01c234a982c5cf6e140a11bcf73f9655932",
+          "bytes": 265
+        }
+      ]
+    }
+  ],
+  "dataset_allocated_bytes_before": 195915776,
+  "dataset_allocated_bytes_after": 65536,
+  "filesystem_available_bytes_before": 89064984576,
+  "filesystem_available_bytes_after": 89259159552,
+  "filesystem_net_available_delta": 194174976,
+  "memory_before": "               total        used        free      shared  buff/cache   available\nMem:            7935        7151         357           6         700         783\nSwap:           8191        7832         359\n",
+  "memory_after": "               total        used        free      shared  buff/cache   available\nMem:            7935        7151         358           6         699         784\nSwap:           8191        7832         359\n",
+  "unchanged_config_hashes": {
+    "tokyorikenai": {
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/config/config.ini",
+      "sha256": "bc731b2ea401d8770f67606eded1b27b1209d55379a5566e0a6ca4d34bc680bd"
+    },
+    "singaporentu": {
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/config/config.ini",
+      "sha256": "9ad16bef31857f408eeeacc6695d7552ac4d438bfa1d101655ac4b8341fb3513"
+    },
+    "tokyoaistlab": {
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/config/config.ini",
+      "sha256": "466ed02c973e9c48f4e08664830cbb423ff0eb8a7262865a1f1f693feb089348"
+    },
+    "pariscnrslab": {
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/config/config.ini",
+      "sha256": "4cd50a2f423de6f74c756ea6ab0338972a8453aabf70181d4b0fa640d85d8214"
+    },
+    "londonturing": {
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/config/config.ini",
+      "sha256": "7b18218d9ff817323c7624191873f02a868041927990fcb26a72522585dc2317"
+    }
+  },
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 105404,
+    "last_irreversible_block_num": 105402,
+    "last_irreversible_block_id": "00019bba7f3083d1daf7ed33493433074f51c082ef25abf521b4ab871d156953",
+    "head_block_id": "00019bbca58f1197f4d9670fe228902f62a1e3ab940e4ff0fb03a3f9a5ac2384",
+    "head_block_time": "2026-11-05T23:33:31.000",
+    "head_block_producer": "openaiclouds",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 105404,
+    "fork_db_head_block_id": "00019bbca58f1197f4d9670fe228902f62a1e3ab940e4ff0fb03a3f9a5ac2384",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:33:30.000"
+  },
+  "after_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 105411,
+    "last_irreversible_block_num": 105407,
+    "last_irreversible_block_id": "00019bbf30e6d276428c0882f2d61627225ecd58a1b8c85db89d8fd0ec006001",
+    "head_block_id": "00019bc36312d4547ec3a91b713f8f2b10b6a672c95497c1e9da0b8d60650d43",
+    "head_block_time": "2026-11-05T23:33:34.500",
+    "head_block_producer": "openaiclouds",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 105411,
+    "fork_db_head_block_id": "00019bc36312d4547ec3a91b713f8f2b10b6a672c95497c1e9da0b8d60650d43",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T23:33:32.500"
+  },
+  "retained_canonical_anchor": {
+    "block_num": 105402,
+    "block_id": "00019bba7f3083d1daf7ed33493433074f51c082ef25abf521b4ab871d156953"
+  },
+  "scope": "User explicitly authorized removal of all block/state datasets of these5nodes. Six datasets cleared including Tokyo initial replay. Only five265-byte finalizer safety files retained/restored, plus tiny private safety copies; no raw block/state backup. Configuration/keys/chain registration/votes/bonds retained. Other nodes, shared bootstrap checkpoint, current chain and history were not deleted. New3bans await native rules; no unban, force ban, settlement or key/safety reset."
+}

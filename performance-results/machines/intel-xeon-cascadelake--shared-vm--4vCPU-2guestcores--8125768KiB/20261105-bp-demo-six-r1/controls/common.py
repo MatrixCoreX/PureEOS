@@ -26,11 +26,16 @@ def table(name,code='eosio',scope='eosio'):
  rows=[];lower='';deadline=time.monotonic()+90
  while time.monotonic()<deadline:
   v=rpc('get_table_rows',{'code':code,'scope':scope,'table':name,'json':True,'limit':1000,'lower_bound':lower})
-  rows+=v['rows']
-  if not v.get('more'):return rows
+  if not v.get('more'):
+   rows+=v['rows'];return rows
   following=str(v.get('next_key',''))
-  if following==lower and not v['rows']:time.sleep(.2);continue
-  assert following and following!=lower,'Incomplete native table '+name;lower=following
+  if not following or following==lower:
+   # A time-limited response can contain rows without a usable continuation.
+   # Discard this incomplete page before retrying its original lower bound.
+   # Appending it first would duplicate rows when the retry succeeds.
+   with(R/'TABLE_READ_RETRIES.jsonl').open('a')as out:out.write(json.dumps({'UTC':now(),'table':name,'code':code,'scope':scope,'lower_bound':lower,'returned_rows':len(v['rows']),'next_key':following,'reason':'Non-advancing incomplete page discarded; retry same lower bound'})+'\n')
+   time.sleep(.2);continue
+  rows+=v['rows'];lower=following
  raise RuntimeError('Table pagination deadline '+name)
 def state(unit):
  return dict(x.split('=',1)for x in subprocess.check_output(['systemctl','show',unit,'-p','ActiveState,SubState,MainPID,NRestarts,UnitFileState'],text=True).splitlines()if'='in x)

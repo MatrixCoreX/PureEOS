@@ -32,6 +32,7 @@ def ensure_ban_final(row,s):
  b=rpc('get_block',{'block_num_or_id':int(row['ban_final_block'])})
  return {'owner':row['owner'],'native_candidate':row,'native_bond':bond,'ban_final_block':b['block_num'],'ban_final_block_id':b['id'],'observed_LIB':s['info']['last_irreversible_block_num']}
 try:
+ assert not(R/'CAMPAIGN_SUPERSEDED_20261106.json').exists(),'Superseded by explicit three-stop/five-dataset-retirement instruction; do not resume the old five-target controller'
  assert not(R/'DEMO_PROGRESS.json').exists(),'Reconcile this existing fault campaign before resuming'
  report('WAITING_FOR_SIX_JOINS');deadline=time.monotonic()+10800
  while not(R/'JOIN_RESULT.json').exists():
