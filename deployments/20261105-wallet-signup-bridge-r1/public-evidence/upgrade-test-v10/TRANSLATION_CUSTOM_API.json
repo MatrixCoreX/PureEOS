@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "exact_messages": 581,
+  "uncovered_literals": [],
+  "linewise_covered": [
+    {
+      "file": "MainActivity.java",
+      "text": "AIC 钱包 · 测试网\n由 PureEOS 驱动"
+    },
+    {
+      "file": "MainActivity.java",
+      "text": "交易ID\n"
+    },
+    {
+      "file": "MainActivity.java",
+      "text": "\n\n可在记录页检查最终结果。"
+    },
+    {
+      "file": "MainActivity.java",
+      "text": "交易ID\n"
+    },
+    {
+      "file": "MainActivity.java",
+      "text": "\n\n可在记录页检查最终结果。"
+    }
+  ],
+  "intentional_nontranslated": [
+    {
+      "file": "MainActivity.java",
+      "text": "简体中文",
+      "reason": "Language selector uses the language autonym."
+    },
+    {
+      "file": "Vault.java",
+      "text": "钱包 ",
+      "reason": "Legacy stored label fallback; user labels are not recursively translated."
+    }
+  ],
+  "catalog_SHA256": "68a23f5541308b2e0b23d3be9ad051d77fc69f7dab7313a4ad5d7bd57d63ea2c",
+  "scope": "r36 main Java and current catalog, offline only"
+}

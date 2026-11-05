@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "shipped_SDK_checks": 28,
+  "protocol": {
+    "status": "PASS",
+    "checks": 900,
+    "atomic_native_deposits": 3,
+    "owner_envelopes": 6,
+    "atomic_fee_cases": 144,
+    "asset_identities": 3,
+    "scope": "Remote JVM public scalar1 vs current qualified SDK. Zero actual chain requests or funded-key use; Android runtime separately qualified."
+  },
+  "dynamic": {
+    "status": "PASS",
+    "checks": 21,
+    "cases": 3,
+    "precisions": [
+      6,
+      0,
+      18
+    ],
+    "scope": "Current SDK independently verifies dynamic identities, native three-root deposits, signatures and owner envelopes. Public scalar1 only; no HTTP, funded keys or live transactions."
+  },
+  "accounts": {
+    "status": "PASS",
+    "checks": 51,
+    "authority_scopes": [
+      "active",
+      "owner",
+      "both"
+    ],
+    "atomic_key_signup_roots": 2,
+    "scope": "Remote public scalar1 only; native system ABI independently validates Java authority bytes/signatures; current SDK validates the complete two-root registration owner signature. No HTTP or funded keys."
+  },
+  "scope": "Offline remote JVM / native ABI / exact shipped SDK; mocked loopback HTTP only; no live-chain requests or funded keys",
+  "scope_refinement": {
+    "source_sha256": "3200fe7121ea50d813afb62fbe740c770125b669684c5ad9af6207040138cf3b",
+    "checks_added": "Independent native ABI validates permission role and parent for Active/Owner/both; pass plain hex across codec package boundaries. Other414/900/21/28 checks retained."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "classes": [
+    "Crypto",
+    "Wire",
+    "Fees",
+    "Json",
+    "Network",
+    "Vault",
+    "TxStore",
+    "I18n",
+    "AccountPager",
+    "PatternView",
+    "Resources",
+    "ApiEndpoint",
+    "BalanceText",
+    "TokenInfo",
+    "Accounts"
+  ],
+  "scope": "Official API26 compile only; no Android8 runtime claim",
+  "platform_SHA256": "cdc1846376a14b0370cc63454a129606b4a52cc50ada75ef0d4cf956b1ad2daa"
+}
