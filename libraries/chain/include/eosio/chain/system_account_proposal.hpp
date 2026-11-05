@@ -3,8 +3,9 @@
 
 namespace eosio::chain {
 
-// Version2 keeps sealed authorities and binds one target::init payload plus
-// the human review hash into the existing native review commitment.
+// Version2 seals system services. Version3 creates a NEW ordinary short-name
+// issuer delegated to the developer's owner/active roles, never an existing
+// account or eosio.* service. Both bind target::init and the human review hash.
 constexpr uint32_t max_system_account_init_bytes = 4096;
 constexpr uint32_t max_pending_system_account_proposals = 4;
 
@@ -15,7 +16,7 @@ struct syspropose {
    account_name target;
    account_name resource_payer;
    int64_t ram_payment = 0; // Exact 4-decimal AIC amount, not an unlimited allowance.
-   uint32_t authority_version = 1; // Fixed sealed-owner/code-only-active policy.
+   uint32_t authority_version = 1; // 1/2 sealed service; 3 new developer-owned ordinary issuer.
    uint32_t code_bytes = 0;
    uint32_t abi_bytes = 0;
    digest_type code_hash, abi_hash, review_document_hash;

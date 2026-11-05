@@ -57,8 +57,9 @@ struct signup_real_fixture:governance_fixture {
    const system_account_proposal_object& creation()const{return *find_system_account_proposal(chain.control->db());}
    void propose(account_name target,int64_t payment) {
       auto review=fc::sha256::hash("isolated real signup review");
-      if(authority_version==2) {
-         const std::string domain="PureEOS creation initializer v1";bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
+      if(authority_version==2 || authority_version==3) {
+         const std::string domain=authority_version==3?"PureEOS developer-owned issuer initializer v1":"PureEOS creation initializer v1";
+         bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
          const auto human=fc::raw::pack(init_review_hash),payload=fc::raw::pack(fc::sha256::hash(init_data.data(),init_data.size()));
          commitment.insert(commitment.end(),human.begin(),human.end());commitment.insert(commitment.end(),payload.begin(),payload.end());
          review=fc::sha256::hash(commitment.data(),commitment.size());
@@ -274,6 +275,55 @@ BOOST_AUTO_TEST_CASE(actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_
    inspect("usd"_n,0x445355,"4,USD");inspect("cny"_n,0x594e43,"4,CNY");
 }
 
+BOOST_AUTO_TEST_CASE(new_ordinary_issuers_delegate_to_account_owner_without_system_or_BP_control) {
+   signup_real_fixture f;std::string wasm,json;
+   fc::read_file_contents((f.root/"custody.token.wasm").string(),wasm);
+   fc::read_file_contents((f.root/"custody.token.abi").string(),json);
+   f.signup_code.assign(wasm.begin(),wasm.end());
+   BOOST_REQUIRE(fc::sha256::hash(wasm.data(),wasm.size())==digest_type("ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb"));
+   abi_def abi;fc::from_variant(fc::json::from_string(json),abi);f.signup_abi=fc::raw::pack(abi);
+   std::ofstream raw_file(f.root/"custody.token.raw.abi",std::ios::binary);raw_file.write(f.signup_abi.data(),f.signup_abi.size());raw_file.close();
+   f.authority_version=3;f.init_review_hash=fc::sha256::hash("new third-party issuers initially delegated to developer account");
+   auto data=[](const char* sym) {return fc::raw::pack(std::make_tuple("alice"_n,
+      asset{10000000000ll,symbol::from_string(sym)},asset{100000000ll,symbol::from_string(sym)}));};
+   const auto usd=data("4,USD"),cny=data("4,CNY");
+   f.init_data=usd;
+   BOOST_CHECK_THROW(f.propose("eosio.key"_n,10000),fc::exception);
+   BOOST_CHECK_THROW(f.propose("eosio.signup"_n,10000),fc::exception);
+   BOOST_CHECK_THROW(f.propose("alice"_n,10000),fc::exception);
+   f.propose("usd"_n,10000);const auto id1=f.creation().proposal_id;
+   f.init_data=cny;f.propose("cny"_n,10000);const auto id2=f.creation().proposal_id;
+   auto execute=[&](uint64_t id,const bytes& init) {return f.push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},
+      sysexec{id,f.signup_code,f.signup_abi,init,f.init_review_hash})},"developer"_n);};
+   BOOST_CHECK_THROW(execute(id1,usd),fc::exception);f.advance_to(f.creation().execute_after);
+   const auto funds=f.balance("developer"_n);auto changed=usd;changed.back()^=1;
+   BOOST_CHECK_THROW(execute(id1,changed),fc::exception);BOOST_CHECK_EQUAL(f.balance("developer"_n),funds);
+   BOOST_CHECK(!f.chain.control->db().find<account_object,by_name>("usd"_n));
+   BOOST_REQUIRE_NO_THROW(execute(id1,usd));BOOST_REQUIRE_NO_THROW(execute(id2,cny));
+   for(auto target:{"usd"_n,"cny"_n}) {
+      const auto& manager=f.chain.control->get_authorization_manager();
+      const auto owner=manager.get_permission({target,"owner"_n}).auth.to_authority();
+      const auto active=manager.get_permission({target,"active"_n}).auth.to_authority();
+      authority expected_owner(1,{},{});expected_owner.accounts.push_back({{"developer"_n,"owner"_n},1});
+      authority expected_active(1,{},{});expected_active.accounts={{{"developer"_n,"active"_n},1},{{target,"eosio.code"_n},1}};
+      std::sort(expected_active.accounts.begin(),expected_active.accounts.end());
+      BOOST_CHECK(fc::raw::pack(owner)==fc::raw::pack(expected_owner));BOOST_CHECK(fc::raw::pack(active)==fc::raw::pack(expected_active));
+      BOOST_CHECK(!is_protected_system_account(f.chain.control->db(),target));
+      BOOST_CHECK((!f.chain.control->db().get<account_metadata_object,by_name>(target).is_privileged()));
+      const authority stolen(f.chain.get_public_key("alice"_n,"active"));
+      BOOST_CHECK_THROW(f.push({action({permission_level{target,"owner"_n}},updateauth{target,"owner"_n,{},stolen})},"eosio"_n),fc::exception);
+      BOOST_CHECK_THROW(f.push({action({permission_level{target,"owner"_n}},updateauth{target,"owner"_n,{},stolen})},"alice"_n),fc::exception);
+      BOOST_CHECK_THROW(f.propose(target,10000),fc::exception); // Existing owner is never replaced by creation.
+   }
+   const auto issue=fc::raw::pack(std::make_tuple("usd"_n,asset::from_string("1.0000 USD"),std::string("owner authorized TEST issuance")));
+   BOOST_REQUIRE_NO_THROW(f.push({action({permission_level{"usd"_n,"active"_n}},"usd"_n,"issue"_n,issue)},"developer"_n));
+   const authority replacement(f.chain.get_public_key("alice"_n,"owner"));
+   BOOST_REQUIRE_NO_THROW(f.push({action({permission_level{"usd"_n,"owner"_n}},updateauth{"usd"_n,"owner"_n,{},replacement})},"developer"_n,"owner"));
+   const auto owned=f.chain.control->get_authorization_manager().get_permission({"usd"_n,"owner"_n}).auth.to_authority();
+   BOOST_CHECK(fc::raw::pack(owned)==fc::raw::pack(replacement));
+   BOOST_CHECK_THROW(f.push({action({permission_level{"usd"_n,"owner"_n}},updateauth{"usd"_n,"owner"_n,{},replacement})},"developer"_n,"owner"),fc::exception);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(pureeos_signup_wire_tests)
 BOOST_AUTO_TEST_CASE(unsigned_helper_matches_native_action_serialization) {
@@ -308,6 +358,23 @@ BOOST_AUTO_TEST_CASE(unsigned_initializer_helper_matches_native_action_serializa
    BOOST_CHECK_EQUAL(bundle["proposal_actions"].get_array().at(1)["data"].as_string(),fc::to_hex(proposed.data(),proposed.size()));
    const auto execution=fc::raw::pack(sysexec{1,bytes(wasm.begin(),wasm.end()),bytes(raw.begin(),raw.end()),data,human});
    BOOST_CHECK_EQUAL(bundle["execution_actions"].get_array().at(0)["data"].as_string(),fc::to_hex(execution.data(),execution.size()));
+}
+BOOST_AUTO_TEST_CASE(unsigned_ordinary_issuer_helper_binds_distinct_policy_and_native_wire) {
+   const std::filesystem::path root{PUREEOS_SIGNUP_REAL_CONTRACTS_DIR};std::string wasm,raw,review;
+   fc::read_file_contents((root/"custody.token.wasm").string(),wasm);fc::read_file_contents((root/"custody.token.raw.abi").string(),raw);
+   fc::read_file_contents((root/"wire-review.md").string(),review);
+   const auto bundle=fc::json::from_file((root/"unsigned-issuer-candidate.json").string());
+   const bytes data{1,2,3};const auto human=fc::sha256::hash(review.data(),review.size());
+   const std::string domain="PureEOS developer-owned issuer initializer v1";bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
+   const auto human_raw=fc::raw::pack(human),payload=fc::raw::pack(fc::sha256::hash(data.data(),data.size()));
+   commitment.insert(commitment.end(),human_raw.begin(),human_raw.end());commitment.insert(commitment.end(),payload.begin(),payload.end());
+   const auto proposed=fc::raw::pack(syspropose{"usd"_n,"developer"_n,10000,3,uint32_t(wasm.size()),uint32_t(raw.size()),
+      fc::sha256::hash(wasm.data(),wasm.size()),fc::sha256::hash(raw.data(),raw.size()),fc::sha256::hash(commitment.data(),commitment.size())});
+   BOOST_CHECK_EQUAL(bundle["proposal_actions"].get_array().at(1)["data"].as_string(),fc::to_hex(proposed.data(),proposed.size()));
+   const auto execution=fc::raw::pack(sysexec{1,bytes(wasm.begin(),wasm.end()),bytes(raw.begin(),raw.end()),data,human});
+   BOOST_CHECK_EQUAL(bundle["execution_actions"].get_array().at(0)["data"].as_string(),fc::to_hex(execution.data(),execution.size()));
+   BOOST_CHECK_EQUAL(bundle["account_policy"]["owner"].as_string(),"developer@owner");
+   BOOST_CHECK(!bundle["account_policy"]["system_protected_after_creation"].as_bool());
 }
 BOOST_AUTO_TEST_SUITE_END()
 #endif

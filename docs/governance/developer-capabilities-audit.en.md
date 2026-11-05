@@ -1,3 +1,5 @@
+> Latest decision (2026-11-05): BP governance only vetoes developer proposals; capabilities expand gradually. No generic former-BP superuser executor or system key-rotation proposal is selected. USD/CNY become new ordinary issuers initially delegated to eosio.dev; eosio.key stays sealed. Visible reviewed upgrades remain permitted. Historical suggestions below are not grants; see [BP authority audit](bp-veto-only-audit.en.md).
+
 # Developer capabilities audit and possible extensions (2026-11-05)
 
 Selected scope: add dotless1–11character short service names, such as`usd`, to

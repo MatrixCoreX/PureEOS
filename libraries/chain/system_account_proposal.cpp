@@ -52,6 +52,17 @@ bool valid_target(account_name target) {
           target!="eosio.dev"_n &&
           target!="eosio.prods"_n && target!="eosio.msig"_n && target!="eosio.wrap"_n && target!="eosio.null"_n;
 }
+bool ordinary_issuer(account_name target) {
+   const auto text=target.to_string();
+   return valid_target(target) && text.find('.')==std::string::npos;
+}
+authority issuer_owner(account_name developer) {
+   authority a(1,{},{});a.accounts.push_back({{developer,config::owner_name},1});return a;
+}
+authority issuer_active(account_name developer,account_name target) {
+   authority a(1,{},{});a.accounts.push_back({{developer,config::active_name},1});
+   a.accounts.push_back({{target,config::eosio_code_name},1});std::sort(a.accounts.begin(),a.accounts.end());return a;
+}
 void check_short_name_auction(const apply_context& ctx,account_name target) {
    if(target.to_string().find('.')!=std::string::npos)return;
    const auto* table=ctx.db.find<table_id_object,by_code_scope_table>(boost::make_tuple("eosio"_n,"eosio"_n,"namebids"_n));
@@ -81,9 +92,11 @@ bool reviewed_initializer(apply_context& ctx,const system_account_proposal_objec
       EOS_ASSERT(data.empty() && human_review_hash==digest_type{},action_validate_exception,
                  "version1 creation cannot include initialization");return false;
    }
-   EOS_ASSERT(state.authority_version==2 && data.size()<=max_system_account_init_bytes && human_review_hash!=digest_type{},
-              action_validate_exception,"version2 creation requires a reviewed initializer of at most4096bytes");
-   const std::string domain="PureEOS creation initializer v1";bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
+   EOS_ASSERT((state.authority_version==2 || (state.authority_version==3 && ordinary_issuer(state.target))) &&
+              data.size()<=max_system_account_init_bytes && human_review_hash!=digest_type{},
+              action_validate_exception,"initialized creation requires a reviewed initializer of at most4096bytes and a valid authority policy");
+   const std::string domain=state.authority_version==3?"PureEOS developer-owned issuer initializer v1":"PureEOS creation initializer v1";
+   bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
    const auto review=fc::raw::pack(human_review_hash);
    const auto payload=fc::raw::pack(ctx.trx_context.hash_with_checktime<fc::sha256>(data.data(),data.size()));
    commitment.insert(commitment.end(),review.begin(),review.end());commitment.insert(commitment.end(),payload.begin(),payload.end());
@@ -158,7 +171,8 @@ void apply_eosio_syspropose(apply_context& ctx) {
    ctx.db.get<account_object,by_name>(args.resource_payer);
    EOS_ASSERT(args.ram_payment>0 && args.ram_payment<=max_creation_ram_payment,
               action_validate_exception,"invalid bounded system account RAM payment");
-   EOS_ASSERT((args.authority_version==creation_authority_version || args.authority_version==2) && args.code_bytes>0 && args.code_bytes<=max_creation_code_bytes &&
+   EOS_ASSERT((args.authority_version==creation_authority_version || args.authority_version==2 ||
+               (args.authority_version==3 && ordinary_issuer(args.target))) && args.code_bytes>0 && args.code_bytes<=max_creation_code_bytes &&
               args.abi_bytes>0 && args.abi_bytes<=max_creation_abi_bytes && args.code_hash!=digest_type{} &&
               args.abi_hash!=digest_type{} && args.review_document_hash!=digest_type{},
               action_validate_exception,"invalid creation authority or reviewed payload bounds");
@@ -319,9 +333,23 @@ void apply_eosio_sysfinish(apply_context& ctx) {
    EOS_ASSERT(fc::raw::pack(owner.auth.to_authority())==fc::raw::pack(creation_owner()) &&
               fc::raw::pack(active.auth.to_authority())==fc::raw::pack(creation_active(state->target)),
               action_validate_exception,"creation authority changed before final sealing");
+   const auto* gov=find_upgrade_governance(ctx.db);
+   EOS_ASSERT(gov && gov->developer!=account_name{},action_validate_exception,"creation finalization requires sealed governance");
+   const bool external=state->authority_version==3;
+   EOS_ASSERT(!external || ordinary_issuer(state->target),action_validate_exception,"system services cannot become developer-owned issuers");
    const auto old=owner.auth.get_billable_size();
-   ctx.db.modify(owner,[&](auto& p){p.auth=authority(1,{},{});p.last_updated=ctx.control.pending_block_time();});
+   ctx.db.modify(owner,[&](auto& p){p.auth=external?issuer_owner(gov->developer):authority(1,{},{});p.last_updated=ctx.control.pending_block_time();});
    ctx.add_ram_usage(state->target,int64_t(owner.auth.get_billable_size())-int64_t(old));
+   if(external) {
+      const auto old_active=active.auth.get_billable_size();
+      ctx.db.modify(active,[&](auto& p){p.auth=issuer_active(gov->developer,state->target);p.last_updated=ctx.control.pending_block_time();});
+      ctx.add_ram_usage(state->target,int64_t(active.auth.get_billable_size())-int64_t(old_active));
+      std::vector<account_name> protected_accounts(gov->protected_accounts.begin(),gov->protected_accounts.end());
+      const auto it=std::lower_bound(protected_accounts.begin(),protected_accounts.end(),state->target);
+      EOS_ASSERT(it!=protected_accounts.end() && *it==state->target,action_validate_exception,"new issuer temporary protection missing");
+      protected_accounts.erase(it);
+      ctx.db.modify(*gov,[&](auto& s){s.protected_accounts=protected_accounts;});
+   }
    ctx.db.modify(*state,[&](auto& s){s.pending=false;s.outcome=1;s.completed_at=ctx.control.pending_block_time();});
    permit->account_creation_authorized=false;
    prune_completed(ctx);

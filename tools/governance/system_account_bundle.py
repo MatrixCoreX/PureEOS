@@ -49,10 +49,14 @@ def prepare(args):
     hashes=[hashlib.sha256(value).digest() for value in [code,abi,review]]
     init=args.init_data.read_bytes() if args.init_data is not None else b''
     if len(init)>4096:raise ValueError('initializer exceeds4096bytes')
-    version=2 if args.init_data is not None else 1
-    commitment=hashlib.sha256(b'PureEOS creation initializer v1\0'+hashes[2]+hashlib.sha256(init).digest()).digest() if version==2 else hashes[2]
+    issuer=getattr(args,'ordinary_issuer',False)
+    if issuer and (not short_name or args.init_data is None):
+        raise ValueError('ordinary issuer requires a NEW dotless short target and reviewed initializer; never eosio.*')
+    version=3 if issuer else (2 if args.init_data is not None else 1)
+    domain=b'PureEOS developer-owned issuer initializer v1\0' if issuer else b'PureEOS creation initializer v1\0'
+    commitment=hashlib.sha256(domain+hashes[2]+hashlib.sha256(init).digest()).digest() if version>=2 else hashes[2]
     proposed=struct.pack('<QQqIII',name_value(args.target),name_value(args.payer),args.ram_atoms,version,len(code),len(abi))+hashes[0]+hashes[1]+commitment
-    execution=struct.pack('<Q',args.proposal_id)+varuint(len(code))+code+varuint(len(abi))+abi+varuint(len(init))+init+(hashes[2] if version==2 else bytes(32))
+    execution=struct.pack('<Q',args.proposal_id)+varuint(len(code))+code+varuint(len(abi))+abi+varuint(len(init))+init+(hashes[2] if version>=2 else bytes(32))
     upgrade=[(args.developer,'upgrade')]
     execution_auth=upgrade+[(args.payer,'active')]
     links=[]
@@ -66,7 +70,11 @@ def prepare(args):
         'code_bytes':len(code),'raw_abi_bytes':len(abi),
         'code_sha256':hashes[0].hex(),'raw_abi_sha256':hashes[1].hex(),'review_sha256':hashes[2].hex(),
         'native_review_commitment':commitment.hex(),
-        'initialization':{'enabled':version==2,'action':'target::init' if version==2 else None,'bytes':len(init),'sha256':hashlib.sha256(init).hexdigest() if version==2 else None},
+        'account_policy':{'kind':'ordinary_developer_owned_issuer' if issuer else 'sealed_system_service',
+            'owner':args.developer+'@owner' if issuer else 'sealed',
+            'active':[args.developer+'@active',args.target+'@eosio.code'] if issuer else 'code-only',
+            'system_protected_after_creation':not issuer},
+        'initialization':{'enabled':version>=2,'action':'target::init' if version>=2 else None,'bytes':len(init),'sha256':hashlib.sha256(init).hexdigest() if version>=2 else None},
         'expected_proposal_id':args.proposal_id,
         'permission_setup_actions':links,
         'proposal_actions':[action('refreshgov',upgrade,b''),action('syspropose',upgrade,proposed)],
@@ -86,6 +94,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ['wasm','raw-abi','review','output']:parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--init-data',type=Path,help='Optional canonical raw target::init arguments, committed together with review hash')
+    parser.add_argument('--ordinary-issuer',action='store_true',help='New ordinary short issuer delegated to developer owner/active; never changes existing or eosio.* accounts')
     for name in ['target','payer','developer','chain-id']:parser.add_argument('--'+name,required=True)
     parser.add_argument('--ram-atoms',type=int,required=True)
     parser.add_argument('--proposal-id',type=int,required=True)
