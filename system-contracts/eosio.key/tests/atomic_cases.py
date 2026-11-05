@@ -80,9 +80,10 @@ def run_atomic(t,source,args):
     def reject(label,call):
         before=t.state();market=t.table('rammarket');ram=t.rpc('get_account',{'account_name':'eosio.key'});n={x:(native(x),native(x,'usd','USD'))for x in ['eosio.key','keyusersolar','keyuserlunar']}
         call()
-        t.check(before==t.state()and not t.ktable('pending')and all(n[x]==(native(x),native(x,'usd','USD'))for x in n)
-            and ram['ram_quota']==t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota']
-            and ram['ram_usage']==t.rpc('get_account',{'account_name':'eosio.key'})['ram_usage']and market==t.table('rammarket'),label+': full principal/fee/RAM/budget/count rollback')
+        after=t.state();pending=t.ktable('pending');after_n={x:(native(x),native(x,'usd','USD'))for x in n};after_ram=t.rpc('get_account',{'account_name':'eosio.key'});after_market=t.table('rammarket')
+        same=before==after and not pending and n==after_n and ram['ram_quota']==after_ram['ram_quota']and ram['ram_usage']==after_ram['ram_usage']and market==after_market
+        if not same:t.report.setdefault('rollback_observations',[]).append({'label':label,'before':before,'after':after,'pending':pending,'native_before':n,'native_after':after_n,'RAM_before':{k:ram[k]for k in ['ram_quota','ram_usage']},'RAM_after':{k:after_ram[k]for k in ['ram_quota','ram_usage']},'market_before':market,'market_after':after_market})
+        t.check(same,label+': full principal/fee/RAM/budget/count rollback')
     t.owner=t.key();t.receiver=t.key();third=t.key()
     t.check(not t.ktable('nativefees')and all(not int(a['ram_purchased'])for a in t.ktable('assets')),
         'No manual fee prepayment or sponsored token capacity exists at test start')

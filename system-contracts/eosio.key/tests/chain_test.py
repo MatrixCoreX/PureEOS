@@ -56,6 +56,16 @@ def main():
                     raise RuntimeError(f'Expected rejection ({failure}), got {result.returncode}: {diagnostic}')
             elif result.returncode:raise RuntimeError(f'cleos {args[:3]} failed: {diagnostic}')
             return result.stdout
+        def table(self,name,*,code='eosio',scope='eosio'):
+            rows=[];cursor=None;seen=set()
+            for page in range(100):
+                query={'json':True,'code':code,'scope':scope,'table':name,'limit':1000,'time_limit_ms':500}
+                if cursor is not None:query['lower_bound']=cursor
+                value=self.rpc('get_table_rows',query);rows.extend(value['rows'])
+                if not value.get('more'):return rows
+                cursor=value.get('next_key');assert cursor is not None and str(cursor)not in seen,'Truncated qualification table without an advancing cursor'
+                seen.add(str(cursor));self.report.setdefault('table_pagination',[]).append({'code':code,'scope':scope,'table':name,'next_key':str(cursor)})
+            raise RuntimeError('Qualification table exceeds bounded pagination')
         def audit_state(self):
             state={'wallet':self.state(),'governance':self.governance(),'code':{},'native':{},'RAM':{}}
             standard=self.report['artifacts']['eosio.token/eosio.token.wasm']
@@ -135,10 +145,11 @@ def main():
             self.bls={n:self.key(True) for n in self.local_signers}
             self.root.joinpath('config').mkdir();self.root.joinpath('wallet').mkdir()
             profile=(args.package/'config/test-low-cost/config.ini').read_text().splitlines()
-            profile=[x for x in profile if not x.startswith(('http-server-address','p2p-listen-endpoint'))]
+            profile=[x for x in profile if not x.startswith(('http-server-address','p2p-listen-endpoint','http-max-response-time-ms','abi-serializer-max-time-ms'))]
             profile += ['plugin = eosio::producer_api_plugin','enable-stale-production = true',
                         'http-server-address = 127.0.0.1:'+str(self.http_port),
-                        'p2p-listen-endpoint = 127.0.0.1:'+str(self.p2p_port),'verbose-http-errors = true']
+                        'p2p-listen-endpoint = 127.0.0.1:'+str(self.p2p_port),'verbose-http-errors = true',
+                        'http-max-response-time-ms = 500','abi-serializer-max-time-ms = 500']
             for n in self.local_signers:
                 profile.append('producer-name = '+n)
                 for k in [self.accounts[n],self.bls[n]]:
