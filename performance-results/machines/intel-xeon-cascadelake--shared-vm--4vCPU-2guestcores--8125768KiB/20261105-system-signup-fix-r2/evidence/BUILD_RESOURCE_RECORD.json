@@ -1,0 +1,28 @@
+{
+  "UTC": "2026-11-04T23:33:39.950248+00:00",
+  "unit": "pureeos-signup-fix-r2-build-1-20261105.service",
+  "CPUWeight": 500,
+  "CPUQuota_unchanged": "50% of one logical CPU",
+  "memory_limit_unchanged": "1280MiB",
+  "scope": "Only owned compiler scheduling weight changed; no node/service/config/policy changes",
+  "executed_script_sha256": "1bbd41cebcda8eba7ba5dc4cf04e93cd9f1f0e50ae89cb325df6748074e607bf",
+  "memory_high_adjustment": {
+    "UTC": "2026-11-04T23:38:24.254111+00:00",
+    "from": "1GiB",
+    "to": "1280MiB",
+    "hard_MemoryMax_unchanged": "1280MiB",
+    "reason": "Own cgroup soft-limit reclaim stalled the compiler: high202447, no max/oom events; keep hard budget,512MiB host floor and live guards unchanged"
+  },
+  "guarded_memory_adjustment": {
+    "UTC": "2026-11-04T23:40:58.733895+00:00",
+    "from_max": "1280MiB",
+    "to_max": "2GiB",
+    "before_host_MemAvailable_bytes": 1595580416,
+    "before_cgroup_current_bytes": 1342062592,
+    "computed_host_reserve_at_max_bytes": 790159360,
+    "before_memory_events": "low 0\nhigh 245434\nmax 107317\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "CPUQuota_unchanged": "50%",
+    "live_memory_floor_unchanged": "512MiB",
+    "reason": "Own compiler hit reclaim limit. Existing committed compiler pages plus observed free headroom admit2GiB while retaining more than640MiB reserve; live PID/head/LIB guards remain enabled."
+  }
+}

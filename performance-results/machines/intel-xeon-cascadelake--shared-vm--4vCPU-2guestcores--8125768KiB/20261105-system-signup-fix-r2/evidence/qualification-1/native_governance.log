@@ -1,0 +1,219 @@
+Random number generator seeded to 1793838443
+Running 34 test cases...
+Entering test module "Master Test Suite"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(153): Entering test suite "pureeos_governance_tests"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(155): Entering test case "profile_and_thresholds"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(155): Leaving test case "profile_and_thresholds"; testing time: 4572us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(169): Entering test case "bootstrap_rejects_wrong_contract_without_locking_accounts"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(169): Leaving test case "bootstrap_rejects_wrong_contract_without_locking_accounts"; testing time: 486331us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(180): Entering test case "review_period_is_fixed_at_fourteen_days"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(180): Leaving test case "review_period_is_fixed_at_fourteen_days"; testing time: 53660us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(196): Entering test case "bootstrap_seals_management_and_preserves_normal_accounts"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(196): Leaving test case "bootstrap_seals_management_and_preserves_normal_accounts"; testing time: 84897us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(213): Entering test case "developer_only_and_no_stale_electorate"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(213): Leaving test case "developer_only_and_no_stale_electorate"; testing time: 76291us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(226): Entering test case "dedicated_upgrade_key_needs_no_active_key"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(226): Leaving test case "dedicated_upgrade_key_needs_no_active_key"; testing time: 67950us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(238): Entering test case "electorate_validation_and_snapshot_immutability"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(238): Leaving test case "electorate_validation_and_snapshot_immutability"; testing time: 56368us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(253): Entering test case "full_review_then_atomic_code_and_abi_upgrade"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(253): Leaving test case "full_review_then_atomic_code_and_abi_upgrade"; testing time: 64970us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(268): Entering test case "no_objections_allows_execution_only_after_fourteen_days"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(268): Leaving test case "no_objections_allows_execution_only_after_fourteen_days"; testing time: 77631us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(285): Entering test case "one_two_three_four_nodes_veto_threshold"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(285): Leaving test case "one_two_three_four_nodes_veto_threshold"; testing time: 272646us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(297): Entering test case "two_of_four_objections_do_not_block"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(297): Leaving test case "two_of_four_objections_do_not_block"; testing time: 64255us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(307): Entering test case "exact_deadline_ends_veto_and_allows_execution"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(307): Leaving test case "exact_deadline_ends_veto_and_allows_execution"; testing time: 78159us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(319): Entering test case "abi_only_upgrade_requires_a_new_full_review"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(319): Leaving test case "abi_only_upgrade_requires_a_new_full_review"; testing time: 76535us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(336): Entering test case "genesis_producer_has_only_narrow_veto"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(336): Leaving test case "genesis_producer_has_only_narrow_veto"; testing time: 66789us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(345): Entering test case "privileged_forwarding_cannot_forge_governance_or_management"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(345): Leaving test case "privileged_forwarding_cannot_forge_governance_or_management"; testing time: 55468us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(359): Entering test case "cancel_and_resubmit_restarts_review"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(359): Leaving test case "cancel_and_resubmit_restarts_review"; testing time: 114558us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(381): Entering test case "execution_failure_rolls_back_proposal"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(381): Leaving test case "execution_failure_rolls_back_proposal"; testing time: 72034us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(391): Entering test case "transaction_retry_discards_single_use_upgrade_capability"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(391): Leaving test case "transaction_retry_discards_single_use_upgrade_capability"; testing time: 65370us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(414): Entering test case "two_hundred_ten_nodes_require_140_not_141"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(414): Leaving test case "two_hundred_ten_nodes_require_140_not_141"; testing time: 218124us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(424): Entering test case "snapshot_binary_json_and_restart_preserve_frozen_proposal"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(424): Leaving test case "snapshot_binary_json_and_restart_preserve_frozen_proposal"; testing time: 133165us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(450): Entering test case "legacy_v9_snapshot_does_not_enable_governance"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(450): Leaving test case "legacy_v9_snapshot_does_not_enable_governance"; testing time: 53669us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(460): Entering test case "sealed_governance_replays_from_genesis"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(460): Leaving test case "sealed_governance_replays_from_genesis"; testing time: 134929us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(65): Entering test case "system_creation_requires_feature_and_native_parent"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(65): Leaving test case "system_creation_requires_feature_and_native_parent"; testing time: 130596us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(80): Entering test case "system_creation_validates_exact_manifest_and_fresh_electorate"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(80): Leaving test case "system_creation_validates_exact_manifest_and_fresh_electorate"; testing time: 88583us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(104): Entering test case "system_creation_preserves_existing_pending_upgrade"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(104): Leaving test case "system_creation_preserves_existing_pending_upgrade"; testing time: 80727us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(118): Entering test case "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account"
+3050000 action_validate_exception: Action validate exception
+system account review period has not ended
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:162 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:01:10","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:01:10","ref_block_num":7,"ref_block_prefix":692822669,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3050000 action_validate_exception: Action validate exception
+system account review period has not ended
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:162 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:10","ref_block_num":9,"ref_block_prefix":3363740939,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:10","ref_block_num":9,"ref_block_prefix":3363740939,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3090004 missing_auth_exception: Missing required authority
+missing authority of developer/active
+    {"account":"developer","permission":"active"}
+    ld-linux-x86-64.so.2  apply_context.cpp:400 require_authorization
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":11,"ref_block_prefix":1011197522,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":11,"ref_block_prefix":1011197522,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3050000 action_validate_exception: Action validate exception
+creation payload differs from reviewed code/ABI
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:63 reviewed_payload
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:13","ref_block_num":11,"ref_block_prefix":1011197522,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:13","ref_block_num":11,"ref_block_prefix":1011197522,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3050000 action_validate_exception: Action validate exception
+system account proposal is not pending or id does not match
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:36 pending
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:17","ref_block_num":11,"ref_block_prefix":1011197522,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:17","ref_block_num":11,"ref_block_prefix":1011197522,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(118): Leaving test case "system_creation_reviews_sponsor_payload_and_seals_nonprivileged_account"; testing time: 105632us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(163): Entering test case "system_creation_internal_stage_preserves_pre_feature_and_inline_authorization_checks"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(163): Leaving test case "system_creation_internal_stage_preserves_pre_feature_and_inline_authorization_checks"; testing time: 129193us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(177): Entering test case "system_creation_rejects_nested_and_duplicate_native_continuations_atomically"
+3050000 action_validate_exception: Action validate exception
+system account staging requires its unused exact native sysexec parent
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:192 apply_eosio_sysstage
+eosio <= eosio::sysstage console output: 
+    {"console":"","account":"eosio","action":"sysstage","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":1619097324,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":1619097324,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3050000 action_validate_exception: Action validate exception
+system account staging requires its unused exact native sysexec parent
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:192 apply_eosio_sysstage
+eosio <= eosio::sysstage console output: 
+    {"console":"","account":"eosio","action":"sysstage","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":3622306888,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":3622306888,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3050000 action_validate_exception: Action validate exception
+system account staging requires its unused exact native sysexec parent
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:192 apply_eosio_sysstage
+eosio <= eosio::sysstage console output: 
+    {"console":"","account":"eosio","action":"sysstage","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":590629417,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":590629417,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+3050000 action_validate_exception: Action validate exception
+inline action's authorizing actor eosio.signup does not exist
+    {"account":"eosio.signup"}
+    ld-linux-x86-64.so.2  apply_context.cpp:459 execute_inline
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":1495672586,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":1495672586,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(177): Leaving test case "system_creation_rejects_nested_and_duplicate_native_continuations_atomically"; testing time: 370624us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(206): Entering test case "system_creation_failure_rolls_back_account_protection_and_execution"
+3070003 wasm_serialization_error: Serialization Error Processing WASM
+guarded ptr out of bounds
+    {}
+    ld-linux-x86-64.so.2  eos-vm.cpp:132 validate
+eosio <= eosio::setcode console output: 
+    {"console":"","account":"eosio","action":"setcode","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:10","ref_block_num":9,"ref_block_prefix":3886499970,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:10","ref_block_num":9,"ref_block_prefix":3886499970,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(206): Leaving test case "system_creation_failure_rolls_back_account_protection_and_execution"; testing time: 92326us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(217): Entering test case "system_creation_effective_veto_and_cancellation_boundaries"
+3050000 action_validate_exception: Action validate exception
+system account creation vetoed or effective electorate empty
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:164 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:16","ref_block_num":9,"ref_block_prefix":586931290,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:16","ref_block_num":9,"ref_block_prefix":586931290,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(217): Leaving test case "system_creation_effective_veto_and_cancellation_boundaries"; testing time: 98386us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(235): Entering test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(235): Leaving test case "system_creation_snapshot_restart_and_replay_preserve_both_lanes"; testing time: 200071us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(260): Entering test case "system_creation_native_ban_reader_recomputes_effective_threshold"
+3050000 action_validate_exception: Action validate exception
+system account creation vetoed or effective electorate empty
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:164 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:13","ref_block_num":9,"ref_block_prefix":134447384,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:13","ref_block_num":9,"ref_block_prefix":134447384,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(260): Leaving test case "system_creation_native_ban_reader_recomputes_effective_threshold"; testing time: 98172us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(272): Entering test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"
+3050000 action_validate_exception: Action validate exception
+system account creation vetoed or effective electorate empty
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:164 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:11","ref_block_num":9,"ref_block_prefix":442843531,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:11","ref_block_num":9,"ref_block_prefix":442843531,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(272): Leaving test case "system_creation_native_ban_reader_excludes_veto_and_blocks_empty_electorate"; testing time: 89640us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(281): Entering test case "system_creation_activated_snapshot_rejects_downgraded_header"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_system_account_tests.inc(281): Leaving test case "system_creation_activated_snapshot_rejects_downgraded_header"; testing time: 262068us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(153): Leaving test suite "pureeos_governance_tests"; testing time: 4125237us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(81): Test suite "pureeos_signup_real_tests" is skipped because disabled
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(159): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 4125266us

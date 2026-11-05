@@ -71,7 +71,7 @@ struct governance_fixture {
    }();
    bytes upgrade_abi = [] { abi_def abi; abi.version = "eosio::abi/1.2"; return fc::raw::pack(abi); }();
 
-   governance_fixture(size_t count = 4, bool seal_now = true) {
+   governance_fixture(size_t count = 4, bool seal_now = true, const std::string& system_wat = fixture_wat()) {
       const std::array<account_name, 1> finalizers{"eosio"_n};
       chain.set_node_finalizers(finalizers);
       chain.produce_blocks(2);
@@ -87,7 +87,7 @@ struct governance_fixture {
          if (i % 32 == 31) chain.produce_block();
       }
       chain.set_authority("developer"_n, "upgrade"_n, authority(chain.get_public_key("developer"_n, "active")), "active"_n);
-      chain.set_code("eosio"_n, fixture_wat().c_str());
+      chain.set_code("eosio"_n, system_wat.c_str());
       if (seal_now) seal();
    }
 

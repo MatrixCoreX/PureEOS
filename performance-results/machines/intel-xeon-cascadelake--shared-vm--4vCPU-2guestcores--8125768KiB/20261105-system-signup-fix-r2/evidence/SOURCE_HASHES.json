@@ -1,0 +1,8 @@
+{
+  "libraries/chain/include/eosio/chain/system_account_proposal.hpp": "15e460fb9e4bf87d26e183ec8ea4ec321c9f687fd133626a3e3e63db1a11d6c9",
+  "libraries/chain/system_account_proposal.cpp": "d0933a2daca2dce9cf70aa4c4c781bbbf5d585679ef4bec1941754e1baa2f2a8",
+  "libraries/chain/controller.cpp": "73400c2df05453748426c2710785d49228af9498efac36b748db7187da49ff0c",
+  "unittests/pureeos_system_account_tests.inc": "4f8aa28ed30c4317e2f09641ea672f191d9ccfd076e3762a7cab2f28c1ffca00",
+  "unittests/pureeos_governance_tests.cpp": "69d0db20b87843a83b22e3883a86a5f0f557881450046ad7725206f17acde76f",
+  "unittests/pureeos_signup_real_tests.cpp": "8236dce8f905f1e10c1952e900a4300cf6a682d47521534c950b826aea1a3c60"
+}

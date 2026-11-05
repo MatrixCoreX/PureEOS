@@ -1,0 +1,22 @@
+compile-controller
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-fix-20261105-r2/build.py", line 61, in <module>
+    obj.unlink(missing_ok=True);run(argv,'compile-'+Path(entry['source']).stem)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-system-signup-fix-20261105-r2/build.py", line 40, in run
+    assert child.returncode==0,label+' failed: '+log.read_text()[-5000:]
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: compile-controller failed: [01m[Kc++:[m[K [01;31m[Kfatal error: [m[KKilled signal terminated program cc1plus
+compilation terminated.
+
+
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-fix-20261105-r2/build.py", line 61, in <module>
+    obj.unlink(missing_ok=True);run(argv,'compile-'+Path(entry['source']).stem)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-system-signup-fix-20261105-r2/build.py", line 40, in run
+    assert child.returncode==0,label+' failed: '+log.read_text()[-5000:]
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: compile-controller failed: [01m[Kc++:[m[K [01;31m[Kfatal error: [m[KKilled signal terminated program cc1plus
+compilation terminated.
+

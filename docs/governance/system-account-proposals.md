@@ -1,6 +1,6 @@
 # System-account creation candidate / 系统账号创建候选
 
-Status: **BUILT REMOTELY, QUALIFICATION FAILED, NOT ACTIVATED**. This branch is based on
+Status: **CONTINUATION REPAIR PASSED 38 REMOTE ISOLATED TEST CASES, NOT ACTIVATED**. This branch is based on
 `057e1731660d3b8423c960cb81fe1758ae9c29f6`. Installing source or a binary is
 insufficient to activate this protocol feature. No reset is part of this design.
 
@@ -67,13 +67,23 @@ the live chain and no affirmative-vote shortcut.
 
 Execution grants a transaction-local, exact-parent, exact-target, single-use
 native capability. Normal direct or privileged-forwarded `newaccount` calls
-still cannot create `eosio.*` after sealing. The native parent schedules:
+still cannot create `eosio.*` after sealing. The root schedules only
+`newaccount` and native-only `sysstage`, both authorized by existing accounts.
+The stage runs after the account exists, verifies its exact top-level `sysexec`
+parent, proposal, payload, sponsor, empty code/ABI and temporary authorities,
+then binds the capability to its own ordinal. It schedules:
 
-1. newaccount with the fixed temporary code-only authority schema;
-2. the sponsor's exact token payment to the new account, before its code exists;
-3. new-account-paid RAM purchase using that entire payment;
-4. exact reviewed setcode and setabi;
-5. native-only `sysfinish` verification and final owner sealing.
+1. the sponsor's exact token payment to the new account, before its code exists;
+2. new-account-paid RAM purchase using that entire payment;
+3. exact reviewed setcode and setabi;
+4. native-only `sysfinish` verification and final owner sealing.
+
+`sysfinish` requires that exact `sysstage` parent. Rebinding the ordinal consumes
+the stage: another root child no longer matches, while a nested stage has the
+wrong parent action type. No new transaction-context field or ordinary inline
+actor/permission exception is introduced. The public proposal/execution wire
+formats remain unchanged; `sysstage` is internal and requires the ephemeral
+capability, never a developer permission link.
 
 Final owner is threshold1 with no keys/accounts/waits (unsatisfiable). Active
 has threshold1 and the existing governance model's `eosio@eosio.code` plus
@@ -118,27 +128,36 @@ manifest bounds, exact electorate refresh, pending-lane isolation, full review,
 sponsor authorization, mismatched payloads, invalid-WASM rollback, vetoes,
 cancellation, final nonprivileged sealing, snapshot/restart and genesis replay.
 Their permissive token/RAM fixture cannot qualify production economics.
-Remote O1 TEST compilation rebuilt144 project translation units using verified
+The retained previous O1 TEST compilation rebuilt144 project translation units using verified
 retained dependencies. In the final isolated attempt7,31/32 governance cases,
 2/3 real-contract cases and1/1 unsigned wire case passed. The successful creation
 case and real signup case failed before deployment because inline authorization
 is checked while the new account is still queued for creation. No actual K1/R1
-registration result can be inferred. See the [failure and correction plan](system-account-execution-followup.md).
+registration result can be inferred from that attempt. The continuation repair
+and added direct/missing-actor/missing-permission, order, nested/duplicate-stage
+and rollback regressions passed in the November5 qualification2:34/34 governance,
+3/3 real-contract and1/1 unsigned-wire cases. Real pinned signup WASM now executes
+K1/R1/legacy registration, separate owner/active signatures, actual RAM/stake
+ownership and atomic rollback. Build4 is an incremental mixed O0/O1 TEST
+functional build. The user approved a60-minute maintenance window for this
+build/isolated validation only; original programs are restored without installing
+the candidate. The first repair qualification's missing helper-copy failure is
+retained separately from the passing second attempt. See the
+[failure and repair record](system-account-execution-followup.md).
 The candidate is not qualified for rollout. The production review profile,
 production build and broader current-chain compatibility remain unqualified.
 
 Before any rollout:
 
-1. Correct the native continuation ordering without relaxing missing-actor or
-   missing-permission checks, then build and run the native tests remotely;
-   qualify TEST and production review
-   profiles, legacy replay, pre-feature behavior, current-format snapshots and
-   rejection of downgraded snapshot headers. The simulated ban-reader cases are
+1. Retain the now-tested continuation ordering and missing-actor/permission
+   guards. Complete the production build/review profile and broader compatibility
+   qualification, retaining the passed TEST legacy replay, pre-feature behavior,
+   current-format snapshots and downgraded-header rejection. Simulated ban-reader cases are
    distinct from real-contract permanent-ban/empty-electorate and resource
    admission/failure qualification, which must also be completed.
-2. Compile the signup contract and validate K1/R1/legacy parser checks against
-   independent implementations. Execute real native create/transfer/RAM/stake
-   flows in an isolated chain, including hostile notifications and rollback.
+2. Preserve the passed CDT/1760 independent parser/curve checks and real pinned
+   native create/transfer/RAM/stake/signature/rollback results. Extend the
+   isolated compatibility and adversarial qualification for the intended release.
 3. Pin source, toolchains, node/WASM/raw-ABI/review hashes. Audit the original26
    processes, current chain id, head/LIB, votes, bonds, bans, history, sole relay
    and proposal3. Preserve failures and original evidence.

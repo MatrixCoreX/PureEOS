@@ -1,0 +1,26 @@
+Random number generator seeded to 1793838449
+Running 3 test cases...
+Entering test module "Master Test Suite"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_governance_tests.cpp(153): Test suite "pureeos_governance_tests" is skipped because disabled
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(81): Entering test suite "pureeos_signup_real_tests"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(82): Entering test case "genesis_BP_has_only_narrow_system_creation_veto"
+3050000 action_validate_exception: Action validate exception
+system account creation vetoed or effective electorate empty
+    {}
+    ld-linux-x86-64.so.2  system_account_proposal.cpp:164 apply_eosio_sysexec
+eosio <= eosio::sysexec console output: 
+    {"console":"","account":"eosio","action":"sysexec","receiver":"eosio"}
+    ld-linux-x86-64.so.2  apply_context.cpp:265 exec_one
+transaction_header: {"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":3871135519,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0}, billed_cpu_time_us: 2000
+    {"header":{"expiration":"2020-01-01T00:31:12","ref_block_num":9,"ref_block_prefix":3871135519,"max_net_usage_words":0,"max_cpu_usage_ms":0,"delay_sec":0},"billed":2000}
+    ld-linux-x86-64.so.2  tester.cpp:813 push_transaction
+
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(82): Leaving test case "genesis_BP_has_only_narrow_system_creation_veto"; testing time: 513165us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(89): Entering test case "pre_feature_v10_snapshot_preserves_vetoed_upgrade3"
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(89): Leaving test case "pre_feature_v10_snapshot_preserves_vetoed_upgrade3"; testing time: 221961us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(112): Entering test case "actual_native_creation_K1_R1_legacy_and_atomic_failures"
+Real pinned WASM: native nonprivileged creation, K1/R1/legacy registration, explicit PowerUp signing and atomic failure paths; isolated controlled tester clock only.
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(112): Leaving test case "actual_native_creation_K1_R1_legacy_and_atomic_failures"; testing time: 448067us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(81): Leaving test suite "pureeos_signup_real_tests"; testing time: 1183271us
+/opt/pureeos-system-signup-fix-20261105-r2/source/unittests/pureeos_signup_real_tests.cpp(159): Test suite "pureeos_signup_wire_tests" is skipped because disabled
+Leaving test module "Master Test Suite"; testing time: 1183293us

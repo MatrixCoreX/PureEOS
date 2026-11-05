@@ -1,0 +1,17 @@
+{
+  "status": "BOUNDED_PRIVATE_FIXTURE_CLEANUP_COMPLETE",
+  "UTC": "2026-11-05T00:35:12.200832+00:00",
+  "public_immutable_files_verified_against_off_server_copy": 37,
+  "removed": [
+    {
+      "path": "qualification-1/private-tmp",
+      "file_allocated_bytes": 0
+    },
+    {
+      "path": "qualification-2/private-tmp",
+      "file_allocated_bytes": 0
+    }
+  ],
+  "sources_build_artifacts_public_failures_original_chain_and_services_preserved": true,
+  "private_runtime_config_backup": "Kept remote only; never exported"
+}

@@ -1,0 +1,10 @@
+Running as unit: pureeos-system-signup-fix-window-guardian-r3-20261105.service; invocation ID: d5441c3cd54148d7bb617470c97ed92a
+Flag --time has been deprecated, use --timeout instead
+250d71f0dbbc52ee0a706e630cf5aecfd29758cef5c551133c7f4002ff3707b7
+Flag --time has been deprecated, use --timeout instead
+17b7768db51a2fb8c3ef905519307b6dac9a0cc82dbb94d01be0cedf354f8e79
+Flag --time has been deprecated, use --timeout instead
+6316750f0512a76ca2143fea3075d65185a0f069b77ac0262b8002ad1e331e99
+Flag --time has been deprecated, use --timeout instead
+663cfecc112762a2a52f7e71b77040bef8887ce4fcc72b81c6ac5cce96ef9076
+{"status": "PAUSED_FOR_BUILD_ONLY", "paused_UTC": "2026-11-05T00:22:00.347515+00:00", "stop_build_unix": 1793839869.068865, "MemAvailable": "MemAvailable:    7441612 kB"}

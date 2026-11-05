@@ -1,0 +1,158 @@
+{
+  "status": "FAIL",
+  "UTC": "2026-11-05T00:38:20.196592+00:00",
+  "scope": "Read-only TLS origin checks via loopback; no public-browser or external-path claim",
+  "checks": {
+    "/api/v1/chain/get_info": {
+      "HTTP_status": 200,
+      "bytes": 990,
+      "sha256": "d8e151d3f0856f663b34359a534fe084a9537e0d3eacb05858ea6cf110772291"
+    },
+    "/": {
+      "HTTP_status": 200,
+      "bytes": 794,
+      "sha256": "59b3f1f02493bfe9767dcf61bad7a126a073500cc9440a0a1bf11ac6de04152f"
+    },
+    "/relay/health": {
+      "HTTP_status": 200,
+      "bytes": 164,
+      "sha256": "e984e941bb7a862639088de14dc38a8296cc77177c2f0fa03183b9d7f6643d03"
+    },
+    "/history/v2/health": {
+      "HTTP_status": 200,
+      "bytes": 1910,
+      "sha256": "522f74af4abb5bec164de0603e465e7c37dc15e6dd6a0252e817a2ee8cf54f14"
+    }
+  },
+  "relay": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "history_health": {
+    "product": "PureHistory",
+    "version": "4.1.0-purehistory.1-dirty",
+    "version_hash": "custom",
+    "host": "aic-test.matrixai.one/history",
+    "health": [
+      {
+        "service": "StateHistory",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 1.342371,
+        "service_data": {
+          "nodes": [
+            {
+              "label": "independent-nonproducing-TEST-history",
+              "active": true,
+              "range": {
+                "from": 2,
+                "to": 266429
+              }
+            }
+          ]
+        }
+      },
+      {
+        "service": "RabbitMq",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 1.188758,
+        "service_data": {
+          "status": true
+        }
+      },
+      {
+        "service": "NodeosRPC",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 5.703374,
+        "service_data": {
+          "head_block_num": 266481,
+          "head_block_time": "2026-11-05T00:38:20.000",
+          "time_offset": 401,
+          "last_irreversible_block": 266478,
+          "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0"
+        }
+      },
+      {
+        "service": "Elasticsearch",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 339.818719,
+        "service_data": {
+          "active_shards": "100.0%",
+          "disk_status": "green",
+          "head_offset": 962,
+          "first_indexed_block": 2,
+          "last_indexed_block": 265519,
+          "total_indexed_blocks": 265517,
+          "missing_blocks": 0,
+          "missing_pct": "0.00%",
+          "times": [
+            {
+              "phase": "cluster_health",
+              "phase_time_ms": 0.014511,
+              "cache": true
+            },
+            {
+              "phase": "first_indexed_block",
+              "phase_time_ms": 4.908569,
+              "cache": true
+            },
+            {
+              "phase": "last_indexed_block",
+              "phase_time_ms": 334.862103,
+              "cache": false
+            }
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "get_actions": 100,
+      "get_voters": 100,
+      "get_links": 1000,
+      "get_deltas": 100,
+      "get_trx_actions": 1000
+    },
+    "features": {
+      "streaming": {
+        "enable": false,
+        "traces": false,
+        "deltas": false
+      },
+      "tables": {
+        "proposals": true,
+        "accounts": true,
+        "voters": true,
+        "permissions": true,
+        "user_resources": false
+      },
+      "contract_state": {
+        "contracts": {}
+      },
+      "index_deltas": true,
+      "index_transfer_memo": true,
+      "index_all_deltas": true,
+      "index_deltas_deletions": false,
+      "deferred_trx": false,
+      "failed_trx": false,
+      "resource_limits": false,
+      "resource_usage": false
+    },
+    "pruning": {
+      "auto_pruning_enabled": false,
+      "max_retained_blocks": 0
+    },
+    "query_time_ms": 342.509,
+    "last_indexed_block": 265519,
+    "last_indexed_block_time": "2026-11-05T00:21:41.500"
+  },
+  "error": "History index has not advanced since prior HTTP check",
+  "finished_UTC": "2026-11-05T00:38:20.746788+00:00"
+}

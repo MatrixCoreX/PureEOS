@@ -1,0 +1,4 @@
+{"UTC": "2026-11-05T00:29:41.094359+00:00", "method": "get_info", "port": 8888, "attempt": 0, "type": "URLError"}
+{"UTC": "2026-11-05T00:29:41.356946+00:00", "method": "get_info", "port": 8888, "attempt": 1, "type": "URLError"}
+{"UTC": "2026-11-05T00:29:41.865770+00:00", "method": "get_info", "port": 8888, "attempt": 2, "type": "URLError"}
+{"UTC": "2026-11-05T00:29:42.616362+00:00", "method": "get_info", "port": 8888, "attempt": 3, "type": "URLError"}

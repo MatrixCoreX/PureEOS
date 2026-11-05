@@ -1,6 +1,6 @@
 # Creation execution failure and correction plan / 创建执行失败与修正计划
 
-Status: **OPEN, CANDIDATE MUST NOT BE ACTIVATED OR DEPLOYED**.
+Status: **CONTINUATION REPAIR PASSED 38 REMOTE ISOLATED TEST CASES; NOT DEPLOYED OR ACTIVATED.**
 
 ## Observed failure
 
@@ -18,15 +18,15 @@ the actor and permission immediately; `newaccount` has not run when the root
 handler tries to queue an action authorized by the new account. The normal
 existence check correctly rejects the transaction and rolls it back.
 
-This is an implementation defect. It is not evidence that account creation,
+This was an implementation defect. The retained attempt7 is not evidence that account creation,
 signup notification execution, K1/R1 registration, stake ownership, actual RAM
 allocation or signup rollback have passed. The separate codec checks and
 unsigned native wire comparison do not establish those behaviors.
 
-## Planned native continuation
+## Native continuation repair
 
 Retain the actor/permission existence checks in `execute_inline` unchanged.
-Introduce a native-only internal continuation, tentatively `sysstage`, rather
+The repair introduces a native-only internal continuation, `sysstage`, rather
 than adding an authorization exception for an account that does not exist.
 
 1. Keep all public `sysexec` checks: top-level developer upgrade authorization,
@@ -51,22 +51,44 @@ than adding an authorization exception for an account that does not exist.
    must roll back account creation, sponsor debit, protection and proposal state
    in the same transaction.
 6. Leave the existing upgrade lane, old proposal3, privileged setter, permission
-   rows and existing object layouts unchanged. Append any transient capability
-   field; do not add serialized transaction capability or shorten either review
-   profile. Internal action replay must remain a no-op before feature activation.
+   rows and existing object layouts unchanged. No transient capability field is
+   added: exact ordinal rebinding plus the required parent action type enforce
+   single use. Do not add serialized capability or shorten either review
+   profile. Internal action replay remains a no-op before feature activation.
 
-## Required verification before reconsidering rollout
+## Repair verification and remaining rollout requirements
 
-- Rebuild the changed native implementation remotely and rerun all existing
-  governance, snapshot, replay and wire checks against the resulting libraries.
-- Reject direct/forwarded continuation calls, wrong proposal/parent/target,
+On November5, remote build4 linked the repaired node and standalone controller
+test binary. Qualification2 passed34 governance cases,3 real-contract cases and
+1 unsigned-wire case. The two previous failing successful-execution cases now
+pass, including actual pinned signup WASM execution, K1/R1/legacy registration,
+separate owner/active signatures, RAM/stake ownership and atomic rollback.
+New regressions cover exact action ordering, direct/forwarded staging calls,
+missing authorizing actors/permissions, nested/duplicate continuations and
+rollback of both governance lanes. Qualification1 already passed34+3 cases but
+its helper step failed because staging omitted the unchanged public Python
+helper; that failure remains retained. Copying the helper resolved it without
+another native source change or rebuild.
+
+This is a mixed O0/O1 incremental **TEST functional build** using retained,
+hash-checked dependencies. It is not an optimized production build or a
+performance qualification. The approved60-minute maintenance window restored
+original programs; no candidate was installed and no live governance action,
+feature activation, system-account creation or contract deployment occurred.
+See the dated bilingual repair report and public evidence under
+`performance-results/machines/intel-xeon-cascadelake--shared-vm--4vCPU-2guestcores--8125768KiB/20261105-system-signup-fix-r2/`.
+
+- Completed in the remote TEST qualification: rebuild the changed native
+  implementation and run the governance, snapshot, replay and wire suites.
+- Completed in those suites: reject direct/forwarded continuation calls, wrong proposal/parent/target,
   repeated stage/finish, wrong authorities and interposed callbacks. Verify that
   ordinary inline actions still reject missing actors and permissions.
-- Pass successful native creation and all real pinned system/token/signup WASM
-  checks: K1, R1, legacy EOS, separate owner/active signatures, real RAM/stake
+- Completed in the real pinned system/token/signup WASM tests: successful native
+  creation, K1, R1, legacy EOS, separate owner/active signatures, real RAM/stake
   ownership, wrong notification source, insufficient RAM and full rollback.
-- Run the production review profile and required broader compatibility checks;
-  the current O1 TEST build is not a production release or performance result.
+- Still required: the production review profile/build and broader current-chain
+  compatibility and permanent-ban/resource-boundary qualification. The mixed
+  TEST build is not a production release or performance result.
 - Preserve the current chain and obtain separate authorization for any node
   rollout. Activate only after all relevant validators support the qualified
   feature, then publish exact reviewed artifacts and wait the complete native
@@ -74,8 +96,9 @@ than adding an authorization exception for an account that does not exist.
 
 ## 中文结论
 
-当前缺陷位于内联动作的排队顺序：创建动作尚未执行，后续动作便引用了新账号
-的权限。应增加同一交易内的原生内部续执行阶段，在账号实际存在后排队部署，
-继续使用精确父动作、一次性能力和完整回滚约束。不得放宽通用账号/权限存在性
-检查。候选仍未通过完整验证，现网不得启用；本轮维护仅构建和隔离验证，随后
-恢复原程序，不创建账号、不提交现网提案、不部署合约。
+缺陷位于内联动作的排队顺序：创建动作尚未执行，后续动作便引用了新账号的
+权限。已增加同一交易内的原生续执行阶段，在账号实际存在后排队部署，保留
+精确父动作、一次性能力和完整回滚，未放宽通用账号/权限存在性检查。远端
+38项隔离测试全部通过，两条原失败路径及真实K1/R1注册、资源与签名已验证。
+这是TEST功能验证，生产构建及更广兼容性资格仍待完成。维护仅恢复原程序，
+未创建现网账号、未提交现网提案、未激活或部署候选。

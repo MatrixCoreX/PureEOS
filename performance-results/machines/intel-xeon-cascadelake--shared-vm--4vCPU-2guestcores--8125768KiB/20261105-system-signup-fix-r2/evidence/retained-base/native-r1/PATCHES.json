@@ -1,0 +1,8 @@
+{
+  "source/libraries/chain/system_account_proposal.cpp": "69ae70663c366390df10f4a9afae56b13fb45cf1ad60eeceed1db3dcb08a4dc1",
+  "source/libraries/chain/authorization_manager.cpp": "ef876cb308489ef508c6abb14c8810f0288c0ee3e1b5c0c69e52586c7a57b825",
+  "source/libraries/chain/protocol_feature_manager.cpp": "6a736893b99866949e26479296258a34b22ad65fa7e27d40677d23d0a0a56600",
+  "source/libraries/chain/apply_context.cpp": "988e395248e120b37aa0e05e27af3821bae92b966c651e0dd38e17cc158f1b23",
+  "source/unittests/pureeos_governance_tests.cpp": "3df13463f0fd9a95fbe68ced1ddf9e084e5dd22e1ed1740fbb59820827a03604",
+  "source/libraries/chain/controller.cpp": "02d02245df3f7a176c80757a90ec77ddcc2da6e507b5b276f11c7eb03a323a38"
+}

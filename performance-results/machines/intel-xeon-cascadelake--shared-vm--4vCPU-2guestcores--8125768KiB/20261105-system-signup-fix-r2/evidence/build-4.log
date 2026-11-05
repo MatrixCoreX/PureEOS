@@ -1,0 +1,7 @@
+compile-controller
+compile-chain_plugin
+archive-libeosio_chain.a
+archive-libchain_plugin.a
+link-nodeos
+compile-real-tests
+link-real-tests

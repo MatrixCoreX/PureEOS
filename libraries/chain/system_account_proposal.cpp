@@ -59,6 +59,19 @@ void direct_inline(apply_context& ctx,action_name name,bytes data,std::vector<pe
    action act;act.account="eosio"_n;act.name=name;act.authorization=std::move(permissions);act.data=std::move(data);
    ctx.execute_inline(std::move(act));
 }
+void reviewed_payload(apply_context& ctx,const system_account_proposal_object& state,const bytes& code,const bytes& abi) {
+   EOS_ASSERT(code.size()==state.code_bytes && abi.size()==state.abi_bytes &&
+              ctx.trx_context.hash_with_checktime<fc::sha256>(code.data(),code.size())==state.code_hash &&
+              ctx.trx_context.hash_with_checktime<fc::sha256>(abi.data(),abi.size())==state.abi_hash,
+              action_validate_exception,"creation payload differs from reviewed code/ABI");
+}
+bool exact_parent_action(const apply_context& ctx,uint32_t ordinal,action_name name) {
+   const auto& trace=ctx.get_current_action_trace();
+   if(!ordinal || trace.creator_action_ordinal.value!=ordinal || !ctx.trx_context.trace ||
+      ordinal>ctx.trx_context.trace->action_traces.size())return false;
+   const auto& parent=ctx.trx_context.trace->action_traces[ordinal-1];
+   return parent.receiver=="eosio"_n && parent.act.account=="eosio"_n && parent.act.name==name;
+}
 }
 
 const system_account_proposal_object* find_system_account_proposal(const chainbase::database& db) {
@@ -155,10 +168,7 @@ void apply_eosio_sysexec(apply_context& ctx) {
    EOS_ASSERT((ctx.db.get<account_metadata_object,by_name>("eosio"_n).code_hash==state->system_code_hash &&
               ctx.db.get<account_metadata_object,by_name>("eosio.token"_n).code_hash==state->token_code_hash),
               action_validate_exception,"system or fee-token code changed since creation review");
-   EOS_ASSERT(args.code.size()==state->code_bytes && args.abi.size()==state->abi_bytes &&
-              ctx.trx_context.hash_with_checktime<fc::sha256>(args.code.data(),args.code.size())==state->code_hash &&
-              ctx.trx_context.hash_with_checktime<fc::sha256>(args.abi.data(),args.abi.size())==state->abi_hash,
-              action_validate_exception,"creation payload differs from reviewed code/ABI");
+   reviewed_payload(ctx,*state,args.code,args.abi);
    EOS_ASSERT(!ctx.trx_context.system_upgrade,action_validate_exception,"only one reviewed system capability per transaction");
    const auto target=state->target;
    std::vector<account_name> protected_accounts(gov.protected_accounts.begin(),gov.protected_accounts.end());
@@ -168,6 +178,46 @@ void apply_eosio_sysexec(apply_context& ctx) {
    permit.parent_action_ordinal=ctx.get_current_action_trace().action_ordinal.value;
    permit.account_creation_authorized=true;permit.creation_proposal_id=state->proposal_id;
    ctx.execute_inline(action({permission_level{"eosio"_n,config::active_name}},newaccount{"eosio"_n,target,creation_owner(),creation_active(target)}));
+   // Queuing an action checks actor/permission existence immediately. Only
+   // existing actors authorize this continuation; target-authorized actions
+   // are queued from its native handler after newaccount has actually run.
+   ctx.execute_inline(action({permission_level{"eosio"_n,config::active_name},
+                             permission_level{state->resource_payer,config::active_name}},
+                            sysstage{state->proposal_id,args.code,args.abi}));
+}
+
+void apply_eosio_sysstage(apply_context& ctx) {
+   if(!activated(ctx))return;
+   auto& permit=ctx.trx_context.system_upgrade;
+   EOS_ASSERT(!ctx.is_read_only() && permit && permit->account_creation_authorized && permit->account_created &&
+              !permit->code_used && !permit->abi_used && ctx.get_sender()=="eosio"_n &&
+              exact_parent_action(ctx,permit->parent_action_ordinal,"sysexec"_n),
+              action_validate_exception,"system account staging requires its unused exact native sysexec parent");
+   const auto& root=ctx.trx_context.trace->action_traces[permit->parent_action_ordinal-1];
+   EOS_ASSERT(root.creator_action_ordinal.value==0,action_validate_exception,"system account staging parent must be top-level sysexec");
+   const auto args=ctx.get_action().data_as<sysstage>();
+   const auto* state=find_system_account_proposal(ctx.db);pending(state,args.proposal_id);
+   EOS_ASSERT(permit->creation_proposal_id==args.proposal_id && permit->target==state->target &&
+              permit->code_hash==state->code_hash && permit->abi_hash==state->abi_hash,
+              action_validate_exception,"system account staging proposal or capability mismatch");
+   ctx.require_authorization("eosio"_n,config::active_name);
+   ctx.require_authorization(state->resource_payer,config::active_name);
+   reviewed_payload(ctx,*state,args.code,args.abi);
+   const auto target=state->target;
+   const auto& account=ctx.db.get<account_object,by_name>(target);
+   const auto& metadata=ctx.db.get<account_metadata_object,by_name>(target);
+   const auto& manager=ctx.control.get_authorization_manager();
+   EOS_ASSERT(is_protected_system_account(ctx.db,target) && !metadata.is_privileged() &&
+              metadata.code_hash==digest_type{} && account.abi.size()==0 &&
+              fc::raw::pack(manager.get_permission({target,config::owner_name}).auth.to_authority())==fc::raw::pack(creation_owner()) &&
+              fc::raw::pack(manager.get_permission({target,config::active_name}).auth.to_authority())==fc::raw::pack(creation_active(target)),
+              action_validate_exception,"created account changed before native staging");
+   EOS_ASSERT((ctx.db.get<account_metadata_object,by_name>("eosio"_n).code_hash==state->system_code_hash &&
+              ctx.db.get<account_metadata_object,by_name>("eosio.token"_n).code_hash==state->token_code_hash),
+              action_validate_exception,"system or fee-token code changed before staging");
+   // Consumes the root-bound stage once. A second root child no longer matches
+   // this ordinal; a nested stage fails the required sysexec parent type.
+   permit->parent_action_ordinal=ctx.get_current_action_trace().action_ordinal.value;
    const asset payment{state->ram_payment,symbol::from_string("4,AIC")};
    action fund;fund.account="eosio.token"_n;fund.name="transfer"_n;fund.authorization={{state->resource_payer,config::active_name}};
    fund.data=fc::raw::pack(std::make_tuple(state->resource_payer,target,payment,std::string("reviewed system account RAM funding")));
@@ -196,7 +246,7 @@ void apply_eosio_sysfinish(apply_context& ctx) {
    auto& permit=ctx.trx_context.system_upgrade;const auto args=ctx.get_action().data_as<sysfinish>();
    EOS_ASSERT(permit && permit->account_creation_authorized && permit->account_created && permit->code_used && permit->abi_used &&
               permit->creation_proposal_id==args.proposal_id && ctx.get_sender()=="eosio"_n &&
-              ctx.get_current_action_trace().creator_action_ordinal.value==permit->parent_action_ordinal,
+              exact_parent_action(ctx,permit->parent_action_ordinal,"sysstage"_n),
               action_validate_exception,"system account finalization requires its exact reviewed native parent");
    ctx.require_authorization("eosio"_n,config::active_name);
    const auto* state=find_system_account_proposal(ctx.db);pending(state,args.proposal_id);

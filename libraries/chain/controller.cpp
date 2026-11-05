@@ -1467,6 +1467,7 @@ struct controller_impl {
    SET_APP_HANDLER( eosio, eosio, sysveto );
    SET_APP_HANDLER( eosio, eosio, syscancel );
    SET_APP_HANDLER( eosio, eosio, sysexec );
+   SET_APP_HANDLER( eosio, eosio, sysstage );
    SET_APP_HANDLER( eosio, eosio, sysfinish );
    }
 

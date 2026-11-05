@@ -1,0 +1,25 @@
+{
+  "UTC": "2026-11-05T00:06:24.854711+00:00",
+  "status": "BOUNDED_BUILD_RESOURCE_FAILURE_NO_LIVE_PAUSE",
+  "compiled_objects": [
+    "libraries/chain/CMakeFiles/eosio_chain.dir/system_account_proposal.cpp.o",
+    "libraries/chain/CMakeFiles/eosio_chain.dir/eosio_contract.cpp.o"
+  ],
+  "runtime_tests": "NOT_RUN",
+  "unit_properties": "Result=exit-code\nMemoryPeak=2147483648\nCPUUsageNSec=298176137000\nMemoryMax=2147483648\n",
+  "kernel_memory_evidence": [
+    "cc1plus invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0, oom_score_adj=900",
+    "CPU: 1 PID: 351911 Comm: cc1plus Not tainted 6.8.0-146-generic #146-Ubuntu",
+    "Memory cgroup stats for /system.slice/pureeos-signup-fix-r2-build-2-20261105.service:",
+    "[ 351911]     0 351911   555376   519238   515046     4192         0  4460544        0           900 cc1plus",
+    "oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=pureeos-signup-fix-r2-build-2-20261105.service,mems_allowed=0,oom_memcg=/system.slice/pureeos-signup-fix-r2-build-2-20261105.service,task_memcg=/system.slice/pureeos-signup-fix-r2-build-2-20261105.service,task=cc1plus,pid=351911,uid=0",
+    "Memory cgroup out of memory: Killed process 351911 (cc1plus) total-vm:2221504kB, anon-rss:2060184kB, file-rss:16768kB, shmem-rss:0kB, UID:0 pgtables:4356kB oom_score_adj:900"
+  ],
+  "node_pids_unchanged": true,
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "head": 263842,
+  "LIB": 263838,
+  "MemAvailable_KiB": 3387700,
+  "no_candidate_installed": true,
+  "test_source_update": "Added pending-target actor regression after stopped build, before any test compilation"
+}

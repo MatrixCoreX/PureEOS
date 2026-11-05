@@ -1,0 +1,571 @@
+{
+  "UTC": "2026-11-04T23:29:17.764184+00:00",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "node_pids": {
+    "pureeos-keynet2-bp-brazilamazon-20261103.service": 338532,
+    "pureeos-keynet2-bp-canadaboreal-20261103.service": 338533,
+    "pureeos-keynet2-bp-cobaltspring-20261103.service": 338536,
+    "pureeos-keynet2-bp-coherevision-20261103.service": 338537,
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service": 338538,
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": 338541,
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service": 338546,
+    "pureeos-keynet2-bp-finlandhaven-20261103.service": 338550,
+    "pureeos-keynet2-bp-francegarden-20261103.service": 338556,
+    "pureeos-keynet2-bp-germanycrest-20261103.service": 252912,
+    "pureeos-keynet2-bp-glaciercrest-20261103.service": 338560,
+    "pureeos-keynet2-bp-italyharbors-20261103.service": 338565,
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service": 338568,
+    "pureeos-keynet2-bp-lunarcompass-20261103.service": 338572,
+    "pureeos-keynet2-bp-maplecascade-20261103.service": 338573,
+    "pureeos-keynet2-bp-mistralcloud-20261103.service": 338578,
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service": 338579,
+    "pureeos-keynet2-bp-nebularlight-20261103.service": 338582,
+    "pureeos-keynet2-bp-silverstream-20261103.service": 338585,
+    "pureeos-keynet2-bp-stellarhaven-20261103.service": 338588,
+    "pureeos-keynet2-bp-velvetforest-20261103.service": 338591,
+    "pureeos-keynet2-bp-willowgarden-20261103.service": 338592,
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service": 338596,
+    "pureeos-keynet2-founder-20261103.service": 338602,
+    "pureeos-keynet2-history-20261103.service": 338609,
+    "pureeos-keynet2-bp-anthropiclab-20261103.service": 338613
+  },
+  "head_age_seconds": 1.264167,
+  "head_LIB_gap": 9,
+  "info": {
+    "server_version": "057e1731",
+    "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+    "head_block_num": 259711,
+    "last_irreversible_block_num": 259702,
+    "last_irreversible_block_id": "0003f6760174a5584a1db69c701d574409b840ec698e870866c6217e9eda0ce9",
+    "head_block_id": "0003f67f91684d8cf36894c92568c25f0900923346c9becd0adce13112167c03",
+    "head_block_time": "2026-11-04T23:29:16.500",
+    "head_block_producer": "willowgarden",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 259711,
+    "fork_db_head_block_id": "0003f67f91684d8cf36894c92568c25f0900923346c9becd0adce13112167c03",
+    "server_full_version_string": "v1.0.0-057e1731660d3b8423c960cb81fe1758ae9c29f6 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "5367703000",
+    "total_net_weight": 227000000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-04T23:29:12.000"
+  },
+  "upgrade": {
+    "developer": "civicgovlead",
+    "review_seconds": 1800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "voters_updated_at": "2026-11-04T08:53:23.500",
+    "proposal_id": 3,
+    "pending": true,
+    "target": "eosio.token",
+    "old_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "old_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+    "new_code_hash": "bee8320e5e761703f469fb6b0f8c0744479b0bf329f709867bb613855808845a",
+    "new_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+    "review_document_hash": "c0fad5db3925292275eac787e1a0bef7beb57be00fc918971d75fd6e95f78caf",
+    "proposed_at": "2026-11-04T08:53:23.500",
+    "execute_after": "2026-11-04T09:23:23.500",
+    "proposal_voters": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "vetoes": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 16,
+    "head_block_num": 259712,
+    "head_block_id": "0003f68082b2c2c6fb43c5cc17710606de2d3b59465e10b0dd0d413fe625e1c8",
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "effective_vetoes": [
+      "anthropiclab",
+      "brazilamazon",
+      "canadaboreal",
+      "cobaltspring",
+      "coherevision",
+      "cosmicgarden",
+      "deepseekcore",
+      "egyptpyramid",
+      "finlandhaven",
+      "francegarden",
+      "glaciercrest",
+      "gptgenesisbp",
+      "italyharbors",
+      "kenyasavanna",
+      "lunarcompass",
+      "maplecascade",
+      "mistralcloud",
+      "moonlitgrove",
+      "nebularlight",
+      "silverstream",
+      "stellarhaven",
+      "velvetforest",
+      "willowgarden",
+      "xaineuralnet"
+    ],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 24,
+    "effective_veto_count": 24,
+    "execution_blocked_no_electorate": false
+  },
+  "caps": {
+    "chain_config": {
+      "max_block_net_usage": 1048576,
+      "target_block_net_usage_pct": 1000,
+      "max_transaction_net_usage": 524288,
+      "base_per_transaction_net_usage": 12,
+      "net_usage_leeway": 500,
+      "context_free_discount_net_usage_num": 20,
+      "context_free_discount_net_usage_den": 100,
+      "max_block_cpu_usage": 800000,
+      "target_block_cpu_usage_pct": 1000,
+      "max_transaction_cpu_usage": 150000,
+      "min_transaction_cpu_usage": 100,
+      "max_transaction_lifetime": 3600,
+      "deferred_trx_expiration_window": 600,
+      "max_transaction_delay": 3888000,
+      "max_inline_action_size": 524288,
+      "max_inline_action_depth": 4,
+      "max_authority_depth": 6,
+      "max_action_return_value_size": 256
+    },
+    "wasm_config": {
+      "max_mutable_global_bytes": 1024,
+      "max_table_elements": 1024,
+      "max_section_elements": 8192,
+      "max_linear_memory_init": 65536,
+      "max_func_local_bytes": 8192,
+      "max_nested_structures": 1024,
+      "max_symbol_bytes": 8192,
+      "max_module_bytes": 20971520,
+      "max_code_bytes": 20971520,
+      "max_pages": 528,
+      "max_call_depth": 251
+    }
+  },
+  "finalizers": {
+    "active_finalizer_policy": {
+      "generation": 369,
+      "threshold": 15,
+      "finalizers": [
+        {
+          "description": "anthropiclab",
+          "weight": 1,
+          "public_key": "PUB_BLS_VzuYH4Lqp3M2LDdJ2kdCTagrOIpAGRHVzBzGosgZqEwdsmTdHNW-aQ28WMr4XhoVaEfQZrZ2GiGruN-6fj0zwOaAR6P9sOBNUlrjuZwAISHq2yO_KgYjms569s-QEaYWtntlPw"
+        },
+        {
+          "description": "brazilamazon",
+          "weight": 1,
+          "public_key": "PUB_BLS_4aZdsbghn0woq4NDqTthE_jWSwvP_jI0gABnJmUZ7pgaDx1COmVwuccxRROHL5sZQl-z3IjL2rmX3jdatLrQ2aNv-1EZVviZgre0Jv1wSCqjYs_vXq_Hk4rI3blTqkMDtExGKA"
+        },
+        {
+          "description": "canadaboreal",
+          "weight": 1,
+          "public_key": "PUB_BLS_8FqhEKXdGWbAymMEtHzna5V94KY3josR_gKT4e7DXPRCRSsSE_cc8NEmFnddIt4LyDg5HUJuYNsAXifCz2X-VFiTamcrmAhOpdg2j-P6hE8JUEZ_T3T4zRiM7Di2cxsUhzfEOA"
+        },
+        {
+          "description": "cobaltspring",
+          "weight": 1,
+          "public_key": "PUB_BLS_Aqv7Ua6vBmfzUd3Sy_29AsocySNHSfCFl3ZvH6nWuO27gt437Re-NvltFI6E5JUIOGJKQmG9rmjN4GGHQb0yGOzPLNs-MWdPysJbv4lvrGSwlNO8s0uItuZOabHKNS4AN-Nyug"
+        },
+        {
+          "description": "coherevision",
+          "weight": 1,
+          "public_key": "PUB_BLS_1Rk2WULUp0jc4_hu1zFYmeHzh4Bc9EIosV-ebXgESV_hJ-Px7CoT9FPeGfZ7wtEPXuIwwOBMYdpoQob8Dt6G2P-hEaK5RU3KI2koVy6i_Xk0qrwsC2czsgRMNTUIDeUV6HRRTA"
+        },
+        {
+          "description": "cosmicgarden",
+          "weight": 1,
+          "public_key": "PUB_BLS_ZjpKrYAk1Vj-GGbwM5fJ-b1OW7sYre8flWyj7beWLgQWaugW8PD6WNawM8On_s0UYh9w9aaq7cxs16YQSfNTv7h7pdcdXMOzm2bsWt0DycNfsrwqdulGkkw94qqo5tcZgHPhgA"
+        },
+        {
+          "description": "deepseekcore",
+          "weight": 1,
+          "public_key": "PUB_BLS_TkWwHUDEHAWusodZUj5eYYj4JM3YNY8Z63JFKhAq14jk_DyF6el2I8Bd6MHzyGMKFX2NskP1zaptxzlXBGmG1bjST430oFd0Je1gvRFgbae2jWu5D_2lq3BrH-u3vQgF4Xn9Jg"
+        },
+        {
+          "description": "egyptpyramid",
+          "weight": 1,
+          "public_key": "PUB_BLS_8if4oGPUe8waBt6LJqSNrnowlacPCbDnHTL5Id8jATHfwNokLaG-QNo95QpgXIAM-bpwT0Ir2I_GzKU4AMWJr7JE2m9pMxkHxAP9qC04hqrS3zQEJVmiLNTK3yCgcdwFKTpttQ"
+        },
+        {
+          "description": "finlandhaven",
+          "weight": 1,
+          "public_key": "PUB_BLS_pdjqn7obclLJtV0PE-P9hp6k_0Il3bOLJpX2KrL1tjcwLUQ8o-sRdYBoCId8pf8ZO9rq60KaYSggKws29eGSccIFf09rcEUCQVR2iZsT8od25l1ZCr0rw7PJaIjXHXkQt_V6BQ"
+        },
+        {
+          "description": "francegarden",
+          "weight": 1,
+          "public_key": "PUB_BLS_WiNKpSjGt72qdV6TsXrC71qOAh0lJeI_IYoGDdsW8PNQtan_dFrXziC4CX4fT7kUZ3f2WDGY1acFdlcx57a668CQn7A3fJ82hUBQWRB1B_uApJWJA8yEAlLLyvYZVdoZIIA3lw"
+        },
+        {
+          "description": "glaciercrest",
+          "weight": 1,
+          "public_key": "PUB_BLS_bpB1dgvD7jILrkc8Q0UFxvH89YuCHk9neOZyDWoe8UbrknxO3xHuVeD0rk1KPdsKuomVXd08fwapsKX4TqSRtLVAX0y2r50NUzRSLAq26LClR_rBHner0AtP0K4hDmwYtQhZpw"
+        },
+        {
+          "description": "gptgenesisbp",
+          "weight": 1,
+          "public_key": "PUB_BLS_7De7UJHbZeGNDTgCyQr8ABwoObslXepqUZdX5EoMygs-eZiFTjrfcT3A9gNO_xMWaZ1WRdqRwQmNkSJP8R804-vwgdLet8Ftj073EIlacCbTIlOJePqF6LgUI80nWuoTZUVggQ"
+        },
+        {
+          "description": "italyharbors",
+          "weight": 1,
+          "public_key": "PUB_BLS_GfrEfD0NM0ETBXB0iP2nHfwxuY_tYObwOcoCyULSMQGZc9I5Fw_lTWr5WAl21j0L5QHV19hRx_2G66MgQBnkulE-2ZrPk8-jGUKyhfZxmQUgBlxgI2BfkXhpohPY0LEWDqFqMw"
+        },
+        {
+          "description": "mistralcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_CcyVNyrdpqRjvbEd_khjwYPXdnl236-6uQ9xt3evXOFSckJgnRcongOMfqo22rIIT2Omyx0ODpCTugaZoB2hmDzeB2Iu8n5jG5AC9s7Dqr_H_Ukt4H3ssmv5ZNpn8NYZ8Qb9JQ"
+        },
+        {
+          "description": "moonlitgrove",
+          "weight": 1,
+          "public_key": "PUB_BLS_EkiRwobpqwluevyXyp-KbsvPXCBUefnvT557WAOwEi1dhGiPD4HFkHsH8MuLpYMFhOTfRnAqC5TFvvyMBUvCqiW-ljbNILZA7qzh5dLhsHiMQwZA72EqrUhJ4S-0-yIAqKFV1g"
+        },
+        {
+          "description": "nebularlight",
+          "weight": 1,
+          "public_key": "PUB_BLS_D8bzH_tfmewukkmKN_42iiaiMSSFKMNMUmTRiB6uukqyyuJEaepdVkvJYnZHgOgHfkr1TRo-VSGW-1hrjaq5-5wq1yF2JQNZh86nvo76onTLb0OCjLoNlUk-LUsllUgVxRrnWQ"
+        },
+        {
+          "description": "silverstream",
+          "weight": 1,
+          "public_key": "PUB_BLS_rUgKKixnmjurwLgkRrPutoBoDixYJZTTinFv_1VLr3Jm_-b-Y7lUo6aFW5A6oNgOw_s3Zj0ylJ7eeQyVUq0dbufgpSitd-fVDazySP4wuAeJ3PhVeWKukwt6COF5BHMR_7Hq4g"
+        },
+        {
+          "description": "stellarhaven",
+          "weight": 1,
+          "public_key": "PUB_BLS_KRR7tOiF8g-kDpBbhZS7ZJ582udOOBXhu7XNeBHGrdN3AvWknyLmT3yFuaFzQdMOhWhZMeOSPnRCmj1cBq8jTSJHMcYqXWAyPg6CHOb26JvE8XGnXsvBtr-Gmp-Xw9QN0w0YJg"
+        },
+        {
+          "description": "velvetforest",
+          "weight": 1,
+          "public_key": "PUB_BLS_psN-jFqXTreSOIjDveoI5N8QSC0XTCANedkete6_vRx73yzq7sX2ONPfi-RJo8oSMTKmK2ugVP0s7WGMDEZEXEWgTc4Ik43nDDRo9oE32vUnfAjeCZMwB6H476JV6K4MQy9Tsg"
+        },
+        {
+          "description": "willowgarden",
+          "weight": 1,
+          "public_key": "PUB_BLS_08Tbe2p_lMO3gCMESw_3mp-U_pJunpDm9jH-ObPoc9-JYZ-UPrd2-8BIILQykAUW6sNef1DvzbhrxZOJy3bNwE404e1SkRqaXshwRZRQ5rCbvUYMTpDRODseYb9bKrgQ24MYTw"
+        },
+        {
+          "description": "xaineuralnet",
+          "weight": 1,
+          "public_key": "PUB_BLS_FTCyEmvV8YShjorv5qKueExYCUXoMtafMEa2P9LZxX0YFn1SzTmWvr-uRiJe2y0FZpFVbCrsFwSIJqwLXe3YvVPN0Qo-M7IhF56Z9hUNRVv0Q1uk8ed7S5wwmu_XbGIFjmY3qw"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "anthropiclab",
+        "public_key": "PUB_BLS_VzuYH4Lqp3M2LDdJ2kdCTagrOIpAGRHVzBzGosgZqEwdsmTdHNW-aQ28WMr4XhoVaEfQZrZ2GiGruN-6fj0zwOaAR6P9sOBNUlrjuZwAISHq2yO_KgYjms569s-QEaYWtntlPw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "brazilamazon",
+        "public_key": "PUB_BLS_4aZdsbghn0woq4NDqTthE_jWSwvP_jI0gABnJmUZ7pgaDx1COmVwuccxRROHL5sZQl-z3IjL2rmX3jdatLrQ2aNv-1EZVviZgre0Jv1wSCqjYs_vXq_Hk4rI3blTqkMDtExGKA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67a4bbd2652b9eb233f82ce379e1099abfefb9e5ec932a81012dbfd3bd6",
+        "voted_for_block_num": 259706,
+        "voted_for_block_timestamp": "2026-11-04T23:29:14.000"
+      },
+      {
+        "description": "canadaboreal",
+        "public_key": "PUB_BLS_8FqhEKXdGWbAymMEtHzna5V94KY3josR_gKT4e7DXPRCRSsSE_cc8NEmFnddIt4LyDg5HUJuYNsAXifCz2X-VFiTamcrmAhOpdg2j-P6hE8JUEZ_T3T4zRiM7Di2cxsUhzfEOA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "cobaltspring",
+        "public_key": "PUB_BLS_Aqv7Ua6vBmfzUd3Sy_29AsocySNHSfCFl3ZvH6nWuO27gt437Re-NvltFI6E5JUIOGJKQmG9rmjN4GGHQb0yGOzPLNs-MWdPysJbv4lvrGSwlNO8s0uItuZOabHKNS4AN-Nyug",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "coherevision",
+        "public_key": "PUB_BLS_1Rk2WULUp0jc4_hu1zFYmeHzh4Bc9EIosV-ebXgESV_hJ-Px7CoT9FPeGfZ7wtEPXuIwwOBMYdpoQob8Dt6G2P-hEaK5RU3KI2koVy6i_Xk0qrwsC2czsgRMNTUIDeUV6HRRTA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67a4bbd2652b9eb233f82ce379e1099abfefb9e5ec932a81012dbfd3bd6",
+        "voted_for_block_num": 259706,
+        "voted_for_block_timestamp": "2026-11-04T23:29:14.000"
+      },
+      {
+        "description": "cosmicgarden",
+        "public_key": "PUB_BLS_ZjpKrYAk1Vj-GGbwM5fJ-b1OW7sYre8flWyj7beWLgQWaugW8PD6WNawM8On_s0UYh9w9aaq7cxs16YQSfNTv7h7pdcdXMOzm2bsWt0DycNfsrwqdulGkkw94qqo5tcZgHPhgA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67a4bbd2652b9eb233f82ce379e1099abfefb9e5ec932a81012dbfd3bd6",
+        "voted_for_block_num": 259706,
+        "voted_for_block_timestamp": "2026-11-04T23:29:14.000"
+      },
+      {
+        "description": "deepseekcore",
+        "public_key": "PUB_BLS_TkWwHUDEHAWusodZUj5eYYj4JM3YNY8Z63JFKhAq14jk_DyF6el2I8Bd6MHzyGMKFX2NskP1zaptxzlXBGmG1bjST430oFd0Je1gvRFgbae2jWu5D_2lq3BrH-u3vQgF4Xn9Jg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "egyptpyramid",
+        "public_key": "PUB_BLS_8if4oGPUe8waBt6LJqSNrnowlacPCbDnHTL5Id8jATHfwNokLaG-QNo95QpgXIAM-bpwT0Ir2I_GzKU4AMWJr7JE2m9pMxkHxAP9qC04hqrS3zQEJVmiLNTK3yCgcdwFKTpttQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "finlandhaven",
+        "public_key": "PUB_BLS_pdjqn7obclLJtV0PE-P9hp6k_0Il3bOLJpX2KrL1tjcwLUQ8o-sRdYBoCId8pf8ZO9rq60KaYSggKws29eGSccIFf09rcEUCQVR2iZsT8od25l1ZCr0rw7PJaIjXHXkQt_V6BQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "francegarden",
+        "public_key": "PUB_BLS_WiNKpSjGt72qdV6TsXrC71qOAh0lJeI_IYoGDdsW8PNQtan_dFrXziC4CX4fT7kUZ3f2WDGY1acFdlcx57a668CQn7A3fJ82hUBQWRB1B_uApJWJA8yEAlLLyvYZVdoZIIA3lw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "glaciercrest",
+        "public_key": "PUB_BLS_bpB1dgvD7jILrkc8Q0UFxvH89YuCHk9neOZyDWoe8UbrknxO3xHuVeD0rk1KPdsKuomVXd08fwapsKX4TqSRtLVAX0y2r50NUzRSLAq26LClR_rBHner0AtP0K4hDmwYtQhZpw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "gptgenesisbp",
+        "public_key": "PUB_BLS_7De7UJHbZeGNDTgCyQr8ABwoObslXepqUZdX5EoMygs-eZiFTjrfcT3A9gNO_xMWaZ1WRdqRwQmNkSJP8R804-vwgdLet8Ftj073EIlacCbTIlOJePqF6LgUI80nWuoTZUVggQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f675015ee964fc1faa7f3d0f78abfc7e8ae5a9ddb98aa749db37572642e4",
+        "voted_for_block_num": 259701,
+        "voted_for_block_timestamp": "2026-11-04T23:29:11.000"
+      },
+      {
+        "description": "italyharbors",
+        "public_key": "PUB_BLS_GfrEfD0NM0ETBXB0iP2nHfwxuY_tYObwOcoCyULSMQGZc9I5Fw_lTWr5WAl21j0L5QHV19hRx_2G66MgQBnkulE-2ZrPk8-jGUKyhfZxmQUgBlxgI2BfkXhpohPY0LEWDqFqMw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "mistralcloud",
+        "public_key": "PUB_BLS_CcyVNyrdpqRjvbEd_khjwYPXdnl236-6uQ9xt3evXOFSckJgnRcongOMfqo22rIIT2Omyx0ODpCTugaZoB2hmDzeB2Iu8n5jG5AC9s7Dqr_H_Ukt4H3ssmv5ZNpn8NYZ8Qb9JQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "moonlitgrove",
+        "public_key": "PUB_BLS_EkiRwobpqwluevyXyp-KbsvPXCBUefnvT557WAOwEi1dhGiPD4HFkHsH8MuLpYMFhOTfRnAqC5TFvvyMBUvCqiW-ljbNILZA7qzh5dLhsHiMQwZA72EqrUhJ4S-0-yIAqKFV1g",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "nebularlight",
+        "public_key": "PUB_BLS_D8bzH_tfmewukkmKN_42iiaiMSSFKMNMUmTRiB6uukqyyuJEaepdVkvJYnZHgOgHfkr1TRo-VSGW-1hrjaq5-5wq1yF2JQNZh86nvo76onTLb0OCjLoNlUk-LUsllUgVxRrnWQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f6760174a5584a1db69c701d574409b840ec698e870866c6217e9eda0ce9",
+        "voted_for_block_num": 259702,
+        "voted_for_block_timestamp": "2026-11-04T23:29:12.000"
+      },
+      {
+        "description": "silverstream",
+        "public_key": "PUB_BLS_rUgKKixnmjurwLgkRrPutoBoDixYJZTTinFv_1VLr3Jm_-b-Y7lUo6aFW5A6oNgOw_s3Zj0ylJ7eeQyVUq0dbufgpSitd-fVDazySP4wuAeJ3PhVeWKukwt6COF5BHMR_7Hq4g",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "stellarhaven",
+        "public_key": "PUB_BLS_KRR7tOiF8g-kDpBbhZS7ZJ582udOOBXhu7XNeBHGrdN3AvWknyLmT3yFuaFzQdMOhWhZMeOSPnRCmj1cBq8jTSJHMcYqXWAyPg6CHOb26JvE8XGnXsvBtr-Gmp-Xw9QN0w0YJg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "velvetforest",
+        "public_key": "PUB_BLS_psN-jFqXTreSOIjDveoI5N8QSC0XTCANedkete6_vRx73yzq7sX2ONPfi-RJo8oSMTKmK2ugVP0s7WGMDEZEXEWgTc4Ik43nDDRo9oE32vUnfAjeCZMwB6H476JV6K4MQy9Tsg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "willowgarden",
+        "public_key": "PUB_BLS_08Tbe2p_lMO3gCMESw_3mp-U_pJunpDm9jH-ObPoc9-JYZ-UPrd2-8BIILQykAUW6sNef1DvzbhrxZOJy3bNwE404e1SkRqaXshwRZRQ5rCbvUYMTpDRODseYb9bKrgQ24MYTw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      },
+      {
+        "description": "xaineuralnet",
+        "public_key": "PUB_BLS_FTCyEmvV8YShjorv5qKueExYCUXoMtafMEa2P9LZxX0YFn1SzTmWvr-uRiJe2y0FZpFVbCrsFwSIJqwLXe3YvVPN0Qo-M7IhF56Z9hUNRVv0Q1uk8ed7S5wwmu_XbGIFjmY3qw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 369,
+        "voted_for_block_id": "0003f67c753d9381843f8ed3b9e430be9e98929a4a60e2ad472d1900569f4804",
+        "voted_for_block_num": 259708,
+        "voted_for_block_timestamp": "2026-11-04T23:29:15.000"
+      }
+    ]
+  }
+}

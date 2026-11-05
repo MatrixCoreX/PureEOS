@@ -1,0 +1,5 @@
+native_governance
+real_contracts
+unsigned-wire-helper
+unsigned_wire
+{"status": "PASS", "UTC": "2026-11-05T00:29:19.083283+00:00", "scope": "Remote in-process native controller tests; controlled isolated tester clock; no live transaction, account, activation or installation", "build": 4, "binary_sha256": "dd7288073b33ae6a8ce106bba0e167afe7931cc7a870990a777fed1ff85fe285", "native_governance": {"exit_code": 0, "cases": 34, "failed": []}, "real_contracts": {"exit_code": 0, "cases": 3, "failed": []}, "unsigned_wire": {"exit_code": 0, "cases": 1, "failed": []}, "finished_UTC": "2026-11-05T00:29:31.526870+00:00", "elapsed_seconds": 12.443619012832642}

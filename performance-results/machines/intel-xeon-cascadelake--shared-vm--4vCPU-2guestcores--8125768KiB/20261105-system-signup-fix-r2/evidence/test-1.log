@@ -1,0 +1,14 @@
+native_governance
+real_contracts
+unsigned-wire-helper
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-fix-20261105-r2/test.py", line 51, in <module>
+    code=run(args,'unsigned-wire-helper');assert not code,'Unsigned helper failed'
+                                                 ^^^^^^^^
+AssertionError: Unsigned helper failed
+
+Traceback (most recent call last):
+  File "/opt/pureeos-system-signup-fix-20261105-r2/test.py", line 51, in <module>
+    code=run(args,'unsigned-wire-helper');assert not code,'Unsigned helper failed'
+                                                 ^^^^^^^^
+AssertionError: Unsigned helper failed

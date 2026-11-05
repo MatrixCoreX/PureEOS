@@ -1,0 +1,30 @@
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:[m[K In function ‘[01m[Kbool eosio::chain::{anonymous}::[01;32m[Kexact_parent_action[m[K(const eosio::chain::apply_context&, uint32_t, eosio::chain::action_name)[m[K’:
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:71:55:[m[K [01;31m[Kerror: [m[K‘[01m[Keosio::chain::action_trace& eosio::chain::transaction_context::[01;32m[Kget_action_trace[m[K(uint32_t)[m[K’ is private within this context
+   71 |    const auto& parent=[01;31m[Kctx.trx_context.get_action_trace(ordinal)[m[K;
+      |                       [01;31m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~[m[K
+In file included from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/host_context.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/apply_context.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:6[m[K:
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/transaction_context.hpp:263:24:[m[K [01;36m[Knote: [m[Kdeclared private here
+  263 |          action_trace& [01;36m[Kget_action_trace[m[K( uint32_t action_ordinal );
+      |                        [01;36m[K^~~~~~~~~~~~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:[m[K In function ‘[01m[Kvoid eosio::chain::[01;32m[Kapply_eosio_sysstage[m[K(apply_context&)[m[K’:
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:195:53:[m[K [01;31m[Kerror: [m[K‘[01m[Keosio::chain::action_trace& eosio::chain::transaction_context::[01;32m[Kget_action_trace[m[K(uint32_t)[m[K’ is private within this context
+  195 |    const auto& root=[01;31m[Kctx.trx_context.get_action_trace(permit->parent_action_ordinal)[m[K;
+      |                     [01;31m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/transaction_context.hpp:263:24:[m[K [01;36m[Knote: [m[Kdeclared private here
+  263 |          action_trace& [01;36m[Kget_action_trace[m[K( uint32_t action_ordinal );
+      |                        [01;36m[K^~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/action.hpp:4[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/transaction.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/authority.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/contract_types.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/upgrade_governance.hpp:3[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/system_account_proposal.hpp:2[m[K,
+                 from [01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:1[m[K:
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/system_account_proposal.cpp:210:64:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class eosio::chain::shared_blob[m[K’ has no member named ‘[01m[Kempty[m[K’
+  210 |               metadata.code_hash==digest_type{} && account.abi.[01;31m[Kempty[m[K() &&
+      |                                                                [01;31m[K^~~~~[m[K
+[01m[K/opt/pureeos-system-signup-fix-20261105-r2/source/libraries/chain/include/eosio/chain/exceptions.hpp:9:10:[m[K [01;36m[Knote: [m[Kin definition of macro ‘[01m[KEOS_ASSERT[m[K’
+    9 |    if( !([01;36m[Kexpr[m[K) )                                                      \
+      |          [01;36m[K^~~~[m[K

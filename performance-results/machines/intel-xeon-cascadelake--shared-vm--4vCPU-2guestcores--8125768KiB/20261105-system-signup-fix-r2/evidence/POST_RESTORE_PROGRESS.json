@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T00:41:27.935984+00:00",
+  "scope": "Read-only observations of original ordinary/indexer controllers; no synthetic payment or restart",
+  "before_batches": 2671,
+  "after_batches": 2677,
+  "before_transactions": 5422,
+  "after_transactions": 5436,
+  "ordinary_has_pending": false,
+  "history_index_progress": {
+    "from": 266651,
+    "to": 266829,
+    "since_UTC": "2026-11-05T00:40:58.780106+00:00"
+  },
+  "history_indexed_block": 266829,
+  "observed_head": 266836,
+  "observed_head_index_gap": 7
+}

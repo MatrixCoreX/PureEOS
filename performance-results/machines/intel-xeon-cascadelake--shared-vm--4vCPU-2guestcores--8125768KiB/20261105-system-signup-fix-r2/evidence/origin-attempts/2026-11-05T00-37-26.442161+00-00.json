@@ -1,0 +1,33 @@
+{
+  "status": "FAIL",
+  "UTC": "2026-11-05T00:37:26.442161+00:00",
+  "scope": "Read-only TLS origin checks via loopback; no public-browser or external-path claim",
+  "checks": {
+    "/api/v1/chain/get_info": {
+      "HTTP_status": 200,
+      "bytes": 990,
+      "sha256": "e9018df482f5faa327e7ba999b20a17e7985da33b2098bea74276b89677a40ef"
+    },
+    "/": {
+      "HTTP_status": 200,
+      "bytes": 794,
+      "sha256": "59b3f1f02493bfe9767dcf61bad7a126a073500cc9440a0a1bf11ac6de04152f"
+    },
+    "/relay/health": {
+      "HTTP_status": 200,
+      "bytes": 164,
+      "sha256": "e984e941bb7a862639088de14dc38a8296cc77177c2f0fa03183b9d7f6643d03"
+    }
+  },
+  "relay": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "error": "Command '['curl', '--noproxy', '*', '--resolve', 'aic-test.matrixai.one:443:127.0.0.1', '--max-time', '18', '--fail-with-body', '-sS', 'https://aic-test.matrixai.one/history/v2/health']' returned non-zero exit status 22.",
+  "finished_UTC": "2026-11-05T00:37:27.396046+00:00"
+}

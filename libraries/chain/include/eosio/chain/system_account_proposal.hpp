@@ -34,6 +34,14 @@ struct sysexec {
    static account_name get_account() { return "eosio"_n; }
    static action_name get_name() { return "sysexec"_n; }
 };
+// Native-only continuation. It runs after newaccount, so all deployment
+// authorizing actors and permissions already exist when actions are queued.
+struct sysstage {
+   uint64_t proposal_id = 0;
+   bytes code, abi;
+   static account_name get_account() { return "eosio"_n; }
+   static action_name get_name() { return "sysstage"_n; }
+};
 struct sysfinish {
    uint64_t proposal_id = 0;
    static account_name get_account() { return "eosio"_n; }
@@ -66,6 +74,7 @@ void apply_eosio_syspropose(apply_context&);
 void apply_eosio_sysveto(apply_context&);
 void apply_eosio_syscancel(apply_context&);
 void apply_eosio_sysexec(apply_context&);
+void apply_eosio_sysstage(apply_context&);
 void apply_eosio_sysfinish(apply_context&);
 }
 
@@ -74,6 +83,7 @@ FC_REFLECT(eosio::chain::syspropose, (target)(resource_payer)(ram_payment)(autho
 FC_REFLECT(eosio::chain::sysveto, (voter)(proposal_id))
 FC_REFLECT(eosio::chain::syscancel, (proposal_id))
 FC_REFLECT(eosio::chain::sysexec, (proposal_id)(code)(abi))
+FC_REFLECT(eosio::chain::sysstage, (proposal_id)(code)(abi))
 FC_REFLECT(eosio::chain::sysfinish, (proposal_id))
 FC_REFLECT(eosio::chain::system_account_proposal_object,
    (proposal_id)(pending)(outcome)(target)(resource_payer)(ram_payment)(authority_version)(code_bytes)(abi_bytes)(review_seconds)

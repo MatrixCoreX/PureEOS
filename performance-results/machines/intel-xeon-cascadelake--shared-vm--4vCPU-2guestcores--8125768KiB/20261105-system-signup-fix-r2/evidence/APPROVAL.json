@@ -1,0 +1,9 @@
+{
+  "approved": true,
+  "UTC": "2026-11-05T00:21:05.352504+00:00",
+  "user_choice": "\u5141\u8bb860\u5206\u949f\u6784\u5efa\u9a8c\u8bc1\u7ef4\u62a4\uff08\u63a8\u8350\uff09",
+  "max_window_seconds": 3600,
+  "build_stop_seconds": 1800,
+  "candidate_deployment": false,
+  "scope": "Current continuation repair build and isolated tests only, then original-program recovery; Germany banned process preserved"
+}

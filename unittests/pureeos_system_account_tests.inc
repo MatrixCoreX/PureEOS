@@ -3,7 +3,7 @@
 // resource admission, or the production registration contract.
 namespace {
 struct system_account_fixture : governance_fixture {
-   system_account_fixture(size_t voters=4, bool activate=true):governance_fixture(voters,false) {
+   system_account_fixture(size_t voters=4, bool activate=true,const std::string& system_wat=fixture_wat()):governance_fixture(voters,false,system_wat) {
       chain.set_code("eosio.token"_n,vector<uint8_t>(upgrade_code.begin(),upgrade_code.end()));
       if(activate) {
          const auto digest=chain.control->get_protocol_feature_manager().get_protocol_feature_set().get_builtin_digest(
@@ -35,10 +35,10 @@ struct system_account_fixture : governance_fixture {
       push({refresh(nodes),action({permission_level{"developer"_n,"upgrade"_n}},args)},"developer"_n);
    }
    void propose_creation(){propose_creation(creation_args());}
-   void execute_creation(bool sponsor=true,bytes code={}) {
+   transaction_trace_ptr execute_creation(bool sponsor=true,bytes code={}) {
       std::vector<permission_level> auth{{"developer"_n,"upgrade"_n}};
       if(sponsor)auth.push_back({"developer"_n,"active"_n});
-      try {push({action(auth,sysexec{creation().proposal_id,code.empty()?upgrade_code:code,upgrade_abi})},"developer"_n);}
+      try {return push({action(auth,sysexec{creation().proposal_id,code.empty()?upgrade_code:code,upgrade_abi})},"developer"_n);}
       catch(const fc::exception& error){BOOST_TEST_MESSAGE(error.to_detail_string());throw;}
    }
    void veto_creation(account_name voter) {native(sysveto{voter,creation().proposal_id},voter);}
@@ -71,6 +71,8 @@ BOOST_AUTO_TEST_CASE(system_creation_requires_feature_and_native_parent) {
    const authority key(f.chain.get_public_key("alice"_n,"active"));
    BOOST_CHECK_THROW(f.forward(newaccount{"eosio"_n,"eosio.signup"_n,key,key},"eosio"_n),fc::exception);
    BOOST_CHECK_THROW(f.forward(f.creation_args(),"developer"_n,"upgrade"_n),fc::exception);
+   BOOST_CHECK_THROW(f.native(sysstage{1,{},{}},"alice"_n),fc::exception);
+   BOOST_CHECK_THROW(f.forward(sysstage{1,{},{}},"eosio"_n),fc::exception);
    BOOST_CHECK_THROW(f.native(sysfinish{1},"alice"_n),fc::exception);
    BOOST_CHECK(!f.exists());
 }
@@ -125,7 +127,23 @@ BOOST_AUTO_TEST_CASE(system_creation_reviews_sponsor_payload_and_seals_nonprivil
    auto bad=f.upgrade_code;bad.push_back(0);
    BOOST_CHECK_THROW(f.execute_creation(true,bad),fc::exception);
    BOOST_CHECK(!f.exists());BOOST_CHECK(f.creation().pending);
-   BOOST_REQUIRE_NO_THROW(f.execute_creation());
+   transaction_trace_ptr trace;
+   BOOST_REQUIRE_NO_THROW(trace=f.execute_creation());
+   uint32_t stage=0;size_t stages=0,finishes=0;std::vector<action_name> root_children;
+   const auto root=trace->action_traces.front().action_ordinal.value;
+   for(const auto& t:trace->action_traces) {
+      if(t.receiver!=t.act.account)continue;
+      if(t.creator_action_ordinal.value==root)root_children.push_back(t.act.name);
+      if(t.act.name=="sysstage"_n){stage=t.action_ordinal.value;++stages;}
+   }
+   BOOST_REQUIRE_EQUAL(stages,1u);
+   BOOST_REQUIRE((root_children==std::vector<action_name>{"newaccount"_n,"sysstage"_n}));
+   for(const auto& t:trace->action_traces)if(t.receiver==t.act.account &&
+       (t.act.name=="buyram"_n || t.act.name=="setcode"_n || t.act.name=="setabi"_n || t.act.name=="sysfinish"_n)) {
+      BOOST_CHECK_EQUAL(t.creator_action_ordinal.value,stage);
+      if(t.act.name=="sysfinish"_n)++finishes;
+   }
+   BOOST_CHECK_EQUAL(finishes,1u);
    BOOST_CHECK(f.exists());BOOST_CHECK(!f.creation().pending);BOOST_CHECK_EQUAL(f.creation().outcome,1u);
    const auto& db=f.chain.control->db();
    const auto& metadata=db.get<account_metadata_object,by_name>("eosio.signup"_n);
@@ -140,6 +158,49 @@ BOOST_AUTO_TEST_CASE(system_creation_reviews_sponsor_payload_and_seals_nonprivil
    BOOST_CHECK_THROW(f.forward(updateauth{"eosio.signup"_n,"active"_n,"owner"_n,authority(f.chain.get_public_key("alice"_n,"active"))},"eosio.signup"_n),fc::exception);
    BOOST_CHECK_THROW(f.execute_creation(),fc::exception);
    BOOST_CHECK_THROW(f.native(sysfinish{f.creation().proposal_id},"alice"_n),fc::exception);
+}
+
+BOOST_AUTO_TEST_CASE(system_creation_internal_stage_preserves_pre_feature_and_inline_authorization_checks) {
+   system_account_fixture off(4,false);
+   BOOST_REQUIRE_NO_THROW(off.push({action({permission_level{"alice"_n,"active"_n}},"eosio"_n,"sysstage"_n,bytes{char(0xff)})},"alice"_n));
+   BOOST_CHECK(!find_system_account_proposal(off.chain.control->db()));
+   system_account_fixture f;f.propose_creation();
+   for(const auto& authorization:{permission_level{"missing"_n,"active"_n},permission_level{"alice"_n,"missing"_n}}) {
+      action child({authorization},sysstage{f.creation().proposal_id,{}, {}});
+      BOOST_CHECK_EXCEPTION(f.push({action({permission_level{"alice"_n,"active"_n}},"eosio"_n,"forward"_n,fc::raw::pack(child))},"alice"_n),
+         action_validate_exception,[](const auto& e){return e.to_detail_string().find("does not exist")!=std::string::npos ||
+            e.to_detail_string().find("non-existent permission")!=std::string::npos;});
+   }
+   BOOST_CHECK(f.creation().pending&&!f.exists());
+}
+
+BOOST_AUTO_TEST_CASE(system_creation_rejects_nested_and_duplicate_native_continuations_atomically) {
+   // Hostile TEST system code tries callbacks from newaccount, the root, or
+   // the stage itself. Real missing-actor/permission checks remain enabled.
+   size_t scenario=0;
+   for(auto trigger:{"newaccount"_n,"sysexec"_n,"sysstage"_n,"sysexec"_n}) {
+      auto wat=fixture_wat();
+      const auto actor=scenario==3?"eosio.signup"_n:"eosio"_n;
+      const auto packed=fc::raw::pack(action({permission_level{actor,"active"_n}},sysstage{1,{}, {}}));
+      std::string escaped;constexpr char hex[]="0123456789abcdef";
+      for(unsigned char byte:packed){escaped+='\\';escaped+=hex[byte>>4];escaped+=hex[byte&15];}
+      wat.insert(wat.find("     (func (export \"apply\")"),"     (data (i32.const 1024) \""+escaped+"\")\n");
+      const auto hook="       (if (i64.eq (get_local $action) (i64.const "+std::to_string(trigger.to_uint64_t())+")) "
+         "(then (call $send (i32.const 1024) (i32.const "+std::to_string(packed.size())+"))))\n";
+      const auto marker="       (if (i64.eq (get_local $action) (i64.const "+std::to_string("privilege"_n.to_uint64_t());
+      wat.insert(wat.find(marker),hook);
+      system_account_fixture f(4,true,wat);f.propose();f.veto(f.nodes[0]);f.propose_creation();f.advance_to(f.creation().execute_after);
+      const auto before=fc::raw::pack(f.creation()),gov=fc::raw::pack(f.state());
+      if(scenario==3) {
+         // The root has armed a creation capability, but the queued newaccount
+         // has not run. Even this exact pending target must fail actor checks.
+         BOOST_CHECK_EXCEPTION(f.execute_creation(),action_validate_exception,[](const auto& e){
+            return e.to_detail_string().find("authorizing actor eosio.signup does not exist")!=std::string::npos;});
+      } else {BOOST_CHECK_THROW(f.execute_creation(),fc::exception);}
+      BOOST_CHECK(!f.exists()&&!is_protected_system_account(f.chain.control->db(),"eosio.signup"_n));
+      BOOST_CHECK(fc::raw::pack(f.creation())==before&&fc::raw::pack(f.state())==gov);
+      ++scenario;
+   }
 }
 
 BOOST_AUTO_TEST_CASE(system_creation_failure_rolls_back_account_protection_and_execution) {

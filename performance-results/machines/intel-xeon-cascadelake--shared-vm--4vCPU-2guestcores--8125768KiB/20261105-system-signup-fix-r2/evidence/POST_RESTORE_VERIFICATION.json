@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T00:36:59.884519+00:00",
+  "chain_id": "116ea0c3c556951ba0a9244cbfbfe13f98972f3353c38ff38c35122d0f61c5a0",
+  "head": 266328,
+  "LIB": 266324,
+  "LIB_progress": 31,
+  "node_count": 26,
+  "node_pids": {
+    "pureeos-keynet2-bp-brazilamazon-20261103.service": 357324,
+    "pureeos-keynet2-bp-canadaboreal-20261103.service": 356637,
+    "pureeos-keynet2-bp-cobaltspring-20261103.service": 356640,
+    "pureeos-keynet2-bp-coherevision-20261103.service": 356642,
+    "pureeos-keynet2-bp-cosmicgarden-20261103.service": 356643,
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": 356646,
+    "pureeos-keynet2-bp-egyptpyramid-20261103.service": 356651,
+    "pureeos-keynet2-bp-finlandhaven-20261103.service": 356654,
+    "pureeos-keynet2-bp-francegarden-20261103.service": 356659,
+    "pureeos-keynet2-bp-germanycrest-20261103.service": 252912,
+    "pureeos-keynet2-bp-glaciercrest-20261103.service": 356663,
+    "pureeos-keynet2-bp-italyharbors-20261103.service": 356670,
+    "pureeos-keynet2-bp-kenyasavanna-20261103.service": 356673,
+    "pureeos-keynet2-bp-lunarcompass-20261103.service": 356676,
+    "pureeos-keynet2-bp-maplecascade-20261103.service": 356679,
+    "pureeos-keynet2-bp-mistralcloud-20261103.service": 356682,
+    "pureeos-keynet2-bp-moonlitgrove-20261103.service": 356683,
+    "pureeos-keynet2-bp-nebularlight-20261103.service": 356690,
+    "pureeos-keynet2-bp-silverstream-20261103.service": 356691,
+    "pureeos-keynet2-bp-stellarhaven-20261103.service": 356694,
+    "pureeos-keynet2-bp-velvetforest-20261103.service": 356696,
+    "pureeos-keynet2-bp-willowgarden-20261103.service": 356697,
+    "pureeos-keynet2-bp-xaineuralnet-20261103.service": 356700,
+    "pureeos-keynet2-founder-20261103.service": 356703,
+    "pureeos-keynet2-history-20261103.service": 356706,
+    "pureeos-keynet2-bp-anthropiclab-20261103.service": 356709
+  },
+  "original_binary_sha256": "0be5282d1d5a5eb72081e1d1374931d5e79cff139de728f8d230e29df50534e7",
+  "all_configs_and_units_unchanged": true,
+  "Germany_original_PID_preserved": true,
+  "frozen_governance_economics_and_90_balances_matched_before_business_resume": true,
+  "consensus_caps_unchanged": true,
+  "native_finalizers": 21,
+  "native_threshold": 15,
+  "cap_proposal3_pending_vetoes": 24,
+  "token_stats": {
+    "AIC": {
+      "supply": "100000000.0000 AIC",
+      "max_supply": "2100000000.0000 AIC",
+      "issuer": "eosio"
+    }
+  },
+  "banned": [
+    "germanycrest"
+  ],
+  "services_active": [
+    "pureeos-key-history-20261103.service",
+    "pureeos-keynet2-activity-wallet-20261103.service",
+    "pureeos-keynet2-companion-observed-peak-20261103.service",
+    "pureeos-keynet2-companion-rotation-20261103.service",
+    "pureeos-keynet2-companion-votes-20261103.service",
+    "pureeos-keynet2-ordinary-activity-20261103.service",
+    "pureeos-keynet2-purehistory-api-20261103.service",
+    "pureeos-keynet2-purehistory-indexer-20261103.service",
+    "pureeos-keynet2-relay-20261103.service",
+    "pureeos-keynet2-wallet-20261103.service"
+  ],
+  "containers": {
+    "pureeos-keynet2-history-rabbitmq": "running-no-healthcheck",
+    "pureeos-keynet2-history-redis": "running-no-healthcheck",
+    "pureeos-keynet2-history-mongo": "running-no-healthcheck",
+    "pureeos-keynet2-history-elasticsearch": "running-no-healthcheck"
+  },
+  "ordinary_progress": {
+    "version": 1,
+    "completed_batches": 2672,
+    "business_transactions": 5425,
+    "transfers": 4864,
+    "ticks": 288,
+    "notes": 273,
+    "empty_blocks": 16321,
+    "max_chain_receipts_in_observed_batch_block": 4,
+    "initial_ordinary_liquid_total_smallest_units": 2846850961
+  },
+  "ordinary_has_pending": false,
+  "candidate_installed": false,
+  "feature_activation_or_live_governance_transactions": false
+}

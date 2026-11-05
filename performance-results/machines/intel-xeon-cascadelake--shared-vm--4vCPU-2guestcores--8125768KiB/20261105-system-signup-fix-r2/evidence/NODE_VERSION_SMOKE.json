@@ -1,0 +1,8 @@
+{
+  "UTC": "2026-11-05T00:33:11.613583+00:00",
+  "exit_code": 0,
+  "stdout": "v2.0.0-test.2-dev\n",
+  "stderr": "info  2026-11-05T00:33:11.608 ld-linux- main.cpp:174                  main                 ] nodeos initializing\n",
+  "sha256": "d4ff795f3c351ff68f5b8143740ec4997cd8bbfe3f8ce6efb1e2feb7562f50d8",
+  "scope": "Candidate loader/version smoke only; no node data, listeners, chain startup or installation"
+}

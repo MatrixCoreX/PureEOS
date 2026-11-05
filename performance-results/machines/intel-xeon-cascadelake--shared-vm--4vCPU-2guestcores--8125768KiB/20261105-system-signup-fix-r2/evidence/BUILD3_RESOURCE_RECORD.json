@@ -1,0 +1,11 @@
+{
+  "UTC": "2026-11-05T00:11:05.885013+00:00",
+  "attempt": 3,
+  "previous_failure": "Only the2GiB compiler cgroup was OOM-killed; original26PIDs preserved",
+  "available_bytes_before": 3428593664,
+  "MemoryMax_bytes": 2684354560,
+  "computed_reserve_at_max_bytes": 744239104,
+  "CPUQuota": "50%",
+  "host_floor_MiB": 512,
+  "no_live_pause": true
+}
