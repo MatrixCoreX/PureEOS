@@ -1,3 +1,5 @@
+> **2026-11-05 supersession / 后续复盘更正:** This is the historical E006 attempt14 report. Its237 checks omitted the actual fees/funded-REX route. The later public creation transaction failed atomically at the native depth limit; four proposals were cancelled and no target was deployed. Candidate7523 passed238 full-route checks; see [repair report](../20261105-atomic-ram-depth-r2/REPORT.md). Old raw results remain unchanged. 以下为历史报告，不能作为当前公开部署成功或完整费用路径已验证的依据。
+
 # Atomic RAM candidate qualification / 自动购 RAM 候选验证
 
 Status: **REMOTE QUALIFICATION PASSED; PUBLIC DEPLOYMENT PENDING** (2026-11-05).

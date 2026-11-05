@@ -252,6 +252,14 @@ def main():
             for n in ['gptkeyorigin','keyrelaymoon']:
                 self.action('bondbp',{'producer':n},n)
                 self.action('regproducer',{'producer':n,'producer_key':self.accounts[n]['Public key'],'url':'','location':0},n)
+            if args.atomic:
+                self.action('voteproducer',{'voter':'keyusersolar','proxy':'','producers':['keyrelaymoon']},'keyusersolar')
+                self.action('deposit',{'owner':'keyusersolar','amount':'100.0000 AIC'},'keyusersolar')
+                self.action('buyrex',{'from':'keyusersolar','amount':'100.0000 AIC'},'keyusersolar')
+                self.tx(['set','contract','eosio.fees',str(self.contracts/'eosio.fees')])
+                self.check(self.rpc('get_code_hash',{'account_name':'eosio.fees'})['code_hash']==
+                    hashlib.sha256((self.contracts/'eosio.fees/eosio.fees.wasm').read_bytes()).hexdigest(),
+                    'Actual fee-forwarding WASM and funded REX pool enabled before atomic transfers')
             if args.fixture:self.mock_bp()
             self.hot=self.key()
             self.run(['wallet','import','-n','localtest'],input_text=self.hot['Private key']+'\n')

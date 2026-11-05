@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "WASM_SHA256": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+  "native_checks": 238,
+  "native_result_sha256": "92efaa060a40b6b73ffa0e55f89b60c82ef27663fcf5a31ef2cb7894c860610b"
+}

@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "source": {
+    "status": "STAGED_NOT_ACTIVATED",
+    "archive_sha256": "f3b30b812579153ed3dea733c4824bd4a82699afea9179126576f93d3b21a356",
+    "files": {
+      "package.json": "1a46d3230ac24669a3a7fc9a91cae2c5699bc059eb3da08bc5c3eb0b5c191833",
+      "package-lock.json": "d014f448c11bc9cca4d3e2b4b71c72d6d18ca7c5a42639e0334c3ed3c24bd0b2",
+      "sdk/index.mjs": "cbe1ee6cc4bf9b1546aa0362ee2da39281eb92fa01977d492ecf219ee0ffecd0",
+      "sdk/fee-profiles.mjs": "8e935c18e6d5d8c7c78657c5e57d5d438d9d744ba41d8ada7f3413d513213e8f",
+      "abi/eosio.key.abi": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+      "relayer/server.mjs": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44",
+      "tests/chain_test.py": "ed4241197b88900626947c07583a7b74e269dbe22f8c04ff27a4cbe962b2e136",
+      "tests/qualify.py": "613e98ac0477b0bee0dd79c66dcb46997d4e56621727387d16fc824ffba19584",
+      "tests/read.mjs": "1619c337d58f9c9ae59441909f3c1233bfd45f4123252811faad2bd968fd0000",
+      "tests/sign.mjs": "4b0fd38ccb464d20df24fba2959fc505f8b62af6c17d428bac2127801d0e0a07",
+      "tests/atomic-sdk.test.mjs": "dc5e8155fc0be651c3fa800d508c79741df5134732b4a885fd04bc512836f054",
+      "tests/relay.test.mjs": "1e2f936c9d97829264fa20672884248b9e4c0d6fad05e804ec89b72738191fdc",
+      "tests/rpc-routing.test.mjs": "870ff29bfe1e5c03a18fa047e72c2ab399895f532a43cd745077ea94e9f73687",
+      "tests/quote.mjs": "531527576f6de4c98acecc17c34e634b72f37356dbed18e78aac3375e0610083",
+      "tests/sdk.test.mjs": "ce30e1c855e68cfd1f329dfb9dfb507647696907a83a8008166dd5af33ccce6a",
+      "tests/atomic_cases.py": "9317d81cf84aad2a66dc74b651c40814c90c4200f812672a1473ca655a5a14ee",
+      "tests/probes/ram_qualify.py": "1b8b3bcb5d4db61d711cb1c4dc6611a363788e58a12367a14926cf6382e437bf",
+      "tests/probes/tx_proof.cpp": "228ac2bd774df50ee5464a089efd0633111b4bfa8530b336fdb78c69c53b4109",
+      "tests/probes/qualify.py": "2c58dedf5804aa2579227a48fd6ff4f4d283527b6341f5e6bac95ea8387ca8eb",
+      "tests/probes/sign.mjs": "6f71ef7ba08d0efd2454e55cf6cbdedc5e6083a3b1c88de68b983eebae8a8d74",
+      "tests/probes/ram_authority.cpp": "e5b14e167f6a0cd0f58d728774be47a08c9fdbc4921bb1090404ba4b8b2e867a",
+      "tests/fixtures/badtoken.cpp": "36e848a60c7c84ff4692cb7886eec7971fbfcc73025809301d47abcdc5d82d56",
+      "tests/fixtures/system_mock.cpp": "62556303d923eb37792a55b11c9a458d296b0b0b5e6cba82b5d363ae2fc82154"
+    }
+  },
+  "scope": "Default shipped ABI matches qualified artifact; complete SDK/relay/routing/atomic tests. No public relay activated here"
+}

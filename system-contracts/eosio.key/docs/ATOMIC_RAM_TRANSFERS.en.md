@@ -1,11 +1,13 @@
 # Atomic RAM transfers: candidate, fees and qualification
 
-2026-11-05 candidate WASM: `e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442`.
-Remote isolated qualification passed 237 native checks and 26 SDK tests. **Public
+2026-11-05 candidate WASM: `7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`.
+Remote isolated qualification passed 238 native checks and 26 SDK tests. **Public
 TEST deployment is still pending** native qualification and the complete
 1800-second reviewed proposal/BP-veto process. This document supersedes normal
 transfer instructions requiring prepaid fee credit, manual sponsored capacity
 or manual USD recipient opening in this branch; historical evidence stays intact.
+
+This qualification includes the actual `eosio.fees` WASM and funded REX at depth4. The historical E006 fixture omitted that route. The public creation attempt failed atomically and all four proposals were cancelled; its historical237 checks did not cover that path. The new candidate queues the native RAM purchase directly, removing one self-call without changing state, ABI, pricing or the global depth cap. It is not publicly deployed and requires fresh full reviews.
 
 ## Principal, fees and storage
 

@@ -1,0 +1,9 @@
+{
+  "status": "EXACT_CORE_AND_TEST_SOURCES_MATCH_REMOTE_BUILD15",
+  "sources": {
+    "src/eosio.key.cpp": "c786105a70a1b07b32dd38cb72c0a19cfe94ce591cab5c87c9e75ef324df963c",
+    "include/eosio.key.hpp": "272886a2b2f1c898d8d2a97324594dcd0ad3ca8115bcdba47c95069ec0bae4c1",
+    "tests/chain_test.py": "ed4241197b88900626947c07583a7b74e269dbe22f8c04ff27a4cbe962b2e136"
+  },
+  "SDK_fee_profile": "Final dual-hash metadata tested separately against shipped ABI"
+}

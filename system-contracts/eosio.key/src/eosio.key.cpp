@@ -613,8 +613,7 @@ void key_contract::begin_payment(payment p) {
              std::make_tuple(get_self(), p.quantity.symbol, get_self())).send();
    }
    if (p.kind != "deposit"_n)
-      action(permission_level{get_self(), "active"_n}, get_self(), "payram"_n,
-             std::make_tuple(p.ticket)).send();
+      schedule_ram(p);
 }
 void key_contract::deposit(name from, name token_contract, public_key to, asset quantity,
                            asset max_fee, checksum256 request_id) {
@@ -695,12 +694,17 @@ bool key_contract::payment_notification(name from, name to, asset quantity, cons
    } else return false;
    pending.set(p, get_self());
    if (start_ram)
-      action(permission_level{get_self(), "active"_n}, get_self(), "payram"_n,
-             std::make_tuple(p.ticket)).send();
+      schedule_ram(p);
    return true;
 }
 void key_contract::payram(checksum256 ticket) {
-   auto p = internal_payment(ticket); auto cfg = config();
+   schedule_ram(internal_payment(ticket));
+}
+void key_contract::schedule_ram(const payment& p) {
+   auto cfg = config();
+   // Queue the native buy directly from the authenticated owner/funding frame.
+   // A self-payram hop would exhaust depth4 when the normal fee receiver
+   // forwards RAM fees into REX. Settlement remains a subsequent self action.
    check(p.kind != "deposit"_n || p.received == 3, "direct deposit funding incomplete");
    if (p.ram_bytes) {
       check_system(cfg);
@@ -709,7 +713,7 @@ void key_contract::payram(checksum256 ticket) {
              std::make_tuple(get_self(), get_self(), asset(p.ram_payment, cfg.fee_symbol))).send();
    }
    action(permission_level{get_self(), "active"_n}, get_self(), "settleram"_n,
-          std::make_tuple(ticket)).send();
+          std::make_tuple(p.ticket)).send();
 }
 void key_contract::settleram(checksum256 ticket) {
    auto p = internal_payment(ticket); auto cfg = config();

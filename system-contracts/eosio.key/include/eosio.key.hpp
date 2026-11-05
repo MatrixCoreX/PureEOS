@@ -260,6 +260,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    void check_idle() const;
    uint32_t first_asset_bytes(uint64_t asset_id) const;
    void begin_payment(payment next);
+   void schedule_ram(const payment& next);
    payment internal_payment(checksum256 ticket) const;
    bool payment_notification(name from, name to, asset quantity, const std::string& memo);
    void send_out(uint64_t asset_id, name to, int64_t quantity, const std::string& memo);
