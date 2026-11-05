@@ -166,16 +166,21 @@ BOOST_AUTO_TEST_CASE(actual_native_creation_K1_R1_legacy_and_atomic_failures) {
    BOOST_CHECK(!is_protected_system_account(f.chain.control->db(),"eosio.failrm"_n));
    BOOST_TEST_MESSAGE("Real pinned WASM: native nonprivileged creation, K1/R1/legacy registration, explicit PowerUp signing and atomic failure paths; isolated controlled tester clock only.");
 }
-BOOST_AUTO_TEST_CASE(short_service_creation_preserves_real_auction_rules_and_registration) {
+BOOST_AUTO_TEST_CASE(short_service_creation_preserves_real_auction_and_contract_account_guards) {
    signup_real_fixture f;auto key=private_key_type::generate();const authority user(key.get_public_key());
    BOOST_CHECK_THROW(f.native(newaccount{"alice"_n,"usd"_n,user,user},"alice"_n),fc::exception);
    BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("usd"_n)));
    f.propose("usd"_n,10000);f.advance_to(f.creation().execute_after);BOOST_REQUIRE_NO_THROW(f.execute());
    BOOST_CHECK(is_protected_system_account(f.chain.control->db(),"usd"_n));
    BOOST_CHECK((!f.chain.control->db().get<account_metadata_object,by_name>("usd"_n).is_privileged()));
-   f.call("eosio.token"_n,"transfer"_n,"alice"_n,fc::mutable_variant_object()("from","alice")("to","usd")("quantity","1.0000 AIC")("memo","usdserviceaa-"+modern(key.get_public_key())));
-   BOOST_CHECK((f.chain.control->db().find<account_object,by_name>("usdserviceaa"_n)));
-   f.authorize_new("usdserviceaa"_n,key);
+   // The reviewed signup contract intentionally works only under eosio.signup.
+   // Native short-name creation must not weaken the contract's own account pin.
+   const auto alice=f.balance("alice"_n);
+   const auto transfer=fc::raw::pack(std::make_tuple("alice"_n,"usd"_n,asset::from_string("1.0000 AIC"),std::string("usdserviceaa-")+modern(key.get_public_key())));
+   BOOST_CHECK_EXCEPTION(f.push({action({permission_level{"alice"_n,"active"_n}},"eosio.token"_n,"transfer"_n,transfer)},"alice"_n),
+      eosio_assert_message_exception,[](const auto& e){return e.to_detail_string().find("reviewed eosio.signup account")!=std::string::npos;});
+   BOOST_CHECK_EQUAL(f.balance("alice"_n),alice);
+   BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("usdserviceaa"_n)));
    f.call("eosio"_n,"bidname"_n,"alice"_n,fc::mutable_variant_object()("bidder","alice")("newname","bid")("bid","1.0000 AIC"));
    BOOST_CHECK_THROW(f.propose("bid"_n,10000),fc::exception);
    f.propose("latebid"_n,10000);
