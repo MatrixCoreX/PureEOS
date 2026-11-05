@@ -1,13 +1,8 @@
-# Atomic RAM transfers: candidate, fees and qualification
+# Atomic RAM transfers: deployed TEST routes, fees and actual evidence
 
-2026-11-05 candidate WASM: `7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`.
-Remote isolated qualification passed 238 native checks and 26 SDK tests. **Public
-TEST deployment is still pending** native qualification and the complete
-1800-second reviewed proposal/BP-veto process. This document supersedes normal
-transfer instructions requiring prepaid fee credit, manual sponsored capacity
-or manual USD recipient opening in this branch; historical evidence stays intact.
+On2026-11-05,chain`09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532` deployed after fresh5–8 full1800-secondreviews/BPveto checks and separate irreversible executions. KEYWASM`7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`. Native58/KEY238/SDK26,public55transferchecks/12payments,signup19,4preview/4publicvariants and6receiptpages passed. HistoricalE006/237omittedactualfees/fundedREX; reviews1–4were cancelled and evidence retained.
 
-This qualification includes the actual `eosio.fees` WASM and funded REX at depth4. The historical E006 fixture omitted that route. The public creation attempt failed atomically and all four proposals were cancelled; its historical237 checks did not cover that path. The new candidate queues the native RAM purchase directly, removing one self-call without changing state, ABI, pricing or the global depth cap. It is not publicly deployed and requires fresh full reviews.
+KEYowner is unsatisfiable; active actually allows sealed eosio.code OR own code, with no dev/BP/external signing keys. Own-code-only prose was inaccurate; a separate correction preserves originalreview bytes and no authority mutation occurred. OrdinaryUSD/CNYowner references eosio.dev. Full bilingual verification lives under actualmachine20261105-public-atomic-key-r1.
 
 ## Principal, fees and storage
 
@@ -138,3 +133,22 @@ Old deposit clients, explorer fee modules, native cleos and released Android APK
 must not be declared compatible merely because some owner-proof wire fields are
 unchanged. New chain IDs, code pins, calls, indexing and interfaces still require
 their own updates and verification.
+
+## Actual irreversible payments and costs
+
+| Scenario | Full principal | Total AIC | Actual RAM | Retained work | Relay | Budget/bought bytes | Canonical receipt |
+|---|---|---:|---:|---:|---:|---:|---|
+| named-to-key first USD | 100.0000 USD | 0.0251 | 0.0083 | 0.0168 | 0.0000 | 3584/3637 | [c381c9f1b1e8…](https://aic-test.matrixai.one/#/transaction/c381c9f1b1e8da6694727a94a063620c42b28e4eb629d2f0521fee7d8d4e99c4?block=17038) |
+| named-to-key first AIC | 20.0000 AIC | 0.0182 | 0.0014 | 0.0168 | 0.0000 | 512/576 | [ee1ef967d8b1…](https://aic-test.matrixai.one/#/transaction/ee1ef967d8b14c92c929416e0188b7540d60412fcacd131186837035df093361?block=17058) |
+| named-to-key first CNY | 100.0000 CNY | 0.0228 | 0.0060 | 0.0168 | 0.0000 | 2560/2617 | [cbd04baa5ebd…](https://aic-test.matrixai.one/#/transaction/cbd04baa5ebd4416ddc43e1a2f16d81a4055882149fc20bd6327d4441f8cf1ea?block=17086) |
+| key-to-key AIC new | 3.0000 AIC | 0.0294 | 0.0037 | 0.0189 | 0.0068 | 1536/1596 | [82495ef2b3bf…](https://aic-test.matrixai.one/#/transaction/82495ef2b3bfbc7832d9a9289eb679119631670f0350eee5285f7d690261d2c5?block=17099) |
+| key-to-key USD new | 2.0000 USD | 0.0264 | 0.0014 | 0.0189 | 0.0061 | 512/576 | [c6403622508b…](https://aic-test.matrixai.one/#/transaction/c6403622508b3ef8c3c5224cc5d1c5a693366f34fbb2701a2f8cfce23ee33d55?block=17124) |
+| key-to-key CNY new | 2.0000 CNY | 0.0264 | 0.0014 | 0.0189 | 0.0061 | 512/576 | [e2d91953fc14…](https://aic-test.matrixai.one/#/transaction/e2d91953fc146231a54f524425b2e06b20f9b4e249969c0459a971324bbe062c?block=17148) |
+| key-to-key AIC existing | 1.0000 AIC | 0.0246 | 0.0000 | 0.0189 | 0.0057 | 0/0 | [891aee2216b1…](https://aic-test.matrixai.one/#/transaction/891aee2216b1bcef12f2c2ad6a2327fc5c8b54f13db86576a6d5ec9d00ee80c2?block=17197) |
+| key-to-named AIC unopened | 1.0000 AIC | 0.0319 | 0.0014 | 0.0231 | 0.0074 | 512/576 | [ec052f92feb1…](https://aic-test.matrixai.one/#/transaction/ec052f92feb16356fac2faca0c3ba004e000f252a355050a32e655d1a2d00d3a?block=17229) |
+| key-to-named USD unopened | 1.0000 USD | 0.0319 | 0.0014 | 0.0231 | 0.0074 | 512/576 | [3fdb6932b173…](https://aic-test.matrixai.one/#/transaction/3fdb6932b1737da209fc2940af414ea02e86af3e7c97894645155e1bcaf7f29c?block=17247) |
+| key-to-named CNY unopened | 1.0000 CNY | 0.0319 | 0.0014 | 0.0231 | 0.0074 | 512/576 | [7072af411aad…](https://aic-test.matrixai.one/#/transaction/7072af411aade0fba37900052a71208238725392cd12bb5167fe2ccd7f250b38?block=17271) |
+| key-to-named USD existing | 0.5000 USD | 0.0301 | 0.0000 | 0.0231 | 0.0070 | 0/0 | [6e977f65d39b…](https://aic-test.matrixai.one/#/transaction/6e977f65d39b51864fee96f9516e8be403d93ec8e283d730eedcc3402af188c6?block=17294) |
+| named-to-USD-only key | 2.0000 USD | 0.0205 | 0.0037 | 0.0168 | 0.0000 | 1536/1596 | [2fc70567bd11…](https://aic-test.matrixai.one/#/transaction/2fc70567bd11fd8b24bdd96823acfc178314aa1f630eeeb3f363f9089bfd795b?block=17320) |
+
+These observed transaction costs are not fixed quotes. Fullprincipal/nativeRAM/retainedwork/relay/caps/rollback were individually checked. OldAPK/legacycleos deposit shortcuts are not qualified here; use the newSDK. Keyledger isK1; signup supports the listedK1/R1/legacy formats.

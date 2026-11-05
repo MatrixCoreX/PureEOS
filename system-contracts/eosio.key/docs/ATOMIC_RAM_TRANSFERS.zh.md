@@ -1,12 +1,8 @@
-# 自动购 RAM 转账：候选实现、费用和验证
+# 自动购 RAM 转账：已部署 TEST 的流程、费用与实测
 
-2026-11-05：本分支重新开发的候选 WASM 为
-`7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`。
-远端隔离链已通过 238 项原生检查、26 项 SDK 测试，**尚未部署公开测试网**。
-新链创建/部署还须通过原生资格验证、完整 TEST 1800 秒提案公示及 BP 否决检查。
-本文件取代本分支旧文档中正常转账要求预存手续费、人工 regtoken/RAM 补充或 USD 收款账号手动 open 的说明；旧链及历史证据不作改写。
+2026-11-05已在新链`09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532`通过新5–8完整1800秒公示、BP否决检查和分别不可逆执行部署。KEYWASM`7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`。native58/KEY238/SDK26，公开转账55检查/12笔、注册19检查、预览4组/公网4组及6个收据页通过。旧E006/237夹具遗漏真实费用/REX，原1–4已取消，原证据保留。
 
-本轮补齐真实 `eosio.fees` 合约和已注资 REX 的 4 层嵌套测试。旧 E006 候选遗漏该路径，公开创建执行失败后，四项提案已全部取消；它的历史 237 项结果不代表覆盖该路径。新候选直接排入原生 RAM 购买，省去额外自调用；状态、ABI、费用公式和全局深度上限不变。新候选尚未公开部署，必须重新完整公示。
+KEYowner封印，active实际为封印的eosio代码或自身代码，无dev/BP/外部密钥。原“仅自身code”说明不准确，已另附更正，未修改原审核文件或链上权限。普通USD/CNYowner绑定eosio.dev账号权限。完整验收见实际机器目录20261105-public-atomic-key-r1的中英报告。
 
 ## 本金、费用与 RAM 的关系
 
@@ -58,7 +54,7 @@ F 必须够本次费用且不超过已签 `max_fee`。SDK `nativeDepositActions`
 发送账号自己承担这笔原生交易的 CPU/NET。无商业中继服务费。
 
 直接向 KEY 发旧 `fee`、PK1/PK2 附言的独立转账会整体失败，不能悄悄退回旧预存模式。
-旧原生 cleos 的命名→公钥封装尚未适配三个动作；应使用本候选 SDK 构造后由合法钱包签名。
+旧原生 cleos 的命名→公钥封装尚未适配三个动作；应使用本分支新版 SDK 构造后由合法钱包签名。
 
 ## 2. 公钥 → 公钥
 
@@ -112,3 +108,22 @@ KEY 仍非特权、owner 封印、active 仅代码权限，无 dev/BP 直接改�
 
 历史命名充值接口、浏览器费率模块、原生 cleos 和已发 Android APK不能因为签名线格式
 部分兼容就宣称全部适配；新链的调用、Chain ID、代码摘要、历史索引和界面仍须更新并验证。
+
+## 本轮不可逆交易与真实账单
+
+| 场景 | 完整本金 | 实扣AIC | 实际RAM支出 | 留存执行费 | 中继费 | 预算/实购字节 | 不可逆收据 |
+|---|---|---:|---:|---:|---:|---:|---|
+| 命名→公钥 / USD首次准入 | 100.0000 USD | 0.0251 | 0.0083 | 0.0168 | 0.0000 | 3584/3637 | [c381c9f1b1e8…](https://aic-test.matrixai.one/#/transaction/c381c9f1b1e8da6694727a94a063620c42b28e4eb629d2f0521fee7d8d4e99c4?block=17038) |
+| 命名→公钥 / 新AIC余额 | 20.0000 AIC | 0.0182 | 0.0014 | 0.0168 | 0.0000 | 512/576 | [ee1ef967d8b1…](https://aic-test.matrixai.one/#/transaction/ee1ef967d8b14c92c929416e0188b7540d60412fcacd131186837035df093361?block=17058) |
+| 命名→公钥 / CNY首次准入 | 100.0000 CNY | 0.0228 | 0.0060 | 0.0168 | 0.0000 | 2560/2617 | [cbd04baa5ebd…](https://aic-test.matrixai.one/#/transaction/cbd04baa5ebd4416ddc43e1a2f16d81a4055882149fc20bd6327d4441f8cf1ea?block=17086) |
+| 公钥→公钥 / 新公钥AIC | 3.0000 AIC | 0.0294 | 0.0037 | 0.0189 | 0.0068 | 1536/1596 | [82495ef2b3bf…](https://aic-test.matrixai.one/#/transaction/82495ef2b3bfbc7832d9a9289eb679119631670f0350eee5285f7d690261d2c5?block=17099) |
+| 公钥→公钥 / 新USD余额 | 2.0000 USD | 0.0264 | 0.0014 | 0.0189 | 0.0061 | 512/576 | [c6403622508b…](https://aic-test.matrixai.one/#/transaction/c6403622508b3ef8c3c5224cc5d1c5a693366f34fbb2701a2f8cfce23ee33d55?block=17124) |
+| 公钥→公钥 / 新CNY余额 | 2.0000 CNY | 0.0264 | 0.0014 | 0.0189 | 0.0061 | 512/576 | [e2d91953fc14…](https://aic-test.matrixai.one/#/transaction/e2d91953fc146231a54f524425b2e06b20f9b4e249969c0459a971324bbe062c?block=17148) |
+| 公钥→公钥 / 已有AIC余额 | 1.0000 AIC | 0.0246 | 0.0000 | 0.0189 | 0.0057 | 0/0 | [891aee2216b1…](https://aic-test.matrixai.one/#/transaction/891aee2216b1bcef12f2c2ad6a2327fc5c8b54f13db86576a6d5ec9d00ee80c2?block=17197) |
+| 公钥→命名 / 首次AIC余额 | 1.0000 AIC | 0.0319 | 0.0014 | 0.0231 | 0.0074 | 512/576 | [ec052f92feb1…](https://aic-test.matrixai.one/#/transaction/ec052f92feb16356fac2faca0c3ba004e000f252a355050a32e655d1a2d00d3a?block=17229) |
+| 公钥→命名 / 首次USD余额 | 1.0000 USD | 0.0319 | 0.0014 | 0.0231 | 0.0074 | 512/576 | [3fdb6932b173…](https://aic-test.matrixai.one/#/transaction/3fdb6932b1737da209fc2940af414ea02e86af3e7c97894645155e1bcaf7f29c?block=17247) |
+| 公钥→命名 / 首次CNY余额 | 1.0000 CNY | 0.0319 | 0.0014 | 0.0231 | 0.0074 | 512/576 | [7072af411aad…](https://aic-test.matrixai.one/#/transaction/7072af411aade0fba37900052a71208238725392cd12bb5167fe2ccd7f250b38?block=17271) |
+| 公钥→命名 / 已有USD余额 | 0.5000 USD | 0.0301 | 0.0000 | 0.0231 | 0.0070 | 0/0 | [6e977f65d39b…](https://aic-test.matrixai.one/#/transaction/6e977f65d39b51864fee96f9516e8be403d93ec8e283d730eedcc3402af188c6?block=17294) |
+| 命名→仅持USD的新公钥 | 2.0000 USD | 0.0205 | 0.0037 | 0.0168 | 0.0000 | 1536/1596 | [2fc70567bd11…](https://aic-test.matrixai.one/#/transaction/2fc70567bd11fd8b24bdd96823acfc178314aa1f630eeeb3f363f9089bfd795b?block=17320) |
+
+这些是具体交易的观察值，不是固定报价；本金、RAM购入、执行留存、中继收益和上限/回滚均逐笔核对。旧APK/旧cleos充值快捷封装没有本轮适配资格；使用本分支新SDK。公钥账本目前K1，注册支持上述K1/R1/legacy格式。

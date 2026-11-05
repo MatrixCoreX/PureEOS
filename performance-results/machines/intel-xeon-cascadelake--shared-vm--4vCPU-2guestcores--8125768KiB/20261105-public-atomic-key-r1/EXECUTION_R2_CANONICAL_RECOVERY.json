@@ -1,0 +1,85 @@
+{
+  "status": "KEY_EXECUTION_IRREVERSIBLE_VERIFIED_DO_NOT_REPLAY",
+  "UTC": "2026-11-05T07:32:08.535746+00:00",
+  "entry": {
+    "target": "eosio.key",
+    "proposal_id": 5,
+    "canonical_receipt": {
+      "transaction_id": "552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b",
+      "block_num": 15463,
+      "block_id": "00003c67b011e3650e946e26ad91a1f95dc9b7429f9dedee9ff75fd8d3e7024e",
+      "observed_lib": 16717,
+      "status": "executed",
+      "timestamp": "2026-11-05T07:21:18.000",
+      "cpu_usage_us": 9758,
+      "net_usage_words": 6259
+    },
+    "review_elapsed_chain_seconds": 1883.0,
+    "code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+    "raw_ABI_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+    "ram_quota": 2191907,
+    "ram_usage": 1760312,
+    "permissions": [
+      {
+        "perm_name": "active",
+        "parent": "owner",
+        "required_auth": {
+          "threshold": 1,
+          "keys": [],
+          "accounts": [
+            {
+              "permission": {
+                "actor": "eosio",
+                "permission": "eosio.code"
+              },
+              "weight": 1
+            },
+            {
+              "permission": {
+                "actor": "eosio.key",
+                "permission": "eosio.code"
+              },
+              "weight": 1
+            }
+          ],
+          "waits": []
+        },
+        "linked_actions": []
+      },
+      {
+        "perm_name": "owner",
+        "parent": "",
+        "required_auth": {
+          "threshold": 1,
+          "keys": [],
+          "accounts": [],
+          "waits": []
+        },
+        "linked_actions": []
+      }
+    ],
+    "privileged": false,
+    "recovered_after_waiter_timeout": true
+  },
+  "initializer_matches_review": true,
+  "authority_schema_correction": "Native authority versions1/2 preserve sealed eosio@eosio.code OR own-code active; no external keys/dev/BPs. Original human own-code-only wording was inaccurate; exact formal version and core hash never changed. No on-chain authority mutation performed.",
+  "native_RAM_purchase": [
+    {
+      "payer": "eosio.key",
+      "receiver": "eosio.key",
+      "quantity": "4.9628 AIC",
+      "bytes": "2190507",
+      "ram_bytes": "2190507",
+      "fee": "0.0249 AIC"
+    }
+  ],
+  "remaining_proposal_ids": [
+    6,
+    7,
+    8
+  ],
+  "four_prior_CPU_rejections": "Same immutable ID; preserved native-failures and raw controller failure. Canonical receipt ultimately committed at9758us without any cap or protocol change. Original waiter ended before its inclusion.",
+  "original_failed_controller_SHA256": "ca85b1f42ac3846ec039b99efba592fac797a58b7de1615084d4f877f5f6e637",
+  "immutable_packet_SHA256": "3ac068c2a4d6ec3e432869f72e6525cbbf0fed7f4115c4a9821fd615e10ad733",
+  "scope": "Positive canonical receipt recovery only; no transaction submission, resigning, account or balance changes"
+}

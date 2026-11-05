@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T08:16:26.749894+00:00",
+  "assets": {
+    "eosio.token": {
+      "supply": "100000000.0000 AIC",
+      "max_supply": "2100000000.0000 AIC",
+      "issuer": "eosio"
+    },
+    "usd": {
+      "supply": "10000.0000 USD",
+      "max_supply": "1000000.0000 USD",
+      "issuer": "usd"
+    },
+    "cny": {
+      "supply": "10000.0000 CNY",
+      "max_supply": "1000000.0000 CNY",
+      "issuer": "cny"
+    }
+  }
+}
