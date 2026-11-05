@@ -1,0 +1,7 @@
+{
+  "commit": "f6c08f7e05dd8254fd80b3fea297b8ddfc289a3e",
+  "file": "/opt/pureeos-dev-account-genesis-20261105-r1/source/unittests/pureeos_signup_real_tests.cpp",
+  "before_sha256": "da2689942dc6feefe87020dc78a44be65d15b492953af9a4ff331eba97966e05",
+  "after_sha256": "56740998fa8246fa765873839d0b77c196fd5f6d752c36fb2b19004ca85ab73d",
+  "scope": "Match explicit resource payer owner/active permission to the selected actual signer; source core remains1f883392"
+}

@@ -1,0 +1,216 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T05:01:16.780663+00:00",
+  "chain_id": "8d2d886c3d46a91245a78f73d8b37b7b4cbc1cd8b3e5e6fdbe7ca58c08203da7",
+  "transaction_id": "3df918f6834146bb9307fe3b289121a939fd209769e1eea2696da0d493a5ec8f",
+  "canonical_block_id": "0000015fb9da2bf6de5c90ab01a954908e712f641df883305264e6eabb9abeeb",
+  "block_num": 351,
+  "native_state": {
+    "proposal_id": 4,
+    "pending": true,
+    "outcome": 0,
+    "target": "eosio.signup",
+    "resource_payer": "gptgenesisbp",
+    "ram_payment": 10000,
+    "authority_version": 1,
+    "code_bytes": 28690,
+    "abi_bytes": 171,
+    "review_seconds": 1800,
+    "code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+    "abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+    "review_document_hash": "6c6bc937d642e490db9a8088154ce9e4b4495b5b037c2e7b80d85594b8008f9d",
+    "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "proposed_at": "2026-11-05T05:01:16.000",
+    "execute_after": "2026-11-05T05:31:16.000",
+    "completed_at": "1970-01-01T00:00:00.000",
+    "proposal_voters": [
+      "gptgenesisbp"
+    ],
+    "vetoes": [],
+    "proposal_exists": true,
+    "feature_activated": true,
+    "sealed": true,
+    "developer": "eosio.dev",
+    "head_block_num": 353,
+    "head_block_id": "000001610d191d4cc90f72e2dee6f588a5c354b362a97204caea8707ac7a7c48",
+    "head_block_time": "2026-11-05T05:01:17.000",
+    "latest_proposal_id": 4,
+    "pending_count": 4,
+    "max_pending_proposals": 4,
+    "pending_proposals": [
+      {
+        "proposal_id": 1,
+        "pending": true,
+        "outcome": 0,
+        "target": "eosio.key",
+        "resource_payer": "gptgenesisbp",
+        "ram_payment": 10000,
+        "authority_version": 1,
+        "code_bytes": 28690,
+        "abi_bytes": 171,
+        "review_seconds": 1800,
+        "code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+        "abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+        "review_document_hash": "6c6bc937d642e490db9a8088154ce9e4b4495b5b037c2e7b80d85594b8008f9d",
+        "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "proposed_at": "2026-11-05T05:01:16.000",
+        "execute_after": "2026-11-05T05:31:16.000",
+        "completed_at": "1970-01-01T00:00:00.000",
+        "proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "vetoes": [],
+        "effective_proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "effective_vetoes": [],
+        "excluded_banned_voters": [],
+        "effective_voter_count": 1,
+        "effective_veto_count": 0,
+        "required_vetoes": 1,
+        "review_mature": false
+      },
+      {
+        "proposal_id": 2,
+        "pending": true,
+        "outcome": 0,
+        "target": "usd",
+        "resource_payer": "gptgenesisbp",
+        "ram_payment": 10000,
+        "authority_version": 1,
+        "code_bytes": 28690,
+        "abi_bytes": 171,
+        "review_seconds": 1800,
+        "code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+        "abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+        "review_document_hash": "6c6bc937d642e490db9a8088154ce9e4b4495b5b037c2e7b80d85594b8008f9d",
+        "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "proposed_at": "2026-11-05T05:01:16.000",
+        "execute_after": "2026-11-05T05:31:16.000",
+        "completed_at": "1970-01-01T00:00:00.000",
+        "proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "vetoes": [],
+        "effective_proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "effective_vetoes": [],
+        "excluded_banned_voters": [],
+        "effective_voter_count": 1,
+        "effective_veto_count": 0,
+        "required_vetoes": 1,
+        "review_mature": false
+      },
+      {
+        "proposal_id": 3,
+        "pending": true,
+        "outcome": 0,
+        "target": "cny",
+        "resource_payer": "gptgenesisbp",
+        "ram_payment": 10000,
+        "authority_version": 1,
+        "code_bytes": 28690,
+        "abi_bytes": 171,
+        "review_seconds": 1800,
+        "code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+        "abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+        "review_document_hash": "6c6bc937d642e490db9a8088154ce9e4b4495b5b037c2e7b80d85594b8008f9d",
+        "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "proposed_at": "2026-11-05T05:01:16.000",
+        "execute_after": "2026-11-05T05:31:16.000",
+        "completed_at": "1970-01-01T00:00:00.000",
+        "proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "vetoes": [],
+        "effective_proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "effective_vetoes": [],
+        "excluded_banned_voters": [],
+        "effective_voter_count": 1,
+        "effective_veto_count": 0,
+        "required_vetoes": 1,
+        "review_mature": false
+      },
+      {
+        "proposal_id": 4,
+        "pending": true,
+        "outcome": 0,
+        "target": "eosio.signup",
+        "resource_payer": "gptgenesisbp",
+        "ram_payment": 10000,
+        "authority_version": 1,
+        "code_bytes": 28690,
+        "abi_bytes": 171,
+        "review_seconds": 1800,
+        "code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+        "abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+        "review_document_hash": "6c6bc937d642e490db9a8088154ce9e4b4495b5b037c2e7b80d85594b8008f9d",
+        "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "proposed_at": "2026-11-05T05:01:16.000",
+        "execute_after": "2026-11-05T05:31:16.000",
+        "completed_at": "1970-01-01T00:00:00.000",
+        "proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "vetoes": [],
+        "effective_proposal_voters": [
+          "gptgenesisbp"
+        ],
+        "effective_vetoes": [],
+        "excluded_banned_voters": [],
+        "effective_voter_count": 1,
+        "effective_veto_count": 0,
+        "required_vetoes": 1,
+        "review_mature": false
+      }
+    ],
+    "effective_proposal_voters": [
+      "gptgenesisbp"
+    ],
+    "effective_vetoes": [],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 1,
+    "effective_veto_count": 0,
+    "required_vetoes": 1,
+    "execution_blocked_no_electorate": false
+  },
+  "snapshot_block": {
+    "timestamp": "2026-11-05T05:01:17.000",
+    "producer": "gptgenesisbp",
+    "confirmed": 0,
+    "previous": "000001604b373366b7e25363d8f4e35107fdb0a52fefa60575fab1b07bacd5b9",
+    "transaction_mroot": "0000000000000000000000000000000000000000000000000000000000000000",
+    "action_mroot": "e769c16195116867aeb00a9670861dab29227b4653d5b6841f1b2c79b2b428d7",
+    "schedule_version": 2147483648,
+    "new_producers": null,
+    "finality_extension": {
+      "qc_claim": {
+        "block_num": 352,
+        "is_strong_qc": true
+      }
+    },
+    "producer_signature": "SIG_K1_KfxwTG4RuKtfqTPfdmMZw7VDmSXy2NTDRp39a7oQ7C9zPM6rHncamQMh4suDVmJ1LFKqWjSddhu4XgJVzWro6uxttYJr66",
+    "transactions": [],
+    "qc_extension": {
+      "qc": {
+        "block_num": 352,
+        "active_policy_sig": {
+          "strong_votes": "1",
+          "sig": "SIG_BLS_fl9UvEooBAsOcmLiXzd9iaOx1ofmmrjUk-IepYdMM8Q7gQzkMFpgBq2oG4JsIV4YXAWoDJ2KKBpqX8dXQirzDlNevrP_6eVVw0DzfgF2rBHul2h1KjaGNL7Ukdqpb8MVnDYNI9qekDemh_ZNOClqwCGXftA3YOtYh5G12NGOtDSGQdE6a7ixV13zh3v65ikD-RVMbqYcL4gZMBTKLoNC84D2NHvYyCaDjc_9yNvOGPT9MlZ5pw1jgF0pBN2_OrgU2Awe1A"
+        }
+      }
+    },
+    "id": "000001610d191d4cc90f72e2dee6f588a5c354b362a97204caea8707ac7a7c48",
+    "block_num": 353,
+    "ref_block_prefix": 3799125961
+  },
+  "scope": "Private canary continuation; four same-transaction proposals and actual native HTTP RPC shape; no executions, no public chain or real user mutation; signup artifact reused only for RPC schema test"
+}
