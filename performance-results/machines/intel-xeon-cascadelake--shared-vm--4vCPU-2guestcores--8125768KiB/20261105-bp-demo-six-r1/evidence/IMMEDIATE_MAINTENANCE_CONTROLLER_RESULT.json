@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T13:56:48.652021+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "user_instruction": "第六个直接挂维护吧",
+  "maintenance_request_irreversible": true,
+  "maintenance_effective": true,
+  "resumed_campaign_unit": "pureeos-bp-demo-six-campaign-r5-20261105.service",
+  "phase_scope": "Only the waiting controller was replaced. No original node was stopped, no successful enrollment or maintenance transaction was replayed. Fault-five gates continue without a sixth-node production prerequisite."
+}

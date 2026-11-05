@@ -38,12 +38,13 @@ try:
   if(R/'JOIN_PROGRESS.json').exists():assert read('JOIN_PROGRESS.json')['status']!='NEEDS_RECONCILIATION','Join requires reconciliation, no fault injected'
   assert time.monotonic()<deadline;time.sleep(5)
  assert read('JOIN_RESULT.json')['status']=='PASS'
- report('WAITING_REAL_JOINT_DUTY_AND_THREE_MAINTENANCE_TURNS');deadline=time.monotonic()+21600
+ assert plan.get('maintenance_mode')=='immediate-owner-request'and read('MAINTENANCE_REQUEST.json')['status']=='PASS'
+ report('WAITING_REAL_JOINT_DUTY_OF_FIVE_FAULT_TARGETS');deadline=time.monotonic()+21600
  while True:
   s=snapshot();p,f=members(s);proofs=read('DUTY_PROOFS.json')if(R/'DUTY_PROOFS.json').exists()else{};turns=proofs.get('complete_personal_production_turns',{})
   on=targets&p&f
-  report('WAITING_REAL_JOINT_DUTY_AND_THREE_MAINTENANCE_TURNS',joint_fault_targets=sorted(on),completed_production_turns=turns,head=s['info']['head_block_num'],LIB=s['info']['last_irreversible_block_num'])
-  if len(on)==5 and all(turns.get(n,0)>=1 for n in targets)and turns.get(maint,0)>=3 and len(p)==len(f)==21 and p==f and s['finalizers']['active_finalizer_policy']['threshold']==15 and s['finalizers'].get('pending_finalizer_policy')is None and all(not r['zero_windows']for r in s['candidates']if r['owner']in targets)and fresh_window(s):
+  report('WAITING_REAL_JOINT_DUTY_OF_FIVE_FAULT_TARGETS',joint_fault_targets=sorted(on),completed_production_turns=turns,head=s['info']['head_block_num'],LIB=s['info']['last_irreversible_block_num'])
+  if len(on)==5 and all(turns.get(n,0)>=1 for n in targets)and len(p)==len(f)==21 and p==f and s['finalizers']['active_finalizer_policy']['threshold']==15 and s['finalizers'].get('pending_finalizer_policy')is None and all(not r['zero_windows']for r in s['candidates']if r['owner']in targets)and fresh_window(s):
    assert not any(r['banned']for r in s['candidates'])
    votes={v['description']:v for v in s['finalizers'].get('last_tracked_votes',[])};remaining=f-targets
    strong=[name for name in remaining if name in votes and votes[name]['is_vote_strong']and votes[name]['voted_for_block_num']>=s['info']['last_irreversible_block_num']-12]
@@ -54,7 +55,7 @@ try:
     latest_votes={v['description']:v for v in again['finalizers'].get('last_tracked_votes',[])};remaining=af-targets
     strong=[name for name in remaining if name in latest_votes and latest_votes[name]['is_vote_strong']and latest_votes[name]['voted_for_block_num']>=again['info']['last_irreversible_block_num']-12]
     if len(strong)!=16 or any(r['zero_windows']for r in again['candidates']if r['owner']in targets)or not fresh_window(again):time.sleep(2);continue
-    save('PRE_STOP.json',{'status':'PASS','snapshot':again,'new_node_sync':health,'production_proofs':proofs,'remaining_healthy_finalizers':sorted(remaining),'remaining_strong_votes':strong,'native_threshold':15,'scope':'All five have genuine irreversible production and current native proposer/finalizer duties. Sixth has at least three completed personal turns.'});break
+    save('PRE_STOP.json',{'status':'PASS','snapshot':again,'new_node_sync':health,'production_proofs':proofs,'remaining_healthy_finalizers':sorted(remaining),'remaining_strong_votes':strong,'native_threshold':15,'scope':'All five have genuine irreversible production and current native proposer/finalizer duties. User superseded the sixth-node production prerequisite with immediate owner-authorized maintenance; no production-turn prerequisite applies to that node.'});break
   assert time.monotonic()<deadline,'Real joint duty gate has not occurred; no synthetic admission or altered timing'
   time.sleep(5)
  units=[nodes[n]['unit']for n in plan['fault_targets']];assert len(units)==5 and all(u.startswith('pureeos-bp-demo-')for u in units)
@@ -92,11 +93,7 @@ try:
  for n in targets:
   b=next(x for x in s['bonds']if x['owner']==n);assert int(b['settled'])==100000000
  save('FORFEITURES.json',{'status':'PASS','settlements':settlements,'escrow_atoms':balance('eosio.bond'),'locked_pool_atoms':balance('eosio.bslash'),'bond_configuration':s['bond_config']})
- proofs=read('DUTY_PROOFS.json');assert proofs['complete_personal_production_turns'][maint]>=3
- report('REQUESTING_OWNER_AUTHORIZED_MAINTENANCE');assert state(nodes[maint]['unit'])['ActiveState']=='active'
- with Wallet()as wallet:
-  wallet.import_key(read('private/keys.json')[maint]['account']);a=sysact('setmaint',maint,{'producer':maint,'maintenance':True});a['authorization'].insert(0,{'actor':BANK,'permission':'active'})
-  proof=wallet.send('maintain-'+maint,[a]);save('MAINTENANCE_REQUEST.json',{'status':'PASS','producer':maint,'canonical_receipt':proof,'completed_turns_before_request':proofs['complete_personal_production_turns'][maint],'production_proofs':proofs['proofs'][maint]})
+ assert read('MAINTENANCE_REQUEST.json')['status']=='PASS'and state(nodes[maint]['unit'])['ActiveState']=='active'
  report('WAITING_NATIVE_MAINTENANCE_HANDOVER');deadline=time.monotonic()+10800
  while True:
   s=snapshot();p,f=members(s);m=next((x for x in s['maintenance']if x['owner']==maint),None)
@@ -104,7 +101,8 @@ try:
   assert state(nodes[maint]['unit'])['ActiveState']=='active','Maintenance demonstration node stays online'
   report('WAITING_NATIVE_MAINTENANCE_HANDOVER',maintenance=m,head=s['info']['head_block_num'],LIB=s['info']['last_irreversible_block_num'])
   if m and m['state']==2 and 0<int(m['effective_block'])<=s['info']['last_irreversible_block_num']and maint not in p|f|pending:
-   save('MAINTENANCE_EFFECTIVE.json',{'status':'PASS','producer':maint,'native_state':m,'snapshot':s,'process_kept_online':state(nodes[maint]['unit'])});break
+   if not(R/'MAINTENANCE_EFFECTIVE.json').exists():save('MAINTENANCE_EFFECTIVE.json',{'status':'PASS','producer':maint,'native_state':m,'snapshot':s,'process_kept_online':state(nodes[maint]['unit'])})
+   break
   assert time.monotonic()<deadline,'Maintenance native handover not yet effective; node must remain online';time.sleep(5)
  report('VERIFYING_FINAL_DEMO_STATE');s=snapshot();p,f=members(s);assert len(p)==len(f)==21 and s['finalizers']['active_finalizer_policy']['threshold']==15
  assert len(table('producersv2'))==30 and sum(bool(x['banned'])for x in s['candidates'])==5

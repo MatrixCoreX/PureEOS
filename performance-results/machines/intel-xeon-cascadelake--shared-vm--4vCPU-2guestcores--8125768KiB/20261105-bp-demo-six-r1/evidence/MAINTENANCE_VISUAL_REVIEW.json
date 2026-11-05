@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T14:01:07.592057+00:00",
+  "scope": "Both actual public Chrome screenshots opened and visually reviewed. Desktop row shows montrealmila maintenance checkpoint56840 and10000AIC bond; both layouts show1maintenance/29eligible/30registered/0bans without visible error notices. Mobile table remains horizontally scrollable.",
+  "files": {
+    "immediate-maintenance-public-zh-dark-1440.png": "16a6f56038cfb7e501b85d4d86ec5ca7b21e73e7d27022233b4962d45f36f737",
+    "immediate-maintenance-public-en-light-390.png": "99de4f99fbfa1302ac5a53069eaf944d2218ca581ac95e7c94697e4230e68ea3"
+  }
+}

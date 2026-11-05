@@ -1,0 +1,784 @@
+{
+  "status": "OBSERVATION_ONLY_NOT_CAPACITY_QUALIFIED",
+  "UTC": "2026-11-05T13:38:10.116171+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 55406,
+    "last_irreversible_block_num": 55386,
+    "last_irreversible_block_id": "0000d85a1cb804571f41206c4d05cb6b14e4b2750f4cf7f23f5e20a72375c73a",
+    "head_block_id": "0000d86e67585f293b1bd01ef234b3f55ab675558e69ee48898298cdd4cdc4db",
+    "head_block_time": "2026-11-05T13:38:08.500",
+    "head_block_producer": "bytedancelab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 55406,
+    "fork_db_head_block_id": "0000d86e67585f293b1bd01ef234b3f55ab675558e69ee48898298cdd4cdc4db",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409534770",
+    "total_net_weight": 236030000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-05T13:37:56.500"
+  },
+  "rotation": {
+    "version": 2,
+    "stage": 1,
+    "active": [
+      "openaiclouds",
+      "gptgenesisbp",
+      "canadamilaai",
+      "parisinriaai",
+      "seoulkaistai",
+      "tokyorikenai",
+      "londonucllab",
+      "zurichethlab",
+      "singaporentu",
+      "moonshotlabs",
+      "minimaxcloud",
+      "bytedancelab",
+      "baiduaiworks",
+      "tencentcloud",
+      "alibabacloud",
+      "nvidiaclouds",
+      "stabilityhub",
+      "perplexityai",
+      "cohereclouds",
+      "mistralcloud",
+      "deepmindlabs"
+    ],
+    "target": [
+      "gptgenesisbp",
+      "canadamilaai",
+      "parisinriaai",
+      "seoulkaistai",
+      "tokyorikenai",
+      "londonucllab",
+      "zurichethlab",
+      "singaporentu",
+      "moonshotlabs",
+      "minimaxcloud",
+      "bytedancelab",
+      "baiduaiworks",
+      "tencentcloud",
+      "alibabacloud",
+      "nvidiaclouds",
+      "stabilityhub",
+      "perplexityai",
+      "cohereclouds",
+      "mistralcloud",
+      "deepmindlabs",
+      "anthropiclab"
+    ],
+    "incoming": "anthropiclab",
+    "outgoing": "openaiclouds",
+    "proposer_version": 88,
+    "finalizer_generation": 89,
+    "proposer_digest": "1fc62d3cfbbfb60596c6b14dc959ed54c689715416b4acd537383fb1be418a2a",
+    "finalizer_digest": "3a7555fef6b22bd6fe5f96072f669800a90403de083a6e40ad6b6d601082f605",
+    "next_attempt_slot": 1694402401,
+    "observation_start": 1694401632,
+    "observation_end": 1694401883,
+    "produced_mask": 2097151,
+    "observation_block": 55190,
+    "completed": 87,
+    "stalled_windows": 1,
+    "growth_start_slot": 1694341313,
+    "capacity": 210,
+    "snapshot_capacity": 210,
+    "ranked_count": 30,
+    "snapshot_epoch": 88,
+    "published_epoch": 88,
+    "queue_tail": 121,
+    "scan_end_ticket": 120,
+    "ranking": 0,
+    "rank_started": 1,
+    "selecting": 0,
+    "rank_cursor": "340282366920881462407168532884691330752",
+    "penalty_epoch": 1,
+    "last_slot": 1694402176,
+    "window_start": 0,
+    "penalty_paused": 0,
+    "window_produced": 1,
+    "window_policy": 87,
+    "window_members": [],
+    "pending_windows": [
+      {
+        "owner": "baiduaiworks",
+        "start": 1694402148,
+        "policy_version": 87,
+        "produced": 1
+      }
+    ],
+    "failed_admissions": 0,
+    "total_banned": 0,
+    "blocked": 0,
+    "retry_outgoing": ""
+  },
+  "candidates": [
+    {
+      "owner": "alibabacloud",
+      "rank": "340282366920573402199014727749773112464",
+      "previous_rank": "340282366920573402199014727749773112464",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 114,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "anthropiclab",
+      "rank": "340282366920652354411266493597324954736",
+      "previous_rank": "340282366920652354411266493597324954736",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 121,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "baiduaiworks",
+      "rank": "340282366920457003207394480867296797056",
+      "previous_rank": "340282366920457003207394480867296797056",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 112,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "berlintulabs",
+      "rank": "340282366920600518691897758955019538304",
+      "previous_rank": "340282366920600518691897758955019538304",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 96,
+      "penalty_epoch": 1,
+      "zero_windows": 1,
+      "banned": 0,
+      "evidence_slots": [
+        1694398896,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        83,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "bytedancelab",
+      "rank": "340282366920708985713433155531057679472",
+      "previous_rank": "340282366920708985713433155531057679472",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 110,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "rank": "340282366920293380385125705715232115936",
+      "previous_rank": "340282366920293380385125705715232115936",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 95,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cohereclouds",
+      "rank": "340282366920413284535448369061939286912",
+      "previous_rank": "340282366920413284535448369061939286912",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 118,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepmindlabs",
+      "rank": "340282366920797530251792045926624366464",
+      "previous_rank": "340282366920797530251792045926624366464",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 120,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "rank": "340282366920430993465494184434820525728",
+      "previous_rank": "340282366920430993465494184434820525728",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 94,
+      "penalty_epoch": 1,
+      "zero_windows": 1,
+      "banned": 0,
+      "evidence_slots": [
+        1694401188,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        86,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "genevacernai",
+      "rank": "340282366920820957065097594942812638432",
+      "previous_rank": "340282366920820957065097594942812638432",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 109,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "rank": "340282366918105596964838409597552562000",
+      "previous_rank": "340282366918105596964838409597552562000",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 93,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "londonturing",
+      "rank": "340282366920881462407168532884691330752",
+      "previous_rank": "340282366920881462407168532884691330752",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 106,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "londonucllab",
+      "rank": "340282366920812287393593283172006382704",
+      "previous_rank": "340282366920812287393593283172006382704",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 100,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "minimaxcloud",
+      "rank": "340282366920618227720193295984781767824",
+      "previous_rank": "340282366920618227720193295984781767824",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 107,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "rank": "340282366920629111465220492289771386000",
+      "previous_rank": "340282366920629111465220492289771386000",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 119,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "montrealmila",
+      "rank": "340282366920828704664354235057515504224",
+      "previous_rank": "340282366920828704664354235057515504224",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 111,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "moonshotlabs",
+      "rank": "340282366920606237318207381418709454720",
+      "previous_rank": "340282366920606237318207381418709454720",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 103,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "nvidiaclouds",
+      "rank": "340282366920695335203462865291168879488",
+      "previous_rank": "340282366920695335203462865291168879488",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 115,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "openaiclouds",
+      "rank": "340282366920587975300994122513125905280",
+      "previous_rank": "340282366920587975300994122513125905280",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 92,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "pariscnrslab",
+      "rank": "340282366920751043947070133626074319984",
+      "previous_rank": "340282366920751043947070133626074319984",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 104,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "parisinriaai",
+      "rank": "340282366920663237648193461074261019872",
+      "previous_rank": "340282366920663237648193461074261019872",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 97,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "perplexityai",
+      "rank": "340282366920570266316388558793604041952",
+      "previous_rank": "340282366920570266316388558793604041952",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 117,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "seoulkaistai",
+      "rank": "340282366920631140333751908814423477472",
+      "previous_rank": "340282366920631140333751908814423477472",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 98,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "singaporentu",
+      "rank": "340282366920649033749361625774054241184",
+      "previous_rank": "340282366920649033749361625774054241184",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 102,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "stabilityhub",
+      "rank": "340282366920233982155467869851800007792",
+      "previous_rank": "340282366920233982155467869851800007792",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 116,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "sydneyunswai",
+      "rank": "340282366920808966670275276564806962400",
+      "previous_rank": "340282366920808966670275276564806962400",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 108,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tencentcloud",
+      "rank": "340282366920480799536147449988485297296",
+      "previous_rank": "340282366920480799536147449988485297296",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 113,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tokyoaistlab",
+      "rank": "340282366920795500621288900896777587824",
+      "previous_rank": "340282366920795500621288900896777587824",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 105,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tokyorikenai",
+      "rank": "340282366920309244668866846292610174176",
+      "previous_rank": "340282366920309244668866846292610174176",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 99,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "zurichethlab",
+      "rank": "340282366920591848828540068079497661552",
+      "previous_rank": "340282366920591848828540068079497661552",
+      "frozen_epoch": 0,
+      "seen_epoch": 88,
+      "ticket": 101,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    }
+  ],
+  "scope": "Native first-miss streaks observed during admission on the heavily loaded shared host. Native priority/re-admission applies; no counter, ban, key, vote or timing edits. This alone does not establish the cause of any missed window."
+}

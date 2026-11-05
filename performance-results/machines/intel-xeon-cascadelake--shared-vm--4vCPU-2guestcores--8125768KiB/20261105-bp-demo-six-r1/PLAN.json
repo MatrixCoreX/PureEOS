@@ -19,10 +19,12 @@
     "sydneyunswai"
   ],
   "maintenance_target": "montrealmila",
-  "maintenance_after_finalized_personal_turns": 3,
+  "maintenance_after_finalized_personal_turns": 0,
   "new_own_bond_AIC_each": 10000,
   "original_votes_and_90_ordinary_assignments_preserved": true,
   "new_other_voters": 6,
   "candidate_capacity_UI": "Replace not-online phrase with next native capacity increase UTC time from existing qualified read-only summary",
-  "no_new_servers_reset_TPS_or_protocol_changes": true
+  "no_new_servers_reset_TPS_or_protocol_changes": true,
+  "maintenance_mode": "immediate-owner-request",
+  "maintenance_user_instruction": "第六个直接挂维护吧"
 }

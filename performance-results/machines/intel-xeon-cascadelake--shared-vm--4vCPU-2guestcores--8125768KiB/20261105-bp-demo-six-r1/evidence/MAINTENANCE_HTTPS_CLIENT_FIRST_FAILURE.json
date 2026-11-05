@@ -1,0 +1,7 @@
+{
+  "status": "FAILED_CLIENT_ATTEMPT",
+  "UTC": "2026-11-05T13:58:49.873061+00:00",
+  "client": "Python urllib default HTTP client",
+  "HTTP": 403,
+  "scope": "Public edge denied this client before state validation; native state2 is already irreversible. Actual Chrome verification follows, no backend/contract change."
+}

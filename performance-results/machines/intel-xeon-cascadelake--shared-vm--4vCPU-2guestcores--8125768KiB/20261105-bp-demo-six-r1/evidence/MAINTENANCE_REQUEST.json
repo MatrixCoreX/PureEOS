@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T13:56:46.159439+00:00",
+  "producer": "montrealmila",
+  "canonical_receipt": {
+    "transaction_id": "2caa7628e4b4d137fb4583e10a124e6b23302994afd96a879b543da83c93d517",
+    "block_num": 56840,
+    "block_id": "0000de082f227503373be4027be570c6979f4c0cbbe540cbef66643adc09b80a",
+    "observed_LIB": 56840,
+    "CPU_us": 430,
+    "NET_words": 17
+  },
+  "maintenance_mode": "immediate-owner-request",
+  "user_instruction": "第六个直接挂维护吧",
+  "completed_turns_before_request": 0,
+  "production_prerequisite_waived_by_user": true,
+  "scope": "Owned producer signs its own native setmaint(true). Existing bank provides additional native CPU/NET authorization; no administrator override, key/vote/bond mutation, or duty-rule change."
+}

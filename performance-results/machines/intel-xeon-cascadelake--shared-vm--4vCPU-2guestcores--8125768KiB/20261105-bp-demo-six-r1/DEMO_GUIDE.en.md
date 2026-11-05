@@ -1,6 +1,6 @@
 # Current TEST network demonstration entry points
 
-This guide covers existing state and the genuine states currently being generated. The six-BP fault/maintenance campaign is still waiting for native admission; use the final report and irreversible receipts for completion claims. Never replay issuance, payments, bonds, income claims or governance execution merely to repeat a demonstration.
+This guide covers existing state and the genuine states currently being generated. The sixth BP is already in native maintenance under the latest user instruction; the five fault targets still await native admission. Use the final report and irreversible receipts for blacklist completion claims. Never replay issuance, payments, bonds, income claims or governance execution merely to repeat a demonstration.
 
 ## Producers, votes and candidate capacity
 
@@ -20,7 +20,7 @@ No blacklist is injected and no observation window is shortened. Genuine native 
 
 ## Voluntary maintenance
 
-The sixth project-owned identity is `montrealmila`. After at least three completed irreversible personal production turns, it signs its own maintenance request.
+The sixth project-owned identity is `montrealmila`. The latest user instruction superseded the three-turn prerequisite with immediate maintenance. Its owner-authorized request is irreversible at block #56840 with native state2. It had produced zero personal turns before requesting maintenance; no admission-production claim is made for this node.
 
 Awaiting maintenance means the native handover is pending and the node must remain online. In maintenance means the native request is effective and actual proposer/finalizer duties have ended. Its process remains online for this demonstration and its 10,000 AIC bond remains locked. Use the irreversible effective checkpoint to establish completion.
 
