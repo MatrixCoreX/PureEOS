@@ -79,6 +79,8 @@ All original 25 node PIDs remain (24 BPs plus history), actual native policy 21/
 
 All builds/tests/Chrome ran remotely on the retained shared Intel Cascadelake 4vCPU/8GB VM. No TPS, capacity, production-security, hardware-device or parallel qualification claim. No chain reset, BP pause, server creation, votes/bonds/caps/native-binary changes. Dynamic wallet token discovery/APK work remains with the wallet task as explicitly requested; its dirty worktree was preserved.
 
+The originally rejected ordinary transaction `846ec918e473f46b658a496a128b72dc3ca716ddb82bf09c2996fc4476da613e` subsequently executed irreversibly with the same native ID in block 40441. Read-only reconciliation matched historical actions and the native executed receipt. The existing sender recovered its original batch; the observer did not sign, submit or edit journals. Evidence: `ORDINARY_TRANSIENT_REJECTION_RECOVERY.json`.
+
 ## Project cleanup and restoration
 
 51 historical public archive paths representing 27 contents were hash-verified onto the local mounted Windows partition at `/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts`, preserving original paths as symlinks. Measured net Linux space increase: 2285469696 bytes. This partition is on the same NVMe, not an external backup.

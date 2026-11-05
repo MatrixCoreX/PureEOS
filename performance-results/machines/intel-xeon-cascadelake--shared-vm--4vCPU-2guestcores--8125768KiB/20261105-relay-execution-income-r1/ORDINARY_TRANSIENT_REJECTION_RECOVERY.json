@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T11:06:28.144077+00:00",
+  "original_rejected_batch": 352,
+  "original_native_ids": [
+    {
+      "transaction_id": "846ec918e473f46b658a496a128b72dc3ca716ddb82bf09c2996fc4476da613e",
+      "block_num": 40441,
+      "block_id": "00009df986822b9ba0396de3201fab08cc9a4d78816c98341b9c50bc9936f1e2",
+      "observed_LIB": 40890,
+      "status": "executed",
+      "CPU_us": 245,
+      "actions": [
+        {
+          "account": "eosio.token",
+          "name": "transfer",
+          "data": {
+            "from": "arcanemeadow",
+            "to": "arcanewillow",
+            "amount": 0.0073,
+            "symbol": "AIC",
+            "memo": "Compute credits 352",
+            "quantity": "0.0073 AIC"
+          }
+        }
+      ]
+    }
+  ],
+  "completed_batches_now": 357,
+  "scope": "Read-only proof of the existing sender recovering original rejected immutable transaction IDs. Verifier did not resubmit, re-sign, edit journals, restart service or change CPU limits."
+}

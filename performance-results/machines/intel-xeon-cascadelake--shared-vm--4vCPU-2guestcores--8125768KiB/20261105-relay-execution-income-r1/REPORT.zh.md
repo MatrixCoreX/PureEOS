@@ -78,6 +78,8 @@ native 第一次解析器错误假定 trace 总是 JSON；第二次试用的 ABI
 
 构建、测试和 Chrome 均仅在保留的 shared Intel Cascadelake 4vCPU/8GB 远端进行。无 TPS、容量/生产安全/并行合格声明，无链重置、BP 停机、新服务器、投票/保证金/总量上限/原生二进制更改。钱包/APK 动态币种发现已按用户指示留给钱包任务，未动其未提交工作。
 
+普通业务的原拒绝交易 `846ec918e473f46b658a496a128b72dc3ca716ddb82bf09c2996fc4476da613e` 已按同一原生 ID 不可逆执行于区块 40441。只读复核同时匹配历史动作和原生 executed 回执，证明既有发送器恢复了原批次；本轮观察器未重新签名、提交或修改日志。证据：`ORDINARY_TRANSIENT_REJECTION_RECOVERY.json`。
+
 ## 项目目录清理与恢复
 
 51 个历史公开发布包路径（27 种内容）经 SHA-256 校验后移至本机 Windows 分区 `/run/media/guagua/Windows/PureEOS-project-cleanup-20261105/public-artifacts`，原路径保留符号链接；该步净释放 2285469696 字节。此分区与 Linux 同一 NVMe，不是外置备份。

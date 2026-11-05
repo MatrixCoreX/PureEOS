@@ -307,10 +307,14 @@
     "final-public-upgrades-en-dark-390.png": {
       "bytes": 168444,
       "sha256": "5f735df8f07781bc5eeb2dc8acabbab9e42f17b0f0b6adc28e530fd0ebb20d7d"
+    },
+    "ORDINARY_TRANSIENT_REJECTION_RECOVERY.json": {
+      "bytes": 1012,
+      "sha256": "6b1ebfe0af5920b14a70eadb548bf75cf66244bac7a4b1a546b91fa24ad1ebee"
     }
   },
   "status": "PASS",
-  "UTC": "2026-11-05T11:04:03.181940+00:00",
+  "UTC": "2026-11-05T11:06:55.020486+00:00",
   "remote_root": "/opt/pureeos-relay-execution-income-20261105-r1",
   "scope": "Explicit public evidence only; no keys, signed packets, raw chain databases or passwords."
 }
