@@ -1,0 +1,7 @@
+# 原生权限字段说明更正
+
+原审核manifest及所有已列工件保持原字节/原哈希，未修改链上authority_version、权限或源码。原说明把系统服务active写成“own-code only”不准确。原生固定策略1/2及已公开core42dda604的实际结果为：owner阈值1且无keys/accounts/waits；active阈值1、无keys/waits，accounts为eosio@eosio.code或本合约@eosio.code。两项均为代码权限，没有dev/BP/外部密钥授权。普通发行策略3仍为owner→eosio.dev@owner、active→eosio.dev@active或自身code，不受此文字更正影响。
+
+依据是已审核原生源码system_account_proposal.cpp的creation_active及sysfinish；后者封印owner，服务策略保留代码active。KEY原交易552759846b93ef9637ea74be7d52adaffeb8e145be65667c2d02b1f213da097b已在15463不可逆执行，实际权限/代码/初始化单独导出核对。此前等待器超时不代表链上未执行，不重发KEY。
+
+该更正不应被解读为“仅有自身code”的部署保证。eosio本身owner封印、active仅eosio.code；dev/BP不能用私钥满足它。未来获批系统代码的能力仍需逐次精确审查和BP否决，不能声称任意未来代码在数学上不会影响资产。本次没有增设系统权限轮换入口，也没有更改现有用户或系统权限。
