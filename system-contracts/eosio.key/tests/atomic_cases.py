@@ -1,0 +1,156 @@
+"""Real native purchases and reserve conservation; remote isolated chain only."""
+import json,os,subprocess,datetime
+from decimal import Decimal
+
+def atoms(text):return int(Decimal(text.split()[0])*10000)
+def run_atomic(t,source,args):
+    def amount(n,symbol='AIC'):return f'{n//10000}.{n%10000:04d} {symbol}'
+    def native(owner,token='eosio.token',symbol='AIC'):
+        return atoms(t.token_balance(owner,token).get(symbol,'0.0000 '+symbol))
+    def wallet(key):
+        return next((w for w in t.ktable('wallets')if t.pub_equal(w['key'],key['Public key'])),None)
+    def balance(key,asset=1):
+        w=wallet(key)
+        return 0 if w is None else next((int(b['amount'])for b in t.ktable('balances',str(w['id']))if int(b['asset_id'])==asset),0)
+    def trace_acts(result):
+        found=[]
+        def visit(v):
+            if isinstance(v,dict):
+                if isinstance(v.get('act'),dict)and v.get('receiver')==v['act'].get('account'):found.append(v['act'])
+                for k,x in v.items():
+                    if k!='act':visit(x)
+            elif isinstance(v,list):
+                for x in v:visit(x)
+        visit(result['processed'].get('action_traces',[]));return found
+    def checked(label,call,expected_bytes):
+        a=t.rpc('get_account',{'account_name':'eosio.key'});before=t.state()
+        result=call();acts=trace_acts(result)
+        receipts=[x['data']for x in acts if x['account']=='eosio.key'and x['name']=='feereceipt']
+        t.check(len(receipts)==1,label+': exactly one canonical fee breakdown')
+        f=receipts[0];buy=[x['data']for x in acts if x['account']=='eosio'and x['name']=='logbuyram']
+        cost=atoms(f['ram_payment']);quota=int(t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota'])-int(a['ram_quota'])
+        t.check(int(f['allocated_bytes'])==expected_bytes,label+': expected conservative allocation budget')
+        t.check(atoms(f['total'])==cost+atoms(f['retained_base'])+atoms(f['relay_fee']),label+': no duplicated RAM fee; exact fee equation')
+        if expected_bytes:
+            t.check(len(buy)==1 and buy[0]['payer']=='eosio.key'and buy[0]['receiver']=='eosio.key'and
+                atoms(buy[0]['quantity'])==cost and int(buy[0]['bytes'])==quota==int(f['purchased_bytes'])and quota>=expected_bytes,
+                label+': native purchase, exact gross AIC cost and actual acquired quota verified')
+        else:t.check(not buy and not cost and quota==0,label+': existing records buy no RAM')
+        t.check(not t.ktable('pending'),label+': internal payment ticket consumed')
+        t.check_reserves()
+        t.report.setdefault('atomic_transfers',[]).append({'label':label,'transaction_id':result['transaction_id'],
+             'fee':f,'native_RAM_buy':buy,'quota_delta':quota})
+        return f
+    def deposit(key,quantity,token='eosio.token',cap='10.0000 AIC',failure=None,actor='keyusersolar'):
+        auth=[{'actor':actor,'permission':'active'}]
+        actions=[{'account':'eosio.key','name':'deposit','authorization':auth,'data':{'from':actor,'token_contract':token,'to':key['Public key'],'quantity':quantity,'max_fee':cap,'request_id':os.urandom(32).hex()}},
+            {'account':'eosio.token','name':'transfer','authorization':auth,'data':{'from':actor,'to':'eosio.key','quantity':cap,'memo':'atomic key fee'}},
+            {'account':token,'name':'transfer','authorization':auth,'data':{'from':actor,'to':'eosio.key','quantity':quantity,'memo':'atomic key principal'}}]
+        for a in actions[1:]:
+            packed=t.run(['convert','pack_hex','--type','transfer','--abi-file',str(t.contracts/'eosio.token/eosio.token.abi'),json.dumps(a['data'])])
+            a['data']=json.loads(packed)
+            assert isinstance(a['data'],str) and len(a['data'])%2==0 and all(c in '0123456789abcdefABCDEF' for c in a['data']), 'Invalid canonical transfer encoding'
+        info=t.rpc('get_info');block=bytes.fromhex(info['last_irreversible_block_id'])
+        packet={'expiration':(datetime.datetime.fromisoformat(info['head_block_time']+'+00:00')+datetime.timedelta(seconds=120)).strftime('%Y-%m-%dT%H:%M:%S'),
+            'ref_block_num':info['last_irreversible_block_num']&65535,'ref_block_prefix':int.from_bytes(block[8:12],'little'),
+            'max_net_usage_words':0,'max_cpu_usage_ms':0,'delay_sec':0,'context_free_actions':[],'actions':actions,'transaction_extensions':[]}
+        return t.tx(['push','transaction',json.dumps(packet)],failure=failure)
+    def reject(label,call):
+        before=t.state();market=t.table('rammarket');ram=t.rpc('get_account',{'account_name':'eosio.key'});n={x:(native(x),native(x,'usd','USD'))for x in ['eosio.key','keyusersolar','keyuserlunar']}
+        call()
+        t.check(before==t.state()and not t.ktable('pending')and all(n[x]==(native(x),native(x,'usd','USD'))for x in n)
+            and ram['ram_quota']==t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota']
+            and ram['ram_usage']==t.rpc('get_account',{'account_name':'eosio.key'})['ram_usage']and market==t.table('rammarket'),label+': full principal/fee/RAM/budget/count rollback')
+    t.owner=t.key();t.receiver=t.key();third=t.key()
+    t.check(not t.ktable('nativefees')and all(not int(a['ram_purchased'])for a in t.ktable('assets')),
+        'No manual fee prepayment or sponsored token capacity exists at test start')
+    t.report['bootstrap_RAM']= {k:t.rpc('get_account',{'account_name':'eosio.key'})[k]for k in ['ram_quota','ram_usage']}
+    # Start with USD and a recipient without AIC, proving fee-token custody does
+    # not depend on prior AIC public-key admission or a manual token regtoken.
+    donor=native('keyusersolar');f=checked('named-to-key first USD',lambda:deposit(t.owner,'100.0000 USD','usd'),3584)
+    t.check(balance(t.owner,2)==1000000 and balance(t.owner,1)==0 and donor-native('keyusersolar')==atoms(f['total']),
+        'USD recipient receives full principal without AIC; native sender pays exact additional AIC fee')
+    reject('USD key sender without AIC',lambda:t.execute('ksend',t.owner,t.request(t.owner,to=t.receiver['Public key'],token_contract='usd',quantity='1.0000 USD',memo=''),failure='insufficient additional AIC'))
+    donor=native('keyusersolar');f=checked('named-to-key first AIC balance',lambda:deposit(t.owner,'20.0000 AIC'),512)
+    t.check(balance(t.owner,1)==200000 and donor-native('keyusersolar')==200000+atoms(f['total']),
+        'Direct AIC deposit pays exact fee once, with full principal and no prepaid credit')
+    checked('named-to-key existing AIC balance',lambda:deposit(t.owner,'1.0000 AIC'),0)
+    checked('key-to-key new recipient',lambda:t.execute('ksend',t.owner,t.request(t.owner,to=t.receiver['Public key'],quantity='3.0000 AIC',memo='')),1536)
+    t.check(balance(t.receiver)==30000,'Public-key recipient gets full 3 AIC')
+    checked('key-to-key existing recipient',lambda:t.execute('ksend',t.owner,t.request(t.owner,to=t.receiver['Public key'],quantity='1.0000 AIC',memo='')),0)
+    checked('key-to-key first USD balance',lambda:t.execute('ksend',t.owner,t.request(t.owner,to=t.receiver['Public key'],token_contract='usd',quantity='2.0000 USD',memo='')),512)
+    checked('key-to-key new USD-only recipient',lambda:t.execute('ksend',t.owner,t.request(t.owner,to=third['Public key'],token_contract='usd',quantity='2.0000 USD',memo='')),1536)
+    t.check(balance(third,1)==0 and balance(third,2)==20000,'New USD-only receiving key needs no AIC or native account')
+    reject('New recipient exceeds signed cap',lambda:t.execute('ksend',t.owner,t.request(t.owner,to=t.key()['Public key'],max_fee='0.0000 AIC',memo=''),failure='fee exceeds signed maximum'))
+    reject('Named deposit exceeds fee cap',lambda:deposit(t.key(),'1.0000 AIC',cap='0.0000 AIC',failure='funding'))
+    reject('Wrong issuer',lambda:deposit(t.key(),'1.0000 AIC','keybadtokenx',failure='whitelist'))
+    cny_only=t.key()
+    checked('named-to-key first CNY',lambda:deposit(cny_only,'100.0000 CNY','cny'),3584)
+    t.check(balance(cny_only,3)==1000000 and balance(cny_only,1)==0,'CNY recipient receives full principal without AIC')
+    reject('CNY key sender without AIC',lambda:t.execute('ksend',cny_only,t.request(cny_only,to=t.owner['Public key'],token_contract='cny',quantity='1.0000 CNY',memo=''),failure='insufficient additional AIC'))
+    checked('named-to-key CNY holder receives AIC fee funds',lambda:deposit(cny_only,'2.0000 AIC'),512)
+    checked('key-to-key first CNY balance',lambda:t.execute('ksend',cny_only,t.request(cny_only,to=t.owner['Public key'],token_contract='cny',quantity='2.0000 CNY',memo='')),512)
+    checked('key-to-key existing CNY balance',lambda:t.execute('ksend',cny_only,t.request(cny_only,to=t.owner['Public key'],token_contract='cny',quantity='1.0000 CNY',memo='')),0)
+    checked('key-to-named first CNY balance',lambda:t.execute('withdraw',cny_only,t.request(cny_only,'withdraw',to='keyuserlunar',token_contract='cny',quantity='1.0000 CNY',memo='')),512)
+    t.check(native('keyuserlunar','cny','CNY')==10000,'Named CNY recipient receives full principal automatically')
+    checked('key-to-named existing CNY balance',lambda:t.execute('withdraw',cny_only,t.request(cny_only,'withdraw',to='keyuserlunar',token_contract='cny',quantity='1.0000 CNY',memo='')),0)
+
+    reject('Standalone legacy fee funding',lambda:t.transfer('keyusersolar','eosio.key','0.1000 AIC','fee',failure='use atomic deposit'))
+    reject('Standalone legacy key memo',lambda:t.transfer('keyusersolar','eosio.key','0.1000 AIC',t.memo(t.owner),failure='use atomic deposit'))
+    # Both a normal USD recipient and a core-token recipient are opened in the
+    # same transaction. No owner action or manual external token::open is used.
+    t.check('USD'not in t.token_balance('keyuserlunar','usd'),'Named USD recipient initially has no balance row')
+    checked('key-to-named first USD balance',lambda:t.execute('withdraw',t.owner,t.request(t.owner,'withdraw',to='keyuserlunar',token_contract='usd',quantity='1.0000 USD',memo='')),512)
+    t.check(native('keyuserlunar','usd','USD')==10000,'Named USD recipient receives entire principal automatically')
+    checked('key-to-named existing USD balance',lambda:t.execute('withdraw',t.owner,t.request(t.owner,'withdraw',to='keyuserlunar',token_contract='usd',quantity='1.0000 USD',memo='')),0)
+    native_to=next(n for n in ['eosio.saving','eosio.wrap','eosio.msig']if 'AIC'not in t.token_balance(n))
+    checked('key-to-named first AIC balance',lambda:t.execute('withdraw',t.owner,t.request(t.owner,'withdraw',to=native_to,quantity='0.1000 AIC',memo='')),512)
+    checked('key-to-named existing AIC balance',lambda:t.execute('withdraw',t.owner,t.request(t.owner,'withdraw',quantity='0.1000 AIC',memo='')),0)
+    checked('self withdrawal without relay fee',lambda:t.execute('selfout',t.owner,t.request(t.owner,'selfout',quantity='0.1000 AIC',memo='')),0)
+    t.check(not t.ktable('nativefees'),'All ordinary transfers complete without manual nativefee credit')
+    for op in ['payram','settleram']:
+        reject('External '+op,lambda op=op:t.action(op,{'ticket':os.urandom(32).hex()},'keyusersolar',contract='eosio.key',failure=''))
+    # Tests below preserve exact proof/domain/TAPOS/expiry/retry protection and
+    # same-epoch independent-device transfers after internal RAM continuations.
+    # Independent holders/devices can sign two requests for the same unopened
+    # recipient before either is submitted. Native execution opens it once.
+    fresh=t.key();requests=[t.request(t.owner,to=fresh['Public key'],quantity='0.0100 AIC',memo='')for _ in range(2)]
+    packets=[t.signed('ksend',r,t.owner)for r in requests]
+    quota=t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota']
+    lib=t.rpc('get_info')['last_irreversible_block_num'];children=[]
+    try:
+        for packet in packets:
+            children.append(subprocess.Popen([str(t.cleos),'--no-auto-keosd','--url',t.url,'--wallet-url','unix://'+str(t.root/'wallet/keosd.sock'),
+                'push','transaction',json.dumps(packet['signed']),'-s','-j'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
+        outputs=[c.communicate(timeout=60)for c in children]
+        assert all(c.returncode==0 for c in children),t.redact(str(outputs))
+        results=[json.loads(o[0])for o in outputs]
+        confirmed=[t.wait_transaction(r['transaction_id'],lib,timeout=90)for r in results]
+        fees=[a['data']for r in results for a in trace_acts(r)if a['account']=='eosio.key'and a['name']=='feereceipt']
+        t.check(balance(fresh)==200 and len(fees)==2 and sorted(int(f['allocated_bytes'])for f in fees)==[0,1536],
+            'Concurrent pre-signed transfers create one shared recipient record and deliver both full principals')
+        t.check(t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota']-quota==sum(int(f['purchased_bytes'])for f in fees),
+            'Concurrent new-recipient requests purchase RAM only once; the later transaction charges no RAM')
+        t.report['atomic_recipient_race']={'fees':fees,'confirmations':confirmed}
+    finally:
+        for c in children:
+            if c.poll()is None:c.kill();c.wait()
+    t.test_nonce_race();t.test_proof_attacks();t.test_hot_key_rotation();t.test_overspend()
+    for rate in [1000,1500,2000,2500,3000]:
+        t.action('setrate',{'bp':'keyrelaymoon','fee_bps':rate},'keyrelaymoon',contract='eosio.key')
+        f=checked('relay rate '+str(rate),lambda rate=rate:t.execute('ksend',t.owner,t.request(t.owner,quantity='0.0001 AIC',memo='',relay_fee_bps=rate)),0)
+        base=atoms(f['total'])-atoms(f['relay_fee'])
+        t.check(atoms(f['relay_fee'])==max(1,(base*rate+9999)//10000),'Exact configured relay fee with upward rounding '+str(rate))
+    earned=next(f for f in t.ktable('feebuckets')if f['owner']=='keyrelaymoon');before=native('keyrelaymoon')
+    t.action('claim',{'bp':'keyrelaymoon','to':'keyrelaymoon','quantity':'0.0010 AIC','max_fee':'0.0000 AIC'},'keyrelaymoon',contract='eosio.key')
+    after=next(f for f in t.ktable('feebuckets')if f['owner']=='keyrelaymoon')
+    t.check(native('keyrelaymoon')==before+10 and int(after['relay_earned'])==int(earned['relay_earned'])-10 and after['network']==earned['network'],
+        'Claim still pays full earned quantity with zero application fee and no prepaid credit')
+    # Capacity rejection occurs in settlement AFTER the attempted native buy.
+    # The whole transaction must restore the real curve, quotas and all funds.
+    while int(t.ktable('config')[0]['wallet_count'])<20:deposit(t.key(),'0.0001 AIC')
+    reject('Capacity after attempted native RAM buy',lambda:deposit(t.key(),'0.0001 AIC',failure='wallet storage capacity reached'))
+    checked('Existing recipient remains usable at key capacity',lambda:t.execute('ksend',t.owner,t.request(t.owner,quantity='0.0001 AIC',memo='')),0)
+
+    t.check_reserves()
+    t.report['scope']='Remote isolated real native TEST chain, production candidate WASM; atomic AIC/USD/CNY 3-route functional/security qualification, not TPS or live deployment'

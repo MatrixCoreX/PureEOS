@@ -1,3 +1,5 @@
+> Historical profile document. For the 2026-11-05 atomic-RAM candidate, use [current Chinese rules](ATOMIC_RAM_TRANSFERS.zh.md) or [current English rules](ATOMIC_RAM_TRANSFERS.en.md). Prepaid fees, PK memo deposits and manual ordinary-transfer opening are superseded; public activation remains pending.
+
 # 代币白名单与开发者提案 / Token whitelist and developer proposals
 
 2026-11-03 用户选择：本轮测试使用 `eosio.token::4,AIC` 和 `keyusdtoken1::4,USD`。

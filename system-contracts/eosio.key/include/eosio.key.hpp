@@ -92,6 +92,12 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
                               name fee_contract, symbol fee_symbol,
                               checksum256 system_hash, fee_policy policy);
    [[eosio::action]] void regtoken(name payer, name token_contract, symbol token_symbol, uint32_t min_bytes);
+   [[eosio::action]] void deposit(name from, name token_contract, public_key to, asset quantity,
+                                 asset max_fee, checksum256 request_id);
+   [[eosio::action]] void payram(checksum256 ticket);
+   [[eosio::action]] void settleram(checksum256 ticket);
+   [[eosio::action]] void feereceipt(checksum256 ticket, checksum256 request_id, asset total,
+      asset ram_payment, asset retained_base, asset relay_fee, uint32_t allocated_bytes, uint64_t purchased_bytes);
    [[eosio::on_notify("eosio::logbuyram")]]
    void onbuyram(name payer, name receiver, asset quantity, int64_t bytes, int64_t ram_bytes, asset fee);
    [[eosio::action]] void regrelay(name bp, name permission, std::string endpoint);
@@ -199,6 +205,26 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    };
    using pricing_table = singleton<"pricing"_n, pricing>;
 
+   // Exists only during one atomic transaction. No user can supply or resume a
+   // ticket. Fixed scratch capacity is part of the measured bootstrap reserve.
+   struct [[eosio::table("pending")]] payment {
+      checksum256 ticket, request_id;
+      name kind, native_from, native_to, token, relay;
+      public_key from_key, to_key;
+      asset quantity;
+      std::string memo;
+      uint64_t asset_id = 0, wallet_id = 0, auth_epoch = 0, purchased_bytes = 0;
+      int64_t base = 0, premium = 0, total = 0, ram_payment = 0, fee_funding = 0;
+      uint32_t ram_bytes = 0;
+      uint8_t received = 0, ram_transfers = 0;
+      bool first_asset = false, ram_confirmed = false;
+      EOSLIB_SERIALIZE(payment, (ticket)(request_id)(kind)(native_from)(native_to)(token)(relay)
+         (from_key)(to_key)(quantity)(memo)(asset_id)(wallet_id)(auth_epoch)(purchased_bytes)
+         (base)(premium)(total)(ram_payment)(fee_funding)(ram_bytes)(received)(ram_transfers)
+         (first_asset)(ram_confirmed))
+   };
+   using pending_table = singleton<"pending"_n, payment>;
+
  private:
    struct charge { int64_t base, premium, total; };
    configuration config() const;
@@ -231,6 +257,11 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    void charge_native(name owner, const charge& fee, const asset& maximum);
    void charge_key(uint64_t wallet_id, name bp, const charge& fee, const asset& maximum);
    void check_max(const configuration& cfg, const charge& fee, const asset& maximum) const;
+   void check_idle() const;
+   uint32_t first_asset_bytes(uint64_t asset_id) const;
+   void begin_payment(payment next);
+   payment internal_payment(checksum256 ticket) const;
+   bool payment_notification(name from, name to, asset quantity, const std::string& memo);
    void send_out(uint64_t asset_id, name to, int64_t quantity, const std::string& memo);
    void record(name kind, checksum256 request_id, name native_from, checksum256 from,
                checksum256 to, name token, asset quantity, int64_t fee, name relay, uint64_t n);

@@ -1,3 +1,5 @@
+- Latest2026-11-05 user expressly requests redevelopment and latest TEST deployment. This supersedes historical no-code/prebuy/manual sponsor and manual native USD open defaults for this candidate. Fully atomic actual native RAM purchase per missing record, sender pays additional bounded cost, full principal, small measured bootstrap reserve. Named-to-key uses direct deposit without manual prepaid fee credits. Keep key proof/replay/epoch/rate caps, exact reviewed tokens/system pins, free claims, BP-only relays and reserve equality. Remote-only build/tests; governed TEST1800s activation after qualification, no direct setcode on sealed services. See root AGENTS latest entry and release-work-20261105/key-atomic-ram-r1/PLAN.md.
+
 # eosio.key v1 development
 
 - User authorized implementation on 2026-11-03, after design-only discussion. Name: eosio.key. Keep all work in this independent directory/branch.

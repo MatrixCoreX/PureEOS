@@ -14,6 +14,8 @@ def main():
     p.add_argument('--artifacts',type=Path,required=True)
     p.add_argument('--native-cleos',type=Path)
     p.add_argument('--review-seconds',type=int,choices=[1800,604800],default=604800)
+    p.add_argument('--custody-artifacts',type=Path)
+    p.add_argument('--atomic',action='store_true',help='Sender-paid atomic RAM integration suite')
     p.add_argument('--fixture',action='store_true',help='TEST ONLY alternate system table source; never production consensus evidence')
     args=p.parse_args()
     sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'sdk-tests'))
@@ -56,11 +58,11 @@ def main():
         def audit_state(self):
             state={'wallet':self.state(),'governance':self.governance(),'code':{},'native':{},'RAM':{}}
             standard=self.report['artifacts']['eosio.token/eosio.token.wasm']
-            for code in ['eosio','eosio.key','eosio.token','keyusdtoken1']:
+            for code in ['eosio','eosio.key','eosio.token','usd']:
                 state['code'][code]=self.rpc('get_code_hash',{'account_name':code})['code_hash']
-            for owner in ['eosio.key','keyusersolar','keyuserlunar','keyrelaymoon','keyusdtoken1']:
+            for owner in ['eosio.key','keyusersolar','keyuserlunar','keyrelaymoon','usd']:
                 state['RAM'][owner]=self.rpc('get_account',{'account_name':owner})['ram_usage']
-                for contract,symbol in [('eosio.token','AIC'),('keyusdtoken1','USD')]:
+                for contract,symbol in [('eosio.token','AIC'),('usd','USD')]:
                     if state['code'][contract]==standard:
                         state['native'][owner+':'+symbol]=self.rpc('get_currency_balance',{'code':contract,'account':owner,'symbol':symbol})
             return state
@@ -127,7 +129,7 @@ def main():
             super().start_node(phase,extra)
         def setup(self):
             ordinary=['civicgovlead','civicgovauth','civicgovcode','keyusersolar','keyuserlunar',
-                      'gptkeyorigin','keyrelaymoon','keyusdtoken1','keybadtokenx','keysysmockup','keyramnotify']
+                      'gptkeyorigin','keyrelaymoon','usd','cny','keybadtokenx','keysysmockup','keyramnotify']
             self.accounts={n:self.key() for n in ['eosio',*ordinary]}
             self.bls={n:self.key(True) for n in self.local_signers}
             self.root.joinpath('config').mkdir();self.root.joinpath('wallet').mkdir()
@@ -165,8 +167,11 @@ def main():
                 active=self.accounts['civicgovauth']['Public key']if n=='civicgovlead'else k
                 self.tx(['create','account','eosio',n,k,active])
             self.tx(['set','account','permission','civicgovlead','upgrade',self.accounts['civicgovcode']['Public key'],'active'])
-            for n in ['eosio.token','keyusdtoken1']:
-                self.tx(['set','contract',n,str(self.contracts/'eosio.token')])
+            for n in ['eosio.token','usd','cny']:
+                if args.atomic and n in ['usd','cny']:
+                    assert args.custody_artifacts,'Pinned USD artifacts required'
+                    self.tx(['set','contract',n,str(args.custody_artifacts),'custody.token.wasm','custody.token.abi'])
+                else:self.tx(['set','contract',n,str(self.contracts/'eosio.token')])
             if (args.artifacts/'test-only-token/keybadtokenx.wasm').exists():
                 self.tx(['set','contract','keybadtokenx',str(args.artifacts/'test-only-token'),'keybadtokenx.wasm','keybadtokenx.abi'])
                 auth={'threshold':1,'keys':[{'key':self.accounts['keybadtokenx']['Public key'],'weight':1}],
@@ -176,14 +181,20 @@ def main():
                 self.action('create',{'owner':'keyusersolar','quantity':'100.0000 AIC'},'keybadtokenx',contract='keybadtokenx')
             self.action('create',{'issuer':'eosio','maximum_supply':'2100000000.0000 AIC'},'eosio.token',contract='eosio.token')
             self.action('issue',{'to':'eosio','quantity':'100000000.0000 AIC','memo':'private functional test'},'eosio',contract='eosio.token')
-            self.action('create',{'issuer':'keyusdtoken1','maximum_supply':'1000000.0000 USD'},'keyusdtoken1',contract='keyusdtoken1')
-            self.action('issue',{'to':'keyusdtoken1','quantity':'10000.0000 USD','memo':'private test token'},'keyusdtoken1',contract='keyusdtoken1')
+            if args.atomic:
+                for token,symbol in [('usd','USD'),('cny','CNY')]:
+                    token_auth={'threshold':1,'keys':[],'accounts':[{'permission':{'actor':token,'permission':'eosio.code'},'weight':1}],'waits':[]}
+                    self.tx(['set','account','permission',token,'active',json.dumps(token_auth),'owner','-p',token+'@owner'])
+                    self.action('init',{'recipient':'keyusersolar','maximum_supply':'1000000.0000 '+symbol,'initial_supply':'10000.0000 '+symbol},token+'@owner',contract=token)
+            else:
+                self.action('create',{'issuer':'usd','maximum_supply':'1000000.0000 USD'},'usd',contract='usd')
+                self.action('issue',{'to':'usd','quantity':'10000.0000 USD','memo':'private test token'},'usd',contract='usd')
             for n in ordinary:
                 # Complete the large private RAM-market test funding before
                 # govinit removes bootstrap eosio signing authority.
                 amount='600000.0000 AIC'if n=='keyusersolar'else'100000.0000 AIC'
                 self.tx(['transfer','eosio',n,amount,'test setup'])
-            self.action('transfer',{'from':'keyusdtoken1','to':'keyusersolar','quantity':'1000.0000 USD','memo':'test setup'},'keyusdtoken1',contract='keyusdtoken1')
+            if not args.atomic:self.action('transfer',{'from':'usd','to':'keyusersolar','quantity':'1000.0000 USD','memo':'test setup'},'usd',contract='usd')
             self.tx(['set','contract','eosio',str(self.contracts/'eosio.bios')])
             supported=self.rpc('get_supported_protocol_features',{'exclude_disabled':True},namespace='producer')
             byid={f['feature_digest']:f for f in supported}
@@ -208,12 +219,13 @@ def main():
             self.action('init',{'version':0,'core':'4,AIC'},'eosio')
             self.action('setramrate',{'bytes_per_block':1024},'eosio')
             for n in ['eosio.key','eosio.reserv',*ordinary]:
-                self.action('buyram',{'payer':'eosio','receiver':n,'quant':'100.0000 AIC'},'eosio')
+                self.action('buyram',{'payer':'eosio','receiver':n,'quant':('3.0000 AIC'if args.atomic and n=='eosio.key'else '100.0000 AIC')},'eosio')
             resource={'current_weight_ratio':None,'target_weight_ratio':None,'assumed_stake_weight':None,
                       'target_timestamp':None,'exponent':2.0,'decay_secs':86400,'min_price':'1.0000 AIC','max_price':'100.0000 AIC'}
             self.action('cfgpowerup',{'args':{'net':resource,'cpu':resource,'powerup_days':30,'min_powerup_fee':'0.0001 AIC'}},'eosio')
             # Users pay/own their own stake; never borrow voting stake from treasury.
             for n in ordinary:
+                if args.atomic and n in ['usd','cny']:continue
                 info=self.rpc('get_info');bid=bytes.fromhex(info['last_irreversible_block_id'])
                 self.tx(['push','transaction',json.dumps({'expiration':(datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(seconds=90)).strftime('%Y-%m-%dT%H:%M:%S'),
                     'ref_block_num':info['last_irreversible_block_num']&65535,'ref_block_prefix':int.from_bytes(bid[8:12],'little'),
@@ -233,7 +245,7 @@ def main():
             self.cfg={'chain_id':info['chain_id'],'deployment':hashlib.sha256(os.urandom(32)).hexdigest(),
                 'fee_contract':'eosio.token','fee_symbol':'4,AIC','system_hash':self.rpc('get_code_hash',{'account_name':'keysysmockup'if args.fixture else'eosio'})['code_hash'],
                 'policy':{'minimum_fee':100,'unit_fee':10,'new_row_fee':500,'maximum_multiplier_bps':100000,
-                          'epoch_seconds':1,'max_wallets':10,'max_balances':30,'max_assets':10,'max_native_payers':20}}
+                          'epoch_seconds':1,'max_wallets':(20 if args.atomic else 10),'max_balances':(60 if args.atomic else 30),'max_assets':10,'max_native_payers':20}}
             # eosio.key active is code-only; deployment init is owner-authorized before sealing.
             self.action('init',self.cfg,'eosio.key@owner',contract='eosio.key')
             self.cfg['version']=2
@@ -248,6 +260,10 @@ def main():
                 self.tx(['set','action','permission','keyrelaymoon','eosio.key',op,'keyrelay'])
             self.action('regrelay',{'bp':'keyrelaymoon','permission':'keyrelay','endpoint':'https://relay.example.invalid'},'keyrelaymoon',contract='eosio.key')
             self.action('updateauth',{'account':'eosio.key','permission':'owner','parent':'','auth':codeauth},'eosio.key@owner')
+            if args.atomic:
+                for token in ['usd','cny']:
+                    token_auth={'threshold':1,'keys':[],'accounts':[{'permission':{'actor':token,'permission':'eosio.code'},'weight':1}],'waits':[]}
+                    self.tx(['set','account','permission',token,'owner',json.dumps(token_auth),'','-p',token+'@owner'])
             wrong_review=604800 if args.review_seconds==1800 else 1800
             self.action('govinit',{'developer':'civicgovlead','review_seconds':wrong_review,'protected_accounts':['eosio.key']},'eosio@owner',failure='review_seconds must match')
             self.check(not self.governance()['sealed'],'Native build rejects the other review profile before sealing')
@@ -347,23 +363,23 @@ def main():
             self.check(int(row['ram_purchased'])==after_ram-before_ram and int(row['ram_used'])==2048 and row['ram_sponsor']=='keyusersolar',
                        'Native payer buys real RAM; registration credits only actual purchased bytes to AIC')
             self.transfer('keyusersolar','eosio.key','100.0000 AIC','fee')
-            before=self.state();native=self.token_balance('keyusersolar','keyusdtoken1')
-            self.transfer('keyusersolar','eosio.key','1.0000 USD',self.memo(self.key()),token='keyusdtoken1',failure='token RAM registration required')
-            self.check(self.state()==before and self.token_balance('keyusersolar','keyusdtoken1')==native,
+            before=self.state();native=self.token_balance('keyusersolar','usd')
+            self.transfer('keyusersolar','eosio.key','1.0000 USD',self.memo(self.key()),token='usd',failure='token RAM registration required')
+            self.check(self.state()==before and self.token_balance('keyusersolar','usd')==native,
                        'Unregistered other token deposit rolls back principal, fees and all rows')
             quota=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_quota'])
             before=self.state();native=self.token_balance('keyusersolar')
-            self.register_token('keyusdtoken1','4,USD',minimum=1073741824,failure='below registration minimum')
+            self.register_token('usd','4,USD',minimum=1073741824,failure='below registration minimum')
             self.check(self.state()==before and self.token_balance('keyusersolar')==native and
                        int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_quota'])==quota,
                        'Failed registration atomically refunds native RAM purchase and leaves no token admission')
-            self.register_token('keyusdtoken1','5,USD',failure='reviewed whitelist')
+            self.register_token('usd','5,USD',failure='reviewed whitelist')
             self.check(self.state()==before and self.token_balance('keyusersolar')==native,
                        'Wrong token precision cannot obtain admission and refunds the paired RAM purchase')
             bad=[{'account':'eosio','name':'buyram','authorization':[{'actor':'keyusersolar','permission':'active'}],
                   'data':{'payer':'keyusersolar','receiver':'eosio.key','quant':'1.0000 AIC'}},
                  {'account':'eosio.key','name':'regtoken','authorization':[{'actor':'keyuserlunar','permission':'active'}],
-                  'data':{'payer':'keyusersolar','token_contract':'keyusdtoken1','token_symbol':'4,USD','min_bytes':4096}}]
+                  'data':{'payer':'keyusersolar','token_contract':'usd','token_symbol':'4,USD','min_bytes':4096}}]
             self.tx(['push','transaction',json.dumps({'actions':bad})],failure='share the explicit RAM payer')
             self.check(self.state()==before and self.token_balance('keyusersolar')==native,
                        'Another account cannot register against a different RAM payer authorization')
@@ -375,9 +391,9 @@ def main():
             target=6144;net=(target*quote+base-target-1)//(base-target)
             gross=(net*200+198)//199+2
             if args.fixture:
-                self.action('open',{'owner':'eosio.key','symbol':'4,USD','ram_payer':'keyusersolar'},'keyusersolar',contract='keyusdtoken1')
-            self.register_token('keyusdtoken1','4,USD',quantity=f'{gross//10000}.{gross%10000:04d} AIC')
-            self.check(self.asset_row('keyusdtoken1','4,USD')['ram_sponsor']=='keyusersolar',
+                self.action('open',{'owner':'eosio.key','symbol':'4,USD','ram_payer':'keyusersolar'},'keyusersolar',contract='usd')
+            self.register_token('usd','4,USD',quantity=f'{gross//10000}.{gross%10000:04d} AIC')
+            self.check(self.asset_row('usd','4,USD')['ram_sponsor']=='keyusersolar',
                        'Permissionless sponsor registers full issuer, precision and symbol without recipient opening')
         def test_sender_ram_fees(self):
             def credit():return int(next(r['amount']for r in self.ktable('nativefees')if r['owner']=='keyusersolar'))
@@ -451,12 +467,12 @@ def main():
                 and int(self.asset_row('eosio.token','4,AIC')['ram_used'])==used+1536,
                 'Production WASM charges exact market storage plus CPU/NET work and relay premium, while consuming the original sponsored budget')
             # The receiver has AIC but no USD row: only a 512-byte balance budget.
-            req512=self.request(self.owner,to=self.receiver['Public key'],token_contract='keyusdtoken1',quantity='0.0001 USD',memo='')
+            req512=self.request(self.owner,to=self.receiver['Public key'],token_contract='usd',quantity='0.0001 USD',memo='')
             quote512=self.sdk_quote('ksend',req512);old=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
-            used=int(self.asset_row('keyusdtoken1','4,USD')['ram_used']);self.execute('ksend',self.owner,req512)
+            used=int(self.asset_row('usd','4,USD')['ram_used']);self.execute('ksend',self.owner,req512)
             now=next(r for r in self.ktable('feebuckets')if r['owner']=='keyrelaymoon')
             self.check(quote512['ram_bytes']==512 and int(now['network'])-int(old['network'])==int(quote512['base'])
-                and int(self.asset_row('keyusdtoken1','4,USD')['ram_used'])==used+512,
+                and int(self.asset_row('usd','4,USD')['ram_used'])==used+512,
                 'Existing-key first USD receipt pays exactly the 512-byte market quote from the sender and its own token allocation')
             reused=self.sdk_quote('ksend',req512)
             self.check(reused['ram_bytes']==0 and int(reused['storage'])==0,'Existing USD balance quote has zero RAM charge at the same high market price')
@@ -509,19 +525,19 @@ def main():
             self.check(True,'TEST FIXTURE: existing recipient owner exit requires no RAM market')
             self.mock_ram(original)
         def test_ram_budget(self):
-            def row():return self.asset_row('keyusdtoken1','4,USD')
+            def row():return self.asset_row('usd','4,USD')
             while int(row()['ram_purchased'])-int(row()['ram_used'])>=1536:
-                self.execute('ksend',self.owner,self.request(self.owner,token_contract='keyusdtoken1',quantity='0.0001 USD',to=self.key()['Public key']))
-            new=self.key();before=self.state();native=self.token_balance('keyusersolar','keyusdtoken1')
-            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(new),token='keyusdtoken1',failure='token RAM budget exhausted')
-            self.check(self.state()==before and self.token_balance('keyusersolar','keyusdtoken1')==native,
+                self.execute('ksend',self.owner,self.request(self.owner,token_contract='usd',quantity='0.0001 USD',to=self.key()['Public key']))
+            new=self.key();before=self.state();native=self.token_balance('keyusersolar','usd')
+            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(new),token='usd',failure='token RAM budget exhausted')
+            self.check(self.state()==before and self.token_balance('keyusersolar','usd')==native,
                        'Per-token RAM exhaustion rejects new key deposits without using AIC token budget or debiting sender')
             used=int(row()['ram_used']);before_ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
-            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(self.owner),token='keyusdtoken1')
+            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(self.owner),token='usd')
             self.check(int(row()['ram_used'])==used and int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])==before_ram,
                        'Existing recipient rows accept deposits at exhausted allocation budget without repeated RAM charges')
-            self.register_token('keyusdtoken1','4,USD',payer='keyuserlunar')
-            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(new),token='keyusdtoken1')
+            self.register_token('usd','4,USD',payer='keyuserlunar')
+            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(new),token='usd')
             self.check(int(row()['ram_used'])==used+1536 and row()['ram_sponsor']=='keyusersolar',
                        'Another native sponsor can top up; new key consumes its own token budget while retaining first-sponsor attribution')
         def test_relay_rates(self):
@@ -596,15 +612,18 @@ def main():
             if sig and (request!=sig['prepared']['request'] or actor or attack):signed=self.signed(op,request,owner,original=sig,actor=actor,attack=attack)
             return self.tx(['push','transaction',json.dumps(signed['signed']),'-s'],failure=failure)
         def tests(self):
+            if args.atomic:
+                from atomic_cases import run_atomic
+                return run_atomic(self,source,args)
             self.owner,self.receiver=self.key(),self.key()
             self.test_registration()
             self.transfer('keyusersolar','eosio.key','1000.0000 AIC',self.memo(self.owner))
-            self.transfer('keyusersolar','eosio.key','100.0000 USD',self.memo(self.owner),token='keyusdtoken1')
+            self.transfer('keyusersolar','eosio.key','100.0000 USD',self.memo(self.owner),token='usd')
             self.check(len(self.ktable('wallets'))==1 and len(self.ktable('assets'))==2,'Native deposits create one canonical wallet and distinct multi-token reserves')
             self.test_sender_ram_fees()
             self.test_relay_rates()
             read=subprocess.run(['node',str(source/'tests/read.mjs')],input=json.dumps({'endpoint':self.url,'key':self.owner['Public key'],
-                'token':'keyusdtoken1','symbol':'4,USD'}),capture_output=True,text=True,timeout=30)
+                'token':'usd','symbol':'4,USD'}),capture_output=True,text=True,timeout=30)
             assert read.returncode==0,self.redact(read.stderr)
             self.check(json.loads(read.stdout)['balance']=='1000000','JS SDK reads actual key/asset secondary indices and exact four-decimal USD balance')
             self.test_market_ram()
@@ -628,17 +647,17 @@ def main():
             from decimal import Decimal
             diff=Decimal(self.token_balance('keyuserlunar')['AIC'].split()[0])-Decimal(before.split()[0])
             self.check(diff==Decimal('3.4567'),'Public-key to native text account delivers exact AIC principal; fee is additional')
-            req=self.request(self.owner,'withdraw',token_contract='keyusdtoken1',quantity='1.2345 USD')
+            req=self.request(self.owner,'withdraw',token_contract='usd',quantity='1.2345 USD')
             row_count=self.ktable('config')[0]['balance_count'];before=self.state()
             self.execute('withdraw',self.owner,req,failure='recipient must open')
-            self.check(self.state()==before and not self.token_balance('keyuserlunar','keyusdtoken1'),
+            self.check(self.state()==before and not self.token_balance('keyuserlunar','usd'),
                        'Unopened native USD recipient rejects before fees, principal or custody RAM change')
-            self.action('open',{'owner':'keyuserlunar','symbol':'4,USD','ram_payer':'keyuserlunar'},'keyuserlunar',contract='keyusdtoken1')
+            self.action('open',{'owner':'keyuserlunar','symbol':'4,USD','ram_payer':'keyuserlunar'},'keyuserlunar',contract='usd')
             ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
             self.execute('withdraw',self.owner,req)
             self.check(self.ktable('config')[0]['balance_count']==row_count and int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])==ram,
                        'USD withdrawal reuses the recipient-funded balance row without extra custody RAM or row-budget charge')
-            self.check(self.token_balance('keyuserlunar','keyusdtoken1')['USD']=='1.2345 USD','Approved standard USD withdrawal delivers the full principal')
+            self.check(self.token_balance('keyuserlunar','usd')['USD']=='1.2345 USD','Approved standard USD withdrawal delivers the full principal')
             self.execute('withdraw',self.owner,self.request(self.owner,'withdraw',to='noaccounthere'),failure='invalid withdrawal')
             self.execute('ksend',self.owner,self.request(self.owner),attack='domain',failure='recovered key')
             self.execute('ksend',self.owner,actor='keyrelaymoon@active',failure='recovered key')
@@ -779,6 +798,7 @@ def main():
             epoch=int(sender['auth_epoch']);balance=int(next(b['amount']for b in self.ktable('balances',str(sender['id']))if int(b['asset_id'])==1))
             recipients=['keyuserlunar','keyusersolar'];before=[Decimal(self.token_balance(n)['AIC'].split()[0])for n in recipients]
             requests=[self.request(self.owner,'withdraw',to=to,quantity=q,memo='independent device '+str(i))for i,(to,q)in enumerate(zip(recipients,['0.1000 AIC','0.2000 AIC']))]
+            expected_fees=[int(self.sdk_quote('withdraw',r)['total'])for r in requests]if args.atomic else[130,130]
             packets=[self.signed('withdraw',r,self.owner)for r in requests];assert all(int(r['auth_epoch'])==epoch for r in requests)
             lib=self.rpc('get_info')['last_irreversible_block_num'];children=[]
             try:
@@ -791,9 +811,9 @@ def main():
                 now=next(w for w in self.ktable('wallets')if self.pub_equal(w['key'],self.owner['Public key']))
                 remaining=int(next(b['amount']for b in self.ktable('balances',str(sender['id']))if int(b['asset_id'])==1))
                 deltas=[Decimal(self.token_balance(n)['AIC'].split()[0])-before[i]for i,n in enumerate(recipients)]
-                self.check(int(now['auth_epoch'])==epoch and balance-remaining==3000+260 and deltas==[Decimal('0.1000'),Decimal('0.2000')],
+                self.check(int(now['auth_epoch'])==epoch and balance-remaining==3000+sum(expected_fees) and deltas==[Decimal('0.1000'),Decimal('0.2000')],
                     'Two independently prepared same-epoch transactions both finalize; exact principals and one extra fee each, no shared nonce allocator')
-                self.report['independent_device_concurrency']={'epoch':str(epoch),'confirmations':confirmations,'fee_atoms_each':130,'principal_atoms':[1000,2000]}
+                self.report['independent_device_concurrency']={'epoch':str(epoch),'confirmations':confirmations,'fee_atoms':expected_fees,'principal_atoms':[1000,2000]}
             finally:
                 for c in children:
                     if c.poll()is None:c.kill();c.wait()
@@ -895,32 +915,32 @@ def main():
             self.transfer('keyusersolar','eosio.key','1.0000 XTK',self.memo(self.owner),token='keybadtokenx',failure='reviewed whitelist')
             self.check(self.state()==before and self.token_balance('keyusersolar','keybadtokenx')==native,
                        'Non-whitelisted deposits cannot allocate custody rows or consume fees')
-            self.tx(['set','contract','keyusdtoken1',str(args.artifacts/'test-only-token'),'keybadtokenx.wasm','keybadtokenx.abi'])
-            self.action('setmode',{'value':6},'keyusdtoken1',contract='keyusdtoken1')
+            self.tx(['set','contract','usd',str(args.artifacts/'test-only-token'),'keybadtokenx.wasm','keybadtokenx.abi'])
+            self.action('setmode',{'value':6},'usd',contract='usd')
             before=self.state();ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])
-            self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='keyusdtoken1',quantity='1.0000 USD'),failure='approved whitelist hash')
+            self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='usd',quantity='1.0000 USD'),failure='approved whitelist hash')
             self.check(self.state()==before and int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])==ram,
                        'Whitelisted USD upgraded to RAM attack is rejected before custody authority; fees, principal and RAM stay unchanged')
-            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(self.owner),token='keyusdtoken1',failure='approved whitelist hash')
+            self.transfer('keyusersolar','eosio.key','0.0001 USD',self.memo(self.owner),token='usd',failure='approved whitelist hash')
             self.check(self.state()==before,'Changed issuer code also rejects deposits atomically')
-            self.tx(['set','contract','keyusdtoken1',str(self.contracts/'eosio.token')])
-            self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='keyusdtoken1',quantity='0.0001 USD'))
+            self.tx(['set','contract','usd',str(self.contracts/'eosio.token')])
+            self.execute('selfout',self.owner,self.request(self.owner,'selfout',token_contract='usd',quantity='0.0001 USD'))
             self.check(True,'Restoring exactly the approved USD code restores owner withdrawal')
-            self.action('create',{'issuer':'keyusdtoken1','maximum_supply':'1000.0000 AIC'},'keyusdtoken1',contract='keyusdtoken1')
-            self.action('issue',{'to':'keyusdtoken1','quantity':'10.0000 AIC','memo':'same implementation, unlisted symbol'},'keyusdtoken1',contract='keyusdtoken1')
-            self.transfer('keyusdtoken1','keyusersolar','10.0000 AIC','test funding',token='keyusdtoken1')
-            before=self.state();native=self.token_balance('keyusersolar','keyusdtoken1')
-            self.register_token('keyusdtoken1','4,AIC',failure='reviewed whitelist')
-            self.transfer('keyusersolar','eosio.key','1.0000 AIC','fee',token='keyusdtoken1',failure='reviewed whitelist')
-            self.transfer('keyusersolar','eosio.key','1.0000 AIC',self.memo(self.owner),token='keyusdtoken1',failure='reviewed whitelist')
-            self.check(self.state()==before and self.token_balance('keyusersolar','keyusdtoken1')==native,
+            self.action('create',{'issuer':'usd','maximum_supply':'1000.0000 AIC'},'usd',contract='usd')
+            self.action('issue',{'to':'usd','quantity':'10.0000 AIC','memo':'same implementation, unlisted symbol'},'usd',contract='usd')
+            self.transfer('usd','keyusersolar','10.0000 AIC','test funding',token='usd')
+            before=self.state();native=self.token_balance('keyusersolar','usd')
+            self.register_token('usd','4,AIC',failure='reviewed whitelist')
+            self.transfer('keyusersolar','eosio.key','1.0000 AIC','fee',token='usd',failure='reviewed whitelist')
+            self.transfer('keyusersolar','eosio.key','1.0000 AIC',self.memo(self.owner),token='usd',failure='reviewed whitelist')
+            self.check(self.state()==before and self.token_balance('keyusersolar','usd')==native,
                        'Approval of USD never approves another symbol on the same standard contract; fake AIC cannot fund fees')
             self.tx(['set','contract','keyramnotify',str(args.artifacts/'test-only-recipient'),'keyramattack.wasm','keyramattack.abi'])
             before=self.state();ram=int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage']);native=self.token_balance('keyramnotify')
             self.execute('selfout',self.owner,self.request(self.owner,'selfout',to='keyramnotify',quantity='0.0001 AIC'),failure='notify context')
             self.check(self.state()==before and int(self.rpc('get_account',{'account_name':'eosio.key'})['ram_usage'])==ram and self.token_balance('keyramnotify')==native,
                        'Native RAM_RESTRICTIONS rejects recipient notification billing; withdrawal fully rolls back')
-            self.report['token_code_admission']={'native':'eosio.token::4,AIC','third_party':'keyusdtoken1::4,USD',
+            self.report['token_code_admission']={'native':'eosio.token::4,AIC','third_party':'usd::4,USD',
                 'reviewed_hash':self.ktable('config')[0]['token_hash'],'unlisted_identity_rejected':True,
                 'changed_code_withdrawal_rejected':True,'extra_RAM_bytes':0,'restored_code_exit_verified':True,
                 'recipient_notification_RAM_rejected':True,'third_party_requires_preopened_native_recipient':True}

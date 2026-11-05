@@ -1,0 +1,38 @@
+{
+  "qualification/RESULT.json": {
+    "sha256": "018dca9162f996939a7fddc9105f3d1a33ea5844e7ae4ddf11efd0ce297007e1",
+    "bytes": 226
+  },
+  "qualification/native.log": {
+    "sha256": "985a29b4bcf7293198ec4d012d6114ffd22a3446be9b16aaa4530555e0dddfc8",
+    "bytes": 18141
+  },
+  "qualification/sdk.log": {
+    "sha256": "d9f0718601d55b7cbdfca13da2b5de581e115a6671b2bafdf86c6f4e8f4f916f",
+    "bytes": 6233
+  },
+  "native-result.json": {
+    "sha256": "6e8c2ea88f7c95b00af8e35013cfd8d51c9ef1fdba14e927413a895cecc402bc",
+    "bytes": 80908
+  },
+  "BUILD_RESULT.json": {
+    "sha256": "65941e423ad01e0d83097165f96227a0b242b1f89e53594b7b36cf1c2099f9ef",
+    "bytes": 315
+  },
+  "eosio.key.wasm": {
+    "sha256": "e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442",
+    "bytes": 175820
+  },
+  "eosio.key.abi": {
+    "sha256": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+    "bytes": 28732
+  },
+  "custody.token.wasm": {
+    "sha256": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+    "bytes": 24679
+  },
+  "custody.token.abi": {
+    "sha256": "9846bb35be03e80a831872f1cbd0aff9732df4abeecfcc76e062d8f38960b4e4",
+    "bytes": 6073
+  }
+}

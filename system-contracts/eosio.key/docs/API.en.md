@@ -1,3 +1,5 @@
+> Historical profile document. For the 2026-11-05 atomic-RAM candidate, use [current Chinese rules](ATOMIC_RAM_TRANSFERS.zh.md) or [current English rules](ATOMIC_RAM_TRANSFERS.en.md). Prepaid fees, PK memo deposits and manual ordinary-transfer opening are superseded; public activation remains pending.
+
 # First-release API · owner protocol 2
 
 2026-11-04 RAM 市场计费候选 / market-priced RAM candidate: see [规则、公式与兼容 / rules and compatibility](RAM_MARKET_FEES.md). New source prices approved bytes from current RAM reserves; old deployed hashes retain fixed row pricing. Public activation is not included in this development task.

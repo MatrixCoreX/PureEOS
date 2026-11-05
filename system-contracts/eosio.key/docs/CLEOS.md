@@ -1,3 +1,5 @@
+> Historical profile document. For the 2026-11-05 atomic-RAM candidate, use [current Chinese rules](ATOMIC_RAM_TRANSFERS.zh.md) or [current English rules](ATOMIC_RAM_TRANSFERS.en.md). Prepaid fees, PK memo deposits and manual ordinary-transfer opening are superseded; public activation remains pending.
+
 # cleos 公钥转账 / Public-key transfers
 
 这些命令由本分支的原生 C++ cleos 实现。现有 `transfer 文本账号 文本账号` 保持原用法。以下域名、账号、金额均为示例；先在部署了 eosio.key 的链上执行。公钥持有人只把私钥导入自己的本地 keosd，不上传到 BP。

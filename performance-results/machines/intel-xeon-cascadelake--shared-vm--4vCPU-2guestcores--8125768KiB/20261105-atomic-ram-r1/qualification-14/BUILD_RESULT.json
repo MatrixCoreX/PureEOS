@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "files": {
+    "eosio.key.wasm": "e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442",
+    "token_allowlist.json": "14c95aa341d9d85ea1157a7205fd214581a195ed71ee14cae575cfc37b0ac3b8",
+    "eosio.key.abi": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5"
+  }
+}

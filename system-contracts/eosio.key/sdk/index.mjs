@@ -7,6 +7,8 @@ const LIMIT=(1n<<62n)-1n;
 const REQUESTS={ksend:'transfer_request',withdraw:'withdrawal_request',selfout:'withdrawal_request',cancel:'cancellation_request',selfcancel:'cancellation_request'};
 const common=[['auth_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset'],['relay_fee_bps','uint16$']];
 const schema={
+ deposit:[['from','name'],['token_contract','name'],['to','public_key'],['quantity','asset'],['max_fee','asset'],['request_id','checksum256']],
+ token_transfer:[['from','name'],['to','name'],['quantity','asset'],['memo','string']],
  transfer_request:[['from','public_key'],['to','public_key'],['token_contract','name'],['quantity','asset'],['memo','string'],...common],
  withdrawal_request:[['from','public_key'],['token_contract','name'],['to','name'],['quantity','asset'],['memo','string'],...common],
  cancellation_request:[['from','public_key'],['auth_epoch','uint64'],['next_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset'],['relay_fee_bps','uint16$']],
@@ -31,6 +33,20 @@ export function assetIdentity(tokenContract,tokenSymbol){return sha(Serializer.e
 export function atomicAsset(quantity){const a=Asset.from(quantity),units=BigInt(a.units.toString());if(units< -LIMIT||units>LIMIT)throw new Error('Asset amount out of range');return{units,symbol:a.symbol.toString(),text:a.toString()};}
 export function formatFee(value){value=BigInt(value);if(value<0n||value>LIMIT)throw new Error('Invalid fee amount');return`${value/10000n}.${String(value%10000n).padStart(4,'0')} AIC`;}
 export function depositMemo(key,maximumFee,id=randomRequestId()){const cap=atomicAsset(maximumFee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('AIC fee cap required');return`PK2|${normalizePublicKey(key)}|${cap.units}|${hash(id)}`;}
+export function nativeDepositAction(request,contract=CONTRACT) {
+  exact(request,['from','token_contract','to','quantity','max_fee','request_id']);
+  nativeName(request.from);nativeName(request.token_contract);nativeName(contract);
+  normalizePublicKey(request.to);hash(request.request_id);
+  const q=atomicAsset(request.quantity),cap=atomicAsset(request.max_fee);
+  if(q.units<=0n||cap.symbol!=='4,AIC'||cap.units<0n||request.from===contract)throw new Error('Invalid direct deposit');
+  return {account:contract,name:'deposit',authorization:[{actor:request.from,permission:'active'}],data:encode('deposit',request).hexString};
+}
+export function nativeDepositActions(request,{contract=CONTRACT,feeFunding=request.max_fee}={}) {
+  const control=nativeDepositAction(request,contract),fund=atomicAsset(feeFunding),cap=atomicAsset(request.max_fee);
+  if(fund.symbol!=='4,AIC'||fund.units<=0n||fund.units>cap.units)throw new Error('Invalid direct deposit funding');
+  const transfer=(token,quantity,memo)=>({account:token,name:'transfer',authorization:[{actor:request.from,permission:'active'}],data:encode('token_transfer',{from:request.from,to:contract,quantity,memo}).hexString});
+  return [control,transfer('eosio.token',fund.text,'atomic key fee'),transfer(request.token_contract,request.quantity,'atomic key principal')];
+}
 export function ramRegistrationActions(payer,tokenContract,tokenSymbol,ramPayment,{minimumBytes=4096,contract=CONTRACT}={}) {
   nativeName(payer);nativeName(tokenContract);nativeName(contract);
   if(payer===contract||tokenContract===contract)throw new Error('External RAM payer and token issuer required');
@@ -95,7 +111,7 @@ export function allocationBytes(rows) {
   if(!Number.isInteger(rows)||rows<0||rows>2)throw new Error('Invalid recipient allocation');
   return [0,512,1536][rows];
 }
-export function ramMarketQuote(market,bytes) {
+export function ramMarketQuote(market,bytes,atomicPurchase=false) {
   if(!Number.isInteger(bytes)||bytes<0||bytes>4096)throw new Error('Invalid RAM byte budget');
   if(!bytes)return 0n;
   const amount=(text,symbol)=>{
@@ -108,18 +124,18 @@ export function ramMarketQuote(market,bytes) {
   const reserve=amount(market?.base?.balance,'0,RAM'),quote=amount(market?.quote?.balance,'4,AIC');
   const half=value=>value===0.5||typeof value==='string'&&/^0\.50*$/.test(value);
   if(!half(market.base.weight)||!half(market.quote.weight)||reserve<=BigInt(bytes))throw new Error('Unsupported or invalid RAM market');
-  const remaining=reserve-BigInt(bytes),net=(quote*BigInt(bytes)+remaining-1n)/remaining;
+  const remaining=reserve-BigInt(bytes),net=(quote*BigInt(bytes)+remaining-1n)/remaining+(atomicPurchase?1n:0n);
   const gross=(net*200n+198n)/199n;
   if(gross>LIMIT)throw new Error('RAM quote out of range');
   return gross;
 }
-export function calculateMarketFee(policy,multiplier,units,bytes,market,relayed,relayFeeBps=3000) {
+export function calculateMarketFee(policy,multiplier,units,bytes,market,relayed,relayFeeBps=3000,atomicPurchase=false) {
   if(!Number.isInteger(units)||units<0||units>128)throw new Error('Invalid work bound');
   multiplier=BigInt(multiplier);
   if(multiplier<10000n||multiplier>BigInt(policy.maximum_multiplier_bps))throw new Error('Invalid fee multiplier');
   if(relayed&&(!Number.isInteger(relayFeeBps)||relayFeeBps<1000||relayFeeBps>3000))throw new Error('Relay fee must be 10% to 30%');
   const execution=(BigInt(policy.unit_fee)*BigInt(units)*multiplier+9999n)/10000n;
-  const storage=ramMarketQuote(market,bytes),computed=execution+storage;
+  const storage=ramMarketQuote(market,bytes,atomicPurchase),computed=execution+storage;
   const base=computed>BigInt(policy.minimum_fee)?computed:BigInt(policy.minimum_fee);
   const premium=relayed?(base*BigInt(relayFeeBps)+9999n)/10000n:0n;
   if(execution<0n||base<=0n||base+premium>LIMIT)throw new Error('Fee out of range');
@@ -212,13 +228,13 @@ export class KeyWalletClient {
       const symbol=atomicAsset(request.quantity).symbol;
       const key=recipientKey||request.to;
       const [wallet,asset]=await Promise.all([this.wallet(key),this.asset(request.token_contract,symbol)]);
-      if(!asset||!BigInt(asset.ram_purchased||0))throw new Error('Token requires paid RAM registration before receiving funds');
+      if(ramPricing!=='atomic'&&(!asset||!BigInt(asset.ram_purchased||0)))throw new Error('Token requires paid RAM registration before receiving funds');
       if(!wallet)rows=2;
       else if(!asset||(await this.rows('balances',String(wallet.id),{lower_bound:String(asset.id),upper_bound:String(asset.id),limit:2})).length===0)rows=1;
-      units=(operation==='deposit'?2:4)+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
+      units=(ramPricing==='atomic'?8:(operation==='deposit'?2:4))+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);
     }else if(operation==='withdraw'||operation==='selfout'){
-      units=6+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);
-      if(rows&&request.token_contract!==cfg.fee_contract)throw new Error('Recipient must open the third-party token balance before withdrawal');
+      units=(ramPricing==='atomic'?10:6)+Math.ceil(Buffer.byteLength(request.memo||'','utf8')/64);rows=await this.nativeRows(request.token_contract,request.to,request.quantity);
+      if(ramPricing!=='atomic'&&rows&&request.token_contract!==cfg.fee_contract)throw new Error('Recipient must open the third-party token balance before withdrawal');
     }
     else if(operation==='cancel'||operation==='selfcancel')units=3;
     else if(operation==='refundfee'){units=4;rows=await this.nativeRows(cfg.fee_contract,request.to,request.quantity);}
@@ -226,15 +242,19 @@ export class KeyWalletClient {
     const relayed=['ksend','withdraw','cancel'].includes(operation),rate=relayed?await this.relayRate(request.relayer):0;
     if(Object.hasOwn(request,'relay_fee_bps')&&request.relay_fee_bps!==rate)throw new Error('Relay rate changed; sign an updated quote');
     let fee;
-    if(ramPricing==='market'){
-      const bytes=allocationBytes(rows);let market=null;
+    if(ramPricing==='market'||ramPricing==='atomic'){
+      let bytes=allocationBytes(rows);let market=null;
+      if(ramPricing==='atomic'&&['ksend','deposit'].includes(operation)){
+        const a=await this.asset(request.token_contract,atomicAsset(request.quantity).symbol);
+        if(request.token_contract!==cfg.fee_contract&&(!a||!BigInt(a.ram_purchased||0)))bytes+=2048;
+      }
       if(bytes){
         if(code.code_hash!==cfg.system_hash)throw new Error('System code changed; pre-open recipient RAM before exiting');
         const result=await this.rpc('get_table_rows',{json:true,code:'eosio',scope:'eosio',table:'rammarket',limit:2});
         if(result.more||result.rows?.length!==1)throw new Error('RAM market unavailable');
         market=result.rows[0];
       }
-      fee=calculateMarketFee(cfg.policy,multiplier,units,bytes,market,relayed,rate);
+      fee=calculateMarketFee(cfg.policy,multiplier,units,bytes,market,relayed,rate,ramPricing==='atomic');
     }else fee=calculateFee(cfg.policy,multiplier,units,rows,relayed,rate);
     const finalCode=await this.rpc('get_code_hash',{account_name:this.contract});
     if(finalCode.code_hash!==walletCode.code_hash)throw new Error('Wallet code changed during fee quote');

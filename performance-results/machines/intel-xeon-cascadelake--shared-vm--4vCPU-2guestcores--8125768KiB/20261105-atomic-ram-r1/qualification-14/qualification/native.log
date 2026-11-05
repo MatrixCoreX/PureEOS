@@ -1,0 +1,240 @@
+Local test directory: /opt/ka-attempt-14/local-tests/integer-v2-4ho0799a
+PASS: Required native features activated; deferred execution remains disabled
+PASS: Governance protocol activation selects the same native review profile before sealing
+RETRY: same immutable native packet; explicit CPU rejection, canonical absence and unchanged state; caps unchanged
+PASS: Native build rejects the other review profile before sealing
+PASS: Native governance sealed after eosio.key deployment with selected review 1800 seconds
+PASS: Wallet is explicitly protected by selected native governance review
+PASS: RAM1024 initialization preserved
+PASS: Wallet owner and active have no deployer private keys after initialization
+PASS: Actual deployed wallet WASM hash equals the selected production/fixture artifact
+PASS: No manual fee prepayment or sponsored token capacity exists at test start
+PASS: named-to-key first USD: exactly one canonical fee breakdown
+PASS: named-to-key first USD: expected conservative allocation budget
+PASS: named-to-key first USD: no duplicated RAM fee; exact fee equation
+PASS: named-to-key first USD: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: named-to-key first USD: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: USD recipient receives full principal without AIC; native sender pays exact additional AIC fee
+PASS: USD key sender without AIC: full principal/fee/RAM/budget/count rollback
+PASS: named-to-key first AIC balance: exactly one canonical fee breakdown
+PASS: named-to-key first AIC balance: expected conservative allocation budget
+PASS: named-to-key first AIC balance: no duplicated RAM fee; exact fee equation
+PASS: named-to-key first AIC balance: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: named-to-key first AIC balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Direct AIC deposit pays exact fee once, with full principal and no prepaid credit
+PASS: named-to-key existing AIC balance: exactly one canonical fee breakdown
+PASS: named-to-key existing AIC balance: expected conservative allocation budget
+PASS: named-to-key existing AIC balance: no duplicated RAM fee; exact fee equation
+PASS: named-to-key existing AIC balance: existing records buy no RAM
+PASS: named-to-key existing AIC balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: key-to-key new recipient: exactly one canonical fee breakdown
+PASS: key-to-key new recipient: expected conservative allocation budget
+PASS: key-to-key new recipient: no duplicated RAM fee; exact fee equation
+PASS: key-to-key new recipient: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-key new recipient: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Public-key recipient gets full 3 AIC
+PASS: key-to-key existing recipient: exactly one canonical fee breakdown
+PASS: key-to-key existing recipient: expected conservative allocation budget
+PASS: key-to-key existing recipient: no duplicated RAM fee; exact fee equation
+PASS: key-to-key existing recipient: existing records buy no RAM
+PASS: key-to-key existing recipient: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: key-to-key first USD balance: exactly one canonical fee breakdown
+PASS: key-to-key first USD balance: expected conservative allocation budget
+PASS: key-to-key first USD balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-key first USD balance: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-key first USD balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: key-to-key new USD-only recipient: exactly one canonical fee breakdown
+PASS: key-to-key new USD-only recipient: expected conservative allocation budget
+PASS: key-to-key new USD-only recipient: no duplicated RAM fee; exact fee equation
+PASS: key-to-key new USD-only recipient: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-key new USD-only recipient: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: New USD-only receiving key needs no AIC or native account
+PASS: New recipient exceeds signed cap: full principal/fee/RAM/budget/count rollback
+PASS: Named deposit exceeds fee cap: full principal/fee/RAM/budget/count rollback
+PASS: Wrong issuer: full principal/fee/RAM/budget/count rollback
+PASS: named-to-key first CNY: exactly one canonical fee breakdown
+PASS: named-to-key first CNY: expected conservative allocation budget
+PASS: named-to-key first CNY: no duplicated RAM fee; exact fee equation
+PASS: named-to-key first CNY: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: named-to-key first CNY: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: CNY recipient receives full principal without AIC
+PASS: CNY key sender without AIC: full principal/fee/RAM/budget/count rollback
+PASS: named-to-key CNY holder receives AIC fee funds: exactly one canonical fee breakdown
+PASS: named-to-key CNY holder receives AIC fee funds: expected conservative allocation budget
+PASS: named-to-key CNY holder receives AIC fee funds: no duplicated RAM fee; exact fee equation
+PASS: named-to-key CNY holder receives AIC fee funds: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: named-to-key CNY holder receives AIC fee funds: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: key-to-key first CNY balance: exactly one canonical fee breakdown
+PASS: key-to-key first CNY balance: expected conservative allocation budget
+PASS: key-to-key first CNY balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-key first CNY balance: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-key first CNY balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: key-to-key existing CNY balance: exactly one canonical fee breakdown
+PASS: key-to-key existing CNY balance: expected conservative allocation budget
+PASS: key-to-key existing CNY balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-key existing CNY balance: existing records buy no RAM
+PASS: key-to-key existing CNY balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: key-to-named first CNY balance: exactly one canonical fee breakdown
+PASS: key-to-named first CNY balance: expected conservative allocation budget
+PASS: key-to-named first CNY balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-named first CNY balance: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-named first CNY balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Named CNY recipient receives full principal automatically
+PASS: key-to-named existing CNY balance: exactly one canonical fee breakdown
+PASS: key-to-named existing CNY balance: expected conservative allocation budget
+PASS: key-to-named existing CNY balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-named existing CNY balance: existing records buy no RAM
+PASS: key-to-named existing CNY balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Standalone legacy fee funding: full principal/fee/RAM/budget/count rollback
+PASS: Standalone legacy key memo: full principal/fee/RAM/budget/count rollback
+PASS: Named USD recipient initially has no balance row
+PASS: key-to-named first USD balance: exactly one canonical fee breakdown
+PASS: key-to-named first USD balance: expected conservative allocation budget
+PASS: key-to-named first USD balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-named first USD balance: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-named first USD balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Named USD recipient receives entire principal automatically
+PASS: key-to-named existing USD balance: exactly one canonical fee breakdown
+PASS: key-to-named existing USD balance: expected conservative allocation budget
+PASS: key-to-named existing USD balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-named existing USD balance: existing records buy no RAM
+PASS: key-to-named existing USD balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: key-to-named first AIC balance: exactly one canonical fee breakdown
+PASS: key-to-named first AIC balance: expected conservative allocation budget
+PASS: key-to-named first AIC balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-named first AIC balance: native purchase, exact gross AIC cost and actual acquired quota verified
+PASS: key-to-named first AIC balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: key-to-named existing AIC balance: exactly one canonical fee breakdown
+PASS: key-to-named existing AIC balance: expected conservative allocation budget
+PASS: key-to-named existing AIC balance: no duplicated RAM fee; exact fee equation
+PASS: key-to-named existing AIC balance: existing records buy no RAM
+PASS: key-to-named existing AIC balance: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: self withdrawal without relay fee: exactly one canonical fee breakdown
+PASS: self withdrawal without relay fee: expected conservative allocation budget
+PASS: self withdrawal without relay fee: no duplicated RAM fee; exact fee equation
+PASS: self withdrawal without relay fee: existing records buy no RAM
+PASS: self withdrawal without relay fee: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: All ordinary transfers complete without manual nativefee credit
+PASS: External payram: full principal/fee/RAM/budget/count rollback
+PASS: External settleram: full principal/fee/RAM/budget/count rollback
+PASS: Concurrent pre-signed transfers create one shared recipient record and deliver both full principals
+PASS: Concurrent new-recipient requests purchase RAM only once; the later transaction charges no RAM
+PASS: Two independently prepared same-epoch transactions both finalize; exact principals and one extra fee each, no shared nonce allocator
+PASS: Owner proof attack expiration rejects without principal, fee or reserve changes
+PASS: Owner proof attack extra-root rejects without principal, fee or reserve changes
+PASS: Owner proof attack domain rejects without principal, fee or reserve changes
+PASS: Owner proof attack invalid-proof rejects without principal, fee or reserve changes
+PASS: Owner proof attack extra-cfd rejects without principal, fee or reserve changes
+PASS: Failed same-ID invalid proof does not poison later valid transaction
+PASS: Exact native retry after success cannot debit twice
+PASS: Changing native packet compression cannot create a second payment
+PASS: Already executed short-lived packet remains rejected after expiry and native dedup pruning
+PASS: Revoked native BP relay hot key cannot authorize pending wallet transaction
+PASS: Rotating only native resource signature preserves holder proof and native transaction ID
+PASS: Attempt to spend entire principal without additional AIC fee fails atomically
+PASS: relay rate 1000: exactly one canonical fee breakdown
+PASS: relay rate 1000: expected conservative allocation budget
+PASS: relay rate 1000: no duplicated RAM fee; exact fee equation
+PASS: relay rate 1000: existing records buy no RAM
+PASS: relay rate 1000: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Exact configured relay fee with upward rounding 1000
+PASS: relay rate 1500: exactly one canonical fee breakdown
+PASS: relay rate 1500: expected conservative allocation budget
+PASS: relay rate 1500: no duplicated RAM fee; exact fee equation
+PASS: relay rate 1500: existing records buy no RAM
+PASS: relay rate 1500: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Exact configured relay fee with upward rounding 1500
+PASS: relay rate 2000: exactly one canonical fee breakdown
+PASS: relay rate 2000: expected conservative allocation budget
+PASS: relay rate 2000: no duplicated RAM fee; exact fee equation
+PASS: relay rate 2000: existing records buy no RAM
+PASS: relay rate 2000: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Exact configured relay fee with upward rounding 2000
+PASS: relay rate 2500: exactly one canonical fee breakdown
+PASS: relay rate 2500: expected conservative allocation budget
+PASS: relay rate 2500: no duplicated RAM fee; exact fee equation
+PASS: relay rate 2500: existing records buy no RAM
+PASS: relay rate 2500: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Exact configured relay fee with upward rounding 2500
+PASS: relay rate 3000: exactly one canonical fee breakdown
+PASS: relay rate 3000: expected conservative allocation budget
+PASS: relay rate 3000: no duplicated RAM fee; exact fee equation
+PASS: relay rate 3000: existing records buy no RAM
+PASS: relay rate 3000: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Exact configured relay fee with upward rounding 3000
+PASS: Claim still pays full earned quantity with zero application fee and no prepaid credit
+PASS: Capacity after attempted native RAM buy: full principal/fee/RAM/budget/count rollback
+PASS: Existing recipient remains usable at key capacity: exactly one canonical fee breakdown
+PASS: Existing recipient remains usable at key capacity: expected conservative allocation budget
+PASS: Existing recipient remains usable at key capacity: no duplicated RAM fee; exact fee equation
+PASS: Existing recipient remains usable at key capacity: existing records buy no RAM
+PASS: Existing recipient remains usable at key capacity: internal payment ticket consumed
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+PASS: Exact vault reserve equals all ledger liabilities for eosio.token::4,AIC
+PASS: Exact vault reserve equals all ledger liabilities for usd::4,USD
+PASS: Exact vault reserve equals all ledger liabilities for cny::4,CNY
+RESULT PASS

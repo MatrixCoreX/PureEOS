@@ -1,3 +1,5 @@
+> Historical profile document. For the 2026-11-05 atomic-RAM candidate, use [current Chinese rules](ATOMIC_RAM_TRANSFERS.zh.md) or [current English rules](ATOMIC_RAM_TRANSFERS.en.md). Prepaid fees, PK memo deposits and manual ordinary-transfer opening are superseded; public activation remains pending.
+
 # RAM 市场计费 / RAM market pricing
 
 2026-11-04 开发及 TEST 激活完成。提案2完整公示1800秒后，经原生 devexec 不可逆启用 `bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1`；ABI不变。旧 `b6509d…` / `1933629d…` 仍按定额行费计价。SDK 与浏览器按审核代码哈希选择规则，未知版本不报价。实际升级交易与三笔收费验证见实际Cascadelake机器的 `20261104-dev-proposals-ram-activation-r1/REPORT.md`。

@@ -70,8 +70,8 @@ struct market_view {
 };
 using market_singleton = singleton<"powup.state"_n, market_view>;
 
-// Qualified native RAM market layout. Read only; transfer fees never execute
-// a RAM purchase or alter the separately sponsored allocation budgets.
+// Qualified native RAM market layout. Read only for exact bounded purchases;
+// only the pinned native system contract changes the market and RAM quotas.
 struct ram_connector {
    asset balance;
    double weight;
