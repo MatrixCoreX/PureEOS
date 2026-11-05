@@ -6,27 +6,111 @@
       "name": "transfer",
       "base": "",
       "fields": [
-        {"name": "from", "type": "name"},
-        {"name": "to", "type": "name"},
-        {"name": "quantity", "type": "asset"},
-        {"name": "memo", "type": "string"}
+        {
+          "name": "from",
+          "type": "name"
+        },
+        {
+          "name": "to",
+          "type": "name"
+        },
+        {
+          "name": "quantity",
+          "type": "asset"
+        },
+        {
+          "name": "memo",
+          "type": "string"
+        }
       ]
     },
     {
       "name": "logbuyram",
       "base": "",
       "fields": [
-        {"name": "payer", "type": "name"},
-        {"name": "receiver", "type": "name"},
-        {"name": "quantity", "type": "asset"},
-        {"name": "bytes", "type": "int64"},
-        {"name": "ram_bytes", "type": "int64"},
-        {"name": "fee", "type": "asset"}
+        {
+          "name": "payer",
+          "type": "name"
+        },
+        {
+          "name": "receiver",
+          "type": "name"
+        },
+        {
+          "name": "quantity",
+          "type": "asset"
+        },
+        {
+          "name": "bytes",
+          "type": "int64"
+        },
+        {
+          "name": "ram_bytes",
+          "type": "int64"
+        },
+        {
+          "name": "fee",
+          "type": "asset"
+        }
+      ]
+    },
+    {
+      "name": "createkey",
+      "base": "",
+      "fields": [
+        {
+          "name": "request_id",
+          "type": "checksum256"
+        }
+      ]
+    },
+    {
+      "name": "pending_key",
+      "base": "",
+      "fields": [
+        {
+          "name": "transaction_id",
+          "type": "checksum256"
+        },
+        {
+          "name": "request_id",
+          "type": "checksum256"
+        },
+        {
+          "name": "account",
+          "type": "name"
+        },
+        {
+          "name": "owner",
+          "type": "public_key"
+        },
+        {
+          "name": "active",
+          "type": "public_key"
+        },
+        {
+          "name": "quantity",
+          "type": "asset"
+        }
       ]
     }
   ],
-  "actions": [],
-  "tables": [],
+  "actions": [
+    {
+      "name": "createkey",
+      "type": "createkey",
+      "ricardian_contract": ""
+    }
+  ],
+  "tables": [
+    {
+      "name": "pendingkey",
+      "type": "pending_key",
+      "index_type": "i64",
+      "key_names": [],
+      "key_types": []
+    }
+  ],
   "ricardian_clauses": [],
   "error_messages": [],
   "abi_extensions": [],

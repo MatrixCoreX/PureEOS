@@ -4,6 +4,9 @@
 #include <eosio/asset.hpp>
 #include <eosio/crypto.hpp>
 #include <eosio/crypto_ext.hpp>
+#include <eosio/transaction.hpp>
+#include <eosio/singleton.hpp>
+#include <eosio/binary_extension.hpp>
 #include <tuple>
 #include <vector>
 #include "key_codec.hpp"
@@ -34,6 +37,19 @@ const checksum256 system_code(std::array<uint8_t,32>{
 constexpr int64_t stake_net=1000,stake_cpu=1000;
 constexpr int64_t minimum_ram_bytes=4096;
 
+// Same wire as eosio.key withdrawal_request; only decoded for exact atomic bridge binding.
+struct key_withdrawal {
+   public_key from; name token_contract,to; asset quantity; std::string memo;
+   uint64_t auth_epoch; checksum256 request_id; name relayer,reward_to; asset max_fee;
+   binary_extension<uint16_t> relay_fee_bps;
+   EOSLIB_SERIALIZE(key_withdrawal,(from)(token_contract)(to)(quantity)(memo)(auth_epoch)(request_id)(relayer)(reward_to)(max_fee)(relay_fee_bps))
+};
+struct [[eosio::table("pendingkey")]] pending_key {
+   checksum256 transaction_id,request_id; name account; public_key owner,active; asset quantity;
+   EOSLIB_SERIALIZE(pending_key,(transaction_id)(request_id)(account)(owner)(active)(quantity))
+};
+using pending_table=singleton<"pendingkey"_n,pending_key>;
+
 class [[eosio::contract("eosio.signup")]] signup_contract:public contract {
 public:
    using contract::contract;
@@ -52,6 +68,73 @@ public:
       check(memo_valid,error?error:"invalid registration memo");
       const name account{request.account};check(!is_account(account),"account name is already registered");
       const auto owner=decode(request.owner),active=request.active==request.owner?owner:decode(request.active);
+      if(from=="eosio.key"_n) {
+         // The KEY transfer notification has already consumed inline depth. Stage
+         // only inside the exact two-root owner-signed transaction; the second
+         // top-level action creates the account under the ordinary depth limit.
+         const auto raw=transaction_bytes();const auto tx=unpack<transaction>(raw);
+         const auto payment=bridge_payment(tx);
+         check(payment.token_contract==get_first_receiver()&&payment.to==get_self()&&
+               payment.quantity==quantity&&payment.memo==memo,"signup bridge payment mismatch");
+         pending_table table(get_self(),get_self().value);
+         check(!table.exists(),"registration already pending");
+         table.set(pending_key{sha256(raw.data(),raw.size()),payment.request_id,account,owner,active,quantity},get_self());
+      } else {
+         pending_table table(get_self(),get_self().value);check(!table.exists(),"registration already pending");
+         create(account,owner,active,quantity);
+      }
+   }
+   [[eosio::action]]
+   void createkey(checksum256 request_id) {
+      check(get_self()=="eosio.signup"_n&&get_first_receiver()==get_self()&&!get_sender().value,
+            "top-level atomic key registration required");
+      const auto raw=transaction_bytes();const auto tx=unpack<transaction>(raw);
+      const auto payment=bridge_payment(tx);
+      pending_table table(get_self(),get_self().value);check(table.exists(),"same-transaction key payment required");
+      const auto pending=table.get();
+      check(pending.transaction_id==sha256(raw.data(),raw.size())&&pending.request_id==request_id&&
+            payment.request_id==request_id&&pending.quantity==payment.quantity,
+            "atomic registration transaction or request mismatch");
+      table.remove(); // All creation, resource and fee failures revert this and the original KEY debit.
+      create(pending.account,pending.owner,pending.active,pending.quantity);
+   }
+   [[eosio::on_notify("eosio::logbuyram")]]
+   void onbuyram(name payer,name receiver,asset quantity,int64_t bytes,int64_t ram_bytes,asset fee) {
+      if(payer!=get_self())return;
+      check(get_first_receiver()=="eosio"_n&&get_code_hash("eosio"_n)==system_code,
+            "unreviewed RAM purchase notification");
+      check(receiver!=get_self()&&quantity.symbol==symbol("AIC",4)&&bytes>=minimum_ram_bytes&&ram_bytes>=bytes&&
+            fee.symbol==quantity.symbol&&fee.amount==(quantity.amount+199)/200,
+            "actual registration RAM purchase does not meet policy");
+   }
+private:
+   static std::vector<char> transaction_bytes() {
+      const size_t size=transaction_size();check(size>0&&size<=16384,"unsupported registration transaction size");
+      std::vector<char> raw(size);check(read_transaction(raw.data(),size)==size,"incomplete registration transaction");return raw;
+   }
+   key_withdrawal bridge_payment(const transaction& tx)const {
+      check(tx.actions.size()==2&&tx.context_free_actions.size()==1&&tx.delay_sec.value==0&&tx.transaction_extensions.empty(),
+            "exact two-root atomic registration required");
+      const auto& first=tx.actions[0];const auto& second=tx.actions[1];
+      check(first.account=="eosio.key"_n&&(first.name=="withdraw"_n||first.name=="selfout"_n)&&first.authorization.size()==1,
+            "key withdrawal must precede registration");
+      const auto payment=first.name=="withdraw"_n?unpack<key_withdrawal>(first.data):
+         std::get<1>(unpack<std::tuple<name,key_withdrawal>>(first.data));
+      check(payment.token_contract=="eosio.token"_n&&payment.to==get_self()&&payment.quantity.symbol==symbol("AIC",4)&&
+            payment.request_id!=checksum256{},"native AIC key registration required");
+      check(second.account==get_self()&&second.name=="createkey"_n&&second.authorization.empty()&&
+            second.data==pack(payment.request_id),"registration continuation mismatch");
+      const auto& proof=tx.context_free_actions[0];
+      check(proof.account=="eosio.key"_n&&proof.name=="prove"_n&&proof.authorization.empty()&&proof.data.size()==102,
+            "key owner proof required");
+      return payment;
+   }
+   void create(name account,const public_key& owner,const public_key& active,asset quantity) {
+      check(!is_account(account),"account name is already registered");
+      check(get_code_hash("eosio.token"_n)==token_code&&get_code_hash("eosio"_n)==system_code,
+            "registration token/system code requires review");
+      check(quantity.is_valid()&&quantity.symbol==symbol("AIC",4)&&quantity.amount>stake_net+stake_cpu,
+            "positive AIC sufficient for CPU, NET and RAM is required");
       const asset ram{quantity.amount-stake_net-stake_cpu,quantity.symbol};
       ram_market market("eosio"_n,"eosio"_n.value);
       const auto& row=market.get(symbol("RAMCORE",4).raw(),"RAM market is unavailable");
@@ -68,16 +151,6 @@ public:
       action(self,"eosio"_n,"delegatebw"_n,
              std::make_tuple(get_self(),account,asset(stake_net,quantity.symbol),asset(stake_cpu,quantity.symbol),true)).send();
    }
-   [[eosio::on_notify("eosio::logbuyram")]]
-   void onbuyram(name payer,name receiver,asset quantity,int64_t bytes,int64_t ram_bytes,asset fee) {
-      if(payer!=get_self())return;
-      check(get_first_receiver()=="eosio"_n&&get_code_hash("eosio"_n)==system_code,
-            "unreviewed RAM purchase notification");
-      check(receiver!=get_self()&&quantity.symbol==symbol("AIC",4)&&bytes>=minimum_ram_bytes&&ram_bytes>=bytes&&
-            fee.symbol==quantity.symbol&&fee.amount==(quantity.amount+199)/200,
-            "actual registration RAM purchase does not meet policy");
-   }
-private:
    static public_key decode(const std::string& text) {
       decoded_key key;const char* error=nullptr;
       auto digest=[](const uint8_t* p,size_t n){return ripemd160(reinterpret_cast<const char*>(p),n).extract_as_byte_array();};
