@@ -8,8 +8,8 @@
   },
   "native_test_execution": {
     "status": "WRITTEN_NOT_RUN_FOR_PARALLEL_SCOPE",
-    "planned_cases": 54,
-    "groups": "46governance+5real+3wire"
+    "planned_cases": 55,
+    "groups": "46governance+6real+3wire"
   },
   "live_node_changes": "Approved60minute build/validation window; original programs restored; candidate never installed",
   "live_transactions": false,

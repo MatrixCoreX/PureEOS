@@ -228,6 +228,52 @@ BOOST_AUTO_TEST_CASE(key_service_reviewed_initializer_runs_after_deployment_and_
    BOOST_CHECK(stage>0&&init>stage&&finish>init);
    BOOST_CHECK((!f.chain.control->db().get<account_metadata_object,by_name>("eosio.key"_n).is_privileged()));
 }
+BOOST_AUTO_TEST_CASE(actual_parallel_USD_CNY_initialization_is_sealed_and_wrong_target_rolls_back) {
+   signup_real_fixture f;
+   std::string wasm,json;
+   fc::read_file_contents((f.root/"custody.token.wasm").string(),wasm);
+   fc::read_file_contents((f.root/"custody.token.abi").string(),json);
+   f.signup_code.assign(wasm.begin(),wasm.end());
+   BOOST_REQUIRE(fc::sha256::hash(f.signup_code.data(),f.signup_code.size())==digest_type("ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb"));
+   abi_def abi;fc::from_variant(fc::json::from_string(json),abi);f.signup_abi=fc::raw::pack(abi);
+   f.authority_version=2;f.init_review_hash=fc::sha256::hash("reviewed system-custody TEST USD and CNY initialization");
+   auto data=[](const char* sym) {return fc::raw::pack(std::make_tuple("alice"_n,
+      asset{10000000000ll,symbol::from_string(sym)},asset{100000000ll,symbol::from_string(sym)}));};
+   const auto usd=data("4,USD"),cny=data("4,CNY");
+   f.init_data=usd;f.propose("usd"_n,10000);const auto id1=f.creation().proposal_id;
+   f.init_data=cny;f.propose("cny"_n,10000);const auto id2=f.creation().proposal_id;
+   auto execute=[&](uint64_t id,const bytes& init) {return f.push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},
+      sysexec{id,f.signup_code,f.signup_abi,init,f.init_review_hash})},"developer"_n);};
+   BOOST_CHECK_THROW(execute(id1,usd),fc::exception);f.advance_to(f.creation().execute_after);
+   BOOST_REQUIRE_NO_THROW(execute(id1,usd));BOOST_CHECK(f.creation().pending);
+   BOOST_REQUIRE_NO_THROW(execute(id2,cny));
+   auto inspect=[&](account_name target,uint64_t symbol_raw,const char* expected_symbol) {
+      auto row=f.chain.get_row_by_account(target,name{symbol_raw},"stat"_n,name{symbol_raw});BOOST_REQUIRE(!row.empty());
+      fc::datastream<const char*> stream(row.data(),row.size());asset supply,maximum;account_name issuer;
+      fc::raw::unpack(stream,supply);fc::raw::unpack(stream,maximum);fc::raw::unpack(stream,issuer);
+      BOOST_CHECK_EQUAL(supply.get_amount(),100000000ll);BOOST_CHECK_EQUAL(maximum.get_amount(),10000000000ll);
+      BOOST_CHECK(issuer==target&&supply.get_symbol()==symbol::from_string(expected_symbol));
+      auto balance=f.chain.get_row_by_account(target,"alice"_n,"accounts"_n,name{symbol_raw});BOOST_REQUIRE(!balance.empty());
+      fc::datastream<const char*> bal(balance.data(),balance.size());asset value;fc::raw::unpack(bal,value);BOOST_CHECK_EQUAL(value.get_amount(),100000000ll);
+      const auto owner=f.chain.control->get_authorization_manager().get_permission({target,"owner"_n}).auth.to_authority();
+      const auto active=f.chain.control->get_authorization_manager().get_permission({target,"active"_n}).auth.to_authority();
+      BOOST_CHECK(owner.keys.empty()&&owner.accounts.empty()&&owner.waits.empty()&&owner.threshold==1);
+      BOOST_CHECK(active.keys.empty()&&active.accounts.size()==2&&active.waits.empty());
+      BOOST_CHECK((!f.chain.control->db().get<account_metadata_object,by_name>(target).is_privileged()));
+      BOOST_CHECK(is_protected_system_account(f.chain.control->db(),target));
+   };
+   inspect("usd"_n,0x445355,"4,USD");inspect("cny"_n,0x594e43,"4,CNY");
+   BOOST_CHECK_THROW(f.call("usd"_n,"issue"_n,"alice"_n,fc::mutable_variant_object()("to","usd")("quantity","1.0000 USD")("memo","unauthorized")),fc::exception);
+   BOOST_CHECK_THROW(f.call("cny"_n,"setmaxsupply"_n,"alice"_n,fc::mutable_variant_object()("issuer","cny")("maximum_supply","2000000.0000 CNY")),fc::exception);
+   f.init_data=usd;f.propose("gold"_n,10000);const auto id3=f.creation().proposal_id;f.advance_to(f.creation().execute_after);
+   const auto funds=f.balance("developer"_n);const auto state=fc::raw::pack(f.creation());
+   BOOST_CHECK_THROW(execute(id3,usd),fc::exception);
+   BOOST_CHECK(!f.chain.control->db().find<account_object,by_name>("gold"_n));
+   BOOST_CHECK(!is_protected_system_account(f.chain.control->db(),"gold"_n));
+   BOOST_CHECK_EQUAL(f.balance("developer"_n),funds);BOOST_CHECK(fc::raw::pack(f.creation())==state);
+   inspect("usd"_n,0x445355,"4,USD");inspect("cny"_n,0x594e43,"4,CNY");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(pureeos_signup_wire_tests)
 BOOST_AUTO_TEST_CASE(unsigned_helper_matches_native_action_serialization) {
