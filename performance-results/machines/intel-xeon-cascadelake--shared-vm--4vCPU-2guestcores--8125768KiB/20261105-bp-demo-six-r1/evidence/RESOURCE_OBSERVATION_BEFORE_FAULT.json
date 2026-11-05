@@ -1,0 +1,253 @@
+{
+  "status": "OBSERVED_NOT_CAPACITY_QUALIFIED",
+  "UTC": "2026-11-05T13:22:34.098983+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "machine": {
+    "Architecture": "x86_64",
+    "CPU(s)": "4",
+    "On-line CPU(s) list": "0-3",
+    "Vendor ID": "GenuineIntel",
+    "Model name": "Intel Xeon Processor (Cascadelake)",
+    "Thread(s) per core": "2",
+    "Core(s) per socket": "2",
+    "Socket(s)": "1",
+    "Virtualization type": "full",
+    "Hypervisor vendor": "Microsoft"
+  },
+  "allowed_CPUs": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "memory": {
+    "MemTotal": "8125768 kB",
+    "MemAvailable": "2093836 kB",
+    "SwapTotal": "8388604 kB",
+    "SwapFree": "4885164 kB"
+  },
+  "loadavg": "111.27 109.77 109.14 53/1174 491591",
+  "disk_available_bytes": 92799217664,
+  "known_processes": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": {
+      "MainPID": "415990",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-anthropiclab-20261105.service": {
+      "MainPID": "415049",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "MainPID": "416139",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-berlintulabs-20261105.service": {
+      "MainPID": "417069",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-bytedancelab-20261105.service": {
+      "MainPID": "416219",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-canadamilaai-20261105.service": {
+      "MainPID": "417139",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-cohereclouds-20261105.service": {
+      "MainPID": "415319",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": {
+      "MainPID": "415177",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-deepseekcore-20261105.service": {
+      "MainPID": "415113",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-londonucllab-20261105.service": {
+      "MainPID": "416566",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": {
+      "MainPID": "416292",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-mistralcloud-20261105.service": {
+      "MainPID": "415241",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": {
+      "MainPID": "416362",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": {
+      "MainPID": "415917",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-openaiclouds-20261105.service": {
+      "MainPID": "414985",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-parisinriaai-20261105.service": {
+      "MainPID": "417001",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-perplexityai-20261105.service": {
+      "MainPID": "415567",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": {
+      "MainPID": "416876",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "MainPID": "416429",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-stabilityhub-20261105.service": {
+      "MainPID": "415780",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-tencentcloud-20261105.service": {
+      "MainPID": "416057",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "MainPID": "416689",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-bp-zurichethlab-20261105.service": {
+      "MainPID": "416500",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-founder-20261105.service": {
+      "MainPID": "417216",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-devnet-history-20261105.service": {
+      "MainPID": "414916",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "MainPID": "464685",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "MainPID": "465556",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "MainPID": "466237",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-genevacernai-20261105.service": {
+      "MainPID": "466849",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-sydneyunswai-20261105.service": {
+      "MainPID": "468675",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-montrealmila-20261105.service": {
+      "MainPID": "469732",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "known_BP_processes": 30,
+  "known_history_processes": 1,
+  "scope": "Single read-only actual-resource observation during normal functional admission; no saturation workload or throughput claim. Shared host with historical CPU/latency limits."
+}

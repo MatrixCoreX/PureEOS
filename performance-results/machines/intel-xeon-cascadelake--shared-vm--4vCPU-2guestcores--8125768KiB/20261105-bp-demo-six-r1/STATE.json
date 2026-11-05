@@ -37,5 +37,10 @@
   "capacity_UI_public_Chrome_variants": 4,
   "public_asset_digests": 6,
   "campaign_unit": "pureeos-bp-demo-six-campaign-r4-20261105.service",
-  "snapshot_scope": "Same-chain native irreversible checkpoint48653, subsequent full validation; no original node restart or raw state copy"
+  "snapshot_scope": "Same-chain native irreversible checkpoint48653, subsequent full validation; no original node restart or raw state copy",
+  "readonly_finish_controller": "pureeos-bp-demo-six-final-readonly-20261105.service; waits actual nativePASS then15windowgap audit/finalread-onlyinvariants/4publicChrome; does not replay mutations",
+  "draft_evidence_Git_branch": "ops/bp-demo-six-20261105",
+  "draft_evidence_commit": "447c9d488",
+  "draft_status": "IN_PROGRESS; native fault and maintenance remain pending",
+  "current_monitor_rule": "Fresh real stage2 window before target duties, zero prior miss streaks, genuine production and16healthy remaining votes; no native policy/timing/state mutation"
 }
