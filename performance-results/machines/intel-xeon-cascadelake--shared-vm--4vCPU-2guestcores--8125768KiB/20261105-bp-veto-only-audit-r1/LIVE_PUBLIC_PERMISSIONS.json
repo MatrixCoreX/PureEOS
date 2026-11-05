@@ -2095,5 +2095,10 @@
     "total_net_weight": 227000000,
     "earliest_available_block_num": 1,
     "last_irreversible_block_time": "2026-11-05T04:00:52.500"
+  },
+  "code_hashes": {
+    "eosio": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "eosio.token": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "eosio.key": "bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1"
   }
 }
