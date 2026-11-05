@@ -65,7 +65,7 @@
   },
   "code_RAM_target_quota_estimate": 567164,
   "counterpart_source_commit": "e148b039d2b8759e9336dd1b4fd50167f70cb085",
-  "governance_driver_SHA256": "9a4ba8335fc29e6e59975c113aedc02adf8f2bdc20ef10b44b645f6d3aa4827b",
+  "governance_driver_SHA256": "e5a33ab264a5b023d873c731855489dab5e10529ccc873093f9dabb0bfbeeb3e",
   "key_code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
   "legacy_native_payer_registration_preserved": true,
   "native_depth_limit": 4,
@@ -75,7 +75,7 @@
   "no_reset_BP_pause_server_TPS": true,
   "old_abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
   "old_code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
-  "operational_driver_note": "Initial controller stopped before wallet creation/signing/proposal because hardened empty-parameter wallet RPCs require an empty body rather than JSON[]. Use corrected developer-only Unix transport; no native chain action occurred.",
+  "operational_driver_note": "Pre-signing controllers stopped before any native action: hardened empty-parameter RPCs require an empty body, and successful key import returns201. The dedicated wallet imported only the matching developer role. Corrected transport accepts successful2xx responses and preserves the same sole-role wallet; no proposal, payment or signature was submitted.",
   "pending_binding": [
     "full native transaction SHA256",
     "nonzero owner-signed request ID",

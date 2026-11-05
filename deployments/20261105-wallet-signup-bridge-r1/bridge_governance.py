@@ -39,7 +39,7 @@ P=G/'private';P.mkdir(mode=0o700,exist_ok=True);W=Path('/opt')/('wsbgov-'+kind+'
 class UnixHTTP(http.client.HTTPConnection):
  def connect(self):self.sock=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM);self.sock.settimeout(10);self.sock.connect(str(socket_path))
 def wallet_rpc(method,data):
- c=UnixHTTP('localhost');c.request('POST','/v1/wallet/'+method,(''if method in ['list_wallets','get_public_keys']else json.dumps(data)),{'Content-Type':'application/json'});r=c.getresponse();b=r.read();c.close();assert r.status==200,'Own developer wallet RPC refused';return json.loads(b)if b else None
+ c=UnixHTTP('localhost');c.request('POST','/v1/wallet/'+method,(''if method in ['list_wallets','get_public_keys']else json.dumps(data)),{'Content-Type':'application/json'});r=c.getresponse();b=r.read();c.close();assert 200<=r.status<300,'Own developer wallet RPC refused';return json.loads(b)if b else None
 def run(args,input_text=None):
  p=subprocess.run([str(cleos),'--no-auto-keosd','--url','http://127.0.0.1:8888','--wallet-url','unix://'+str(socket_path),*args],input=input_text,capture_output=True,text=True,timeout=90)
  
