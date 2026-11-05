@@ -1,5 +1,7 @@
 # Atomic RAM transfers: deployed TEST routes, fees and actual evidence
 
+Candidate execution-income change: see [execution fees earned by the relay](RELAY_EXECUTION_INCOME.en.md). The public transaction table below retains its actual pre-upgrade allocation.
+
 On2026-11-05,chain`09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532` deployed after fresh5–8 full1800-secondreviews/BPveto checks and separate irreversible executions. KEYWASM`7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788`. Native58/KEY238/SDK26,public55transferchecks/12payments,signup19,4preview/4publicvariants and6receiptpages passed. HistoricalE006/237omittedactualfees/fundedREX; reviews1–4were cancelled and evidence retained.
 
 KEYowner is unsatisfiable; active actually allows sealed eosio.code OR own code, with no dev/BP/external signing keys. Own-code-only prose was inaccurate; a separate correction preserves originalreview bytes and no authority mutation occurred. OrdinaryUSD/CNYowner references eosio.dev. Full bilingual verification lives under actualmachine20261105-public-atomic-key-r1.
@@ -60,7 +62,7 @@ F must cover actual fees and stay within signed `max_fee`. SDK
 `nativeDepositActions` accepts `feeFunding`, defaulting to `max_fee`. The sender
 temporarily needs F; only total is retained. AIC deposits temporarily need
 principal plus F, while USD/CNY deposits need their principal plus F AIC. The
-named sender pays native CPU/NET and no commercial relay premium.
+named sender pays native CPU/NET and no commercial relay fee.
 
 Standalone legacy `fee` or PK1/PK2 memo transfers reject atomically. The old
 native cleos named-deposit shortcut is not adapted to the three-action envelope;

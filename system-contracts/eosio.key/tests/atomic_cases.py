@@ -31,6 +31,17 @@ def run_atomic(t,source,args):
         cost=atoms(f['ram_payment']);quota=int(t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota'])-int(a['ram_quota'])
         t.check(int(f['allocated_bytes'])==expected_bytes,label+': expected conservative allocation budget')
         t.check(atoms(f['total'])==cost+atoms(f['retained_base'])+atoms(f['relay_fee']),label+': no duplicated RAM fee; exact fee equation')
+        transfer_receipts=[x['data']for x in acts if x['account']=='eosio.key'and x['name']=='receipt']
+        assert len(transfer_receipts)==1
+        relay=transfer_receipts[0]['relayer'];owner=relay or 'eosio.key'
+        prior={r['owner']:r for r in before['feebuckets']}
+        after={r['owner']:r for r in t.ktable('feebuckets')}
+        old=prior.get(owner,{'network':0,'relay_earned':0});now=after[owner]
+        execution=atoms(f['retained_base']);service=atoms(f['relay_fee'])
+        t.check(int(now['network'])-int(old['network'])==(0 if relay else execution) and
+            int(now['relay_earned'])-int(old['relay_earned'])==(execution+service if relay else 0),
+            label+': actual relay earns execution plus relay fee; no-relay destination and old reserves preserved')
+        t.check(all(after[k]==v for k,v in prior.items()if k!=owner),label+': unrelated fee buckets unchanged')
         if expected_bytes:
             t.check(len(buy)==1 and buy[0]['payer']=='eosio.key'and buy[0]['receiver']=='eosio.key'and
                 atoms(buy[0]['quantity'])==cost and int(buy[0]['bytes'])==quota==int(f['purchased_bytes'])and quota>=expected_bytes,
@@ -141,11 +152,29 @@ def run_atomic(t,source,args):
         f=checked('relay rate '+str(rate),lambda rate=rate:t.execute('ksend',t.owner,t.request(t.owner,quantity='0.0001 AIC',memo='',relay_fee_bps=rate)),0)
         base=atoms(f['total'])-atoms(f['relay_fee'])
         t.check(atoms(f['relay_fee'])==max(1,(base*rate+9999)//10000),'Exact configured relay fee with upward rounding '+str(rate))
+    for op in ['cancel','selfcancel']:
+        before={r['owner']:r for r in t.ktable('feebuckets')}
+        result=t.execute(op,t.owner,t.request(t.owner,op))
+        receipt=next(a['data']for a in trace_acts(result)if a['account']=='eosio.key'and a['name']=='receipt')
+        fee=atoms(receipt['fee']);owner='keyrelaymoon'if op=='cancel'else'eosio.key'
+        now=next(r for r in t.ktable('feebuckets')if r['owner']==owner);old=before[owner]
+        t.check(fee>0 and int(now['relay_earned'])-int(old['relay_earned'])==(fee if op=='cancel'else 0)and
+            int(now['network'])-int(old['network'])==(0 if op=='cancel'else fee),
+            op+': cancellation uses the same execution-income destination and preserves historical network reserves')
     earned=next(f for f in t.ktable('feebuckets')if f['owner']=='keyrelaymoon');before=native('keyrelaymoon')
     t.action('claim',{'bp':'keyrelaymoon','to':'keyrelaymoon','quantity':'0.0010 AIC','max_fee':'0.0000 AIC'},'keyrelaymoon',contract='eosio.key')
     after=next(f for f in t.ktable('feebuckets')if f['owner']=='keyrelaymoon')
     t.check(native('keyrelaymoon')==before+10 and int(after['relay_earned'])==int(earned['relay_earned'])-10 and after['network']==earned['network'],
         'Claim still pays full earned quantity with zero application fee and no prepaid credit')
+    before=t.state()
+    t.action('claim',{'bp':'keyrelaymoon','to':'keyrelaymoon','quantity':amount(int(after['relay_earned'])+1),'max_fee':'0.0000 AIC'},
+        'keyrelaymoon',contract='eosio.key',failure='insufficient confirmed relay earnings')
+    t.check(t.state()==before,'Claim cannot redeem more than newly earned execution plus relay fees')
+    remaining=int(after['relay_earned']);before_native=native('keyrelaymoon')
+    t.action('claim',{'bp':'keyrelaymoon','to':'keyrelaymoon','quantity':amount(remaining),'max_fee':'0.0000 AIC'},'keyrelaymoon',contract='eosio.key')
+    now=next(r for r in t.ktable('feebuckets')if r['owner']=='keyrelaymoon')
+    t.check(int(now['relay_earned'])==0 and now['network']==after['network']and native('keyrelaymoon')==before_native+remaining,
+        'Relay can claim all execution plus relay income in full without spending historical network reserve')
     # Capacity rejection occurs in settlement AFTER the attempted native buy.
     # The whole transaction must restore the real curve, quotas and all funds.
     while int(t.ktable('config')[0]['wallet_count'])<20:deposit(t.key(),'0.0001 AIC')

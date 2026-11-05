@@ -6,7 +6,7 @@ export const FIXED_RAM_CODES = [
 // Filled from the remotely compiled candidate, then qualified against native
 // execution. Never infer a pricing rule from an unknown RPC-supplied ABI.
 export const MARKET_RAM_CODES = ['bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1'];
-export const ATOMIC_RAM_CODES = ['e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442', '7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788'];
+export const ATOMIC_RAM_CODES = ['1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d', 'e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442', '7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788'];
 export function ramFeeProfile(codeHash) {
   if (ATOMIC_RAM_CODES.includes(codeHash)) return 'atomic';
   if (MARKET_RAM_CODES.includes(codeHash)) return 'market';

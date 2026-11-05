@@ -146,7 +146,7 @@ The BP owner authorizes `setrate(bp,fee_bps)` with1000â€“3000 basis points (10%â
 
 `regrelay` accepts an empty endpoint for inactive comparison metadata. Such entries cannot relay transfers, and `setrelay(true)` rejects until an HTTPS endpoint is registered. The current TEST selection operates only the founder HTTP relay; the other four entries remain inactive, without extra keys or permissions.
 
-`service_atoms = max(1, ceil(base_atoms * fee_bps / 10000))`; `total_atoms = base_atoms + service_atoms`. Amounts round upward to0.0001 AIC, with a minimum service fee of0.0001 AIC. Self-service operations carry no relay premium; income claims remain application-fee-free.
+`service_atoms = max(1, ceil(base_atoms * fee_bps / 10000))`; `total_atoms = base_atoms + service_atoms`. Amounts round upward to0.0001 AIC, with a minimum service fee of0.0001 AIC. Self-service operations carry no relay fee; income claims remain application-fee-free.
 
 The optional trailing `relay_fee_bps:uint16$` request extension binds the selected quote rate into the owner's signed native transaction. A changed rate rejects execution, and the existing signed total fee cap still applies. Legacy requests without the extension retain the original30% rate ceiling and signed total fee cap, and can execute at cheaper configured rates. The existing native cleos remains compatible; exact quote-rate binding requires the new SDK extension. This revision becomes active only after remote qualification and the native review/execution process; consult its deployment report for the actual chain/code state.
 

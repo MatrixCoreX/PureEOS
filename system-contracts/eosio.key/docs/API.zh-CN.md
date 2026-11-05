@@ -93,7 +93,7 @@ Reference relay admission: at most 128 pending jobs, 8 per holder, 10,000 durabl
 BP 原生签名承担 CPU/NET；收款账号缺 AIC 余额行时，由领取 BP 原生授权付 RAM open，
 可在同一原子交易先open再claim。合约拒绝缺行，不垫付 eosio.key RAM 或额外预算。
 `max_fee` 字段兼容保留，可填0.0000 AIC；不改ABI/表布局、收益归属、储备和原子回滚。
-所有转账（包括内部公钥转公钥）仍收动态 AIC 手续费，商业中继加价保留。
+所有转账（包括内部公钥转公钥）仍收动态 AIC 手续费，商业中继手续费保留。
 此前收益内扣费方案已取代。本轮授权远端验证后重建 TEST 链并在封存前部署；新 TEST 节点公示1800秒，正式版仍604800秒。其他已封存链必须遵守各自原生治理期限。
 
 ## 中继自主费率与签名约束

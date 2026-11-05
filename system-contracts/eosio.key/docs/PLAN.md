@@ -41,7 +41,7 @@ Fee inputs are committed PowerUp market adjusted/current occupancy and capacity,
 not machine load or measured block consumption. All arithmetic uses integers.
 Immutable initial policy sets minimum fees, per-operation work, row charges,
 maximum multiplier and limits. A short on-chain epoch cache fixes one price per
-epoch. Users sign a maximum total fee and expiration. The BP markup is exactly
+epoch. Users sign a maximum total fee and expiration. The BP relay fee is exactly
 30% before documented atomic-unit rounding. Base fees are segregated from relay
 earnings; no existing BP bond/slash pool is reused. Relay income is not a promise
 of net profit or automatic reimbursement of operating costs.

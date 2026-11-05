@@ -556,11 +556,16 @@ void key_contract::check_max(const configuration& cfg, const charge& fee, const 
    check(maximum.is_valid() && maximum.symbol == cfg.fee_symbol && maximum.amount >= 0, "invalid AIC fee cap");
    check(fee.total <= maximum.amount, "fee exceeds signed maximum");
 }
-void key_contract::credit_fee_bucket(name owner, const charge& fee) {
+void key_contract::credit_fee_bucket(name owner, const charge& fee, bool relay_income) {
    fee_buckets table(get_self(), get_self().value);
    auto it = table.find(owner.value);
-   auto update = [&](auto& row) { row.owner = owner; row.network = checked(__int128(row.network) + fee.base);
-      row.relay_earned = checked(__int128(row.relay_earned) + fee.premium); };
+   // Only newly earned fees change destination. Existing network reserves stay
+   // untouched, including reserves recorded under a BP's historical bucket.
+   // Callers exclude actual native RAM spending before crediting this bucket.
+   const int64_t network = relay_income ? 0 : fee.base;
+   const int64_t earned = checked(__int128(fee.premium) + (relay_income ? fee.base : 0));
+   auto update = [&](auto& row) { row.owner = owner; row.network = checked(__int128(row.network) + network);
+      row.relay_earned = checked(__int128(row.relay_earned) + earned); };
    if (it == table.end()) table.emplace(get_self(), update); else table.modify(it, same_payer, update);
 }
 void key_contract::charge_native(name owner, const charge& fee, const asset& maximum) {
@@ -574,7 +579,7 @@ void key_contract::charge_native(name owner, const charge& fee, const asset& max
 void key_contract::charge_key(uint64_t wallet_id, name bp, const charge& fee, const asset& maximum) {
    auto cfg = config(); check_max(cfg, fee, maximum); check_asset(1);
    debit(wallet_id, 1, fee.total);
-   credit_fee_bucket(bp, fee);
+   credit_fee_bucket(bp, fee, bp.value && bp != get_self());
 }
 void key_contract::check_idle() const {
    check(!pending_table(get_self(), get_self().value).exists(), "atomic payment already in progress");
@@ -722,7 +727,8 @@ void key_contract::settleram(checksum256 ticket) {
          (!p.ram_payment && !p.ram_confirmed && !p.ram_transfers), "unconfirmed atomic RAM purchase");
    if (p.first_asset) consume_ram(p.asset_id, asset_ram);
    credit_fee_bucket(p.relay.value ? p.relay : get_self(),
-                     charge{p.base - p.ram_payment, p.premium, p.total - p.ram_payment});
+                     charge{p.base - p.ram_payment, p.premium, p.total - p.ram_payment},
+                     p.relay.value && p.relay != get_self());
    if (p.kind == "ksend"_n || p.kind == "deposit"_n) {
       auto recipient = ensure_wallet(p.to_key, p.asset_id);
       credit(recipient, p.asset_id, p.quantity.amount);

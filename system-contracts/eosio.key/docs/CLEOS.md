@@ -71,9 +71,9 @@ cleos -u https://YOUR-RPC key sign prepared.json > signed.json
 cleos -u https://YOUR-RPC key push signed.json -p keyusersolar@active
 ```
 
-原生 payer 支付链上 CPU/NET，公钥余额支付基础 AIC 费用，不收 BP 加价。payer 不能替代公钥签名。BP 中继停用、维护或拉黑时仍能使用此路径。`prepare --self` 与商业 `withdraw` 签名域不同，不能把其中一种签名挪用于另一种。
+原生 payer 支付链上 CPU/NET，公钥余额支付基础 AIC 费用，不收 BP 中继手续费。payer 不能替代公钥签名。BP 中继停用、维护或拉黑时仍能使用此路径。`prepare --self` 与商业 `withdraw` 签名域不同，不能把其中一种签名挪用于另一种。
 
-The native payer supplies transaction CPU/NET, while the key pays the base AIC fee with no BP markup. A payer cannot replace the owner's signature. This path remains independent of relay disablement, maintenance and blacklisting. Its signing domain differs from commercial `withdraw`; signatures cannot be reused across them.
+The native payer supplies transaction CPU/NET, while the key pays the base AIC fee with no BP relay fee. A payer cannot replace the owner's signature. This path remains independent of relay disablement, maintenance and blacklisting. Its signing domain differs from commercial `withdraw`; signatures cannot be reused across them.
 
 `key push` 沿用 cleos 的提交语义；最终到账以不可逆区块为准。HTTP 中继的 `finalized` 状态仅在扫描到实际不可逆交易回执后产生。`--allow-http-for-test` 仅允许显式选择 loopback 测试地址。
 
@@ -92,7 +92,7 @@ External relay submission uses a separate HTTP configuration, forwards no RPC cr
 ## 中继收入领取 / Claim relay earnings
 
 成功商业执行把基础费记入网络费用桶，把基础费的10%–30%服务费记入指定 BP 的
-`feebuckets.relay_earned`。例如基础费 0.0100 AIC、加价 0.0030 AIC，发送方共付
+`feebuckets.relay_earned`。例如基础费 0.0100 AIC、中继手续费 0.0030 AIC，发送方共付
 0.0130 AIC；这不是总费用按 70%/30% 分成。失败整笔回滚，不产生可领取收入。
 
 2026-11-03 最新选择：领取中继收入 `claim` 不收 AIC 应用手续费，申请数量全额到账。
@@ -112,7 +112,7 @@ CPU/NET 市场占用曲线收费，商业中继按本人设置的基础费10%–
 The selected claim pays full earned AIC with no application fee. The BP supplies native CPU/NET
 and pre-opens missing recipient token rows using its own authorized RAM, optionally in the same
 atomic transaction. The contract never allocates custody RAM for a claim recipient, never requires
-prepayment and keeps existing fee credit untouched. Transfer fees and commercial markup remain.
+prepayment and keeps existing fee credit untouched. Transfer fees and commercial relay fee remain.
 The matching SDK quotes claims at zero; use it with the qualified fee-free-claim code after upgrade.
 This authorized TEST rebuild installs the qualified code before sealing and uses a separately
 built 1,800-second TEST review profile. Production remains at 604,800 seconds. Other sealed

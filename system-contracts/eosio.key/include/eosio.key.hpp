@@ -253,7 +253,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    uint32_t multiplier(const configuration& cfg, bool exit_path);
    uint16_t relay_fee(name bp, const binary_extension<uint16_t>& signed_bps) const;
    charge quote(const configuration& cfg, uint32_t units, uint32_t bytes, uint16_t relay_bps, bool exit_path = false);
-   void credit_fee_bucket(name owner, const charge& fee);
+   void credit_fee_bucket(name owner, const charge& fee, bool relay_income = false);
    void charge_native(name owner, const charge& fee, const asset& maximum);
    void charge_key(uint64_t wallet_id, name bp, const charge& fee, const asset& maximum);
    void check_max(const configuration& cfg, const charge& fee, const asset& maximum) const;
