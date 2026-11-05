@@ -353,6 +353,18 @@ void apply_context::exec()
 {
    _notified.emplace_back( receiver, action_ordinal );
    exec_one();
+   // sysstage is a native continuation of the exact, top-level reviewed
+   // creation capability. Its bookkeeping hop must not spend an additional
+   // contract nesting level before buyram's normal fees -> REX route. The
+   // native handler above has already validated its parent, payload and payer.
+   // No WASM intrinsic or ordinary inline action can request this treatment.
+   const auto& creation_permit = trx_context.system_upgrade;
+   const bool native_creation_continuation = recurse_depth == 1 &&
+      control.is_builtin_activated(builtin_protocol_feature_t::pureeos_system_account_governance) &&
+      act->account == config::system_account_name && act->name == "sysstage"_n &&
+      get_sender() == config::system_account_name && creation_permit &&
+      creation_permit->account_creation_authorized && creation_permit->account_created &&
+      get_current_action_trace().creator_action_ordinal.value == creation_permit->parent_action_ordinal;
    for( uint32_t i = 1; i < _notified.size(); ++i ) {
       std::tie( receiver, action_ordinal ) = _notified[i];
       exec_one();
@@ -367,7 +379,7 @@ void apply_context::exec()
       }
 
       for( uint32_t ordinal : _inline_actions ) {
-         trx_context.execute_action( ordinal, recurse_depth + 1 );
+         trx_context.execute_action( ordinal, recurse_depth + (native_creation_continuation ? 0 : 1) );
       }
    }
 

@@ -30,6 +30,7 @@ using namespace eosio::testing;
 namespace {
 genesis_state governance_genesis() {
    auto g = base_tester::default_genesis();
+   g.initial_configuration.max_inline_action_depth = 4;
    auto [priv, pub, pop] = get_bls_key("eosio"_n);
    g.initial_savanna.emplace();
    g.initial_savanna->version = 2;
