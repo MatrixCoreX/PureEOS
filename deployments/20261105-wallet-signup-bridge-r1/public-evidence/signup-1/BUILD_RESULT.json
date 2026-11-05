@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "files": {
+    "eosio.signup.abi": "59a5a814fdf3bde1e3c88e0fd6e8a2fb26235fc6f304e75ab9d3bc1edee89ef5",
+    "eosio.signup.wasm": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791"
+  },
+  "source_sha256": "cadc300785248104a42e0ffb0ffafaf8702f4a8fa9400640e8056f090db0b851"
+}

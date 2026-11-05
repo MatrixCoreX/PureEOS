@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "KEY_WASM": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+  "signup_WASM": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+  "native_checks": 322,
+  "native_result_sha256": "932617932887bca04595fa0e4e81d6437112f9f8eeeee3497cc3ae10b57acb3b",
+  "current_native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "25_live_node_PIDs_unchanged": true
+}

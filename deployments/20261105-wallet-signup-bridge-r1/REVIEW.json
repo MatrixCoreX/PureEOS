@@ -1,0 +1,110 @@
+{
+  "JSON_ABI_SHA256": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+  "KEY_ABI_storage_signature_wire_unchanged": true,
+  "SDK_protocol_proof": {
+    "accounts": {
+      "atomic_key_signup_roots": 2,
+      "authority_scopes": [
+        "active",
+        "owner",
+        "both"
+      ],
+      "checks": 51,
+      "scope": "Remote public scalar1 only; native system ABI independently validates Java authority bytes/signatures; current SDK validates the complete two-root registration owner signature. No HTTP or funded keys.",
+      "status": "PASS"
+    },
+    "dynamic": {
+      "cases": 3,
+      "checks": 21,
+      "precisions": [
+        6,
+        0,
+        18
+      ],
+      "scope": "Current SDK independently verifies dynamic identities, native three-root deposits, signatures and owner envelopes. Public scalar1 only; no HTTP, funded keys or live transactions.",
+      "status": "PASS"
+    },
+    "protocol": {
+      "asset_identities": 3,
+      "atomic_fee_cases": 144,
+      "atomic_native_deposits": 3,
+      "checks": 900,
+      "owner_envelopes": 6,
+      "scope": "Remote JVM public scalar1 vs current qualified SDK. Zero actual chain requests or funded-key use; Android runtime separately qualified.",
+      "status": "PASS"
+    },
+    "scope": "Offline remote JVM / native ABI / exact shipped SDK; mocked loopback HTTP only; no live-chain requests or funded keys",
+    "scope_refinement": {
+      "checks_added": "Independent native ABI validates permission role and parent for Active/Owner/both; pass plain hex across codec package boundaries. Other414/900/21/28 checks retained.",
+      "source_sha256": "3200fe7121ea50d813afb62fbe740c770125b669684c5ad9af6207040138cf3b"
+    },
+    "shipped_SDK_checks": 28,
+    "status": "PASS"
+  },
+  "atomic_registration": "One native transaction, two roots, one complete K1 owner proof; all failures roll back principal, fees, RAM and account creation",
+  "before_target_RAM": {
+    "ram_quota": 2213632,
+    "ram_usage": 1769448
+  },
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "code_RAM_policy": "One-time developer-funded code/ABI/runtime headroom, independent of KEY user ledgers. Conservative estimate, not exact native metering; reviewed fixed AIC budget with20% price headroom.",
+  "code_RAM_sponsor_action": null,
+  "code_RAM_target_quota_estimate": null,
+  "counterpart_source_commit": "d28a5c5b21f2d8ed8dc3bf15ae70a00688267c35",
+  "governance_driver_SHA256": "647159dfd12ba629b70f94505c170f7c2a66d3e3cecae8a20aa77c24e08579c5",
+  "key_code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+  "legacy_native_payer_registration_preserved": true,
+  "native_depth_limit": 4,
+  "native_system_token_code_or_caps_changed": false,
+  "new_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+  "new_code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+  "no_reset_BP_pause_server_TPS": true,
+  "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+  "old_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+  "pending_binding": [
+    "full native transaction SHA256",
+    "nonzero owner-signed request ID",
+    "exact native AIC payment",
+    "typed name and Owner/Active keys"
+  ],
+  "persistent_prepayment": false,
+  "production_review_seconds_unchanged": 604800,
+  "qualification": {
+    "25_live_node_PIDs_unchanged": true,
+    "KEY_WASM": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+    "current_native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+    "native_checks": 322,
+    "native_result_sha256": "932617932887bca04595fa0e4e81d6437112f9f8eeeee3497cc3ae10b57acb3b",
+    "signup_WASM": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+    "status": "PASS"
+  },
+  "qualification_SHA256": "d5f99f91472c3ea8ebd2390863dae34fc0bb407a9fff63514cd75f01c4f0d97a",
+  "qualified_attempt": "qualification-7",
+  "registration_resource_policy": "0.1000 AIC owned NET +0.1000 AIC owned CPU; all remainder buys at least4096 RAM bytes; no signup markup",
+  "relay_execution_income_and_fee_free_claim_preserved": true,
+  "retained_failures": [
+    "native1 socket path too long",
+    "native2 correct TEST hardware floor rejected undersized QA cgroup",
+    "native3 concurrent test CPU refusal; exact-packet canonical reconciliation added; no cap change",
+    "native4 queued/cancelled before start to fix harness",
+    "native5: first commercial registration executed; an overly broad zero-RAM assertion failed on independently confirmed standard-token first-spend RAM payer adoption, fixed test accounting",
+    "native6: rejected-operation state-comparison assertion failed without sufficient per-field diagnostics; exact cause not conclusively identified. Added complete table pagination/500ms read budgets and detailed snapshots; native7 full322 PASS, unchanged candidate WASMs"
+  ],
+  "review_seconds": 1800,
+  "roots": [
+    "eosio.key.withdraw or selfout",
+    "eosio.signup.createkey(request_id), empty authorization"
+  ],
+  "scope": "Retained shared Cascadelake VM, isolated current946a52fb runtime/full fee WASM/funded REX/strict depth4 functional qualification. Not a TPS, capacity, production, physical-phone or external-audit claim.",
+  "sequence": "Signup first, then KEY; each separate complete native1800-second review and effective BP veto check",
+  "signup_ABI_change": "Add createkey action and same-transaction transient pendingkey singleton; no existing-state migration",
+  "signup_code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+  "signup_trust": "Actual eosio.token funds from KEY plus exact root layout. Does not pin KEY code, avoiding a circular code-hash dependency. KEY pins the reviewed signup WASM.",
+  "sole_founder_HTTP_and_permissions_unchanged": true,
+  "source_commit": "e148b039d2b8759e9336dd1b4fd50167f70cb085",
+  "target": "eosio.key",
+  "user_fee_formula_changed": false,
+  "wallet_APK_SHA256": "1fa14d702e0515074a2db039075e1c5d52e6e3ebc4a8fb4360b4c4455f4df9d0",
+  "wallet_core_checks": 414,
+  "wallet_runtime_joint_test": "Pending governed activation; offline414, codec proofs and owned upgrade instrumentation build only"
+}
