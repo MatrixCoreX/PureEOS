@@ -1,0 +1,60 @@
+{
+  "ABI_JSON_SHA256": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+  "ABI_storage_signature_wire_unchanged": true,
+  "actual_RAM_cost_and_budget_policy_unchanged": true,
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "change": "Execution fees earned by the actual submitting relay; rename percentage charge to relay fee / 中继手续费",
+  "compiled_source_archive_sha256": "0c93d490cf9a23bef44af566112932b23a3a0b7fe7797850f7f6ef15b1c5780a",
+  "fee_free_claim_preserved": true,
+  "frontend_build_sha256": "f1a03aef75594b37e9d277e2744f255961b12f3156a5cc964ec864689856d53d",
+  "frontend_checks": 268,
+  "frontend_source_commit": "097c1ad18fab190bf91e07ea2bf3397450d2952a",
+  "full_principal_preserved": true,
+  "historical_network_atoms_observed": 2352,
+  "historical_network_reserves_migrated": false,
+  "historical_receipts_reinterpreted": false,
+  "income_transfer": "Confirmed relay_earned ledger, redeemed by existing owner-authorized claim; not immediate per-payment native transfer",
+  "legacy_retained_base_field": "Execution fee amount; destination depends on reviewed code version and associated receipt.relayer",
+  "native_qualification": {
+    "WASM_SHA256": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+    "native_checks": 290,
+    "native_result_sha256": "56d37bf18ebcf8ccb35520a720165c2217585e76f06c982a98edef6a01f94d32",
+    "status": "PASS"
+  },
+  "native_qualification_sha256": "e353a6894a84ee248db5a956f0f1794d03aaecfa5cc2540de9662ded0ee7032e",
+  "native_review_seconds": 1800,
+  "new_claimable_income": "execution fee plus relay fee, excluding actual native RAM spending",
+  "new_code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+  "no_relay_operations_unchanged": [
+    "deposit",
+    "selfout",
+    "selfcancel",
+    "legacy refundfee"
+  ],
+  "node_system_token_vote_bond_cap_changes": false,
+  "old_code_hash": "7523bbec364316d06f48283e9cc17cf81fa929bd60b4efd818eadd73e215c788",
+  "production_review_seconds_unchanged": 604800,
+  "qualified_source_archive_sha256": "3af2c418363f9f11f2dc46af16fbf756981ace8f27e9a5aa46976872726e769b",
+  "raw_ABI_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+  "relay_rate_bps": [
+    1000,
+    3000
+  ],
+  "relayed_operations": [
+    "ksend",
+    "withdraw",
+    "cancel"
+  ],
+  "reset": false,
+  "retained_failures": [
+    "attempt1: native ABI trace emitted hex; harness assumed JSON",
+    "attempt2: generic ABI decoding RPC absent; replaced by offline reviewed ABI decoding"
+  ],
+  "scope": "Remote isolated real-contract functional/security qualification on retained shared Cascadelake VM; not TPS, production capacity or parallel qualification",
+  "shipped_SDK_checks": 26,
+  "signed_rate_and_max_fee_preserved": true,
+  "sole_founder_HTTP_unchanged": true,
+  "source_commit": "d5148fbdb8fa6b97bbf55212ce48641b63a2cd7c",
+  "target": "eosio.key",
+  "user_total_fee_formula_changed": false
+}

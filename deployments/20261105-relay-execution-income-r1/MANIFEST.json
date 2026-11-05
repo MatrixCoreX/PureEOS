@@ -1,0 +1,8 @@
+{
+  "REVIEW.en.md": "f0cf9bb2e479d45bbb68e2c873961a213d728fc6a530c9db957377e21a3deea6",
+  "REVIEW.json": "a9560228f74f42684b4b0df73908e8fc3d318330268f79a5604f14bbdab0c414",
+  "REVIEW.zh.md": "b48b62a75754882755c85a690cf0f2e68bf4dfc3e2d5bd1b2cf114b817dd28dd",
+  "artifacts/eosio.key.abi": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
+  "artifacts/eosio.key.raw.abi": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+  "artifacts/eosio.key.wasm": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d"
+}
