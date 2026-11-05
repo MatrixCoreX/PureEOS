@@ -1,0 +1,45 @@
+{
+  "status": "REMOTE_NATIVE_REPAIR_TEST_38_CASES_PASS_NOT_DEPLOYED",
+  "scope": "Remote in-process native controller tests; controlled isolated tester clock; no live transaction, account, activation or installation",
+  "UTC": "2026-11-05T00:29:31.526870+00:00",
+  "build_attempt": 4,
+  "qualification_attempt": 2,
+  "native_suite_results": {
+    "native_governance": {
+      "exit_code": 0,
+      "cases": 34,
+      "passed": 34,
+      "failed": []
+    },
+    "real_contracts": {
+      "exit_code": 0,
+      "cases": 3,
+      "passed": 3,
+      "failed": []
+    },
+    "unsigned_wire": {
+      "exit_code": 0,
+      "cases": 1,
+      "passed": 1,
+      "failed": []
+    }
+  },
+  "nodeos_sha256": "d4ff795f3c351ff68f5b8143740ec4997cd8bbfe3f8ce6efb1e2feb7562f50d8",
+  "test_binary_sha256": "dd7288073b33ae6a8ce106bba0e167afe7931cc7a870990a777fed1ff85fe285",
+  "build_profile": "Incremental mixed O0/O1 TEST functional build; source/object hashes verified; not performance or production qualification",
+  "wasm_sha256": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+  "raw_abi": {
+    "status": "PASS",
+    "sha256": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+    "bytes": 171
+  },
+  "standalone_codec_checks_previously_passed": 1760,
+  "actual_registration_RAM_stake_signing_rollback": "PASS_IN_ISOLATED_PINNED_NATIVE_CONTROLLER",
+  "PowerUp": "Explicit owned-fixture sponsor payment; registration stake ownership is not a claim of usable PowerUp work",
+  "previous_failed_attempt": "remote-native-r7.json retained unchanged",
+  "repair_attempt1": "All37native/real cases passed; final helper absent from staged source; unchanged helper copied before passing qualification2",
+  "live_candidate_installed": false,
+  "live_transactions": false,
+  "live_account_or_deployment": false,
+  "production_build_review_and_broader_compatibility": "NOT_QUALIFIED"
+}
