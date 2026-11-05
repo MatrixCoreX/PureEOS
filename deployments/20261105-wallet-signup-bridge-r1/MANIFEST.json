@@ -1,11 +1,11 @@
 {
   "REVIEW.en.md": "e08f141fb4c4aa309eb121af04efa67b267b1a9d52a4c228fd3a8303c870ab5e",
-  "REVIEW.json": "e26560017e7c7d8922aa2692990534fb325ccc388eb2356be5a8ac50d70ca080",
+  "REVIEW.json": "6c076a5bb3e23781fbf1cdb295ecb5f8dfcedde484596b85d6a66954e3d50487",
   "REVIEW.zh.md": "0c89cdc9a07c75e84a35b2e3f54074c40215f34aacb15a09fbd71bbdb6a09275",
   "artifacts/eosio.key.abi": "f4d64cd7bd84796fab77886fc8308def72b19076a76c2e2bae58857f7bf3b0c5",
   "artifacts/eosio.key.raw.abi": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
   "artifacts/eosio.key.wasm": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
-  "bridge_governance.py": "9a4ba8335fc29e6e59975c113aedc02adf8f2bdc20ef10b44b645f6d3aa4827b",
+  "bridge_governance.py": "e5a33ab264a5b023d873c731855489dab5e10529ccc873093f9dabb0bfbeeb3e",
   "public-evidence/accounts-proof-r36b/RESULT.json": "09e4fdfea2da142b5a9e842e05cd9efcd784519ef202133155c5106127a1f1e5",
   "public-evidence/key-1/BUILD_RESULT.json": "6de98792193c3cd1788706e6f0e9b3f45dc91ff569ab20f50d7d87300934fa52",
   "public-evidence/qualification-7/RESULT.json": "d5f99f91472c3ea8ebd2390863dae34fc0bb407a9fff63514cd75f01c4f0d97a",
