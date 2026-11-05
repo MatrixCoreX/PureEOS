@@ -16,7 +16,15 @@ def run_atomic(t,source,args):
         found=[]
         def visit(v):
             if isinstance(v,dict):
-                if isinstance(v.get('act'),dict)and v.get('receiver')==v['act'].get('account'):found.append(v['act'])
+                if isinstance(v.get('act'),dict)and v.get('receiver')==v['act'].get('account'):
+                    action=v['act']
+                    # Bounded native ABI serialization can leave individual
+                    # trace payloads as hex. Decode that exact payload against
+                    # the chain ABI instead of assuming every trace is JSON.
+                    if action['name']in ['receipt','feereceipt','logbuyram']and isinstance(action['data'],str):
+                        action={**action,'data':t.rpc('abi_bin_to_json',{'code':action['account'],'action':action['name'],'binargs':action['data']})['args']}
+                        t.report.setdefault('binary_trace_decodes',[]).append({'account':action['account'],'action':action['name']})
+                    found.append(action)
                 for k,x in v.items():
                     if k!='act':visit(x)
             elif isinstance(v,list):
