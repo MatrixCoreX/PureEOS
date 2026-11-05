@@ -22,8 +22,11 @@ def run_atomic(t,source,args):
                     # trace payloads as hex. Decode that exact payload against
                     # the chain ABI instead of assuming every trace is JSON.
                     if action['name']in ['receipt','feereceipt','logbuyram']and isinstance(action['data'],str):
-                        action={**action,'data':t.rpc('abi_bin_to_json',{'code':action['account'],'action':action['name'],'binargs':action['data']})['args']}
-                        t.report.setdefault('binary_trace_decodes',[]).append({'account':action['account'],'action':action['name']})
+                        abi_path=args.artifacts/'eosio.key.abi'if action['account']=='eosio.key'else t.contracts/'eosio.system/eosio.system.abi'
+                        abi=json.loads(abi_path.read_text());kind=next(x['type']for x in abi['actions']if x['name']==action['name'])
+                        decoded=json.loads(t.run(['convert','unpack_hex','--type',kind,'--abi-file',str(abi_path),action['data']]))
+                        action={**action,'data':decoded}
+                        t.report.setdefault('binary_trace_decodes',[]).append({'account':action['account'],'action':action['name'],'type':kind,'decoder':'offline reviewed ABI'})
                     found.append(action)
                 for k,x in v.items():
                     if k!='act':visit(x)
