@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "action": {
+    "account": "eosio",
+    "authorization": [
+      {
+        "actor": "eosio.dev",
+        "permission": "active"
+      }
+    ],
+    "data": {
+      "payer": "eosio.dev",
+      "quant": "0.3837 AIC",
+      "receiver": "eosio.signup"
+    },
+    "name": "buyram"
+  },
+  "before_RAM": {
+    "ram_quota": 429064,
+    "ram_usage": 290311
+  },
+  "after_RAM": {
+    "ram_quota": 595323,
+    "ram_usage": 290311
+  },
+  "minimum_target_quota_estimate": 567164,
+  "canonical_receipt": {
+    "block_num": 57653,
+    "block_id": "0000e135692438bef6396915321e54d96aafd3125a591bf9a8392d535fac1c07",
+    "timestamp": "2026-11-05T14:06:46.500",
+    "transaction_id": "93163f744c113765ce4dd395d41e25668f5f91a7d689678a3da544626ab6bb6b",
+    "irreversible_at_observed_LIB": 57654
+  },
+  "same_atomic_proposal_transaction": true
+}

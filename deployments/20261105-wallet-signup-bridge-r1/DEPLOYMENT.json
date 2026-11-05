@@ -1,0 +1,66 @@
+{
+  "status": "ACTIVE_ON_CURRENT_TEST_CHAIN",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "recorded_UTC": "2026-11-05T15:15:40.465199+00:00",
+  "upgrades": {
+    "signup": {
+      "proposal_id": 2,
+      "review_seconds": 1800,
+      "actual_chain_seconds_before_execution": 1845.0,
+      "proposal_receipt": {
+        "block_num": 57653,
+        "block_id": "0000e135692438bef6396915321e54d96aafd3125a591bf9a8392d535fac1c07",
+        "timestamp": "2026-11-05T14:06:46.500",
+        "transaction_id": "93163f744c113765ce4dd395d41e25668f5f91a7d689678a3da544626ab6bb6b",
+        "irreversible_at_observed_LIB": 57654
+      },
+      "execution_receipt": {
+        "block_num": 59877,
+        "block_id": "0000e9e5e965bc8a81224b10cd7744e66016518e137997c4219cd91922dea718",
+        "timestamp": "2026-11-05T14:37:31.500",
+        "transaction_id": "ae4ba13c58b03fe59d3d31ee4356d61fc8e17f79b2b40d559a345d97f2826b12",
+        "irreversible_at_observed_LIB": 59882
+      },
+      "new_code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "new_raw_ABI_hash": "6858916070985e06486fe9131ae6fec06079963699beaea93840adedb2c6020c"
+    },
+    "key": {
+      "proposal_id": 3,
+      "review_seconds": 1800,
+      "actual_chain_seconds_before_execution": 1836.0,
+      "proposal_receipt": {
+        "block_num": 59912,
+        "block_id": "0000ea082568b8c8514c2ded60b0e25ce439bb589d5d86d2d377c4dd0de6735b",
+        "timestamp": "2026-11-05T14:38:06.000",
+        "transaction_id": "47e07f9606e056e52eb3f8c63c51645416a9251b8cda3676e30ecc877667c85a",
+        "irreversible_at_observed_LIB": 59912
+      },
+      "execution_receipt": {
+        "block_num": 62283,
+        "block_id": "0000f34b5c93150ae8dc04a71a4d73e4a69b7b3a2c7cfd6cdff0a472a056f990",
+        "timestamp": "2026-11-05T15:08:42.000",
+        "transaction_id": "ded43a3828995a40473f00c2321f781b0912b6c76fea7a539e1387f3ad2bd985",
+        "irreversible_at_observed_LIB": 62286
+      },
+      "new_code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+      "new_raw_ABI_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83"
+    }
+  },
+  "isolated_native_checks": 322,
+  "shipped_SDK_checks": 28,
+  "native_inline_depth_unchanged": 4,
+  "native_node_system_token_code_or_caps_changed": false,
+  "same_transaction_roots": [
+    "eosio.key.withdraw/selfout",
+    "eosio.signup.createkey"
+  ],
+  "atomic_rollback": "Principal, fees, RAM purchases, account creation and stakes all revert together on failure",
+  "original25_native_process_subset_preserved": true,
+  "sole_founder_relay": "gptgenesisbp@keyrelay,30%; no new endpoint or permission",
+  "existing_terminal_relay_jobs_preserved": 18,
+  "client_activation": "PASS matching writer/reader code hashes; existing relay and derived key-history only",
+  "one_time_developer_code_RAM_sponsorship": "0.3837 AIC from existing eosio.dev funds; separate from KEY user balances",
+  "wallet_APK": "Candidate1fa14d702e0515074a2db039075e1c5d52e6e3ebc4a8fb4360b4c4455f4df9d0, offline414/900/21/51 and SDK28 passed; actual Android upgrade/paid joint qualification and phone rollout still pending. R14 package service failure before prepare/payment retained; R15 cancelled before tests; R16 queued with normal package sessions/diagnostics.",
+  "review_documents": "Original REVIEW.json bytes and their on-chain hashes remain unchanged; these are subsequent deployment records",
+  "scope": "Functional TEST chain deployment, not TPS/capacity/production/physical-phone security/external audit. Other agent owns independent six-BP campaign."
+}
