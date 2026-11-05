@@ -1,0 +1,4 @@
+{
+  "demonstrate.py": "a50e430b86e122286f7193ccf7298470346aa720324172362b1cc53b687d8dc8",
+  "reason": "Recheck same native generations and all16strong survivors immediately before any fault stop; prior monitor waiting only, no fault actions."
+}

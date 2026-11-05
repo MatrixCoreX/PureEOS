@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T12:15:26.226569+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "source_node": "gptgenesisbp",
+  "native_response": {
+    "head_block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+    "head_block_num": 48653,
+    "head_block_time": "2026-11-05T12:15:24.000",
+    "version": 11,
+    "snapshot_name": "/opt/pureeos-devnet-20261105-r1/founder/data/snapshots/snapshot-0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f.bin"
+  },
+  "checkpoint_path": "/opt/pureeos-bp-demo-six-20261105-r1/checkpoint/snapshot.bin",
+  "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+  "bytes": 3156840,
+  "canonical_snapshot_block": {
+    "block_num": 48653,
+    "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+    "observed_LIB": 48653
+  },
+  "original25_PIDs_unchanged": true,
+  "scope": "Native exported same-chain trusted state checkpoint for ONLY six new demo BPs; all later blocks use full validation. Original chain/history untouched; no unsafe live-state directory copy or consensus/signature bypass."
+}

@@ -1,0 +1,149 @@
+{
+  "status": "PREPARED",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "remote_root": "/opt/pureeos-bp-demo-six-20261105-r1",
+  "original_BPs": 24,
+  "new_BPs": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing",
+    "genevacernai",
+    "sydneyunswai",
+    "montrealmila"
+  ],
+  "fault_targets": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing",
+    "genevacernai",
+    "sydneyunswai"
+  ],
+  "maintenance_target": "montrealmila",
+  "maintenance_after_finalized_personal_turns": 3,
+  "new_own_bond_AIC_each": 10000,
+  "original_votes_and_90_ordinary_assignments_preserved": true,
+  "new_other_voters": 6,
+  "candidate_capacity_UI": "Replace not-online phrase with next native capacity increase UTC time from existing qualified read-only summary",
+  "no_new_servers_reset_TPS_or_protocol_changes": true,
+  "nodes": [
+    {
+      "name": "tokyoaistlab",
+      "voter": "cedarharbors",
+      "index": 31,
+      "rpc_port": 8931,
+      "p2p_port": 9931,
+      "role": "permanent-blacklist-demo",
+      "unit": "pureeos-bp-demo-tokyoaistlab-20261105.service",
+      "CPU_stake_AIC": "100.0031",
+      "other_CPU_stake_AIC": "655.0000",
+      "NET_stake_AIC": "10.0000",
+      "public_keys": {
+        "account": "PUB_K1_7zvjuBHU1e1SFhEqxPeWP3DjGJKxzL7w8NbU8KW2y68Kp6AuSm",
+        "production": "PUB_K1_6cAufWzqYgNq6Cqbmy6Ba3q1xRr5jW74NBtoLG4My5vjpyXDYY",
+        "peer": "PUB_K1_81p9wcVo3z2DCNqr2Y8aWJiHpoVHin8NqnAgiuhU69nzrdFWjg",
+        "bls": "PUB_BLS_TInlbGrg1ZbZsqKNseO51eOyNdlgKTIF0XDfnTy3RevH2QtFkl1m2-D9GHW5YacQZKMoGI9d_86QrsvZdW_MAOg-GSiUCJ5PcmZy7D4mv8-L2eiOFKBMIw9qrqj2rp8KeYY_Cg",
+        "voter": "PUB_K1_6aYpxEPsS8hWJPHvVSdZ1cfh2FmXeWmexdEj1pK5aeSunvUgyL"
+      }
+    },
+    {
+      "name": "pariscnrslab",
+      "voter": "mapleharbors",
+      "index": 32,
+      "rpc_port": 8932,
+      "p2p_port": 9932,
+      "role": "permanent-blacklist-demo",
+      "unit": "pureeos-bp-demo-pariscnrslab-20261105.service",
+      "CPU_stake_AIC": "100.0032",
+      "other_CPU_stake_AIC": "896.0000",
+      "NET_stake_AIC": "10.0000",
+      "public_keys": {
+        "account": "PUB_K1_881kZETSuCoBUXWmrW4qArTPvm4zp57EMZbuutmLAxfwJbE8Pk",
+        "production": "PUB_K1_5HK8oeEYNXP7cFt4DYBe8XR2s1HHDxvQAmVnA2NodV6mjS4CHG",
+        "peer": "PUB_K1_8ats3ccj75Ht4HiJPgUnApDiG6FUVTuzKUcwmpPPEAgPNeyd6z",
+        "bls": "PUB_BLS_G1Gfoj7fnpa3aZHDUn8N9m6zbVCe2LnMtrlwYQBLdlWr-VErnpluQXABLDEt0UoAf72ha4xTklTPMcl381If_PILKN-zwBpT3CifG9ES6UiWB7S6oQXY-VHSTRhKjSIEJqDmVg",
+        "voter": "PUB_K1_6VEJjBf7iw5tmMXLJs21vDmLA5fSdAoPkoSLNUKnJ7S2UF5NQZ"
+      }
+    },
+    {
+      "name": "londonturing",
+      "voter": "birchmeadows",
+      "index": 33,
+      "rpc_port": 8933,
+      "p2p_port": 9933,
+      "role": "permanent-blacklist-demo",
+      "unit": "pureeos-bp-demo-londonturing-20261105.service",
+      "CPU_stake_AIC": "100.0033",
+      "other_CPU_stake_AIC": "189.0000",
+      "NET_stake_AIC": "10.0000",
+      "public_keys": {
+        "account": "PUB_K1_8Uroq68TWyEesy7veMCKxpy68fV5v1hNgXtJuTqnKMSgudo1SB",
+        "production": "PUB_K1_6BEzyBbPi3SEEpxYyDLRCo7ssTh5c2WKkrdS7WeQtHqnoA2vyF",
+        "peer": "PUB_K1_5Dvm1qHZRPAMNcWuC97bsc42u4yTAyp9Luz5Q4JXweGMpCSmeq",
+        "bls": "PUB_BLS_gWl1_jkWkKk3I7oCRfIU3Yw8yCwuFert8__PbHCw7PkHrdc9vXvkNzsqa40SUy0HktfH6i-zEUfSeeYa_WcUOOlvqBZgqjWMWUJHOh-7SIaxIE4x62a8n1pb6B_n9l8Tq9Uyvg",
+        "voter": "PUB_K1_89h3mKqfCJppH3UAbfKfY5M374WL8AAQSSyMbtiPt8XdQSvSDr"
+      }
+    },
+    {
+      "name": "genevacernai",
+      "voter": "olivegardens",
+      "index": 34,
+      "rpc_port": 8934,
+      "p2p_port": 9934,
+      "role": "permanent-blacklist-demo",
+      "unit": "pureeos-bp-demo-genevacernai-20261105.service",
+      "CPU_stake_AIC": "100.0034",
+      "other_CPU_stake_AIC": "517.0000",
+      "NET_stake_AIC": "10.0000",
+      "public_keys": {
+        "account": "PUB_K1_8ij1JZHQXrtTHYxG6PszLuQo236L3ZpCTB4LWL7R4wHWWaejEJ",
+        "production": "PUB_K1_5ir4vk6a9NtZX4w6wk4RBAYgba98ZsuKSUsC9a9wrdud6xPX44",
+        "peer": "PUB_K1_5oT1qswrSFvmSpDYmxSqdiUZtQ4kk77d4qT3FZ3oSr2fx8BZ4x",
+        "bls": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q",
+        "voter": "PUB_K1_6mvpZgSjy67vKmxUX4wrER9JtTaLLcbuqQ7Ptn3CzMfpdrHuFH"
+      }
+    },
+    {
+      "name": "sydneyunswai",
+      "voter": "pinemoonvale",
+      "index": 35,
+      "rpc_port": 8935,
+      "p2p_port": 9935,
+      "role": "permanent-blacklist-demo",
+      "unit": "pureeos-bp-demo-sydneyunswai-20261105.service",
+      "CPU_stake_AIC": "100.0035",
+      "other_CPU_stake_AIC": "582.0000",
+      "NET_stake_AIC": "10.0000",
+      "public_keys": {
+        "account": "PUB_K1_7nXfEFQJsG1K8pFo6YwRzoJW6JDJkxLJiHsv44VSyBV5VSFBaT",
+        "production": "PUB_K1_6kMVazebFxne8UrPA1oXT9LfPhExjZTXNYrTWn6F19we2xN5HR",
+        "peer": "PUB_K1_7FLQe3TrMoxaMSuLn6PotQwZ9gcaGRYmHUSLTYre2tJhKr96gn",
+        "bls": "PUB_BLS_9pMqCaIYUGAl71SG6iCUPdW-L-ZmQ4A9DYPq_8JucyVT3jU2agpfOqNfzWBh_RUIf24UfWyWkx35XIvF1C2nm2acF0BuoxeSiQZI-s11TCkiOfeCHxH_0svvH2zkyiMMoaWwOA",
+        "voter": "PUB_K1_5TB1XZXfX8xnHu6j6JeJGtGFt8iqXgXbu1MBndMLgikDcJJ9oY"
+      }
+    },
+    {
+      "name": "montrealmila",
+      "voter": "oakriverbank",
+      "index": 36,
+      "rpc_port": 8936,
+      "p2p_port": 9936,
+      "role": "maintenance-demo",
+      "unit": "pureeos-bp-demo-montrealmila-20261105.service",
+      "CPU_stake_AIC": "100.0036",
+      "other_CPU_stake_AIC": "475.0000",
+      "NET_stake_AIC": "10.0000",
+      "public_keys": {
+        "account": "PUB_K1_5dGpcNNQwykYeEQ64sicZS8AZWiKpk7YNWnnQqirKV49FugRyb",
+        "production": "PUB_K1_7399gmEhCB2o8HJ6yJz4ChkbT7zXQdNRFeqH9D3JH6VmLSSCMz",
+        "peer": "PUB_K1_8WvPkwRZEwkbtN1h9DT4FN2yqEqYxPTae6JSquu1Y6QP7hwokk",
+        "bls": "PUB_BLS_fPCHHvIDqPj43R_KD-_g5adZ76Bv_ypK6wIT1NzGaO6svhDcGFaHXmrjSuSkRxIZJaZ8WGqm5C06baeJDKg9ABWGK0UsWKLEk3nYtMCBh395p56BY3luL4HZ4jaSVx8PgGtYKg",
+        "voter": "PUB_K1_5fxzR5A681v1B48iMM4JC7X9CncErQewrvenvtpr7E4mpyNA5Y"
+      }
+    }
+  ],
+  "vote_seed": "173092ad10e8ba63be4213d1c964166287d8a2c3746170ae063122a8eada9b02",
+  "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "registration_count_before": 24,
+  "stake_vote_scope": "Six additional owned ordinary accounts plus six BP self-votes; all old votes remain unchanged",
+  "start_LIB": 47150
+}

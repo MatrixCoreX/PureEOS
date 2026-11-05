@@ -1,0 +1,16 @@
+{
+  "status": "PUBLISHED_AWAITING_PUBLIC_QA",
+  "UTC": "2026-11-05T12:35:00.045418+00:00",
+  "previous_release": "/var/www/aic-test/releases/20261105T105459Z-relay-execution-income-r1",
+  "release": "/var/www/aic-test/releases/20261105T123459Z-next-capacity-time",
+  "source_SHA256": "2831ee159ce06a191ff3cc748ece1d74df923bcfc8c8af53ede75e1095334c15",
+  "files": {
+    "index.html": "e8a17124895551064d38cf26e6fdba72c288c57b53d5979da133c6310c174f4b",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-BJQ3zRZn.js": "9f5370088480ef6f420cc1d999e65291f8ca28f58e4a37a6f40591e686e7671c",
+    "assets/index-DUbnafJU.css": "3e00623702907f32fab832b45930fbe8422dc4933e57dc33d4260d7339ac084a"
+  },
+  "scope": "Static capacity-caption change only. No RPC/service/chain/contract changes."
+}

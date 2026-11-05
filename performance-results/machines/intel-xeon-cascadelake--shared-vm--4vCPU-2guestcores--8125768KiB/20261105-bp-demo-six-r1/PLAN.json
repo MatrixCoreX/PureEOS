@@ -1,0 +1,28 @@
+{
+  "status": "PREPARING",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "remote_root": "/opt/pureeos-bp-demo-six-20261105-r1",
+  "original_BPs": 24,
+  "new_BPs": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing",
+    "genevacernai",
+    "sydneyunswai",
+    "montrealmila"
+  ],
+  "fault_targets": [
+    "tokyoaistlab",
+    "pariscnrslab",
+    "londonturing",
+    "genevacernai",
+    "sydneyunswai"
+  ],
+  "maintenance_target": "montrealmila",
+  "maintenance_after_finalized_personal_turns": 3,
+  "new_own_bond_AIC_each": 10000,
+  "original_votes_and_90_ordinary_assignments_preserved": true,
+  "new_other_voters": 6,
+  "candidate_capacity_UI": "Replace not-online phrase with next native capacity increase UTC time from existing qualified read-only summary",
+  "no_new_servers_reset_TPS_or_protocol_changes": true
+}

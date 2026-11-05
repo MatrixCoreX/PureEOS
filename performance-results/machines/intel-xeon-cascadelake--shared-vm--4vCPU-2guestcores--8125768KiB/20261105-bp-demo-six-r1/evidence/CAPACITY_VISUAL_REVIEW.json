@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T12:34:54.218178+00:00",
+  "scope": "Actually viewed all four capacity-card screenshots. Native next-capacity UTC timestamp, bilingual labels,120px cards, wrapping and page width are legible and checked.",
+  "screenshots": {
+    "capacity_preview-zh-dark-1440.png": "a91037955410620093597ba0d36a6797091109180d3d02bbda83ac2dcfc49a3d",
+    "capacity_preview-en-light-1440.png": "f8042bd51b8bd45ae02bfaf7527f7cadde8cc43359e81ffafa33b49a9c200754",
+    "capacity_preview-zh-light-390.png": "9b5be56498d54fd23760ea5571a56eae432bb42104db44c3bec70758060302ec",
+    "capacity_preview-en-dark-390.png": "1c7e72394797185700c825dfb50d2926329fc46f50a4adf6b696e70ceec7ae63"
+  },
+  "observed_during_live_registration": "One mobile screenshot includes an existing vote-detail HTTP503 notice during changing BP enrollment. Caption/native date checks passed; final native-demo/public checks must verify actual blacklist/maintenance rows after enrollment and handover. No simulated data or hidden error."
+}

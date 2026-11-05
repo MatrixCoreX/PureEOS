@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "source_SHA256": "32cee381e706cd6936404b5c59ed4f3010e958bb685bceff111342293a47ecd5",
+  "files": {
+    "index.html": "acce5125e19198fbb88ac36eb08001e80e79558ba4e53b96127cbc80e9a44474",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-DUbnafJU.css": "3e00623702907f32fab832b45930fbe8422dc4933e57dc33d4260d7339ac084a",
+    "assets/index-CU58cxHi.js": "30ea62d622890391bebc56820e606e51fa1be7761653afaa2b49de9270f56374"
+  }
+}

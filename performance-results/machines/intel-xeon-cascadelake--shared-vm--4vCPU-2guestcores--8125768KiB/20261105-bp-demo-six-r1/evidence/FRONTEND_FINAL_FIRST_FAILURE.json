@@ -1,0 +1,6 @@
+{
+  "status": "FAIL",
+  "scope": "Build helper text interpolation replaced SHA inside a JSON field name before any tests/build; no frontend or chain publication.",
+  "source_SHA256": "d76f86c75d013a50620634672ba19dac9840aaecd40c49f24d236be62d5f2b14",
+  "error": "  File \"/opt/pureeos-bp-demo-six-20261105-r1/build_frontend_final.py\", line 13\n    result={'status':'PASS','source_'2831ee159ce06a191ff3cc748ece1d74df923bcfc8c8af53ede75e1095334c15'256':'2831ee159ce06a191ff3cc748ece1d74df923bcfc8c8af53ede75e1095334c15','earlier_full_suite_checks':268,'final_focused_checks':checks,'scope':'Same capacity data/branches; final caption compacts DOM to keep existing120px cards. Existing producer-summary/i18n tests plus finalTypeScript/build; actual Chrome remains required.','files':{str(p.relative_to(F/'dist')):hashlib.sha256(p.read_bytes()).hexdigest()for p in(F/'dist').rglob('*')if p.is_file()}}\n                                        ^\nSyntaxError: invalid decimal literal\n"
+}

@@ -1,0 +1,5 @@
+{
+  "demonstrate.py": "6d9668ab9d611fd6a682c5e5fc8cfd20eecb886ce4cdeff34abd6b1a6cc3180a",
+  "audit_zero_windows.py": "8d25ceeca74277ef9c18d79a17ccad1af8a77c2c6a9bd4b699b0b4f515beb749",
+  "scope": "Waiting-only refinement: require zero native prior missed-window streaks, then later read-only audit all15post-stop canonical slot gaps. No native timing/state change and no fault action yet."
+}

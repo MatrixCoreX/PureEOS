@@ -1,0 +1,730 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T12:32:44.777851+00:00",
+  "completed": [
+    {
+      "name": "tokyoaistlab",
+      "voter": "cedarharbors",
+      "create": {
+        "transaction_id": "a8e7e1ec3e3f1968f9c2990bceaecdda221c8684de049a970e15fe3304ef45a4",
+        "block_num": 47164,
+        "block_id": "0000b83cb75b3db807cc0d0e6a609e5882c4e18d3c2c17710bdc6455ebaeaf95",
+        "observed_LIB": 47168,
+        "CPU_us": 3483,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "81752a6ea90d7e9793144dc24a283e8580e247aa9d601a1050257233f86c491c",
+        "block_num": 47180,
+        "block_id": "0000b84c00305accac5c54918a900f3820519d1a472ae21a123203ff848d26b4",
+        "observed_LIB": 47181,
+        "CPU_us": 941,
+        "NET_words": 76
+      },
+      "registration": {
+        "transaction_id": "da969fb10e9e2f7de24434d24846fe29ce86800e8f1b8bf00db62a722e81e99c",
+        "block_num": 49385,
+        "block_id": "0000c0e922aae0dfe1f439eac6968aeccd59187ef5a64c6b311c2f47bc885429",
+        "observed_LIB": 49385,
+        "CPU_us": 3993,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-demo-tokyoaistlab-20261105.service",
+        "PID": 464685,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync": [
+          {
+            "UTC": "2026-11-05T12:21:26.511565+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49333,
+              "last_irreversible_block_num": 49329,
+              "last_irreversible_block_id": "0000c0b17108ce71012eca8cb0ab75218a7da8077e4ddbe1aa05de15aa2c0e68",
+              "head_block_id": "0000c0b5a9fca58321ba1a86db6253655481f46ea9b11e6d3a3761a24a302a71",
+              "head_block_time": "2026-11-05T12:21:26.000",
+              "head_block_producer": "parisinriaai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49333,
+              "fork_db_head_block_id": "0000c0b5a9fca58321ba1a86db6253655481f46ea9b11e6d3a3761a24a302a71",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6093633070",
+              "total_net_weight": 226030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:21:24.000"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:21:29.591967+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49339,
+              "last_irreversible_block_num": 49334,
+              "last_irreversible_block_id": "0000c0b648385bcbbb5593799e514cb83593adaadca72ba63c5a67c90bc97f43",
+              "head_block_id": "0000c0bb74bc8b4ef116ca5103498e5fb257be17d0aef791569968e012f7ce40",
+              "head_block_time": "2026-11-05T12:21:29.000",
+              "head_block_producer": "parisinriaai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49339,
+              "fork_db_head_block_id": "0000c0bb74bc8b4ef116ca5103498e5fb257be17d0aef791569968e012f7ce40",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6093633070",
+              "total_net_weight": 226030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:21:26.500"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:21:32.524775+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49343,
+              "last_irreversible_block_num": 49336,
+              "last_irreversible_block_id": "0000c0b80c3f8f7d893e082041e6a325b67577f8a422f734a1c93fb49b849631",
+              "head_block_id": "0000c0bf507cee2a339400146c0037e61359cc0795f5b3adecccfc8fb3ca1894",
+              "head_block_time": "2026-11-05T12:21:31.500",
+              "head_block_producer": "perplexityai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49343,
+              "fork_db_head_block_id": "0000c0bf507cee2a339400146c0037e61359cc0795f5b3adecccfc8fb3ca1894",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6093633070",
+              "total_net_weight": 226030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:21:27.500"
+            }
+          }
+        ],
+        "bootstrap": "Native same-chain irreversible state checkpoint, then full validation",
+        "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+        "checkpoint_block": {
+          "block_num": 48653,
+          "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+          "observed_LIB": 48653
+        }
+      }
+    },
+    {
+      "name": "pariscnrslab",
+      "voter": "mapleharbors",
+      "create": {
+        "transaction_id": "bce2e3eb929b2f08089f3a10efdf507ffe753247a9041c7604a34ed71c82cdc7",
+        "block_num": 49407,
+        "block_id": "0000c0ff8be9274ca3a861e05ae20530b7e30d10a90c369c0f5f97ed65a5c081",
+        "observed_LIB": 49407,
+        "CPU_us": 1012,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "9016f5bb1bf517508309692a8724ab42217d6e7b691bb8d6f7c6a4476527c603",
+        "block_num": 49422,
+        "block_id": "0000c10ea417def889d479c006bb00a11b5351435e158a42a791c0daedfe2962",
+        "observed_LIB": 49422,
+        "CPU_us": 1189,
+        "NET_words": 76
+      },
+      "registration": {
+        "transaction_id": "eb4ec34ae7c10df6dbb78931b7ab82d6b05312d8edc578b79f53e0724d011510",
+        "block_num": 49497,
+        "block_id": "0000c159afbae99133add33613f751550ef02b78d5ac4f96fd1129cb97befff5",
+        "observed_LIB": 49497,
+        "CPU_us": 3475,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-demo-pariscnrslab-20261105.service",
+        "PID": 465556,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync": [
+          {
+            "UTC": "2026-11-05T12:22:58.398351+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49484,
+              "last_irreversible_block_num": 49474,
+              "last_irreversible_block_id": "0000c142338f8feeb59d03226eb8e137d3458d4d1d491591caa38aa99038af66",
+              "head_block_id": "0000c14ccd8ddd003470c2cb6fbb92040ee79dc26bba4cea3ff6bdee6c0ff6c2",
+              "head_block_time": "2026-11-05T12:22:53.500",
+              "head_block_producer": "deepseekcore",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49484,
+              "fork_db_head_block_id": "0000c14ccd8ddd003470c2cb6fbb92040ee79dc26bba4cea3ff6bdee6c0ff6c2",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6193233390",
+              "total_net_weight": 228030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:22:48.500"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:23:01.633796+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49488,
+              "last_irreversible_block_num": 49486,
+              "last_irreversible_block_id": "0000c14e0c96a91da1668bfd262f6ce769b54440c591d99f2ad33fba68b52c97",
+              "head_block_id": "0000c1508370188604df8a4fb08968e671783a162b2cf8ad1d373a94500d4b08",
+              "head_block_time": "2026-11-05T12:23:01.000",
+              "head_block_producer": "londonucllab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49488,
+              "fork_db_head_block_id": "0000c1508370188604df8a4fb08968e671783a162b2cf8ad1d373a94500d4b08",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6193233390",
+              "total_net_weight": 228030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:23:00.000"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:23:04.270761+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49494,
+              "last_irreversible_block_num": 49489,
+              "last_irreversible_block_id": "0000c151bc609a715ccf436a4a2d07b5c58a2c11068de033714a785a13fda968",
+              "head_block_id": "0000c156f3b62a94d6703873a74b7528ef539712988e2918c7872f630fe4b7d1",
+              "head_block_time": "2026-11-05T12:23:04.000",
+              "head_block_producer": "londonucllab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49494,
+              "fork_db_head_block_id": "0000c156f3b62a94d6703873a74b7528ef539712988e2918c7872f630fe4b7d1",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6193233390",
+              "total_net_weight": 228030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:23:01.500"
+            }
+          }
+        ],
+        "bootstrap": "Native same-chain irreversible state checkpoint, then full validation",
+        "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+        "checkpoint_block": {
+          "block_num": 48653,
+          "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+          "observed_LIB": 48653
+        }
+      }
+    },
+    {
+      "name": "londonturing",
+      "voter": "birchmeadows",
+      "create": {
+        "transaction_id": "5d9409c20133b0055ef11f008a6caa69183eca632472a129ff0925c5c4e98250",
+        "block_num": 49509,
+        "block_id": "0000c165ae761cd25265d796a4dc6f096a7e2be41c4f7343829ac39a0b485ed0",
+        "observed_LIB": 49509,
+        "CPU_us": 1116,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "a95f9b00c59ae6abceabf8ef1e4f24ed3b73d3e3ace1edf99ba2f666319fd67c",
+        "block_num": 49531,
+        "block_id": "0000c17b8c57e1683abb08d9c533a4d719a06251a3fbd21364056b500db9ad36",
+        "observed_LIB": 49532,
+        "CPU_us": 950,
+        "NET_words": 76
+      },
+      "registration": {
+        "transaction_id": "b4b71cde598c083100db344d8646c24d75fce4290109eb072951f0cc3cbedf47",
+        "block_num": 49605,
+        "block_id": "0000c1c5f5800e9f5257b7ccd8d9490e565abcac2d6dbba729425ff09b5453f0",
+        "observed_LIB": 49607,
+        "CPU_us": 3668,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-demo-londonturing-20261105.service",
+        "PID": 466237,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync": [
+          {
+            "UTC": "2026-11-05T12:24:09.944422+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49592,
+              "last_irreversible_block_num": 49586,
+              "last_irreversible_block_id": "0000c1b2a6a4a345c26718c63c246cb209c6899e97cbe0957eb30a0c458368f8",
+              "head_block_id": "0000c1b8614fa501fe72a64afb13fbfc4c196e8156a94fb6081b78476dd76597",
+              "head_block_time": "2026-11-05T12:24:05.500",
+              "head_block_producer": "tencentcloud",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49592,
+              "fork_db_head_block_id": "0000c1b8614fa501fe72a64afb13fbfc4c196e8156a94fb6081b78476dd76597",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6222133720",
+              "total_net_weight": 230030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:24:02.000"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:24:12.851235+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49595,
+              "last_irreversible_block_num": 49593,
+              "last_irreversible_block_id": "0000c1b9efa7d5d162073fb7e36b986a9edc36048470ba2521be862d2fd350b9",
+              "head_block_id": "0000c1bb53fa9ce4a007b9bfd073b55011aec5d10735447937b96472500bf5db",
+              "head_block_time": "2026-11-05T12:24:12.500",
+              "head_block_producer": "zurichethlab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49595,
+              "fork_db_head_block_id": "0000c1bb53fa9ce4a007b9bfd073b55011aec5d10735447937b96472500bf5db",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6222133720",
+              "total_net_weight": 230030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:24:11.500"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:24:16.529809+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49602,
+              "last_irreversible_block_num": 49598,
+              "last_irreversible_block_id": "0000c1be26b6f849bd88e3128d49cd7cd362d86c87a60c15b22237f507871613",
+              "head_block_id": "0000c1c282e06d028a14bccd865ab97f7c0ce4f3362d342d234eabbbce56d601",
+              "head_block_time": "2026-11-05T12:24:16.000",
+              "head_block_producer": "zurichethlab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49602,
+              "fork_db_head_block_id": "0000c1c282e06d028a14bccd865ab97f7c0ce4f3362d342d234eabbbce56d601",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6222133720",
+              "total_net_weight": 230030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:24:14.000"
+            }
+          }
+        ],
+        "bootstrap": "Native same-chain irreversible state checkpoint, then full validation",
+        "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+        "checkpoint_block": {
+          "block_num": 48653,
+          "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+          "observed_LIB": 48653
+        }
+      }
+    },
+    {
+      "name": "genevacernai",
+      "voter": "olivegardens",
+      "create": {
+        "transaction_id": "0b97a2f36de9c11b1843fee1ac51fdb18b0fe36a3fb21cb82207b738154241ff",
+        "block_num": 49615,
+        "block_id": "0000c1cf63fd132a977c619e097f6061b4062896b8bb46dc24e46e60938d5655",
+        "observed_LIB": 49616,
+        "CPU_us": 1075,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "530ae2d6a1ea4bef0fb43594ae4c9ceb3f732f91eb737474f2692d6fbe1ef40e",
+        "block_num": 49626,
+        "block_id": "0000c1da3a1e09653ab1b195e01118a925bfce1b5bde002f0ae5897ecbf6cf9e",
+        "observed_LIB": 49626,
+        "CPU_us": 1065,
+        "NET_words": 76
+      },
+      "registration": {
+        "transaction_id": "cbae23314f5e2546d55837e4126fb174ce600d8ba000fe168e8568bca56c977a",
+        "block_num": 49815,
+        "block_id": "0000c297eae960c3fb501feae6092d1bf992ce027417cbb56f321306c25b93ca",
+        "observed_LIB": 49834,
+        "CPU_us": 3775,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-demo-genevacernai-20261105.service",
+        "PID": 466849,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync": [
+          {
+            "UTC": "2026-11-05T12:26:37.050151+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49797,
+              "last_irreversible_block_num": 49783,
+              "last_irreversible_block_id": "0000c2774c8bb9b8a828df8c048e7a3ed114ecbea091d63874396e31edfe91b1",
+              "head_block_id": "0000c285e20a6da6a0027e6f3e1ce1a29896a69bee087df2afb888ef26cd23ff",
+              "head_block_time": "2026-11-05T12:26:35.000",
+              "head_block_producer": "anthropiclab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49797,
+              "fork_db_head_block_id": "0000c285e20a6da6a0027e6f3e1ce1a29896a69bee087df2afb888ef26cd23ff",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6283834060",
+              "total_net_weight": 232030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:26:27.000"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:26:40.307231+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49803,
+              "last_irreversible_block_num": 49789,
+              "last_irreversible_block_id": "0000c27d906b8b214f1f6b974a0bc366da1a043648709651b575e1b6096bb795",
+              "head_block_id": "0000c28b409565c4913dc606269205ce8ad2a0de7c669368ff811d35d68cb3c5",
+              "head_block_time": "2026-11-05T12:26:39.000",
+              "head_block_producer": "berlintulabs",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49803,
+              "fork_db_head_block_id": "0000c28b409565c4913dc606269205ce8ad2a0de7c669368ff811d35d68cb3c5",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6283834060",
+              "total_net_weight": 232030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:26:30.500"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:26:43.335349+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49808,
+              "last_irreversible_block_num": 49799,
+              "last_irreversible_block_id": "0000c287353aa66f61913d317d1d916e2e7b469d5bba79969bc9a808228a2a40",
+              "head_block_id": "0000c29085ee47a1e84d5eb06219d86f30a1ed8649d24af1ea25284a93dd04b2",
+              "head_block_time": "2026-11-05T12:26:41.500",
+              "head_block_producer": "berlintulabs",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49808,
+              "fork_db_head_block_id": "0000c29085ee47a1e84d5eb06219d86f30a1ed8649d24af1ea25284a93dd04b2",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6283834060",
+              "total_net_weight": 232030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:26:37.000"
+            }
+          }
+        ],
+        "bootstrap": "Native same-chain irreversible state checkpoint, then full validation",
+        "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+        "checkpoint_block": {
+          "block_num": 48653,
+          "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+          "observed_LIB": 48653
+        }
+      }
+    },
+    {
+      "name": "sydneyunswai",
+      "voter": "pinemoonvale",
+      "create": {
+        "transaction_id": "dc6d340a915ed5e10462b7bed7638fdfb5a94656fdceffe451a0aacaca049c52",
+        "block_num": 49852,
+        "block_id": "0000c2bc7a38d08c16d4e2ead168ad4052f82f63526e20b4fdbff5816b18bae4",
+        "observed_LIB": 49852,
+        "CPU_us": 967,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "fcc6fc11337bc0ed118cdf9a09287ab7c09496d72638c16e6d3749322e999bd8",
+        "block_num": 49862,
+        "block_id": "0000c2c68ef6be49af5bd1d6411aea475c50c93a0c839c06b228ca22af1a05e2",
+        "observed_LIB": 49862,
+        "CPU_us": 1104,
+        "NET_words": 76
+      },
+      "registration": {
+        "transaction_id": "c9209e5545a385cc4afed2a67c95c3fb5665109a808b302ae48be31ba3ba2e0c",
+        "block_num": 49985,
+        "block_id": "0000c341ad81b385e55053007677e736bbda4508eaa81d2abb8af4bda5da08b6",
+        "observed_LIB": 49985,
+        "CPU_us": 3474,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-demo-sydneyunswai-20261105.service",
+        "PID": 468675,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync": [
+          {
+            "UTC": "2026-11-05T12:28:33.536287+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49961,
+              "last_irreversible_block_num": 49957,
+              "last_irreversible_block_id": "0000c325ec4f942f2b2b04ecc4ae5d96ae7b149125e13fe66670db764945c811",
+              "head_block_id": "0000c329fd9048289cde7a3231d4116d962fdd5e22d09a7ee6f0238605838400",
+              "head_block_time": "2026-11-05T12:28:33.500",
+              "head_block_producer": "alibabacloud",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49961,
+              "fork_db_head_block_id": "0000c329fd9048289cde7a3231d4116d962fdd5e22d09a7ee6f0238605838400",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6352034410",
+              "total_net_weight": 234030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:28:31.500"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:28:36.651357+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49966,
+              "last_irreversible_block_num": 49960,
+              "last_irreversible_block_id": "0000c328fb5a2ba4130b37f2c46d5af3ef15d3a0bf4dbc2885cb9f4ee0af00d9",
+              "head_block_id": "0000c32ef9c108a72addf24135edc222a2f9fa54e50f49ce37dedeb689a63beb",
+              "head_block_time": "2026-11-05T12:28:36.000",
+              "head_block_producer": "anthropiclab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49966,
+              "fork_db_head_block_id": "0000c32ef9c108a72addf24135edc222a2f9fa54e50f49ce37dedeb689a63beb",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6352034410",
+              "total_net_weight": 234030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:28:33.000"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:28:39.883544+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 49971,
+              "last_irreversible_block_num": 49963,
+              "last_irreversible_block_id": "0000c32b7016d63c7f1b96aca5cedbce2ab2a61f011cb744028ca9ad117c2d2a",
+              "head_block_id": "0000c333571a1c687c1438b6d72ec5c8eac43184ffc72616a069cc2dfff69ca9",
+              "head_block_time": "2026-11-05T12:28:38.500",
+              "head_block_producer": "anthropiclab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 49971,
+              "fork_db_head_block_id": "0000c333571a1c687c1438b6d72ec5c8eac43184ffc72616a069cc2dfff69ca9",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6352034410",
+              "total_net_weight": 234030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:28:34.500"
+            }
+          }
+        ],
+        "bootstrap": "Native same-chain irreversible state checkpoint, then full validation",
+        "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+        "checkpoint_block": {
+          "block_num": 48653,
+          "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+          "observed_LIB": 48653
+        }
+      }
+    },
+    {
+      "name": "montrealmila",
+      "voter": "oakriverbank",
+      "create": {
+        "transaction_id": "2b264d3ec9c6a5607b99f6b42d9c129e4406b62a3513878583b4b5b45c2e9fb4",
+        "block_num": 49997,
+        "block_id": "0000c34df93b0545431d6255c42eb8e241eaf9546ed88fd9b554ac4ef980c24f",
+        "observed_LIB": 49997,
+        "CPU_us": 1098,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "5ff0e1e3851869ec8e934ff16e9eb3c1da1295fd88740560266ffc61ce4c6e01",
+        "block_num": 50008,
+        "block_id": "0000c358b33e0bba8817b7e977d74ffece6aeaa1ec2a26ed32e1076f3fc9fb79",
+        "observed_LIB": 50010,
+        "CPU_us": 1091,
+        "NET_words": 76
+      },
+      "registration": {
+        "transaction_id": "d61e203c26c6ca0c67a562de23628022b31b19f8d0f2ba6bce2e2ab74c2df221",
+        "block_num": 50251,
+        "block_id": "0000c44b9e652cfbb3ac4e9117e2553c02652c3ffa9e3ac4314877c9745753e6",
+        "observed_LIB": 50263,
+        "CPU_us": 3778,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-demo-montrealmila-20261105.service",
+        "PID": 469732,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync": [
+          {
+            "UTC": "2026-11-05T12:32:07.351767+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 50228,
+              "last_irreversible_block_num": 50218,
+              "last_irreversible_block_id": "0000c42a8f364679e25332dc80c406aa678bc76fb577e527aaf07b04a5dec82a",
+              "head_block_id": "0000c4342cb2463b79d745d84d5293c54972831d525d03d9ade12109dac04877",
+              "head_block_time": "2026-11-05T12:32:06.500",
+              "head_block_producer": "perplexityai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 50228,
+              "fork_db_head_block_id": "0000c4342cb2463b79d745d84d5293c54972831d525d03d9ade12109dac04877",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6409534770",
+              "total_net_weight": 236030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:32:01.500"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:32:10.646812+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 50233,
+              "last_irreversible_block_num": 50221,
+              "last_irreversible_block_id": "0000c42d3bbfff097caaee31003bc0d81ea96972505f7d15ff383d5383474407",
+              "head_block_id": "0000c4396f8b617304e3d19001be1eda4824a1564bf67ee27986b7e82451545e",
+              "head_block_time": "2026-11-05T12:32:09.000",
+              "head_block_producer": "perplexityai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 50233,
+              "fork_db_head_block_id": "0000c4396f8b617304e3d19001be1eda4824a1564bf67ee27986b7e82451545e",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6409534770",
+              "total_net_weight": 236030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:32:03.000"
+            }
+          },
+          {
+            "UTC": "2026-11-05T12:32:13.750290+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 50237,
+              "last_irreversible_block_num": 50223,
+              "last_irreversible_block_id": "0000c42f696b832464ec9ce2a277e9bcb22af9597733c2b3b4ca27f6ec5f212e",
+              "head_block_id": "0000c43d522db0f41ba8485b78d24b702ba4caf53af423007b6a9dd6bf01f52e",
+              "head_block_time": "2026-11-05T12:32:11.500",
+              "head_block_producer": "perplexityai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 50237,
+              "fork_db_head_block_id": "0000c43d522db0f41ba8485b78d24b702ba4caf53af423007b6a9dd6bf01f52e",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6409534770",
+              "total_net_weight": 236030000,
+              "earliest_available_block_num": 48654,
+              "last_irreversible_block_time": "2026-11-05T12:32:04.000"
+            }
+          }
+        ],
+        "bootstrap": "Native same-chain irreversible state checkpoint, then full validation",
+        "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+        "checkpoint_block": {
+          "block_num": 48653,
+          "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+          "observed_LIB": 48653
+        }
+      }
+    }
+  ],
+  "current": "montrealmila",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "registered_count": 30,
+  "new_self_votes": 6,
+  "new_other_votes": 6,
+  "pairwise_distinct_totals": 30,
+  "old_votes_unchanged": true,
+  "bond_configuration": {
+    "version": 1,
+    "enforced": 1,
+    "refund_delay_sec": 604800,
+    "locked": 3000000000,
+    "slash_pending": 0,
+    "slash_settled": 0,
+    "refunded": 0
+  }
+}

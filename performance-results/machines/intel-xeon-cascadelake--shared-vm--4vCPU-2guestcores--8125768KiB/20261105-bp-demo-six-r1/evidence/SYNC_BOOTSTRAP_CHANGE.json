@@ -1,0 +1,9 @@
+{
+  "status": "CONTROLLED_BOOTSTRAP_CHANGE",
+  "UTC": "2026-11-05T12:14:09.484304+00:00",
+  "reason": "Full genesis replay on the shared host advances but is slow; bootstrap ONLY new unregistered demo nodes using an original-node native same-chain snapshot. Original nodes/history stay running, no chain reset or signature/quorum rule changes.",
+  "stopped_only_owned_setup_controller": true,
+  "temporary_signer_closed": true,
+  "initial_new_node": "tokyoaistlab",
+  "existing_successful_create_and_fund_transactions_must_not_repeat": true
+}

@@ -1,0 +1,21 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run --config remote-vitest.config.ts src/lib/producers.test.ts src/lib/i18n.test.ts --maxWorkers=1
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-bp-demo-six-20261105-r1/frontend-final[39m
+
+ [32m✓[39m src/lib/producers.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 114[2mms[22m[39m
+ [32m✓[39m src/lib/i18n.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 210[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+[2m   Start at [22m 12:11:41
+[2m   Duration [22m 11.02s[2m (transform 43%, setup 35%, import 17%, tests 4%, worker 1%)[22m
+
+[2m    Isolate [22m [33m2 workers spawned[39m[2m · ~1.14s startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~1.14s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+

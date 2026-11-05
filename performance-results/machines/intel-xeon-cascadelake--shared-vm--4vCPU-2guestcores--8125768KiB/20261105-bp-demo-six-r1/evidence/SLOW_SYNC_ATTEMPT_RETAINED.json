@@ -1,0 +1,94 @@
+{
+  "status": "RETAINED",
+  "UTC": "2026-11-05T12:20:30.381587+00:00",
+  "name": "tokyoaistlab",
+  "stopped_only_new_unregistered_unit": "pureeos-bp-demo-tokyoaistlab-20261105.service",
+  "original_data_kept": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data",
+  "original_node_PIDs": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 415990,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 415049,
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": 416139,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 417069,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 416219,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 417139,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 415319,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 415177,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 415113,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 416566,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 416292,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 415241,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 416362,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 415917,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 414985,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 417001,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 415567,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 416876,
+    "pureeos-devnet-bp-singaporentu-20261105.service": 416429,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 415780,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 416057,
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": 416689,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 416500,
+    "pureeos-devnet-founder-20261105.service": 417216,
+    "pureeos-devnet-history-20261105.service": 414916
+  },
+  "native_snapshot": {
+    "status": "PASS",
+    "UTC": "2026-11-05T12:15:26.226569+00:00",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "source_node": "gptgenesisbp",
+    "native_response": {
+      "head_block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+      "head_block_num": 48653,
+      "head_block_time": "2026-11-05T12:15:24.000",
+      "version": 11,
+      "snapshot_name": "/opt/pureeos-devnet-20261105-r1/founder/data/snapshots/snapshot-0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f.bin"
+    },
+    "checkpoint_path": "/opt/pureeos-bp-demo-six-20261105-r1/checkpoint/snapshot.bin",
+    "checkpoint_SHA256": "085701fecf378272856d1eecfc138397e5b1c014aea446eedd2360c2da95c021",
+    "bytes": 3156840,
+    "canonical_snapshot_block": {
+      "block_num": 48653,
+      "block_id": "0000be0d5e6553a94d1693cf2b9ed9f4db2e12fe12a37d788d5974606853e58f",
+      "observed_LIB": 48653
+    },
+    "original25_PIDs_unchanged": true,
+    "scope": "Native exported same-chain trusted state checkpoint for ONLY six new demo BPs; all later blocks use full validation. Original chain/history untouched; no unsafe live-state directory copy or consensus/signature bypass."
+  },
+  "old_create_and_fund_receipts": [
+    {
+      "status": "IRREVERSIBLE",
+      "UTC": "2026-11-05T12:01:38.428108+00:00",
+      "transaction_id": "a8e7e1ec3e3f1968f9c2990bceaecdda221c8684de049a970e15fe3304ef45a4",
+      "start_LIB": 47153,
+      "packet_SHA256": "b63b46c937552c3e79a18b2d64deb59ec2e44335a2f23004dd1cbcf90683c372",
+      "attempts": [],
+      "reported_block": 47162,
+      "canonical_receipt": {
+        "transaction_id": "a8e7e1ec3e3f1968f9c2990bceaecdda221c8684de049a970e15fe3304ef45a4",
+        "block_num": 47164,
+        "block_id": "0000b83cb75b3db807cc0d0e6a609e5882c4e18d3c2c17710bdc6455ebaeaf95",
+        "observed_LIB": 47168,
+        "CPU_us": 3483,
+        "NET_words": 58
+      }
+    },
+    {
+      "status": "IRREVERSIBLE",
+      "UTC": "2026-11-05T12:01:44.800752+00:00",
+      "transaction_id": "81752a6ea90d7e9793144dc24a283e8580e247aa9d601a1050257233f86c491c",
+      "start_LIB": 47169,
+      "packet_SHA256": "581a30aca666f782687647a972299abd7258ba068b8866c9f1d2eea2fb97b157",
+      "attempts": [],
+      "reported_block": 47175,
+      "canonical_receipt": {
+        "transaction_id": "81752a6ea90d7e9793144dc24a283e8580e247aa9d601a1050257233f86c491c",
+        "block_num": 47180,
+        "block_id": "0000b84c00305accac5c54918a900f3820519d1a472ae21a123203ff848d26b4",
+        "observed_LIB": 47181,
+        "CPU_us": 941,
+        "NET_words": 76
+      }
+    }
+  ],
+  "scope": "Setup refinement on a new unregistered node; not the later fault stop. Original chain/node data unchanged."
+}

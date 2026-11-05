@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T13:03:47.484275+00:00",
+  "scope": "All four actual normal public HTTPS Chrome screenshots opened and visually reviewed; capacity caption fits120px cards, expected UTC time shown, mobile page bounded with scrollable tables, no unavailable/error notice visible. This check does not yet verify future fault or maintenance outcomes.",
+  "files": {
+    "capacity_public-zh-dark-1440.png": "9df604e9c677df127d1240329fd2520a62f712215345fb9312d902d3f123d102",
+    "capacity_public-en-light-1440.png": "66ec7becf501842c385c80448098e18082fb5d6c5a5f6123d3532caf96f10de3",
+    "capacity_public-zh-light-390.png": "08669a8571fa9e2b314e140baa8b0f834d667b12dbc3ea6d78d5ad6f6cef634f",
+    "capacity_public-en-dark-390.png": "b410974cb2612542777bcbe3be8e14260d475c9cce7fe0835bb0929c9b879135"
+  }
+}

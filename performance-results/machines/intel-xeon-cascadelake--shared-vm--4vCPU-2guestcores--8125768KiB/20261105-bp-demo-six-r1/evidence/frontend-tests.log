@@ -1,0 +1,133 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run --config remote-vitest.config.ts --maxWorkers=1
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-bp-demo-six-20261105-r1/frontend[39m
+
+ [32m✓[39m src/App.test.tsx [2m([22m[2m49 tests[22m[2m)[22m[33m 66686[2mms[22m[39m
+   [32m✓[39m explorer workflows in a DOM test environment [2m(49)[22m
+     [33m[2m✓[22m[39m labels the build default  as a testnet in both languages, without labeling custom nodes[33m 2745[2mms[22m[39m
+     [33m[2m✓[22m[39m labels the build default https://aic-test.matrixai.one/api as a testnet in both languages, without labeling custom nodes[33m 1198[2mms[22m[39m
+     [33m[2m✓[22m[39m opens with live default data despite retired settings and offers no required setup[33m 4422[2mms[22m[39m
+     [33m[2m✓[22m[39m prefills the history field for an existing browser with a legacy empty default-node setting[33m 545[2mms[22m[39m
+     [33m[2m✓[22m[39m accepts an optional node URL and discovers its Chain ID without an input field[33m 2743[2mms[22m[39m
+     [33m[2m✓[22m[39m restores the default without requiring network parameters[33m 2221[2mms[22m[39m
+     [33m[2m✓[22m[39m updates the latest block list automatically and holds historical pagination still[33m 2537[2mms[22m[39m
+     [33m[2m✓[22m[39m updates block confirmation without downloading its transaction payload again[33m 2303[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps five latest-block row slots and omits status from the compact table[33m 949[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves an optional history node and verifies its network automatically[33m 1663[2mms[22m[39m
+     [33m[2m✓[22m[39m shows issued token supply and translates the label without replacing its amount[33m 2174[2mms[22m[39m
+     [33m[2m✓[22m[39m opens12-block activity by default and retains a manual collapse through language changes[33m 1555[2mms[22m[39m
+     [33m[2m✓[22m[39m shows unknown activity when the shared overview read fails[33m 2040[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps block data visible when token supply cannot be read[33m 2228[2mms[22m[39m
+     [33m[2m✓[22m[39m switches language in place, keeps the selected account tab and restores the language on remount[33m 1649[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps unsaved queries and selected table input when switching language[33m 1018[2mms[22m[39m
+     [33m[2m✓[22m[39m switches language for the session when browser storage is unavailable[33m 637[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /[33m 332[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /blocks[33m 2089[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /block/48451930[33m 925[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /transaction/b8d45680aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[33m 761[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /transactions[33m 1226[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /tokens[33m 557[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /account[33m 339[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /account/alice[33m 927[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /contract/eosio.token[33m 346[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /network[33m 584[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /producers[33m 523[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /key/EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV[33m 611[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the complete English interface at /lookup/b8d45680aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[33m 1559[2mms[22m[39m
+     [33m[2m✓[22m[39m switches between black and light versions and restores the selected theme on remount[33m 2539[2mms[22m[39m
+     [33m[2m✓[22m[39m can change theme when browser storage is unavailable[33m 910[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the overview and searches an account[33m 2098[2mms[22m[39m
+     [33m[2m✓[22m[39m opens a block transaction with a block hint and shows correct billing units[33m 1007[2mms[22m[39m
+     [33m[2m✓[22m[39m queries a contract table with scope and displays returned rows[33m 1217[2mms[22m[39m
+     [33m[2m✓[22m[39m shows the baseline and values as demonstration data[33m 1414[2mms[22m[39m
+     [33m[2m✓[22m[39m shows all 500 ranked accounts below the account search and links each account[33m 5142[2mms[22m[39m
+     [33m[2m✓[22m[39m shows token balances from the token contract and preserves them across a language switch[33m 1335[2mms[22m[39m
+     [33m[2m✓[22m[39m shows indexed recent transactions on the overview despite empty current blocks and keeps them through refresh[33m 2325[2mms[22m[39m
+     [33m[2m✓[22m[39m uses the indexed source by default on the recent-transactions page[33m 726[2mms[22m[39m
+     [33m[2m✓[22m[39m distinguishes absent refunds from fields omitted by an account API[33m 1030[2mms[22m[39m
+     [33m[2m✓[22m[39m validates a real endpoint before persisting settings[33m 558[2mms[22m[39m
+     [33m[2m✓[22m[39m reports live network failure without showing demo block data[33m 1483[2mms[22m[39m
+     [33m[2m✓[22m[39m navigates to transaction IDs resolved from ambiguous hashes[33m 462[2mms[22m[39m
+ [32m✓[39m src/Queries.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 20489[2mms[22m[39m
+   [32m✓[39m read-only query workflows [2m(7)[22m
+     [33m[2m✓[22m[39m applies advanced history filters and preserves entered fields when switching language[33m 7103[2mms[22m[39m
+     [33m[2m✓[22m[39m exports only visible rows from the current page and exposes the bounded full export[33m 3084[2mms[22m[39m
+     [33m[2m✓[22m[39m reads reverse table pages using upper_bound and keeps payer and index options[33m 3608[2mms[22m[39m
+     [33m[2m✓[22m[39m opens scopes on demand and fills the selected scope into the form[33m 1576[2mms[22m[39m
+     [33m[2m✓[22m[39m shows creation relations and only fetches authority references on request, retaining English state[33m 3463[2mms[22m[39m
+     [33m[2m✓[22m[39m shows a transaction call tree with a flat list option[33m 712[2mms[22m[39m
+     [33m[2m✓[22m[39m renders indexed statistics with honest scope and full English labels without calling live services[33m 917[2mms[22m[39m
+ [32m✓[39m src/components/ActiveProducers.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 10732[2mms[22m[39m
+   [32m✓[39m overview on-duty roster and global BP totals [2m(3)[22m
+     [33m[2m✓[22m[39m shows eligible BP totals excluding banned accounts independently from active membership, preserving markers and language[33m 5910[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the RPC roster available when the BP summary fails and does not substitute the roster length for a total[33m 1651[2mms[22m[39m
+     [33m[2m✓[22m[39m pauses roster, head, arrival and BP summary polling with the overview auto-refresh control[33m 3161[2mms[22m[39m
+ [32m✓[39m src/components/KeyFeeEstimate.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 7038[2mms[22m[39m
+   [33m[2m✓[22m[39m shows dynamic CPU/NET reference data and recalculates storage scenarios without new RPC calls[33m 1572[2mms[22m[39m
+   [33m[2m✓[22m[39m renders unavailable resources without presenting a zero fee[33m 726[2mms[22m[39m
+   [33m[2m✓[22m[39m honors the overview pause and provides complete English pricing labels[33m 483[2mms[22m[39m
+   [33m[2m✓[22m[39m defaults to the active relay and compares inactive registrations without suggesting a live service[33m 705[2mms[22m[39m
+   [33m[2m✓[22m[39m shows market-priced byte budgets and keeps the revised formulas collapsed by default in both languages[33m 445[2mms[22m[39m
+   [33m[2m✓[22m[39m labels actual automatic RAM purchases and scopes the new estimate to AIC in both languages[33m 1842[2mms[22m[39m
+   [33m[2m✓[22m[39m shows relay execution-income allocation only for the reviewed income profile[33m 1260[2mms[22m[39m
+ [32m✓[39m src/components/PublicKeyHistory.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 4487[2mms[22m[39m
+   [33m[2m✓[22m[39m shows deposits without claiming receiving key paid native sender fees, and links exact receipt[33m 2407[2mms[22m[39m
+   [33m[2m✓[22m[39m distinguishes unavailable history from empty results[33m 416[2mms[22m[39m
+   [33m[2m✓[22m[39m holds new first-page records behind the update button[33m 893[2mms[22m[39m
+   [33m[2m✓[22m[39m does not poll historical pages[33m 769[2mms[22m[39m
+ [32m✓[39m src/lib/language.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 1860[2mms[22m[39m
+   [32m✓[39m initial interface language [2m(14)[22m
+     [33m[2m✓[22m[39m matches bootstrap and React for [ 'zh-CN', 'en-US' ] with saved=undefined[33m 709[2mms[22m[39m
+ [32m✓[39m src/components/DeveloperProposals.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 3359[2mms[22m[39m
+   [33m[2m✓[22m[39m shows actual native proposal fields, effective veto threshold and chain-time countdown with folded hashes[33m 1689[2mms[22m[39m
+   [33m[2m✓[22m[39m labels closed state honestly even when deployed code matches, with complete English text[33m 560[2mms[22m[39m
+   [33m[2m✓[22m[39m clears the old proposal after failed refresh instead of showing no proposals or inventing votes[33m 1082[2mms[22m[39m
+ [32m✓[39m src/components/DeveloperProposalHistory.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1790[2mms[22m[39m
+   [33m[2m✓[22m[39m shows real executed status and keeps secondary hashes and veto records folded[33m 1072[2mms[22m[39m
+   [33m[2m✓[22m[39m translates history labels and removes old rows on an unavailable refresh[33m 707[2mms[22m[39m
+ [32m✓[39m src/components/ProducerBlacklist.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1323[2mms[22m[39m
+   [32m✓[39m permanent blacklist panel [2m(4)[22m
+     [33m[2m✓[22m[39m works with history disabled and links each actual banned account[33m 803[2mms[22m[39m
+     [33m[2m✓[22m[39m translates the panel while preserving raw BP names[33m 321[2mms[22m[39m
+ [32m✓[39m src/lib/queries.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 1137[2mms[22m[39m
+   [32m✓[39m bounded history filters and exports [2m(7)[22m
+     [33m[2m✓[22m[39m pins filtered descending exports to the first page sequence and deduplicates entries[33m 314[2mms[22m[39m
+     [33m[2m✓[22m[39m caps exports at 1000 actions and stops cancelled work before another page[33m 517[2mms[22m[39m
+ [32m✓[39m src/components/ProducerBond.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 808[2mms[22m[39m
+   [32m✓[39m BP bond amount and status display [2m(4)[22m
+     [33m[2m✓[22m[39m shows the actual slash checkpoint and clears amounts after failed refresh[33m 561[2mms[22m[39m
+ [32m✓[39m src/components/PublicKeyWallet.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 919[2mms[22m[39m
+   [33m[2m✓[22m[39m renders exact multiple-token balances including zero, without requiring a native account[33m 724[2mms[22m[39m
+ [32m✓[39m src/lib/state.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 582[2mms[22m[39m
+ [32m✓[39m src/lib/api.test.ts [2m([22m[2m45 tests[22m[2m)[22m[33m 1444[2mms[22m[39m
+   [32m✓[39m RPC and history boundaries [2m(31)[22m
+     [33m[2m✓[22m[39m invokes the browser fetch with its global receiver rather than the ExplorerApi instance[33m 501[2mms[22m[39m
+ [32m✓[39m src/lib/key-fees.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 183[2mms[22m[39m
+ [32m✓[39m src/lib/producers.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 345[2mms[22m[39m
+ [32m✓[39m src/lib/key-wallet.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 246[2mms[22m[39m
+ [32m✓[39m src/lib/creation-history.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m src/lib/rotation-history.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+ [32m✓[39m src/lib/key-history.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 443[2mms[22m[39m
+ [32m✓[39m src/lib/upgrade-history.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 138[2mms[22m[39m
+ [32m✓[39m src/lib/bonds.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 219[2mms[22m[39m
+ [32m✓[39m src/lib/producer-votes.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 80[2mms[22m[39m
+ [32m✓[39m src/lib/i18n.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 95[2mms[22m[39m
+ [32m✓[39m src/lib/creations.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+ [32m✓[39m src/lib/upgrades.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 123[2mms[22m[39m
+ [32m✓[39m src/lib/peak-tps.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+ [32m✓[39m src/lib/holders.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 345[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m28 passed[39m[22m[90m (28)[39m
+[2m      Tests [22m [1m[32m268 passed[39m[22m[90m (268)[39m
+[2m   Start at [22m 11:52:03
+[2m   Duration [22m 341.61s[2m (tests 41%, environment 24%, import 16%, setup 10%, transform 10%)[22m
+
+[2m    Isolate [22m [33m28 workers spawned[39m[2m · ~3.75s startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~101.21s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+

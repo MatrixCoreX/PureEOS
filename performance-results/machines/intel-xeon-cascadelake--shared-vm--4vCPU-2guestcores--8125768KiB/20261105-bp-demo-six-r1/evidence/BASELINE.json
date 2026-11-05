@@ -1,0 +1,3478 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-05T12:01:30.661177+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "node_pids": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 415990,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 415049,
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": 416139,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 417069,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 416219,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 417139,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 415319,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 415177,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 415113,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 416566,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 416292,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 415241,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 416362,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 415917,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 414985,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 417001,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 415567,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 416876,
+    "pureeos-devnet-bp-singaporentu-20261105.service": 416429,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 415780,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 416057,
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": 416689,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 416500,
+    "pureeos-devnet-founder-20261105.service": 417216,
+    "pureeos-devnet-history-20261105.service": 414916
+  },
+  "old_producers": [
+    {
+      "owner": "alibabacloud",
+      "total_votes": 19790010,
+      "producer_key": "PUB_K1_6SUpnpxb9wAEEzxvQo9rQVWrprbyYsw5ztq18H1fwWJW7pVufK",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2018,
+      "last_claim_time": "2026-11-05T05:13:18.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6SUpnpxb9wAEEzxvQo9rQVWrprbyYsw5ztq18H1fwWJW7pVufK",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "anthropiclab",
+      "total_votes": 15510002,
+      "producer_key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1748,
+      "last_claim_time": "2026-11-05T05:12:24.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "baiduaiworks",
+      "total_votes": 26100012,
+      "producer_key": "PUB_K1_5UmQLPDaSEr6fTyBAyK4e3HK9PMMfTgR46X7ctS1BTz5huvciu",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2102,
+      "last_claim_time": "2026-11-05T05:13:32.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5UmQLPDaSEr6fTyBAyK4e3HK9PMMfTgR46X7ctS1BTz5huvciu",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "berlintulabs",
+      "total_votes": 18320022,
+      "producer_key": "PUB_K1_6YvpcYwsRkfRgutfMGEJdyCpQhoSC6PSzLTpPWDoVBySVmnH34",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1526,
+      "last_claim_time": "2026-11-05T05:14:51.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6YvpcYwsRkfRgutfMGEJdyCpQhoSC6PSzLTpPWDoVBySVmnH34",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "bytedancelab",
+      "total_votes": 12440013,
+      "producer_key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2142,
+      "last_claim_time": "2026-11-05T05:13:39.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "canadamilaai",
+      "total_votes": 34970023,
+      "producer_key": "PUB_K1_5i2xeLTqGnas8vYR7qaGVCRZPJmHE5LXXmCN7TJWdBN3cMy8Xj",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1582,
+      "last_claim_time": "2026-11-05T05:15:00.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5i2xeLTqGnas8vYR7qaGVCRZPJmHE5LXXmCN7TJWdBN3cMy8Xj",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "cohereclouds",
+      "total_votes": 28470006,
+      "producer_key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1835,
+      "last_claim_time": "2026-11-05T05:12:49.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "total_votes": 7640004,
+      "producer_key": "PUB_K1_7F5q79uQoMkUCggy6iHB5EL6ALhL6uWFaNdjybkqYCyBiodH51",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1726,
+      "last_claim_time": "2026-11-05T05:12:36.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7F5q79uQoMkUCggy6iHB5EL6ALhL6uWFaNdjybkqYCyBiodH51",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "deepseekcore",
+      "total_votes": 27510003,
+      "producer_key": "PUB_K1_82C5R1GCKTEeSteyNLe2NxbEWykxvk91NJ7zYZ72TnnRNYU4NZ",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2073,
+      "last_claim_time": "2026-11-05T05:12:29.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_82C5R1GCKTEeSteyNLe2NxbEWykxvk91NJ7zYZ72TnnRNYU4NZ",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "gptgenesisbp",
+      "total_votes": 153570000,
+      "producer_key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+      "is_active": 1,
+      "url": "",
+      "unpaid_blocks": 2425,
+      "last_claim_time": "2026-11-05T05:11:42.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "londonucllab",
+      "total_votes": 6840018,
+      "producer_key": "PUB_K1_8FvkzAk4sBXZzDFH8GVZ669eqxztrQPsLtunieUJzstyRdAFMy",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2490,
+      "last_claim_time": "2026-11-05T05:14:18.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8FvkzAk4sBXZzDFH8GVZ669eqxztrQPsLtunieUJzstyRdAFMy",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "minimaxcloud",
+      "total_votes": 17360014,
+      "producer_key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2234,
+      "last_claim_time": "2026-11-05T05:13:47.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "mistralcloud",
+      "total_votes": 16770005,
+      "producer_key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1802,
+      "last_claim_time": "2026-11-05T05:12:42.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "moonshotlabs",
+      "total_votes": 18010015,
+      "producer_key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2255,
+      "last_claim_time": "2026-11-05T05:13:54.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "nvidiaclouds",
+      "total_votes": 13180009,
+      "producer_key": "PUB_K1_8PZbtYbgJF9phfFF5t6VCt9ZvQ1bkrp1rWSbQGeshh1byxaoAC",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2011,
+      "last_claim_time": "2026-11-05T05:13:11.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8PZbtYbgJF9phfFF5t6VCt9ZvQ1bkrp1rWSbQGeshh1byxaoAC",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "total_votes": 19000001,
+      "producer_key": "PUB_K1_8HkSyD1JbzxrAni7fhbvGzbcRrywkjLUqmukBLnaD3W3eojQPV",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1733,
+      "last_claim_time": "2026-11-05T05:12:17.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8HkSyD1JbzxrAni7fhbvGzbcRrywkjLUqmukBLnaD3W3eojQPV",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "parisinriaai",
+      "total_votes": 14920021,
+      "producer_key": "PUB_K1_7KYKjytwBHrSfXKfsQ8y8V954z7CeNUADJprupH6HiH5uMy226",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1566,
+      "last_claim_time": "2026-11-05T05:14:42.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7KYKjytwBHrSfXKfsQ8y8V954z7CeNUADJprupH6HiH5uMy226",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "perplexityai",
+      "total_votes": 19960007,
+      "producer_key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1916,
+      "last_claim_time": "2026-11-05T05:12:56.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "seoulkaistai",
+      "total_votes": 16660020,
+      "producer_key": "PUB_K1_6x78eaVRdoXhiLcqx4eh6dEPYWbrmTRZJ8NZd6ZuPVAnz4siGC",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1511,
+      "last_claim_time": "2026-11-05T05:14:34.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6x78eaVRdoXhiLcqx4eh6dEPYWbrmTRZJ8NZd6ZuPVAnz4siGC",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "singaporentu",
+      "total_votes": 15690016,
+      "producer_key": "PUB_K1_7SQwtgNoBTx3fJJfgtKt9juECN7NZ2wSwwemY5z5Z5Cm27foez",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2323,
+      "last_claim_time": "2026-11-05T05:14:02.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7SQwtgNoBTx3fJJfgtKt9juECN7NZ2wSwwemY5z5Z5Cm27foez",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "stabilityhub",
+      "total_votes": 38190008,
+      "producer_key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1909,
+      "last_claim_time": "2026-11-05T05:13:03.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "tencentcloud",
+      "total_votes": 24810011,
+      "producer_key": "PUB_K1_6ob3t5dNoPgUGmrNsWvoz8bUFzM3zqnBXtr8XZAe5YhdDh4GQe",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2069,
+      "last_claim_time": "2026-11-05T05:13:25.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6ob3t5dNoPgUGmrNsWvoz8bUFzM3zqnBXtr8XZAe5YhdDh4GQe",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "tokyorikenai",
+      "total_votes": 34110019,
+      "producer_key": "PUB_K1_6QaokR34ryK9iPbNo6gPPc8EhYrGa1ygkbdXAX8QHgM95KGMvP",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1497,
+      "last_claim_time": "2026-11-05T05:14:25.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6QaokR34ryK9iPbNo6gPPc8EhYrGa1ygkbdXAX8QHgM95KGMvP",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "zurichethlab",
+      "total_votes": 18790017,
+      "producer_key": "PUB_K1_7dJtdWTxJDv372X72cg8xLX3CjbKWya9Xfcs1tFrs5JTtqbJtZ",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 2385,
+      "last_claim_time": "2026-11-05T05:14:10.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7dJtdWTxJDv372X72cg8xLX3CjbKWya9Xfcs1tFrs5JTtqbJtZ",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "old_voters": [
+    {
+      "owner": "alibabacloud",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 1100010,
+      "last_vote_amount": 1100010,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "anthropiclab",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 1100002,
+      "last_vote_amount": 1100002,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "arcaneflower",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 7130000,
+      "last_vote_amount": 7130000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "arcanemeadow",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 1750000,
+      "last_vote_amount": 1750000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "arcanewillow",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 8770000,
+      "last_vote_amount": 8770000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "astralstream",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 3430000,
+      "last_vote_amount": 3430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "astralvalley",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 1470000,
+      "last_vote_amount": 1470000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnbreeze",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 2330000,
+      "last_vote_amount": 2330000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumncomets",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 5630000,
+      "last_vote_amount": 5630000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnfalcon",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 4950000,
+      "last_vote_amount": 4950000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnflower",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 8040000,
+      "last_vote_amount": 8040000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnforest",
+      "proxy": "",
+      "producers": [
+        "londonucllab"
+      ],
+      "staked": 5740000,
+      "last_vote_amount": 5740000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnvalley",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 4270000,
+      "last_vote_amount": 4270000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "baiduaiworks",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 1100012,
+      "last_vote_amount": 1100012,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "berlintulabs",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 1100022,
+      "last_vote_amount": 1100022,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightcanyon",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 7530000,
+      "last_vote_amount": 7530000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightcomets",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 8090000,
+      "last_vote_amount": 8090000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightgarden",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 7280000,
+      "last_vote_amount": 7280000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightharbor",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 2370000,
+      "last_vote_amount": 2370000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "bytedancelab",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 1100013,
+      "last_vote_amount": 1100013,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "canadamilaai",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 1100023,
+      "last_vote_amount": 1100023,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicbankers",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 110000000,
+      "last_vote_amount": 110000000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civiccounter",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicgovauth",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicgovcode",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicgovlead",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicrenters",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicuserone",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 11710000,
+      "last_vote_amount": 11710000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicusertwo",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 7260000,
+      "last_vote_amount": 7260000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltaurora",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 4950000,
+      "last_vote_amount": 4950000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltbreeze",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 3650000,
+      "last_vote_amount": 3650000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltcanyon",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 6770000,
+      "last_vote_amount": 6770000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltflower",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 4750000,
+      "last_vote_amount": 4750000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltforest",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 4660000,
+      "last_vote_amount": 4660000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltgarden",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 7030000,
+      "last_vote_amount": 7030000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltmeadow",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 2580000,
+      "last_vote_amount": 2580000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltstream",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 6390000,
+      "last_vote_amount": 6390000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltvalley",
+      "proxy": "",
+      "producers": [
+        "mistralcloud"
+      ],
+      "staked": 7550000,
+      "last_vote_amount": 7550000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cohereclouds",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 1100006,
+      "last_vote_amount": 1100006,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicaurora",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 2690000,
+      "last_vote_amount": 2690000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicbreeze",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 1540000,
+      "last_vote_amount": 1540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmiccomets",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 8770000,
+      "last_vote_amount": 8770000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicfalcon",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 5590000,
+      "last_vote_amount": 5590000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicflower",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 7430000,
+      "last_vote_amount": 7430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicmeadow",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 8720000,
+      "last_vote_amount": 8720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicwillow",
+      "proxy": "",
+      "producers": [
+        "nvidiaclouds"
+      ],
+      "staked": 3460000,
+      "last_vote_amount": 3460000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "deepmindlabs",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 1100004,
+      "last_vote_amount": 1100004,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "deepseekcore",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 2200003,
+      "last_vote_amount": 2200003,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "eosio.dev",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozenaurora",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 3540000,
+      "last_vote_amount": 3540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozenbreeze",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 7860000,
+      "last_vote_amount": 7860000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozencanyon",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 5340000,
+      "last_vote_amount": 5340000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozencomets",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 3210000,
+      "last_vote_amount": 3210000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozenstream",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 6450000,
+      "last_vote_amount": 6450000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentleaurora",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 6660000,
+      "last_vote_amount": 6660000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlegarden",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 9050000,
+      "last_vote_amount": 9050000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlemeadow",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 6480000,
+      "last_vote_amount": 6480000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlestream",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 2140000,
+      "last_vote_amount": 2140000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlevalley",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 9000000,
+      "last_vote_amount": 9000000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldenbreeze",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 4600000,
+      "last_vote_amount": 4600000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldencanyon",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 2990000,
+      "last_vote_amount": 2990000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldengarden",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 5180000,
+      "last_vote_amount": 5180000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldenvalley",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 4360000,
+      "last_vote_amount": 4360000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldenwillow",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 8730000,
+      "last_vote_amount": 8730000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gptgenesisbp",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 1100000,
+      "last_vote_amount": 1100000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "londonucllab",
+      "proxy": "",
+      "producers": [
+        "londonucllab"
+      ],
+      "staked": 1100018,
+      "last_vote_amount": 1100018,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowcomets",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 2240000,
+      "last_vote_amount": 2240000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowflower",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 5240000,
+      "last_vote_amount": 5240000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowmeadow",
+      "proxy": "",
+      "producers": [
+        "nvidiaclouds"
+      ],
+      "staked": 8620000,
+      "last_vote_amount": 8620000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowwillow",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 4530000,
+      "last_vote_amount": 4530000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "minimaxcloud",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 1100014,
+      "last_vote_amount": 1100014,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mistralcloud",
+      "proxy": "",
+      "producers": [
+        "mistralcloud"
+      ],
+      "staked": 1100005,
+      "last_vote_amount": 1100005,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "moonshotlabs",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 1100015,
+      "last_vote_amount": 1100015,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "nvidiaclouds",
+      "proxy": "",
+      "producers": [
+        "nvidiaclouds"
+      ],
+      "staked": 1100009,
+      "last_vote_amount": 1100009,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "openaiclouds",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 1100001,
+      "last_vote_amount": 1100001,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "parisinriaai",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 1100021,
+      "last_vote_amount": 1100021,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "perplexityai",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 1100007,
+      "last_vote_amount": 1100007,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purpleaurora",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 6720000,
+      "last_vote_amount": 6720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplebreeze",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 2330000,
+      "last_vote_amount": 2330000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplecanyon",
+      "proxy": "",
+      "producers": [
+        "mistralcloud"
+      ],
+      "staked": 8120000,
+      "last_vote_amount": 8120000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplevalley",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 7740000,
+      "last_vote_amount": 7740000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplewillow",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 3070000,
+      "last_vote_amount": 3070000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "seoulkaistai",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 1100020,
+      "last_vote_amount": 1100020,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenecanyon",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 6050000,
+      "last_vote_amount": 6050000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenefalcon",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 2630000,
+      "last_vote_amount": 2630000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sereneflower",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 6540000,
+      "last_vote_amount": 6540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenestream",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 5330000,
+      "last_vote_amount": 5330000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenewillow",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 6850000,
+      "last_vote_amount": 6850000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "signupdualai",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "signupkoneai",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "signuplegacy",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentcanyon",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 4180000,
+      "last_vote_amount": 4180000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentcomets",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 5100000,
+      "last_vote_amount": 5100000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentflower",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 1540000,
+      "last_vote_amount": 1540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentharbor",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 2620000,
+      "last_vote_amount": 2620000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentvalley",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 1850000,
+      "last_vote_amount": 1850000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silveraurora",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 2720000,
+      "last_vote_amount": 2720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silvercomets",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 6830000,
+      "last_vote_amount": 6830000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silverfalcon",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 3510000,
+      "last_vote_amount": 3510000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silvermeadow",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 4650000,
+      "last_vote_amount": 4650000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silvervalley",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 4780000,
+      "last_vote_amount": 4780000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silverwillow",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 3220000,
+      "last_vote_amount": 3220000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "singaporentu",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 1100016,
+      "last_vote_amount": 1100016,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "springbreeze",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 7430000,
+      "last_vote_amount": 7430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "springcomets",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 6970000,
+      "last_vote_amount": 6970000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "springgarden",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 3190000,
+      "last_vote_amount": 3190000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "stabilityhub",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 1100008,
+      "last_vote_amount": 1100008,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "summercanyon",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 3490000,
+      "last_vote_amount": 3490000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "summergarden",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 5400000,
+      "last_vote_amount": 5400000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitcanyon",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 8810000,
+      "last_vote_amount": 8810000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitcomets",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 7900000,
+      "last_vote_amount": 7900000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitfalcon",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 6080000,
+      "last_vote_amount": 6080000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitflower",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 2440000,
+      "last_vote_amount": 2440000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitgarden",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 3130000,
+      "last_vote_amount": 3130000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "tencentcloud",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 1100011,
+      "last_vote_amount": 1100011,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "tokyorikenai",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 1100019,
+      "last_vote_amount": 1100019,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetbreeze",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 7290000,
+      "last_vote_amount": 7290000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetcanyon",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 3430000,
+      "last_vote_amount": 3430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetgarden",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 7720000,
+      "last_vote_amount": 7720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetwillow",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 7240000,
+      "last_vote_amount": 7240000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "wintercomets",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 5250000,
+      "last_vote_amount": 5250000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "winterflower",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 6400000,
+      "last_vote_amount": 6400000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "winterharbor",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 2060000,
+      "last_vote_amount": 2060000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "zurichethlab",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 1100017,
+      "last_vote_amount": 1100017,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    }
+  ],
+  "old_bonds": [
+    {
+      "owner": "alibabacloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855594,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "anthropiclab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855540,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "baiduaiworks",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855608,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "berlintulabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855685,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "bytedancelab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855615,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855694,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "cohereclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855565,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepmindlabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855552,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855545,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855500,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "londonucllab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855653,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "minimaxcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855622,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855559,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "moonshotlabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855630,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "nvidiaclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855586,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "openaiclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855533,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "parisinriaai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855677,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "perplexityai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855572,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "seoulkaistai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855668,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "singaporentu",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855637,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "stabilityhub",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855579,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "tencentcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855601,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "tokyorikenai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855661,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "zurichethlab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855645,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    }
+  ],
+  "old_candidates": [
+    {
+      "owner": "alibabacloud",
+      "rank": "340282366920573402199014727749773112464",
+      "previous_rank": "340282366920573402199014727749773112464",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 84,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "anthropiclab",
+      "rank": "340282366920652354411266493597324954736",
+      "previous_rank": "340282366920652354411266493597324954736",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 91,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "baiduaiworks",
+      "rank": "340282366920457003207394480867296797056",
+      "previous_rank": "340282366920457003207394480867296797056",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 82,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "berlintulabs",
+      "rank": "340282366920600518691897758955019538304",
+      "previous_rank": "340282366920600518691897758955019538304",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 96,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "bytedancelab",
+      "rank": "340282366920708985713433155531057679472",
+      "previous_rank": "340282366920708985713433155531057679472",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 81,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "rank": "340282366920293380385125705715232115936",
+      "previous_rank": "340282366920293380385125705715232115936",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 95,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cohereclouds",
+      "rank": "340282366920413284535448369061939286912",
+      "previous_rank": "340282366920413284535448369061939286912",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 88,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepmindlabs",
+      "rank": "340282366920797530251792045926624366464",
+      "previous_rank": "340282366920797530251792045926624366464",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 90,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "rank": "340282366920430993465494184434820525728",
+      "previous_rank": "340282366920430993465494184434820525728",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 94,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "rank": "340282366918105596964838409597552562000",
+      "previous_rank": "340282366918105596964838409597552562000",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 93,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "londonucllab",
+      "rank": "340282366920812287393593283172006382704",
+      "previous_rank": "340282366920812287393593283172006382704",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 100,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "minimaxcloud",
+      "rank": "340282366920618227720193295984781767824",
+      "previous_rank": "340282366920618227720193295984781767824",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 80,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "rank": "340282366920629111465220492289771386000",
+      "previous_rank": "340282366920629111465220492289771386000",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 89,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "moonshotlabs",
+      "rank": "340282366920606237318207381418709454720",
+      "previous_rank": "340282366920606237318207381418709454720",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 79,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "nvidiaclouds",
+      "rank": "340282366920695335203462865291168879488",
+      "previous_rank": "340282366920695335203462865291168879488",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 85,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "openaiclouds",
+      "rank": "340282366920587975300994122513125905280",
+      "previous_rank": "340282366920587975300994122513125905280",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 92,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "parisinriaai",
+      "rank": "340282366920663237648193461074261019872",
+      "previous_rank": "340282366920663237648193461074261019872",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 97,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "perplexityai",
+      "rank": "340282366920570266316388558793604041952",
+      "previous_rank": "340282366920570266316388558793604041952",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 87,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "seoulkaistai",
+      "rank": "340282366920631140333751908814423477472",
+      "previous_rank": "340282366920631140333751908814423477472",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 98,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "singaporentu",
+      "rank": "340282366920649033749361625774054241184",
+      "previous_rank": "340282366920649033749361625774054241184",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 78,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "stabilityhub",
+      "rank": "340282366920233982155467869851800007792",
+      "previous_rank": "340282366920233982155467869851800007792",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 86,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tencentcloud",
+      "rank": "340282366920480799536147449988485297296",
+      "previous_rank": "340282366920480799536147449988485297296",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 83,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tokyorikenai",
+      "rank": "340282366920309244668866846292610174176",
+      "previous_rank": "340282366920309244668866846292610174176",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 99,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "zurichethlab",
+      "rank": "340282366920591848828540068079497661552",
+      "previous_rank": "340282366920591848828540068079497661552",
+      "frozen_epoch": 0,
+      "seen_epoch": 73,
+      "ticket": 77,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    }
+  ],
+  "bond_config": {
+    "version": 1,
+    "enforced": 1,
+    "refund_delay_sec": 604800,
+    "locked": 2400000000,
+    "slash_pending": 0,
+    "slash_settled": 0,
+    "refunded": 0
+  },
+  "rotation": {
+    "version": 2,
+    "stage": 2,
+    "active": [
+      "minimaxcloud",
+      "bytedancelab",
+      "baiduaiworks",
+      "tencentcloud",
+      "alibabacloud",
+      "nvidiaclouds",
+      "stabilityhub",
+      "perplexityai",
+      "cohereclouds",
+      "mistralcloud",
+      "deepmindlabs",
+      "anthropiclab",
+      "openaiclouds",
+      "gptgenesisbp",
+      "deepseekcore",
+      "canadamilaai",
+      "berlintulabs",
+      "parisinriaai",
+      "seoulkaistai",
+      "tokyorikenai",
+      "londonucllab"
+    ],
+    "target": [
+      "minimaxcloud",
+      "bytedancelab",
+      "baiduaiworks",
+      "tencentcloud",
+      "alibabacloud",
+      "nvidiaclouds",
+      "stabilityhub",
+      "perplexityai",
+      "cohereclouds",
+      "mistralcloud",
+      "deepmindlabs",
+      "anthropiclab",
+      "openaiclouds",
+      "gptgenesisbp",
+      "deepseekcore",
+      "canadamilaai",
+      "berlintulabs",
+      "parisinriaai",
+      "seoulkaistai",
+      "tokyorikenai",
+      "londonucllab"
+    ],
+    "incoming": "londonucllab",
+    "outgoing": "moonshotlabs",
+    "proposer_version": 73,
+    "finalizer_generation": 74,
+    "proposer_digest": "1442affbdce97dce2b1adb9499414c9e734ea11471518e3db18be1a4a68d8d9c",
+    "finalizer_digest": "9bb55552946d7c562368e60b93ed15f354d923c12d845cf6a82e3df5a5fc9988",
+    "next_attempt_slot": 1694390549,
+    "observation_start": 1694390544,
+    "observation_end": 1694390795,
+    "produced_mask": 2068,
+    "observation_block": 47145,
+    "completed": 72,
+    "stalled_windows": 0,
+    "growth_start_slot": 1694341313,
+    "capacity": 210,
+    "snapshot_capacity": 210,
+    "ranked_count": 24,
+    "snapshot_epoch": 73,
+    "published_epoch": 73,
+    "queue_tail": 100,
+    "scan_end_ticket": 99,
+    "ranking": 0,
+    "rank_started": 1,
+    "selecting": 0,
+    "rank_cursor": "340282366920812287393593283172006382704",
+    "penalty_epoch": 1,
+    "last_slot": 1694390578,
+    "window_start": 1694390568,
+    "penalty_paused": 0,
+    "window_produced": 1,
+    "window_policy": 73,
+    "window_members": [
+      "alibabacloud",
+      "anthropiclab",
+      "baiduaiworks",
+      "berlintulabs",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindlabs",
+      "deepseekcore",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "nvidiaclouds",
+      "openaiclouds",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentcloud",
+      "tokyorikenai"
+    ],
+    "pending_windows": [],
+    "failed_admissions": 0,
+    "total_banned": 0,
+    "blocked": 0,
+    "retry_outgoing": ""
+  },
+  "token_stats": {
+    "eosio.token": {
+      "AIC": {
+        "supply": "100000000.0000 AIC",
+        "max_supply": "2100000000.0000 AIC",
+        "issuer": "eosio"
+      }
+    },
+    "usd": {
+      "USD": {
+        "supply": "100010000.0000 USD",
+        "max_supply": "1000000000.0000 USD",
+        "issuer": "usd"
+      }
+    },
+    "cny": {
+      "CNY": {
+        "supply": "100010000.0000 CNY",
+        "max_supply": "1000000000.0000 CNY",
+        "issuer": "cny"
+      }
+    }
+  },
+  "code_ABI_pins": {
+    "eosio": {
+      "account_name": "eosio",
+      "code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "abi_hash": "f19e4c55e11f5029f4a161865ac0b0ea29f730d4f19fbdc6eb30c29c10ef5512",
+      "abi": "DmVvc2lvOjphYmkvMS4yAxdibG9ja19zaWduaW5nX2F1dGhvcml0eSJ2YXJpYW50X2Jsb2NrX3NpZ25pbmdfYXV0aG9yaXR5X3YwF2Jsb2NrY2hhaW5fcGFyYW1ldGVyc190GGJsb2NrY2hhaW5fcGFyYW1ldGVyc192MRFnZXRwZWVya2V5c19yZXNfdAxwZWVya2V5c190W12gAQhhYmlfaGFzaAACBW93bmVyBG5hbWUEaGFzaAtjaGVja3N1bTI1NglhY3RmaW5rZXkAAg5maW5hbGl6ZXJfbmFtZQRuYW1lDWZpbmFsaXplcl9rZXkGc3RyaW5nFGFjdGlvbl9yZXR1cm5fYnV5cmFtAAYFcGF5ZXIEbmFtZQhyZWNlaXZlcgRuYW1lCHF1YW50aXR5BWFzc2V0D2J5dGVzX3B1cmNoYXNlZAVpbnQ2NAlyYW1fYnl0ZXMFaW50NjQDZmVlBWFzc2V0GWFjdGlvbl9yZXR1cm5fcmFtdHJhbnNmZXIABQRmcm9tBG5hbWUCdG8EbmFtZQVieXRlcwVpbnQ2NA5mcm9tX3JhbV9ieXRlcwVpbnQ2NAx0b19yYW1fYnl0ZXMFaW50NjQVYWN0aW9uX3JldHVybl9zZWxscmFtAAUHYWNjb3VudARuYW1lCHF1YW50aXR5BWFzc2V0CmJ5dGVzX3NvbGQFaW50NjQJcmFtX2J5dGVzBWludDY0A2ZlZQVhc3NldAhhY3RpdmF0ZQABDmZlYXR1cmVfZGlnZXN0C2NoZWNrc3VtMjU2CWF1dGhvcml0eQAECXRocmVzaG9sZAZ1aW50MzIEa2V5cwxrZXlfd2VpZ2h0W10IYWNjb3VudHMZcGVybWlzc2lvbl9sZXZlbF93ZWlnaHRbXQV3YWl0cw13YWl0X3dlaWdodFtdCmJpZF9yZWZ1bmQAAgZiaWRkZXIEbmFtZQZhbW91bnQFYXNzZXQHYmlkbmFtZQADBmJpZGRlcgRuYW1lB25ld25hbWUEbmFtZQNiaWQFYXNzZXQJYmlkcmVmdW5kAAIGYmlkZGVyBG5hbWUHbmV3bmFtZQRuYW1lDGJsb2NrX2hlYWRlcgAICXRpbWVzdGFtcAZ1aW50MzIIcHJvZHVjZXIEbmFtZQljb25maXJtZWQGdWludDE2CHByZXZpb3VzC2NoZWNrc3VtMjU2EXRyYW5zYWN0aW9uX21yb290C2NoZWNrc3VtMjU2DGFjdGlvbl9tcm9vdAtjaGVja3N1bTI1NhBzY2hlZHVsZV92ZXJzaW9uBnVpbnQzMg1uZXdfcHJvZHVjZXJzEnByb2R1Y2VyX3NjaGVkdWxlPxpibG9ja19zaWduaW5nX2F1dGhvcml0eV92MAACCXRocmVzaG9sZAZ1aW50MzIEa2V5cwxrZXlfd2VpZ2h0W10VYmxvY2tjaGFpbl9wYXJhbWV0ZXJzABETbWF4X2Jsb2NrX25ldF91c2FnZQZ1aW50NjQadGFyZ2V0X2Jsb2NrX25ldF91c2FnZV9wY3QGdWludDMyGW1heF90cmFuc2FjdGlvbl9uZXRfdXNhZ2UGdWludDMyHmJhc2VfcGVyX3RyYW5zYWN0aW9uX25ldF91c2FnZQZ1aW50MzIQbmV0X3VzYWdlX2xlZXdheQZ1aW50MzIjY29udGV4dF9mcmVlX2Rpc2NvdW50X25ldF91c2FnZV9udW0GdWludDMyI2NvbnRleHRfZnJlZV9kaXNjb3VudF9uZXRfdXNhZ2VfZGVuBnVpbnQzMhNtYXhfYmxvY2tfY3B1X3VzYWdlBnVpbnQzMhp0YXJnZXRfYmxvY2tfY3B1X3VzYWdlX3BjdAZ1aW50MzIZbWF4X3RyYW5zYWN0aW9uX2NwdV91c2FnZQZ1aW50MzIZbWluX3RyYW5zYWN0aW9uX2NwdV91c2FnZQZ1aW50MzIYbWF4X3RyYW5zYWN0aW9uX2xpZmV0aW1lBnVpbnQzMh5kZWZlcnJlZF90cnhfZXhwaXJhdGlvbl93aW5kb3cGdWludDMyFW1heF90cmFuc2FjdGlvbl9kZWxheQZ1aW50MzIWbWF4X2lubGluZV9hY3Rpb25fc2l6ZQZ1aW50MzIXbWF4X2lubGluZV9hY3Rpb25fZGVwdGgGdWludDE2E21heF9hdXRob3JpdHlfZGVwdGgGdWludDE2GGJsb2NrY2hhaW5fcGFyYW1ldGVyc192MRVibG9ja2NoYWluX3BhcmFtZXRlcnMBHG1heF9hY3Rpb25fcmV0dXJuX3ZhbHVlX3NpemUHdWludDMyJAZib25kYnAAAQhwcm9kdWNlcgRuYW1lB2JwX2JvbmQACgVvd25lcgRuYW1lBXN0YXRlBXVpbnQ4B2JhbGFuY2UFaW50NjQJZm9yZmVpdGVkBWludDY0B3NldHRsZWQFaW50NjQJYm9uZGVkX2F0BnVpbnQzMgpleGl0X2Jsb2NrBnVpbnQzMg1yZWZ1bmRhYmxlX2F0BnVpbnQzMg9iYW5fZmluYWxfYmxvY2sGdWludDMyEGJhbl9yZWNvcmRfYmxvY2sGdWludDMyDmJwX2JvbmRfY29uZmlnAAcHdmVyc2lvbgV1aW50OAhlbmZvcmNlZARib29sEHJlZnVuZF9kZWxheV9zZWMGdWludDMyBmxvY2tlZAVpbnQ2NA1zbGFzaF9wZW5kaW5nBWludDY0DXNsYXNoX3NldHRsZWQFaW50NjQIcmVmdW5kZWQFaW50NjQOYnBfbWFpbnRlbmFuY2UABgVvd25lcgRuYW1lBXN0YXRlBXVpbnQ4DnJlcXVlc3RlZF9zbG90BnVpbnQzMg5lZmZlY3RpdmVfc2xvdAZ1aW50MzIPZWZmZWN0aXZlX2Jsb2NrBnVpbnQzMgxyZXN1bWVkX3Nsb3QGdWludDMyBmJ1eXJhbQADBXBheWVyBG5hbWUIcmVjZWl2ZXIEbmFtZQVxdWFudAVhc3NldApidXlyYW1idXJuAAMFcGF5ZXIEbmFtZQhxdWFudGl0eQVhc3NldARtZW1vBnN0cmluZwtidXlyYW1ieXRlcwADBXBheWVyBG5hbWUIcmVjZWl2ZXIEbmFtZQVieXRlcwZ1aW50MzIKYnV5cmFtc2VsZgACB2FjY291bnQEbmFtZQVxdWFudAVhc3NldAZidXlyZXgAAgRmcm9tBG5hbWUGYW1vdW50BWFzc2V0C2NhbmNlbGRlbGF5AAIOY2FuY2VsaW5nX2F1dGgQcGVybWlzc2lvbl9sZXZlbAZ0cnhfaWQLY2hlY2tzdW0yNTYKY2ZncG93ZXJ1cAABBGFyZ3MOcG93ZXJ1cF9jb25maWcMY2xhaW1yZXdhcmRzAAEFb3duZXIEbmFtZQhjbG9zZXJleAABBW93bmVyBG5hbWUMY25jbHJleG9yZGVyAAEFb3duZXIEbmFtZQljb25uZWN0b3IAAgdiYWxhbmNlBWFzc2V0BndlaWdodAdmbG9hdDY0C2NvbnNvbGlkYXRlAAEFb3duZXIEbmFtZQpkZWZjcHVsb2FuAAMEZnJvbQRuYW1lCGxvYW5fbnVtBnVpbnQ2NAZhbW91bnQFYXNzZXQKZGVmbmV0bG9hbgADBGZyb20EbmFtZQhsb2FuX251bQZ1aW50NjQGYW1vdW50BWFzc2V0CmRlbGVnYXRlYncABQRmcm9tBG5hbWUIcmVjZWl2ZXIEbmFtZRJzdGFrZV9uZXRfcXVhbnRpdHkFYXNzZXQSc3Rha2VfY3B1X3F1YW50aXR5BWFzc2V0CHRyYW5zZmVyBGJvb2wTZGVsZWdhdGVkX2JhbmR3aWR0aAAEBGZyb20EbmFtZQJ0bwRuYW1lCm5ldF93ZWlnaHQFYXNzZXQKY3B1X3dlaWdodAVhc3NldApkZWxldGVhdXRoAAMHYWNjb3VudARuYW1lCnBlcm1pc3Npb24EbmFtZQ1hdXRob3JpemVkX2J5BW5hbWUkCWRlbGZpbmtleQACDmZpbmFsaXplcl9uYW1lBG5hbWUNZmluYWxpemVyX2tleQZzdHJpbmcLZGVsc2NoZWR1bGUAAQpzdGFydF90aW1lDnRpbWVfcG9pbnRfc2VjB2RlcG9zaXQAAgVvd25lcgRuYW1lBmFtb3VudAVhc3NldAlkZXZjYW5jZWwAAQtwcm9wb3NhbF9pZAZ1aW50NjQHZGV2ZXhlYwADC3Byb3Bvc2FsX2lkBnVpbnQ2NARjb2RlBWJ5dGVzA2FiaQVieXRlcwpkZXZwcm9wb3NlAAYGdGFyZ2V0BG5hbWUNb2xkX2NvZGVfaGFzaAtjaGVja3N1bTI1NgxvbGRfYWJpX2hhc2gLY2hlY2tzdW0yNTYNbmV3X2NvZGVfaGFzaAtjaGVja3N1bTI1NgxuZXdfYWJpX2hhc2gLY2hlY2tzdW0yNTYUcmV2aWV3X2RvY3VtZW50X2hhc2gLY2hlY2tzdW0yNTYHZGV2dmV0bwACBXZvdGVyBG5hbWULcHJvcG9zYWxfaWQGdWludDY0EmRpcmVjdF92b3RlX3BvbGljeQABB3ZlcnNpb24GdWludDMyC2RvbmF0ZXRvcmV4AAMFcGF5ZXIEbmFtZQhxdWFudGl0eQVhc3NldARtZW1vBnN0cmluZxJlb3Npb19nbG9iYWxfc3RhdGUVYmxvY2tjaGFpbl9wYXJhbWV0ZXJzDQxtYXhfcmFtX3NpemUGdWludDY0GHRvdGFsX3JhbV9ieXRlc19yZXNlcnZlZAZ1aW50NjQPdG90YWxfcmFtX3N0YWtlBWludDY0HWxhc3RfcHJvZHVjZXJfc2NoZWR1bGVfdXBkYXRlFGJsb2NrX3RpbWVzdGFtcF90eXBlGGxhc3RfcGVydm90ZV9idWNrZXRfZmlsbAp0aW1lX3BvaW50DnBlcnZvdGVfYnVja2V0BWludDY0D3BlcmJsb2NrX2J1Y2tldAVpbnQ2NBN0b3RhbF91bnBhaWRfYmxvY2tzBnVpbnQzMhV0b3RhbF9hY3RpdmF0ZWRfc3Rha2UFaW50NjQbdGhyZXNoX2FjdGl2YXRlZF9zdGFrZV90aW1lCnRpbWVfcG9pbnQbbGFzdF9wcm9kdWNlcl9zY2hlZHVsZV9zaXplBnVpbnQxNhp0b3RhbF9wcm9kdWNlcl92b3RlX3dlaWdodAVpbnQ2NA9sYXN0X25hbWVfY2xvc2UUYmxvY2tfdGltZXN0YW1wX3R5cGUTZW9zaW9fZ2xvYmFsX3N0YXRlMgAFEW5ld19yYW1fcGVyX2Jsb2NrBnVpbnQxNhFsYXN0X3JhbV9pbmNyZWFzZRRibG9ja190aW1lc3RhbXBfdHlwZQ5sYXN0X2Jsb2NrX251bRRibG9ja190aW1lc3RhbXBfdHlwZRx0b3RhbF9wcm9kdWNlcl92b3RlcGF5X3NoYXJlB2Zsb2F0NjQIcmV2aXNpb24FdWludDgTZW9zaW9fZ2xvYmFsX3N0YXRlMwACFmxhc3RfdnBheV9zdGF0ZV91cGRhdGUKdGltZV9wb2ludBx0b3RhbF92cGF5X3NoYXJlX2NoYW5nZV9yYXRlB2Zsb2F0NjQTZW9zaW9fZ2xvYmFsX3N0YXRlNAADD2NvbnRpbnVvdXNfcmF0ZQdmbG9hdDY0FGluZmxhdGlvbl9wYXlfZmFjdG9yBWludDY0DnZvdGVwYXlfZmFjdG9yBWludDY0DmV4Y2hhbmdlX3N0YXRlAAMGc3VwcGx5BWFzc2V0BGJhc2UJY29ubmVjdG9yBXF1b3RlCWNvbm5lY3RvcgxleGVjc2NoZWR1bGUAAAhleGl0Ym9uZAABCHByb2R1Y2VyBG5hbWUZZmluX2tleV9pZF9nZW5lcmF0b3JfaW5mbwABFW5leHRfZmluYWxpemVyX2tleV9pZAZ1aW50NjQTZmluYWxpemVyX2F1dGhfaW5mbwACBmtleV9pZAZ1aW50NjQNZmluX2F1dGhvcml0eRNmaW5hbGl6ZXJfYXV0aG9yaXR5E2ZpbmFsaXplcl9hdXRob3JpdHkAAwtkZXNjcmlwdGlvbgZzdHJpbmcGd2VpZ2h0BnVpbnQ2NApwdWJsaWNfa2V5BWJ5dGVzDmZpbmFsaXplcl9pbmZvAAQOZmluYWxpemVyX25hbWUEbmFtZQ1hY3RpdmVfa2V5X2lkBnVpbnQ2NBFhY3RpdmVfa2V5X2JpbmFyeQVieXRlcxNmaW5hbGl6ZXJfa2V5X2NvdW50BnVpbnQzMhJmaW5hbGl6ZXJfa2V5X2luZm8ABAJpZAZ1aW50NjQOZmluYWxpemVyX25hbWUEbmFtZQ1maW5hbGl6ZXJfa2V5BnN0cmluZxRmaW5hbGl6ZXJfa2V5X2JpbmFyeQVieXRlcwtmdW5kY3B1bG9hbgADBGZyb20EbmFtZQhsb2FuX251bQZ1aW50NjQHcGF5bWVudAVhc3NldAtmdW5kbmV0bG9hbgADBGZyb20EbmFtZQhsb2FuX251bQZ1aW50NjQHcGF5bWVudAVhc3NldAdnb3Zpbml0AAMJZGV2ZWxvcGVyBG5hbWUOcmV2aWV3X3NlY29uZHMGdWludDMyEnByb3RlY3RlZF9hY2NvdW50cwZuYW1lW10EaW5pdAACB3ZlcnNpb24JdmFydWludDMyBGNvcmUGc3ltYm9sCmluaXRicGJvbmQAAAprZXlfd2VpZ2h0AAIDa2V5CnB1YmxpY19rZXkGd2VpZ2h0BnVpbnQxNhlsYXN0X3Byb3BfZmluYWxpemVyc19pbmZvAAEYbGFzdF9wcm9wb3NlZF9maW5hbGl6ZXJzFWZpbmFsaXplcl9hdXRoX2luZm9bXQxsaW1pdGF1dGhjaGcAAwdhY2NvdW50BG5hbWULYWxsb3dfcGVybXMGbmFtZVtdDmRpc2FsbG93X3Blcm1zBm5hbWVbXQhsaW5rYXV0aAAFB2FjY291bnQEbmFtZQRjb2RlBG5hbWUEdHlwZQRuYW1lC3JlcXVpcmVtZW50BG5hbWUNYXV0aG9yaXplZF9ieQVuYW1lJAlsb2didXlyYW0ABgVwYXllcgRuYW1lCHJlY2VpdmVyBG5hbWUIcXVhbnRpdHkFYXNzZXQFYnl0ZXMFaW50NjQJcmFtX2J5dGVzBWludDY0A2ZlZQVhc3NldAxsb2dyYW1jaGFuZ2UAAwVvd25lcgRuYW1lBWJ5dGVzBWludDY0CXJhbV9ieXRlcwVpbnQ2NApsb2dzZWxscmFtAAUHYWNjb3VudARuYW1lCHF1YW50aXR5BWFzc2V0BWJ5dGVzBWludDY0CXJhbV9ieXRlcwVpbnQ2NANmZWUFYXNzZXQMbG9nc3lzdGVtZmVlAAMIcHJvdG9jb2wEbmFtZQNmZWUFYXNzZXQEbWVtbwZzdHJpbmcLbXZmcnNhdmluZ3MAAgVvd25lcgRuYW1lA3JleAVhc3NldAttdnRvc2F2aW5ncwACBW93bmVyBG5hbWUDcmV4BWFzc2V0CG5hbWVfYmlkAAQHbmV3bmFtZQRuYW1lC2hpZ2hfYmlkZGVyBG5hbWUIaGlnaF9iaWQFaW50NjQNbGFzdF9iaWRfdGltZQp0aW1lX3BvaW50Cm5ld2FjY291bnQABAdjcmVhdG9yBG5hbWUEbmFtZQRuYW1lBW93bmVyCWF1dGhvcml0eQZhY3RpdmUJYXV0aG9yaXR5B29uYmxvY2sAAQZoZWFkZXIMYmxvY2tfaGVhZGVyB29uZXJyb3IAAglzZW5kZXJfaWQHdWludDEyOAhzZW50X3RyeAVieXRlcxlwYWlyX3RpbWVfcG9pbnRfc2VjX2ludDY0AAIFZmlyc3QOdGltZV9wb2ludF9zZWMGc2Vjb25kBWludDY0EHBlcm1pc3Npb25fbGV2ZWwAAgVhY3RvcgRuYW1lCnBlcm1pc3Npb24EbmFtZRdwZXJtaXNzaW9uX2xldmVsX3dlaWdodAACCnBlcm1pc3Npb24QcGVybWlzc2lvbl9sZXZlbAZ3ZWlnaHQGdWludDE2B3Bvd2VydXAABgVwYXllcgRuYW1lCHJlY2VpdmVyBG5hbWUEZGF5cwZ1aW50MzIIbmV0X2ZyYWMFaW50NjQIY3B1X2ZyYWMFaW50NjQLbWF4X3BheW1lbnQFYXNzZXQOcG93ZXJ1cF9jb25maWcABANuZXQXcG93ZXJ1cF9jb25maWdfcmVzb3VyY2UDY3B1F3Bvd2VydXBfY29uZmlnX3Jlc291cmNlDHBvd2VydXBfZGF5cwd1aW50MzI/D21pbl9wb3dlcnVwX2ZlZQZhc3NldD8XcG93ZXJ1cF9jb25maWdfcmVzb3VyY2UACBRjdXJyZW50X3dlaWdodF9yYXRpbwZpbnQ2ND8TdGFyZ2V0X3dlaWdodF9yYXRpbwZpbnQ2ND8UYXNzdW1lZF9zdGFrZV93ZWlnaHQGaW50NjQ/EHRhcmdldF90aW1lc3RhbXAPdGltZV9wb2ludF9zZWM/CGV4cG9uZW50CGZsb2F0NjQ/CmRlY2F5X3NlY3MHdWludDMyPwltaW5fcHJpY2UGYXNzZXQ/CW1heF9wcmljZQZhc3NldD8NcG93ZXJ1cF9vcmRlcgAGB3ZlcnNpb24FdWludDgCaWQGdWludDY0BW93bmVyBG5hbWUKbmV0X3dlaWdodAVpbnQ2NApjcHVfd2VpZ2h0BWludDY0B2V4cGlyZXMOdGltZV9wb2ludF9zZWMNcG93ZXJ1cF9zdGF0ZQAFB3ZlcnNpb24FdWludDgDbmV0FnBvd2VydXBfc3RhdGVfcmVzb3VyY2UDY3B1FnBvd2VydXBfc3RhdGVfcmVzb3VyY2UMcG93ZXJ1cF9kYXlzBnVpbnQzMg9taW5fcG93ZXJ1cF9mZWUFYXNzZXQWcG93ZXJ1cF9zdGF0ZV9yZXNvdXJjZQAPB3ZlcnNpb24FdWludDgGd2VpZ2h0BWludDY0DHdlaWdodF9yYXRpbwVpbnQ2NBRhc3N1bWVkX3N0YWtlX3dlaWdodAVpbnQ2NBRpbml0aWFsX3dlaWdodF9yYXRpbwVpbnQ2NBN0YXJnZXRfd2VpZ2h0X3JhdGlvBWludDY0EWluaXRpYWxfdGltZXN0YW1wDnRpbWVfcG9pbnRfc2VjEHRhcmdldF90aW1lc3RhbXAOdGltZV9wb2ludF9zZWMIZXhwb25lbnQHZmxvYXQ2NApkZWNheV9zZWNzBnVpbnQzMgltaW5fcHJpY2UFYXNzZXQJbWF4X3ByaWNlBWFzc2V0C3V0aWxpemF0aW9uBWludDY0FGFkanVzdGVkX3V0aWxpemF0aW9uBWludDY0FXV0aWxpemF0aW9uX3RpbWVzdGFtcA50aW1lX3BvaW50X3NlYwtwb3dlcnVwZXhlYwACBHVzZXIEbmFtZQNtYXgGdWludDE2DXByb2R1Y2VyX2luZm8ACQVvd25lcgRuYW1lC3RvdGFsX3ZvdGVzBWludDY0DHByb2R1Y2VyX2tleQpwdWJsaWNfa2V5CWlzX2FjdGl2ZQRib29sA3VybAZzdHJpbmcNdW5wYWlkX2Jsb2NrcwZ1aW50MzIPbGFzdF9jbGFpbV90aW1lCnRpbWVfcG9pbnQIbG9jYXRpb24GdWludDE2EnByb2R1Y2VyX2F1dGhvcml0eRhibG9ja19zaWduaW5nX2F1dGhvcml0eSQOcHJvZHVjZXJfaW5mbzIAAwVvd25lcgRuYW1lDXZvdGVwYXlfc2hhcmUHZmxvYXQ2NBlsYXN0X3ZvdGVwYXlfc2hhcmVfdXBkYXRlCnRpbWVfcG9pbnQMcHJvZHVjZXJfa2V5AAINcHJvZHVjZXJfbmFtZQRuYW1lEWJsb2NrX3NpZ25pbmdfa2V5CnB1YmxpY19rZXkRcHJvZHVjZXJfc2NoZWR1bGUAAgd2ZXJzaW9uBnVpbnQzMglwcm9kdWNlcnMOcHJvZHVjZXJfa2V5W10HcmFtYnVybgADBW93bmVyBG5hbWUFYnl0ZXMFaW50NjQEbWVtbwZzdHJpbmcLcmFtdHJhbnNmZXIABARmcm9tBG5hbWUCdG8EbmFtZQVieXRlcwVpbnQ2NARtZW1vBnN0cmluZwpyZWZyZXNoZ292AAAGcmVmdW5kAAEFb3duZXIEbmFtZQ5yZWZ1bmRfcmVxdWVzdAAEBW93bmVyBG5hbWUMcmVxdWVzdF90aW1lDnRpbWVfcG9pbnRfc2VjCm5ldF9hbW91bnQFYXNzZXQKY3B1X2Ftb3VudAVhc3NldApyZWZ1bmRib25kAAEIcHJvZHVjZXIEbmFtZQlyZWdmaW5rZXkAAw5maW5hbGl6ZXJfbmFtZQRuYW1lDWZpbmFsaXplcl9rZXkGc3RyaW5nE3Byb29mX29mX3Bvc3Nlc3Npb24Gc3RyaW5nC3JlZ3Byb2R1Y2VyAAQIcHJvZHVjZXIEbmFtZQxwcm9kdWNlcl9rZXkKcHVibGljX2tleQN1cmwGc3RyaW5nCGxvY2F0aW9uBnVpbnQxNgxyZWdwcm9kdWNlcjIABAhwcm9kdWNlcgRuYW1lEnByb2R1Y2VyX2F1dGhvcml0eRdibG9ja19zaWduaW5nX2F1dGhvcml0eQN1cmwGc3RyaW5nCGxvY2F0aW9uBnVpbnQxNghyZWdwcm94eQACBXByb3h5BG5hbWUHaXNwcm94eQRib29sB3JlbnRjcHUABARmcm9tBG5hbWUIcmVjZWl2ZXIEbmFtZQxsb2FuX3BheW1lbnQFYXNzZXQJbG9hbl9mdW5kBWFzc2V0B3JlbnRuZXQABARmcm9tBG5hbWUIcmVjZWl2ZXIEbmFtZQxsb2FuX3BheW1lbnQFYXNzZXQJbG9hbl9mdW5kBWFzc2V0D3Jlc291cmNlX3BvbGljeQADB3ZlcnNpb24FdWludDgKbmV0X3dlaWdodAVpbnQ2NApjcHVfd2VpZ2h0BWludDY0EnJld2FyZF9wb2xpY3lfaW5mbwAFB3ZlcnNpb24GdWludDMyCnN0YXJ0X3RpbWUKdGltZV9wb2ludA9oYWx2aW5nX3NlY29uZHMGdWludDY0F2luaXRpYWxfY29udGludW91c19yYXRlB2Zsb2F0NjQLY3VycmVudF9lcmEGdWludDMyC3JleF9iYWxhbmNlAAYHdmVyc2lvbgV1aW50OAVvd25lcgRuYW1lCnZvdGVfc3Rha2UFYXNzZXQLcmV4X2JhbGFuY2UFYXNzZXQLbWF0dXJlZF9yZXgFaW50NjQOcmV4X21hdHVyaXRpZXMbcGFpcl90aW1lX3BvaW50X3NlY19pbnQ2NFtdCHJleF9mdW5kAAMHdmVyc2lvbgV1aW50OAVvd25lcgRuYW1lB2JhbGFuY2UFYXNzZXQIcmV4X2xvYW4ACAd2ZXJzaW9uBXVpbnQ4BGZyb20EbmFtZQhyZWNlaXZlcgRuYW1lB3BheW1lbnQFYXNzZXQHYmFsYW5jZQVhc3NldAx0b3RhbF9zdGFrZWQFYXNzZXQIbG9hbl9udW0GdWludDY0CmV4cGlyYXRpb24KdGltZV9wb2ludAxyZXhfbWF0dXJpdHkAAxdudW1fb2ZfbWF0dXJpdHlfYnVja2V0cwZ1aW50MzIQc2VsbF9tYXR1cmVkX3JleARib29sEmJ1eV9yZXhfdG9fc2F2aW5ncwRib29sCXJleF9vcmRlcgAHB3ZlcnNpb24FdWludDgFb3duZXIEbmFtZQ1yZXhfcmVxdWVzdGVkBWFzc2V0CHByb2NlZWRzBWFzc2V0DHN0YWtlX2NoYW5nZQVhc3NldApvcmRlcl90aW1lCnRpbWVfcG9pbnQHaXNfb3BlbgRib29sCHJleF9wb29sAAgHdmVyc2lvbgV1aW50OAp0b3RhbF9sZW50BWFzc2V0DHRvdGFsX3VubGVudAVhc3NldAp0b3RhbF9yZW50BWFzc2V0DnRvdGFsX2xlbmRhYmxlBWFzc2V0CXRvdGFsX3JleAVhc3NldBBuYW1lYmlkX3Byb2NlZWRzBWFzc2V0CGxvYW5fbnVtBnVpbnQ2NBJyZXhfcmV0dXJuX2J1Y2tldHMAAgd2ZXJzaW9uBXVpbnQ4DnJldHVybl9idWNrZXRzG3BhaXJfdGltZV9wb2ludF9zZWNfaW50NjRbXQ9yZXhfcmV0dXJuX3Bvb2wABwd2ZXJzaW9uBXVpbnQ4Dmxhc3RfZGlzdF90aW1lDnRpbWVfcG9pbnRfc2VjE3BlbmRpbmdfYnVja2V0X3RpbWUOdGltZV9wb2ludF9zZWMSb2xkZXN0X2J1Y2tldF90aW1lDnRpbWVfcG9pbnRfc2VjF3BlbmRpbmdfYnVja2V0X3Byb2NlZWRzBWludDY0GGN1cnJlbnRfcmF0ZV9vZl9pbmNyZWFzZQVpbnQ2NAhwcm9jZWVkcwVpbnQ2NAdyZXhleGVjAAIEdXNlcgRuYW1lA21heAZ1aW50MTYLcm12cHJvZHVjZXIAAQhwcm9kdWNlcgRuYW1lEnJvdGF0aW9uX2NhbmRpZGF0ZQAMBW93bmVyBG5hbWUEcmFuawd1aW50MTI4DXByZXZpb3VzX3JhbmsHdWludDEyOAxmcm96ZW5fZXBvY2gGdWludDY0CnNlZW5fZXBvY2gGdWludDY0BnRpY2tldAZ1aW50NjQNcGVuYWx0eV9lcG9jaAZ1aW50NjQMemVyb193aW5kb3dzBXVpbnQ4BmJhbm5lZARib29sDmV2aWRlbmNlX3Nsb3RzCXVpbnQ2NFszXRFldmlkZW5jZV9wb2xpY2llcwl1aW50MzJbM10PYmFuX2ZpbmFsX2Jsb2NrBnVpbnQzMg1yb3RhdGlvbl9pbmZvACkHdmVyc2lvbgZ1aW50MzIFc3RhZ2UFdWludDgGYWN0aXZlBm5hbWVbXQZ0YXJnZXQGbmFtZVtdCGluY29taW5nBG5hbWUIb3V0Z29pbmcEbmFtZRBwcm9wb3Nlcl92ZXJzaW9uBnVpbnQzMhRmaW5hbGl6ZXJfZ2VuZXJhdGlvbgZ1aW50MzIPcHJvcG9zZXJfZGlnZXN0C2NoZWNrc3VtMjU2EGZpbmFsaXplcl9kaWdlc3QLY2hlY2tzdW0yNTYRbmV4dF9hdHRlbXB0X3Nsb3QGdWludDY0EW9ic2VydmF0aW9uX3N0YXJ0BnVpbnQ2NA9vYnNlcnZhdGlvbl9lbmQGdWludDY0DXByb2R1Y2VkX21hc2sGdWludDMyEW9ic2VydmF0aW9uX2Jsb2NrBnVpbnQzMgljb21wbGV0ZWQGdWludDY0D3N0YWxsZWRfd2luZG93cwZ1aW50NjQRZ3Jvd3RoX3N0YXJ0X3Nsb3QGdWludDY0CGNhcGFjaXR5BnVpbnQzMhFzbmFwc2hvdF9jYXBhY2l0eQZ1aW50MzIMcmFua2VkX2NvdW50BnVpbnQzMg5zbmFwc2hvdF9lcG9jaAZ1aW50NjQPcHVibGlzaGVkX2Vwb2NoBnVpbnQ2NApxdWV1ZV90YWlsBnVpbnQ2NA9zY2FuX2VuZF90aWNrZXQGdWludDY0B3JhbmtpbmcEYm9vbAxyYW5rX3N0YXJ0ZWQEYm9vbAlzZWxlY3RpbmcEYm9vbAtyYW5rX2N1cnNvcgd1aW50MTI4DXBlbmFsdHlfZXBvY2gGdWludDY0CWxhc3Rfc2xvdAZ1aW50NjQMd2luZG93X3N0YXJ0BnVpbnQ2NA5wZW5hbHR5X3BhdXNlZARib29sD3dpbmRvd19wcm9kdWNlZARib29sDXdpbmRvd19wb2xpY3kGdWludDMyDndpbmRvd19tZW1iZXJzBm5hbWVbXQ9wZW5kaW5nX3dpbmRvd3MRcm90YXRpb25fd2luZG93W10RZmFpbGVkX2FkbWlzc2lvbnMGdWludDY0DHRvdGFsX2Jhbm5lZAZ1aW50NjQHYmxvY2tlZAV1aW50OA5yZXRyeV9vdXRnb2luZwVuYW1lJA9yb3RhdGlvbl93aW5kb3cABAVvd25lcgRuYW1lBXN0YXJ0BnVpbnQ2NA5wb2xpY3lfdmVyc2lvbgZ1aW50MzIIcHJvZHVjZWQEYm9vbA5zY2hlZHVsZXNfaW5mbwACCnN0YXJ0X3RpbWUOdGltZV9wb2ludF9zZWMPY29udGludW91c19yYXRlB2Zsb2F0NjQHc2VsbHJhbQACB2FjY291bnQEbmFtZQVieXRlcwVpbnQ2NAdzZWxscmV4AAIEZnJvbQRuYW1lA3JleAVhc3NldAZzZXRhYmkAAwdhY2NvdW50BG5hbWUDYWJpBWJ5dGVzBG1lbW8Hc3RyaW5nJApzZXRhY2N0Y3B1AAIHYWNjb3VudARuYW1lCmNwdV93ZWlnaHQGaW50NjQ/CnNldGFjY3RuZXQAAgdhY2NvdW50BG5hbWUKbmV0X3dlaWdodAZpbnQ2ND8Kc2V0YWNjdHJhbQACB2FjY291bnQEbmFtZQlyYW1fYnl0ZXMGaW50NjQ/CnNldGFsaW1pdHMABAdhY2NvdW50BG5hbWUJcmFtX2J5dGVzBWludDY0Cm5ldF93ZWlnaHQFaW50NjQKY3B1X3dlaWdodAVpbnQ2NAdzZXRjb2RlAAUHYWNjb3VudARuYW1lBnZtdHlwZQV1aW50OAl2bXZlcnNpb24FdWludDgEY29kZQVieXRlcwRtZW1vB3N0cmluZyQMc2V0aW5mbGF0aW9uAAMLYW5udWFsX3JhdGUFaW50NjQUaW5mbGF0aW9uX3BheV9mYWN0b3IFaW50NjQOdm90ZXBheV9mYWN0b3IFaW50NjQIc2V0bWFpbnQAAghwcm9kdWNlcgRuYW1lC21haW50ZW5hbmNlBGJvb2wJc2V0cGFyYW1zAAEGcGFyYW1zF2Jsb2NrY2hhaW5fcGFyYW1ldGVyc190DHNldHBheWZhY3RvcgACFGluZmxhdGlvbl9wYXlfZmFjdG9yBWludDY0DnZvdGVwYXlfZmFjdG9yBWludDY0B3NldHByaXYAAgdhY2NvdW50BG5hbWUHaXNfcHJpdgV1aW50OAZzZXRyYW0AAQxtYXhfcmFtX3NpemUGdWludDY0CnNldHJhbXJhdGUAAQ9ieXRlc19wZXJfYmxvY2sGdWludDE2BnNldHJleAABB2JhbGFuY2UFYXNzZXQMc2V0cmV4bWF0dXJlAAMXbnVtX29mX21hdHVyaXR5X2J1Y2tldHMHdWludDMyPxBzZWxsX21hdHVyZWRfcmV4BWJvb2w/EmJ1eV9yZXhfdG9fc2F2aW5ncwVib29sPwtzZXRzY2hlZHVsZQACCnN0YXJ0X3RpbWUOdGltZV9wb2ludF9zZWMPY29udGludW91c19yYXRlB2Zsb2F0NjQKc2V0dGxlYm9uZAABCHByb2R1Y2VyBG5hbWUMc3dpdGNodG9zdm5uAAAMdW5kZWxlZ2F0ZWJ3AAQEZnJvbQRuYW1lCHJlY2VpdmVyBG5hbWUUdW5zdGFrZV9uZXRfcXVhbnRpdHkFYXNzZXQUdW5zdGFrZV9jcHVfcXVhbnRpdHkFYXNzZXQKdW5saW5rYXV0aAAEB2FjY291bnQEbmFtZQRjb2RlBG5hbWUEdHlwZQRuYW1lDWF1dGhvcml6ZWRfYnkFbmFtZSQJdW5yZWdwcm9kAAEIcHJvZHVjZXIEbmFtZQx1bnN0YWtldG9yZXgABAVvd25lcgRuYW1lCHJlY2VpdmVyBG5hbWUIZnJvbV9uZXQFYXNzZXQIZnJvbV9jcHUFYXNzZXQGdW52ZXN0AAMHYWNjb3VudARuYW1lE3VudmVzdF9uZXRfcXVhbnRpdHkFYXNzZXQTdW52ZXN0X2NwdV9xdWFudGl0eQVhc3NldAp1cGRhdGVhdXRoAAUHYWNjb3VudARuYW1lCnBlcm1pc3Npb24EbmFtZQZwYXJlbnQEbmFtZQRhdXRoCWF1dGhvcml0eQ1hdXRob3JpemVkX2J5BW5hbWUkCXVwZGF0ZXJleAABBW93bmVyBG5hbWUMdXBkdHJldmlzaW9uAAEIcmV2aXNpb24FdWludDgOdXNlcl9yZXNvdXJjZXMABAVvd25lcgRuYW1lCm5ldF93ZWlnaHQFYXNzZXQKY3B1X3dlaWdodAVhc3NldAlyYW1fYnl0ZXMFaW50NjQMdm90ZXByb2R1Y2VyAAMFdm90ZXIEbmFtZQVwcm94eQRuYW1lCXByb2R1Y2VycwZuYW1lW10Kdm90ZXJfaW5mbwAKBW93bmVyBG5hbWUFcHJveHkEbmFtZQlwcm9kdWNlcnMGbmFtZVtdBnN0YWtlZAVpbnQ2NBBsYXN0X3ZvdGVfYW1vdW50BWludDY0E3Byb3hpZWRfdm90ZV93ZWlnaHQHZmxvYXQ2NAhpc19wcm94eQRib29sBmZsYWdzMQZ1aW50MzIJcmVzZXJ2ZWQyBnVpbnQzMglyZXNlcnZlZDMFYXNzZXQKdm90ZXVwZGF0ZQABCnZvdGVyX25hbWUEbmFtZQt3YWl0X3dlaWdodAACCHdhaXRfc2VjBnVpbnQzMgZ3ZWlnaHQGdWludDE2B3dhc21jZmcAAQhzZXR0aW5ncwRuYW1lCHdpdGhkcmF3AAIFb3duZXIEbmFtZQZhbW91bnQFYXNzZXQRbGltaXRfYXV0aF9jaGFuZ2UABAd2ZXJzaW9uBXVpbnQ4B2FjY291bnQEbmFtZQthbGxvd19wZXJtcwZuYW1lW10OZGlzYWxsb3dfcGVybXMGbmFtZVtdEWJsb2NrX2luZm9fcmVjb3JkAAMHdmVyc2lvbgV1aW50OAxibG9ja19oZWlnaHQGdWludDMyD2Jsb2NrX3RpbWVzdGFtcAp0aW1lX3BvaW50CmRlbHBlZXJrZXkAAhdwcm9wb3Nlcl9maW5hbGl6ZXJfbmFtZQRuYW1lA2tleQpwdWJsaWNfa2V5C2dldHBlZXJrZXlzAAAIcGVlcl9rZXkAAgdhY2NvdW50BG5hbWUEZGF0YQ92YXJpYW50X3YwX2RhdGEKcGVlcmtleXNfdAACDXByb2R1Y2VyX25hbWUEbmFtZQhwZWVyX2tleQtwdWJsaWNfa2V5PwpyZWdwZWVya2V5AAIXcHJvcG9zZXJfZmluYWxpemVyX25hbWUEbmFtZQNrZXkKcHVibGljX2tleQd2MF9kYXRhAAEGcHVia2V5C3B1YmxpY19rZXk/YAAA8ApOtzIyCWFjdGZpbmtleQAAAAAqm+0yMghhY3RpdmF0Zf0CLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQWN0aXZhdGUgUHJvdG9jb2wgRmVhdHVyZQpzdW1tYXJ5OiAnQWN0aXZhdGUgcHJvdG9jb2wgZmVhdHVyZSB7e25vd3JhcCBmZWF0dXJlX2RpZ2VzdH19JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FkbWluLnBuZyM5YmYxY2VjNjY0ODYzYmQ2YWFhYzBmODE0YjIzNWY4Nzk5ZmIwMmM4NTBlOWFhNWRhMzRlOGEwMDRiZDY1MThlCi0tLQoKe3skYWN0aW9uLmFjY291bnR9fSBhY3RpdmF0ZXMgdGhlIHByb3RvY29sIGZlYXR1cmUgd2l0aCBhIGRpZ2VzdCBvZiB7e2ZlYXR1cmVfZGlnZXN0fX0uAAAAQEkzkzsHYmlkbmFtZZ4OLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQmlkIE9uIGEgUHJlbWl1bSBBY2NvdW50IE5hbWUKc3VtbWFyeTogJ3t7bm93cmFwIGJpZGRlcn19IGJpZHMgb24gdGhlIHByZW1pdW0gYWNjb3VudCBuYW1lIHt7bm93cmFwIG5ld25hbWV9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hY2NvdW50LnBuZyMzZDU1YTJmYzNhNWMyMGI0NTZmNTY1N2ZhZjY2NmJjMjVmZmQwNmY0ODM2YzVlODI1NmY3NDExNDliMGIyOTRmCi0tLQoKe3tiaWRkZXJ9fSBiaWRzIHt7YmlkfX0gb24gYW4gYXVjdGlvbiB0byBvd24gdGhlIHByZW1pdW0gYWNjb3VudCBuYW1lIHt7bmV3bmFtZX19LgoKe3tiaWRkZXJ9fSB0cmFuc2ZlcnMge3tiaWR9fSB0byB0aGUgc3lzdGVtIHRvIGNvdmVyIHRoZSBjb3N0IG9mIHRoZSBiaWQsIHdoaWNoIHdpbGwgYmUgcmV0dXJuZWQgdG8ge3tiaWRkZXJ9fSBvbmx5IGlmIHt7YmlkZGVyfX0gaXMgbGF0ZXIgb3V0YmlkIGluIHRoZSBhdWN0aW9uIGZvciB7e25ld25hbWV9fSBieSBhbm90aGVyIGFjY291bnQuCgpJZiB0aGUgYXVjdGlvbiBmb3Ige3tuZXduYW1lfX0gY2xvc2VzIHdpdGgge3tiaWRkZXJ9fSByZW1haW5pbmcgYXMgdGhlIGhpZ2hlc3QgYmlkZGVyLCB7e2JpZGRlcn19IHdpbGwgYmUgYXV0aG9yaXplZCB0byBjcmVhdGUgdGhlIGFjY291bnQgd2l0aCBuYW1lIHt7bmV3bmFtZX19LgoKIyMgQmlkIHJlZnVuZCBiZWhhdmlvcgoKSWYge3tiaWRkZXJ9feKAmXMgYmlkIG9uIHt7bmV3bmFtZX19IGlzIGxhdGVyIG91dGJpZCBieSBhbm90aGVyIGFjY291bnQsIHt7YmlkZGVyfX0gd2lsbCBiZSBhYmxlIHRvIGNsYWltIGJhY2sgdGhlIHRyYW5zZmVycmVkIGFtb3VudCBvZiB7e2JpZH19LiBUaGUgc3lzdGVtIHdpbGwgYXR0ZW1wdCB0byBhdXRvbWF0aWNhbGx5IGRvIHRoaXMgb24gYmVoYWxmIG9mIHt7YmlkZGVyfX0sIGJ1dCB0aGUgYXV0b21hdGljIHJlZnVuZCBtYXkgb2NjYXNpb25hbGx5IGZhaWwgd2hpY2ggd2lsbCB0aGVuIHJlcXVpcmUge3tiaWRkZXJ9fSB0byBtYW51YWxseSBjbGFpbSB0aGUgcmVmdW5kIHdpdGggdGhlIGJpZHJlZnVuZCBhY3Rpb24uCgojIyBBdWN0aW9uIGNsb3NlIGNyaXRlcmlhCgpUaGUgc3lzdGVtIHNob3VsZCBhdXRvbWF0aWNhbGx5IGNsb3NlIHRoZSBhdWN0aW9uIGZvciB7e25ld25hbWV9fSBpZiBpdCBzYXRpc2ZpZXMgdGhlIGNvbmRpdGlvbiB0aGF0IG92ZXIgYSBwZXJpb2Qgb2YgdHdvIG1pbnV0ZXMgdGhlIGZvbGxvd2luZyB0d28gcHJvcGVydGllcyBjb250aW51b3VzbHkgaG9sZDoKCi0gbm8gb25lIGhhcyBiaWQgb24ge3tuZXduYW1lfX0gd2l0aGluIHRoZSBsYXN0IDI0IGhvdXJzOwotIGFuZCwgdGhlIHZhbHVlIG9mIHRoZSBsYXRlc3QgYmlkIG9uIHt7bmV3bmFtZX19IGlzIGdyZWF0ZXIgdGhhbiB0aGUgdmFsdWUgb2YgdGhlIGJpZHMgb24gZWFjaCBvZiB0aGUgb3RoZXIgb3BlbiBhdWN0aW9ucy4KCkJlIGF3YXJlIHRoYXQgdGhlIGNvbmRpdGlvbiB0byBjbG9zZSB0aGUgYXVjdGlvbiBkZXNjcmliZWQgYWJvdmUgYXJlIHN1ZmZpY2llbnQgYnV0IG5vdCBuZWNlc3NhcnkuIFRoZSBhdWN0aW9uIGZvciB7e25ld25hbWV9fSBjYW5ub3QgY2xvc2UgdW5sZXNzIGJvdGggb2YgdGhlIHByb3BlcnRpZXMgYXJlIHNpbXVsdGFuZW91c2x5IHNhdGlzZmllZCwgYnV0IGl0IG1heSBiZSBjbG9zZWQgd2l0aG91dCByZXF1aXJpbmcgdGhlIHByb3BlcnRpZXMgdG8gaG9sZCBmb3IgYSBwZXJpb2Qgb2YgMiBtaW51dGVzLgAASFMvdZM7CWJpZHJlZnVuZOkCLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQ2xhaW0gUmVmdW5kIG9uIE5hbWUgQmlkCnN1bW1hcnk6ICdDbGFpbSByZWZ1bmQgb24ge3tub3dyYXAgbmV3bmFtZX19IGJpZCcKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hY2NvdW50LnBuZyMzZDU1YTJmYzNhNWMyMGI0NTZmNTY1N2ZhZjY2NmJjMjVmZmQwNmY0ODM2YzVlODI1NmY3NDExNDliMGIyOTRmCi0tLQoKe3tiaWRkZXJ9fSBjbGFpbXMgcmVmdW5kIG9uIHt7bmV3bmFtZX19IGJpZCBhZnRlciBiZWluZyBvdXRiaWQgYnkgc29tZW9uZSBlbHNlLgAAAADUkyY9BmJvbmRicKgBUHJvZHVjZXIgYXV0aG9yaXplcyBhbiBhdG9taWMgdHJhbnNmZXIgb2YgZXhhY3RseSAxMDAwMC4wMDAwIEFJQyB0byBlb3Npby5ib25kLiBObyBDUFUvTkVULCB2b3RlIG9yIHJld2FyZCBzdGFrZSBpcyByZXVzZWQuIFBlcm1hbmVudCBiYW5zIGNhbm5vdCBiZSBjbGVhcmVkIGJ5IGZ1bmRpbmcuAAAAAEhzvT4GYnV5cmFt7wMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBCdXkgUkFNCnN1bW1hcnk6ICd7e25vd3JhcCBwYXllcn19IGJ1eXMgUkFNIG9uIGJlaGFsZiBvZiB7e25vd3JhcCByZWNlaXZlcn19IGJ5IHBheWluZyB7e25vd3JhcCBxdWFudH19JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3Jlc291cmNlLnBuZyMzODMwZjFjZThjYjA3Zjc3NTdkYmNmMzgzYjFlYzFiMTE5MTRhYzM0YTFmOWQ4YjA2NWYwNzYwMGZhOWRhYzE5Ci0tLQoKe3twYXllcn19IGJ1eXMgUkFNIG9uIGJlaGFsZiBvZiB7e3JlY2VpdmVyfX0gYnkgcGF5aW5nIHt7cXVhbnR9fS4gVGhpcyB0cmFuc2FjdGlvbiB3aWxsIGluY3VyIGEgMC41JSBmZWUgb3V0IG9mIHt7cXVhbnR9fSBhbmQgdGhlIGFtb3VudCBvZiBSQU0gZGVsaXZlcmVkIHdpbGwgZGVwZW5kIG9uIG1hcmtldCByYXRlcy4AwLz6SHO9PgpidXlyYW1idXJutQMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBCdXkgYW5kIEJ1cm4gUkFNCnN1bW1hcnk6ICdCdXkgYW5kIGltbWVkaWF0ZWx5IEJ1cm4ge3txdWFudGl0eX19IG9mIFJBTSBmcm9tIHt7bm93cmFwIHBheWVyfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgpCdXkgYW5kIEJ1cm4ge3txdWFudGl0eX19IG9mIFJBTSBmcm9tIGFjY291bnQge3twYXllcn19LgoKe3sjaWYgbWVtb319VGhlcmUgaXMgYSBtZW1vIGF0dGFjaGVkIHRvIHRoZSBhY3Rpb24gc3RhdGluZzoKe3ttZW1vfX0Ke3svaWZ9fQCwyv5Ic70+C2J1eXJhbWJ5dGVz9gMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBCdXkgUkFNCnN1bW1hcnk6ICd7e25vd3JhcCBwYXllcn19IGJ1eXMge3tub3dyYXAgYnl0ZXN9fSBieXRlcyBvZiBSQU0gb24gYmVoYWxmIG9mIHt7bm93cmFwIHJlY2VpdmVyfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgp7e3BheWVyfX0gYnV5cyBhcHByb3hpbWF0ZWx5IHt7Ynl0ZXN9fSBieXRlcyBvZiBSQU0gb24gYmVoYWxmIG9mIHt7cmVjZWl2ZXJ9fSBieSBwYXlpbmcgbWFya2V0IHJhdGVzIGZvciBSQU0uIFRoaXMgdHJhbnNhY3Rpb24gd2lsbCBpbmN1ciBhIDAuNSUgZmVlIGFuZCB0aGUgY29zdCB3aWxsIGRlcGVuZCBvbiBtYXJrZXQgcmF0ZXMuAMCKCktzvT4KYnV5cmFtc2VsZs0DLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQnV5IFJBTSBzZWxmCnN1bW1hcnk6ICd7e25vd3JhcCBhY2NvdW50fX0gYnV5cyBSQU0gdG8gc2VsZiBieSBwYXlpbmcge3tub3dyYXAgcXVhbnR9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXNvdXJjZS5wbmcjMzgzMGYxY2U4Y2IwN2Y3NzU3ZGJjZjM4M2IxZWMxYjExOTE0YWMzNGExZjlkOGIwNjVmMDc2MDBmYTlkYWMxOQotLS0KCnt7YWNjb3VudH19IGJ1eXMgUkFNIHRvIHNlbGYgYnkgcGF5aW5nIHt7cXVhbnR9fS4gVGhpcyB0cmFuc2FjdGlvbiB3aWxsIGluY3VyIGEgMC41JSBmZWUgb3V0IG9mIHt7cXVhbnR9fSBhbmQgdGhlIGFtb3VudCBvZiBSQU0gZGVsaXZlcmVkIHdpbGwgZGVwZW5kIG9uIG1hcmtldCByYXRlcy4AAAAAdHW9PgZidXlyZXj8CS0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IEJ1eSBSRVggVG9rZW5zCnN1bW1hcnk6ICd7e25vd3JhcCBmcm9tfX0gYnV5cyBSRVggdG9rZW5zIGluIGV4Y2hhbmdlIGZvciB7e25vd3JhcCBhbW91bnR9fSBhbmQgdGhlaXIgdm90ZSBzdGFrZSBpbmNyZWFzZXMgYnkge3tub3dyYXAgYW1vdW50fX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3thbW91bnR9fSBpcyB0YWtlbiBvdXQgb2Yge3tmcm9tfX3igJlzIFJFWCBmdW5kIGFuZCB1c2VkIHRvIHB1cmNoYXNlIFJFWCB0b2tlbnMgYXQgdGhlIGN1cnJlbnQgbWFya2V0IGV4Y2hhbmdlIHJhdGUuIEJlZm9yZSBidXlpbmcgUkVYLCB7e2Zyb219fSBtdXN0IGRpcmVjdGx5IHNlbGVjdCBleGFjdGx5IG9uZSBhY3RpdmUgcmVnaXN0ZXJlZCBwcm9kdWNlciB3aXRoIHVzYWJsZSBibG9jayBzaWduaW5nIGF1dGhvcml0eS4gUHJveHkgdm90aW5nIGlzIGRpc2FibGVkLiB7e2Ftb3VudH19IGlzIGFkZGVkIHRvIHt7ZnJvbX194oCZcyB2b3RlIHN0YWtlLgoKV2hpbGUgYW55IFJFWCBzaGFyZXMgcmVtYWluLCBpbmNsdWRpbmcgc2F2aW5ncyBhbmQgdW5maWxsZWQgc2VsbCBvcmRlcnMsIHRoZSBvd25lciBtYXkgc3dpdGNoIGRpcmVjdGx5IHRvIGFub3RoZXIgZWxpZ2libGUgcHJvZHVjZXIgYnV0IGNhbm5vdCBjbGVhciB0aGUgc2VsZWN0aW9uLiBBZnRlciBhbGwgc2hhcmVzIGFyZSBzb2xkIGFuZCBwZW5kaW5nIHZvdGUtc3Rha2UgY2hhbmdlcyBhcmUgc2V0dGxlZCwgdGhlIG93bmVyIG1heSBjbGVhciB0aGUgdm90ZSB3aXRob3V0IHdpdGhkcmF3aW5nIHRoZSBwZXJzb25hbCBSRVggZnVuZC4gQW4gZXhpc3RpbmcgcHJvZHVjZXIgYmVjb21pbmcgaW5hY3RpdmUgZG9lcyBub3QgcHJldmVudCBub3JtYWwgUkVYIHJlZGVtcHRpb24uCgpBIHNlbGwgb3JkZXIgb2YgdGhlIHB1cmNoYXNlZCBhbW91bnQgY2FuIG9ubHkgYmUgaW5pdGlhdGVkIGFmdGVyIHdhaXRpbmcgZm9yIHRoZSBtYXR1cml0eSBwZXJpb2Qgb2YgNCB0byA1IGRheXMgdG8gcGFzcy4gRXZlbiB0aGVuLCBkZXBlbmRpbmcgb24gdGhlIG1hcmtldCBjb25kaXRpb25zLCB0aGUgaW5pdGlhdGVkIHNlbGwgb3JkZXIgbWF5IG5vdCBiZSBleGVjdXRlZCBpbW1lZGlhdGVseS4AvIkqRYWmQQtjYW5jZWxkZWxhef8CLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQ2FuY2VsIERlbGF5ZWQgVHJhbnNhY3Rpb24Kc3VtbWFyeTogJ3t7bm93cmFwIGNhbmNlbGluZ19hdXRoLmFjdG9yfX0gY2FuY2VscyBhIGRlbGF5ZWQgdHJhbnNhY3Rpb24nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWNjb3VudC5wbmcjM2Q1NWEyZmMzYTVjMjBiNDU2ZjU2NTdmYWY2NjZiYzI1ZmZkMDZmNDgzNmM1ZTgyNTZmNzQxMTQ5YjBiMjk0ZgotLS0KCnt7Y2FuY2VsaW5nX2F1dGguYWN0b3J9fSBjYW5jZWxzIHRoZSBkZWxheWVkIHRyYW5zYWN0aW9uIHdpdGggaWQge3t0cnhfaWR9fS4AQNVXcVrZQgpjZmdwb3dlcnVwAIDTNVxd6UxEDGNsYWltcmV3YXJkc4sNLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQ2xhaW0gQmxvY2sgUHJvZHVjZXIgUmV3YXJkcwpzdW1tYXJ5OiAne3tub3dyYXAgb3duZXJ9fSBjbGFpbXMgYmxvY2sgYW5kIHZvdGUgcmV3YXJkcycKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hZG1pbi5wbmcjOWJmMWNlYzY2NDg2M2JkNmFhYWMwZjgxNGIyMzVmODc5OWZiMDJjODUwZTlhYTVkYTM0ZThhMDA0YmQ2NTE4ZQotLS0KCnt7b3duZXJ9fSBjbGFpbXMgYmxvY2sgYW5kIHZvdGUgcmV3YXJkcyBmcm9tIHRoZSBzeXN0ZW0uCgpQdXJlRU9TIGNhbmNlbHMgdGhlIGZvcm1lciA4MCUgc2F2aW5ncyBpc3N1YW5jZS4gUmV3YXJkcyBhY3RpdmF0ZSBhdCB0aGUgZmlyc3QgcG9zaXRpdmUgZGlyZWN0IHByb2R1Y2VyIHZvdGUsIGluY2x1ZGluZyBvbmUgY29yZS10b2tlbiBzbWFsbGVzdCB1bml0IG9mIG93bmVkIENQVS9ORVQgc3Rha2Ugb3Igc2V0dGxlZCBSRVggdm90ZSBzdGFrZTsgdGhlcmUgaXMgbm8gMTUlIG9yIGZpeGVkLXRva2VuLXN1cHBseSB0aHJlc2hvbGQuIFplcm8td2VpZ2h0IHNlbGVjdGlvbnMgZG8gbm90IGFjdGl2YXRlIHJld2FyZHMuIEFuIHVwZ3JhZGVkLCBwcmV2aW91c2x5IHVuYWN0aXZhdGVkIGNoYWluIHdpdGggZXhpc3RpbmcgcG9zaXRpdmUgdm90ZXMgYWN0aXZhdGVzIHVuZGVyIHRoZSBuZXcgY29kZSB3aXRob3V0IGFub3RoZXIgdm90ZSBvciByZXRyb2FjdGl2ZSBmdW5kaW5nLiBBbiBleGlzdGluZyBhY3RpdmF0aW9uIGNsb2NrIGlzIG5ldmVyIHJlc2V0IGJ5IHVwZ3JhZGluZywgcmVzdGFydGluZyBvciB3aXRoZHJhd2luZyB2b3Rlcy4gTmV3IHJld2FyZHMgc3RhcnQgYXQgbG4oMS4wNSkvNSBwZXIgbGVnYWN5IDM2NC1kYXkgYWNjb3VudGluZyB5ZWFyIChhcHByb3hpbWF0ZWx5IDElKSwgaGFsdmluZyBldmVyeSAxLDQ2MSBkYXlzIGZyb20gdGhlIGZpcnN0IHJld2FyZCBhY3RpdmF0aW9uLiBBY2NydWFsIGNyb3NzaW5nIGEgYm91bmRhcnkgaXMgc3BsaXQgYmV0d2VlbiBlcmFzIGFuZCB1c2VzIHRoZSBjdXJyZW50bHkgaXNzdWVkIHRva2VuIHN1cHBseSwgbm90IHVuaXNzdWVkIG9yIHVubWFwcGVkIHRva2Vucy4gQWxsIG5ldyBmdW5kaW5nIGdvZXMgdG8gYmxvY2sgcGF5LCBkaXN0cmlidXRlZCBpbiBleGFjdCBpbnRlZ2VyIHByb3BvcnRpb24gdG8gdW5wYWlkIHByb2R1Y2VkIGJsb2Nrczsgdm90ZXMgZG8gbm90IGVudGVyIHRoZSBwYXlvdXQgY2FsY3VsYXRpb24uIFplcm8gdW5wYWlkIGJsb2NrcyBjYW5ub3QgdW5sb2NrIHJld2FyZHMuIFZvdGUgcGF5LCBpdHMgbWluaW11bS1wYXltZW50IHRocmVzaG9sZCwgYW5kIGl0cyBzaGFyZSBhY2N1bXVsYXRpb24gYXJlIGRpc2FibGVkLiBIaXN0b3JpY2FsIGJhbGFuY2VzIGFyZSBub3QgY29uZmlzY2F0ZWQ6IGFueSBwcmUtdXBncmFkZSB2b3RlIHBvb2wgcmVtYWlucyB1bmNoYW5nZWQgYW5kIGlzIG5vdCBwYWlkIG91dCBieSB0aGlzIGFjdGlvbi4gVGhlIGlzc3VhbmNlIGNhcCBhbmQgZXhpc3RpbmcgdHJlYXN1cnkgZmFsbGJhY2sgc3RpbGwgYXBwbHkuIEluaXRpYWwgcmVnaXN0cmF0aW9uIGFsc28gc3RhcnRzIHRoZSBleGlzdGluZyAyNC1ob3VyIGNsYWltIGNvb2xkb3duLgAAAF1dhWlECGNsb3NlcmV4iQQtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBDbGVhbnVwIFVudXNlZCBSRVggRGF0YQpzdW1tYXJ5OiAnRGVsZXRlIFJFWCByZWxhdGVkIERCIGVudHJpZXMgYW5kIGZyZWUgYXNzb2NpYXRlZCBSQU0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKRGVsZXRlIFJFWCByZWxhdGVkIERCIGVudHJpZXMgYW5kIGZyZWUgYXNzb2NpYXRlZCBSQU0gZm9yIHt7b3duZXJ9fS4KClRvIGZ1bGx5IGRlbGV0ZSBhbGwgUkVYIHJlbGF0ZWQgREIgZW50cmllcywge3tvd25lcn19IG11c3QgZW5zdXJlIHRoYXQgdGhlaXIgUkVYIGJhbGFuY2UgYW5kIFJFWCBmdW5kIGFtb3VudHMgYXJlIGJvdGggemVybyBhbmQgdGhleSBoYXZlIG5vIG91dHN0YW5kaW5nIGxvYW5zLnBVurSrG9FEDGNuY2xyZXhvcmRlcuACLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQ2FuY2VsIFNjaGVkdWxlZCBSRVggU2VsbCBPcmRlcgpzdW1tYXJ5OiAne3tub3dyYXAgb3duZXJ9fSBjYW5jZWxzIGEgc2NoZWR1bGVkIHNlbGwgb3JkZXIgaWYgbm90IHlldCBmaWxsZWQnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3tvd25lcn19IGNhbmNlbHMgdGhlaXIgb3BlbiBzZWxsIG9yZGVyLgBUNslFiidFC2NvbnNvbGlkYXRlmwMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBDb25zb2xpZGF0ZSBSRVggTWF0dXJpdHkgQnVja2V0cyBJbnRvIE9uZQpzdW1tYXJ5OiAnQ29uc29saWRhdGUgUkVYIG1hdHVyaXR5IGJ1Y2tldHMgaW50byBvbmUnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKQ29uc29saWRhdGUgUkVYIG1hdHVyaXR5IGJ1Y2tldHMgaW50byBvbmUgYnVja2V0IHRoYXQge3tvd25lcn19IHdpbGwgbm90IGJlIGFibGUgdG8gc2VsbCB1bnRpbCA0IHRvIDUgZGF5cyBsYXRlci4AwDQ06oqWSgpkZWZjcHVsb2Fu0wMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBXaXRoZHJhdyBmcm9tIHRoZSBGdW5kIG9mIGEgU3BlY2lmaWMgQ1BVIExvYW4Kc3VtbWFyeTogJ3t7bm93cmFwIGZyb219fSB0cmFuc2ZlcnMge3tub3dyYXAgYW1vdW50fX0gZnJvbSB0aGUgZnVuZCBvZiBDUFUgbG9hbiBudW1iZXIge3tub3dyYXAgbG9hbl9udW19fSBiYWNrIHRvIFJFWCBmdW5kJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3JleC5wbmcjZDIyOTgzN2ZhNjJhNDY0YjljNzFlMDYwNjBhYTg2MTc5YWRmMGIzZjRlM2I4YzRmOTcwMmY0ZjRiMGMzNDBhOAotLS0KCnt7ZnJvbX19IHRyYW5zZmVycyB7e2Ftb3VudH19IGZyb20gdGhlIGZ1bmQgb2YgQ1BVIGxvYW4gbnVtYmVyIHt7bG9hbl9udW19fSBiYWNrIHRvIFJFWCBmdW5kLgDANDRmNZdKCmRlZm5ldGxvYW7TAy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFdpdGhkcmF3IGZyb20gdGhlIEZ1bmQgb2YgYSBTcGVjaWZpYyBORVQgTG9hbgpzdW1tYXJ5OiAne3tub3dyYXAgZnJvbX19IHRyYW5zZmVycyB7e25vd3JhcCBhbW91bnR9fSBmcm9tIHRoZSBmdW5kIG9mIE5FVCBsb2FuIG51bWJlciB7e25vd3JhcCBsb2FuX251bX19IGJhY2sgdG8gUkVYIGZ1bmQnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3tmcm9tfX0gdHJhbnNmZXJzIHt7YW1vdW50fX0gZnJvbSB0aGUgZnVuZCBvZiBORVQgbG9hbiBudW1iZXIge3tsb2FuX251bX19IGJhY2sgdG8gUkVYIGZ1bmQuAAA/KhumokoKZGVsZWdhdGVid+gGLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU3Rha2UgVG9rZW5zIGZvciBORVQgYW5kL29yIENQVQpzdW1tYXJ5OiAnU3Rha2UgdG9rZW5zIGZvciBORVQgYW5kL29yIENQVSBhbmQgb3B0aW9uYWxseSB0cmFuc2ZlciBvd25lcnNoaXAnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgp7eyNpZiB0cmFuc2Zlcn19IHt7ZnJvbX19IHN0YWtlcyBvbiBiZWhhbGYgb2Yge3tyZWNlaXZlcn19IHt7c3Rha2VfbmV0X3F1YW50aXR5fX0gZm9yIE5FVCBiYW5kd2lkdGggYW5kIHt7c3Rha2VfY3B1X3F1YW50aXR5fX0gZm9yIENQVSBiYW5kd2lkdGguCgpTdGFrZWQgdG9rZW5zIHdpbGwgYWxzbyBiZSB0cmFuc2ZlcnJlZCB0byB7e3JlY2VpdmVyfX0uIFRoZSBzdW0gb2YgdGhlc2UgdHdvIHF1YW50aXRpZXMgd2lsbCBiZSBkZWR1Y3RlZCBmcm9tIHt7ZnJvbX194oCZcyBsaXF1aWQgYmFsYW5jZSBhbmQgYWRkIHRvIHRoZSB2b3RlIHdlaWdodCBvZiB7e3JlY2VpdmVyfX0uCnt7ZWxzZX19Cnt7ZnJvbX19IHN0YWtlcyB0byBzZWxmIGFuZCBkZWxlZ2F0ZXMgdG8ge3tyZWNlaXZlcn19IHt7c3Rha2VfbmV0X3F1YW50aXR5fX0gZm9yIE5FVCBiYW5kd2lkdGggYW5kIHt7c3Rha2VfY3B1X3F1YW50aXR5fX0gZm9yIENQVSBiYW5kd2lkdGguCgpUaGUgc3VtIG9mIHRoZXNlIHR3byBxdWFudGl0aWVzIGFkZCB0byB0aGUgdm90ZSB3ZWlnaHQgb2Yge3tmcm9tfX0uCnt7L2lmfX0AQMvaqKyiSgpkZWxldGVhdXRo6gItLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBEZWxldGUgQWNjb3VudCBQZXJtaXNzaW9uCnN1bW1hcnk6ICdEZWxldGUgdGhlIHt7bm93cmFwIHBlcm1pc3Npb259fSBwZXJtaXNzaW9uIG9mIHt7bm93cmFwIGFjY291bnR9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hY2NvdW50LnBuZyMzZDU1YTJmYzNhNWMyMGI0NTZmNTY1N2ZhZjY2NmJjMjVmZmQwNmY0ODM2YzVlODI1NmY3NDExNDliMGIyOTRmCi0tLQoKRGVsZXRlIHRoZSB7e3Blcm1pc3Npb259fSBwZXJtaXNzaW9uIG9mIHt7YWNjb3VudH19LgAA8ApOt6JKCWRlbGZpbmtleQAAVNRJNYSjSgtkZWxzY2hlZHVsZb4ELS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogRGVsZXRlIEFubnVhbCBSYXRlIFNjaGVkdWxlCnN1bW1hcnk6ICdEZWxldGUgYW5udWFsIHJhdGUgc2NoZWR1bGUnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgpJbiB0aGlzIFB1cmVFT1MgcHJvZmlsZSB0aGlzIGNvbXBhdGliaWxpdHkgYWN0aW9uIGFsd2F5cyByZWplY3RzLiBUaGUgZml4ZWQgaGFsdmluZyBwb2xpY3kgY2Fubm90IGJlIG92ZXJyaWRkZW4gdGhyb3VnaCBsZWdhY3kgaW5mbGF0aW9uL3BheS1mYWN0b3Ivc2NoZWR1bGUgYWN0aW9uczsgY2hhbmdlcyByZXF1aXJlIHJldmlld2VkIHN5c3RlbSBjb2RlLgoKe3skYWN0aW9uLmFjY291bnR9fSB0byBkZWxldGUgYSBwcmUtZGV0ZXJtaW5lZCBpbmZsYXRpb24gc2NoZWR1bGUgZnJvbSB7e3N0YXJ0X3RpbWV9fSBzdGFydCB0aW1lLgAAACA7TKtKB2RlcG9zaXT9Ay0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IERlcG9zaXQgSW50byBSRVggRnVuZApzdW1tYXJ5OiAnQWRkIHRvIHt7bm93cmFwIG93bmVyfX3igJlzIFJFWCBmdW5kIGJ5IHRyYW5zZmVycmluZyB7e25vd3JhcCBhbW91bnR9fSBmcm9tIHt7bm93cmFwIG93bmVyfX3igJlzIGxpcXVpZCBiYWxhbmNlJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3JleC5wbmcjZDIyOTgzN2ZhNjJhNDY0YjljNzFlMDYwNjBhYTg2MTc5YWRmMGIzZjRlM2I4YzRmOTcwMmY0ZjRiMGMzNDBhOAotLS0KClRyYW5zZmVyIHt7YW1vdW50fX0gZnJvbSB7e293bmVyfX3igJlzIGxpcXVpZCBiYWxhbmNlIHRvIHt7b3duZXJ9feKAmXMgUkVYIGZ1bmQuIEFsbCBwcm9jZWVkcyBhbmQgZXhwZW5zZXMgcmVsYXRlZCB0byBSRVggYXJlIGFkZGVkIHRvIG9yIHRha2VuIG91dCBvZiB0aGlzIGZ1bmQuAACICk2DtkoJZGV2Y2FuY2VsvwFUaGUgY29uZmlndXJlZCBkZXZlbG9wZXIgY2FuY2VscyB0aGUgaWRlbnRpZmllZCBwZW5kaW5nIHVwZ3JhZGUuIEEgbmV3IHByb3Bvc2FsIG11c3QgdXNlIGEgbmV3IGlkZW50aWZpZXIgYW5kIGNvbXBsZXRlIGEgbmV3IHJldmlldyBwZXJpb2Q7IG9iamVjdGlvbnMgYW5kIGRlYWRsaW5lcyBjYW5ub3QgYmUgZWRpdGVkIGluIHBsYWNlLgAAAACprrZKB2RldmV4ZWPpA1RoZSBjb25maWd1cmVkIGRldmVsb3BlciBleGVjdXRlcyB0aGUgZXhhY3QgcmV2aWV3ZWQgY29kZSBhbmQgQUJJIG9ubHkgYWZ0ZXIgdGhlIHByb3Bvc2FsJ3MgZnVsbCBkZWFkbGluZSBhbmQgYmVsb3cgdGhlIGVmZmVjdGl2ZSB2ZXRvIHRocmVzaG9sZC4gTmV3IHByb3Bvc2FscyBhZnRlciBQVVJFRU9TX1NFVkVOX0RBWV9HT1ZFUk5BTkNFIGFjdGl2YXRpb24gd2FpdCBzZXZlbiBkYXlzOyBvbGRlciBkZWFkbGluZXMgcmVtYWluIHVuY2hhbmdlZC4gTm8gYWZmaXJtYXRpdmUgcHJvZHVjZXIgYXBwcm92YWwgaXMgcmVxdWlyZWQuIFRoZSBuYXRpdmUgaG9zdCB2ZXJpZmllcyBoYXNoZXMsIGF1dGhvcml6YXRpb24gYW5kIGEgbm9uZW1wdHkgZWZmZWN0aXZlIGVsZWN0b3JhdGUsIGFuZCBpbnN0YWxscyBjb2RlIGFuZCBBQkkgYXRvbWljYWxseS4gRmFpbHVyZSBsZWF2ZXMgdGhlIHBlbmRpbmcgcHJvcG9zYWwgYW5kIHByZXZpb3VzIGNvZGUgdW5jaGFuZ2VkLgCAwrTSW7dKCmRldnByb3Bvc2WOA1RoZSBjb25maWd1cmVkIGRldmVsb3BlciBwdWJsaXNoZXMgYW4gdXBncmFkZSBib3VuZCB0byB0aGUgdGFyZ2V0LCBiYXNlIGFuZCBuZXcgY29kZS9BQkkgaGFzaGVzLCByZXZpZXcgZG9jdW1lbnQgaGFzaCBhbmQgZnJvemVuIGVsZWN0b3JhdGUuIE5ldyBwcm9wb3NhbHMgYWZ0ZXIgUFVSRUVPU19TRVZFTl9EQVlfR09WRVJOQU5DRSBhY3RpdmF0aW9uIHJlcXVpcmUgYSBmdWxsIHNldmVuLWRheSByZXZpZXc7IHByZS1hY3RpdmF0aW9uIHByb3Bvc2FscyByZXRhaW4gdGhlaXIgb3JpZ2luYWwgZGVhZGxpbmVzLiBUaGlzIGFjdGlvbiBkb2VzIG5vdCBpbnN0YWxsIGNvZGUuIE9yZGluYXJ5IHVzZXJzIGFuZCBwcm9kdWNlciBhdXRob3JpdGllcyBjYW5ub3QgcHVibGlzaCBzeXN0ZW0gdXBncmFkZXMuAAAAgGa1t0oHZGV2dmV0b5AEQSBtZW1iZXIgb2YgdGhlIHByb3Bvc2FsJ3MgZnJvemVuIGVsZWN0b3JhdGUgcmVjb3JkcyBvbmUgb2JqZWN0aW9uIGJlZm9yZSBpdHMgZGVhZGxpbmUuIEFmdGVyIFBVUkVFT1NfU0VWRU5fREFZX0dPVkVSTkFOQ0UgYWN0aXZhdGlvbiwgcGVybWFuZW50IGJhbnMgZXhjbHVkZSBhbiBhY2NvdW50IGZyb20gYm90aCB0aGUgZWZmZWN0aXZlIGVsZWN0b3JhdGUgTiBhbmQgdGhlIGVmZmVjdGl2ZSBvYmplY3Rpb25zIFY7IG9yaWdpbmFsIHJlY29yZHMgcmVtYWluLiBBdCBsZWFzdCBjZWlsaW5nKDJOLzMpIGVmZmVjdGl2ZSBvYmplY3Rpb25zIGJsb2NrIGV4ZWN1dGlvbjsgYW4gZW1wdHkgZWZmZWN0aXZlIGVsZWN0b3JhdGUgYWxzbyBibG9ja3MgZXhlY3V0aW9uLiBBYnN0ZW50aW9uIGlzIG5vdCBhbiBvYmplY3Rpb24uIE1haW50ZW5hbmNlIGFuZCBvcmRpbmFyeSB2b3RlIGNoYW5nZXMgZG8gbm90IHJld3JpdGUgZnJvemVuIHJpZ2h0cy4gVGhpcyBncmFudHMgbm8gZ2VuZXJhbCBzeXN0ZW0gbWFuYWdlbWVudCBhdXRob3JpdHkuALq6NKtsJk0LZG9uYXRldG9yZXiaAy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IERvbmF0ZSBzeXN0ZW0gdG9rZW5zIHRvIFJFWApzdW1tYXJ5OiAne3tub3dyYXAgcGF5ZXJ9fSBkb25hdGVzIHt7bm93cmFwIHF1YW50aXR5fX0gdG9rZW5zIHRvIFJFWCcKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXgucG5nI2QyMjk4MzdmYTYyYTQ2NGI5YzcxZTA2MDYwYWE4NjE3OWFkZjBiM2Y0ZTNiOGM0Zjk3MDJmNGY0YjBjMzQwYTgKLS0tCgp7e3F1YW50aXR5fX0gaXMgdGFrZW4gb3V0IG9mIHt7cGF5ZXJ9feKAmXMgdG9rZW4gYmFsYW5jZSBhbmQgZ2l2ZW4gdG8gUkVYIHdpdGggdGhlIGluY2x1ZGVkIG1lbW86ICJ7e21lbW99fSIuoKJOqiGMVFcMZXhlY3NjaGVkdWxlrwQtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBFeGVjdXRlIE5leHQgQW5udWFsIFJhdGUgU2NoZWR1bGUKc3VtbWFyeTogJ0V4ZWN1dGUgbmV4dCBhbm51YWwgcmF0ZSBzY2hlZHVsZScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hZG1pbi5wbmcjOWJmMWNlYzY2NDg2M2JkNmFhYWMwZjgxNGIyMzVmODc5OWZiMDJjODUwZTlhYTVkYTM0ZThhMDA0YmQ2NTE4ZQotLS0KCkluIHRoaXMgUHVyZUVPUyBwcm9maWxlIHRoaXMgY29tcGF0aWJpbGl0eSBhY3Rpb24gYWx3YXlzIHJlamVjdHMuIFRoZSBmaXhlZCBoYWx2aW5nIHBvbGljeSBjYW5ub3QgYmUgb3ZlcnJpZGRlbiB0aHJvdWdoIGxlZ2FjeSBpbmZsYXRpb24vcGF5LWZhY3Rvci9zY2hlZHVsZSBhY3Rpb25zOyBjaGFuZ2VzIHJlcXVpcmUgcmV2aWV3ZWQgc3lzdGVtIGNvZGUuCgp7eyRhY3Rpb24uYWNjb3VudH19IHRvIGV4ZWN1dGUgdGhlIG5leHQgdXBjb21pbmcgYW5udWFsIHJhdGUgc2NoZWR1bGUuAAAAadKTXVcIZXhpdGJvbmSWAVJlcXVlc3QgZnVsbCBib25kIGV4aXQgYW5kIGRlYWN0aXZhdGUgcmVnaXN0cmF0aW9uLiBDb250aW51ZSBleGlzdGluZyBuYXRpdmUgZHV0aWVzIHVudGlsIHNhZmUgaGFuZG9mZjsgcHJldmlvdXMgdmlvbGF0aW9ucyBhbmQgcGVybWFuZW50IGJhbnMgcmVtYWluLgCmoVFXlKZeC2Z1bmRjcHVsb2Fu8QMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBEZXBvc2l0IGludG8gdGhlIEZ1bmQgb2YgYSBTcGVjaWZpYyBDUFUgTG9hbgpzdW1tYXJ5OiAne3tub3dyYXAgZnJvbX19IGZ1bmRzIGEgQ1BVIGxvYW4nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3tmcm9tfX0gdHJhbnNmZXJzIHt7cGF5bWVudH19IGZyb20gUkVYIGZ1bmQgdG8gdGhlIGZ1bmQgb2YgQ1BVIGxvYW4gbnVtYmVyIHt7bG9hbl9udW19fSBpbiBvcmRlciB0byBiZSB1c2VkIGluIGxvYW4gcmVuZXdhbCBhdCBleHBpcnkuIHt7ZnJvbX19IGNhbiB3aXRoZHJhdyB0aGUgdG90YWwgYmFsYW5jZSBvZiB0aGUgbG9hbiBmdW5kIGF0IGFueSB0aW1lLgCmoTGrmaZeC2Z1bmRuZXRsb2Fu8QMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBEZXBvc2l0IGludG8gdGhlIEZ1bmQgb2YgYSBTcGVjaWZpYyBORVQgTG9hbgpzdW1tYXJ5OiAne3tub3dyYXAgZnJvbX19IGZ1bmRzIGEgTkVUIGxvYW4nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3tmcm9tfX0gdHJhbnNmZXJzIHt7cGF5bWVudH19IGZyb20gUkVYIGZ1bmQgdG8gdGhlIGZ1bmQgb2YgTkVUIGxvYW4gbnVtYmVyIHt7bG9hbl9udW19fSBpbiBvcmRlciB0byBiZSB1c2VkIGluIGxvYW4gcmVuZXdhbCBhdCBleHBpcnkuIHt7ZnJvbX19IGNhbiB3aXRoZHJhdyB0aGUgdG90YWwgYmFsYW5jZSBvZiB0aGUgbG9hbiBmdW5kIGF0IGFueSB0aW1lLgAAACC76TZlB2dvdmluaXSoA09uZS10aW1lIFB1cmVFT1MgcHJvZmlsZS0yIGJvb3RzdHJhcCwgYXV0aG9yaXplZCBieSBlb3Npb0Bvd25lci4gU2VhbHMgcHJvdGVjdGVkIHN5c3RlbSBwZXJtaXNzaW9ucywgc2VsZWN0cyB0aGUgaW5kZXBlbmRlbnQgZGV2ZWxvcGVyLCBhbmQgdmVyaWZpZXMgdGhlIHN5c3RlbSBjb250cmFjdCdzIGluaXRpYWwgZWxlY3RvcmF0ZSBoYW5kc2hha2UuIEFmdGVyIFBVUkVFT1NfU0VWRU5fREFZX0dPVkVSTkFOQ0UgYWN0aXZhdGlvbiwgcmV2aWV3X3NlY29uZHMgbXVzdCBlcXVhbCA2MDQ4MDAgKHNldmVuIGRheXMpOyBwcmUtYWN0aXZhdGlvbiByZXBsYXkgcmVxdWlyZXMgdGhlIG9yaWdpbmFsIDEyMDk2MDAuIFRoaXMgaXMgbm90IGEgY29uZmlndXJhYmxlIGR1cmF0aW9uIGFuZCBjYW5ub3QgYmUgdXNlZCBhZnRlciBpbml0aWFsaXphdGlvbi4AAAAAAJDddARpbml02AItLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBJbml0aWFsaXplIFN5c3RlbSBDb250cmFjdApzdW1tYXJ5OiAnSW5pdGlhbGl6ZSBzeXN0ZW0gY29udHJhY3QnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgpJbml0aWFsaXplIHN5c3RlbSBjb250cmFjdC4gVGhlIGNvcmUgdG9rZW4gc3ltYm9sIHdpbGwgYmUgc2V0IHRvIHt7Y29yZX19LgBAmvTUk910CmluaXRicGJvbmTDAkluaXRpYWxpemUgZml4ZWQgMTAwMDAuMDAwMCBBSUMgQlAgYm9uZHMsIGEgc2V2ZW4tZGF5IHJlZnVuZCBjb29sZG93biBhbmQgZGVkaWNhdGVkIGVvc2lvLmJvbmQvZW9zaW8uYnNsYXNoIGN1c3RvZHkuIEZvcmZlaXR1cmVzIHN0YXkgbG9ja2VkOyB0aGVyZSBpcyBubyBwb29sIHdpdGhkcmF3YWwgb3IgYnVybiBhY3Rpb24uIEZyZXNoLWNoYWluIGluaXRpYWxpemF0aW9uIGlzIG1hbmRhdG9yeSBiZWZvcmUgZ292ZXJuYW5jZSBzZWFsaW5nIGFuZCBCUCByZWdpc3RyYXRpb24uIE5vIGluaXRpYWxpemF0aW9uIGFyZ3VtZW50IGNhbiBjaGFuZ2UgdGhlc2UgdGVybXMuwBpqWZvspIsMbGltaXRhdXRoY2hnAAAAAC1rA6eLCGxpbmthdXRokgUtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBMaW5rIEFjdGlvbiB0byBQZXJtaXNzaW9uCnN1bW1hcnk6ICd7e25vd3JhcCBhY2NvdW50fX0gc2V0cyB0aGUgbWluaW11bSByZXF1aXJlZCBwZXJtaXNzaW9uIGZvciB0aGUge3sjaWYgdHlwZX19e3tub3dyYXAgdHlwZX19IGFjdGlvbiBvZiB0aGV7ey9pZn19IHt7bm93cmFwIGNvZGV9fSBjb250cmFjdCB0byB7e25vd3JhcCByZXF1aXJlbWVudH19JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FjY291bnQucG5nIzNkNTVhMmZjM2E1YzIwYjQ1NmY1NjU3ZmFmNjY2YmMyNWZmZDA2ZjQ4MzZjNWU4MjU2Zjc0MTE0OWIwYjI5NGYKLS0tCgp7e2FjY291bnR9fSBzZXRzIHRoZSBtaW5pbXVtIHJlcXVpcmVkIHBlcm1pc3Npb24gZm9yIHRoZSB7eyNpZiB0eXBlfX17e3R5cGV9fSBhY3Rpb24gb2YgdGhle3svaWZ9fSB7e2NvZGV9fSBjb250cmFjdCB0byB7e3JlcXVpcmVtZW50fX0uCgp7eyNpZiB0eXBlfX17e2Vsc2V9fUFueSBsaW5rcyBleHBsaWNpdGx5IGFzc29jaWF0ZWQgdG8gc3BlY2lmaWMgYWN0aW9ucyBvZiB7e2NvZGV9fSB3aWxsIHRha2UgcHJlY2VkZW5jZS57ey9pZn19AACQ5np9GI0JbG9nYnV5cmFtAKDYNA1JcxmNDGxvZ3JhbWNoYW5nZQAAgDQ3RoUZjQpsb2dzZWxscmFtAKDUkipjjxmNDGxvZ3N5c3RlbWZlZQAAMJtuG3zXlgttdmZyc2F2aW5nc5EDLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogVW5sb2NrIFJFWCBUb2tlbnMKc3VtbWFyeTogJ3t7bm93cmFwIG93bmVyfX0gdW5sb2NrcyBSRVggVG9rZW5zJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3JleC5wbmcjZDIyOTgzN2ZhNjJhNDY0YjljNzFlMDYwNjBhYTg2MTc5YWRmMGIzZjRlM2I4YzRmOTcwMmY0ZjRiMGMzNDBhOAotLS0KCnt7b3duZXJ9fSB1bmxvY2tzIHt7cmV4fX0gYnkgbW92aW5nIGl0IG91dCBvZiB0aGUgUkVYIHNhdmluZ3MgYnVja2V0LiBUaGUgdW5sb2NrZWQgUkVYIHRva2VucyBjYW5ub3QgYmUgc29sZCB1bnRpbCA0IHRvIDUgZGF5cyBsYXRlci4AMJtuG0zzlgttdnRvc2F2aW5nc68DLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogTG9jayBSRVggVG9rZW5zCnN1bW1hcnk6ICd7e25vd3JhcCBvd25lcn19IGxvY2tzIFJFWCBUb2tlbnMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3tvd25lcn19IGxvY2tzIHt7cmV4fX0gYnkgbW92aW5nIGl0IGludG8gdGhlIFJFWCBzYXZpbmdzIGJ1Y2tldC4gVGhlIGxvY2tlZCBSRVggdG9rZW5zIGNhbm5vdCBiZSBzb2xkIGRpcmVjdGx5IGFuZCB3aWxsIGhhdmUgdG8gYmUgdW5sb2NrZWQgZXhwbGljaXRseSBiZWZvcmUgc2VsbGluZy4AQJ6aImS4mgpuZXdhY2NvdW509QMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBDcmVhdGUgTmV3IEFjY291bnQKc3VtbWFyeTogJ3t7bm93cmFwIGNyZWF0b3J9fSBjcmVhdGVzIGEgbmV3IGFjY291bnQgd2l0aCB0aGUgbmFtZSB7e25vd3JhcCBuYW1lfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWNjb3VudC5wbmcjM2Q1NWEyZmMzYTVjMjBiNDU2ZjU2NTdmYWY2NjZiYzI1ZmZkMDZmNDgzNmM1ZTgyNTZmNzQxMTQ5YjBiMjk0ZgotLS0KCnt7Y3JlYXRvcn19IGNyZWF0ZXMgYSBuZXcgYWNjb3VudCB3aXRoIHRoZSBuYW1lIHt7bmFtZX19IGFuZCB0aGUgZm9sbG93aW5nIHBlcm1pc3Npb25zOgoKb3duZXIgcGVybWlzc2lvbiB3aXRoIGF1dGhvcml0eToKe3t0b19qc29uIG93bmVyfX0KCmFjdGl2ZSBwZXJtaXNzaW9uIHdpdGggYXV0aG9yaXR5Ogp7e3RvX2pzb24gYWN0aXZlfX0AAAAAIhrPpAdvbmJsb2NrAAAAAODSe9WkB29uZXJyb3IAAAAAoOqrOK0HcG93ZXJ1cMkCLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogUG93ZXJ1cCByZXNvdXJjZXMKc3VtbWFyeTogJ1VzZXIgbWF5IHBvd2VydXAgdG8gcmVzZXJ2ZSByZXNvdXJjZXMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgpVc2VycyBtYXkgdXNlIHRoZSBwb3dlcnVwIGFjdGlvbiB0byByZXNlcnZlIHJlc291cmNlcy4AkOqq6qs4rQtwb3dlcnVwZXhlYwAAAABgXn2kuQdyYW1idXJunQMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBCdXJuIFJBTSBmcm9tIEFjY291bnQKc3VtbWFyeTogJ0J1cm4gdW51c2VkIFJBTSBmcm9tIHt7bm93cmFwIG93bmVyfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgpCdXJuIHt7Ynl0ZXN9fSBieXRlcyBvZiB1bnVzZWQgUkFNIGZyb20gYWNjb3VudCB7e293bmVyfX0uCgp7eyNpZiBtZW1vfX1UaGVyZSBpcyBhIG1lbW8gYXR0YWNoZWQgdG8gdGhlIGJ1cm4gc3RhdGluZzoKe3ttZW1vfX0Ke3svaWZ9fQCuWniam6W5C3JhbXRyYW5zZmVyzgMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBUcmFuc2ZlciBSQU0gZnJvbSBBY2NvdW50CnN1bW1hcnk6ICdUcmFuc2ZlciB1bnVzZWQgUkFNIGZyb20ge3tub3dyYXAgZnJvbX19IHRvIHt7bm93cmFwIHRvfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgpUcmFuc2ZlciB7e2J5dGVzfX0gYnl0ZXMgb2YgdW51c2VkIFJBTSBmcm9tIGFjY291bnQge3tmcm9tfX0gdG8gYWNjb3VudCB7e3RvfX0uCgp7eyNpZiBtZW1vfX1UaGVyZSBpcyBhIG1lbW8gYXR0YWNoZWQgdG8gdGhlIHRyYW5zZmVyIHN0YXRpbmc6Cnt7bWVtb319Cnt7L2lmfX0AwKasYXWXugpyZWZyZXNoZ2926gFSZWZyZXNoIHRoZSBkZXRlcm1pbmlzdGljLCBhdC1tb3N0LTIxMCBlbGlnaWJsZSBwcm9kdWNlciBlbGVjdG9yYXRlLiBUaGUgY2FsbGVyIGNhbm5vdCBzdXBwbHkgaXRzIG1lbWJlcnMuIFRoaXMgYWN0aW9uIGlzIG5vdCBhbiB1cGdyYWRlIHByb3Bvc2FsIG9yIGFuIGFwcHJvdmFsLiBBIGRldmVsb3BlciBwcm9wb3NhbCBtdXN0IGltbWVkaWF0ZWx5IGZvbGxvdyBpdCBpbiB0aGUgc2FtZSB0cmFuc2FjdGlvbi4AAAAApKmXugZyZWZ1bmT8Ai0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IENsYWltIFVuc3Rha2VkIFRva2VucwpzdW1tYXJ5OiAnUmV0dXJuIHByZXZpb3VzbHkgdW5zdGFrZWQgdG9rZW5zIHRvIHt7bm93cmFwIG93bmVyfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWNjb3VudC5wbmcjM2Q1NWEyZmMzYTVjMjBiNDU2ZjU2NTdmYWY2NjZiYzI1ZmZkMDZmNDgzNmM1ZTgyNTZmNzQxMTQ5YjBiMjk0ZgotLS0KClJldHVybiBwcmV2aW91c2x5IHVuc3Rha2VkIHRva2VucyB0byB7e293bmVyfX0gYWZ0ZXIgdGhlIHVuc3Rha2luZyBwZXJpb2QgaGFzIGVsYXBzZWQuAECa9KSpl7oKcmVmdW5kYm9uZKMBUmVmdW5kIG9ubHkgYWZ0ZXIgc2FmZSBwcm9wb3Nlci9maW5hbGl6ZXIgaGFuZG9mZiwgc2V0dGxlZCBkdXR5IHdpbmRvd3MsIGlycmV2ZXJzaWJsZSBleGl0IGFuZCB0aGUgaW5pdGlhbGl6ZWQgY29vbGRvd24uIE5vIGF1dG9tYXRpYyBkZWZlcnJlZCB0cmFuc2FjdGlvbiBpcyB1c2VkLgAA8ApOt5i6CXJlZ2ZpbmtleQAArkI60VuZugtyZWdwcm9kdWNlco4ELS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogUmVnaXN0ZXIgYXMgYSBCbG9jayBQcm9kdWNlciBDYW5kaWRhdGUKc3VtbWFyeTogJ1JlZ2lzdGVyIHt7bm93cmFwIHByb2R1Y2VyfX0gYWNjb3VudCBhcyBhIGJsb2NrIHByb2R1Y2VyIGNhbmRpZGF0ZScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy92b3RpbmcucG5nI2RiMjhjZDNkYjZlNjJkNDUwOWFmMzY0NGNlN2QzNzczMjk0ODJhMTRiYjRiZmFjYTJhYTVmMTQwMGQ4ZThhODQKLS0tCgpSZWdpc3RlciB7e3Byb2R1Y2VyfX0gYWNjb3VudCBhcyBhIGJsb2NrIHByb2R1Y2VyIGNhbmRpZGF0ZS4KClVSTDoge3t1cmx9fQpMb2NhdGlvbiBjb2RlOiB7e2xvY2F0aW9ufX0KQmxvY2sgc2lnbmluZyBrZXk6IHt7cHJvZHVjZXJfa2V5fX0KCiMjIEJsb2NrIFByb2R1Y2VyIEFncmVlbWVudAp7eyRjbGF1c2VzLkJsb2NrUHJvZHVjZXJBZ3JlZW1lbnR9fSCuQjrRW5m6DHJlZ3Byb2R1Y2VyMqIELS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogUmVnaXN0ZXIgYXMgYSBCbG9jayBQcm9kdWNlciBDYW5kaWRhdGUKc3VtbWFyeTogJ1JlZ2lzdGVyIHt7bm93cmFwIHByb2R1Y2VyfX0gYWNjb3VudCBhcyBhIGJsb2NrIHByb2R1Y2VyIGNhbmRpZGF0ZScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy92b3RpbmcucG5nI2RiMjhjZDNkYjZlNjJkNDUwOWFmMzY0NGNlN2QzNzczMjk0ODJhMTRiYjRiZmFjYTJhYTVmMTQwMGQ4ZThhODQKLS0tCgpSZWdpc3RlciB7e3Byb2R1Y2VyfX0gYWNjb3VudCBhcyBhIGJsb2NrIHByb2R1Y2VyIGNhbmRpZGF0ZS4KClVSTDoge3t1cmx9fQpMb2NhdGlvbiBjb2RlOiB7e2xvY2F0aW9ufX0KQmxvY2sgc2lnbmluZyBhdXRob3JpdHk6Cnt7dG9fanNvbiBwcm9kdWNlcl9hdXRob3JpdHl9fQoKIyMgQmxvY2sgUHJvZHVjZXIgQWdyZWVtZW50Cnt7JGNsYXVzZXMuQmxvY2tQcm9kdWNlckFncmVlbWVudH19AAAAvtNbmboIcmVncHJveHmoAy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFJlZ2lzdGVyL3VucmVnaXN0ZXIgYXMgYSBQcm94eQpzdW1tYXJ5OiAnUHJveHkgdm90aW5nIGlzIGRpc2FibGVkOyB0aGlzIGFjdGlvbiBhbHdheXMgcmVqZWN0cycKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy92b3RpbmcucG5nI2RiMjhjZDNkYjZlNjJkNDUwOWFmMzY0NGNlN2QzNzczMjk0ODJhMTRiYjRiZmFjYTJhYTVmMTQwMGQ4ZThhODQKLS0tCgpUaGlzIGNvbXBhdGliaWxpdHkgYWN0aW9uIHJlamVjdHMgYm90aCByZWdpc3RyYXRpb24gYW5kIHVucmVnaXN0cmF0aW9uLiBJdCBjYW5ub3QgY3JlYXRlLCBmb3J3YXJkIG9yIGFnZ3JlZ2F0ZSBwcm94eSB2b3Rlcy4AAABAV5SnugdyZW50Y3B10QktLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBSZW50IENQVSBCYW5kd2lkdGggZm9yIDMwIERheXMKc3VtbWFyeTogJ3t7bm93cmFwIGZyb219fSBwYXlzIHt7bm93cmFwIGxvYW5fcGF5bWVudH19IHRvIHJlbnQgQ1BVIGJhbmR3aWR0aCBmb3Ige3tub3dyYXAgcmVjZWl2ZXJ9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXgucG5nI2QyMjk4MzdmYTYyYTQ2NGI5YzcxZTA2MDYwYWE4NjE3OWFkZjBiM2Y0ZTNiOGM0Zjk3MDJmNGY0YjBjMzQwYTgKLS0tCgp7e2Zyb219fSBwYXlzIHt7bG9hbl9wYXltZW50fX0gdG8gcmVudCBDUFUgYmFuZHdpZHRoIG9uIGJlaGFsZiBvZiB7e3JlY2VpdmVyfX0gZm9yIGEgcGVyaW9kIG9mIDMwIGRheXMuCgp7e2xvYW5fcGF5bWVudH19IGlzIHRha2VuIG91dCBvZiB7e2Zyb219feKAmXMgUkVYIGZ1bmQuIFRoZSBtYXJrZXQgcHJpY2UgZGV0ZXJtaW5lcyB0aGUgbnVtYmVyIG9mIHRva2VucyB0byBiZSBzdGFrZWQgdG8ge3tyZWNlaXZlcn194oCZcyBDUFUgcmVzb3VyY2VzLiBJbiBhZGRpdGlvbiwge3tmcm9tfX0gcHJvdmlkZXMge3tsb2FuX2Z1bmR9fSwgd2hpY2ggaXMgYWxzbyB0YWtlbiBvdXQgb2Yge3tmcm9tfX3igJlzIFJFWCBmdW5kLCB0byBiZSB1c2VkIGZvciBhdXRvbWF0aWMgcmVuZXdhbCBvZiB0aGUgbG9hbi4KCkF0IGV4cGlyYXRpb24sIGlmIHRoZSBsb2FuIGhhcyBsZXNzIGZ1bmRzIHRoYW4ge3tsb2FuX3BheW1lbnR9fSwgaXQgaXMgY2xvc2VkIGFuZCBsZW50IHRva2VucyB0aGF0IGhhdmUgYmVlbiBzdGFrZWQgYXJlIHRha2VuIG91dCBvZiB7e3JlY2VpdmVyfX3igJlzIENQVSBiYW5kd2lkdGguIE90aGVyd2lzZSwgaXQgaXMgcmVuZXdlZCBhdCB0aGUgbWFya2V0IHByaWNlIGF0IHRoZSB0aW1lIG9mIHJlbmV3YWwsIHRoYXQgaXMsIHRoZSBudW1iZXIgb2Ygc3Rha2VkIHRva2VucyBpcyByZWNhbGN1bGF0ZWQgYW5kIHt7cmVjZWl2ZXJ9feKAmXMgQ1BVIGJhbmR3aWR0aCBpcyB1cGRhdGVkIGFjY29yZGluZ2x5LiB7e2Zyb219fSBjYW4gZnVuZCBvciBkZWZ1bmQgYSBsb2FuIGF0IGFueSB0aW1lIGJlZm9yZSBleHBpcmF0aW9uLiBXaGVuIHRoZSBsb2FuIGlzIGNsb3NlZCwge3tmcm9tfX0gaXMgcmVmdW5kZWQgYW55IHRva2VucyByZW1haW5pbmcgaW4gdGhlIGxvYW4gZnVuZC4AAAAgq5mnugdyZW50bmV03QktLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBSZW50IE5FVCBCYW5kd2lkdGggZm9yIDMwIERheXMKc3VtbWFyeTogJ3t7bm93cmFwIGZyb219fSBwYXlzIHt7bm93cmFwIGxvYW5fcGF5bWVudH19IHRvIHJlbnQgTkVUIGJhbmR3aWR0aCBmb3Ige3tub3dyYXAgcmVjZWl2ZXJ9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXgucG5nI2QyMjk4MzdmYTYyYTQ2NGI5YzcxZTA2MDYwYWE4NjE3OWFkZjBiM2Y0ZTNiOGM0Zjk3MDJmNGY0YjBjMzQwYTgKLS0tCgp7e2Zyb219fSBwYXlzIHt7bG9hbl9wYXltZW50fX0gdG8gcmVudCBORVQgYmFuZHdpZHRoIG9uIGJlaGFsZiBvZiB7e3JlY2VpdmVyfX0gZm9yIGEgcGVyaW9kIG9mIDMwIGRheXMuCgp7e2xvYW5fcGF5bWVudH19IGlzIHRha2VuIG91dCBvZiB7e2Zyb219feKAmXMgUkVYIGZ1bmQuIFRoZSBtYXJrZXQgcHJpY2UgZGV0ZXJtaW5lcyB0aGUgbnVtYmVyIG9mIHRva2VucyB0byBiZSBzdGFrZWQgdG8ge3tyZWNlaXZlcn194oCZcyBORVQgcmVzb3VyY2VzIGZvciAzMCBkYXlzLiBJbiBhZGRpdGlvbiwge3tmcm9tfX0gcHJvdmlkZXMge3tsb2FuX2Z1bmR9fSwgd2hpY2ggaXMgYWxzbyB0YWtlbiBvdXQgb2Yge3tmcm9tfX3igJlzIFJFWCBmdW5kLCB0byBiZSB1c2VkIGZvciBhdXRvbWF0aWMgcmVuZXdhbCBvZiB0aGUgbG9hbi4KCkF0IGV4cGlyYXRpb24sIGlmIHRoZSBsb2FuIGhhcyBsZXNzIGZ1bmRzIHRoYW4ge3tsb2FuX3BheW1lbnR9fSwgaXQgaXMgY2xvc2VkIGFuZCBsZW50IHRva2VucyB0aGF0IGhhdmUgYmVlbiBzdGFrZWQgYXJlIHRha2VuIG91dCBvZiB7e3JlY2VpdmVyfX3igJlzIE5FVCBiYW5kd2lkdGguIE90aGVyd2lzZSwgaXQgaXMgcmVuZXdlZCBhdCB0aGUgbWFya2V0IHByaWNlIGF0IHRoZSB0aW1lIG9mIHJlbmV3YWwsIHRoYXQgaXMsIHRoZSBudW1iZXIgb2Ygc3Rha2VkIHRva2VucyBpcyByZWNhbGN1bGF0ZWQgYW5kIHt7cmVjZWl2ZXJ9feKAmXMgTkVUIGJhbmR3aWR0aCBpcyB1cGRhdGVkIGFjY29yZGluZ2x5LiB7e2Zyb219fSBjYW4gZnVuZCBvciBkZWZ1bmQgYSBsb2FuIGF0IGFueSB0aW1lIGJlZm9yZSBleHBpcmF0aW9uLiBXaGVuIHRoZSBsb2FuIGlzIGNsb3NlZCwge3tmcm9tfX0gaXMgcmVmdW5kZWQgYW55IHRva2VucyByZW1haW5pbmcgaW4gdGhlIGxvYW4gZnVuZC4AAAAAqa66ugdyZXhleGVjlwMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBQZXJmb3JtIFJFWCBNYWludGVuYW5jZQpzdW1tYXJ5OiAnUHJvY2VzcyBzZWxsIG9yZGVycyBhbmQgZXhwaXJlZCBsb2FucycKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXgucG5nI2QyMjk4MzdmYTYyYTQ2NGI5YzcxZTA2MDYwYWE4NjE3OWFkZjBiM2Y0ZTNiOGM0Zjk3MDJmNGY0YjBjMzQwYTgKLS0tCgpQZXJmb3JtcyBSRVggbWFpbnRlbmFuY2UgYnkgcHJvY2Vzc2luZyBhIG1heGltdW0gb2Yge3ttYXh9fSBSRVggc2VsbCBvcmRlcnMgYW5kIGV4cGlyZWQgbG9hbnMuIEFueSBhY2NvdW50IGNhbiBleGVjdXRlIHRoaXMgYWN0aW9uLgCuQjrRW7e8C3JtdnByb2R1Y2Vy9wQtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBGb3JjaWJseSBVbnJlZ2lzdGVyIGEgQmxvY2sgUHJvZHVjZXIgQ2FuZGlkYXRlCnN1bW1hcnk6ICd7e25vd3JhcCBwcm9kdWNlcn19IGlzIHVucmVnaXN0ZXJlZCBhcyBhIGJsb2NrIHByb2R1Y2VyIGNhbmRpZGF0ZScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hZG1pbi5wbmcjOWJmMWNlYzY2NDg2M2JkNmFhYWMwZjgxNGIyMzVmODc5OWZiMDJjODUwZTlhYTVkYTM0ZThhMDA0YmQ2NTE4ZQotLS0KCnt7JGFjdGlvbi5hY2NvdW50fX0gdW5yZWdpc3RlcnMge3twcm9kdWNlcn19IGFzIGEgYmxvY2sgcHJvZHVjZXIgY2FuZGlkYXRlLiB7e3Byb2R1Y2VyfX0gYWNjb3VudCB3aWxsIHJldGFpbiBpdHMgdm90ZXMgYW5kIHRob3NlIHZvdGVzIGNhbiBjaGFuZ2UgYmFzZWQgb24gdm90ZXIgc3Rha2UgY2hhbmdlcyBvciB2b3RlcyByZW1vdmVkIGZyb20ge3twcm9kdWNlcn19LiBIb3dldmVyIG5ldyB2b3RlcnMgd2lsbCBub3QgYmUgYWJsZSB0byB2b3RlIGZvciB7e3Byb2R1Y2VyfX0gd2hpbGUgaXQgcmVtYWlucyB1bnJlZ2lzdGVyZWQuAAAAQJobo8IHc2VsbHJhbboDLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU2VsbCBSQU0gRnJvbSBBY2NvdW50CnN1bW1hcnk6ICdTZWxsIHVudXNlZCBSQU0gZnJvbSB7e25vd3JhcCBhY2NvdW50fX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmVzb3VyY2UucG5nIzM4MzBmMWNlOGNiMDdmNzc1N2RiY2YzODNiMWVjMWIxMTkxNGFjMzRhMWY5ZDhiMDY1ZjA3NjAwZmE5ZGFjMTkKLS0tCgpTZWxsIHt7Ynl0ZXN9fSBieXRlcyBvZiB1bnVzZWQgUkFNIGZyb20gYWNjb3VudCB7e2FjY291bnR9fSBhdCBtYXJrZXQgcHJpY2UuIFRoaXMgdHJhbnNhY3Rpb24gd2lsbCBpbmN1ciBhIDAuNSUgZmVlIG9uIHRoZSBwcm9jZWVkcyB3aGljaCBkZXBlbmQgb24gbWFya2V0IHJhdGVzLgAAAKCrG6PCB3NlbGxyZXjhCi0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFNlbGwgUkVYIFRva2VucyBpbiBFeGNoYW5nZSBmb3IgRU9TCnN1bW1hcnk6ICd7e25vd3JhcCBmcm9tfX0gc2VsbHMge3tub3dyYXAgcmV4fX0gdG9rZW5zJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3JleC5wbmcjZDIyOTgzN2ZhNjJhNDY0YjljNzFlMDYwNjBhYTg2MTc5YWRmMGIzZjRlM2I4YzRmOTcwMmY0ZjRiMGMzNDBhOAotLS0KClRoZSAncmV4JyBwYXJhbWV0ZXIgbm8gbG9uZ2VyIGhhcyBhbiBlZmZlY3QuCgp7e2Zyb219fSBpbml0aWF0ZXMgYSBzZWxsIG9yZGVyIHRvIHNlbGwgYWxsIG9mIHRoZWlyIG1hdHVyZWQgUkVYIHRva2VucyBhdCB0aGUgbWFya2V0IGV4Y2hhbmdlIHJhdGUgZHVyaW5nIHRoZSB0aW1lIGF0IHdoaWNoIHRoZSBvcmRlciBpcyB1bHRpbWF0ZWx5IGV4ZWN1dGVkLiAKSWYge3tmcm9tfX0gYWxyZWFkeSBoYXMgYW4gb3BlbiBzZWxsIG9yZGVyIGluIHRoZSBzZWxsIHF1ZXVlLCB7e3JleH19IHdpbGwgYmUgYWRkZWQgdG8gdGhlIGFtb3VudCBvZiB0aGUgc2VsbCBvcmRlciB3aXRob3V0IGNoYW5nZSB0aGUgcG9zaXRpb24gb2YgdGhlIHNlbGwgb3JkZXIgd2l0aGluIHRoZSBxdWV1ZS4gCk9uY2UgdGhlIHNlbGwgb3JkZXIgaXMgZXhlY3V0ZWQsIHByb2NlZWRzIGFyZSBhZGRlZCB0byB7e2Zyb219feKAmXMgUkVYIGZ1bmQsIHRoZSB2YWx1ZSBvZiBzb2xkIFJFWCB0b2tlbnMgaXMgZGVkdWN0ZWQgZnJvbSB7e2Zyb219feKAmXMgdm90ZSBzdGFrZSwgYW5kIHZvdGVzIGFyZSB1cGRhdGVkIGFjY29yZGluZ2x5LgoKRGVwZW5kaW5nIG9uIHRoZSBtYXJrZXQgY29uZGl0aW9ucywgaXQgbWF5IG5vdCBiZSBwb3NzaWJsZSB0byBmaWxsIHRoZSBlbnRpcmUgc2VsbCBvcmRlciBpbW1lZGlhdGVseS4gSW4gc3VjaCBhIGNhc2UsIHRoZSBzZWxsIG9yZGVyIGlzIGFkZGVkIHRvIHRoZSBiYWNrIG9mIGEgc2VsbCBxdWV1ZS4gCkEgc2VsbCBvcmRlciBhdCB0aGUgZnJvbnQgb2YgdGhlIHNlbGwgcXVldWUgd2lsbCBhdXRvbWF0aWNhbGx5IGJlIGV4ZWN1dGVkIHdoZW4gdGhlIG1hcmtldCBjb25kaXRpb25zIGFsbG93IGZvciB0aGUgZW50aXJlIG9yZGVyIHRvIGJlIGZpbGxlZC4gUmVnYXJkbGVzcyBvZiB0aGUgbWFya2V0IGNvbmRpdGlvbnMsIAp0aGUgc3lzdGVtIGlzIGRlc2lnbmVkIHRvIGV4ZWN1dGUgdGhpcyBzZWxsIG9yZGVyIHdpdGhpbiAzMCBkYXlzLiB7e2Zyb219fSBjYW4gY2FuY2VsIHRoZSBvcmRlciBhdCBhbnkgdGltZSBiZWZvcmUgaXQgaXMgZmlsbGVkIHVzaW5nIHRoZSBjbmNscmV4b3JkZXIgYWN0aW9uLgAAAAC4Y7LCBnNldGFiaegCLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogRGVwbG95IENvbnRyYWN0IEFCSQpzdW1tYXJ5OiAnRGVwbG95IGNvbnRyYWN0IEFCSSBvbiBhY2NvdW50IHt7bm93cmFwIGFjY291bnR9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hY2NvdW50LnBuZyMzZDU1YTJmYzNhNWMyMGI0NTZmNTY1N2ZhZjY2NmJjMjVmZmQwNmY0ODM2YzVlODI1NmY3NDExNDliMGIyOTRmCi0tLQoKRGVwbG95IHRoZSBBQkkgZmlsZSBhc3NvY2lhdGVkIHdpdGggdGhlIGNvbnRyYWN0IG9uIGFjY291bnQge3thY2NvdW50fX0uAICuKCNkssIKc2V0YWNjdGNwdZMGLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogRXhwbGljaXRseSBNYW5hZ2UgdGhlIENQVSBRdW90YSBvZiBBY2NvdW50CnN1bW1hcnk6ICdFeHBsaWNpdGx5IG1hbmFnZSB0aGUgQ1BVIGJhbmR3aWR0aCBxdW90YSBvZiBhY2NvdW50IHt7bm93cmFwIGFjY291bnR9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hZG1pbi5wbmcjOWJmMWNlYzY2NDg2M2JkNmFhYWMwZjgxNGIyMzVmODc5OWZiMDJjODUwZTlhYTVkYTM0ZThhMDA0YmQ2NTE4ZQotLS0KCnt7I2lmX2hhc192YWx1ZSBjcHVfd2VpZ2h0fX0KRXhwbGljaXRseSBtYW5hZ2UgdGhlIENQVSBiYW5kd2lkdGggcXVvdGEgb2YgYWNjb3VudCB7e2FjY291bnR9fSBieSBwaW5uaW5nIGl0IHRvIGEgd2VpZ2h0IG9mIHt7Y3B1X3dlaWdodH19LgoKe3thY2NvdW50fX0gY2FuIHN0YWtlIGFuZCB1bnN0YWtlLCBob3dldmVyLCBpdCB3aWxsIG5vdCBjaGFuZ2UgdGhlaXIgQ1BVIGJhbmR3aWR0aCBxdW90YSBhcyBsb25nIGFzIGl0IHJlbWFpbnMgcGlubmVkLgp7e2Vsc2V9fQpVbnBpbiB0aGUgQ1BVIGJhbmR3aWR0aCBxdW90YSBvZiBhY2NvdW50IHt7YWNjb3VudH19LiBUaGUgQ1BVIGJhbmR3aWR0aCBxdW90YSBvZiB7e2FjY291bnR9fSB3aWxsIGJlIGRyaXZlbiBieSB0aGUgY3VycmVudCB0b2tlbnMgc3Rha2VkIGZvciBDUFUgYmFuZHdpZHRoIGJ5IHt7YWNjb3VudH19Lgp7ey9pZl9oYXNfdmFsdWV9fQBAVjMjZLLCCnNldGFjY3RuZXSXBi0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IEV4cGxpY2l0bHkgTWFuYWdlIHRoZSBORVQgUXVvdGEgb2YgQWNjb3VudApzdW1tYXJ5OiAnRXhwbGljaXRseSBtYW5hZ2UgdGhlIE5FVCBiYW5kd2lkdGggcXVvdGEgb2YgYWNjb3VudCB7e25vd3JhcCBhY2NvdW50fX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgp7eyNpZl9oYXNfdmFsdWUgbmV0X3dlaWdodH19CkV4cGxpY2l0bHkgbWFuYWdlIHRoZSBuZXR3b3JrIGJhbmR3aWR0aCBxdW90YSBvZiBhY2NvdW50IHt7YWNjb3VudH19IGJ5IHBpbm5pbmcgaXQgdG8gYSB3ZWlnaHQgb2Yge3tuZXRfd2VpZ2h0fX0uCgp7e2FjY291bnR9fSBjYW4gc3Rha2UgYW5kIHVuc3Rha2UsIGhvd2V2ZXIsIGl0IHdpbGwgbm90IGNoYW5nZSB0aGVpciBORVQgYmFuZHdpZHRoIHF1b3RhIGFzIGxvbmcgYXMgaXQgcmVtYWlucyBwaW5uZWQuCnt7ZWxzZX19ClVucGluIHRoZSBORVQgYmFuZHdpZHRoIHF1b3RhIG9mIGFjY291bnQge3thY2NvdW50fX0uIFRoZSBORVQgYmFuZHdpZHRoIHF1b3RhIG9mIHt7YWNjb3VudH19IHdpbGwgYmUgZHJpdmVuIGJ5IHRoZSBjdXJyZW50IHRva2VucyBzdGFrZWQgZm9yIE5FVCBiYW5kd2lkdGggYnkge3thY2NvdW50fX0uCnt7L2lmX2hhc192YWx1ZX19AIA0NyNkssIKc2V0YWNjdHJhbcUFLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogRXhwbGljaXRseSBNYW5hZ2UgdGhlIFJBTSBRdW90YSBvZiBBY2NvdW50CnN1bW1hcnk6ICdFeHBsaWNpdGx5IG1hbmFnZSB0aGUgUkFNIHF1b3RhIG9mIGFjY291bnQge3tub3dyYXAgYWNjb3VudH19JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FkbWluLnBuZyM5YmYxY2VjNjY0ODYzYmQ2YWFhYzBmODE0YjIzNWY4Nzk5ZmIwMmM4NTBlOWFhNWRhMzRlOGEwMDRiZDY1MThlCi0tLQoKe3sjaWZfaGFzX3ZhbHVlIHJhbV9ieXRlc319CkV4cGxpY2l0bHkgbWFuYWdlIHRoZSBSQU0gcXVvdGEgb2YgYWNjb3VudCB7e2FjY291bnR9fSBieSBwaW5uaW5nIGl0IHRvIHt7cmFtX2J5dGVzfX0gYnl0ZXMuCgp7e2FjY291bnR9fSBjYW4gYnV5IGFuZCBzZWxsIFJBTSwgaG93ZXZlciwgaXQgd2lsbCBub3QgY2hhbmdlIHRoZWlyIFJBTSBxdW90YSBhcyBsb25nIGFzIGl0IHJlbWFpbnMgcGlubmVkLgp7e2Vsc2V9fQpVbnBpbiB0aGUgUkFNIHF1b3RhIG9mIGFjY291bnQge3thY2NvdW50fX0uIFRoZSBSQU0gcXVvdGEgb2Yge3thY2NvdW50fX0gd2lsbCBiZSBkcml2ZW4gYnkgdGhlIGN1cnJlbnQgUkFNIGhvbGRpbmdzIG9mIHt7YWNjb3VudH19Lgp7ey9pZl9oYXNfdmFsdWV9fQAAzk66aLLCCnNldGFsaW1pdHPrAy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IEFkanVzdCBSZXNvdXJjZSBMaW1pdHMgb2YgQWNjb3VudApzdW1tYXJ5OiAnQWRqdXN0IHJlc291cmNlIGxpbWl0cyBvZiBhY2NvdW50IHt7bm93cmFwIGFjY291bnR9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hZG1pbi5wbmcjOWJmMWNlYzY2NDg2M2JkNmFhYWMwZjgxNGIyMzVmODc5OWZiMDJjODUwZTlhYTVkYTM0ZThhMDA0YmQ2NTE4ZQotLS0KCnt7JGFjdGlvbi5hY2NvdW50fX0gdXBkYXRlcyB7e2FjY291bnR9feKAmXMgcmVzb3VyY2UgbGltaXRzIHRvIGhhdmUgYSBSQU0gcXVvdGEgb2Yge3tyYW1fYnl0ZXN9fSBieXRlcywgYSBORVQgYmFuZHdpZHRoIHF1b3RhIG9mIHt7bmV0X3dlaWdodH19IGFuZCBhIENQVSBiYW5kd2lkdGggcXVvdGEgb2Yge3tjcHVfd2VpZ2h0fX0uAAAAQCWKssIHc2V0Y29kZdsCLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogRGVwbG95IENvbnRyYWN0IENvZGUKc3VtbWFyeTogJ0RlcGxveSBjb250cmFjdCBjb2RlIG9uIGFjY291bnQge3tub3dyYXAgYWNjb3VudH19JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FjY291bnQucG5nIzNkNTVhMmZjM2E1YzIwYjQ1NmY1NjU3ZmFmNjY2YmMyNWZmZDA2ZjQ4MzZjNWU4MjU2Zjc0MTE0OWIwYjI5NGYKLS0tCgpEZXBsb3kgY29tcGlsZWQgY29udHJhY3QgY29kZSB0byB0aGUgYWNjb3VudCB7e2FjY291bnR9fS4wqcsmrumywgxzZXRpbmZsYXRpb26tBi0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFNldCBJbmZsYXRpb24gUGFyYW1ldGVycwpzdW1tYXJ5OiAnU2V0IGluZmxhdGlvbiBwYXJhbWV0ZXJzJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FkbWluLnBuZyM5YmYxY2VjNjY0ODYzYmQ2YWFhYzBmODE0YjIzNWY4Nzk5ZmIwMmM4NTBlOWFhNWRhMzRlOGEwMDRiZDY1MThlCi0tLQoKSW4gdGhpcyBQdXJlRU9TIHByb2ZpbGUgdGhpcyBjb21wYXRpYmlsaXR5IGFjdGlvbiBhbHdheXMgcmVqZWN0cy4gVGhlIGZpeGVkIGhhbHZpbmcgcG9saWN5IGNhbm5vdCBiZSBvdmVycmlkZGVuIHRocm91Z2ggbGVnYWN5IGluZmxhdGlvbi9wYXktZmFjdG9yL3NjaGVkdWxlIGFjdGlvbnM7IGNoYW5nZXMgcmVxdWlyZSByZXZpZXdlZCBzeXN0ZW0gY29kZS4KCnt7JGFjdGlvbi5hY2NvdW50fX0gc2V0cyB0aGUgaW5mbGF0aW9uIHBhcmFtZXRlcnMgYXMgZm9sbG93czoKCiogQW5udWFsIGluZmxhdGlvbiByYXRlIChpbiB1bml0cyBvZiBhIGh1bmRyZWR0aCBvZiBhIHBlcmNlbnQpOiB7e2FubnVhbF9yYXRlfX0KKiBGcmFjdGlvbiBvZiBpbmZsYXRpb24gdXNlZCB0byByZXdhcmQgYmxvY2sgcHJvZHVjZXJzOiAxMDAwMC97e2luZmxhdGlvbl9wYXlfZmFjdG9yfX0KKiBGcmFjdGlvbiBvZiBibG9jayBwcm9kdWNlciByZXdhcmRzIHRvIGJlIGRpc3RyaWJ1dGVkIHByb3BvcnRpb25hbCB0byBibG9ja3MgcHJvZHVjZWQ6IDEwMDAwL3t7dm90ZXBheV9mYWN0b3J9fQAAAHk6I7PCCHNldG1haW50AAAAwNJcU7PCCXNldHBhcmFtc8UCLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU2V0IFN5c3RlbSBQYXJhbWV0ZXJzCnN1bW1hcnk6ICdTZXQgU3lzdGVtIFBhcmFtZXRlcnMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgp7eyRhY3Rpb24uYWNjb3VudH19IHNldHMgc3lzdGVtIHBhcmFtZXRlcnMgdG86Cnt7dG9fanNvbiBwYXJhbXN9fXBpRmZ5U7PCDHNldHBheWZhY3RvcssFLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU2V0IFBheSBGYWN0b3JzCnN1bW1hcnk6ICdTZXQgcGF5IGZhY3RvcnMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgpJbiB0aGlzIFB1cmVFT1MgcHJvZmlsZSB0aGlzIGNvbXBhdGliaWxpdHkgYWN0aW9uIGFsd2F5cyByZWplY3RzLiBUaGUgZml4ZWQgaGFsdmluZyBwb2xpY3kgY2Fubm90IGJlIG92ZXJyaWRkZW4gdGhyb3VnaCBsZWdhY3kgaW5mbGF0aW9uL3BheS1mYWN0b3Ivc2NoZWR1bGUgYWN0aW9uczsgY2hhbmdlcyByZXF1aXJlIHJldmlld2VkIHN5c3RlbSBjb2RlLgoKe3skYWN0aW9uLmFjY291bnR9fSBzZXRzIHRoZSBpbmZsYXRpb24gcGFyYW1ldGVycyBhcyBmb2xsb3dzOgoKKiBGcmFjdGlvbiBvZiBpbmZsYXRpb24gdXNlZCB0byByZXdhcmQgYmxvY2sgcHJvZHVjZXJzOiAxMDAwMC97e2luZmxhdGlvbl9wYXlfZmFjdG9yfX0KKiBGcmFjdGlvbiBvZiBibG9jayBwcm9kdWNlciByZXdhcmRzIHRvIGJlIGRpc3RyaWJ1dGVkIHByb3BvcnRpb25hbCB0byBibG9ja3MgcHJvZHVjZWQ6IDEwMDAwL3t7dm90ZXBheV9mYWN0b3J9fQAAAGC7W7PCB3NldHByaXaCBC0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IE1ha2UgYW4gQWNjb3VudCBQcml2aWxlZ2VkIG9yIFVucHJpdmlsZWdlZApzdW1tYXJ5OiAne3sjaWYgaXNfcHJpdn19TWFrZSB7e25vd3JhcCBhY2NvdW50fX0gcHJpdmlsZWdlZHt7ZWxzZX19UmVtb3ZlIHByaXZpbGVnZWQgc3RhdHVzIG9mIHt7bm93cmFwIGFjY291bnR9fXt7L2lmfX0nCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgp7eyNpZiBpc19wcml2fX0Ke3skYWN0aW9uLmFjY291bnR9fSBtYWtlcyB7e2FjY291bnR9fSBwcml2aWxlZ2VkLgp7e2Vsc2V9fQp7eyRhY3Rpb24uYWNjb3VudH19IHJlbW92ZXMgcHJpdmlsZWdlZCBzdGF0dXMgb2Yge3thY2NvdW50fX0uCnt7L2lmfX0AAAAASHOzwgZzZXRyYW3bAi0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IENvbmZpZ3VyZSB0aGUgQXZhaWxhYmxlIFJBTQpzdW1tYXJ5OiAnQ29uZmlndXJlIHRoZSBhdmFpbGFibGUgUkFNJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FkbWluLnBuZyM5YmYxY2VjNjY0ODYzYmQ2YWFhYzBmODE0YjIzNWY4Nzk5ZmIwMmM4NTBlOWFhNWRhMzRlOGEwMDRiZDY1MThlCi0tLQoKe3skYWN0aW9uLmFjY291bnR9fSBjb25maWd1cmVzIHRoZSBhdmFpbGFibGUgUkFNIHRvIHt7bWF4X3JhbV9zaXplfX0gYnl0ZXMuAIDK5kpzs8IKc2V0cmFtcmF0ZfoCLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU2V0IHRoZSBSYXRlIG9mIEluY3JlYXNlIG9mIFJBTQpzdW1tYXJ5OiAnU2V0IHRoZSByYXRlIG9mIGluY3JlYXNlIG9mIFJBTSBwZXIgYmxvY2snCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgp7eyRhY3Rpb24uYWNjb3VudH19IHNldHMgdGhlIHJhdGUgb2YgaW5jcmVhc2Ugb2YgUkFNIHRvIHt7Ynl0ZXNfcGVyX2Jsb2NrfX0gYnl0ZXMvYmxvY2suAAAAAHR1s8IGc2V0cmV4rAMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBBZGp1c3QgUkVYIFBvb2wgVmlydHVhbCBCYWxhbmNlCnN1bW1hcnk6ICdBZGp1c3QgUkVYIFBvb2wgVmlydHVhbCBCYWxhbmNlJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FkbWluLnBuZyM5YmYxY2VjNjY0ODYzYmQ2YWFhYzBmODE0YjIzNWY4Nzk5ZmIwMmM4NTBlOWFhNWRhMzRlOGEwMDRiZDY1MThlCi0tLQoKe3skYWN0aW9uLmFjY291bnR9fSBhZGp1c3RzIFJFWCBsb2FuIHJhdGUgYnkgc2V0dGluZyBSRVggcG9vbCB2aXJ0dWFsIGJhbGFuY2UgdG8ge3tiYWxhbmNlfX0uIE5vIHRva2VuIHRyYW5zZmVyIG9yIGlzc3VlIGlzIGV4ZWN1dGVkIGluIHRoaXMgYWN0aW9uLqCuzkZ2dbPCDHNldHJleG1hdHVyZf4ELS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU2V0IFJFWCBNYXR1cml0eSBTZXR0aW5ncwpzdW1tYXJ5OiAnU2V0cyB0aGUgb3B0aW9ucyBmb3IgUkVYIG1hdHVyaXR5IGJ1Y2tldHMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3sjaWYgbnVtX29mX21hdHVyaXR5X2J1Y2tldHN9fQogIFNldHMgdGhlIG51bWJlcnMgb2YgbWF0dXJpdHkgYnVja2V0cyB0byAne3tudW1fb2ZfbWF0dXJpdHlfYnVja2V0c319Jwp7ey9pZn19Cgp7eyNpZiBzZWxsX21hdHVyZWRfcmV4fX0KICBTZXRzIHdoZXRoZXIgb3Igbm90IHRvIGltbWVkaWF0ZWx5IHNlbGwgbWF0dXJlZCBSRVggdG8gJ3t7c2VsbF9tYXR1cmVkX3JleH19Jwp7ey9pZn19Cgp7eyNpZiBidXlfcmV4X3RvX3NhdmluZ3N9fQogIFNldHMgd2hldGhlciBvciBub3QgdG8gaW1tZWRpYXRlbHkgbW92ZSBwdXJjaGFzZWQgUkVYIHRvIHNhdmluZ3MgdG8gJ3t7YnV5X3JleF90b19zYXZpbmdzfX0nCnt7L2lmfX0AVNRJNYSzwgtzZXRzY2hlZHVsZZwFLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogU2V0IEFubnVhbCBSYXRlIFNjaGVkdWxlCnN1bW1hcnk6ICdTZXQgYW5udWFsIHJhdGUgcGFyYW1ldGVycycKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hZG1pbi5wbmcjOWJmMWNlYzY2NDg2M2JkNmFhYWMwZjgxNGIyMzVmODc5OWZiMDJjODUwZTlhYTVkYTM0ZThhMDA0YmQ2NTE4ZQotLS0KCkluIHRoaXMgUHVyZUVPUyBwcm9maWxlIHRoaXMgY29tcGF0aWJpbGl0eSBhY3Rpb24gYWx3YXlzIHJlamVjdHMuIFRoZSBmaXhlZCBoYWx2aW5nIHBvbGljeSBjYW5ub3QgYmUgb3ZlcnJpZGRlbiB0aHJvdWdoIGxlZ2FjeSBpbmZsYXRpb24vcGF5LWZhY3Rvci9zY2hlZHVsZSBhY3Rpb25zOyBjaGFuZ2VzIHJlcXVpcmUgcmV2aWV3ZWQgc3lzdGVtIGNvZGUuCgp7eyRhY3Rpb24uYWNjb3VudH19IHNldHMgYSBwcmUtZGV0ZXJtaW5lZCBpbmZsYXRpb24gc2NoZWR1bGUgdG8gYWRqdXN0IHBhcmFtZXRlcnMgYXMgZm9sbG93czoKCiogU3RhcnQgdGltZSBvZiB0aGUgc2NoZWR1bGU6IHt7c3RhcnRfdGltZX19CiogVGhlIGNvbnRpbnVvdXMgcmF0ZSBvZiBpbmZsYXRpb246IHt7Y29udGludW91c19yYXRlfX0AQJr0qJizwgpzZXR0bGVib25kqAJBZnRlciB0aGUgYmxhY2tsaXN0IGRlY2lzaW9uIGJlY29tZXMgaXJyZXZlcnNpYmxlLCBzZXR0bGUgaXRzIGZvcmZlaXR1cmUgb25jZSBmcm9tIGVvc2lvLmJvbmQgaW50byB0aGUgZGVkaWNhdGVkIGxvY2tlZCBlb3Npby5ic2xhc2ggcG9vbC4gQW55b25lIG1heSBzdWJtaXQ7IG5vIGNhbGxlciBjaG9vc2VzIHRoZSBhbW91bnQgb3IgcmVjaXBpZW50LiBUaGUgcG9vbCBoYXMgbm8gd2l0aGRyYXdhbCBhY3Rpb24uIEJsYWNrbGlzdCBhY2NvdW50aW5nIGl0c2VsZiBzZW5kcyBubyBleHRlcm5hbCBub3RpZmljYXRpb25zLjDnxjQ3lB3HDHN3aXRjaHRvc3ZubgDAj8qGqajS1Ax1bmRlbGVnYXRlYneWBy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFVuc3Rha2UgVG9rZW5zIGZvciBORVQgYW5kL29yIENQVQpzdW1tYXJ5OiAnVW5zdGFrZSB0b2tlbnMgZm9yIE5FVCBhbmQvb3IgQ1BVIGZyb20ge3tub3dyYXAgcmVjZWl2ZXJ9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXNvdXJjZS5wbmcjMzgzMGYxY2U4Y2IwN2Y3NzU3ZGJjZjM4M2IxZWMxYjExOTE0YWMzNGExZjlkOGIwNjVmMDc2MDBmYTlkYWMxOQotLS0KCnt7ZnJvbX19IHVuc3Rha2VzIGZyb20ge3tyZWNlaXZlcn19IHt7dW5zdGFrZV9uZXRfcXVhbnRpdHl9fSBmb3IgTkVUIGJhbmR3aWR0aCBhbmQge3t1bnN0YWtlX2NwdV9xdWFudGl0eX19IGZvciBDUFUgYmFuZHdpZHRoLgoKVGhlIHN1bSBvZiB0aGVzZSB0d28gcXVhbnRpdGllcyB3aWxsIGJlIHJlbW92ZWQgZnJvbSB0aGUgdm90ZSB3ZWlnaHQgb2Yge3tyZWNlaXZlcn19IGFuZCB3aWxsIGJlIG1hZGUgYXZhaWxhYmxlIHRvIHt7ZnJvbX19IGFmdGVyIGFuIHVuaW50ZXJydXB0ZWQgMyBkYXkgcGVyaW9kIHdpdGhvdXQgZnVydGhlciB1bnN0YWtpbmcgYnkge3tmcm9tfX0uIEFmdGVyIHRoZSB1bmludGVycnVwdGVkIDMgZGF5IHBlcmlvZCBwYXNzZXMsIHRoZSBzeXN0ZW0gd2lsbCBhdHRlbXB0IHRvIGF1dG9tYXRpY2FsbHkgcmV0dXJuIHRoZSBmdW5kcyB0byB7e2Zyb219feKAmXMgcmVndWxhciB0b2tlbiBiYWxhbmNlLiBIb3dldmVyLCB0aGlzIGF1dG9tYXRpYyByZWZ1bmQgbWF5IG9jY2FzaW9uYWxseSBmYWlsIHdoaWNoIHdpbGwgdGhlbiByZXF1aXJlIHt7ZnJvbX19IHRvIG1hbnVhbGx5IGNsYWltIHRoZSBmdW5kcyB3aXRoIHRoZSByZWZ1bmQgYWN0aW9uLgBAy9rA6eLUCnVubGlua2F1dGiGBS0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFVubGluayBBY3Rpb24gZnJvbSBQZXJtaXNzaW9uCnN1bW1hcnk6ICd7e25vd3JhcCBhY2NvdW50fX0gdW5zZXRzIHRoZSBtaW5pbXVtIHJlcXVpcmVkIHBlcm1pc3Npb24gZm9yIHRoZSB7eyNpZiB0eXBlfX17e25vd3JhcCB0eXBlfX0gYWN0aW9uIG9mIHRoZXt7L2lmfX0ge3tub3dyYXAgY29kZX19IGNvbnRyYWN0JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FjY291bnQucG5nIzNkNTVhMmZjM2E1YzIwYjQ1NmY1NjU3ZmFmNjY2YmMyNWZmZDA2ZjQ4MzZjNWU4MjU2Zjc0MTE0OWIwYjI5NGYKLS0tCgp7e2FjY291bnR9fSByZW1vdmVzIHRoZSBhc3NvY2lhdGlvbiBiZXR3ZWVuIHRoZSB7eyNpZiB0eXBlfX17e3R5cGV9fSBhY3Rpb24gb2YgdGhle3svaWZ9fSB7e2NvZGV9fSBjb250cmFjdCBhbmQgaXRzIG1pbmltdW0gcmVxdWlyZWQgcGVybWlzc2lvbi4KCnt7I2lmIHR5cGV9fXt7ZWxzZX19VGhpcyB3aWxsIG5vdCByZW1vdmUgYW55IGxpbmtzIGV4cGxpY2l0bHkgYXNzb2NpYXRlZCB0byBzcGVjaWZpYyBhY3Rpb25zIG9mIHt7Y29kZX19Lnt7L2lmfX0AAEj0Vqbu1Al1bnJlZ3Byb2TaBC0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFVucmVnaXN0ZXIgYXMgYSBCbG9jayBQcm9kdWNlciBDYW5kaWRhdGUKc3VtbWFyeTogJ3t7bm93cmFwIHByb2R1Y2VyfX0gdW5yZWdpc3RlcnMgYXMgYSBibG9jayBwcm9kdWNlciBjYW5kaWRhdGUnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvdm90aW5nLnBuZyNkYjI4Y2QzZGI2ZTYyZDQ1MDlhZjM2NDRjZTdkMzc3MzI5NDgyYTE0YmI0YmZhY2EyYWE1ZjE0MDBkOGU4YTg0Ci0tLQoKe3twcm9kdWNlcn19IHVucmVnaXN0ZXJzIGFzIGEgYmxvY2sgcHJvZHVjZXIgY2FuZGlkYXRlLiB7e3Byb2R1Y2VyfX0gYWNjb3VudCB3aWxsIHJldGFpbiBpdHMgdm90ZXMgYW5kIHRob3NlIHZvdGVzIGNhbiBjaGFuZ2UgYmFzZWQgb24gdm90ZXIgc3Rha2UgY2hhbmdlcyBvciB2b3RlcyByZW1vdmVkIGZyb20ge3twcm9kdWNlcn19LiBIb3dldmVyIG5ldyB2b3RlcnMgd2lsbCBub3QgYmUgYWJsZSB0byB2b3RlIGZvciB7e3Byb2R1Y2VyfX0gd2hpbGUgaXQgcmVtYWlucyB1bnJlZ2lzdGVyZWQu0NWlWUGT8dQMdW5zdGFrZXRvcmV4sQotLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBCdXkgUkVYIFRva2VucyBVc2luZyBTdGFrZWQgVG9rZW5zCnN1bW1hcnk6ICd7e25vd3JhcCBvd25lcn19IGJ1eXMgUkVYIHRva2VucyBpbiBleGNoYW5nZSBmb3IgdG9rZW5zIGN1cnJlbnRseSBzdGFrZWQgdG8gTkVUIGFuZC9vciBDUFUnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKe3tmcm9tX25ldH19IGFuZCB7e2Zyb21fY3B1fX0gYXJlIHdpdGhkcmF3biBmcm9tIHt7cmVjZWl2ZXJ9feKAmXMgTkVUIGFuZCBDUFUgYmFuZHdpZHRocyByZXNwZWN0aXZlbHkuIFRoZXNlIGZ1bmRzIGFyZSB1c2VkIHRvIHB1cmNoYXNlIFJFWCB0b2tlbnMgYXQgdGhlIGN1cnJlbnQgbWFya2V0IGV4Y2hhbmdlIHJhdGUuIEJlZm9yZSBjb252ZXJ0aW5nIHN0YWtlIHRvIFJFWCwge3tvd25lcn19LCBub3QgdGhlIHJlc291cmNlIHJlY2VpdmVyLCBtdXN0IGRpcmVjdGx5IHNlbGVjdCBleGFjdGx5IG9uZSBhY3RpdmUgcmVnaXN0ZXJlZCBwcm9kdWNlciB3aXRoIHVzYWJsZSBibG9jayBzaWduaW5nIGF1dGhvcml0eS4gUHJveHkgdm90aW5nIGlzIGRpc2FibGVkLgoKV2hpbGUgYW55IFJFWCBzaGFyZXMgcmVtYWluLCBpbmNsdWRpbmcgc2F2aW5ncyBhbmQgdW5maWxsZWQgc2VsbCBvcmRlcnMsIHRoZSBvd25lciBtYXkgc3dpdGNoIGRpcmVjdGx5IHRvIGFub3RoZXIgZWxpZ2libGUgcHJvZHVjZXIgYnV0IGNhbm5vdCBjbGVhciB0aGUgc2VsZWN0aW9uLiBBZnRlciBhbGwgc2hhcmVzIGFyZSBzb2xkIGFuZCBwZW5kaW5nIHZvdGUtc3Rha2UgY2hhbmdlcyBhcmUgc2V0dGxlZCwgdGhlIG93bmVyIG1heSBjbGVhciB0aGUgdm90ZSB3aXRob3V0IHdpdGhkcmF3aW5nIHRoZSBwZXJzb25hbCBSRVggZnVuZC4gQW4gZXhpc3RpbmcgcHJvZHVjZXIgYmVjb21pbmcgaW5hY3RpdmUgZG9lcyBub3QgcHJldmVudCBub3JtYWwgUkVYIHJlZGVtcHRpb24uCgpBIHNlbGwgb3JkZXIgb2YgdGhlIHB1cmNoYXNlZCBhbW91bnQgY2FuIG9ubHkgYmUgaW5pdGlhdGVkIGFmdGVyIHdhaXRpbmcgZm9yIHRoZSBtYXR1cml0eSBwZXJpb2Qgb2YgNCB0byA1IGRheXMgdG8gcGFzcy4gRXZlbiB0aGVuLCBkZXBlbmRpbmcgb24gdGhlIG1hcmtldCBjb25kaXRpb25zLCB0aGUgaW5pdGlhdGVkIHNlbGwgb3JkZXIgbWF5IG5vdCBiZSBleGVjdXRlZCBpbW1lZGlhdGVseS4AAAAAZKz21AZ1bnZlc3SeAy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IFVudmVzdCBUb2tlbnMKc3VtbWFyeTogJ1JlY2xhaW0gYW5kIHJldGlyZSB1bnZlc3RlZCB0b2tlbnMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvYWRtaW4ucG5nIzliZjFjZWM2NjQ4NjNiZDZhYWFjMGY4MTRiMjM1Zjg3OTlmYjAyYzg1MGU5YWE1ZGEzNGU4YTAwNGJkNjUxOGUKLS0tCgpSZWNsYWltIGFuZCByZXRpcmUge3skYWN0aW9uLnVudmVzdF9uZXRfcXVhbnRpdHl9fSBhbmQge3skYWN0aW9uLnVudmVzdF9jcHVfcXVhbnRpdHl9fSB3b3J0aCBvZiB1bnZlc3RlZCB0b2tlbnMgZnJvbSB0aGUgYWNjb3VudCB7eyRhY3Rpb24uYWNjb3VudH19LgBAy9qobFLVCnVwZGF0ZWF1dGjiAy0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IE1vZGlmeSBBY2NvdW50IFBlcm1pc3Npb24Kc3VtbWFyeTogJ0FkZCBvciB1cGRhdGUgdGhlIHt7bm93cmFwIHBlcm1pc3Npb259fSBwZXJtaXNzaW9uIG9mIHt7bm93cmFwIGFjY291bnR9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9hY2NvdW50LnBuZyMzZDU1YTJmYzNhNWMyMGI0NTZmNTY1N2ZhZjY2NmJjMjVmZmQwNmY0ODM2YzVlODI1NmY3NDExNDliMGIyOTRmCi0tLQoKTW9kaWZ5LCBhbmQgY3JlYXRlIGlmIG5lY2Vzc2FyeSwgdGhlIHt7cGVybWlzc2lvbn19IHBlcm1pc3Npb24gb2Yge3thY2NvdW50fX0gdG8gaGF2ZSBhIHBhcmVudCBwZXJtaXNzaW9uIG9mIHt7cGFyZW50fX0gYW5kIHRoZSBmb2xsb3dpbmcgYXV0aG9yaXR5Ogp7e3RvX2pzb24gYXV0aH19AADo6qpsUtUJdXBkYXRlcmV49gItLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBVcGRhdGUgUkVYIE93bmVyIFZvdGUgV2VpZ2h0CnN1bW1hcnk6ICdVcGRhdGUgdm90ZSB3ZWlnaHQgdG8gY3VycmVudCB2YWx1ZSBvZiBoZWxkIFJFWCB0b2tlbnMnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvcmV4LnBuZyNkMjI5ODM3ZmE2MmE0NjRiOWM3MWUwNjA2MGFhODYxNzlhZGYwYjNmNGUzYjhjNGY5NzAyZjRmNGIwYzM0MGE4Ci0tLQoKVXBkYXRlIHZvdGUgd2VpZ2h0IG9mIHt7b3duZXJ9fSBhY2NvdW50IHRvIGN1cnJlbnQgdmFsdWUgb2YgaGVsZCBSRVggdG9rZW5zLjCpw26rm1PVDHVwZHRyZXZpc2lvbooELS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogVXBkYXRlIFN5c3RlbSBDb250cmFjdCBSZXZpc2lvbiBOdW1iZXIKc3VtbWFyeTogJ1VwZGF0ZSBzeXN0ZW0gY29udHJhY3QgcmV2aXNpb24gbnVtYmVyJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL2FkbWluLnBuZyM5YmYxY2VjNjY0ODYzYmQ2YWFhYzBmODE0YjIzNWY4Nzk5ZmIwMmM4NTBlOWFhNWRhMzRlOGEwMDRiZDY1MThlCi0tLQoKe3skYWN0aW9uLmFjY291bnR9fSBhZHZhbmNlcyB0aGUgc3lzdGVtIGNvbnRyYWN0IHJldmlzaW9uIG51bWJlciB0byB7e3JldmlzaW9ufX0uCgpJbiB0aGlzIFB1cmVFT1MgcHJvZmlsZSB2b3RlLXBheSByZXZpc2lvbiBjaGFuZ2VzIGFyZSBkaXNhYmxlZC4gUmV3YXJkcyBkZXBlbmQgb25seSBvbiBwcm9kdWNlZCBibG9ja3M7IGEgbGVnYWN5IHJldmlzaW9uIGNhbm5vdCBlbmFibGUgdm90ZSBwYXkucBXSid6qMt0Mdm90ZXByb2R1Y2VyzRItLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBWb3RlIGZvciBCbG9jayBQcm9kdWNlcnMKc3VtbWFyeTogJ3t7bm93cmFwIHZvdGVyfX0gc2VsZWN0cyBhdCBtb3N0IG9uZSBwcm9kdWNlciBkaXJlY3RseSwgb3IgY2xlYXJzIGFuIGVsaWdpYmxlIHZvdGUnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvdm90aW5nLnBuZyNkYjI4Y2QzZGI2ZTYyZDQ1MDlhZjM2NDRjZTdkMzc3MzI5NDgyYTE0YmI0YmZhY2EyYWE1ZjE0MDBkOGU4YTg0Ci0tLQoKVGhlIHZvdGVyIGFjY291bnQncyBvd24gYXV0aG9yaXphdGlvbiBpcyByZXF1aXJlZCwgaW5jbHVkaW5nIGZvciBiMS4gVGhlIHByb3h5IG11c3QgYmUgZW1wdHkgYW5kIHRoZSBwcm9kdWNlcnMgbGlzdCBtdXN0IGNvbnRhaW4gemVybyBvciBvbmUgZW50cnkuIEEgbmV3IHNlbGVjdGlvbiBtdXN0IGJlIGFuIGFjdGl2ZSByZWdpc3RlcmVkIHByb2R1Y2VyIHdpdGggdXNhYmxlIGJsb2NrIHNpZ25pbmcgYXV0aG9yaXR5OyBpdCBuZWVkIG5vdCBhbHJlYWR5IGhhdmUgdm90ZXMgb3IgYW4gYWN0aXZlIGNvbW1pdHRlZSBzZWF0LgoKQSB6ZXJvLWJhbGFuY2Ugdm90ZXIgY2FuIGNyZWF0ZSBhIHNlbGVjdGlvbiBhdCBpdHMgb3duIFJBTSBleHBlbnNlIGJlZm9yZSBidXlpbmcgUkVYOyB0aGlzIGNyZWF0ZXMgbm8gdm90ZSB3ZWlnaHQuIEFueSBSRVggaG9sZGluZywgaW5jbHVkaW5nIGltbWF0dXJlLCBzYXZpbmdzIGFuZCBxdWV1ZWQtdG8tc2VsbCBzaGFyZXMsIHByZXZlbnRzIGNsZWFyaW5nIHRoZSBzZWxlY3Rpb24uIFN3aXRjaGluZyBkaXJlY3RseSB0byBhbm90aGVyIGVsaWdpYmxlIHByb2R1Y2VyIGlzIGF0b21pYy4gRnVsbHkgc29sZCBSRVggYW5kIHBlbmRpbmcgZmlsbGVkLW9yZGVyIHN0YWtlIGNoYW5nZXMgbXVzdCBiZSBzZXR0bGVkIGJlZm9yZSBjbGVhcmluZy4KClZvdGVzIHVzZSB2ZXJzaW9uZWQgaW50ZWdlciB0YWJsZXMgaW4gY29yZS10b2tlbiBzbWFsbGVzdCB1bml0cywgd2l0aG91dCBhIHRpbWUgbXVsdGlwbGllci4gRWFjaCB2b3RlciBhbGxvY2F0ZXMgb3duZWQgQ1BVL05FVCBzdGFrZSBwbHVzIHNldHRsZWQgUkVYIHZvdGUgc3Rha2UgdG8gYXQgbW9zdCBvbmUgcHJvZHVjZXIuIFJlcGVhdGluZyBhIHNlbGVjdGlvbiBjYW5ub3QgYWxsb2NhdGUgdGhlIHByaW5jaXBhbCB0d2ljZTsgY2hhbmdpbmcgYSBzZWxlY3Rpb24gc3VidHJhY3RzIHRoZSBvbGQgYWxsb2NhdGlvbiBhbmQgYWRkcyB0aGUgbmV3IGFsbG9jYXRpb24gYXRvbWljYWxseS4gRmlsbGVkIFJFWCBzZWxsIG9yZGVycyBpbW1lZGlhdGVseSB1cGRhdGUgdGhlaXIgb3duZXIncyBhbGxvY2F0aW9uLgoKVGhlIGZpcnN0IHBvc2l0aXZlIGFsbG9jYXRpb24gYWN0aXZhdGVzIHJld2FyZHMgd2l0aG91dCBhIGZpeGVkLXN1cHBseSBvciAxNSUgdGhyZXNob2xkLiBBIHplcm8td2VpZ2h0IGNob2ljZSBkb2VzIG5vdCBhY3RpdmF0ZSB0aGVtLiBBY3RpdmF0aW9uIGlzIG9uZS10aW1lIGFuZCB2b3RlIHJlbW92YWwgbmV2ZXIgcmVzZXRzIHRoZSBoYWx2aW5nIGNsb2NrLiBFeGlzdGluZyBwb3NpdGl2ZSBhbGxvY2F0aW9ucyBvbiBhIHByZXZpb3VzbHkgdW5hY3RpdmF0ZWQgaW50ZWdlci12MiBjaGFpbiBhY3RpdmF0ZSB1bmRlciB0aGUgdXBncmFkZWQgY29udHJhY3Qgd2l0aG91dCByZXF1aXJpbmcgYW5vdGhlciB2b3RlOyBubyBwcmUtdXBncmFkZSBiYWNrcGF5IGlzIGNyZWF0ZWQuCgpUaGlzIHByb2ZpbGUgdXNlcyBpbnRlZ2VyLXYyIHZvdGluZyB0YWJsZXMgYW5kIGRvZXMgbm90IG1pZ3JhdGUgbGVnYWN5IGZsb2F0aW5nLXBvaW50IHZvdGluZyB0YWJsZXMuIFZvdGVzIGRldGVybWluZSBjYW5kaWRhdGUgcmFua2luZywgbm90IHJld2FyZHMuIFJld2FyZHMgY2FuY2VsIHNhdmluZ3MgaXNzdWFuY2UsIGhhbHZlIGV2ZXJ5IDEsNDYxIGRheXMgZnJvbSBmaXJzdCByZXdhcmQgYWN0aXZhdGlvbiwgYW5kIGFsbG9jYXRlIGFsbCBuZXcgZnVuZGluZyBpbiBwcm9wb3J0aW9uIHRvIHVucGFpZCBwcm9kdWNlZCBibG9ja3MuIFZvdGUtcGF5IHNoYXJlcyBhcmUgbm90IGNyZWF0ZWQgb3IgdXBkYXRlZC4gWmVybyB1bnBhaWQgYmxvY2tzIGNhbm5vdCB1bmxvY2sgcmV3YXJkIGNsYWltcywgYW5kIHNlcGFyYXRlIHJhbmstb25seSBicGF5IGRpc3RyaWJ1dGlvbnMgYXJlIGRpc2FibGVkLiBQcmUtdXBncmFkZSB2b3RlLXBvb2wgYmFsYW5jZXMgYXJlIHByZXNlcnZlZCBidXQgbm8gbG9uZ2VyIGRpc3RyaWJ1dGVkIGJ5IGNsYWltcmV3YXJkcy4gVGhlIHVucGFpZC1ibG9jayBjaGVjayBpcyBub3QgYnkgaXRzZWxmIHByb29mIG9mIGZpbmFsaXR5LgCAyiZVrTLdCnZvdGV1cGRhdGUAAAAAgC0kseEHd2FzbWNmZwAAAADc3NSy4wh3aXRoZHJhd74DLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogV2l0aGRyYXcgZnJvbSBSRVggRnVuZApzdW1tYXJ5OiAnV2l0aGRyYXcge3tub3dyYXAgYW1vdW50fX0gZnJvbSB7e25vd3JhcCBvd25lcn194oCZcyBSRVggZnVuZCBieSB0cmFuc2ZlcnJpbmcgdG8ge3tvd25lcn194oCZcyBsaXF1aWQgYmFsYW5jZScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy9yZXgucG5nI2QyMjk4MzdmYTYyYTQ2NGI5YzcxZTA2MDYwYWE4NjE3OWFkZjBiM2Y0ZTNiOGM0Zjk3MDJmNGY0YjBjMzQwYTgKLS0tCgpXaXRoZHJhd3Mge3thbW91bnR9fSBmcm9tIHt7b3duZXJ9feKAmXMgUkVYIGZ1bmQgYW5kIHRyYW5zZmVyIHRoZW0gdG8ge3tvd25lcn194oCZcyBsaXF1aWQgYmFsYW5jZS4AgFfwKlWjSgpkZWxwZWVya2V5AACwV/AqVbNiC2dldHBlZXJrZXlzAACAV/AqVZm6CnJlZ3BlZXJrZXkAKQAAAKBh09wxA2k2NAAACGFiaV9oYXNoAABOUy91kzsDaTY0AAAKYmlkX3JlZnVuZAAAYAulSU89A2k2NAAADmJwX2JvbmRfY29uZmlnAAAAAKdJTz0DaTY0AAAHYnBfYm9uZAAAACBPZ2Q9A2k2NAAADmJwX21haW50ZW5hbmNlAAAAYBoadUUDaTY0AAAIcmV4X2xvYW4AAAAgTXOiSgNpNjQAABNkZWxlZ2F0ZWRfYmFuZHdpZHRoAAC+6rtoplsDaTY0AAAOZmluYWxpemVyX2luZm8ApmLJeQWnWwNpNjQAABlmaW5fa2V5X2lkX2dlbmVyYXRvcl9pbmZvAAAAAHsFp1sDaTY0AAASZmluYWxpemVyX2tleV9pbmZvAAAAQERzaGQDaTY0AAATZW9zaW9fZ2xvYmFsX3N0YXRlMgAAAGBEc2hkA2k2NAAAE2Vvc2lvX2dsb2JhbF9zdGF0ZTMAAACARHNoZANpNjQAABNlb3Npb19nbG9iYWxfc3RhdGU0AAAAYkdzaGQDaTY0AAASZW9zaW9fZ2xvYmFsX3N0YXRlgKdbld6asYkDaTY0AAAZbGFzdF9wcm9wX2ZpbmFsaXplcnNfaW5mbwAAADi5o6SZA2k2NAAACG5hbWVfYmlkAAAAYBoas5oDaTY0AAAIcmV4X2xvYW4ArkqXgqo5rQNpNjQAAA1wb3dlcnVwX29yZGVyAFQ2GYOqOa0DaTY0AAANcG93ZXJ1cF9zdGF0ZQCAwFchneitA2k2NAAADnByb2R1Y2VyX2luZm8yAMTGVyGd6K0DaTY0AAANcHJvZHVjZXJfaW5mbwAAyApeI6W5A2k2NAAADmV4Y2hhbmdlX3N0YXRlAAAAAKepl7oDaTY0AAAOcmVmdW5kX3JlcXVlc3QAAPDIRVqxugNpNjQAAA9yZXNvdXJjZV9wb2xpY3kAAM4KIn2yugNpNjQAABJyZXhfcmV0dXJuX2J1Y2tldHPgkYu0pmu4ugNpNjQAABJyZXdhcmRfcG9saWN5X2luZm8AAAAARHO6ugNpNjQAAAtyZXhfYmFsYW5jZQAAACBNvbq6A2k2NAAACHJleF9mdW5kAHx2V2cju7oDaTY0AAAMcmV4X21hdHVyaXR5AAAAIFJau7oDaTY0AAAIcmV4X3Bvb2wAAABKK227ugNpNjQAAAlyZXhfb3JkZXIAQKS0ZnW7ugNpNjQAAA9yZXhfcmV0dXJuX3Bvb2wAAACTumwyvQNpNjQAAA1yb3RhdGlvbl9pbmZvAAAAOE2DMr0DaTY0AAAScm90YXRpb25fY2FuZGlkYXRlAADAKuqkGsIDaTY0AAAOc2NoZWR1bGVzX2luZm8AAAAAq3sV1gNpNjQAAA51c2VyX3Jlc291cmNlcwCARy7SqjLdA2k2NAAAEmRpcmVjdF92b3RlX3BvbGljeQAAAGLjqzLdA2k2NAAACnZvdGVyX2luZm/AGmpZm+ykiwNpNjQAABFsaW1pdF9hdXRoX2NoYW5nZQAAoGs6iGg8A2k2NAAAEWJsb2NrX2luZm9fcmVjb3JkAAAA2Ct4laoDaTY0AAAIcGVlcl9rZXkCDVVzZXJBZ3JlZW1lbnQpVXNlciBhZ3JlZW1lbnQgZm9yIHRoZSBjaGFpbiBjYW4gZ28gaGVyZS4WQmxvY2tQcm9kdWNlckFncmVlbWVudJgBSSwge3twcm9kdWNlcn19LCBoZXJlYnkgbm9taW5hdGUgbXlzZWxmIGZvciBjb25zaWRlcmF0aW9uIGFzIGFuIGVsZWN0ZWQgYmxvY2sgcHJvZHVjZXIuCgpBZGRpdGlvbmFsIGNvbmRpdGlvbnMgZm9yIGJsb2NrIHByb2R1Y2VyIGFncmVlbWVudCBjYW4gZ28gaGVyZS4AAAIidmFyaWFudF9ibG9ja19zaWduaW5nX2F1dGhvcml0eV92MAEaYmxvY2tfc2lnbmluZ19hdXRob3JpdHlfdjAPdmFyaWFudF92MF9kYXRhAQd2MF9kYXRhCAAAAABIc70+FGFjdGlvbl9yZXR1cm5fYnV5cmFtAMC8+khzvT4UYWN0aW9uX3JldHVybl9idXlyYW0AsMr+SHO9PhRhY3Rpb25fcmV0dXJuX2J1eXJhbQDAigpLc70+FGFjdGlvbl9yZXR1cm5fYnV5cmFtAAAAYF59pLkZYWN0aW9uX3JldHVybl9yYW10cmFuc2ZlcgCuWniam6W5GWFjdGlvbl9yZXR1cm5fcmFtdHJhbnNmZXIAAABAmhujwhVhY3Rpb25fcmV0dXJuX3NlbGxyYW0AsFfwKlWzYhFnZXRwZWVya2V5c19yZXNfdAA="
+    },
+    "eosio.token": {
+      "account_name": "eosio.token",
+      "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+      "abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+      "abi": "DmVvc2lvOjphYmkvMS4yAAoHYWNjb3VudAABB2JhbGFuY2UFYXNzZXQFY2xvc2UAAgVvd25lcgRuYW1lBnN5bWJvbAZzeW1ib2wGY3JlYXRlAAIGaXNzdWVyBG5hbWUObWF4aW11bV9zdXBwbHkFYXNzZXQOY3VycmVuY3lfc3RhdHMAAwZzdXBwbHkFYXNzZXQKbWF4X3N1cHBseQVhc3NldAZpc3N1ZXIEbmFtZQVpc3N1ZQADAnRvBG5hbWUIcXVhbnRpdHkFYXNzZXQEbWVtbwZzdHJpbmcKaXNzdWVmaXhlZAADAnRvBG5hbWUGc3VwcGx5BWFzc2V0BG1lbW8Gc3RyaW5nBG9wZW4AAwVvd25lcgRuYW1lBnN5bWJvbAZzeW1ib2wJcmFtX3BheWVyBG5hbWUGcmV0aXJlAAIIcXVhbnRpdHkFYXNzZXQEbWVtbwZzdHJpbmcMc2V0bWF4c3VwcGx5AAIGaXNzdWVyBG5hbWUObWF4aW11bV9zdXBwbHkFYXNzZXQIdHJhbnNmZXIABARmcm9tBG5hbWUCdG8EbmFtZQhxdWFudGl0eQVhc3NldARtZW1vBnN0cmluZwgAAAAAAIVpRAVjbG9zZe4DLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogQ2xvc2UgVG9rZW4gQmFsYW5jZQpzdW1tYXJ5OiAnQ2xvc2Uge3tub3dyYXAgb3duZXJ9feKAmXMgemVybyBxdWFudGl0eSBiYWxhbmNlJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3Rva2VuLnBuZyMyMDdmZjY4YjA0MDZlYWE1NjYxOGIwOGJkYTgxZDZhMDk1NDU0M2YzNmFkYzMyOGFiMzA2NWYzMWE1YzVkNjU0Ci0tLQoKe3tvd25lcn19IGFncmVlcyB0byBjbG9zZSB0aGVpciB6ZXJvIHF1YW50aXR5IGJhbGFuY2UgZm9yIHRoZSB7e3N5bWJvbF90b19zeW1ib2xfY29kZSBzeW1ib2x9fSB0b2tlbi4KClJBTSB3aWxsIGJlIHJlZnVuZGVkIHRvIHRoZSBSQU0gcGF5ZXIgb2YgdGhlIHt7c3ltYm9sX3RvX3N5bWJvbF9jb2RlIHN5bWJvbH19IHRva2VuIGJhbGFuY2UgZm9yIHt7b3duZXJ9fS4AAAAAqGzURQZjcmVhdGWPBS0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IENyZWF0ZSBOZXcgVG9rZW4Kc3VtbWFyeTogJ0NyZWF0ZSBhIG5ldyB0b2tlbicKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy90b2tlbi5wbmcjMjA3ZmY2OGIwNDA2ZWFhNTY2MThiMDhiZGE4MWQ2YTA5NTQ1NDNmMzZhZGMzMjhhYjMwNjVmMzFhNWM1ZDY1NAotLS0KCnt7JGFjdGlvbi5hY2NvdW50fX0gYWdyZWVzIHRvIGNyZWF0ZSBhIG5ldyB0b2tlbiB3aXRoIHN5bWJvbCB7e2Fzc2V0X3RvX3N5bWJvbF9jb2RlIG1heGltdW1fc3VwcGx5fX0gdG8gYmUgbWFuYWdlZCBieSB7e2lzc3Vlcn19LgoKVGhpcyBhY3Rpb24gd2lsbCBub3QgcmVzdWx0IGFueSBhbnkgdG9rZW5zIGJlaW5nIGlzc3VlZCBpbnRvIGNpcmN1bGF0aW9uLgoKe3tpc3N1ZXJ9fSB3aWxsIGJlIGFsbG93ZWQgdG8gaXNzdWUgdG9rZW5zIGludG8gY2lyY3VsYXRpb24sIHVwIHRvIGEgbWF4aW11bSBzdXBwbHkgb2Yge3ttYXhpbXVtX3N1cHBseX19LgoKUkFNIHdpbGwgZGVkdWN0ZWQgZnJvbSB7eyRhY3Rpb24uYWNjb3VudH194oCZcyByZXNvdXJjZXMgdG8gY3JlYXRlIHRoZSBuZWNlc3NhcnkgcmVjb3Jkcy4AAAAAAKUxdgVpc3N1ZeMHLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogSXNzdWUgVG9rZW5zIGludG8gQ2lyY3VsYXRpb24Kc3VtbWFyeTogJ0lzc3VlIHt7bm93cmFwIHF1YW50aXR5fX0gaW50byBjaXJjdWxhdGlvbiBhbmQgdHJhbnNmZXIgaW50byB7e25vd3JhcCB0b3194oCZcyBhY2NvdW50JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3Rva2VuLnBuZyMyMDdmZjY4YjA0MDZlYWE1NjYxOGIwOGJkYTgxZDZhMDk1NDU0M2YzNmFkYzMyOGFiMzA2NWYzMWE1YzVkNjU0Ci0tLQoKVGhlIHRva2VuIG1hbmFnZXIgYWdyZWVzIHRvIGlzc3VlIHt7cXVhbnRpdHl9fSBpbnRvIGNpcmN1bGF0aW9uLCBhbmQgdHJhbnNmZXIgaXQgaW50byB7e3RvfX3igJlzIGFjY291bnQuCgp7eyNpZiBtZW1vfX1UaGVyZSBpcyBhIG1lbW8gYXR0YWNoZWQgdG8gdGhlIHRyYW5zZmVyIHN0YXRpbmc6Cnt7bWVtb319Cnt7L2lmfX0KCklmIHt7dG99fSBkb2VzIG5vdCBoYXZlIGEgYmFsYW5jZSBmb3Ige3thc3NldF90b19zeW1ib2xfY29kZSBxdWFudGl0eX19LCBvciB0aGUgdG9rZW4gbWFuYWdlciBkb2VzIG5vdCBoYXZlIGEgYmFsYW5jZSBmb3Ige3thc3NldF90b19zeW1ib2xfY29kZSBxdWFudGl0eX19LCB0aGUgdG9rZW4gbWFuYWdlciB3aWxsIGJlIGRlc2lnbmF0ZWQgYXMgdGhlIFJBTSBwYXllciBvZiB0aGUge3thc3NldF90b19zeW1ib2xfY29kZSBxdWFudGl0eX19IHRva2VuIGJhbGFuY2UgZm9yIHt7dG99fS4gQXMgYSByZXN1bHQsIFJBTSB3aWxsIGJlIGRlZHVjdGVkIGZyb20gdGhlIHRva2VuIG1hbmFnZXLigJlzIHJlc291cmNlcyB0byBjcmVhdGUgdGhlIG5lY2Vzc2FyeSByZWNvcmRzLgoKVGhpcyBhY3Rpb24gZG9lcyBub3QgYWxsb3cgdGhlIHRvdGFsIHF1YW50aXR5IHRvIGV4Y2VlZCB0aGUgbWF4IGFsbG93ZWQgc3VwcGx5IG9mIHRoZSB0b2tlbi4AQFLdLaUxdgppc3N1ZWZpeGVklggtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBJc3N1ZSBGaXhlZCBTdXBwbHkgb2YgVG9rZW5zIGludG8gQ2lyY3VsYXRpb24Kc3VtbWFyeTogJ0lzc3VlIHVwIHRvIHt7bm93cmFwIHN1cHBseX19IHN1cHBseSBpbnRvIGNpcmN1bGF0aW9uIGFuZCB0cmFuc2ZlciBpbnRvIHt7bm93cmFwIHRvfX3igJlzIGFjY291bnQnCmljb246IGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9BbnRlbG9wZUlPL3JlZmVyZW5jZS1jb250cmFjdHMvbWFpbi9jb250cmFjdHMvaWNvbnMvdG9rZW4ucG5nIzIwN2ZmNjhiMDQwNmVhYTU2NjE4YjA4YmRhODFkNmEwOTU0NTQzZjM2YWRjMzI4YWIzMDY1ZjMxYTVjNWQ2NTQKLS0tCgpUaGUgdG9rZW4gbWFuYWdlciBhZ3JlZXMgdG8gaXNzdWUgdG9rZW5zIHVwIHRvIHt7c3VwcGx5fX0gZml4ZWQgc3VwcGx5IGludG8gY2lyY3VsYXRpb24sIGFuZCB0cmFuc2ZlciBpdCBpbnRvIHt7dG99feKAmXMgYWNjb3VudC4KCnt7I2lmIG1lbW99fVRoZXJlIGlzIGEgbWVtbyBhdHRhY2hlZCB0byB0aGUgdHJhbnNmZXIgc3RhdGluZzoKe3ttZW1vfX0Ke3svaWZ9fQoKSWYge3t0b319IGRvZXMgbm90IGhhdmUgYSBiYWxhbmNlIGZvciB7e2Fzc2V0X3RvX3N5bWJvbF9jb2RlIHF1YW50aXR5fX0sIG9yIHRoZSB0b2tlbiBtYW5hZ2VyIGRvZXMgbm90IGhhdmUgYSBiYWxhbmNlIGZvciB7e2Fzc2V0X3RvX3N5bWJvbF9jb2RlIHF1YW50aXR5fX0sIHRoZSB0b2tlbiBtYW5hZ2VyIHdpbGwgYmUgZGVzaWduYXRlZCBhcyB0aGUgUkFNIHBheWVyIG9mIHRoZSB7e2Fzc2V0X3RvX3N5bWJvbF9jb2RlIHF1YW50aXR5fX0gdG9rZW4gYmFsYW5jZSBmb3Ige3t0b319LiBBcyBhIHJlc3VsdCwgUkFNIHdpbGwgYmUgZGVkdWN0ZWQgZnJvbSB0aGUgdG9rZW4gbWFuYWdlcuKAmXMgcmVzb3VyY2VzIHRvIGNyZWF0ZSB0aGUgbmVjZXNzYXJ5IHJlY29yZHMuCgpUaGlzIGFjdGlvbiBkb2VzIG5vdCBhbGxvdyB0aGUgdG90YWwgcXVhbnRpdHkgdG8gZXhjZWVkIHRoZSBtYXggYWxsb3dlZCBzdXBwbHkgb2YgdGhlIHRva2VuLgAAAAAAMFWlBG9wZW67BS0tLQpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IE9wZW4gVG9rZW4gQmFsYW5jZQpzdW1tYXJ5OiAnT3BlbiBhIHplcm8gcXVhbnRpdHkgYmFsYW5jZSBmb3Ige3tub3dyYXAgb3duZXJ9fScKaWNvbjogaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0FudGVsb3BlSU8vcmVmZXJlbmNlLWNvbnRyYWN0cy9tYWluL2NvbnRyYWN0cy9pY29ucy90b2tlbi5wbmcjMjA3ZmY2OGIwNDA2ZWFhNTY2MThiMDhiZGE4MWQ2YTA5NTQ1NDNmMzZhZGMzMjhhYjMwNjVmMzFhNWM1ZDY1NAotLS0KCnt7cmFtX3BheWVyfX0gYWdyZWVzIHRvIGVzdGFibGlzaCBhIHplcm8gcXVhbnRpdHkgYmFsYW5jZSBmb3Ige3tvd25lcn19IGZvciB0aGUge3tzeW1ib2xfdG9fc3ltYm9sX2NvZGUgc3ltYm9sfX0gdG9rZW4uCgpJZiB7e293bmVyfX0gZG9lcyBub3QgaGF2ZSBhIGJhbGFuY2UgZm9yIHt7c3ltYm9sX3RvX3N5bWJvbF9jb2RlIHN5bWJvbH19LCB7e3JhbV9wYXllcn19IHdpbGwgYmUgZGVzaWduYXRlZCBhcyB0aGUgUkFNIHBheWVyIG9mIHRoZSB7e3N5bWJvbF90b19zeW1ib2xfY29kZSBzeW1ib2x9fSB0b2tlbiBiYWxhbmNlIGZvciB7e293bmVyfX0uIEFzIGEgcmVzdWx0LCBSQU0gd2lsbCBiZSBkZWR1Y3RlZCBmcm9tIHt7cmFtX3BheWVyfX3igJlzIHJlc291cmNlcyB0byBjcmVhdGUgdGhlIG5lY2Vzc2FyeSByZWNvcmRzLgAAAACo67K6BnJldGlyZdEDLS0tCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogUmVtb3ZlIFRva2VucyBmcm9tIENpcmN1bGF0aW9uCnN1bW1hcnk6ICdSZW1vdmUge3tub3dyYXAgcXVhbnRpdHl9fSBmcm9tIGNpcmN1bGF0aW9uJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3Rva2VuLnBuZyMyMDdmZjY4YjA0MDZlYWE1NjYxOGIwOGJkYTgxZDZhMDk1NDU0M2YzNmFkYzMyOGFiMzA2NWYzMWE1YzVkNjU0Ci0tLQoKVGhlIHRva2VuIG1hbmFnZXIgYWdyZWVzIHRvIHJlbW92ZSB7e3F1YW50aXR5fX0gZnJvbSBjaXJjdWxhdGlvbiwgdGFrZW4gZnJvbSB0aGVpciBvd24gYWNjb3VudC4KCnt7I2lmIG1lbW99fSBUaGVyZSBpcyBhIG1lbW8gYXR0YWNoZWQgdG8gdGhlIGFjdGlvbiBzdGF0aW5nOgp7e21lbW99fQp7ey9pZn194GOtGncjs8IMc2V0bWF4c3VwcGx5tQMtLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBTZXQgTWF4IFN1cHBseQpzdW1tYXJ5OiAnU2V0IG1heCBzdXBwbHkgZm9yIHRva2VuJwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3Rva2VuLnBuZyMyMDdmZjY4YjA0MDZlYWE1NjYxOGIwOGJkYTgxZDZhMDk1NDU0M2YzNmFkYzMyOGFiMzA2NWYzMWE1YzVkNjU0Ci0tLQoKe3tpc3N1ZXJ9fSB3aWxsIGJlIGFsbG93ZWQgdG8gaXNzdWUgdG9rZW5zIGludG8gY2lyY3VsYXRpb24sIHVwIHRvIGEgbWF4aW11bSBzdXBwbHkgb2Yge3ttYXhpbXVtX3N1cHBseX19LgoKVGhpcyBhY3Rpb24gd2lsbCBub3QgcmVzdWx0IGFueSBhbnkgdG9rZW5zIGJlaW5nIGlzc3VlZCBpbnRvIGNpcmN1bGF0aW9uLgAAAFctPM3NCHRyYW5zZmVyqwctLS0Kc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBUcmFuc2ZlciBUb2tlbnMKc3VtbWFyeTogJ1NlbmQge3tub3dyYXAgcXVhbnRpdHl9fSBmcm9tIHt7bm93cmFwIGZyb219fSB0byB7e25vd3JhcCB0b319JwppY29uOiBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vQW50ZWxvcGVJTy9yZWZlcmVuY2UtY29udHJhY3RzL21haW4vY29udHJhY3RzL2ljb25zL3RyYW5zZmVyLnBuZyM1ZGZhZDBkZjcyNzcyZWUxY2NjMTU1ZTY3MGMxZDEyNGY1YzUxMjJmMWQ1MDI3NTY1ZGYzOGI0MTgwNDJkMWRkCi0tLQoKe3tmcm9tfX0gYWdyZWVzIHRvIHNlbmQge3txdWFudGl0eX19IHRvIHt7dG99fS4KCnt7I2lmIG1lbW99fVRoZXJlIGlzIGEgbWVtbyBhdHRhY2hlZCB0byB0aGUgdHJhbnNmZXIgc3RhdGluZzoKe3ttZW1vfX0Ke3svaWZ9fQoKSWYge3tmcm9tfX0gaXMgbm90IGFscmVhZHkgdGhlIFJBTSBwYXllciBvZiB0aGVpciB7e2Fzc2V0X3RvX3N5bWJvbF9jb2RlIHF1YW50aXR5fX0gdG9rZW4gYmFsYW5jZSwge3tmcm9tfX0gd2lsbCBiZSBkZXNpZ25hdGVkIGFzIHN1Y2guIEFzIGEgcmVzdWx0LCBSQU0gd2lsbCBiZSBkZWR1Y3RlZCBmcm9tIHt7ZnJvbX194oCZcyByZXNvdXJjZXMgdG8gcmVmdW5kIHRoZSBvcmlnaW5hbCBSQU0gcGF5ZXIuCgpJZiB7e3RvfX0gZG9lcyBub3QgaGF2ZSBhIGJhbGFuY2UgZm9yIHt7YXNzZXRfdG9fc3ltYm9sX2NvZGUgcXVhbnRpdHl9fSwge3tmcm9tfX0gd2lsbCBiZSBkZXNpZ25hdGVkIGFzIHRoZSBSQU0gcGF5ZXIgb2YgdGhlIHt7YXNzZXRfdG9fc3ltYm9sX2NvZGUgcXVhbnRpdHl9fSB0b2tlbiBiYWxhbmNlIGZvciB7e3RvfX0uIEFzIGEgcmVzdWx0LCBSQU0gd2lsbCBiZSBkZWR1Y3RlZCBmcm9tIHt7ZnJvbX194oCZcyByZXNvdXJjZXMgdG8gY3JlYXRlIHRoZSBuZWNlc3NhcnkgcmVjb3Jkcy4CAAAAOE9NETIDaTY0AAAHYWNjb3VudAAAAAAAkE3GA2k2NAAADmN1cnJlbmN5X3N0YXRzAAAAAAAA"
+    },
+    "eosio.key": {
+      "account_name": "eosio.key",
+      "code_hash": "1092b97ede0d06ab7cc7b54ac0fe5c6a47227e8356e3b7a44877d6a47bd6273d",
+      "abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+      "abi": "DmVvc2lvOjphYmkvMS4yACEHYmFsYW5jZQACCGFzc2V0X2lkBnVpbnQ2NAZhbW91bnQFaW50NjQGY2FuY2VsAAEHcmVxdWVzdBRjYW5jZWxsYXRpb25fcmVxdWVzdBRjYW5jZWxsYXRpb25fcmVxdWVzdAAIBGZyb20KcHVibGljX2tleQphdXRoX2Vwb2NoBnVpbnQ2NApuZXh0X2Vwb2NoBnVpbnQ2NApyZXF1ZXN0X2lkC2NoZWNrc3VtMjU2B3JlbGF5ZXIEbmFtZQlyZXdhcmRfdG8EbmFtZQdtYXhfZmVlBWFzc2V0DXJlbGF5X2ZlZV9icHMHdWludDE2JAVjbGFpbQAEAmJwBG5hbWUCdG8EbmFtZQhxdWFudGl0eQVhc3NldAdtYXhfZmVlBWFzc2V0DWNvbmZpZ3VyYXRpb24ADgd2ZXJzaW9uBnVpbnQzMghjaGFpbl9pZAtjaGVja3N1bTI1NgpkZXBsb3ltZW50C2NoZWNrc3VtMjU2C3N5c3RlbV9oYXNoC2NoZWNrc3VtMjU2DGZlZV9jb250cmFjdARuYW1lCmZlZV9zeW1ib2wGc3ltYm9sBnBvbGljeQpmZWVfcG9saWN5C25leHRfd2FsbGV0BnVpbnQ2NApuZXh0X2Fzc2V0BnVpbnQ2NAx3YWxsZXRfY291bnQGdWludDMyDWJhbGFuY2VfY291bnQGdWludDMyC2Fzc2V0X2NvdW50BnVpbnQzMhJuYXRpdmVfcGF5ZXJfY291bnQGdWludDMyCnRva2VuX2hhc2gLY2hlY2tzdW0yNTYHZGVwb3NpdAAGBGZyb20EbmFtZQ50b2tlbl9jb250cmFjdARuYW1lAnRvCnB1YmxpY19rZXkIcXVhbnRpdHkFYXNzZXQHbWF4X2ZlZQVhc3NldApyZXF1ZXN0X2lkC2NoZWNrc3VtMjU2CmZlZV9idWNrZXQAAwVvd25lcgRuYW1lB25ldHdvcmsFaW50NjQMcmVsYXlfZWFybmVkBWludDY0CmZlZV9wb2xpY3kACQttaW5pbXVtX2ZlZQVpbnQ2NAh1bml0X2ZlZQVpbnQ2NAtuZXdfcm93X2ZlZQVpbnQ2NBZtYXhpbXVtX211bHRpcGxpZXJfYnBzBnVpbnQzMg1lcG9jaF9zZWNvbmRzBnVpbnQzMgttYXhfd2FsbGV0cwZ1aW50MzIMbWF4X2JhbGFuY2VzBnVpbnQzMgptYXhfYXNzZXRzBnVpbnQzMhFtYXhfbmF0aXZlX3BheWVycwZ1aW50MzIKZmVlcmVjZWlwdAAIBnRpY2tldAtjaGVja3N1bTI1NgpyZXF1ZXN0X2lkC2NoZWNrc3VtMjU2BXRvdGFsBWFzc2V0C3JhbV9wYXltZW50BWFzc2V0DXJldGFpbmVkX2Jhc2UFYXNzZXQJcmVsYXlfZmVlBWFzc2V0D2FsbG9jYXRlZF9ieXRlcwZ1aW50MzIPcHVyY2hhc2VkX2J5dGVzBnVpbnQ2NAlmaW5pc2hvdXQAAghhc3NldF9pZAZ1aW50NjQGdGlja2V0BnVpbnQ2NARpbml0AAYIY2hhaW5faWQLY2hlY2tzdW0yNTYKZGVwbG95bWVudAtjaGVja3N1bTI1NgxmZWVfY29udHJhY3QEbmFtZQpmZWVfc3ltYm9sBnN5bWJvbAtzeXN0ZW1faGFzaAtjaGVja3N1bTI1NgZwb2xpY3kKZmVlX3BvbGljeQVrc2VuZAABB3JlcXVlc3QQdHJhbnNmZXJfcmVxdWVzdA1uYXRpdmVfY3JlZGl0AAIFb3duZXIEbmFtZQZhbW91bnQFaW50NjQHcGF5bWVudAAZBnRpY2tldAtjaGVja3N1bTI1NgpyZXF1ZXN0X2lkC2NoZWNrc3VtMjU2BGtpbmQEbmFtZQtuYXRpdmVfZnJvbQRuYW1lCW5hdGl2ZV90bwRuYW1lBXRva2VuBG5hbWUFcmVsYXkEbmFtZQhmcm9tX2tleQpwdWJsaWNfa2V5BnRvX2tleQpwdWJsaWNfa2V5CHF1YW50aXR5BWFzc2V0BG1lbW8Gc3RyaW5nCGFzc2V0X2lkBnVpbnQ2NAl3YWxsZXRfaWQGdWludDY0CmF1dGhfZXBvY2gGdWludDY0D3B1cmNoYXNlZF9ieXRlcwZ1aW50NjQEYmFzZQVpbnQ2NAdwcmVtaXVtBWludDY0BXRvdGFsBWludDY0C3JhbV9wYXltZW50BWludDY0C2ZlZV9mdW5kaW5nBWludDY0CXJhbV9ieXRlcwZ1aW50MzIIcmVjZWl2ZWQFdWludDgNcmFtX3RyYW5zZmVycwV1aW50OAtmaXJzdF9hc3NldARib29sDXJhbV9jb25maXJtZWQEYm9vbAZwYXlyYW0AAQZ0aWNrZXQLY2hlY2tzdW0yNTYHcHJpY2luZwAEBWVwb2NoBnVpbnQ2NA5tdWx0aXBsaWVyX2JwcwZ1aW50MzIRY3B1X29jY3VwYW5jeV9icHMGdWludDMyEW5ldF9vY2N1cGFuY3lfYnBzBnVpbnQzMgVwcm92ZQAEBW93bmVyCnB1YmxpY19rZXkIY2hhaW5faWQLY2hlY2tzdW0yNTYKZGVwbG95bWVudAtjaGVja3N1bTI1NhNyZWZlcmVuY2VfYmxvY2tfbnVtBnVpbnQzMgdyZWNlaXB0AAsEa2luZARuYW1lCnJlcXVlc3RfaWQLY2hlY2tzdW0yNTYOdHJhbnNhY3Rpb25faWQLY2hlY2tzdW0yNTYLbmF0aXZlX2Zyb20EbmFtZQhmcm9tX2tleQtjaGVja3N1bTI1NgZ0b19rZXkLY2hlY2tzdW0yNTYOdG9rZW5fY29udHJhY3QEbmFtZQhxdWFudGl0eQVhc3NldANmZWUFYXNzZXQHcmVsYXllcgRuYW1lCmF1dGhfZXBvY2gGdWludDY0CXJlZnVuZGZlZQAEBW93bmVyBG5hbWUCdG8EbmFtZQhxdWFudGl0eQVhc3NldAdtYXhfZmVlBWFzc2V0EHJlZ2lzdGVyZWRfYXNzZXQADwJpZAZ1aW50NjQOdG9rZW5fY29udHJhY3QEbmFtZQx0b2tlbl9zeW1ib2wGc3ltYm9sCGlkZW50aXR5C2NoZWNrc3VtMjU2B3Jlc2VydmUFaW50NjQEYnVzeQRib29sCG5vdGlmaWVkBGJvb2wKb3V0X3RpY2tldAZ1aW50NjQGb3V0X3RvBG5hbWUKb3V0X2Ftb3VudAVpbnQ2NA9yZWNlaXZlcl9iZWZvcmUFaW50NjQLcmFtX3Nwb25zb3IEbmFtZQ1yYW1fcHVyY2hhc2VkBnVpbnQ2NAhyYW1fdXNlZAZ1aW50NjQKZnVuZGluZ190eAtjaGVja3N1bTI1NghyZWdyZWxheQADAmJwBG5hbWUKcGVybWlzc2lvbgRuYW1lCGVuZHBvaW50BnN0cmluZwhyZWd0b2tlbgAEBXBheWVyBG5hbWUOdG9rZW5fY29udHJhY3QEbmFtZQx0b2tlbl9zeW1ib2wGc3ltYm9sCW1pbl9ieXRlcwZ1aW50MzIFcmVsYXkABAJicARuYW1lCnBlcm1pc3Npb24EbmFtZQhlbmRwb2ludAZzdHJpbmcHZW5hYmxlZARib29sCnJlbGF5X3JhdGUAAgJicARuYW1lB2ZlZV9icHMGdWludDE2CnNlbGZjYW5jZWwAAgVwYXllcgRuYW1lB3JlcXVlc3QUY2FuY2VsbGF0aW9uX3JlcXVlc3QHc2VsZm91dAACBXBheWVyBG5hbWUHcmVxdWVzdBJ3aXRoZHJhd2FsX3JlcXVlc3QHc2V0cmF0ZQACAmJwBG5hbWUHZmVlX2JwcwZ1aW50MTYIc2V0cmVsYXkAAgJicARuYW1lB2VuYWJsZWQEYm9vbAlzZXR0bGVyYW0AAQZ0aWNrZXQLY2hlY2tzdW0yNTYQdHJhbnNmZXJfcmVxdWVzdAALBGZyb20KcHVibGljX2tleQJ0bwpwdWJsaWNfa2V5DnRva2VuX2NvbnRyYWN0BG5hbWUIcXVhbnRpdHkFYXNzZXQEbWVtbwZzdHJpbmcKYXV0aF9lcG9jaAZ1aW50NjQKcmVxdWVzdF9pZAtjaGVja3N1bTI1NgdyZWxheWVyBG5hbWUJcmV3YXJkX3RvBG5hbWUHbWF4X2ZlZQVhc3NldA1yZWxheV9mZWVfYnBzB3VpbnQxNiQGd2FsbGV0AAQCaWQGdWludDY0A2tleQpwdWJsaWNfa2V5CGtleV9oYXNoC2NoZWNrc3VtMjU2CmF1dGhfZXBvY2gGdWludDY0CHdpdGhkcmF3AAEHcmVxdWVzdBJ3aXRoZHJhd2FsX3JlcXVlc3QSd2l0aGRyYXdhbF9yZXF1ZXN0AAsEZnJvbQpwdWJsaWNfa2V5DnRva2VuX2NvbnRyYWN0BG5hbWUCdG8EbmFtZQhxdWFudGl0eQVhc3NldARtZW1vBnN0cmluZwphdXRoX2Vwb2NoBnVpbnQ2NApyZXF1ZXN0X2lkC2NoZWNrc3VtMjU2B3JlbGF5ZXIEbmFtZQlyZXdhcmRfdG8EbmFtZQdtYXhfZmVlBWFzc2V0DXJlbGF5X2ZlZV9icHMHdWludDE2JBMAAAAARIWmQQZjYW5jZWwAAAAAAADpTEQFY2xhaW0AAAAAIDtMq0oHZGVwb3NpdAAAQK5OIXWVWgpmZWVyZWNlaXB0AAAAyJo27KZbCWZpbmlzaG91dAAAAAAAAJDddARpbml0AAAAAACANBWGBWtzZW5kAAAAAABIc72pBnBheXJhbQAAAAAAALXprQVwcm92ZQAAAAAgV6eQugdyZWNlaXB0AAAAUGqlqZe6CXJlZnVuZGZlZQAAAADeRHWZughyZWdyZWxheQAAAABTQZqZughyZWd0b2tlbgAAQFRoGrSiwgpzZWxmY2FuY2VsAAAAACBruqLCB3NlbGZvdXQAAAAAQGVzs8IHc2V0cmF0ZQAAAADeRHWzwghzZXRyZWxheQAAAJDmqpizwglzZXR0bGVyYW0AAAAA3NzUsuMId2l0aGRyYXcACgAAAADgrDA2A2k2NAAAEHJlZ2lzdGVyZWRfYXNzZXQAAABYoWmiOQNpNjQAAAdiYWxhbmNlAAAAADC3JkUDaTY0AAANY29uZmlndXJhdGlvbgAAzgoifZRaA2k2NAAACmZlZV9idWNrZXQAAFZqqe2ymQNpNjQAAA1uYXRpdmVfY3JlZGl0AAAAgE2XpqoDaTY0AAAHcGF5bWVudAAAAIBNh9ytA2k2NAAAB3ByaWNpbmcAAFbZXG+iugNpNjQAAApyZWxheV9yYXRlAAAAAGBvoroDaTY0AAAFcmVsYXkAAAAAZxWj4QNpNjQAAAZ3YWxsZXQAAAAAAAA="
+    },
+    "eosio.signup": {
+      "account_name": "eosio.signup",
+      "code_hash": "996d520ce32c01da431334fc7bf1f03755f4c82f7ae73ddf8b9d931054ae35f3",
+      "abi_hash": "ca516e15cc09daa9adf924318e43b7a1efea8573546824102cfd617a9a7c4dd9",
+      "abi": "DmVvc2lvOjphYmkvMS4yAAIIdHJhbnNmZXIABARmcm9tBG5hbWUCdG8EbmFtZQhxdWFudGl0eQVhc3NldARtZW1vBnN0cmluZwlsb2didXlyYW0ABgVwYXllcgRuYW1lCHJlY2VpdmVyBG5hbWUIcXVhbnRpdHkFYXNzZXQFYnl0ZXMFaW50NjQJcmFtX2J5dGVzBWludDY0A2ZlZQVhc3NldAAAAAAAAAAA"
+    },
+    "usd": {
+      "account_name": "usd",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "abi": "DmVvc2lvOjphYmkvMS4yAAsHYWNjb3VudAABB2JhbGFuY2UFYXNzZXQFY2xvc2UAAgVvd25lcgRuYW1lBnN5bWJvbAZzeW1ib2wGY3JlYXRlAAIGaXNzdWVyBG5hbWUObWF4aW11bV9zdXBwbHkFYXNzZXQOY3VycmVuY3lfc3RhdHMAAwZzdXBwbHkFYXNzZXQKbWF4X3N1cHBseQVhc3NldAZpc3N1ZXIEbmFtZQRpbml0AAMJcmVjaXBpZW50BG5hbWUObWF4aW11bV9zdXBwbHkFYXNzZXQOaW5pdGlhbF9zdXBwbHkFYXNzZXQFaXNzdWUAAwJ0bwRuYW1lCHF1YW50aXR5BWFzc2V0BG1lbW8Gc3RyaW5nCmlzc3VlZml4ZWQAAwJ0bwRuYW1lBnN1cHBseQVhc3NldARtZW1vBnN0cmluZwRvcGVuAAMFb3duZXIEbmFtZQZzeW1ib2wGc3ltYm9sCXJhbV9wYXllcgRuYW1lBnJldGlyZQACCHF1YW50aXR5BWFzc2V0BG1lbW8Gc3RyaW5nDHNldG1heHN1cHBseQACBmlzc3VlcgRuYW1lDm1heGltdW1fc3VwcGx5BWFzc2V0CHRyYW5zZmVyAAQEZnJvbQRuYW1lAnRvBG5hbWUIcXVhbnRpdHkFYXNzZXQEbWVtbwZzdHJpbmcJAAAAAACFaUQFY2xvc2UAAAAAAKhs1EUGY3JlYXRlAAAAAAAAkN10BGluaXQAAAAAAAClMXYFaXNzdWUAAEBS3S2lMXYKaXNzdWVmaXhlZAAAAAAAADBVpQRvcGVuAAAAAACo67K6BnJldGlyZQDgY60adyOzwgxzZXRtYXhzdXBwbHkAAAAAVy08zc0IdHJhbnNmZXIAAgAAADhPTREyA2k2NAAAB2FjY291bnQAAAAAAJBNxgNpNjQAAA5jdXJyZW5jeV9zdGF0cwAAAAAAAA=="
+    },
+    "cny": {
+      "account_name": "cny",
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e",
+      "abi": "DmVvc2lvOjphYmkvMS4yAAsHYWNjb3VudAABB2JhbGFuY2UFYXNzZXQFY2xvc2UAAgVvd25lcgRuYW1lBnN5bWJvbAZzeW1ib2wGY3JlYXRlAAIGaXNzdWVyBG5hbWUObWF4aW11bV9zdXBwbHkFYXNzZXQOY3VycmVuY3lfc3RhdHMAAwZzdXBwbHkFYXNzZXQKbWF4X3N1cHBseQVhc3NldAZpc3N1ZXIEbmFtZQRpbml0AAMJcmVjaXBpZW50BG5hbWUObWF4aW11bV9zdXBwbHkFYXNzZXQOaW5pdGlhbF9zdXBwbHkFYXNzZXQFaXNzdWUAAwJ0bwRuYW1lCHF1YW50aXR5BWFzc2V0BG1lbW8Gc3RyaW5nCmlzc3VlZml4ZWQAAwJ0bwRuYW1lBnN1cHBseQVhc3NldARtZW1vBnN0cmluZwRvcGVuAAMFb3duZXIEbmFtZQZzeW1ib2wGc3ltYm9sCXJhbV9wYXllcgRuYW1lBnJldGlyZQACCHF1YW50aXR5BWFzc2V0BG1lbW8Gc3RyaW5nDHNldG1heHN1cHBseQACBmlzc3VlcgRuYW1lDm1heGltdW1fc3VwcGx5BWFzc2V0CHRyYW5zZmVyAAQEZnJvbQRuYW1lAnRvBG5hbWUIcXVhbnRpdHkFYXNzZXQEbWVtbwZzdHJpbmcJAAAAAACFaUQFY2xvc2UAAAAAAKhs1EUGY3JlYXRlAAAAAAAAkN10BGluaXQAAAAAAAClMXYFaXNzdWUAAEBS3S2lMXYKaXNzdWVmaXhlZAAAAAAAADBVpQRvcGVuAAAAAACo67K6BnJldGlyZQDgY60adyOzwgxzZXRtYXhzdXBwbHkAAAAAVy08zc0IdHJhbnNmZXIAAgAAADhPTREyA2k2NAAAB2FjY291bnQAAAAAAJBNxgNpNjQAAA5jdXJyZW5jeV9zdGF0cwAAAAAAAA=="
+    }
+  },
+  "KEY_snapshot": {
+    "wallets": [
+      {
+        "id": 1,
+        "key": "PUB_K1_5ys66qeRfL9x4PQq8VV8evDJsv1j6zb2NyqyN3417bgJjrTGNh",
+        "key_hash": "84ff44411ec63dcba357bcf1bc23a15f887ce97609b2f19015e55f753cc55fb4",
+        "auth_epoch": 0
+      },
+      {
+        "id": 2,
+        "key": "PUB_K1_74dJFhF9f41ZA1xzH4xzmQpenu8LuPwq5Y7NQJxupG4gwukPtB",
+        "key_hash": "9cb6c9cf0c0b068bf08cbf02b18f1c534c3ec04217d4f6071f718c4a2694638c",
+        "auth_epoch": 0
+      },
+      {
+        "id": 3,
+        "key": "PUB_K1_8DjrbATAxSZ8XtGUCtkXxiMexeEZ2FdC6MfcbBnPGdYj47hZNY",
+        "key_hash": "8968870a71885793b741d55eae8c9a36fd037920cdc90fd35776d313ca0c2bd6",
+        "auth_epoch": 0
+      },
+      {
+        "id": 4,
+        "key": "PUB_K1_6uF7CtYsjW1V78PBc5NGvFpNjmdkJbx8xoFU7ctc5oCEnba3Nc",
+        "key_hash": "199775e11da31aa54a6683a17b0f1a82f9b551f696afe0e8d8906411b1888181",
+        "auth_epoch": 0
+      },
+      {
+        "id": 5,
+        "key": "PUB_K1_7uApqkx42W6rxMmA49v6nhKhDnRefKKHYbQCeTVzo1WzaWvaev",
+        "key_hash": "1b9d9c2f618d1e2ac81dabac56ffa163714dfd4ed4ab89fd504e905fd3c7ed19",
+        "auth_epoch": 0
+      },
+      {
+        "id": 6,
+        "key": "PUB_K1_8ZGAaxvpavEa38Ytgf73boMeBcyikZqiKcWSciw7mwrUpvEv6j",
+        "key_hash": "19211a186fd095b26ab42a7e898fc0264f8969016c4f86c43b2fa50de23bb34f",
+        "auth_epoch": 0
+      }
+    ],
+    "assets": [
+      {
+        "id": 1,
+        "token_contract": "eosio.token",
+        "token_symbol": "4,AIC",
+        "identity": "fb9e99db61fa57b4b209dadff455ea409f62443ffa22670891950711d13efe3b",
+        "reserve": 378342,
+        "busy": 0,
+        "notified": 0,
+        "out_ticket": 12,
+        "out_to": "",
+        "out_amount": 0,
+        "receiver_before": 0,
+        "ram_sponsor": "eosio.key",
+        "ram_purchased": 5497,
+        "ram_used": 5120,
+        "funding_tx": "90dfe0b7af8f02154f119b487400e9ef98358a6528f411e090c2a2395a1c234e"
+      },
+      {
+        "id": 2,
+        "token_contract": "usd",
+        "token_symbol": "4,USD",
+        "identity": "3a45df29983e94c2dd05a8dc0474be47f470f604bb59ffb778c21d3482b30afa",
+        "reserve": 2010000,
+        "busy": 0,
+        "notified": 0,
+        "out_ticket": 4,
+        "out_to": "",
+        "out_amount": 0,
+        "receiver_before": 0,
+        "ram_sponsor": "eosio.key",
+        "ram_purchased": 10731,
+        "ram_used": 10240,
+        "funding_tx": "3ff39cfe3afeff40d4e9ecd9fa1e6742d2156500550c7d716d75b28ec6c0f6a0"
+      },
+      {
+        "id": 3,
+        "token_contract": "cny",
+        "token_symbol": "4,CNY",
+        "identity": "7bd7bb0448754bf09c1c935e792cab91b1592898fd78afc50451e9737f2d52d9",
+        "reserve": 1980000,
+        "busy": 0,
+        "notified": 0,
+        "out_ticket": 2,
+        "out_to": "",
+        "out_amount": 0,
+        "receiver_before": 0,
+        "ram_sponsor": "eosio.key",
+        "ram_purchased": 5497,
+        "ram_used": 5120,
+        "funding_tx": "5554f57760bb5451deadd661e79bd2b68b331c7885fce5c536ee6a639ca140d9"
+      }
+    ],
+    "fees": [
+      {
+        "owner": "anthropiclab",
+        "network": 0,
+        "relay_earned": 0
+      },
+      {
+        "owner": "canadamilaai",
+        "network": 0,
+        "relay_earned": 0
+      },
+      {
+        "owner": "deepseekcore",
+        "network": 0,
+        "relay_earned": 0
+      },
+      {
+        "owner": "eosio.key",
+        "network": 1356,
+        "relay_earned": 0
+      },
+      {
+        "owner": "gptgenesisbp",
+        "network": 1680,
+        "relay_earned": 0
+      },
+      {
+        "owner": "singaporentu",
+        "network": 0,
+        "relay_earned": 0
+      }
+    ],
+    "balances": {
+      "1": [
+        {
+          "asset_id": 1,
+          "amount": 147674
+        },
+        {
+          "asset_id": 2,
+          "amount": 965000
+        },
+        {
+          "asset_id": 3,
+          "amount": 970000
+        }
+      ],
+      "2": [
+        {
+          "asset_id": 1,
+          "amount": 40000
+        },
+        {
+          "asset_id": 2,
+          "amount": 20000
+        },
+        {
+          "asset_id": 3,
+          "amount": 20000
+        }
+      ],
+      "3": [
+        {
+          "asset_id": 2,
+          "amount": 20000
+        }
+      ],
+      "4": [
+        {
+          "asset_id": 1,
+          "amount": 147632
+        },
+        {
+          "asset_id": 2,
+          "amount": 965000
+        },
+        {
+          "asset_id": 3,
+          "amount": 970000
+        }
+      ],
+      "5": [
+        {
+          "asset_id": 1,
+          "amount": 40000
+        },
+        {
+          "asset_id": 2,
+          "amount": 20000
+        },
+        {
+          "asset_id": 3,
+          "amount": 20000
+        }
+      ],
+      "6": [
+        {
+          "asset_id": 2,
+          "amount": 20000
+        }
+      ]
+    }
+  },
+  "bank_balance_atoms": 3718949158,
+  "maintenance": []
+}
