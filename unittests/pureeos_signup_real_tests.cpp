@@ -10,11 +10,14 @@ namespace {
 struct signup_real_fixture:governance_fixture {
    std::filesystem::path root{PUREEOS_SIGNUP_REAL_CONTRACTS_DIR};
    bytes signup_code,signup_abi;
+   bytes init_data;
+   digest_type init_review_hash{};
+   uint32_t authority_version=1;
    signup_real_fixture():governance_fixture(0,false) {
       auto feature=chain.control->get_protocol_feature_manager().get_protocol_feature_set().get_builtin_digest(builtin_protocol_feature_t::pureeos_rotation_context);
       push({action({permission_level{"eosio"_n,"active"_n}},"eosio"_n,"activate"_n,fc::raw::pack(*feature))},"eosio"_n);chain.produce_blocks(2);
       chain.create_accounts({"eosio.stake"_n,"eosio.rex"_n,"eosio.ram"_n,"eosio.ramfee"_n,"eosio.bpay"_n,"eosio.vpay"_n,
-         "eosio.saving"_n,"eosio.fees"_n,"eosio.reserv"_n});
+         "eosio.saving"_n,"eosio.fees"_n,"eosio.reserv"_n,"eosio.names"_n});
       deploy("eosio.token"_n,"eosio.token/eosio.token");
       BOOST_REQUIRE((chain.control->db().get<account_metadata_object,by_name>("eosio.token"_n).code_hash==digest_type("f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c")));
       call("eosio.token"_n,"create"_n,"eosio.token"_n,fc::mutable_variant_object()("issuer","eosio")("maximum_supply","2100000000.0000 AIC"));
@@ -53,11 +56,19 @@ struct signup_real_fixture:governance_fixture {
    }
    const system_account_proposal_object& creation()const{return *find_system_account_proposal(chain.control->db());}
    void propose(account_name target,int64_t payment) {
-      syspropose args{target,"developer"_n,payment,1,uint32_t(signup_code.size()),uint32_t(signup_abi.size()),
+      auto review=fc::sha256::hash("isolated real signup review");
+      if(authority_version==2) {
+         const std::string domain="PureEOS creation initializer v1";bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
+         const auto human=fc::raw::pack(init_review_hash),payload=fc::raw::pack(fc::sha256::hash(init_data.data(),init_data.size()));
+         commitment.insert(commitment.end(),human.begin(),human.end());commitment.insert(commitment.end(),payload.begin(),payload.end());
+         review=fc::sha256::hash(commitment.data(),commitment.size());
+      }
+      syspropose args{target,"developer"_n,payment,authority_version,uint32_t(signup_code.size()),uint32_t(signup_abi.size()),
          fc::sha256::hash(signup_code.data(),signup_code.size()),fc::sha256::hash(signup_abi.data(),signup_abi.size()),fc::sha256::hash("isolated real signup review")};
+      args.review_document_hash=review;
       push({action({permission_level{"developer"_n,"upgrade"_n}},"eosio"_n,"refreshgov"_n,bytes{}),action({permission_level{"developer"_n,"upgrade"_n}},args)},"developer"_n);
    }
-   void execute() {push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},sysexec{creation().proposal_id,signup_code,signup_abi})},"developer"_n);}
+   transaction_trace_ptr execute() {return push({action({permission_level{"developer"_n,"upgrade"_n},permission_level{"developer"_n,"active"_n}},sysexec{creation().proposal_id,signup_code,signup_abi,init_data,init_review_hash})},"developer"_n);}
    int64_t balance(account_name account)const {
       auto row=chain.get_row_by_account("eosio.token"_n,account,"accounts"_n,name{uint64_t(0x434941)});if(row.empty())return 0;
       fc::datastream<const char*> stream(row.data(),row.size());asset value;fc::raw::unpack(stream,value);return value.get_amount();
@@ -155,6 +166,63 @@ BOOST_AUTO_TEST_CASE(actual_native_creation_K1_R1_legacy_and_atomic_failures) {
    BOOST_CHECK(!is_protected_system_account(f.chain.control->db(),"eosio.failrm"_n));
    BOOST_TEST_MESSAGE("Real pinned WASM: native nonprivileged creation, K1/R1/legacy registration, explicit PowerUp signing and atomic failure paths; isolated controlled tester clock only.");
 }
+BOOST_AUTO_TEST_CASE(short_service_creation_preserves_real_auction_rules_and_registration) {
+   signup_real_fixture f;auto key=private_key_type::generate();const authority user(key.get_public_key());
+   BOOST_CHECK_THROW(f.native(newaccount{"alice"_n,"usd"_n,user,user},"alice"_n),fc::exception);
+   BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("usd"_n)));
+   f.propose("usd"_n,10000);f.advance_to(f.creation().execute_after);BOOST_REQUIRE_NO_THROW(f.execute());
+   BOOST_CHECK(is_protected_system_account(f.chain.control->db(),"usd"_n));
+   BOOST_CHECK((!f.chain.control->db().get<account_metadata_object,by_name>("usd"_n).is_privileged()));
+   f.call("eosio.token"_n,"transfer"_n,"alice"_n,fc::mutable_variant_object()("from","alice")("to","usd")("quantity","1.0000 AIC")("memo","usdserviceaa-"+modern(key.get_public_key())));
+   BOOST_CHECK((f.chain.control->db().find<account_object,by_name>("usdserviceaa"_n)));
+   f.authorize_new("usdserviceaa"_n,key);
+   f.call("eosio"_n,"bidname"_n,"alice"_n,fc::mutable_variant_object()("bidder","alice")("newname","bid")("bid","1.0000 AIC"));
+   BOOST_CHECK_THROW(f.propose("bid"_n,10000),fc::exception);
+   f.propose("latebid"_n,10000);
+   f.call("eosio"_n,"bidname"_n,"alice"_n,fc::mutable_variant_object()("bidder","alice")("newname","latebid")("bid","1.0000 AIC"));
+   f.advance_to(f.creation().execute_after);const auto sponsor=f.balance("developer"_n);const auto before=fc::raw::pack(f.creation());
+   BOOST_CHECK_THROW(f.execute(),fc::exception);BOOST_CHECK_EQUAL(f.balance("developer"_n),sponsor);
+   BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("latebid"_n)));
+   BOOST_CHECK(fc::raw::pack(f.creation())==before);
+}
+BOOST_AUTO_TEST_CASE(key_service_reviewed_initializer_runs_after_deployment_and_rolls_back_atomically) {
+   signup_real_fixture f;std::string code;fc::read_file_contents((f.root/"eosio.key.wasm").string(),code);
+   f.signup_code.assign(code.begin(),code.end());
+   BOOST_REQUIRE(fc::sha256::hash(code.data(),code.size())==digest_type("bc3358d79a64a42fcef367079ce77bcc261b51a39ff73481880d7f5bbf35b6b1"));
+   abi_def abi;fc::from_variant(fc::json::from_file((f.root/"eosio.key.abi").string()),abi);
+   const auto key_raw=fc::raw::pack(abi);std::ofstream raw_file(f.root/"eosio.key.raw.abi",std::ios::binary);raw_file.write(key_raw.data(),key_raw.size());raw_file.close();
+   const auto yield=abi_serializer::create_yield_function(fc::seconds(10));abi_serializer serializer(abi,yield);
+   auto configure=[&](bool valid) {
+      auto policy=fc::mutable_variant_object()("minimum_fee",100)("unit_fee",10)("new_row_fee",500)("maximum_multiplier_bps",100000)
+         ("epoch_seconds",1)("max_wallets",1000)("max_balances",4000)("max_assets",32)("max_native_payers",1000);
+      auto args=fc::mutable_variant_object()("chain_id",valid?f.chain.control->get_chain_id().str():std::string(64,'0'))
+         ("deployment",fc::sha256::hash("isolated reviewed initialization").str())("fee_contract","eosio.token")("fee_symbol","4,AIC")
+         ("system_hash","b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170")("policy",policy);
+      f.authority_version=2;f.init_review_hash=fc::sha256::hash("isolated real signup review");
+      f.init_data=serializer.variant_to_binary("init",args,yield);f.signup_abi=fc::raw::pack(abi);
+   };
+   configure(false);f.propose("eosio.key"_n,100000);f.advance_to(f.creation().execute_after);
+   const auto sponsor=f.balance("developer"_n);const auto before=fc::raw::pack(f.creation());
+   BOOST_CHECK_THROW(f.execute(),fc::exception);BOOST_CHECK_EQUAL(f.balance("developer"_n),sponsor);
+   BOOST_CHECK((!f.chain.control->db().find<account_object,by_name>("eosio.key"_n)));
+   BOOST_CHECK(!is_protected_system_account(f.chain.control->db(),"eosio.key"_n));BOOST_CHECK(fc::raw::pack(f.creation())==before);
+   f.native(syscancel{f.creation().proposal_id},"developer"_n,"upgrade"_n);
+   configure(true);f.propose("eosio.key"_n,100000);f.advance_to(f.creation().execute_after);
+   transaction_trace_ptr trace;BOOST_REQUIRE_NO_THROW(trace=f.execute());
+   const auto row=f.chain.get_row_by_account("eosio.key"_n,"eosio.key"_n,"config"_n,"config"_n);BOOST_REQUIRE(!row.empty());
+   const auto table=std::find_if(abi.tables.begin(),abi.tables.end(),[](const auto& t){return t.name=="config"_n;});BOOST_REQUIRE(table!=abi.tables.end());
+   const auto cfg=serializer.binary_to_variant(table->type,row,yield);
+   BOOST_CHECK_EQUAL(cfg["chain_id"].as_string(),f.chain.control->get_chain_id().str());
+   BOOST_CHECK_EQUAL(cfg["policy"]["minimum_fee"].as_int64(),100);
+   uint32_t stage=0,init=0,finish=0;
+   for(const auto& t:trace->action_traces)if(t.receiver==t.act.account) {
+      if(t.act.name=="sysstage"_n)stage=t.action_ordinal.value;
+      if(t.act.account=="eosio.key"_n&&t.act.name=="init"_n){init=t.action_ordinal.value;BOOST_CHECK_EQUAL(t.creator_action_ordinal.value,stage);}
+      if(t.act.name=="sysfinish"_n)finish=t.action_ordinal.value;
+   }
+   BOOST_CHECK(stage>0&&init>stage&&finish>init);
+   BOOST_CHECK((!f.chain.control->db().get<account_metadata_object,by_name>("eosio.key"_n).is_privileged()));
+}
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(pureeos_signup_wire_tests)
 BOOST_AUTO_TEST_CASE(unsigned_helper_matches_native_action_serialization) {
@@ -169,6 +237,26 @@ BOOST_AUTO_TEST_CASE(unsigned_helper_matches_native_action_serialization) {
       const auto linked=fc::raw::pack(linkauth{"developer"_n,"eosio"_n,name,"upgrade"_n});
       BOOST_CHECK_EQUAL(bundle["permission_setup_actions"].get_array().at(i++)["data"].as_string(),fc::to_hex(linked.data(),linked.size()));
    }
+}
+BOOST_AUTO_TEST_CASE(unsigned_short_helper_matches_native_action_serialization) {
+   const std::filesystem::path root{PUREEOS_SIGNUP_REAL_CONTRACTS_DIR};
+   std::string wasm,raw,review;fc::read_file_contents((root/"eosio.signup.wasm").string(),wasm);fc::read_file_contents((root/"eosio.signup.raw.abi").string(),raw);fc::read_file_contents((root/"wire-review.md").string(),review);
+   const auto bundle=fc::json::from_file((root/"unsigned-short-candidate.json").string());
+   const auto proposed=fc::raw::pack(syspropose{"usd"_n,"developer"_n,10000,1,uint32_t(wasm.size()),uint32_t(raw.size()),fc::sha256::hash(wasm.data(),wasm.size()),fc::sha256::hash(raw.data(),raw.size()),fc::sha256::hash(review.data(),review.size())});
+   BOOST_CHECK_EQUAL(bundle["proposal_actions"].get_array().at(1)["data"].as_string(),fc::to_hex(proposed.data(),proposed.size()));
+   const auto execution=fc::raw::pack(sysexec{1,bytes(wasm.begin(),wasm.end()),bytes(raw.begin(),raw.end())});
+   BOOST_CHECK_EQUAL(bundle["execution_actions"].get_array().at(0)["data"].as_string(),fc::to_hex(execution.data(),execution.size()));
+}
+BOOST_AUTO_TEST_CASE(unsigned_initializer_helper_matches_native_action_serialization) {
+   const std::filesystem::path root{PUREEOS_SIGNUP_REAL_CONTRACTS_DIR};
+   std::string wasm,raw,review;fc::read_file_contents((root/"eosio.key.wasm").string(),wasm);fc::read_file_contents((root/"eosio.key.raw.abi").string(),raw);fc::read_file_contents((root/"wire-review.md").string(),review);
+   const auto bundle=fc::json::from_file((root/"unsigned-init-candidate.json").string());
+   const bytes data{1,2,3};const auto human=fc::sha256::hash(review.data(),review.size());
+   const auto proposed=fc::raw::pack(syspropose{"eosio.key"_n,"developer"_n,100000,2,uint32_t(wasm.size()),uint32_t(raw.size()),
+      fc::sha256::hash(wasm.data(),wasm.size()),fc::sha256::hash(raw.data(),raw.size()),pureeos_governance_tests::fixture_init_commitment(human,data)});
+   BOOST_CHECK_EQUAL(bundle["proposal_actions"].get_array().at(1)["data"].as_string(),fc::to_hex(proposed.data(),proposed.size()));
+   const auto execution=fc::raw::pack(sysexec{1,bytes(wasm.begin(),wasm.end()),bytes(raw.begin(),raw.end()),data,human});
+   BOOST_CHECK_EQUAL(bundle["execution_actions"].get_array().at(0)["data"].as_string(),fc::to_hex(execution.data(),execution.size()));
 }
 BOOST_AUTO_TEST_SUITE_END()
 #endif

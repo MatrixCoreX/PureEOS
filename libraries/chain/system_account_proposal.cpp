@@ -6,6 +6,7 @@
 #include <eosio/chain/apply_context.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/asset.hpp>
+#include <eosio/chain/contract_table_objects.hpp>
 #include <algorithm>
 #include <limits>
 
@@ -44,8 +45,17 @@ authority creation_active(account_name target) {
 }
 bool valid_target(account_name target) {
    const auto text=target.to_string();
-   return text.size()>6 && text.size()<=12 && text.starts_with("eosio.") &&
+   const bool system_name=text.size()>6 && text.size()<=12 && text.starts_with("eosio.");
+   const bool short_name=!text.empty() && text.size()<12 && text.find('.')==std::string::npos && target!="eosio"_n;
+   return (system_name || short_name) &&
+          target!="eosio.dev"_n &&
           target!="eosio.prods"_n && target!="eosio.msig"_n && target!="eosio.wrap"_n && target!="eosio.null"_n;
+}
+void check_short_name_auction(const apply_context& ctx,account_name target) {
+   if(target.to_string().find('.')!=std::string::npos)return;
+   const auto* table=ctx.db.find<table_id_object,by_code_scope_table>(boost::make_tuple("eosio"_n,"eosio"_n,"namebids"_n));
+   EOS_ASSERT((!table || !ctx.db.find<key_value_object,by_scope_primary>(boost::make_tuple(table->id,target.to_uint64_t()))),
+              action_validate_exception,"short name has an existing auction bid or unclaimed award");
 }
 uint32_t review_seconds(const apply_context& ctx) {
    if(!ctx.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_seven_day_governance))return upgrade_review_seconds;
@@ -64,6 +74,20 @@ void reviewed_payload(apply_context& ctx,const system_account_proposal_object& s
               ctx.trx_context.hash_with_checktime<fc::sha256>(code.data(),code.size())==state.code_hash &&
               ctx.trx_context.hash_with_checktime<fc::sha256>(abi.data(),abi.size())==state.abi_hash,
               action_validate_exception,"creation payload differs from reviewed code/ABI");
+}
+bool reviewed_initializer(apply_context& ctx,const system_account_proposal_object& state,const bytes& data,const digest_type& human_review_hash) {
+   if(state.authority_version==creation_authority_version) {
+      EOS_ASSERT(data.empty() && human_review_hash==digest_type{},action_validate_exception,
+                 "version1 creation cannot include initialization");return false;
+   }
+   EOS_ASSERT(state.authority_version==2 && data.size()<=max_system_account_init_bytes && human_review_hash!=digest_type{},
+              action_validate_exception,"version2 creation requires a reviewed initializer of at most4096bytes");
+   const std::string domain="PureEOS creation initializer v1";bytes commitment(domain.begin(),domain.end());commitment.push_back('\0');
+   const auto review=fc::raw::pack(human_review_hash);
+   const auto payload=fc::raw::pack(ctx.trx_context.hash_with_checktime<fc::sha256>(data.data(),data.size()));
+   commitment.insert(commitment.end(),review.begin(),review.end());commitment.insert(commitment.end(),payload.begin(),payload.end());
+   EOS_ASSERT(ctx.trx_context.hash_with_checktime<fc::sha256>(commitment.data(),commitment.size())==state.review_document_hash,
+              action_validate_exception,"initializer or human review differs from the reviewed commitment");return true;
 }
 bool exact_parent_action(const apply_context& ctx,uint32_t ordinal,action_name name) {
    const auto& trace=ctx.get_current_action_trace();
@@ -99,7 +123,8 @@ void apply_eosio_syspropose(apply_context& ctx) {
    const auto* state=find_system_account_proposal(ctx.db);
    EOS_ASSERT(!state || !state->pending,action_validate_exception,"cancel or execute the previous system account proposal first");
    EOS_ASSERT((valid_target(args.target) && !ctx.db.find<account_object,by_name>(args.target)),
-              action_validate_exception,"target must be a new permitted eosio.* account");
+              action_validate_exception,"target must be a new permitted eosio.* or ordinary short account");
+   check_short_name_auction(ctx,args.target);
    EOS_ASSERT(gov.protected_accounts.size()<64 && !is_protected_system_account(ctx.db,args.target),
               action_validate_exception,"protected account capacity exhausted or target already protected");
    EOS_ASSERT(args.resource_payer!=account_name{} && !is_protected_system_account(ctx.db,args.resource_payer),
@@ -107,7 +132,7 @@ void apply_eosio_syspropose(apply_context& ctx) {
    ctx.db.get<account_object,by_name>(args.resource_payer);
    EOS_ASSERT(args.ram_payment>0 && args.ram_payment<=max_creation_ram_payment,
               action_validate_exception,"invalid bounded system account RAM payment");
-   EOS_ASSERT(args.authority_version==creation_authority_version && args.code_bytes>0 && args.code_bytes<=max_creation_code_bytes &&
+   EOS_ASSERT((args.authority_version==creation_authority_version || args.authority_version==2) && args.code_bytes>0 && args.code_bytes<=max_creation_code_bytes &&
               args.abi_bytes>0 && args.abi_bytes<=max_creation_abi_bytes && args.code_hash!=digest_type{} &&
               args.abi_hash!=digest_type{} && args.review_document_hash!=digest_type{},
               action_validate_exception,"invalid creation authority or reviewed payload bounds");
@@ -165,10 +190,12 @@ void apply_eosio_sysexec(apply_context& ctx) {
               action_validate_exception,"system account creation vetoed or effective electorate empty");
    EOS_ASSERT((valid_target(state->target) && !ctx.db.find<account_object,by_name>(state->target) && gov.protected_accounts.size()<64),
               action_validate_exception,"system account target or capacity changed");
+   check_short_name_auction(ctx,state->target);
    EOS_ASSERT((ctx.db.get<account_metadata_object,by_name>("eosio"_n).code_hash==state->system_code_hash &&
               ctx.db.get<account_metadata_object,by_name>("eosio.token"_n).code_hash==state->token_code_hash),
               action_validate_exception,"system or fee-token code changed since creation review");
    reviewed_payload(ctx,*state,args.code,args.abi);
+   (void)reviewed_initializer(ctx,*state,args.init_data,args.initialization_review_hash);
    EOS_ASSERT(!ctx.trx_context.system_upgrade,action_validate_exception,"only one reviewed system capability per transaction");
    const auto target=state->target;
    std::vector<account_name> protected_accounts(gov.protected_accounts.begin(),gov.protected_accounts.end());
@@ -183,7 +210,7 @@ void apply_eosio_sysexec(apply_context& ctx) {
    // are queued from its native handler after newaccount has actually run.
    ctx.execute_inline(action({permission_level{"eosio"_n,config::active_name},
                              permission_level{state->resource_payer,config::active_name}},
-                            sysstage{state->proposal_id,args.code,args.abi}));
+                            sysstage{state->proposal_id,args.code,args.abi,args.init_data,args.initialization_review_hash}));
 }
 
 void apply_eosio_sysstage(apply_context& ctx) {
@@ -203,7 +230,9 @@ void apply_eosio_sysstage(apply_context& ctx) {
    ctx.require_authorization("eosio"_n,config::active_name);
    ctx.require_authorization(state->resource_payer,config::active_name);
    reviewed_payload(ctx,*state,args.code,args.abi);
+   const bool initializer=reviewed_initializer(ctx,*state,args.init_data,args.initialization_review_hash);
    const auto target=state->target;
+   check_short_name_auction(ctx,target);
    const auto& account=ctx.db.get<account_object,by_name>(target);
    const auto& metadata=ctx.db.get<account_metadata_object,by_name>(target);
    const auto& manager=ctx.control.get_authorization_manager();
@@ -225,6 +254,10 @@ void apply_eosio_sysstage(apply_context& ctx) {
    direct_inline(ctx,"buyram"_n,fc::raw::pack(std::make_tuple(target,target,payment)),{{target,config::active_name}});
    ctx.execute_inline(action({permission_level{target,config::active_name}},setcode{target,0,0,args.code}));
    ctx.execute_inline(action({permission_level{target,config::active_name}},setabi{target,args.abi}));
+   if(initializer) {
+      action init;init.account=target;init.name="init"_n;init.authorization={{target,config::active_name}};init.data=args.init_data;
+      ctx.execute_inline(std::move(init));
+   }
    ctx.execute_inline(action({permission_level{"eosio"_n,config::active_name}},sysfinish{state->proposal_id}));
 }
 

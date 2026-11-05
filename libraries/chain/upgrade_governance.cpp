@@ -67,6 +67,24 @@ void link_permission(apply_context& ctx, account_name account, action_name actio
       ctx.add_ram_usage(account, config::billable_size_v<permission_link_object>);
    }
 }
+void validate_developer_delegates(const authority& auth) {
+   EOS_ASSERT(auth.threshold>0 && auth.keys.empty() && auth.waits.empty() &&
+              auth.accounts.size()>=auth.threshold,action_validate_exception,
+              "eosio.dev roles require nonempty account-based M-of-N authorities without keys or waits");
+   std::set<account_name> members;
+   for(const auto& member:auth.accounts) {
+      EOS_ASSERT(member.weight==1 && member.permission.actor!="eosio"_n &&
+                 !member.permission.actor.to_string().starts_with("eosio.") &&
+                 member.permission.permission!=config::eosio_code_name &&
+                 members.insert(member.permission.actor).second,action_validate_exception,
+                 "eosio.dev members must be distinct ordinary accounts with unit weight and signing permissions");
+   }
+}
+bool named_developer(const apply_context& ctx,account_name account) {
+   const auto* state=find_upgrade_governance(ctx.db);
+   return account=="eosio.dev"_n && state && state->developer==account &&
+          ctx.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_system_account_governance);
+}
 } // namespace
 
 const upgrade_governance_object* find_upgrade_governance(const chainbase::database& db) {
@@ -115,6 +133,20 @@ void check_system_permission_change(apply_context& ctx, account_name account) {
               "protected system permissions cannot be changed after govinit");
 }
 
+void check_developer_account_authority(apply_context& ctx,account_name account,permission_name permission,const authority& proposed) {
+   if(!named_developer(ctx,account) || (permission!=config::owner_name && permission!=config::active_name && permission!=upgrade_permission))return;
+   validate_developer_delegates(proposed);
+   const auto& manager=ctx.control.get_authorization_manager();
+   auto threshold=[&](permission_name name){return name==permission?proposed.threshold:manager.get_permission({account,name}).auth.threshold;};
+   EOS_ASSERT(threshold(config::owner_name)>=threshold(upgrade_permission) &&
+              threshold(config::active_name)>=threshold(upgrade_permission),action_validate_exception,
+              "eosio.dev owner and active thresholds cannot be weaker than upgrade");
+}
+void check_developer_account_permission_deletion(apply_context& ctx,account_name account,permission_name permission) {
+   EOS_ASSERT(!named_developer(ctx,account) || permission!=upgrade_permission,action_validate_exception,
+              "eosio.dev must retain its account-based upgrade role");
+}
+
 void check_system_code_change(apply_context& ctx, account_name account, bool abi, const bytes& payload) {
    if (!is_protected_system_account(ctx.db, account)) return;
    EOS_ASSERT(!permanently_disabled(account), action_validate_exception,
@@ -144,12 +176,27 @@ void apply_eosio_govinit(apply_context& ctx) {
               action_validate_exception, "review_seconds must match the activated governance protocol");
    EOS_ASSERT(args.developer != account_name{} && args.developer != "eosio"_n && !permanently_disabled(args.developer),
               action_validate_exception, "developer must be a separate ordinary account");
+   const bool named_role=args.developer=="eosio.dev"_n;
+   EOS_ASSERT(!args.developer.to_string().starts_with("eosio.") ||
+              (named_role && ctx.control.is_builtin_activated(builtin_protocol_feature_t::pureeos_system_account_governance)),
+              action_validate_exception,"only activated eosio.dev may be the namespaced developer identity");
    const auto& schedule = ctx.control.head_active_producers().producers;
    EOS_ASSERT(schedule.size() == 1 && schedule.front().producer_name == "eosio"_n,
               action_validate_exception, "govinit must complete during single-node bootstrap");
 
    auto& auth = ctx.control.get_mutable_authorization_manager();
    auth.get_permission({args.developer, upgrade_permission}); // Must be deliberately provisioned before sealing.
+   if(named_role) {
+      const auto& owner=auth.get_permission({args.developer,config::owner_name});
+      const auto& active=auth.get_permission({args.developer,config::active_name});
+      const auto& upgrade=auth.get_permission({args.developer,upgrade_permission});
+      for(const auto* role:{&owner,&active,&upgrade})validate_developer_delegates(role->auth.to_authority());
+      EOS_ASSERT(owner.auth.threshold>=upgrade.auth.threshold && active.auth.threshold>=upgrade.auth.threshold && upgrade.parent==active.id,
+                 action_validate_exception,"eosio.dev requires non-weaker management thresholds and active-parented upgrade");
+      const auto& metadata=ctx.db.get<account_metadata_object,by_name>(args.developer);
+      EOS_ASSERT(!metadata.is_privileged() && metadata.code_hash==digest_type{},action_validate_exception,
+                 "eosio.dev must be a nonprivileged signing identity without contract code at genesis sealing");
+   }
    const auto genesis_auth = auth.get_permission({"eosio"_n, config::active_name}).auth.to_authority();
    EOS_ASSERT(genesis_auth.threshold == 1 && genesis_auth.keys.size() == 1 && genesis_auth.keys.front().weight == 1 &&
               genesis_auth.accounts.empty() && genesis_auth.waits.empty(), action_validate_exception,
@@ -161,7 +208,7 @@ void apply_eosio_govinit(apply_context& ctx) {
    // An omitted system account must never leave a bootstrap-key or BP-controlled back door.
    for (const auto& account : ctx.db.get_index<account_index, by_id>()) {
       ctx.trx_context.checktime();
-      if (account.name.to_string().starts_with("eosio.")) targets.insert(account.name);
+      if (account.name.to_string().starts_with("eosio.") && !(named_role && account.name==args.developer)) targets.insert(account.name);
    }
    EOS_ASSERT(targets.size() <= 64 && !targets.contains(args.developer), action_validate_exception,
               "invalid protected target list or developer is itself a protected system account");
@@ -197,6 +244,8 @@ void apply_eosio_govinit(apply_context& ctx) {
    link_permission(ctx, "eosio"_n, "devveto"_n, veto_permission);
    for (auto action : {"refreshgov"_n, "devpropose"_n, "devcancel"_n, "devexec"_n})
       link_permission(ctx, args.developer, action, upgrade_permission);
+   if(named_role)for(auto action:{"syspropose"_n,"syscancel"_n,"sysexec"_n})
+      link_permission(ctx,args.developer,action,upgrade_permission);
 
    ctx.db.modify(*state, [&](auto& s) {
       s.developer = args.developer;

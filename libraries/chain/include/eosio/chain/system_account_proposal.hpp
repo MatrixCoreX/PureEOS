@@ -3,6 +3,10 @@
 
 namespace eosio::chain {
 
+// Version2 keeps sealed authorities and binds one target::init payload plus
+// the human review hash into the existing native review commitment.
+constexpr uint32_t max_system_account_init_bytes = 4096;
+
 // A separate, bounded proposal lane preserves any existing reviewed contract
 // upgrade (including a vetoed pending proposal). All actions require the new
 // protocol feature; merely installing a binary grants no creation capability.
@@ -31,6 +35,8 @@ struct syscancel {
 struct sysexec {
    uint64_t proposal_id = 0;
    bytes code, abi;
+   bytes init_data;
+   digest_type initialization_review_hash{};
    static account_name get_account() { return "eosio"_n; }
    static action_name get_name() { return "sysexec"_n; }
 };
@@ -39,6 +45,8 @@ struct sysexec {
 struct sysstage {
    uint64_t proposal_id = 0;
    bytes code, abi;
+   bytes init_data;
+   digest_type initialization_review_hash{};
    static account_name get_account() { return "eosio"_n; }
    static action_name get_name() { return "sysstage"_n; }
 };
@@ -82,8 +90,8 @@ CHAINBASE_SET_INDEX_TYPE(eosio::chain::system_account_proposal_object, eosio::ch
 FC_REFLECT(eosio::chain::syspropose, (target)(resource_payer)(ram_payment)(authority_version)(code_bytes)(abi_bytes)(code_hash)(abi_hash)(review_document_hash))
 FC_REFLECT(eosio::chain::sysveto, (voter)(proposal_id))
 FC_REFLECT(eosio::chain::syscancel, (proposal_id))
-FC_REFLECT(eosio::chain::sysexec, (proposal_id)(code)(abi))
-FC_REFLECT(eosio::chain::sysstage, (proposal_id)(code)(abi))
+FC_REFLECT(eosio::chain::sysexec, (proposal_id)(code)(abi)(init_data)(initialization_review_hash))
+FC_REFLECT(eosio::chain::sysstage, (proposal_id)(code)(abi)(init_data)(initialization_review_hash))
 FC_REFLECT(eosio::chain::sysfinish, (proposal_id))
 FC_REFLECT(eosio::chain::system_account_proposal_object,
    (proposal_id)(pending)(outcome)(target)(resource_payer)(ram_payment)(authority_version)(code_bytes)(abi_bytes)(review_seconds)

@@ -1,3 +1,10 @@
+#ifndef PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS
+#if defined(PUREEOS_TEST_BUILD) && defined(PUREEOS_TEST_GOVERNANCE_30MIN)
+#define PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS 1800
+#else
+#define PUREEOS_EXPECTED_SYSTEM_REVIEW_SECONDS 604800
+#endif
+#endif
 #include <eosio/testing/tester.hpp>
 #include <eosio/testing/bls_utils.hpp>
 #include <eosio/chain/upgrade_governance.hpp>
@@ -477,6 +484,7 @@ BOOST_AUTO_TEST_CASE(sealed_governance_replays_from_genesis) {
 }
 
 #include "pureeos_system_account_tests.inc"
+#include "pureeos_developer_identity_tests.inc"
 
 BOOST_AUTO_TEST_SUITE_END()
 

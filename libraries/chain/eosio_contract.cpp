@@ -72,7 +72,9 @@ void apply_eosio_newaccount(apply_context& context) {
    auto create = context.get_action().data_as<newaccount>();
    if (const auto* governance = find_upgrade_governance(context.db); governance && governance->developer != account_name{}) {
       const bool system_name=create.name.to_string().starts_with("eosio.");
-      const bool reviewed_creation=system_name && consume_system_account_creation(context,create);
+      const auto& permit=context.trx_context.system_upgrade;
+      const bool exact_creation_target=permit && permit->account_creation_authorized && permit->target==create.name;
+      const bool reviewed_creation=(system_name || exact_creation_target) && consume_system_account_creation(context,create);
       EOS_ASSERT(!system_name || reviewed_creation, action_validate_exception,
                  "new eosio.* accounts are disabled after governance sealing");
       if(!reviewed_creation)check_system_permission_change(context, create.name);
@@ -298,6 +300,7 @@ void apply_eosio_updateauth(apply_context& context) {
    }
 
    validate_authority_precondition(context, update.auth);
+   check_developer_account_authority(context,update.account,update.permission,update.auth);
 
 
 
@@ -347,6 +350,7 @@ void apply_eosio_deleteauth(apply_context& context) {
 
    auto remove = context.get_action().data_as<deleteauth>();
    check_system_permission_change(context, remove.account);
+   check_developer_account_permission_deletion(context,remove.account,remove.permission);
    context.require_authorization(remove.account); // only here to mark the single authority on this action as used
 
    EOS_ASSERT(remove.permission != config::active_name, action_validate_exception, "Cannot delete active authority");

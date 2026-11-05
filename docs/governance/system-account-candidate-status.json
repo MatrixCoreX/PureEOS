@@ -1,48 +1,14 @@
 {
-  "status": "REMOTE_TEST_REPAIR_38_CASES_PASS_NOT_ROLLOUT_QUALIFIED_NOT_ACTIVATED",
+  "status": "EXTENDED_SHORT_NAMES_NAMED_DEV_INITIALIZATION_REMOTE_REQUALIFICATION_PENDING",
   "base_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
   "feature": "PUREEOS_SYSTEM_ACCOUNT_GOVERNANCE",
   "enum": 500003,
   "native_build": {
-    "status": "BUILT",
-    "attempt": 4,
-    "profile": "Incremental mixed O0/O1 TEST functional build; source/object hashes verified; not performance or production qualification",
-    "changed_native_objects": {
-      "libraries/chain/CMakeFiles/eosio_chain.dir/system_account_proposal.cpp.o": "-O0",
-      "libraries/chain/CMakeFiles/eosio_chain.dir/eosio_contract.cpp.o": "-O0",
-      "libraries/chain/CMakeFiles/eosio_chain.dir/controller.cpp.o": "-O1",
-      "plugins/chain_plugin/CMakeFiles/chain_plugin.dir/chain_plugin.cpp.o": "-O1"
-    },
-    "remaining_objects": "Verified retained O1 base compilation; full provenance in report evidence",
-    "standalone_test_TU": "O1; includes governance+real-contract+wire suites",
-    "nodeos_sha256": "d4ff795f3c351ff68f5b8143740ec4997cd8bbfe3f8ce6efb1e2feb7562f50d8",
-    "test_binary_sha256": "dd7288073b33ae6a8ce106bba0e167afe7931cc7a870990a777fed1ff85fe285",
-    "production_release_qualification": false
+    "status": "EXTENDED_SOURCE_REBUILD_PENDING"
   },
   "native_test_execution": {
-    "status": "PASS",
-    "attempt": 2,
-    "UTC": "2026-11-05T00:29:31.526870+00:00",
-    "suites": {
-      "native_governance": {
-        "exit_code": 0,
-        "cases": 34,
-        "passed": 34,
-        "failed": []
-      },
-      "real_contracts": {
-        "exit_code": 0,
-        "cases": 3,
-        "passed": 3,
-        "failed": []
-      },
-      "unsigned_wire": {
-        "exit_code": 0,
-        "cases": 1,
-        "passed": 1,
-        "failed": []
-      }
-    }
+    "status": "WRITTEN_NOT_RUN_FOR_EXTENDED_SCOPE",
+    "planned_cases": 50
   },
   "live_node_changes": "Approved60minute build/validation window; original programs restored; candidate never installed",
   "live_transactions": false,
@@ -109,5 +75,54 @@
     },
     "blocking_defect": "Queued inline deployment actions authorize an account that has not yet been created; require atomic native continuation without weakening actor/permission existence checks"
   },
-  "repair_attempt1": "34governance+3real cases passed; unchanged helper missing from staged source prevented final wire check; original failure retained, helper copied, qualification2 all38passed"
+  "repair_attempt1": "34governance+3real cases passed; unchanged helper missing from staged source prevented final wire check; original failure retained, helper copied, qualification2 all38passed",
+  "previous_repair_build": {
+    "status": "BUILT",
+    "attempt": 4,
+    "profile": "Incremental mixed O0/O1 TEST functional build; source/object hashes verified; not performance or production qualification",
+    "changed_native_objects": {
+      "libraries/chain/CMakeFiles/eosio_chain.dir/system_account_proposal.cpp.o": "-O0",
+      "libraries/chain/CMakeFiles/eosio_chain.dir/eosio_contract.cpp.o": "-O0",
+      "libraries/chain/CMakeFiles/eosio_chain.dir/controller.cpp.o": "-O1",
+      "plugins/chain_plugin/CMakeFiles/chain_plugin.dir/chain_plugin.cpp.o": "-O1"
+    },
+    "remaining_objects": "Verified retained O1 base compilation; full provenance in report evidence",
+    "standalone_test_TU": "O1; includes governance+real-contract+wire suites",
+    "nodeos_sha256": "d4ff795f3c351ff68f5b8143740ec4997cd8bbfe3f8ce6efb1e2feb7562f50d8",
+    "test_binary_sha256": "dd7288073b33ae6a8ce106bba0e167afe7931cc7a870990a777fed1ff85fe285",
+    "production_release_qualification": false
+  },
+  "previous_repair_test_execution": {
+    "status": "PASS",
+    "attempt": 2,
+    "UTC": "2026-11-05T00:29:31.526870+00:00",
+    "suites": {
+      "native_governance": {
+        "exit_code": 0,
+        "cases": 34,
+        "passed": 34,
+        "failed": []
+      },
+      "real_contracts": {
+        "exit_code": 0,
+        "cases": 3,
+        "passed": 3,
+        "failed": []
+      },
+      "unsigned_wire": {
+        "exit_code": 0,
+        "cases": 1,
+        "passed": 1,
+        "failed": []
+      }
+    }
+  },
+  "selected_fresh_genesis": {
+    "developer": "eosio.dev",
+    "authority": "Distinct ordinary-account M/N references, no direct keys/waits, owner/active>=upgrade",
+    "namespace": "eosio.* and dotless1-11character service names; reserve eosio.dev; protect auctions",
+    "initializer": "Version2 reviewed commitment; fixed target::init <=4096bytes; no snapshot layout/rawABI changes",
+    "services": "eosio.key/eosio.signup created+deployed after startup through separate complete native reviews",
+    "old_chain_reset": "Explicitly selected by user; preserve separate old evidence; fresh chainID/keys/history"
+  }
 }

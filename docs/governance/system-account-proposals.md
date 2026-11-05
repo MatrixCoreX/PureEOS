@@ -1,12 +1,12 @@
 # System-account creation candidate / 系统账号创建候选
 
-Status: **CONTINUATION REPAIR PASSED 38 REMOTE ISOLATED TEST CASES, NOT ACTIVATED**. This branch is based on
+Status: **EXTENDED SHORT-NAME/ACCOUNT-DEVELOPER/INITIALIZATION SOURCE; REMOTE REQUALIFICATION PENDING; NOT ACTIVATED**. This branch is based on
 `057e1731660d3b8423c960cb81fe1758ae9c29f6`. Installing source or a binary is
-insufficient to activate this protocol feature. No reset is part of this design.
+insufficient to activate this protocol feature. The user selected a fresh TEST genesis on November5. The earlier38/38 repair results cover the previous scope only. Obtain the new description digest after qualification; never reuse a previous candidate digest.
 
 ## Purpose and privilege boundary
 
-The current sealed chain rejects all new `eosio.*` accounts. Existing native
+The old sealed chain rejects all new `eosio.*` accounts. Existing native
 `devpropose/devexec` can replace reviewed code/ABI on an existing protected
 account, but cannot create a missing account. This candidate adds a separate
 creation lane while retaining the old pending upgrade, including proposal3.
@@ -16,6 +16,42 @@ is independent of `owner`, `active`, and the account-name prefix. The new lane
 always creates **nonprivileged** accounts. It does not grant a developer key
 permission to create accounts directly or call privileged chain-management
 interfaces. `eosio.signup` only needs ordinary newaccount/RAM/delegation actions.
+
+
+## November5 selected fresh-genesis extension
+
+The designated signing identity is eosio.dev, not a service contract. Its
+owner/active/upgrade roles delegate to distinct ordinary accounts with unit
+weights, no direct public keys and no waits. Owner/active thresholds must be
+at least upgrade’s threshold. Only this feature-gated, explicitly selected
+identity is excluded from service-owner sealing. Other system accounts remain
+protected. Initial delegation is single-account; future M/N requires parent
+permissions to be included and insufficient-signature rejection to be verified.
+Underlying member accounts still sign normally. Disabled eosio.msig/wrap stay disabled.
+
+Version1 creation has no initializer. Version2 uses the same sealed service
+authorities and commits an at-most4096byte target::init payload and human review
+hash into the existing native review field:
+
+```text
+SHA256("PureEOS creation initializer v1\0" || human_review_SHA256 || init_data_SHA256)
+```
+
+Execution/staging append the raw initialization arguments and human review hash.
+Version1 requires empty/zero values. Version2 checks the commitment before any
+creation/staging capability is consumed, then queues only target::init after
+setabi and before final sealing. Any initialization failure rolls back everything.
+There is no arbitrary target/action forwarding or direct developer admin grant.
+Code/rawABI hashes and snapshot object layouts remain unchanged. Publish both
+human-review/initializer hashes and the native commitment. The offline helper
+prepare_creation_initializer.py uses a hash-pinned native converter;
+system_account_bundle.py --init-data prepares version2 unsigned actions.
+
+The user selected post-startup creation/deployment of eosio.key and eosio.signup
+through separate full native TEST1800second reviews. Neither is precreated or
+preinstalled at genesis. Production review remains seven days. This extended
+source requires fresh remote qualification; previous repair38/38 is not a pass
+for the new namespace, named identity or initialization.
 
 ## Reviewed manifest and actions
 
@@ -28,7 +64,7 @@ they grant no creation capability and change no creation-proposal state.
 Only one creation proposal can be pending. The native singleton records:
 
 - target, existing resource payer, exact RAM payment in4-decimal AIC;
-- authority-schema version1, exact code/ABI sizes and SHA256 hashes;
+- authority-schema version1/2, exact code/ABI sizes and SHA256 hashes;
 - public review-document hash and the system/token code hashes at submission;
 - monotonically increasing proposal id, native proposal/deadline times;
 - frozen electorate, recorded vetoes, explicit completion status/time.
@@ -37,7 +73,7 @@ Only one creation proposal can be pending. The native singleton records:
 the real system contract's `refreshgov` in the same transaction. The candidate
 bounds WASM at16MiB, raw ABI at1MiB, bootstrap payment at10000.0000AIC, and the
 protected-account list at64. These are upper bounds, not approved spending.
-The proposed account must be absent, named `eosio.*`, and at most12 characters.
+The target must be absent: a permitted eosio.* name of at most12characters or a dotless1–11character short service name. eosio.dev is reserved for explicit genesis identity setup. Existing namebids entries/unclaimed awards block proposal and execution; ordinary12character names and other suffix namespaces are excluded.
 Reserved legacy governance names cannot be recreated. A protected system
 account cannot be selected as the resource payer.
 
@@ -76,13 +112,13 @@ then binds the capability to its own ordinal. It schedules:
 1. the sponsor's exact token payment to the new account, before its code exists;
 2. new-account-paid RAM purchase using that entire payment;
 3. exact reviewed setcode and setabi;
-4. native-only `sysfinish` verification and final owner sealing.
+4. optional exactly reviewed version2 target::init;
+5. native-only sysfinish verification and final owner sealing.
 
 `sysfinish` requires that exact `sysstage` parent. Rebinding the ordinal consumes
 the stage: another root child no longer matches, while a nested stage has the
 wrong parent action type. No new transaction-context field or ordinary inline
-actor/permission exception is introduced. The public proposal/execution wire
-formats remain unchanged; `sysstage` is internal and requires the ephemeral
+actor/permission exception is introduced. The proposal wire layout remains unchanged; execution/staging append init data and the human review hash before first feature activation; `sysstage` is internal and requires the ephemeral
 capability, never a developer permission link.
 
 Final owner is threshold1 with no keys/accounts/waits (unsatisfiable). Active

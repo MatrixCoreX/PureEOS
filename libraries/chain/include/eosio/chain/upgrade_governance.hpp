@@ -95,6 +95,8 @@ struct upgrade_effective_tally {
 upgrade_effective_tally get_upgrade_effective_tally(const chainbase::database&, const upgrade_governance_object&, bool exclude_banned);
 bool is_protected_system_account(const chainbase::database& db, account_name account);
 void check_system_permission_change(apply_context& context, account_name account);
+void check_developer_account_authority(apply_context&,account_name,permission_name,const authority&);
+void check_developer_account_permission_deletion(apply_context&,account_name,permission_name);
 void check_system_code_change(apply_context& context, account_name account, bool abi, const bytes& payload);
 void apply_eosio_govinit(apply_context&);
 void apply_eosio_devpropose(apply_context&);
