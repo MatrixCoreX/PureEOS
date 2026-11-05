@@ -1491,7 +1491,7 @@ fc::variant read_only::get_system_account_state(const get_system_account_state_p
    const auto* gov=chain::find_upgrade_governance(db.db());
    const auto tally=state?chain::get_system_account_effective_tally(db.db(),*state):chain::upgrade_effective_tally{};
    fc::variants pending_proposals;
-   for(const auto& proposal:db.db().get_index<chain::system_account_proposal_index,chain::by_id>())if(proposal.pending) {
+   for(const auto& proposal:db.db().get_index<chain::system_account_proposal_index,::by_id>())if(proposal.pending) {
       const auto effective=chain::get_system_account_effective_tally(db.db(),proposal);
       fc::mutable_variant_object item(fc::variant(proposal).get_object());
       item("effective_proposal_voters",effective.voters)("effective_vetoes",effective.vetoes)

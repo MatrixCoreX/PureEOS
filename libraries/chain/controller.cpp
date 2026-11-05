@@ -2761,8 +2761,8 @@ struct controller_impl {
             return feature.feature_digest == *creation_feature;
          }), snapshot_exception, "Activated system-account governance requires snapshot version11 or later");
       }
-      EOS_ASSERT((db.get_index<system_account_proposal_index, by_id>().size() <= 1),
-                 snapshot_exception, "System-account proposal snapshot must contain at most one state row");
+      EOS_ASSERT((db.get_index<system_account_proposal_index, by_id>().size() <= max_pending_system_account_proposals),
+                 snapshot_exception, "System-account proposal snapshot exceeds the bounded parallel state capacity");
 
       db.set_revision( chain_head.block_num() );
       db.create<database_header_object>([](const auto& header){
