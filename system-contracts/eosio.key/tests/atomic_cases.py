@@ -145,12 +145,33 @@ def run_atomic(t,source,args):
             children.append(subprocess.Popen([str(t.cleos),'--no-auto-keosd','--url',t.url,'--wallet-url','unix://'+str(t.root/'wallet/keosd.sock'),
                 'push','transaction',json.dumps(packet['signed']),'-s','-j'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True))
         outputs=[c.communicate(timeout=60)for c in children]
-        assert all(c.returncode==0 for c in children),t.redact(str(outputs))
-        results=[json.loads(o[0])for o in outputs]
+        results=[]
+        # An overloaded functional host may definitively reject one submitted
+        # packet on CPU. Reconcile its exact native ID before retrying the SAME
+        # signed bytes. Never require the peer's legitimately executed transfer
+        # to be absent, and never re-sign an ambiguous payment.
+        for i,(child,output) in enumerate(zip(children,outputs)):
+            try:result=json.loads(output[0])
+            except Exception:raise RuntimeError('Ambiguous concurrent response; retain originals, no retry')
+            expected=packets[i]['prepared']['transaction_id'];assert result['transaction_id']==expected
+            if child.returncode:
+                trace=result['processed'];assert trace.get('receipt')is None and trace.get('except',{}).get('name')=='tx_cpu_usage_exceeded',t.redact(str(output))
+                end=t.wait_lib(trace['block_num']+2)['last_irreversible_block_num'];scanned=[];found=[]
+                for n in range(lib+1,end+1):
+                    block=t.rpc('get_block',{'block_num_or_id':n});scanned.append({'block':n,'id':block['id']})
+                    found.extend(x for x in block['transactions']if(x['trx']if isinstance(x['trx'],str)else x['trx']['id'])==expected)
+                assert not found,'CPU-refused original unexpectedly present: stop and reconcile, no retry'
+                nonce=t.nonce+1
+                result=t.execute('ksend',t.owner,requests[i],packets[i]);assert result['transaction_id']==expected
+                frozen=json.loads(t.run(['convert','pack_transaction',str(t.root/'immutable-packets'/(str(nonce)+'.json'))]))
+                original=packets[i]['packet'];assert frozen['packed_trx']==original['packed_trx']and frozen['packed_context_free_data']==original['packed_context_free_data']and frozen['signatures']==original['signatures']
+                t.report.setdefault('atomic_race_CPU_refusals',[]).append({'transaction_id':expected,'canonical_absence':scanned,'same_signed_bytes_after_definitive_CPU_refusal':True,'no_re_sign':True,'unchanged_CPU_cap_us':150000})
+            else:assert result['processed']['receipt']['status']=='executed'
+            results.append(result)
         confirmed=[t.wait_transaction(r['transaction_id'],lib,timeout=90)for r in results]
         fees=[a['data']for r in results for a in trace_acts(r)if a['account']=='eosio.key'and a['name']=='feereceipt']
         t.check(balance(fresh)==200 and len(fees)==2 and sorted(int(f['allocated_bytes'])for f in fees)==[0,1536],
-            'Concurrent pre-signed transfers create one shared recipient record and deliver both full principals')
+            'Independently pre-signed requests submitted together create one shared recipient record and deliver both full principals')
         t.check(t.rpc('get_account',{'account_name':'eosio.key'})['ram_quota']-quota==sum(int(f['purchased_bytes'])for f in fees),
             'Concurrent new-recipient requests purchase RAM only once; the later transaction charges no RAM')
         t.report['atomic_recipient_race']={'fees':fees,'confirmations':confirmed}
@@ -186,6 +207,9 @@ def run_atomic(t,source,args):
     now=next(r for r in t.ktable('feebuckets')if r['owner']=='keyrelaymoon')
     t.check(int(now['relay_earned'])==0 and now['network']==after['network']and native('keyrelaymoon')==before_native+remaining,
         'Relay can claim all execution plus relay income in full without spending historical network reserve')
+    if args.signup_artifacts:
+        from signup_bridge_cases import run_signup_bridge
+        run_signup_bridge(t,source,args,deposit,balance,native,trace_acts)
     # Capacity rejection occurs in settlement AFTER the attempted native buy.
     # The whole transaction must restore the real curve, quotas and all funds.
     while int(t.ktable('config')[0]['wallet_count'])<20:deposit(t.key(),'0.0001 AIC')

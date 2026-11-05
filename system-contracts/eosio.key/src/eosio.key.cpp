@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-AIC-Noncommercial-3.0
 #include "eosio.key.hpp"
+#include "signup_bridge.hpp"
 #include <eosio/action.hpp>
 #include <eosio/crypto_ext.hpp>
 #include <eosio/transaction.hpp>
@@ -481,8 +482,26 @@ void key_contract::verify_envelope(name operation, const public_key& owner, uint
    check(get_first_receiver() == get_self() && !get_sender().value, "top-level owner operation required");
    check(owner.index() == 0 && !zero(request_id), "K1 owner and nonzero request ID required");
    auto data = raw_transaction(); auto tx = unpack<transaction>(data);
-   check(tx.actions.size() == 1 && tx.context_free_actions.size() == 1,
-         "one root operation and one owner proof required");
+   check(tx.context_free_actions.size() == 1, "one owner proof required");
+   const bool withdrawal = operation == "withdraw"_n || operation == "selfout"_n;
+   bool bridge = false;
+   checksum256 registration_id;
+   if (withdrawal) {
+      const auto request = operation == "withdraw"_n ? unpack<withdrawal_request>(payload) :
+         std::get<1>(unpack<std::tuple<name, withdrawal_request>>(payload));
+      bridge = request.to == "eosio.signup"_n;
+      registration_id = request.request_id;
+      if (bridge) check(request.token_contract == cfg.fee_contract && request.quantity.symbol == cfg.fee_symbol &&
+                        get_code_hash("eosio.signup"_n) == signup_bridge_code,
+                        "registration requires reviewed native AIC signup code");
+   }
+   check(tx.actions.size() == (bridge ? 2 : 1), "exact owner operation root layout required");
+   if (bridge) {
+      const auto& continuation = tx.actions[1];
+      check(continuation.account == "eosio.signup"_n && continuation.name == "createkey"_n &&
+            continuation.authorization.empty() && continuation.data == pack(registration_id),
+            "atomic registration continuation mismatch");
+   }
    check(tx.delay_sec.value == 0 && tx.transaction_extensions.empty(), "unsupported transaction extensions");
    check(uint64_t(tx.expiration.sec_since_epoch()) <= uint64_t(current_time_point().sec_since_epoch()) + 3600,
          "owner transaction validity exceeds one hour");

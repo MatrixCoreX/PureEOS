@@ -15,6 +15,7 @@ def main():
     p.add_argument('--native-cleos',type=Path)
     p.add_argument('--review-seconds',type=int,choices=[1800,604800],default=604800)
     p.add_argument('--custody-artifacts',type=Path)
+    p.add_argument('--signup-artifacts',type=Path)
     p.add_argument('--atomic',action='store_true',help='Sender-paid atomic RAM integration suite')
     p.add_argument('--fixture',action='store_true',help='TEST ONLY alternate system table source; never production consensus evidence')
     args=p.parse_args()
@@ -149,6 +150,7 @@ def main():
                      'initial_savanna':{'version':2,'finalizer_key':self.bls['eosio']['Public key'],
                      'proof_of_possession':self.bls['eosio']['Proof of Possession']},
                      'initial_configuration':json.loads((args.package/'config/test-low-cost/chain-parameters.json').read_text())}
+            if args.signup_artifacts:genesis['initial_configuration']['max_inline_action_depth']=4
             (self.root/'genesis.json').write_text(json.dumps(genesis))
             self.wallet=self.spawn([str(args.package/'bin/keosd'),'--data-dir',str(self.root/'wallet'),
                                     '--config-dir',str(self.root/'wallet'),'--http-server-address',''],'wallet.log')
@@ -162,6 +164,7 @@ def main():
             info=self.wait_lib(17,timeout=90);self.report['chain_id']=info['chain_id']
             system=['eosio.token','eosio.stake','eosio.rex','eosio.ram','eosio.ramfee','eosio.bpay',
                     'eosio.vpay','eosio.saving','eosio.fees','eosio.msig','eosio.wrap','eosio.reserv','eosio.key']
+            if args.signup_artifacts:system.append('eosio.signup')
             for n in [*system,*ordinary]:
                 k=self.accounts.get(n,self.accounts['eosio'])['Public key']
                 active=self.accounts['civicgovauth']['Public key']if n=='civicgovlead'else k
@@ -218,7 +221,7 @@ def main():
             self.deploy_system()
             self.action('init',{'version':0,'core':'4,AIC'},'eosio')
             self.action('setramrate',{'bytes_per_block':1024},'eosio')
-            for n in ['eosio.key','eosio.reserv',*ordinary]:
+            for n in ['eosio.key','eosio.reserv',*(['eosio.signup']if args.signup_artifacts else []),*ordinary]:
                 self.action('buyram',{'payer':'eosio','receiver':n,'quant':('3.0000 AIC'if args.atomic and n=='eosio.key'else '100.0000 AIC')},'eosio')
             resource={'current_weight_ratio':None,'target_weight_ratio':None,'assumed_stake_weight':None,
                       'target_timestamp':None,'exponent':2.0,'decay_secs':86400,'min_price':'1.0000 AIC','max_price':'100.0000 AIC'}
@@ -236,6 +239,11 @@ def main():
                          'data':{'from':n,'receiver':n,'stake_net_quantity':'10.0000 AIC','stake_cpu_quantity':'100.0000 AIC','transfer':False}}]})])
             codeauth={'threshold':1,'keys':[],'accounts':[{'permission':{'actor':'eosio.key','permission':'eosio.code'},'weight':1}],'waits':[]}
             self.tx(['set','account','permission','eosio.key','active',json.dumps(codeauth),'owner'])
+            if args.signup_artifacts:
+                self.tx(['set','contract','eosio.signup',str(args.signup_artifacts),'eosio.signup.wasm','eosio.signup.abi'])
+                auth={'threshold':1,'keys':[],'accounts':[{'permission':{'actor':'eosio.signup','permission':'eosio.code'},'weight':1}],'waits':[]}
+                self.tx(['set','account','permission','eosio.signup','active',json.dumps(auth),'owner'])
+                self.tx(['set','account','permission','eosio.signup','owner',json.dumps(auth),'','-p','eosio.signup@owner'])
             wallet_artifacts=args.artifacts/'test-only-wallet'if args.fixture else args.artifacts
             self.tx(['set','contract','eosio.key',str(wallet_artifacts),'eosio.key.wasm','eosio.key.abi','-p','eosio.key@owner'])
             if args.fixture:

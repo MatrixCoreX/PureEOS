@@ -44,3 +44,11 @@ Builds/tests run remotely only. SDK/reference relay use Node.js >=22.12; the sol
 relay remains the founder. This is a development TEST candidate, not a stable production release.
 
 License: repository [AIC noncommercial license](../../AIC_LICENSE.md).
+
+## Atomic public-key registration / 公钥余额注册桥接
+
+The candidate pairs `withdraw` or `selfout` of native AIC to `eosio.signup` with one exact second root: `eosio.signup::createkey(request_id)` with no authorization. The existing v2 holder proof signs the complete two-root transaction. All other owner operations keep one root. Extra roots, a changed request ID, a non-native token, a changed Signup WASM or any extra continuation authorization are rejected before KEY debits. The SDK prepares and verifies this pair automatically for the Signup destination.
+
+Signup stages actual received funds against the complete transaction hash, request ID, name and parsed Owner/Active keys, then creates at top level. It removes its pending row in the same transaction. Any failure rolls back the principal, KEY fee, account, RAM and stakes; no persistent prepayment, BP custody or extra relay permission is introduced. Keep current native depth4, commercial execution-income allocation, rates/caps, full principal and free claim. Signup still uses0.1000 AIC NET plus0.1000 CPU with ownership transferred to the new account; the remainder buys at least4096 RAM bytes. Native-payer transfer registration remains supported.
+
+This is a coordinated candidate upgrade: activate the exact reviewed Signup WASM first, then this KEY WASM, with a complete native TEST1800-second review for each. Production7days remain unchanged. The existing native cleos generic transfer flow remains unchanged; registration needs a client that constructs this complete owner-signed pair. Remote build/qualification and actual activation evidence determine availability; this source section alone is not deployment proof.

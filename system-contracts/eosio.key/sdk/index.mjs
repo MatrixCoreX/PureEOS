@@ -8,6 +8,7 @@ const REQUESTS={ksend:'transfer_request',withdraw:'withdrawal_request',selfout:'
 const common=[['auth_epoch','uint64'],['request_id','checksum256'],['relayer','name'],['reward_to','name'],['max_fee','asset'],['relay_fee_bps','uint16$']];
 const schema={
  deposit:[['from','name'],['token_contract','name'],['to','public_key'],['quantity','asset'],['max_fee','asset'],['request_id','checksum256']],
+ createkey:[['request_id','checksum256']],
  token_transfer:[['from','name'],['to','name'],['quantity','asset'],['memo','string']],
  transfer_request:[['from','public_key'],['to','public_key'],['token_contract','name'],['quantity','asset'],['memo','string'],...common],
  withdrawal_request:[['from','public_key'],['token_contract','name'],['to','name'],['quantity','asset'],['memo','string'],...common],
@@ -58,6 +59,15 @@ export function ramRegistrationActions(payer,tokenContract,tokenSymbol,ramPaymen
           {account:contract,name:'regtoken',authorization:[...authorization],data:{payer,token_contract:tokenContract,token_symbol:tokenSymbol,min_bytes:minimumBytes}}];
 }
 export function validateRequest(operation,request){const type=REQUESTS[operation];if(!type)throw new Error('Unsupported wallet operation');exact(request,schema[type].filter(([name,type])=>!type.endsWith('$')||Object.hasOwn(request,name)).map(x=>x[0]));if(Object.hasOwn(request,'relay_fee_bps')){const b=request.relay_fee_bps;if(!Number.isInteger(b)||(operation.startsWith('self')?b!==0:b<1000||b>3000))throw new Error('Relay fee must be 10% to 30%, or zero for self operations');}normalizePublicKey(request.from);if(operation==='ksend')normalizePublicKey(request.to);u64(request.auth_epoch);hash(request.request_id);nativeName(request.relayer,true);nativeName(request.reward_to,true);if(type!=='cancellation_request'){nativeName(request.token_contract);if(operation!=='ksend')nativeName(request.to);}const cap=atomicAsset(request.max_fee);if(cap.symbol!=='4,AIC'||cap.units<0n)throw new Error('Invalid AIC fee cap');if(type==='cancellation_request'){if(u64(request.next_epoch)<=u64(request.auth_epoch))throw new Error('Invalid next epoch');}else{if(atomicAsset(request.quantity).units<=0n||typeof request.memo!=='string'||Buffer.byteLength(request.memo)>128)throw new Error('Invalid principal or memo');}if(operation.startsWith('self')){if(request.relayer||request.reward_to)throw new Error('Self operation cannot pay relay');}else if(!request.relayer||request.reward_to!==request.relayer)throw new Error('Selected BP and reward identity must match');return type;}
+export function isKeySignup(operation,request) {
+ return ['withdraw','selfout'].includes(operation)&&request.to==='eosio.signup';
+}
+function signupContinuation(operation,request,config) {
+ if(!isKeySignup(operation,request))return [];
+ const amount=atomicAsset(request.quantity);
+ if(request.token_contract!==config.fee_contract||amount.symbol!==config.fee_symbol||config.fee_contract!=='eosio.token'||config.fee_symbol!=='4,AIC')throw new Error('Registration requires native AIC');
+ return [{account:'eosio.signup',name:'createkey',authorization:[],data:encode('createkey',{request_id:request.request_id}).hexString}];
+}
 export function ownerDigest(config,transaction,contract=CONTRACT){if(Number(config.version)!==2)throw new Error('Unsupported owner proof version');return Checksum256.from(sha(encode('proof_envelope',{tag:TAG,version:2,chain_id:hash(config.chain_id),contract,deployment:hash(config.deployment),transaction_id:Transaction.from(transaction).id}).array));}
 export function prepareEnvelope(config,info,operation,request,{payer='',permission='keyrelay',validSeconds=120,contract=CONTRACT}={}){
  validateRequest(operation,request);if(info.chain_id!==config.chain_id)throw new Error('Node chain mismatch');if(!Number.isInteger(validSeconds)||validSeconds<1||validSeconds>3500)throw new Error('Invalid transaction lifetime');
@@ -65,14 +75,15 @@ export function prepareEnvelope(config,info,operation,request,{payer='',permissi
  const reference=Number(info.last_irreversible_block_num),block=Buffer.from(info.last_irreversible_block_id,'hex');if(!Number.isSafeInteger(reference)||reference<=0||block.length!==32||block.readUInt32BE(0)!==reference)throw new Error('Invalid irreversible reference block');
  const tx=Transaction.from({expiration:new Date(Date.parse(info.head_block_time+'Z')+validSeconds*1000).toISOString().slice(0,19),ref_block_num:reference&65535,ref_block_prefix:block.readUInt32LE(8),max_net_usage_words:0,max_cpu_usage_ms:0,delay_sec:0,transaction_extensions:[],
  context_free_actions:[{account:contract,name:'prove',authorization:[],data:encode('prove',{owner:request.from,chain_id:config.chain_id,deployment:config.deployment,reference_block_num:reference}).hexString}],
- actions:[{account:contract,name:operation,authorization:[{actor,permission}],data:encode(operation,self?{payer,request}:{request}).hexString}]});
+ actions:[{account:contract,name:operation,authorization:[{actor,permission}],data:encode(operation,self?{payer,request}:{request}).hexString},...signupContinuation(operation,request,config)]});
  return{version:2,chain_id:config.chain_id,deployment:config.deployment,operation,request,payer:self?payer:'',permission,reference_block_num:reference,transaction:JSON.parse(JSON.stringify(tx)),transaction_id:tx.id.toString(),digest:ownerDigest(config,tx,contract).toString()};
 }
 export function verifyPrepared(prepared,config,contract=CONTRACT){
  exact(prepared,['version','chain_id','deployment','operation','request','payer','permission','reference_block_num','transaction','transaction_id','digest']);
  if(prepared.version!==2||prepared.chain_id!==config.chain_id||prepared.deployment!==config.deployment)throw new Error('Prepared domain mismatch');
  const {operation,request,payer,permission,reference_block_num:reference}=prepared;validateRequest(operation,request);const self=operation.startsWith('self');nativeName(permission);nativeName(payer,true);if(self?!payer:!!payer)throw new Error('Invalid payer');
- const tx=Transaction.from(prepared.transaction);if(tx.actions.length!==1||tx.context_free_actions.length!==1||Number(tx.delay_sec)!==0||tx.transaction_extensions.length||Number(tx.max_net_usage_words)!==0||Number(tx.max_cpu_usage_ms)!==0)throw new Error('Unexpected native transaction fields');
+ const continuation=signupContinuation(operation,request,config);
+ const tx=Transaction.from(prepared.transaction);if(tx.actions.length!==1+continuation.length||tx.context_free_actions.length!==1||Number(tx.delay_sec)!==0||tx.transaction_extensions.length||Number(tx.max_net_usage_words)!==0||Number(tx.max_cpu_usage_ms)!==0)throw new Error('Unexpected native transaction fields');
  // Reject ignored JSON fields or structured ABI-dependent action objects.
  exact(prepared.transaction,['expiration','ref_block_num','ref_block_prefix','max_net_usage_words','max_cpu_usage_ms','delay_sec','context_free_actions','actions','transaction_extensions']);
  for(const a of [...prepared.transaction.actions,...prepared.transaction.context_free_actions]){exact(a,['account','name','authorization','data']);if(typeof a.data!=='string')throw new Error('Raw canonical action bytes required');for(const p of a.authorization)exact(p,['actor','permission']);}
@@ -80,6 +91,7 @@ export function verifyPrepared(prepared,config,contract=CONTRACT){
  const proof=tx.context_free_actions[0],root=tx.actions[0];
  if(proof.account.toString()!==contract||proof.name.toString()!=='prove'||proof.authorization.length||proof.data.hexString!==encode('prove',{owner:request.from,chain_id:config.chain_id,deployment:config.deployment,reference_block_num:reference}).hexString)throw new Error('Proof action mismatch');
  if(root.account.toString()!==contract||root.name.toString()!==operation||root.authorization.length!==1||root.authorization[0].actor.toString()!==(self?payer:request.relayer)||root.authorization[0].permission.toString()!==permission||root.data.hexString!==encode(operation,self?{payer,request}:{request}).hexString)throw new Error('Root operation mismatch');
+ if(continuation.length){const c=tx.actions[1];if(c.account.toString()!=='eosio.signup'||c.name.toString()!=='createkey'||c.authorization.length||c.data.hexString!==continuation[0].data)throw new Error('Atomic registration continuation mismatch');}
  if(Serializer.encode({type:Transaction,object:tx}).array.length>16384||tx.id.toString()!==prepared.transaction_id||ownerDigest(config,tx,contract).toString()!==prepared.digest)throw new Error('Prepared transaction hash mismatch');return tx;
 }
 export function signPrepared(prepared,config,userPrivateKey,contract=CONTRACT){verifyPrepared(prepared,config,contract);const key=PrivateKey.from(userPrivateKey);if(!key.toPublic().equals(PublicKey.from(prepared.request.from)))throw new Error('Signing key does not own sender wallet');return{prepared,owner_signature:key.signDigest(prepared.digest).toString()};}
