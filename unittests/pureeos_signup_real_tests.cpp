@@ -316,12 +316,20 @@ BOOST_AUTO_TEST_CASE(new_ordinary_issuers_delegate_to_account_owner_without_syst
       BOOST_CHECK_THROW(f.propose(target,10000),fc::exception); // Existing owner is never replaced by creation.
    }
    const auto issue=fc::raw::pack(std::make_tuple("usd"_n,asset::from_string("1.0000 USD"),std::string("owner authorized TEST issuance")));
-   BOOST_REQUIRE_NO_THROW(f.push({action({permission_level{"usd"_n,"active"_n}},"usd"_n,"issue"_n,issue)},"developer"_n));
+   // A newly created issuer has no native CPU/NET allocation yet. The actual
+   // authorized developer explicitly pays resources, just as bootstrap's
+   // treasury marker pays for a new holder's first self-resource operation.
+   auto owner_paid=[&](action operation,const std::string& key) {
+      const auto marker=fc::raw::pack(std::make_tuple("developer"_n,"usd"_n,asset::from_string("0.0001 AIC"),std::string("explicit issuer transaction resource payer")));
+      try {return f.push({action({permission_level{"developer"_n,"active"_n}},"eosio.token"_n,"transfer"_n,marker),std::move(operation)},"developer"_n,key);}
+      catch(const fc::exception& e){BOOST_TEST_MESSAGE(e.to_detail_string());throw;}
+   };
+   BOOST_REQUIRE_NO_THROW(owner_paid(action({permission_level{"usd"_n,"active"_n}},"usd"_n,"issue"_n,issue),"active"));
    const authority replacement(f.chain.get_public_key("alice"_n,"owner"));
-   BOOST_REQUIRE_NO_THROW(f.push({action({permission_level{"usd"_n,"owner"_n}},updateauth{"usd"_n,"owner"_n,{},replacement})},"developer"_n,"owner"));
+   BOOST_REQUIRE_NO_THROW(owner_paid(action({permission_level{"usd"_n,"owner"_n}},updateauth{"usd"_n,"owner"_n,{},replacement}),"owner"));
    const auto owned=f.chain.control->get_authorization_manager().get_permission({"usd"_n,"owner"_n}).auth.to_authority();
    BOOST_CHECK(fc::raw::pack(owned)==fc::raw::pack(replacement));
-   BOOST_CHECK_THROW(f.push({action({permission_level{"usd"_n,"owner"_n}},updateauth{"usd"_n,"owner"_n,{},replacement})},"developer"_n,"owner"),fc::exception);
+   BOOST_CHECK_THROW(owner_paid(action({permission_level{"usd"_n,"owner"_n}},updateauth{"usd"_n,"owner"_n,{},replacement}),"owner"),fc::exception);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
