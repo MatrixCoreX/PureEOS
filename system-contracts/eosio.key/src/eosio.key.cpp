@@ -15,7 +15,6 @@ constexpr int64_t limit = (int64_t(1) << 62) - 1;
 // Conservative budgets for the pinned runtime's table/row/index billing, not
 // exact RAM measurements. No reclaim on zero balance or recipient close/reopen.
 constexpr uint64_t asset_ram = 2048, wallet_ram = 1024, balance_ram = 512, native_payer_ram = 1024;
-constexpr uint64_t max_ram_budget = uint64_t(1) << 40;
 // The native fee token stays pinned. Additional exact identities and reviewed
 // implementations are compiled from the manifest into this protected WASM.
 const checksum256 reviewed_token(std::array<uint8_t,32>{
@@ -173,9 +172,8 @@ void key_contract::init(checksum256 chain_id, checksum256 deployment, name fee_c
          "fee-policy parameter out of bounds");
    check(policy.maximum_multiplier_bps >= 10000 && policy.maximum_multiplier_bps <= 1000000 &&
          policy.epoch_seconds >= 1 && policy.epoch_seconds <= 60, "invalid dynamic-fee policy");
-   check(policy.max_wallets > 0 && policy.max_wallets <= 10000000 && policy.max_balances > 0 &&
-         policy.max_balances <= 50000000 && policy.max_assets > 0 && policy.max_assets <= 100000 &&
-         policy.max_native_payers > 0 && policy.max_native_payers <= 10000000, "invalid storage limits");
+   // Legacy count-limit fields remain serialized but do not restrict global
+   // admission. Every actual new record still consumes paid RAM below.
    check(get_code_hash(system_account) == system_hash, "system code does not match declared schema");
    token_stats stats(fee_contract, fee_symbol.code().raw());
    auto st = stats.find(fee_symbol.code().raw());
@@ -217,8 +215,8 @@ void key_contract::onbuyram(name payer, name receiver, asset quantity, int64_t b
       check(p.ticket == sha256(raw.data(), raw.size()), "RAM purchase transaction mismatch");
       assets table(get_self(), get_self().value);
       auto it = table.require_find(p.asset_id, "atomic RAM asset missing");
-      check(!it->busy && uint64_t(bytes) <= max_ram_budget &&
-            it->ram_purchased <= max_ram_budget - uint64_t(bytes), "atomic RAM budget overflow");
+      check(!it->busy && uint64_t(bytes) <= uint64_t(-1) - it->ram_purchased,
+            "atomic RAM budget overflow");
       table.modify(it, same_payer, [&](auto& row) {
          if (!row.ram_purchased) row.ram_sponsor = get_self();
          row.ram_purchased += uint64_t(bytes); row.funding_tx = p.ticket;
@@ -251,7 +249,7 @@ void key_contract::onbuyram(name payer, name receiver, asset quantity, int64_t b
    auto id = ensure_asset(token, sym);
    assets table(get_self(), get_self().value);
    auto it = table.require_find(id, "registered asset missing");
-   check(!it->busy && uint64_t(bytes) <= max_ram_budget && it->ram_purchased <= max_ram_budget - uint64_t(bytes),
+   check(!it->busy && uint64_t(bytes) <= uint64_t(-1) - it->ram_purchased,
          "RAM budget overflow or outstanding token interaction");
    const auto txid = sha256(raw.data(), raw.size());
    check(it->funding_tx != txid, "RAM purchase already assigned");
@@ -297,6 +295,28 @@ void key_contract::consume_ram(uint64_t asset_id, uint64_t bytes) {
    check(it->ram_purchased && it->ram_used <= it->ram_purchased && bytes <= it->ram_purchased - it->ram_used,
          "token RAM budget exhausted; sponsor more RAM before creating rows");
    if (bytes) table.modify(it, same_payer, [&](auto& row) { row.ram_used += bytes; });
+}
+void key_contract::track_allocation(configuration& cfg, uint8_t kind) {
+   growth_table table(get_self(), get_self().value);
+   growth_counters counts;
+   if (table.exists()) counts = table.get();
+   else {
+      check(cfg.next_wallet > 0 && cfg.next_asset > 0 &&
+            cfg.next_wallet - 1 == cfg.wallet_count && cfg.next_asset - 1 == cfg.asset_count,
+            "legacy allocation counters do not match identifiers");
+      counts.wallet_count = cfg.wallet_count;
+      counts.balance_count = cfg.balance_count;
+      counts.asset_count = cfg.asset_count;
+   }
+   check(counts.version == 1 && kind <= 2, "unsupported allocation counter");
+   auto& value = kind == 0 ? counts.wallet_count : kind == 1 ? counts.balance_count : counts.asset_count;
+   check(value != uint64_t(-1), "allocation counter overflow");
+   ++value;
+   table.set(counts, get_self());
+   const auto legacy = [](uint64_t value) { return uint32_t(std::min(value, uint64_t(uint32_t(-1)))); };
+   cfg.wallet_count = legacy(counts.wallet_count);
+   cfg.balance_count = legacy(counts.balance_count);
+   cfg.asset_count = legacy(counts.asset_count);
 }
 void key_contract::check_bp(name bp, const configuration& cfg) const {
    check_system(cfg);
@@ -382,9 +402,10 @@ uint64_t key_contract::ensure_wallet(const public_key& key, uint64_t asset_id) {
    if (auto id = find_wallet(key)) return id;
    validate_key(key);
    auto cfg = config();
-   check(cfg.wallet_count < cfg.policy.max_wallets && cfg.next_wallet != uint64_t(-1), "wallet storage capacity reached");
+   check(cfg.next_wallet != uint64_t(-1), "wallet identifier overflow");
    consume_ram(asset_id, wallet_ram);
-   uint64_t id = cfg.next_wallet++; ++cfg.wallet_count;
+   track_allocation(cfg, 0);
+   uint64_t id = cfg.next_wallet++;
    wallets table(get_self(), get_self().value);
    table.emplace(get_self(), [&](auto& row) { row.id = id; row.key = key; row.key_hash = hash_key(key); });
    config_table(get_self(), get_self().value).set(cfg, get_self());
@@ -407,8 +428,9 @@ uint64_t key_contract::ensure_asset(name token, symbol sym) {
          st->supply.symbol == sym && st->max_supply.symbol == sym && st->supply.amount >= 0 &&
          st->max_supply.amount >= st->supply.amount && is_account(st->issuer), "unsupported token stat or precision");
    auto cfg = config();
-   check(cfg.asset_count < cfg.policy.max_assets && cfg.next_asset != uint64_t(-1), "asset capacity reached");
-   uint64_t id = cfg.next_asset++; ++cfg.asset_count;
+   check(cfg.next_asset != uint64_t(-1), "asset identifier overflow");
+   track_allocation(cfg, 2);
+   uint64_t id = cfg.next_asset++;
    assets table(get_self(), get_self().value);
    table.emplace(get_self(), [&](auto& row) { row.id = id; row.token_contract = token;
       row.token_symbol = sym; row.identity = hash_asset(token, sym); });
@@ -433,10 +455,10 @@ void key_contract::credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount)
    auto it = table.find(asset_id);
    if (it == table.end()) {
       auto cfg = config();
-      check(cfg.balance_count < cfg.policy.max_balances, "balance storage capacity reached");
       consume_ram(asset_id, balance_ram);
       table.emplace(get_self(), [&](auto& row) { row.asset_id = asset_id; row.amount = amount; });
-      ++cfg.balance_count; config_table(get_self(), get_self().value).set(cfg, get_self());
+      track_allocation(cfg, 1);
+      config_table(get_self(), get_self().value).set(cfg, get_self());
    } else table.modify(it, same_payer, [&](auto& row) { row.amount = checked(__int128(row.amount) + amount); });
 }
 void key_contract::debit(uint64_t wallet_id, uint64_t asset_id, int64_t amount) {
@@ -834,11 +856,10 @@ void key_contract::send_out(uint64_t id, name to, int64_t quantity, const std::s
    const auto receiver_before = raw_balance(token, to, sym);
    if(outgoing_rows(token,to,sym)) {
       auto cfg=config();
-      check(cfg.balance_count<cfg.policy.max_balances,"external token-row storage capacity reached");
       consume_ram(id, balance_ram);
       action(permission_level{get_self(), "active"_n}, token, "open"_n,
              std::make_tuple(to, sym, get_self())).send();
-      ++cfg.balance_count;
+      track_allocation(cfg, 1);
       config_table(get_self(),get_self().value).set(cfg,get_self());
    }
    const uint64_t ticket = it->out_ticket + 1;

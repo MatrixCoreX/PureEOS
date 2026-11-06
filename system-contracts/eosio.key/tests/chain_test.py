@@ -16,6 +16,8 @@ def main():
     p.add_argument('--review-seconds',type=int,choices=[1800,604800],default=604800)
     p.add_argument('--custody-artifacts',type=Path)
     p.add_argument('--signup-artifacts',type=Path)
+    p.add_argument('--legacy-artifacts',type=Path,help='Actual prior KEY artifacts for the isolated old-state upgrade check')
+    p.add_argument('--growth-fixture',action='store_true',help='TEST ONLY synthetic counter/RAM-boundary state; never a capacity claim')
     p.add_argument('--atomic',action='store_true',help='Sender-paid atomic RAM integration suite')
     p.add_argument('--fixture',action='store_true',help='TEST ONLY alternate system table source; never production consensus evidence')
     args=p.parse_args()
@@ -57,11 +59,18 @@ def main():
             elif result.returncode:raise RuntimeError(f'cleos {args[:3]} failed: {diagnostic}')
             return result.stdout
         def table(self,name,*,code='eosio',scope='eosio'):
-            rows=[];cursor=None;seen=set()
+            rows=[];cursor=None;seen=set();incomplete=0
             for page in range(100):
                 query={'json':True,'code':code,'scope':scope,'table':name,'limit':1000,'time_limit_ms':500}
                 if cursor is not None:query['lower_bound']=cursor
-                value=self.rpc('get_table_rows',query);rows.extend(value['rows'])
+                value=self.rpc('get_table_rows',query)
+                next_cursor=value.get('next_key')
+                if value.get('more')and (next_cursor is None or str(next_cursor)==''or str(next_cursor)==str(cursor)):
+                    incomplete+=1
+                    assert incomplete<=5,'Repeated nonadvancing qualification table page'
+                    self.report.setdefault('discarded_partial_reads',[]).append({'code':code,'scope':scope,'table':name,'cursor':cursor})
+                    time.sleep(.1);continue
+                incomplete=0;rows.extend(value['rows'])
                 if not value.get('more'):return rows
                 cursor=value.get('next_key');assert cursor is not None and str(cursor)not in seen,'Truncated qualification table without an advancing cursor'
                 seen.add(str(cursor));self.report.setdefault('table_pagination',[]).append({'code':code,'scope':scope,'table':name,'next_key':str(cursor)})
@@ -256,7 +265,8 @@ def main():
                 self.tx(['set','account','permission','eosio.signup','active',json.dumps(auth),'owner'])
                 self.tx(['set','account','permission','eosio.signup','owner',json.dumps(auth),'','-p','eosio.signup@owner'])
             wallet_artifacts=args.artifacts/'test-only-wallet'if args.fixture else args.artifacts
-            self.tx(['set','contract','eosio.key',str(wallet_artifacts),'eosio.key.wasm','eosio.key.abi','-p','eosio.key@owner'])
+            initial_artifacts=args.legacy_artifacts or wallet_artifacts
+            self.tx(['set','contract','eosio.key',str(initial_artifacts),'eosio.key.wasm','eosio.key.abi','-p','eosio.key@owner'])
             if args.fixture:
                 self.tx(['set','contract','keysysmockup',str(args.artifacts/'test-only-system'),'keysysmockup.wasm','keysysmockup.abi'])
                 self.action('setmarket',{'cpu':0,'net':0},'keysysmockup',contract='keysysmockup')
@@ -264,10 +274,13 @@ def main():
             self.cfg={'chain_id':info['chain_id'],'deployment':hashlib.sha256(os.urandom(32)).hexdigest(),
                 'fee_contract':'eosio.token','fee_symbol':'4,AIC','system_hash':self.rpc('get_code_hash',{'account_name':'keysysmockup'if args.fixture else'eosio'})['code_hash'],
                 'policy':{'minimum_fee':100,'unit_fee':10,'new_row_fee':500,'maximum_multiplier_bps':100000,
-                          'epoch_seconds':1,'max_wallets':(20 if args.atomic else 10),'max_balances':(60 if args.atomic else 30),'max_assets':10,'max_native_payers':20}}
+                          'epoch_seconds':1,'max_wallets':(1 if args.atomic else 10),'max_balances':(1 if args.atomic else 30),'max_assets':(1 if args.atomic else 10),'max_native_payers':20}}
             # eosio.key active is code-only; deployment init is owner-authorized before sealing.
             self.action('init',self.cfg,'eosio.key@owner',contract='eosio.key')
             self.cfg['version']=2
+            if args.legacy_artifacts:
+                from storage_growth_cases import upgrade_legacy_state
+                upgrade_legacy_state(self,args)
             for n in ['gptkeyorigin','keyrelaymoon']:
                 self.action('bondbp',{'producer':n},n)
                 self.action('regproducer',{'producer':n,'producer_key':self.accounts[n]['Public key'],'url':'','location':0},n)
@@ -286,6 +299,14 @@ def main():
             for op in ['ksend','withdraw','cancel']:
                 self.tx(['set','action','permission','keyrelaymoon','eosio.key',op,'keyrelay'])
             self.action('regrelay',{'bp':'keyrelaymoon','permission':'keyrelay','endpoint':'https://relay.example.invalid'},'keyrelaymoon',contract='eosio.key')
+            if args.growth_fixture:
+                # Boundary transactions intentionally precede govinit so the
+                # TEST ONLY seed can still use its private owner. Match the
+                # fee contract's eventual native sealed code authority now.
+                fee_auth={'threshold':1,'keys':[],'accounts':[{'permission':{'actor':'eosio.fees','permission':'eosio.code'},'weight':1}],'waits':[]}
+                self.tx(['set','account','permission','eosio.fees','active',json.dumps(fee_auth),'owner','-p','eosio.fees@owner'])
+                from storage_growth_cases import boundary_cases
+                boundary_cases(self,args)
             self.action('updateauth',{'account':'eosio.key','permission':'owner','parent':'','auth':codeauth},'eosio.key@owner')
             if args.atomic:
                 for token in ['usd','cny']:
@@ -321,7 +342,7 @@ def main():
         def memo(self,key,cap='100000'):
             return 'PK2|'+key['Public key']+'|'+cap+'|'+os.urandom(32).hex()
         def state(self):
-            return {n:self.ktable(n)for n in ['config','wallets','assets','nativefees','feebuckets','pricing','relayrates','relays']}|{'balances':[
+            return {n:self.ktable(n)for n in ['config','wallets','assets','nativefees','feebuckets','pricing','relayrates','relays','growth']}|{'balances':[
                 {'wallet':w['id'],'rows':self.ktable('balances',str(w['id']))}for w in self.ktable('wallets')]}
         def register_token(self,token='eosio.token',symbol='4,AIC',quantity='1.0000 AIC',minimum=4096,payer='keyusersolar',failure=None):
             actions=[{'account':'eosio','name':'buyram','authorization':[{'actor':payer,'permission':'active'}],
@@ -639,6 +660,10 @@ def main():
             if sig and (request!=sig['prepared']['request'] or actor or attack):signed=self.signed(op,request,owner,original=sig,actor=actor,attack=attack)
             return self.tx(['push','transaction',json.dumps(signed['signed']),'-s'],failure=failure)
         def tests(self):
+            if args.growth_fixture:
+                self.check_reserves()
+                self.report['scope']='TEST ONLY synthetic counter/RAM-boundary states on a private real native runtime; actual candidate execution/purchases/rollback, not billions of real wallets or a capacity/TPS claim'
+                return
             if args.atomic:
                 from atomic_cases import run_atomic
                 return run_atomic(self,source,args)

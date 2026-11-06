@@ -1,3 +1,5 @@
+> 2026-11-07 candidate: remove global record-count admission ceilings, retain sender-funded real RAM and exact fees. See [中文规则](docs/UNBOUNDED_GROWTH.zh.md) / [English](docs/UNBOUNDED_GROWTH.en.md). Candidate build is not public activation; full governed review and post-upgrade evidence are required.
+
 # eosio.key · Atomic RAM candidate / 自动购 RAM 候选
 
 2026-11-05: candidate `e006128f25fcda3f2395302212247b436b550d8ffde0f7da3064b8cec624a442`

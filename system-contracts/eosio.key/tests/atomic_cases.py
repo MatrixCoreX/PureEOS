@@ -44,6 +44,14 @@ def run_atomic(t,source,args):
         t.check(atoms(f['total'])==cost+atoms(f['retained_base'])+atoms(f['relay_fee']),label+': no duplicated RAM fee; exact fee equation')
         transfer_receipts=[x['data']for x in acts if x['account']=='eosio.key'and x['name']=='receipt']
         assert len(transfer_receipts)==1
+        current=t.state();old_counts=(before['growth']or before['config'])[0];new_counts=current['growth'][0]
+        old_internal=sum(len(x['rows'])for x in before['balances'])
+        new_internal=sum(len(x['rows'])for x in current['balances'])
+        external=1 if transfer_receipts[0]['kind']in ['withdraw','selfout']and expected_bytes==512 else 0
+        t.check(int(new_counts['wallet_count'])-int(old_counts['wallet_count'])==len(current['wallets'])-len(before['wallets'])and
+                int(new_counts['balance_count'])-int(old_counts['balance_count'])==new_internal-old_internal+external and
+                int(new_counts['asset_count'])-int(old_counts['asset_count'])==len(current['assets'])-len(before['assets']),
+                label+': exact growth counters include new internal/external rows and preserve migrated totals')
         relay=transfer_receipts[0]['relayer'];owner=relay or 'eosio.key'
         prior={r['owner']:r for r in before['feebuckets']}
         after={r['owner']:r for r in t.ktable('feebuckets')}
@@ -85,8 +93,12 @@ def run_atomic(t,source,args):
         if not same:t.report.setdefault('rollback_observations',[]).append({'label':label,'before':before,'after':after,'pending':pending,'native_before':n,'native_after':after_n,'RAM_before':{k:ram[k]for k in ['ram_quota','ram_usage']},'RAM_after':{k:after_ram[k]for k in ['ram_quota','ram_usage']},'market_before':market,'market_after':after_market})
         t.check(same,label+': full principal/fee/RAM/budget/count rollback')
     t.owner=t.key();t.receiver=t.key();third=t.key()
-    t.check(not t.ktable('nativefees')and all(not int(a['ram_purchased'])for a in t.ktable('assets')),
-        'No manual fee prepayment or sponsored token capacity exists at test start')
+    if args.legacy_artifacts:
+        t.check(not t.ktable('nativefees')and not t.ktable('growth'),
+            'Existing funded legacy ledger survives code upgrade without manual prepayment or eager migration')
+    else:
+        t.check(not t.ktable('nativefees')and all(not int(a['ram_purchased'])for a in t.ktable('assets')),
+            'No manual fee prepayment or sponsored token capacity exists at test start')
     t.report['bootstrap_RAM']= {k:t.rpc('get_account',{'account_name':'eosio.key'})[k]for k in ['ram_quota','ram_usage']}
     # Start with USD and a recipient without AIC, proving fee-token custody does
     # not depend on prior AIC public-key admission or a manual token regtoken.
@@ -211,11 +223,9 @@ def run_atomic(t,source,args):
     if args.signup_artifacts:
         from signup_bridge_cases import run_signup_bridge
         run_signup_bridge(t,source,args,deposit,balance,native,trace_acts)
-    # Capacity rejection occurs in settlement AFTER the attempted native buy.
-    # The whole transaction must restore the real curve, quotas and all funds.
-    while int(t.ktable('config')[0]['wallet_count'])<20:deposit(t.key(),'0.0001 AIC')
-    reject('Capacity after attempted native RAM buy',lambda:deposit(t.key(),'0.0001 AIC',failure='wallet storage capacity reached'))
-    checked('Existing recipient remains usable at key capacity',lambda:t.execute('ksend',t.owner,t.request(t.owner,quantity='0.0001 AIC',memo='')),0)
+    from storage_growth_cases import ordinary_growth
+    ordinary_growth(t,args,deposit)
+    checked('Existing recipient remains usable after crossing legacy caps',lambda:t.execute('ksend',t.owner,t.request(t.owner,quantity='0.0001 AIC',memo='')),0)
 
     t.check_reserves()
     t.report['scope']='Remote isolated real native TEST chain, production candidate WASM; atomic AIC/USD/CNY 3-route functional/security qualification, not TPS or live deployment'

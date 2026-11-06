@@ -17,6 +17,8 @@ struct fee_policy {
    int64_t new_row_fee; // Legacy wire/state field; market-priced WASM ignores it.
    uint32_t maximum_multiplier_bps;
    uint32_t epoch_seconds;
+   // Deprecated admission limits. Retained verbatim for existing state and
+   // init wire compatibility; allocation is funded by each atomic payment.
    uint32_t max_wallets;
    uint32_t max_balances;
    uint32_t max_assets;
@@ -132,6 +134,15 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
       EOSLIB_SERIALIZE(configuration, (version)(chain_id)(deployment)(system_hash)(fee_contract)(fee_symbol)(policy)(next_wallet)(next_asset)(wallet_count)(balance_count)(asset_count)(native_payer_count)(token_hash))
    };
    using config_table = singleton<"config"_n, configuration>;
+   // Exact, non-admission counters. Lazily seeded from the unchanged legacy
+   // config on the first allocation after upgrade; no ledger scan or admin
+   // migration action is required. Legacy uint32 views saturate, never wrap.
+   struct [[eosio::table("growth")]] growth_counters {
+      uint32_t version = 1;
+      uint64_t wallet_count = 0, balance_count = 0, asset_count = 1;
+      EOSLIB_SERIALIZE(growth_counters, (version)(wallet_count)(balance_count)(asset_count))
+   };
+   using growth_table = singleton<"growth"_n, growth_counters>;
    struct [[eosio::table]] wallet {
       uint64_t id;
       public_key key;
@@ -243,6 +254,7 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    uint64_t find_asset(name token, symbol sym) const;
    uint64_t ensure_asset(name token, symbol sym);
    void consume_ram(uint64_t asset_id, uint64_t bytes);
+   void track_allocation(configuration& cfg, uint8_t kind);
    void check_asset(uint64_t id) const;
    int64_t balance_of(uint64_t wallet_id, uint64_t asset_id) const;
    void credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
