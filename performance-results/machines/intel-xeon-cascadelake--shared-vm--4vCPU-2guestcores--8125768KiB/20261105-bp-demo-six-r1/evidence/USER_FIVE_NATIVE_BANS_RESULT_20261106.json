@@ -1,0 +1,330 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T00:11:38.332842+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "head": 109617,
+  "LIB": 109614,
+  "all_five_retired_nodes": [
+    {
+      "producer": "tokyorikenai",
+      "banned": true,
+      "zero_windows": 3,
+      "evidence_slots": [
+        1694466876,
+        1694467128,
+        1694467380
+      ],
+      "evidence_policies": [
+        172,
+        172,
+        172
+      ],
+      "ban_final_block": 100076,
+      "bond_record_block": 100079,
+      "forfeited_atoms": 100000000,
+      "settled_atoms": 0,
+      "irreversible": true
+    },
+    {
+      "producer": "singaporentu",
+      "banned": true,
+      "zero_windows": 3,
+      "evidence_slots": [
+        1694467068,
+        1694467320,
+        1694467584
+      ],
+      "evidence_policies": [
+        172,
+        172,
+        173
+      ],
+      "ban_final_block": 100247,
+      "bond_record_block": 100251,
+      "forfeited_atoms": 100000000,
+      "settled_atoms": 0,
+      "irreversible": true
+    },
+    {
+      "producer": "tokyoaistlab",
+      "banned": true,
+      "zero_windows": 3,
+      "evidence_slots": [
+        1694473692,
+        1694473944,
+        1694474196
+      ],
+      "evidence_policies": [
+        179,
+        179,
+        180
+      ],
+      "ban_final_block": 105899,
+      "bond_record_block": 105902,
+      "forfeited_atoms": 100000000,
+      "settled_atoms": 0,
+      "irreversible": true
+    },
+    {
+      "producer": "pariscnrslab",
+      "banned": true,
+      "zero_windows": 3,
+      "evidence_slots": [
+        1694473632,
+        1694473884,
+        1694478156
+      ],
+      "evidence_policies": [
+        179,
+        179,
+        186
+      ],
+      "ban_final_block": 109591,
+      "bond_record_block": 109594,
+      "forfeited_atoms": 100000000,
+      "settled_atoms": 0,
+      "irreversible": true
+    },
+    {
+      "producer": "londonturing",
+      "banned": true,
+      "zero_windows": 3,
+      "evidence_slots": [
+        1694473560,
+        1694473812,
+        1694474076
+      ],
+      "evidence_policies": [
+        179,
+        179,
+        180
+      ],
+      "ban_final_block": 105792,
+      "bond_record_block": 105795,
+      "forfeited_atoms": 100000000,
+      "settled_atoms": 0,
+      "irreversible": true
+    }
+  ],
+  "new_three_remaining": 0,
+  "global_banned": [
+    "londonturing",
+    "pariscnrslab",
+    "singaporentu",
+    "tokyoaistlab",
+    "tokyorikenai"
+  ],
+  "scope": "Read-only observation only, no stop/restart, data deletion, payment, settlement, key or native-state changes. Native windows and policy handovers govern timing.",
+  "decisions": [
+    {
+      "producer": "tokyorikenai",
+      "native_candidate": {
+        "owner": "tokyorikenai",
+        "rank": "340282366920938463459709216498713414880",
+        "previous_rank": "340282366920938463459709216498713414880",
+        "frozen_epoch": 0,
+        "seen_epoch": 172,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694466876,
+          1694467128,
+          1694467380
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          172
+        ],
+        "ban_final_block": 100076
+      },
+      "native_bond": {
+        "owner": "tokyorikenai",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855661,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 100076,
+        "ban_record_block": 100079
+      },
+      "anchor": {
+        "timestamp": "2026-11-05T22:41:36.000",
+        "id": "000186eccb8ba7e63ecca287fcdcd3c67cfebe010c70075db635b0c1f8d9b39b",
+        "block_num": 100076
+      }
+    },
+    {
+      "producer": "singaporentu",
+      "native_candidate": {
+        "owner": "singaporentu",
+        "rank": "340282366920938463459026033818262107040",
+        "previous_rank": "340282366920938463459026033818262107040",
+        "frozen_epoch": 0,
+        "seen_epoch": 173,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694467068,
+          1694467320,
+          1694467584
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          173
+        ],
+        "ban_final_block": 100247
+      },
+      "native_bond": {
+        "owner": "singaporentu",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855637,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 100247,
+        "ban_record_block": 100251
+      },
+      "anchor": {
+        "timestamp": "2026-11-05T22:43:18.000",
+        "id": "000187974d52b692547ae9dc9fb57833215442c753b3c2929b755edd9412c918",
+        "block_num": 100247
+      }
+    },
+    {
+      "producer": "tokyoaistlab",
+      "native_candidate": {
+        "owner": "tokyoaistlab",
+        "rank": "340282366920938463459709216206797687920",
+        "previous_rank": "340282366920938463459709216206797687920",
+        "frozen_epoch": 0,
+        "seen_epoch": 180,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694473692,
+          1694473944,
+          1694474196
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          180
+        ],
+        "ban_final_block": 105899
+      },
+      "native_bond": {
+        "owner": "tokyoaistlab",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793880108,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 105899,
+        "ban_record_block": 105902
+      },
+      "anchor": {
+        "timestamp": "2026-11-05T23:38:24.000",
+        "id": "00019dab6425816ecf0921becf8b5347c2afc61959f1adc5dfa37b7c326f1f48",
+        "block_num": 105899
+      }
+    },
+    {
+      "producer": "pariscnrslab",
+      "native_candidate": {
+        "owner": "pariscnrslab",
+        "rank": "340282366920938463457154833029198531696",
+        "previous_rank": "340282366920938463457154833029198531696",
+        "frozen_epoch": 0,
+        "seen_epoch": 186,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694473632,
+          1694473884,
+          1694478156
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          186
+        ],
+        "ban_final_block": 109591
+      },
+      "native_bond": {
+        "owner": "pariscnrslab",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793881333,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 109591,
+        "ban_record_block": 109594
+      },
+      "anchor": {
+        "timestamp": "2026-11-06T00:11:24.000",
+        "id": "0001ac17b3408db714523f28163c3d0b562f6a15a9a5b36292bff6a17ae4286b",
+        "block_num": 109591
+      }
+    },
+    {
+      "producer": "londonturing",
+      "native_candidate": {
+        "owner": "londonturing",
+        "rank": "340282366920938463455098849831599974080",
+        "previous_rank": "340282366920938463455098849831599974080",
+        "frozen_epoch": 0,
+        "seen_epoch": 180,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1694473560,
+          1694473812,
+          1694474076
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          180
+        ],
+        "ban_final_block": 105792
+      },
+      "native_bond": {
+        "owner": "londonturing",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793881404,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 105792,
+        "ban_record_block": 105795
+      },
+      "anchor": {
+        "timestamp": "2026-11-05T23:37:24.000",
+        "id": "00019d407a6bffd7ab96179af70477e55cd13479238630e383f23e03955116e9",
+        "block_num": 105792
+      }
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # 2026-11-06: three additional BPs stopped, five node datasets cleared
 
+**Latest audit: the requestedfive bans completed at08:11Asia/Shanghai; Baidu independently triggered a sixth native ban at08:37after its earlierOOM/dirty-database failure. See[SIXTH_BAN_CAUSE.en.md](SIXTH_BAN_CAUSE.en.md). The following preserves the shutdown/cleanup observations at their original time.**
+
 The latest user instruction adopts the two existing native bans, directly stops three additional new BPs, and deletes all block datasets of those five nodes. This supersedes the old five-new-node campaign, whose mutation controller is now explicitly guarded against resumption.
 
 Stopped and disabled: `tokyorikenai` and `singaporentu` (already natively banned), plus `tokyoaistlab`, `pariscnrslab` and `londonturing` (stopped now). `genevacernai` and `sydneyunswai` remain online. `montrealmila` remains online in native maintenance state2.

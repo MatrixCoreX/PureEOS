@@ -1,0 +1,635 @@
+{
+  "status": "CAUSE_CONFIRMED",
+  "UTC": "2026-11-06T08:41:23.596848+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "observed_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 161683,
+    "last_irreversible_block_num": 161681,
+    "last_irreversible_block_id": "000277918adc244a77d1502477965b62565fa6e268079532d8b84cc84b2b300e",
+    "head_block_id": "000277936bd37ea47ee51241342db113daf6baad504e79d28911f721eca20a86",
+    "head_block_time": "2026-11-06T08:41:23.500",
+    "head_block_producer": "mistralcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 161683,
+    "fork_db_head_block_id": "000277936bd37ea47ee51241342db113daf6baad504e79d28911f721eca20a86",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409564770",
+    "total_net_weight": 236060000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-06T08:41:22.500"
+  },
+  "authorized_five": [
+    "londonturing",
+    "pariscnrslab",
+    "singaporentu",
+    "tokyoaistlab",
+    "tokyorikenai"
+  ],
+  "current_native_bans": [
+    "baiduaiworks",
+    "londonturing",
+    "pariscnrslab",
+    "singaporentu",
+    "tokyoaistlab",
+    "tokyorikenai"
+  ],
+  "extra_ban": "baiduaiworks",
+  "authorized_stop_receipt": {
+    "status": "PASS",
+    "UTC": "2026-11-05T23:32:10.244167+00:00",
+    "selected_new_three": [
+      "tokyoaistlab",
+      "pariscnrslab",
+      "londonturing"
+    ],
+    "already_banned_two": [
+      "tokyorikenai",
+      "singaporentu"
+    ],
+    "only_five_units": [
+      "pureeos-devnet-bp-tokyorikenai-20261105.service",
+      "pureeos-devnet-bp-singaporentu-20261105.service",
+      "pureeos-bp-demo-tokyoaistlab-20261105.service",
+      "pureeos-bp-demo-pariscnrslab-20261105.service",
+      "pureeos-bp-demo-londonturing-20261105.service"
+    ],
+    "processes": {
+      "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "pureeos-devnet-bp-singaporentu-20261105.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "pureeos-bp-demo-pariscnrslab-20261105.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      },
+      "pureeos-bp-demo-londonturing-20261105.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled"
+      }
+    },
+    "quorum_guards": [
+      {
+        "generation": 180,
+        "threshold": 15,
+        "remaining_recent_strong_online": [
+          "alibabacloud",
+          "anthropiclab",
+          "bytedancelab",
+          "canadamilaai",
+          "cohereclouds",
+          "deepseekcore",
+          "genevacernai",
+          "minimaxcloud",
+          "mistralcloud",
+          "moonshotlabs",
+          "nvidiaclouds",
+          "openaiclouds",
+          "perplexityai",
+          "stabilityhub",
+          "sydneyunswai",
+          "tencentcloud"
+        ]
+      }
+    ],
+    "before_info": {
+      "server_version": "42dda604",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 105248,
+      "last_irreversible_block_num": 105237,
+      "last_irreversible_block_id": "00019b15250361041ed4989d5b244908c8c5221dc24267bdce9795ad09b079a2",
+      "head_block_id": "00019b206d6f08db5faa58cf33c88e22dede4c54abf95b3a860392381cfcc8dc",
+      "head_block_time": "2026-11-05T23:32:05.500",
+      "head_block_producer": "tokyoaistlab",
+      "virtual_block_cpu_limit": 800000000,
+      "virtual_block_net_limit": 1048576000,
+      "block_cpu_limit": 800000,
+      "block_net_limit": 1048576,
+      "server_version_string": "v1.0.0-test.2-dev",
+      "fork_db_head_block_num": 105248,
+      "fork_db_head_block_id": "00019b206d6f08db5faa58cf33c88e22dede4c54abf95b3a860392381cfcc8dc",
+      "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+      "total_cpu_weight": "6409534770",
+      "total_net_weight": 236030000,
+      "earliest_available_block_num": 1,
+      "last_irreversible_block_time": "2026-11-05T23:32:00.000"
+    },
+    "scope": "Latest explicit user instruction supersedes the earlier five-new-node wait gate. Only these five processes were stopped/disabled. Data cleanup is a separate checked step.",
+    "after_info": {
+      "server_version": "42dda604",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 105255,
+      "last_irreversible_block_num": 105248,
+      "last_irreversible_block_id": "00019b200994724c5cfde01275903dc91c050c26512248c8a010007033125e3f",
+      "head_block_id": "00019b27f774c7be65981142899b6b0d512a4cbdb62d3fc3a333de1414607389",
+      "head_block_time": "2026-11-05T23:32:10.000",
+      "head_block_producer": "alibabacloud",
+      "virtual_block_cpu_limit": 800000000,
+      "virtual_block_net_limit": 1048576000,
+      "block_cpu_limit": 800000,
+      "block_net_limit": 1048576,
+      "server_version_string": "v1.0.0-test.2-dev",
+      "fork_db_head_block_num": 105255,
+      "fork_db_head_block_id": "00019b27f774c7be65981142899b6b0d512a4cbdb62d3fc3a333de1414607389",
+      "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+      "total_cpu_weight": "6409534770",
+      "total_net_weight": 236030000,
+      "earliest_available_block_num": 1,
+      "last_irreversible_block_time": "2026-11-05T23:32:06.000"
+    },
+    "irreversible_progress_after_stop": true
+  },
+  "planned_five_completion": {
+    "status": "PASS",
+    "UTC": "2026-11-06T00:11:38.332842+00:00",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head": 109617,
+    "LIB": 109614,
+    "all_five_retired_nodes": [
+      {
+        "producer": "tokyorikenai",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694466876,
+          1694467128,
+          1694467380
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          172
+        ],
+        "ban_final_block": 100076,
+        "bond_record_block": 100079,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      },
+      {
+        "producer": "singaporentu",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694467068,
+          1694467320,
+          1694467584
+        ],
+        "evidence_policies": [
+          172,
+          172,
+          173
+        ],
+        "ban_final_block": 100247,
+        "bond_record_block": 100251,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      },
+      {
+        "producer": "tokyoaistlab",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694473692,
+          1694473944,
+          1694474196
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          180
+        ],
+        "ban_final_block": 105899,
+        "bond_record_block": 105902,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      },
+      {
+        "producer": "pariscnrslab",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694473632,
+          1694473884,
+          1694478156
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          186
+        ],
+        "ban_final_block": 109591,
+        "bond_record_block": 109594,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      },
+      {
+        "producer": "londonturing",
+        "banned": true,
+        "zero_windows": 3,
+        "evidence_slots": [
+          1694473560,
+          1694473812,
+          1694474076
+        ],
+        "evidence_policies": [
+          179,
+          179,
+          180
+        ],
+        "ban_final_block": 105792,
+        "bond_record_block": 105795,
+        "forfeited_atoms": 100000000,
+        "settled_atoms": 0,
+        "irreversible": true
+      }
+    ],
+    "new_three_remaining": 0,
+    "global_banned": [
+      "londonturing",
+      "pariscnrslab",
+      "singaporentu",
+      "tokyoaistlab",
+      "tokyorikenai"
+    ],
+    "scope": "Read-only observation only, no stop/restart, data deletion, payment, settlement, key or native-state changes. Native windows and policy handovers govern timing.",
+    "decisions": [
+      {
+        "producer": "tokyorikenai",
+        "native_candidate": {
+          "owner": "tokyorikenai",
+          "rank": "340282366920938463459709216498713414880",
+          "previous_rank": "340282366920938463459709216498713414880",
+          "frozen_epoch": 0,
+          "seen_epoch": 172,
+          "ticket": 0,
+          "penalty_epoch": 1,
+          "zero_windows": 3,
+          "banned": 1,
+          "evidence_slots": [
+            1694466876,
+            1694467128,
+            1694467380
+          ],
+          "evidence_policies": [
+            172,
+            172,
+            172
+          ],
+          "ban_final_block": 100076
+        },
+        "native_bond": {
+          "owner": "tokyorikenai",
+          "state": 4,
+          "balance": 0,
+          "forfeited": 100000000,
+          "settled": 0,
+          "bonded_at": 1793855661,
+          "exit_block": 0,
+          "refundable_at": 0,
+          "ban_final_block": 100076,
+          "ban_record_block": 100079
+        },
+        "anchor": {
+          "timestamp": "2026-11-05T22:41:36.000",
+          "id": "000186eccb8ba7e63ecca287fcdcd3c67cfebe010c70075db635b0c1f8d9b39b",
+          "block_num": 100076
+        }
+      },
+      {
+        "producer": "singaporentu",
+        "native_candidate": {
+          "owner": "singaporentu",
+          "rank": "340282366920938463459026033818262107040",
+          "previous_rank": "340282366920938463459026033818262107040",
+          "frozen_epoch": 0,
+          "seen_epoch": 173,
+          "ticket": 0,
+          "penalty_epoch": 1,
+          "zero_windows": 3,
+          "banned": 1,
+          "evidence_slots": [
+            1694467068,
+            1694467320,
+            1694467584
+          ],
+          "evidence_policies": [
+            172,
+            172,
+            173
+          ],
+          "ban_final_block": 100247
+        },
+        "native_bond": {
+          "owner": "singaporentu",
+          "state": 4,
+          "balance": 0,
+          "forfeited": 100000000,
+          "settled": 0,
+          "bonded_at": 1793855637,
+          "exit_block": 0,
+          "refundable_at": 0,
+          "ban_final_block": 100247,
+          "ban_record_block": 100251
+        },
+        "anchor": {
+          "timestamp": "2026-11-05T22:43:18.000",
+          "id": "000187974d52b692547ae9dc9fb57833215442c753b3c2929b755edd9412c918",
+          "block_num": 100247
+        }
+      },
+      {
+        "producer": "tokyoaistlab",
+        "native_candidate": {
+          "owner": "tokyoaistlab",
+          "rank": "340282366920938463459709216206797687920",
+          "previous_rank": "340282366920938463459709216206797687920",
+          "frozen_epoch": 0,
+          "seen_epoch": 180,
+          "ticket": 0,
+          "penalty_epoch": 1,
+          "zero_windows": 3,
+          "banned": 1,
+          "evidence_slots": [
+            1694473692,
+            1694473944,
+            1694474196
+          ],
+          "evidence_policies": [
+            179,
+            179,
+            180
+          ],
+          "ban_final_block": 105899
+        },
+        "native_bond": {
+          "owner": "tokyoaistlab",
+          "state": 4,
+          "balance": 0,
+          "forfeited": 100000000,
+          "settled": 0,
+          "bonded_at": 1793880108,
+          "exit_block": 0,
+          "refundable_at": 0,
+          "ban_final_block": 105899,
+          "ban_record_block": 105902
+        },
+        "anchor": {
+          "timestamp": "2026-11-05T23:38:24.000",
+          "id": "00019dab6425816ecf0921becf8b5347c2afc61959f1adc5dfa37b7c326f1f48",
+          "block_num": 105899
+        }
+      },
+      {
+        "producer": "pariscnrslab",
+        "native_candidate": {
+          "owner": "pariscnrslab",
+          "rank": "340282366920938463457154833029198531696",
+          "previous_rank": "340282366920938463457154833029198531696",
+          "frozen_epoch": 0,
+          "seen_epoch": 186,
+          "ticket": 0,
+          "penalty_epoch": 1,
+          "zero_windows": 3,
+          "banned": 1,
+          "evidence_slots": [
+            1694473632,
+            1694473884,
+            1694478156
+          ],
+          "evidence_policies": [
+            179,
+            179,
+            186
+          ],
+          "ban_final_block": 109591
+        },
+        "native_bond": {
+          "owner": "pariscnrslab",
+          "state": 4,
+          "balance": 0,
+          "forfeited": 100000000,
+          "settled": 0,
+          "bonded_at": 1793881333,
+          "exit_block": 0,
+          "refundable_at": 0,
+          "ban_final_block": 109591,
+          "ban_record_block": 109594
+        },
+        "anchor": {
+          "timestamp": "2026-11-06T00:11:24.000",
+          "id": "0001ac17b3408db714523f28163c3d0b562f6a15a9a5b36292bff6a17ae4286b",
+          "block_num": 109591
+        }
+      },
+      {
+        "producer": "londonturing",
+        "native_candidate": {
+          "owner": "londonturing",
+          "rank": "340282366920938463455098849831599974080",
+          "previous_rank": "340282366920938463455098849831599974080",
+          "frozen_epoch": 0,
+          "seen_epoch": 180,
+          "ticket": 0,
+          "penalty_epoch": 1,
+          "zero_windows": 3,
+          "banned": 1,
+          "evidence_slots": [
+            1694473560,
+            1694473812,
+            1694474076
+          ],
+          "evidence_policies": [
+            179,
+            179,
+            180
+          ],
+          "ban_final_block": 105792
+        },
+        "native_bond": {
+          "owner": "londonturing",
+          "state": 4,
+          "balance": 0,
+          "forfeited": 100000000,
+          "settled": 0,
+          "bonded_at": 1793881404,
+          "exit_block": 0,
+          "refundable_at": 0,
+          "ban_final_block": 105792,
+          "ban_record_block": 105795
+        },
+        "anchor": {
+          "timestamp": "2026-11-05T23:37:24.000",
+          "id": "00019d407a6bffd7ab96179af70477e55cd13479238630e383f23e03955116e9",
+          "block_num": 105792
+        }
+      }
+    ]
+  },
+  "original_OOM_evidence": [
+    "2026-11-05T23:23:48+00:00 pureeos-test45-20261102-ac0414 kernel: oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=pureeos-devnet-bp-parisinriaai-20261105.service,mems_allowed=0,global_oom,task_memcg=/system.slice/pureeos-devnet-bp-baiduaiworks-20261105.service,task=ld-linux-x86-64,pid=416139,uid=999",
+    "2026-11-05T23:23:48+00:00 pureeos-test45-20261102-ac0414 kernel: Out of memory: Killed process 416139 (ld-linux-x86-64) total-vm:166449628kB, anon-rss:275668kB, file-rss:5248kB, shmem-rss:0kB, UID:999 pgtables:35692kB oom_score_adj:0"
+  ],
+  "dirty_database_evidence": [
+    "warn  2026-11-05T23:26:48.288 ld-linux- chain_plugin.cpp:1262         plugin_initialize    ] 13 N5boost10wrapexceptISt12system_errorEE: Database dirty flag set",
+    "rethrow Database dirty flag set: ",
+    "    {\"what\":\"Database dirty flag set\"}",
+    "Database dirty flag set",
+    "error 2026-11-05T23:26:48.323 ld-linux- main.cpp:254                  main                 ] database dirty flag set (likely due to unclean shutdown): replay required"
+  ],
+  "incident_evidence_SHA256": "0beaf7e7ee0e1bca4838e4f0db5e645324b960ec694ee81b978fa3f386e59049",
+  "extra_native_candidate": {
+    "owner": "baiduaiworks",
+    "rank": "340282366920938463449079229048989016448",
+    "previous_rank": "340282366920938463449079229048989016448",
+    "frozen_epoch": 0,
+    "seen_epoch": 191,
+    "ticket": 0,
+    "penalty_epoch": 1,
+    "zero_windows": 3,
+    "banned": 1,
+    "evidence_slots": [
+      1694472720,
+      1694472972,
+      1694481276
+    ],
+    "evidence_policies": [
+      178,
+      178,
+      191
+    ],
+    "ban_final_block": 112526
+  },
+  "extra_native_bond": {
+    "owner": "baiduaiworks",
+    "state": 4,
+    "balance": 0,
+    "forfeited": 100000000,
+    "settled": 0,
+    "bonded_at": 1793855608,
+    "exit_block": 0,
+    "refundable_at": 0,
+    "ban_final_block": 112526,
+    "ban_record_block": 112529
+  },
+  "extra_native_window_evidence": [
+    {
+      "slot": 1694472720,
+      "policy": 178,
+      "window_start_UTC": "2026-11-05T23:26:00+00:00",
+      "window_start_Asia_Shanghai": "2026-11-06T07:26:00+08:00"
+    },
+    {
+      "slot": 1694472972,
+      "policy": 178,
+      "window_start_UTC": "2026-11-05T23:28:06+00:00",
+      "window_start_Asia_Shanghai": "2026-11-06T07:28:06+08:00"
+    },
+    {
+      "slot": 1694481276,
+      "policy": 191,
+      "window_start_UTC": "2026-11-06T00:37:18+00:00",
+      "window_start_Asia_Shanghai": "2026-11-06T08:37:18+08:00"
+    }
+  ],
+  "irreversible_anchors": {
+    "native_finality_checkpoint": {
+      "block_num": 112526,
+      "id": "0001b78ee208cd2b003782f1eb07e293d97f97d92f5caeeb350f6b96690765aa",
+      "timestamp": "2026-11-06T00:37:24.000"
+    },
+    "native_bond_record": {
+      "block_num": 112529,
+      "id": "0001b79145b2a913814084e65d7a5361c2887becefe9be5e3c19679c5720790d",
+      "timestamp": "2026-11-06T00:37:25.500"
+    }
+  },
+  "maintenance_node": {
+    "candidate": {
+      "owner": "montrealmila",
+      "rank": "340282366920828704664354235057515504224",
+      "previous_rank": "340282366920828704664354235057515504224",
+      "frozen_epoch": 0,
+      "seen_epoch": 261,
+      "ticket": 0,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    "maintenance": {
+      "owner": "montrealmila",
+      "state": 2,
+      "requested_slot": 1694404386,
+      "effective_slot": 1694404386,
+      "effective_block": 56840,
+      "resumed_slot": 0
+    }
+  },
+  "summary_API": {
+    "schema_version": 1,
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "generated_at": "2026-11-06T08:41:21.668217+00:00",
+    "head": 161678,
+    "LIB": 161675,
+    "available": true,
+    "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "registered_bp_count": 30,
+    "eligible_bp_count": 23,
+    "published_candidate_count": 23,
+    "active_producer_count": 21,
+    "permanent_blacklist_count": 6,
+    "maintenance_excluded_count": 1,
+    "maintenance_active_count": 1,
+    "maintenance_pending_count": 0,
+    "rotation_capacity": 210,
+    "next_capacity": 211,
+    "next_capacity_slot": "1695543508",
+    "next_capacity_estimated_at": "2026-11-12T04:09:14.000+00:00",
+    "count_scope": "All native producer/candidate/maintenance rows; pagination complete; no online-process or history-node count",
+    "eligible_scope": "Active registration, positive integer votes and usable producer/finalizer keys (valid rank), excluding permanent bans and non-normal maintenance; candidate admission still follows ranking snapshots"
+  },
+  "finding": "The requested5-node shutdown/deletion list was followed. Baidu was separately OOM-killed before that operation, then repeatedly failed startup with a dirty database. Its first2native zero windows occurred before the requested3additional stops; a later third effective window triggered native permanent ban. Requested demo count5 does not cap native penalties on other faulty BPs. Native banned count6 is real, not a frontend-only count.",
+  "scope": "Read-only diagnosis. No repair, node stop/restart, data cleanup, unban, key/safety/protocol change or transaction sent under this request."
+}

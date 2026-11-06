@@ -1,5 +1,7 @@
 # 2026-11-06：新增三节点停机、五节点数据清理已完成
 
+**最新核查更新：指定五个在北京时间08:11全部封禁，但Baidu因先前OOM/数据库故障在08:37额外被原生规则封禁，总数为6。详见[SIXTH_BAN_CAUSE.zh.md](SIXTH_BAN_CAUSE.zh.md)。以下保留停机清理时的实际记录。**
+
 用户采用已有的两个原生黑名单，再要求另外三个新节点直接停机，并清除这五个节点的区块数据。旧的“五个新节点一起停机”方案已被明确替代，旧控制器加了禁止恢复的标记。
 
 停机并禁用自动启动的五个账户为：`tokyorikenai`、`singaporentu`（此前已原生永久拉黑），以及 `tokyoaistlab`、`pariscnrslab`、`londonturing`（本次直接停机）。`genevacernai`、`sydneyunswai` 继续在线；`montrealmila` 保持原生维护state2、进程在线。

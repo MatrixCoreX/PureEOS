@@ -1,6 +1,6 @@
 {
-  "status": "THREE_STOP_FIVE_DATA_CLEAR_PASS_NATIVE_THREE_BANS_PENDING",
-  "UTC": "2026-11-05T23:38:03.257596+00:00",
+  "status": "AUTHORIZED_FIVE_BANS_PASS_EXTRA_SIXTH_DIAGNOSED",
+  "UTC": "2026-11-06T08:44:29.446586+00:00",
   "files": {
     "DEMO_GUIDE.zh.md": {
       "bytes": 4394,
@@ -10,25 +10,33 @@
       "bytes": 4658,
       "sha256": "3c0276ada203192ccdae49ecb44409f78f1987b1f15516145180ef46d843411b"
     },
+    "SIXTH_BAN_CAUSE.en.md": {
+      "bytes": 2175,
+      "sha256": "5e67811f65d4e685035f293790792310501d6172aa80ef4ecae71d4e795ffff1"
+    },
     "PLAN.md": {
       "bytes": 1854,
       "sha256": "5176abc2bc0271d47221e9a5e4a8012a8a33400bc1c84e9daa2e58bed7e9ca23"
     },
     "REPORT.en.md": {
-      "bytes": 2880,
-      "sha256": "a5a13e6193bbd9e62b2211f6b415735f9dc3fb668e5d3400ef17e75c75fdedb7"
+      "bytes": 3188,
+      "sha256": "10ab505842525ee13ba8ae466a02f0b4a06847f969cbb4568545cb41184456b6"
+    },
+    "SIXTH_BAN_CAUSE.zh.md": {
+      "bytes": 2089,
+      "sha256": "8fed809f7f53132f6cc1acb442b66e5dcaf1c2a00d91d3dad310a0fadc8750b3"
     },
     "PLAN.json": {
       "bytes": 979,
       "sha256": "799f3662c0712e3e403386757583d84c006a754ece5abc9452767bb6d0b98ec2"
     },
     "STATE.json": {
-      "bytes": 5056,
-      "sha256": "e05c25216bd845844b0f7c57af5bbbf4302cf39adfde65e1cf1fb6044b6296d0"
+      "bytes": 6119,
+      "sha256": "67f22628f2671faa8a28608ce4ad85463fb2e774844507f7ba74bbd8b4148d43"
     },
     "REPORT.zh.md": {
-      "bytes": 2957,
-      "sha256": "124904c586f8761e8634d0e93f153e3b31dda9dde7b33995140f26e635bd26c2"
+      "bytes": 3218,
+      "sha256": "9fb2a3f11fd4a4b4d20b65a7027aeded268a44a0cb198c982c288183b92f07d2"
     },
     "controls/publish_frontend.py": {
       "bytes": 1619,
@@ -166,6 +174,10 @@
       "bytes": 343,
       "sha256": "6c1c6aaf9782205d354df150e713ff82e97d2a25a66220acda5dfeab24d9a59e"
     },
+    "evidence/USER_FIVE_NATIVE_BANS_RESULT_20261106.json": {
+      "bytes": 8273,
+      "sha256": "e05645d5e00ae718055ca0700add4eb69d246dbd7aab85262c987dda94577a2b"
+    },
     "evidence/MAINTENANCE_VISUAL_REVIEW.json": {
       "bytes": 623,
       "sha256": "ebdff6ed580daa5b75cc9b9d9808db9a009b53a45fd14db94d2cbaa6689f2092"
@@ -233,6 +245,10 @@
     "evidence/frontend-tests.log": {
       "bytes": 14685,
       "sha256": "e6988435af84a22c1a74458fa2936e5e9e07b1188df4ed274dde7263e2acbac8"
+    },
+    "evidence/SIXTH_BAN_CAUSE_AUDIT_20261106.json": {
+      "bytes": 20823,
+      "sha256": "ed148a5f4305323e691a03357a731df83d34552b89e6a9166f947a5886f5ab15"
     },
     "evidence/CAPACITY_PREVIEW.json": {
       "bytes": 6671,
@@ -343,5 +359,5 @@
       "sha256": "08669a8571fa9e2b314e140baa8b0f834d667b12dbc3ea6d78d5ad6f6cef634f"
     }
   },
-  "scope": "Public evidence and generic controls only; no private key/config contents, safety bytes or raw datasets exported."
+  "scope": "Public read-only evidence and generic controls; no keys, raw configurations, signed packets or raw datasets."
 }
