@@ -1,0 +1,17 @@
+{
+  "publish_frontend.py": "d21dab1dd0915b14819dc7c9f13b6ce42d73de82a464615e29d667b54f4ec49c",
+  "native_session.py": "4c6313a976e00f6b8a6ade95928e489e33234c4d497e66cee074764a0be22f61",
+  "activate_clients.py": "62e58ebce05d2150b396900d0f94cbddd79e365d19b108092eec28a1e6e19093",
+  "ops_common.py": "dbfc19d95354d3c7c2d525979e0b8f640e3d597037d295bceb6d1179286f3515",
+  "wait_public_qa.py": "22e30fbe39b40de95cab6eb6771e1d84b30b047c5753b597cc3324a0b583036f",
+  "governance.py": "3a37622a1e50e686890cc445dd7f2172808d4b3984380981dbc52ea74c679f9e",
+  "preactivation.py": "3a0255de6c920e1a33c30bfc32c5cad602f4f2df05c9bdd3b5ef20def8dfc46b",
+  "wait_upgrade.py": "24181e91300acdf441eaf6b79ef5bbc70d9d22e4bafb1e20d60a75464aa09720",
+  "public_qa.py": "f4ac56dd80ea967e7fe327642ad54ccbc56552d2f037d11708eb0ae21421510a",
+  "final_audit.py": "108a7afb9ed8d42a2e11741dec562b3db4586593622724daa4dc71f1e6814d04",
+  "ADOPT_INSTALLED_R58_SOURCE.json": "c4e55550146df581d0058529c12d0936969c2571e20a7d84bb1bf990cd486d57",
+  "CLIENT_SOURCE_PUBLISHED.json": "541368ab4457a274662f5b28b4221b952381b9438158d0850beb87d4282b9721",
+  "qa_bridge.mjs": "3bdc04cfb3e3d90efc3db1d7a6b7a545655574970e18e89df9f41190ed52e904",
+  "OPERATIONAL_QA_ADDENDUM.json": "75fb790e94ff52487d2a58a9a7d0d74e0c099c3f20dcef7441dcd197c70deccf",
+  "stable_snapshot.py": "2205103b832d02b1baa1dc2a3a83698e628791c156bc91323d0105ad8fcd1e98"
+}
