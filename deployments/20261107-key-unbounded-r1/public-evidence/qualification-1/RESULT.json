@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/qualification-1/run.py\", line 48, in <module>\n    run(common+['--work',str(N),*flags],mode,env,2600)\n  File \"/opt/pureeos-key-unbounded-20261107-r1/qualification-1/run.py\", line 24, in run\n    guard();time.sleep(2)\n    ^^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/qualification-1/run.py\", line 9, in guard\n    p=Path('/proc')/str(b['PID']);assert (p/'stat').read_text().split()[21]==b['start_ticks'] and sha((p/'cmdline').read_bytes())==b['cmdline_sha256'],unit\n                                         ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1029, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/proc/73047/stat'\n",
+  "memory_KiB": {
+    "MemAvailable": 1745740,
+    "SwapFree": 1815600
+  },
+  "do_not_replay_completed_phases": true
+}

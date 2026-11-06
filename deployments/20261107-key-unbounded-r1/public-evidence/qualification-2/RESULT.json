@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/qualification-2/run.py\", line 70, in <module>\n    run(common+['--work',str(N),*flags],mode,env,2600)\n  File \"/opt/pureeos-key-unbounded-20261107-r1/qualification-2/run.py\", line 41, in run\n    assert child.returncode==0,name+' failed; preserve log and originals'\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: boundary failed; preserve log and originals\n",
+  "memory_KiB": {
+    "MemAvailable": 2343792,
+    "SwapFree": 886360
+  },
+  "do_not_replay_completed_phases": true
+}

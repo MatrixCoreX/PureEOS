@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "KEY_WASM": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+  "JSON_ABI": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "native": {
+    "migration-full": {
+      "checks": 355,
+      "result_sha256": "72fc3128a5e3f934c08fca20fc1c77f0568b40ff50a1b5e36df68250f85b620d",
+      "root": "/opt/kg-2-migration-full",
+      "scope": "Remote isolated real native TEST chain, production candidate WASM; atomic AIC/USD/CNY 3-route functional/security qualification, not TPS or live deployment",
+      "reused": true,
+      "reason": "Exact production WASM unchanged; only separate pre-seal boundary fixture authority setup changed"
+    },
+    "boundary": {
+      "checks": 21,
+      "result_sha256": "3bdd10211de637823152e283fdb551c9e7584ae5b5a63724ce16e2898c0c6e1d",
+      "root": "/opt/kg-3-boundary",
+      "scope": "TEST ONLY synthetic counter/RAM-boundary states on a private real native runtime; actual candidate execution/purchases/rollback, not billions of real wallets or a capacity/TPS claim"
+    }
+  },
+  "overlay_sha256": "854db796a414ca5c12991e894879d991339661811a56e8f116c606edb9a041b3",
+  "native_and_other_guarded_processes_unchanged": true,
+  "ordinary_autorestarts_observed_only": true,
+  "no_live_transactions": true
+}

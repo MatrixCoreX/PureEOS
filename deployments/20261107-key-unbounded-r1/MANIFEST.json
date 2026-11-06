@@ -1,0 +1,21 @@
+{
+  "REVIEW.en.md": "2eed29eb06cb28959499dca4bedfb2270915058e4b35884fa513a3d1a328bc4e",
+  "REVIEW.json": "1152e6be7cfbf341647c6cc6578d083fb03677dddce55ff916662a095b93b430",
+  "REVIEW.zh.md": "c83681ccaee9f46cf328e1aecf257453c376b9025193c00da7e5efa9e7648b95",
+  "artifacts/eosio.key.abi": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "artifacts/eosio.key.raw.abi": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+  "artifacts/eosio.key.wasm": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+  "controllers/activate_clients.py": "62e58ebce05d2150b396900d0f94cbddd79e365d19b108092eec28a1e6e19093",
+  "controllers/governance.py": "3a37622a1e50e686890cc445dd7f2172808d4b3984380981dbc52ea74c679f9e",
+  "controllers/native_session.py": "4c6313a976e00f6b8a6ade95928e489e33234c4d497e66cee074764a0be22f61",
+  "controllers/ops_common.py": "dbfc19d95354d3c7c2d525979e0b8f640e3d597037d295bceb6d1179286f3515",
+  "controllers/public_qa.py": "13adb5483afc267aea84a5a2a5c26164fdb9ee90c1c0c25f631a5b417d277622",
+  "controllers/qa_bridge.mjs": "3bdc04cfb3e3d90efc3db1d7a6b7a545655574970e18e89df9f41190ed52e904",
+  "public-evidence/build-1/BUILD_RESULT.json": "087679b5409ff5c27e22f7c3f28403c9b1e7b9cf5eaee3b2bc8787f8970edac5",
+  "public-evidence/kg-2-migration-full/RESULT.json": "72fc3128a5e3f934c08fca20fc1c77f0568b40ff50a1b5e36df68250f85b620d",
+  "public-evidence/kg-3-boundary/RESULT.json": "3bdd10211de637823152e283fdb551c9e7584ae5b5a63724ce16e2898c0c6e1d",
+  "public-evidence/qualification-1/RESULT.json": "f0bac58e0adaaeea2bb58e8224410b3c7be872e6e33e0c98d4c0d1cbe58aa4a7",
+  "public-evidence/qualification-2/RESULT.json": "29ee7b1e9fe867fb2b4f8a00d1a8edc15c1c6386ad67549a997134a0d1685be2",
+  "public-evidence/qualification-3/RESULT.json": "be5cd36368ba062a969c5f7c414707c86b925dd34bbe3d96240e8b374c9a7fee",
+  "public-evidence/qualification-3/SDK_REUSED.json": "b39819ab0ea220e76cc2424c1f377715ac6952bc4ef9fba41e437e773e906d72"
+}

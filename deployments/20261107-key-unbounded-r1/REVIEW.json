@@ -1,0 +1,94 @@
+{
+  "JSON_ABI_SHA256": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "before_target_RAM": {
+    "ram_quota": 2223576,
+    "ram_usage": 1798538
+  },
+  "build_source_archive_SHA256": "954ea12940d3d64d6b7ec5b700c4917e08ce39cfea8e773c767bb83bb0dfa825",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "change": "Remove fixed aggregate wallet, balance and asset admission limits and per-asset 1TiB cumulative RAM budget ceiling; use checked uint64 counters and paid allocation",
+  "client_policy": "Explicit reviewed old30f6/new7db compatibility only, unknown code still rejected. Exact SDK/relay/API pins and client build/preactivation proof required before governed execution.",
+  "code_RAM_additional_bytes_estimate": 32759,
+  "code_RAM_policy": "Existing KEY quota covers conservative code/ABI delta plus4096 metadata margin; no sponsorship, user ledger debit or new signer. This is an estimate, not native exact metering.",
+  "code_RAM_sponsor_action": null,
+  "compiled_production_inputs_SHA256": {
+    "include/eosio.key.hpp": "f7651a68deac7045984b275b5a3e27b8c47a65e486fd3d19d087c06747b0ecbf",
+    "scripts/build.sh": "5f0adfc16ebdc7680bfab66c3d4cf1a0d741154f24f53fdbc23543e1a9016005",
+    "src/eosio.key.cpp": "8f092ff3d748469ec21921f469e9142fec8121aabf4af3f771ccc7141e8b147e",
+    "token_allowlist.json": "14c95aa341d9d85ea1157a7205fd214581a195ed71ee14cae575cfc37b0ac3b8"
+  },
+  "controllers_SHA256": {
+    "activate_clients.py": "62e58ebce05d2150b396900d0f94cbddd79e365d19b108092eec28a1e6e19093",
+    "governance.py": "3a37622a1e50e686890cc445dd7f2172808d4b3984380981dbc52ea74c679f9e",
+    "native_session.py": "4c6313a976e00f6b8a6ade95928e489e33234c4d497e66cee074764a0be22f61",
+    "ops_common.py": "dbfc19d95354d3c7c2d525979e0b8f640e3d597037d295bceb6d1179286f3515",
+    "public_qa.py": "13adb5483afc267aea84a5a2a5c26164fdb9ee90c1c0c25f631a5b417d277622"
+  },
+  "downgrade": "No automatic downgrade is proposed. Old code does not maintain growth; any future rollback requires its own reviewed compatible design.",
+  "finite_limits": "Actual RAM supply/market, storage, native transaction limits, token allowlist, checked uint64 representation/ID/RAM overflow remain. This does not claim physically unlimited capacity or TPS.",
+  "issuer_code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+  "legacy_policy_fields": "max_wallets/max_balances/max_assets/max_native_payers remain serialized compatibility fields and do not gate allocation",
+  "migration": "First paid allocation seeds from legacy cumulative counters in O(1) and same transaction. No init, admin action, row scan, balance rewrite or reset. Existing uint32 views saturate at UINT32_MAX while exact growth remains uint64. External token-row allocations are cumulative, not current internal row count.",
+  "new_abi_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+  "new_code_hash": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+  "new_table": {
+    "growth": {
+      "asset_count": "uint64",
+      "balance_count": "uint64",
+      "version": "uint32=1",
+      "wallet_count": "uint64"
+    }
+  },
+  "no_reset_BP_pause_server_TPS": true,
+  "old_abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83",
+  "old_code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+  "prepared_UTC": "2026-11-06T22:46:01.935920+00:00",
+  "preserved": [
+    "Existing config version2 and serialized layout, wallet/balance/asset/fee tables and action wire",
+    "Signature domains, owner proofs, nonces, maximum signed fee, full principal and atomic rollback",
+    "Exact native RAM buy amount and quota verification; no duplicate purchase for existing rows",
+    "Token allowlist and reviewed code pins, native CPU/NET/depth4, relay eligibility and execution income, fee-free claim",
+    "Signup3c03 bridge, all native authorities, node processes, token supplies/caps, existing voting/bonds"
+  ],
+  "production_review_seconds_unchanged": 604800,
+  "qualification": {
+    "JSON_ABI": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+    "KEY_WASM": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+    "native": {
+      "boundary": {
+        "checks": 21,
+        "result_sha256": "3bdd10211de637823152e283fdb551c9e7584ae5b5a63724ce16e2898c0c6e1d",
+        "root": "/opt/kg-3-boundary",
+        "scope": "TEST ONLY synthetic counter/RAM-boundary states on a private real native runtime; actual candidate execution/purchases/rollback, not billions of real wallets or a capacity/TPS claim"
+      },
+      "migration-full": {
+        "checks": 355,
+        "reason": "Exact production WASM unchanged; only separate pre-seal boundary fixture authority setup changed",
+        "result_sha256": "72fc3128a5e3f934c08fca20fc1c77f0568b40ff50a1b5e36df68250f85b620d",
+        "reused": true,
+        "root": "/opt/kg-2-migration-full",
+        "scope": "Remote isolated real native TEST chain, production candidate WASM; atomic AIC/USD/CNY 3-route functional/security qualification, not TPS or live deployment"
+      }
+    },
+    "native_and_other_guarded_processes_unchanged": true,
+    "no_live_transactions": true,
+    "ordinary_autorestarts_observed_only": true,
+    "overlay_sha256": "854db796a414ca5c12991e894879d991339661811a56e8f116c606edb9a041b3",
+    "status": "PASS"
+  },
+  "qualification_SHA256": "be5cd36368ba062a969c5f7c414707c86b925dd34bbe3d96240e8b374c9a7fee",
+  "qualified_attempt": "qualification-3",
+  "retained_failures": [
+    "Qualification1 native setup aborted by observed ordinary-sender automatic restart; SDK28 passed",
+    "Qualification2 full migration355 PASS; separate pre-seal boundary fixture lacked eosio.fees self-code authority; corrected TEST ONLY setup in qualification3, no production code change",
+    "Client-build1 gated out before any build because qualification2 overall FAIL"
+  ],
+  "review_seconds": 1800,
+  "signup_code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+  "sole_founder_HTTP_unchanged": true,
+  "source_commit": "4b9627ea2aeab8b82839c5488a3034cb07739c08",
+  "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+  "target": "eosio.key",
+  "test_scope": "355 genuine prior-WASM migration/full-route checks reused unchanged production artifact; separate fresh seeded boundary vectors test arithmetic and actual purchases/rollback, not billions of real accounts or TiB of physical RAM. SDK28. Client/Core/APK/browser acceptance recorded separately before activation.",
+  "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+}

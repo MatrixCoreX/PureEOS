@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "source_archive_sha256": "954ea12940d3d64d6b7ec5b700c4917e08ce39cfea8e773c767bb83bb0dfa825",
+  "files": {
+    "eosio.key.wasm": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+    "token_allowlist.json": "14c95aa341d9d85ea1157a7205fd214581a195ed71ee14cae575cfc37b0ac3b8",
+    "eosio.key.abi": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf"
+  },
+  "only_ABI_addition": "growth table / growth_counters struct; existing action and table layouts unchanged",
+  "test_only_fixture": {
+    "growth.seed.abi": "c4c1589ecbccd61312375d2bfc7c0d349206162e3687721909daaa1ac7c6d455",
+    "growth.seed.wasm": "d68d8f5e7d43007ad6273da0450ea878cc13ec0eba8d640f3b95e9c273eaa7c1"
+  },
+  "head_before": 252561,
+  "LIB_after": 252734,
+  "live_services_unchanged": true
+}

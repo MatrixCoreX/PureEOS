@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "tests": 28,
+  "origin": "qualification-1/sdk.log",
+  "log_sha256": "57d71315df1f2e23dd4dca76dc864daf10c93d5a143c999dd821072c9a03a54c",
+  "exact_source_files": {
+    "sdk/fee-profiles.mjs": "1f8e7d6503a6e557ef5c1549ae16a4a75f1c5a6ceb4cfda256ca226c54dcccbd",
+    "sdk/index.mjs": "44c77658a5b8bc1113bfe8f2de4123337dbfdc6253afb15e8dc60616f938d1c9",
+    "tests/atomic-sdk.test.mjs": "dc5e8155fc0be651c3fa800d508c79741df5134732b4a885fd04bc512836f054",
+    "tests/relay.test.mjs": "1e2f936c9d97829264fa20672884248b9e4c0d6fad05e804ec89b72738191fdc",
+    "tests/rpc-routing.test.mjs": "870ff29bfe1e5c03a18fa047e72c2ab399895f532a43cd745077ea94e9f73687",
+    "tests/sdk.test.mjs": "ce30e1c855e68cfd1f329dfb9dfb507647696907a83a8008166dd5af33ccce6a",
+    "tests/signup-bridge.test.mjs": "75c22af451d249e3ca9086f43355837a6661607f9d934bf4ef6982445ed78a3f"
+  },
+  "reason": "Native process guard aborted after SDK pass; no SDK implementation changes"
+}
