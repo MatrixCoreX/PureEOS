@@ -1,0 +1,82 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T09:35:29.421414+00:00",
+  "only_units": [
+    "pureeos-devnet-bp-baiduaiworks-20261105.service",
+    "pureeos-bp-demo-montrealmila-20261105.service"
+  ],
+  "stopped": {
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-montrealmila-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    }
+  },
+  "preserved24_PIDs": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 12992,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 12995,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 12996,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 13000,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 13004,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 13009,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 13011,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 13015,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 13016,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 13018,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 13021,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 13024,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 13027,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 13029,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 13030,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 13035,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 13040,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 13042,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 13045,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 13046,
+    "pureeos-devnet-founder-20261105.service": 13048,
+    "pureeos-devnet-history-20261105.service": 13051,
+    "pureeos-bp-demo-genevacernai-20261105.service": 15826,
+    "pureeos-bp-demo-sydneyunswai-20261105.service": 12219
+  },
+  "sixth_maintenance_unchanged": {
+    "owner": "montrealmila",
+    "state": 2,
+    "requested_slot": 1694404386,
+    "effective_slot": 1694404386,
+    "effective_block": 56840,
+    "resumed_slot": 0
+  },
+  "after_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 168109,
+    "last_irreversible_block_num": 168105,
+    "last_irreversible_block_id": "000290a93aa10295fe9d214fb1c253b43049f65ec7d65d1759a9b489ce44d079",
+    "head_block_id": "000290ad8d86f13f2337f5ccd8090f256f20d1e8229df1310c07e05ac11327fb",
+    "head_block_time": "2026-11-06T09:35:29.500",
+    "head_block_producer": "deepmindlabs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 168109,
+    "fork_db_head_block_id": "000290ad8d86f13f2337f5ccd8090f256f20d1e8229df1310c07e05ac11327fb",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409564770",
+    "total_net_weight": 236060000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-06T09:35:27.500"
+  },
+  "memory_after": "               total        used        free      shared  buff/cache   available\nMem:            7935        5900         250           8        2103        2035\nSwap:           8191        1080        7111\n",
+  "scope": "Only these2off-duty services stopped/disabled. No keys/safety/blockdata/chain rules changed or removed."
+}

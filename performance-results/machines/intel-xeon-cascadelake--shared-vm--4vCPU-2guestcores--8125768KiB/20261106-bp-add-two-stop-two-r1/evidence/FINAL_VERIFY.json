@@ -1,0 +1,1053 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T09:45:08.696993+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "start": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 169239,
+    "last_irreversible_block_num": 169235,
+    "last_irreversible_block_id": "000295131bcd525420bd37f74281f3219abd3ec1f4968a67e77fb092eb8ed9c5",
+    "head_block_id": "00029517d9b707c289645be3a1644a031b87d31444194d5634fc72bf7a3bec15",
+    "head_block_time": "2026-11-06T09:45:07.500",
+    "head_block_producer": "tencentcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 169239,
+    "fork_db_head_block_id": "00029517d9b707c289645be3a1644a031b87d31444194d5634fc72bf7a3bec15",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6491365600",
+    "total_net_weight": 240060000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-06T09:45:05.500"
+  },
+  "end": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 169240,
+    "last_irreversible_block_num": 169237,
+    "last_irreversible_block_id": "00029515b5d1e1d3144a15018c3cab90f8bc5a0bfee6228655b95bca678c54f6",
+    "head_block_id": "0002951806988798313042dd96acfebfc8b2496b5240eca55aecc85fb70235b5",
+    "head_block_time": "2026-11-06T09:45:08.000",
+    "head_block_producer": "tencentcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 169240,
+    "fork_db_head_block_id": "0002951806988798313042dd96acfebfc8b2496b5240eca55aecc85fb70235b5",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6491365600",
+    "total_net_weight": 240060000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-06T09:45:06.500"
+  },
+  "new_nodes": [
+    {
+      "name": "bostonmitlab",
+      "process": {
+        "MainPID": "37957",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 169240,
+        "last_irreversible_block_num": 169237,
+        "last_irreversible_block_id": "00029515b5d1e1d3144a15018c3cab90f8bc5a0bfee6228655b95bca678c54f6",
+        "head_block_id": "0002951806988798313042dd96acfebfc8b2496b5240eca55aecc85fb70235b5",
+        "head_block_time": "2026-11-06T09:45:08.000",
+        "head_block_producer": "tencentcloud",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 169240,
+        "fork_db_head_block_id": "0002951806988798313042dd96acfebfc8b2496b5240eca55aecc85fb70235b5",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6491365600",
+        "total_net_weight": 240060000,
+        "earliest_available_block_num": 168719,
+        "last_irreversible_block_time": "2026-11-06T09:45:06.500"
+      },
+      "producer": {
+        "owner": "bostonmitlab",
+        "total_votes": 3710041,
+        "producer_key": "PUB_K1_7ExRjZsbFGQ4f6a7fRDAW8jhxk9rrYWxNd7Hg1bqhbnqQx6Hsb",
+        "is_active": 1,
+        "url": "https://aic-test.matrixai.one",
+        "unpaid_blocks": 0,
+        "last_claim_time": "2026-11-06T09:41:12.000",
+        "location": 0,
+        "producer_authority": [
+          "block_signing_authority_v0",
+          {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_7ExRjZsbFGQ4f6a7fRDAW8jhxk9rrYWxNd7Hg1bqhbnqQx6Hsb",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      "bond": {
+        "owner": "bostonmitlab",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793958044,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      "self_vote": {
+        "owner": "bostonmitlab",
+        "proxy": "",
+        "producers": [
+          "bostonmitlab"
+        ],
+        "staked": 1100041,
+        "last_vote_amount": 1100041,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      "other_vote": {
+        "owner": "cambridgeoak",
+        "proxy": "",
+        "producers": [
+          "bostonmitlab"
+        ],
+        "staked": 2610000,
+        "last_vote_amount": 2610000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      "current_proposer": false,
+      "current_finalizer": false
+    },
+    {
+      "name": "torontovectr",
+      "process": {
+        "MainPID": "38342",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 169240,
+        "last_irreversible_block_num": 169237,
+        "last_irreversible_block_id": "00029515b5d1e1d3144a15018c3cab90f8bc5a0bfee6228655b95bca678c54f6",
+        "head_block_id": "0002951806988798313042dd96acfebfc8b2496b5240eca55aecc85fb70235b5",
+        "head_block_time": "2026-11-06T09:45:08.000",
+        "head_block_producer": "tencentcloud",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 169240,
+        "fork_db_head_block_id": "0002951806988798313042dd96acfebfc8b2496b5240eca55aecc85fb70235b5",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6491365600",
+        "total_net_weight": 240060000,
+        "earliest_available_block_num": 168719,
+        "last_irreversible_block_time": "2026-11-06T09:45:06.500"
+      },
+      "producer": {
+        "owner": "torontovectr",
+        "total_votes": 4870042,
+        "producer_key": "PUB_K1_8TGBHQJWHgzMuKT9M6UtdtbnchHe1GN4fUJKEDmyWfgiZfjDpE",
+        "is_active": 1,
+        "url": "https://aic-test.matrixai.one",
+        "unpaid_blocks": 0,
+        "last_claim_time": "2026-11-06T09:41:48.000",
+        "location": 0,
+        "producer_authority": [
+          "block_signing_authority_v0",
+          {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_8TGBHQJWHgzMuKT9M6UtdtbnchHe1GN4fUJKEDmyWfgiZfjDpE",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      "bond": {
+        "owner": "torontovectr",
+        "state": 0,
+        "balance": 100000000,
+        "forfeited": 0,
+        "settled": 0,
+        "bonded_at": 1793958077,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 0,
+        "ban_record_block": 0
+      },
+      "self_vote": {
+        "owner": "torontovectr",
+        "proxy": "",
+        "producers": [
+          "torontovectr"
+        ],
+        "staked": 1100042,
+        "last_vote_amount": 1100042,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      "other_vote": {
+        "owner": "ontariomaple",
+        "proxy": "",
+        "producers": [
+          "torontovectr"
+        ],
+        "staked": 3770000,
+        "last_vote_amount": 3770000,
+        "proxied_vote_weight": "0.00000000000000000",
+        "is_proxy": 0,
+        "flags1": 0,
+        "reserved2": 0,
+        "reserved3": "0 "
+      },
+      "current_proposer": false,
+      "current_finalizer": false
+    }
+  ],
+  "only_two_user_stopped_services": {
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-montrealmila-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    }
+  },
+  "prior_retired_five_still_off": {
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    }
+  },
+  "preserved24_other_PIDs": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 12992,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 12995,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 12996,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 13000,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 13004,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 13009,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 13011,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 13015,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 13016,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 13018,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 13021,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 13024,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 13027,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 13029,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 13030,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 13035,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 13040,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 13042,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 13045,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 13046,
+    "pureeos-devnet-founder-20261105.service": 13048,
+    "pureeos-devnet-history-20261105.service": 13051,
+    "pureeos-bp-demo-genevacernai-20261105.service": 15826,
+    "pureeos-bp-demo-sydneyunswai-20261105.service": 12219
+  },
+  "native_proposers": {
+    "active": {
+      "version": 271,
+      "producers": [
+        {
+          "producer_name": "alibabacloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6SUpnpxb9wAEEzxvQo9rQVWrprbyYsw5ztq18H1fwWJW7pVufK",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "anthropiclab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "berlintulabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6YvpcYwsRkfRgutfMGEJdyCpQhoSC6PSzLTpPWDoVBySVmnH34",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "bytedancelab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cohereclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "deepmindlabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7F5q79uQoMkUCggy6iHB5EL6ALhL6uWFaNdjybkqYCyBiodH51",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "genevacernai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5ir4vk6a9NtZX4w6wk4RBAYgba98ZsuKSUsC9a9wrdud6xPX44",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "gptgenesisbp",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "londonucllab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8FvkzAk4sBXZzDFH8GVZ669eqxztrQPsLtunieUJzstyRdAFMy",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "minimaxcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "mistralcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "moonshotlabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "nvidiaclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8PZbtYbgJF9phfFF5t6VCt9ZvQ1bkrp1rWSbQGeshh1byxaoAC",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "openaiclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8HkSyD1JbzxrAni7fhbvGzbcRrywkjLUqmukBLnaD3W3eojQPV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "parisinriaai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7KYKjytwBHrSfXKfsQ8y8V954z7CeNUADJprupH6HiH5uMy226",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "perplexityai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "seoulkaistai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6x78eaVRdoXhiLcqx4eh6dEPYWbrmTRZJ8NZd6ZuPVAnz4siGC",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "stabilityhub",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "sydneyunswai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6kMVazebFxne8UrPA1oXT9LfPhExjZTXNYrTWn6F19we2xN5HR",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "tencentcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6ob3t5dNoPgUGmrNsWvoz8bUFzM3zqnBXtr8XZAe5YhdDh4GQe",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "zurichethlab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7dJtdWTxJDv372X72cg8xLX3CjbKWya9Xfcs1tFrs5JTtqbJtZ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pending": null,
+    "proposed": null
+  },
+  "native_finalizers": {
+    "active_finalizer_policy": {
+      "generation": 272,
+      "threshold": 15,
+      "finalizers": [
+        {
+          "description": "alibabacloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_k9LV0TDa2wMQRlDBGdRqVKOmALuvJ5g_OprZb3oTv8ycmN2mSrAXn6tRt85INdgJjEZuIClYFJf1yzLl_V9NkfXn4yg7PONa0_hscN4R2yM9tTBloYoFJnMNCtPR3TUAOkUp6Q"
+        },
+        {
+          "description": "anthropiclab",
+          "weight": 1,
+          "public_key": "PUB_BLS_kXjL6WGrWSVfZLJP0ZJtB2SP7JdBhrR3NNx8DbPzMCUi8QhohlsSpoYKJT8mB9MRPVTxeKS4Jq0P5E9K_YmrqmCik46h3IEb6SqW1xZFGb6EE8JiM142fyi6dkWzxMQAKOfP1Q"
+        },
+        {
+          "description": "berlintulabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_rEePesA4CmdXzGLTxyRknF74GieIBN-XTzppgA85LJQ7yLS19vnv3dOqIAud2iwDDZow5fs5YrVbQrq8ZNk2G119sOPn00gCk0T46y5EVltFZe5tFybV9eTs16Sb7loQ591nkQ"
+        },
+        {
+          "description": "bytedancelab",
+          "weight": 1,
+          "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA"
+        },
+        {
+          "description": "cohereclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA"
+        },
+        {
+          "description": "deepmindlabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_9jibXBIrdThq0YHkG7AqZiiHFeyubZYo5SkMJvqgZVSJD0RzzaU9d-Xo49SEF7sO0FWIzFecEIFSMG5I_-t1KSFxlcBzjWzu1y3LmlOklzGEvgvpeRIjTHJOn-rhJA0GNioJEQ"
+        },
+        {
+          "description": "genevacernai",
+          "weight": 1,
+          "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q"
+        },
+        {
+          "description": "gptgenesisbp",
+          "weight": 1,
+          "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg"
+        },
+        {
+          "description": "londonucllab",
+          "weight": 1,
+          "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ"
+        },
+        {
+          "description": "minimaxcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A"
+        },
+        {
+          "description": "mistralcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ"
+        },
+        {
+          "description": "moonshotlabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ"
+        },
+        {
+          "description": "nvidiaclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS_0nd8jTQkprwClDxe6a5xChMhDDFIBPCqSiLMiz3DrCVv_9IgnsFw67nO1RNYFh8YDRZqNXAbgtReiaRcCWvwmjCjIO5owymxyZo6Knt-GZ13SFMgH0ur2uwPrqGFOCkFI7LKfQ"
+        },
+        {
+          "description": "openaiclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS__ItsCrWEuqbcsZS9WyGOQO8CNIjsg7avESKdj-SOCCesdC81r1OCrD53t4SCqzwMVkLK-lPkSVKriqSUVolfY3XwLLpBVrsT_jDRc-k_bUW-oG9Z1I7FIBmBj4fT0zELCxgLvw"
+        },
+        {
+          "description": "parisinriaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ"
+        },
+        {
+          "description": "perplexityai",
+          "weight": 1,
+          "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA"
+        },
+        {
+          "description": "seoulkaistai",
+          "weight": 1,
+          "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA"
+        },
+        {
+          "description": "stabilityhub",
+          "weight": 1,
+          "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug"
+        },
+        {
+          "description": "sydneyunswai",
+          "weight": 1,
+          "public_key": "PUB_BLS_9pMqCaIYUGAl71SG6iCUPdW-L-ZmQ4A9DYPq_8JucyVT3jU2agpfOqNfzWBh_RUIf24UfWyWkx35XIvF1C2nm2acF0BuoxeSiQZI-s11TCkiOfeCHxH_0svvH2zkyiMMoaWwOA"
+        },
+        {
+          "description": "tencentcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_qnTv-Ma-qS5JAAdirtJdCN0O6Lu1_2JjwGh8lPJIE9BMuzmUn4KR7q-UhT_lW4APHsDjUTIeiIRNYU6AHJZ9jz2WHGypqWINZBYhjFMGEk_8P1-FBOgCqHlSaHtq50IQFeCJPw"
+        },
+        {
+          "description": "zurichethlab",
+          "weight": 1,
+          "public_key": "PUB_BLS_Nhkw_5dnw07V5pDSAk4y7C6ZUoyfgxGugTybT3-TfzsqbAzexIss4dH5KWGt7QsNcu7eyc7iP9SvE1GwdLWEMcS5jTqdXzKLnwWKewcR7jWUuGtNkweXz8mRWR-b2cMNVEDwIQ"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "alibabacloud",
+        "public_key": "PUB_BLS_k9LV0TDa2wMQRlDBGdRqVKOmALuvJ5g_OprZb3oTv8ycmN2mSrAXn6tRt85INdgJjEZuIClYFJf1yzLl_V9NkfXn4yg7PONa0_hscN4R2yM9tTBloYoFJnMNCtPR3TUAOkUp6Q",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "anthropiclab",
+        "public_key": "PUB_BLS_kXjL6WGrWSVfZLJP0ZJtB2SP7JdBhrR3NNx8DbPzMCUi8QhohlsSpoYKJT8mB9MRPVTxeKS4Jq0P5E9K_YmrqmCik46h3IEb6SqW1xZFGb6EE8JiM142fyi6dkWzxMQAKOfP1Q",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "berlintulabs",
+        "public_key": "PUB_BLS_rEePesA4CmdXzGLTxyRknF74GieIBN-XTzppgA85LJQ7yLS19vnv3dOqIAud2iwDDZow5fs5YrVbQrq8ZNk2G119sOPn00gCk0T46y5EVltFZe5tFybV9eTs16Sb7loQ591nkQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "bytedancelab",
+        "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "cohereclouds",
+        "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "deepmindlabs",
+        "public_key": "PUB_BLS_9jibXBIrdThq0YHkG7AqZiiHFeyubZYo5SkMJvqgZVSJD0RzzaU9d-Xo49SEF7sO0FWIzFecEIFSMG5I_-t1KSFxlcBzjWzu1y3LmlOklzGEvgvpeRIjTHJOn-rhJA0GNioJEQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "genevacernai",
+        "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "gptgenesisbp",
+        "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "londonucllab",
+        "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "minimaxcloud",
+        "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "mistralcloud",
+        "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "moonshotlabs",
+        "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "nvidiaclouds",
+        "public_key": "PUB_BLS_0nd8jTQkprwClDxe6a5xChMhDDFIBPCqSiLMiz3DrCVv_9IgnsFw67nO1RNYFh8YDRZqNXAbgtReiaRcCWvwmjCjIO5owymxyZo6Knt-GZ13SFMgH0ur2uwPrqGFOCkFI7LKfQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "openaiclouds",
+        "public_key": "PUB_BLS__ItsCrWEuqbcsZS9WyGOQO8CNIjsg7avESKdj-SOCCesdC81r1OCrD53t4SCqzwMVkLK-lPkSVKriqSUVolfY3XwLLpBVrsT_jDRc-k_bUW-oG9Z1I7FIBmBj4fT0zELCxgLvw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "parisinriaai",
+        "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "perplexityai",
+        "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "seoulkaistai",
+        "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "stabilityhub",
+        "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "sydneyunswai",
+        "public_key": "PUB_BLS_9pMqCaIYUGAl71SG6iCUPdW-L-ZmQ4A9DYPq_8JucyVT3jU2agpfOqNfzWBh_RUIf24UfWyWkx35XIvF1C2nm2acF0BuoxeSiQZI-s11TCkiOfeCHxH_0svvH2zkyiMMoaWwOA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "tencentcloud",
+        "public_key": "PUB_BLS_qnTv-Ma-qS5JAAdirtJdCN0O6Lu1_2JjwGh8lPJIE9BMuzmUn4KR7q-UhT_lW4APHsDjUTIeiIRNYU6AHJZ9jz2WHGypqWINZBYhjFMGEk_8P1-FBOgCqHlSaHtq50IQFeCJPw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      },
+      {
+        "description": "zurichethlab",
+        "public_key": "PUB_BLS_Nhkw_5dnw07V5pDSAk4y7C6ZUoyfgxGugTybT3-TfzsqbAzexIss4dH5KWGt7QsNcu7eyc7iP9SvE1GwdLWEMcS5jTqdXzKLnwWKewcR7jWUuGtNkweXz8mRWR-b2cMNVEDwIQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 272,
+        "voted_for_block_id": "0002951635854c23d5c9c0f627ea2af3be6dbf59d4d9758c8b507d78e0c0c7eb",
+        "voted_for_block_num": 169238,
+        "voted_for_block_timestamp": "2026-11-06T09:45:07.000"
+      }
+    ]
+  },
+  "maintenance": [
+    {
+      "owner": "montrealmila",
+      "state": 2,
+      "requested_slot": 1694404386,
+      "effective_slot": 1694404386,
+      "effective_block": 56840,
+      "resumed_slot": 0
+    }
+  ],
+  "producer_summary": {
+    "schema_version": 1,
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "generated_at": "2026-11-06T09:45:07.741986+00:00",
+    "head": 169239,
+    "LIB": 169235,
+    "available": true,
+    "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "registered_bp_count": 32,
+    "eligible_bp_count": 25,
+    "published_candidate_count": 23,
+    "active_producer_count": 21,
+    "permanent_blacklist_count": 6,
+    "maintenance_excluded_count": 1,
+    "maintenance_active_count": 1,
+    "maintenance_pending_count": 0,
+    "rotation_capacity": 210,
+    "next_capacity": 211,
+    "next_capacity_slot": "1695543508",
+    "next_capacity_estimated_at": "2026-11-12T04:09:14.000+00:00",
+    "count_scope": "All native producer/candidate/maintenance rows; pagination complete; no online-process or history-node count",
+    "eligible_scope": "Active registration, positive integer votes and usable producer/finalizer keys (valid rank), excluding permanent bans and non-normal maintenance; candidate admission still follows ranking snapshots"
+  },
+  "summary_observations": [
+    {
+      "available": true,
+      "registered": 32,
+      "eligible": 25,
+      "head": 169239
+    }
+  ],
+  "machine": {
+    "Architecture": "x86_64",
+    "CPU(s)": "4",
+    "Model name": "Intel Xeon Processor (Cascadelake)",
+    "Thread(s) per core": "2",
+    "Core(s) per socket": "2",
+    "Socket(s)": "1",
+    "Hypervisor vendor": "Microsoft"
+  },
+  "memory": "               total        used        free      shared  buff/cache   available\nMem:            7935        5972         190           8        2091        1962\nSwap:           8191        1172        7019\n",
+  "loadavg": "89.44 86.05 83.18 88/1070 39323",
+  "token_stats_unchanged": {
+    "eosio.token": {
+      "AIC": {
+        "supply": "100000000.0000 AIC",
+        "max_supply": "2100000000.0000 AIC",
+        "issuer": "eosio"
+      }
+    },
+    "usd": {
+      "USD": {
+        "supply": "100010000.0000 USD",
+        "max_supply": "1000000000.0000 USD",
+        "issuer": "usd"
+      }
+    },
+    "cny": {
+      "CNY": {
+        "supply": "100010000.0000 CNY",
+        "max_supply": "1000000000.0000 CNY",
+        "issuer": "cny"
+      }
+    }
+  },
+  "code_ABI_pins_unchanged": {
+    "eosio": {
+      "code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "abi_hash": "f19e4c55e11f5029f4a161865ac0b0ea29f730d4f19fbdc6eb30c29c10ef5512"
+    },
+    "eosio.token": {
+      "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+      "abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856"
+    },
+    "eosio.key": {
+      "code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+      "abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83"
+    },
+    "eosio.signup": {
+      "code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "abi_hash": "6858916070985e06486fe9131ae6fec06079963699beaea93840adedb2c6020c"
+    },
+    "usd": {
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e"
+    },
+    "cny": {
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e"
+    }
+  },
+  "scope": "New2synced/registered/self+other votes/own10000AICbonds, all32distinct vote totals, oldvotes/bonds/contracts/supplies/soleHTTP retained. Native21/15,32registered/25eligible/6banned/1maintenance. Baidu/Montreal servicesoff without deleting theirdata. Real newBP duty is not claimed; nativeFIFO applies. No server/reset/TPS/capacity qualification or wallet/device/private-key export."
+}

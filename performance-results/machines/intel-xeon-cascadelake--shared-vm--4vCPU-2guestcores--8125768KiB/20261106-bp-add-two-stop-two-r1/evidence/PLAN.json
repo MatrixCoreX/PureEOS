@@ -1,0 +1,59 @@
+{
+  "status": "PREPARED",
+  "UTC": "2026-11-06T09:40:32.546439+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "remote_root": "/opt/pureeos-bp-add-two-stop-two-20261106-r1",
+  "new_BPs": [
+    "bostonmitlab",
+    "torontovectr"
+  ],
+  "nodes": [
+    {
+      "name": "bostonmitlab",
+      "voter": "cambridgeoak",
+      "index": 41,
+      "rpc_port": 8941,
+      "p2p_port": 9941,
+      "unit": "pureeos-bp-extra-bostonmitlab-20261106.service",
+      "CPU_stake_AIC": "100.0041",
+      "NET_stake_AIC": "10.0000",
+      "other_CPU_stake_AIC": "251.0000",
+      "public_keys": {
+        "account": "PUB_K1_7zqbeBa8c6z1cG6sq3VWbxSwv8yeRX82NifqrmNtfe6XVpamD5",
+        "production": "PUB_K1_7ExRjZsbFGQ4f6a7fRDAW8jhxk9rrYWxNd7Hg1bqhbnqQx6Hsb",
+        "peer": "PUB_K1_7ZsXzYgbjRMXFa49HrtGfAeFUcWS2hCR6Em6Qi6wtwVuFGFrkW",
+        "bls": "PUB_BLS_HWxfVY-duYgYiczEw_AdSVcezfYjpRkauIaeUFmEksbxkVdoPtvtcrEEKcA-UOkE0lT3JhZnKz0DEte1w4xRsxmhmaFBSZ637vap34rHwMOEiPzaxVz5phj6PBSUwr8IXOuBdA",
+        "voter": "PUB_K1_6fzuN8eHee6T4MikLf6KAM1jhjDurqrHJKzc9voBXfebb97h3e"
+      }
+    },
+    {
+      "name": "torontovectr",
+      "voter": "ontariomaple",
+      "index": 42,
+      "rpc_port": 8942,
+      "p2p_port": 9942,
+      "unit": "pureeos-bp-extra-torontovectr-20261106.service",
+      "CPU_stake_AIC": "100.0042",
+      "NET_stake_AIC": "10.0000",
+      "other_CPU_stake_AIC": "367.0000",
+      "public_keys": {
+        "account": "PUB_K1_827ACAatdcAWV5rATZukRHgpjq33ZKdtgi934SWZcgJ32WuCXF",
+        "production": "PUB_K1_8TGBHQJWHgzMuKT9M6UtdtbnchHe1GN4fUJKEDmyWfgiZfjDpE",
+        "peer": "PUB_K1_8KzfUqLUrRis5eTB759pJwnSivpC9dJtHZhGs5ixdLDNF2GhwU",
+        "bls": "PUB_BLS_LyihV-aoM7mdkeDhwAAjCuyGM8rBEsWLXfH9i1IXVNzpIEYfdhaTiRab4dQ6-roHXdOrkzxTMihjNzYsGX_8Mwq5jplSWIeEUk4PvoxUs6GafW4GV0C1ArsrdACYru0AuU8Faw",
+        "voter": "PUB_K1_5sw8vDHb9vi3S1VpVCLf397rS9ooFptuvFwWn7GfreUvsNCcd2"
+      }
+    }
+  ],
+  "maintenance_target": "",
+  "own_bond_AIC_each": "10000.0000",
+  "ordinary_voters": [
+    "cambridgeoak",
+    "ontariomaple"
+  ],
+  "registration_count_before": 30,
+  "registration_count_expected": 32,
+  "sole_founder_HTTP_relay_retained": true,
+  "snapshot_scope": "Fresh same-chain native irreversible checkpoint, then full validation; no original-state directory copy.",
+  "user_scope": "Two nodes on existing host; stop only bannedBaidu and already-maintainedMontreal. No new server, reset, TPS, protocol/contract/key/cap change or old payment replay."
+}

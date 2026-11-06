@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T09:40:37.261215+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "checkpoint_path": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/checkpoint/snapshot.bin",
+  "checkpoint_SHA256": "303515fd6b9052ac10b1e8c00c7cdbe944ed8698a0d6f2d9530cd5aaffd63498",
+  "bytes": 3202070,
+  "canonical_snapshot_block": {
+    "block_num": 168718,
+    "block_id": "0002930ebd97bac3c54e58f8864e0bd31380508a723d07e5d55f1caaa636901f"
+  },
+  "native_response": {
+    "head_block_id": "0002930ebd97bac3c54e58f8864e0bd31380508a723d07e5d55f1caaa636901f",
+    "head_block_num": 168718,
+    "head_block_time": "2026-11-06T09:40:34.500",
+    "version": 11,
+    "snapshot_name": "/opt/pureeos-devnet-20261105-r1/founder/data/snapshots/snapshot-0002930ebd97bac3c54e58f8864e0bd31380508a723d07e5d55f1caaa636901f.bin"
+  },
+  "preserved24_other_PIDs": true,
+  "scope": "Same-chain native irreversible trusted state checkpoint for two new identities; subsequent blocks fully validated. Raw checkpoint remains remote, no original node stopped or reconfigured."
+}

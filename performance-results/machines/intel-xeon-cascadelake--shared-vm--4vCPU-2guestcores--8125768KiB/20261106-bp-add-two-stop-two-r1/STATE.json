@@ -1,0 +1,70 @@
+{
+  "status": "COMPLETE",
+  "UTC": "2026-11-06T09:41:22.349377+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "remote_root": "/opt/pureeos-bp-add-two-stop-two-20261106-r1",
+  "stopped_units": [
+    "pureeos-devnet-bp-baiduaiworks-20261105.service",
+    "pureeos-bp-demo-montrealmila-20261105.service"
+  ],
+  "stop_result": "PASS, disabled, no data deletion and no maintenance/unban/authority change",
+  "new_BPs": [
+    "bostonmitlab",
+    "torontovectr"
+  ],
+  "new_other_voters": [
+    "cambridgeoak",
+    "ontariomaple"
+  ],
+  "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "preserved_other_node_PIDs": 24,
+  "expected_final_registered": 32,
+  "expected_final_eligible": 25,
+  "existing_native_bans_to_retain": 6,
+  "maintenance_nodes": 1,
+  "new_bond_AIC_each": "10000.0000",
+  "no_new_server_reset_TPS_or_contract_changes": true,
+  "unit": "pureeos-bp-add-two-20261106.service",
+  "remaining": [],
+  "guard": "Do not rerun signed labels/setup. Reconcile same immutable IDs if interrupted. Raw checkpoint/configs/private keys/packets remote only. Keep all retired5 off and every other current node alive.",
+  "completed_UTC": "2026-11-06T09:45:08.696993+00:00",
+  "registered_BPs": 32,
+  "eligible_BPs": 25,
+  "permanent_bans": 6,
+  "maintenance_count": 1,
+  "actual_native_policy": "21/15",
+  "running_BP_processes": 25,
+  "history_processes": 1,
+  "new_node_PIDs": {
+    "bostonmitlab": 37957,
+    "torontovectr": 38342
+  },
+  "new_nodes_registered_irreversibly": {
+    "bostonmitlab": {
+      "transaction_id": "61eec99c38abba3d5aaea248b11364621110520601191db2dedfef15d3101739",
+      "block_num": 168792,
+      "block_id": "00029358285d1a3b261e3f82ac674b93975b6a504b23545072dee6059d93f075",
+      "observed_LIB": 168792,
+      "CPU_us": 3606,
+      "NET_words": 108
+    },
+    "torontovectr": {
+      "transaction_id": "c767074c9f104c30353505a7c205f1eb6d24f3a8f3948748cbff2cb467cf4228",
+      "block_num": 168856,
+      "block_id": "00029398c9cd678ca8656af4da30145bcadb6beea88740fe2a0fc9d5408bce3f",
+      "observed_LIB": 168856,
+      "CPU_us": 3795,
+      "NET_words": 108
+    }
+  },
+  "other24_node_PIDs_unchanged": true,
+  "all32_vote_totals_distinct": true,
+  "original_votes_bonds_contracts_supplies_and_sole_HTTP_unchanged": true,
+  "checkpoint_block": {
+    "block_num": 168718,
+    "block_id": "0002930ebd97bac3c54e58f8864e0bd31380508a723d07e5d55f1caaa636901f"
+  },
+  "checkpoint_SHA256": "303515fd6b9052ac10b1e8c00c7cdbe944ed8698a0d6f2d9530cd5aaffd63498",
+  "signer_closed": true,
+  "scope_limit": "Synced, registered and self/other-voted; actual new-node on-duty production not claimed or awaited."
+}

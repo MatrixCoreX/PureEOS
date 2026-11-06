@@ -1,0 +1,3765 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T09:40:30.787868+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "node_pids": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 12992,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 12995,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 12996,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 13000,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 13004,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 13009,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 13011,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 13015,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 13016,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 13018,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 13021,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 13024,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 13027,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 13029,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 13030,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 13035,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 13040,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 13042,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 13045,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 13046,
+    "pureeos-devnet-founder-20261105.service": 13048,
+    "pureeos-devnet-history-20261105.service": 13051,
+    "pureeos-bp-demo-genevacernai-20261105.service": 15826,
+    "pureeos-bp-demo-sydneyunswai-20261105.service": 12219
+  },
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 168708,
+    "last_irreversible_block_num": 168705,
+    "last_irreversible_block_id": "000293010cfce24b032b2403973309f5fb017dc274fa06cb5637bbda89a618d3",
+    "head_block_id": "000293048ebcae9692091ace6d13c7f110d4e5465a266ea35b82efed91864459",
+    "head_block_time": "2026-11-06T09:40:29.500",
+    "head_block_producer": "parisinriaai",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 168708,
+    "fork_db_head_block_id": "000293048ebcae9692091ace6d13c7f110d4e5465a266ea35b82efed91864459",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409564770",
+    "total_net_weight": 236060000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-06T09:40:28.000"
+  },
+  "old_producers": [
+    {
+      "owner": "alibabacloud",
+      "total_votes": 19790010,
+      "producer_key": "PUB_K1_6SUpnpxb9wAEEzxvQo9rQVWrprbyYsw5ztq18H1fwWJW7pVufK",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6872,
+      "last_claim_time": "2026-11-05T05:13:18.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6SUpnpxb9wAEEzxvQo9rQVWrprbyYsw5ztq18H1fwWJW7pVufK",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "anthropiclab",
+      "total_votes": 15510002,
+      "producer_key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6585,
+      "last_claim_time": "2026-11-05T05:12:24.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "baiduaiworks",
+      "total_votes": 26100012,
+      "producer_key": "PUB_K1_5UmQLPDaSEr6fTyBAyK4e3HK9PMMfTgR46X7ctS1BTz5huvciu",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 4226,
+      "last_claim_time": "2026-11-05T05:13:32.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5UmQLPDaSEr6fTyBAyK4e3HK9PMMfTgR46X7ctS1BTz5huvciu",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "berlintulabs",
+      "total_votes": 18320022,
+      "producer_key": "PUB_K1_6YvpcYwsRkfRgutfMGEJdyCpQhoSC6PSzLTpPWDoVBySVmnH34",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6182,
+      "last_claim_time": "2026-11-05T05:14:51.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6YvpcYwsRkfRgutfMGEJdyCpQhoSC6PSzLTpPWDoVBySVmnH34",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "bytedancelab",
+      "total_votes": 12440013,
+      "producer_key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6910,
+      "last_claim_time": "2026-11-05T05:13:39.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "canadamilaai",
+      "total_votes": 34970023,
+      "producer_key": "PUB_K1_5i2xeLTqGnas8vYR7qaGVCRZPJmHE5LXXmCN7TJWdBN3cMy8Xj",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6353,
+      "last_claim_time": "2026-11-05T05:15:00.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5i2xeLTqGnas8vYR7qaGVCRZPJmHE5LXXmCN7TJWdBN3cMy8Xj",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "cohereclouds",
+      "total_votes": 28470006,
+      "producer_key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6678,
+      "last_claim_time": "2026-11-05T05:12:49.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "total_votes": 7640004,
+      "producer_key": "PUB_K1_7F5q79uQoMkUCggy6iHB5EL6ALhL6uWFaNdjybkqYCyBiodH51",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6470,
+      "last_claim_time": "2026-11-05T05:12:36.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7F5q79uQoMkUCggy6iHB5EL6ALhL6uWFaNdjybkqYCyBiodH51",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "deepseekcore",
+      "total_votes": 27510003,
+      "producer_key": "PUB_K1_82C5R1GCKTEeSteyNLe2NxbEWykxvk91NJ7zYZ72TnnRNYU4NZ",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6779,
+      "last_claim_time": "2026-11-05T05:12:29.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_82C5R1GCKTEeSteyNLe2NxbEWykxvk91NJ7zYZ72TnnRNYU4NZ",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "genevacernai",
+      "total_votes": 6370034,
+      "producer_key": "PUB_K1_5ir4vk6a9NtZX4w6wk4RBAYgba98ZsuKSUsC9a9wrdud6xPX44",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 4307,
+      "last_claim_time": "2026-11-05T12:26:48.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5ir4vk6a9NtZX4w6wk4RBAYgba98ZsuKSUsC9a9wrdud6xPX44",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "gptgenesisbp",
+      "total_votes": 153570000,
+      "producer_key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+      "is_active": 1,
+      "url": "",
+      "unpaid_blocks": 7087,
+      "last_claim_time": "2026-11-05T05:11:42.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "londonturing",
+      "total_votes": 3090033,
+      "producer_key": "PUB_K1_6BEzyBbPi3SEEpxYyDLRCo7ssTh5c2WKkrdS7WeQtHqnoA2vyF",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1669,
+      "last_claim_time": "2026-11-05T12:24:18.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6BEzyBbPi3SEEpxYyDLRCo7ssTh5c2WKkrdS7WeQtHqnoA2vyF",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "londonucllab",
+      "total_votes": 6840018,
+      "producer_key": "PUB_K1_8FvkzAk4sBXZzDFH8GVZ669eqxztrQPsLtunieUJzstyRdAFMy",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 7475,
+      "last_claim_time": "2026-11-05T05:14:18.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8FvkzAk4sBXZzDFH8GVZ669eqxztrQPsLtunieUJzstyRdAFMy",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "minimaxcloud",
+      "total_votes": 17360014,
+      "producer_key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 7130,
+      "last_claim_time": "2026-11-05T05:13:47.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "mistralcloud",
+      "total_votes": 16770005,
+      "producer_key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6636,
+      "last_claim_time": "2026-11-05T05:12:42.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "montrealmila",
+      "total_votes": 5950036,
+      "producer_key": "PUB_K1_7399gmEhCB2o8HJ6yJz4ChkbT7zXQdNRFeqH9D3JH6VmLSSCMz",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 0,
+      "last_claim_time": "2026-11-05T12:32:24.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7399gmEhCB2o8HJ6yJz4ChkbT7zXQdNRFeqH9D3JH6VmLSSCMz",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "moonshotlabs",
+      "total_votes": 18010015,
+      "producer_key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 7243,
+      "last_claim_time": "2026-11-05T05:13:54.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "nvidiaclouds",
+      "total_votes": 13180009,
+      "producer_key": "PUB_K1_8PZbtYbgJF9phfFF5t6VCt9ZvQ1bkrp1rWSbQGeshh1byxaoAC",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6883,
+      "last_claim_time": "2026-11-05T05:13:11.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8PZbtYbgJF9phfFF5t6VCt9ZvQ1bkrp1rWSbQGeshh1byxaoAC",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "total_votes": 19000001,
+      "producer_key": "PUB_K1_8HkSyD1JbzxrAni7fhbvGzbcRrywkjLUqmukBLnaD3W3eojQPV",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6502,
+      "last_claim_time": "2026-11-05T05:12:17.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8HkSyD1JbzxrAni7fhbvGzbcRrywkjLUqmukBLnaD3W3eojQPV",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "pariscnrslab",
+      "total_votes": 10160032,
+      "producer_key": "PUB_K1_5HK8oeEYNXP7cFt4DYBe8XR2s1HHDxvQAmVnA2NodV6mjS4CHG",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1685,
+      "last_claim_time": "2026-11-05T12:23:06.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5HK8oeEYNXP7cFt4DYBe8XR2s1HHDxvQAmVnA2NodV6mjS4CHG",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "parisinriaai",
+      "total_votes": 14920021,
+      "producer_key": "PUB_K1_7KYKjytwBHrSfXKfsQ8y8V954z7CeNUADJprupH6HiH5uMy226",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6550,
+      "last_claim_time": "2026-11-05T05:14:42.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7KYKjytwBHrSfXKfsQ8y8V954z7CeNUADJprupH6HiH5uMy226",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "perplexityai",
+      "total_votes": 19960007,
+      "producer_key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6751,
+      "last_claim_time": "2026-11-05T05:12:56.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "seoulkaistai",
+      "total_votes": 16660020,
+      "producer_key": "PUB_K1_6x78eaVRdoXhiLcqx4eh6dEPYWbrmTRZJ8NZd6ZuPVAnz4siGC",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6464,
+      "last_claim_time": "2026-11-05T05:14:34.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6x78eaVRdoXhiLcqx4eh6dEPYWbrmTRZJ8NZd6ZuPVAnz4siGC",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "singaporentu",
+      "total_votes": 15690016,
+      "producer_key": "PUB_K1_7SQwtgNoBTx3fJJfgtKt9juECN7NZ2wSwwemY5z5Z5Cm27foez",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 4255,
+      "last_claim_time": "2026-11-05T05:14:02.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7SQwtgNoBTx3fJJfgtKt9juECN7NZ2wSwwemY5z5Z5Cm27foez",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "stabilityhub",
+      "total_votes": 38190008,
+      "producer_key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6863,
+      "last_claim_time": "2026-11-05T05:13:03.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "sydneyunswai",
+      "total_votes": 7020035,
+      "producer_key": "PUB_K1_6kMVazebFxne8UrPA1oXT9LfPhExjZTXNYrTWn6F19we2xN5HR",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 4385,
+      "last_claim_time": "2026-11-05T12:28:48.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6kMVazebFxne8UrPA1oXT9LfPhExjZTXNYrTWn6F19we2xN5HR",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "tencentcloud",
+      "total_votes": 24810011,
+      "producer_key": "PUB_K1_6ob3t5dNoPgUGmrNsWvoz8bUFzM3zqnBXtr8XZAe5YhdDh4GQe",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 6941,
+      "last_claim_time": "2026-11-05T05:13:25.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6ob3t5dNoPgUGmrNsWvoz8bUFzM3zqnBXtr8XZAe5YhdDh4GQe",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "tokyoaistlab",
+      "total_votes": 7750031,
+      "producer_key": "PUB_K1_6cAufWzqYgNq6Cqbmy6Ba3q1xRr5jW74NBtoLG4My5vjpyXDYY",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 1678,
+      "last_claim_time": "2026-11-05T12:21:54.000",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6cAufWzqYgNq6Cqbmy6Ba3q1xRr5jW74NBtoLG4My5vjpyXDYY",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "tokyorikenai",
+      "total_votes": 34110019,
+      "producer_key": "PUB_K1_6QaokR34ryK9iPbNo6gPPc8EhYrGa1ygkbdXAX8QHgM95KGMvP",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 3561,
+      "last_claim_time": "2026-11-05T05:14:25.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_6QaokR34ryK9iPbNo6gPPc8EhYrGa1ygkbdXAX8QHgM95KGMvP",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "owner": "zurichethlab",
+      "total_votes": 18790017,
+      "producer_key": "PUB_K1_7dJtdWTxJDv372X72cg8xLX3CjbKWya9Xfcs1tFrs5JTtqbJtZ",
+      "is_active": 1,
+      "url": "https://aic-test.matrixai.one",
+      "unpaid_blocks": 7322,
+      "last_claim_time": "2026-11-05T05:14:10.500",
+      "location": 0,
+      "producer_authority": [
+        "block_signing_authority_v0",
+        {
+          "threshold": 1,
+          "keys": [
+            {
+              "key": "PUB_K1_7dJtdWTxJDv372X72cg8xLX3CjbKWya9Xfcs1tFrs5JTtqbJtZ",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "old_voters": [
+    {
+      "owner": "alibabacloud",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 1100010,
+      "last_vote_amount": 1100010,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "anthropiclab",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 1100002,
+      "last_vote_amount": 1100002,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "arcaneflower",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 7130000,
+      "last_vote_amount": 7130000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "arcanemeadow",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 1750000,
+      "last_vote_amount": 1750000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "arcanewillow",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 8770000,
+      "last_vote_amount": 8770000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "astralstream",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 3430000,
+      "last_vote_amount": 3430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "astralvalley",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 1470000,
+      "last_vote_amount": 1470000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnbreeze",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 2330000,
+      "last_vote_amount": 2330000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumncomets",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 5630000,
+      "last_vote_amount": 5630000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnfalcon",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 4950000,
+      "last_vote_amount": 4950000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnflower",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 8040000,
+      "last_vote_amount": 8040000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnforest",
+      "proxy": "",
+      "producers": [
+        "londonucllab"
+      ],
+      "staked": 5740000,
+      "last_vote_amount": 5740000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "autumnvalley",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 4270000,
+      "last_vote_amount": 4270000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "baiduaiworks",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 1100012,
+      "last_vote_amount": 1100012,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "berlintulabs",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 1100022,
+      "last_vote_amount": 1100022,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "birchmeadows",
+      "proxy": "",
+      "producers": [
+        "londonturing"
+      ],
+      "staked": 1990000,
+      "last_vote_amount": 1990000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightcanyon",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 7530000,
+      "last_vote_amount": 7530000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightcomets",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 8090000,
+      "last_vote_amount": 8090000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightgarden",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 7280000,
+      "last_vote_amount": 7280000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "brightharbor",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 2370000,
+      "last_vote_amount": 2370000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "bytedancelab",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 1100013,
+      "last_vote_amount": 1100013,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "canadamilaai",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 1100023,
+      "last_vote_amount": 1100023,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cedarharbors",
+      "proxy": "",
+      "producers": [
+        "tokyoaistlab"
+      ],
+      "staked": 6650000,
+      "last_vote_amount": 6650000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicbankers",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 110000000,
+      "last_vote_amount": 110000000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civiccounter",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicgovauth",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicgovcode",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicgovlead",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicrenters",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicuserone",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 11710000,
+      "last_vote_amount": 11710000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "civicusertwo",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 7260000,
+      "last_vote_amount": 7260000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltaurora",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 4950000,
+      "last_vote_amount": 4950000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltbreeze",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 3650000,
+      "last_vote_amount": 3650000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltcanyon",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 6770000,
+      "last_vote_amount": 6770000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltflower",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 4750000,
+      "last_vote_amount": 4750000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltforest",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 4660000,
+      "last_vote_amount": 4660000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltgarden",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 7030000,
+      "last_vote_amount": 7030000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltmeadow",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 2580000,
+      "last_vote_amount": 2580000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltstream",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 6390000,
+      "last_vote_amount": 6390000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cobaltvalley",
+      "proxy": "",
+      "producers": [
+        "mistralcloud"
+      ],
+      "staked": 7550000,
+      "last_vote_amount": 7550000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cohereclouds",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 1100006,
+      "last_vote_amount": 1100006,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicaurora",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 2690000,
+      "last_vote_amount": 2690000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicbreeze",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 1540000,
+      "last_vote_amount": 1540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmiccomets",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 8770000,
+      "last_vote_amount": 8770000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicfalcon",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 5590000,
+      "last_vote_amount": 5590000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicflower",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 7430000,
+      "last_vote_amount": 7430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicmeadow",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 8720000,
+      "last_vote_amount": 8720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "cosmicwillow",
+      "proxy": "",
+      "producers": [
+        "nvidiaclouds"
+      ],
+      "staked": 3460000,
+      "last_vote_amount": 3460000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "deepmindlabs",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 1100004,
+      "last_vote_amount": 1100004,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "deepseekcore",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 2200003,
+      "last_vote_amount": 2200003,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "eosio.dev",
+      "proxy": "",
+      "producers": [],
+      "staked": 1100000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozenaurora",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 3540000,
+      "last_vote_amount": 3540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozenbreeze",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 7860000,
+      "last_vote_amount": 7860000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozencanyon",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 5340000,
+      "last_vote_amount": 5340000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozencomets",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 3210000,
+      "last_vote_amount": 3210000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "frozenstream",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 6450000,
+      "last_vote_amount": 6450000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "genevacernai",
+      "proxy": "",
+      "producers": [
+        "genevacernai"
+      ],
+      "staked": 1100034,
+      "last_vote_amount": 1100034,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentleaurora",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 6660000,
+      "last_vote_amount": 6660000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlegarden",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 9050000,
+      "last_vote_amount": 9050000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlemeadow",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 6480000,
+      "last_vote_amount": 6480000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlestream",
+      "proxy": "",
+      "producers": [
+        "canadamilaai"
+      ],
+      "staked": 2140000,
+      "last_vote_amount": 2140000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gentlevalley",
+      "proxy": "",
+      "producers": [
+        "baiduaiworks"
+      ],
+      "staked": 9000000,
+      "last_vote_amount": 9000000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldenbreeze",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 4600000,
+      "last_vote_amount": 4600000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldencanyon",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 2990000,
+      "last_vote_amount": 2990000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldengarden",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 5180000,
+      "last_vote_amount": 5180000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldenvalley",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 4360000,
+      "last_vote_amount": 4360000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "goldenwillow",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 8730000,
+      "last_vote_amount": 8730000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "gptgenesisbp",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 1100000,
+      "last_vote_amount": 1100000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "londonturing",
+      "proxy": "",
+      "producers": [
+        "londonturing"
+      ],
+      "staked": 1100033,
+      "last_vote_amount": 1100033,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "londonucllab",
+      "proxy": "",
+      "producers": [
+        "londonucllab"
+      ],
+      "staked": 1100018,
+      "last_vote_amount": 1100018,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mapleharbors",
+      "proxy": "",
+      "producers": [
+        "pariscnrslab"
+      ],
+      "staked": 9060000,
+      "last_vote_amount": 9060000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowcomets",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 2240000,
+      "last_vote_amount": 2240000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowflower",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 5240000,
+      "last_vote_amount": 5240000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowmeadow",
+      "proxy": "",
+      "producers": [
+        "nvidiaclouds"
+      ],
+      "staked": 8620000,
+      "last_vote_amount": 8620000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mellowwillow",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 4530000,
+      "last_vote_amount": 4530000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "minimaxcloud",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 1100014,
+      "last_vote_amount": 1100014,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "mistralcloud",
+      "proxy": "",
+      "producers": [
+        "mistralcloud"
+      ],
+      "staked": 1100005,
+      "last_vote_amount": 1100005,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "montrealmila",
+      "proxy": "",
+      "producers": [
+        "montrealmila"
+      ],
+      "staked": 1100036,
+      "last_vote_amount": 1100036,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "moonshotlabs",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 1100015,
+      "last_vote_amount": 1100015,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "nvidiaclouds",
+      "proxy": "",
+      "producers": [
+        "nvidiaclouds"
+      ],
+      "staked": 1100009,
+      "last_vote_amount": 1100009,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "oakriverbank",
+      "proxy": "",
+      "producers": [
+        "montrealmila"
+      ],
+      "staked": 4850000,
+      "last_vote_amount": 4850000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "olivegardens",
+      "proxy": "",
+      "producers": [
+        "genevacernai"
+      ],
+      "staked": 5270000,
+      "last_vote_amount": 5270000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "openaiclouds",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 1100001,
+      "last_vote_amount": 1100001,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "pariscnrslab",
+      "proxy": "",
+      "producers": [
+        "pariscnrslab"
+      ],
+      "staked": 1100032,
+      "last_vote_amount": 1100032,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "parisinriaai",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 1100021,
+      "last_vote_amount": 1100021,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "perplexityai",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 1100007,
+      "last_vote_amount": 1100007,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "pinemoonvale",
+      "proxy": "",
+      "producers": [
+        "sydneyunswai"
+      ],
+      "staked": 5920000,
+      "last_vote_amount": 5920000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purpleaurora",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 6720000,
+      "last_vote_amount": 6720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplebreeze",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 2330000,
+      "last_vote_amount": 2330000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplecanyon",
+      "proxy": "",
+      "producers": [
+        "mistralcloud"
+      ],
+      "staked": 8120000,
+      "last_vote_amount": 8120000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplevalley",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 7740000,
+      "last_vote_amount": 7740000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "purplewillow",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 3070000,
+      "last_vote_amount": 3070000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "seoulkaistai",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 1100020,
+      "last_vote_amount": 1100020,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenecanyon",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 6050000,
+      "last_vote_amount": 6050000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenefalcon",
+      "proxy": "",
+      "producers": [
+        "deepmindlabs"
+      ],
+      "staked": 2630000,
+      "last_vote_amount": 2630000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sereneflower",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 6540000,
+      "last_vote_amount": 6540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenestream",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 5330000,
+      "last_vote_amount": 5330000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "serenewillow",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 6850000,
+      "last_vote_amount": 6850000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "signupdualai",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "signupkoneai",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "signuplegacy",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentcanyon",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 4180000,
+      "last_vote_amount": 4180000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentcomets",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 5100000,
+      "last_vote_amount": 5100000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentflower",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 1540000,
+      "last_vote_amount": 1540000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentharbor",
+      "proxy": "",
+      "producers": [
+        "moonshotlabs"
+      ],
+      "staked": 2620000,
+      "last_vote_amount": 2620000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silentvalley",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 1850000,
+      "last_vote_amount": 1850000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silveraurora",
+      "proxy": "",
+      "producers": [
+        "deepseekcore"
+      ],
+      "staked": 2720000,
+      "last_vote_amount": 2720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silvercomets",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 6830000,
+      "last_vote_amount": 6830000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silverfalcon",
+      "proxy": "",
+      "producers": [
+        "minimaxcloud"
+      ],
+      "staked": 3510000,
+      "last_vote_amount": 3510000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silvermeadow",
+      "proxy": "",
+      "producers": [
+        "bytedancelab"
+      ],
+      "staked": 4650000,
+      "last_vote_amount": 4650000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silvervalley",
+      "proxy": "",
+      "producers": [
+        "cohereclouds"
+      ],
+      "staked": 4780000,
+      "last_vote_amount": 4780000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "silverwillow",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 3220000,
+      "last_vote_amount": 3220000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "singaporentu",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 1100016,
+      "last_vote_amount": 1100016,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "springbreeze",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 7430000,
+      "last_vote_amount": 7430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "springcomets",
+      "proxy": "",
+      "producers": [
+        "openaiclouds"
+      ],
+      "staked": 6970000,
+      "last_vote_amount": 6970000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "springgarden",
+      "proxy": "",
+      "producers": [
+        "parisinriaai"
+      ],
+      "staked": 3190000,
+      "last_vote_amount": 3190000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "stabilityhub",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 1100008,
+      "last_vote_amount": 1100008,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "summercanyon",
+      "proxy": "",
+      "producers": [
+        "anthropiclab"
+      ],
+      "staked": 3490000,
+      "last_vote_amount": 3490000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "summergarden",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 5400000,
+      "last_vote_amount": 5400000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitcanyon",
+      "proxy": "",
+      "producers": [
+        "stabilityhub"
+      ],
+      "staked": 8810000,
+      "last_vote_amount": 8810000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitcomets",
+      "proxy": "",
+      "producers": [
+        "perplexityai"
+      ],
+      "staked": 7900000,
+      "last_vote_amount": 7900000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitfalcon",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 6080000,
+      "last_vote_amount": 6080000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitflower",
+      "proxy": "",
+      "producers": [
+        "alibabacloud"
+      ],
+      "staked": 2440000,
+      "last_vote_amount": 2440000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sunlitgarden",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 3130000,
+      "last_vote_amount": 3130000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "sydneyunswai",
+      "proxy": "",
+      "producers": [
+        "sydneyunswai"
+      ],
+      "staked": 1100035,
+      "last_vote_amount": 1100035,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "tencentcloud",
+      "proxy": "",
+      "producers": [
+        "tencentcloud"
+      ],
+      "staked": 1100011,
+      "last_vote_amount": 1100011,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "tokyoaistlab",
+      "proxy": "",
+      "producers": [
+        "tokyoaistlab"
+      ],
+      "staked": 1100031,
+      "last_vote_amount": 1100031,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "tokyorikenai",
+      "proxy": "",
+      "producers": [
+        "tokyorikenai"
+      ],
+      "staked": 1100019,
+      "last_vote_amount": 1100019,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetbreeze",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 7290000,
+      "last_vote_amount": 7290000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetcanyon",
+      "proxy": "",
+      "producers": [
+        "seoulkaistai"
+      ],
+      "staked": 3430000,
+      "last_vote_amount": 3430000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetgarden",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 7720000,
+      "last_vote_amount": 7720000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "velvetwillow",
+      "proxy": "",
+      "producers": [
+        "berlintulabs"
+      ],
+      "staked": 7240000,
+      "last_vote_amount": 7240000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "walletkeyone",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "walletkeytri",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "walletkeytwo",
+      "proxy": "",
+      "producers": [],
+      "staked": 2000,
+      "last_vote_amount": 0,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "wintercomets",
+      "proxy": "",
+      "producers": [
+        "gptgenesisbp"
+      ],
+      "staked": 5250000,
+      "last_vote_amount": 5250000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "winterflower",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 6400000,
+      "last_vote_amount": 6400000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "winterharbor",
+      "proxy": "",
+      "producers": [
+        "singaporentu"
+      ],
+      "staked": 2060000,
+      "last_vote_amount": 2060000,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    },
+    {
+      "owner": "zurichethlab",
+      "proxy": "",
+      "producers": [
+        "zurichethlab"
+      ],
+      "staked": 1100017,
+      "last_vote_amount": 1100017,
+      "proxied_vote_weight": "0.00000000000000000",
+      "is_proxy": 0,
+      "flags1": 0,
+      "reserved2": 0,
+      "reserved3": "0 "
+    }
+  ],
+  "old_bonds": [
+    {
+      "owner": "alibabacloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855594,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "anthropiclab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855540,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "baiduaiworks",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793855608,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 112526,
+      "ban_record_block": 112529
+    },
+    {
+      "owner": "berlintulabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855685,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "bytedancelab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855615,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855694,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "cohereclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855565,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepmindlabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855552,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855545,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "genevacernai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793881470,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855500,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "londonturing",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793881404,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 105792,
+      "ban_record_block": 105795
+    },
+    {
+      "owner": "londonucllab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855653,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "minimaxcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855622,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855559,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "montrealmila",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793881744,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "moonshotlabs",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855630,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "nvidiaclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855586,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "openaiclouds",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855533,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "pariscnrslab",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793881333,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 109591,
+      "ban_record_block": 109594
+    },
+    {
+      "owner": "parisinriaai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855677,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "perplexityai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855572,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "seoulkaistai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855668,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "singaporentu",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793855637,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 100247,
+      "ban_record_block": 100251
+    },
+    {
+      "owner": "stabilityhub",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855579,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "sydneyunswai",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793881641,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "tencentcloud",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855601,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    },
+    {
+      "owner": "tokyoaistlab",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793880108,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 105899,
+      "ban_record_block": 105902
+    },
+    {
+      "owner": "tokyorikenai",
+      "state": 4,
+      "balance": 0,
+      "forfeited": 100000000,
+      "settled": 0,
+      "bonded_at": 1793855661,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 100076,
+      "ban_record_block": 100079
+    },
+    {
+      "owner": "zurichethlab",
+      "state": 0,
+      "balance": 100000000,
+      "forfeited": 0,
+      "settled": 0,
+      "bonded_at": 1793855645,
+      "exit_block": 0,
+      "refundable_at": 0,
+      "ban_final_block": 0,
+      "ban_record_block": 0
+    }
+  ],
+  "old_candidates": [
+    {
+      "owner": "alibabacloud",
+      "rank": "340282366920573402199014727749773112464",
+      "previous_rank": "340282366920573402199014727749773112464",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 373,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "anthropiclab",
+      "rank": "340282366920652354411266493597324954736",
+      "previous_rank": "340282366920652354411266493597324954736",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 380,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "baiduaiworks",
+      "rank": "340282366920938463449079229048989016448",
+      "previous_rank": "340282366920938463449079229048989016448",
+      "frozen_epoch": 0,
+      "seen_epoch": 191,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694472720,
+        1694472972,
+        1694481276
+      ],
+      "evidence_policies": [
+        178,
+        178,
+        191
+      ],
+      "ban_final_block": 112526
+    },
+    {
+      "owner": "berlintulabs",
+      "rank": "340282366920600518691897758955019538304",
+      "previous_rank": "340282366920600518691897758955019538304",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 361,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "bytedancelab",
+      "rank": "340282366920708985713433155531057679472",
+      "previous_rank": "340282366920708985713433155531057679472",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 371,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "canadamilaai",
+      "rank": "340282366920293380385125705715232115936",
+      "previous_rank": "340282366920293380385125705715232115936",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 360,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "cohereclouds",
+      "rank": "340282366920413284535448369061939286912",
+      "previous_rank": "340282366920413284535448369061939286912",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 377,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepmindlabs",
+      "rank": "340282366920797530251792045926624366464",
+      "previous_rank": "340282366920797530251792045926624366464",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 379,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "deepseekcore",
+      "rank": "340282366920430993465494184434820525728",
+      "previous_rank": "340282366920430993465494184434820525728",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 359,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "genevacernai",
+      "rank": "340282366920820957065097594942812638432",
+      "previous_rank": "340282366920820957065097594942812638432",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 369,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "gptgenesisbp",
+      "rank": "340282366918105596964838409597552562000",
+      "previous_rank": "340282366918105596964838409597552562000",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 382,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "londonturing",
+      "rank": "340282366920938463455098849831599974080",
+      "previous_rank": "340282366920938463455098849831599974080",
+      "frozen_epoch": 0,
+      "seen_epoch": 180,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694473560,
+        1694473812,
+        1694474076
+      ],
+      "evidence_policies": [
+        179,
+        179,
+        180
+      ],
+      "ban_final_block": 105792
+    },
+    {
+      "owner": "londonucllab",
+      "rank": "340282366920812287393593283172006382704",
+      "previous_rank": "340282366920812287393593283172006382704",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 364,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "minimaxcloud",
+      "rank": "340282366920618227720193295984781767824",
+      "previous_rank": "340282366920618227720193295984781767824",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 367,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "mistralcloud",
+      "rank": "340282366920629111465220492289771386000",
+      "previous_rank": "340282366920629111465220492289771386000",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 378,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "montrealmila",
+      "rank": "340282366920828704664354235057515504224",
+      "previous_rank": "340282366920828704664354235057515504224",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 370,
+      "penalty_epoch": 0,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "moonshotlabs",
+      "rank": "340282366920606237318207381418709454720",
+      "previous_rank": "340282366920606237318207381418709454720",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 366,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "nvidiaclouds",
+      "rank": "340282366920695335203462865291168879488",
+      "previous_rank": "340282366920695335203462865291168879488",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 374,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "openaiclouds",
+      "rank": "340282366920587975300994122513125905280",
+      "previous_rank": "340282366920587975300994122513125905280",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 381,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "pariscnrslab",
+      "rank": "340282366920938463457154833029198531696",
+      "previous_rank": "340282366920938463457154833029198531696",
+      "frozen_epoch": 0,
+      "seen_epoch": 186,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694473632,
+        1694473884,
+        1694478156
+      ],
+      "evidence_policies": [
+        179,
+        179,
+        186
+      ],
+      "ban_final_block": 109591
+    },
+    {
+      "owner": "parisinriaai",
+      "rank": "340282366920663237648193461074261019872",
+      "previous_rank": "340282366920663237648193461074261019872",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 362,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "perplexityai",
+      "rank": "340282366920570266316388558793604041952",
+      "previous_rank": "340282366920570266316388558793604041952",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 376,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "seoulkaistai",
+      "rank": "340282366920631140333751908814423477472",
+      "previous_rank": "340282366920631140333751908814423477472",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 363,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "singaporentu",
+      "rank": "340282366920938463459026033818262107040",
+      "previous_rank": "340282366920938463459026033818262107040",
+      "frozen_epoch": 0,
+      "seen_epoch": 173,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694467068,
+        1694467320,
+        1694467584
+      ],
+      "evidence_policies": [
+        172,
+        172,
+        173
+      ],
+      "ban_final_block": 100247
+    },
+    {
+      "owner": "stabilityhub",
+      "rank": "340282366920233982155467869851800007792",
+      "previous_rank": "340282366920233982155467869851800007792",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 375,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "sydneyunswai",
+      "rank": "340282366920808966670275276564806962400",
+      "previous_rank": "340282366920808966670275276564806962400",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 368,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tencentcloud",
+      "rank": "340282366920480799536147449988485297296",
+      "previous_rank": "340282366920480799536147449988485297296",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 372,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    },
+    {
+      "owner": "tokyoaistlab",
+      "rank": "340282366920938463459709216206797687920",
+      "previous_rank": "340282366920938463459709216206797687920",
+      "frozen_epoch": 0,
+      "seen_epoch": 180,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694473692,
+        1694473944,
+        1694474196
+      ],
+      "evidence_policies": [
+        179,
+        179,
+        180
+      ],
+      "ban_final_block": 105899
+    },
+    {
+      "owner": "tokyorikenai",
+      "rank": "340282366920938463459709216498713414880",
+      "previous_rank": "340282366920938463459709216498713414880",
+      "frozen_epoch": 0,
+      "seen_epoch": 172,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1694466876,
+        1694467128,
+        1694467380
+      ],
+      "evidence_policies": [
+        172,
+        172,
+        172
+      ],
+      "ban_final_block": 100076
+    },
+    {
+      "owner": "zurichethlab",
+      "rank": "340282366920591848828540068079497661552",
+      "previous_rank": "340282366920591848828540068079497661552",
+      "frozen_epoch": 0,
+      "seen_epoch": 271,
+      "ticket": 365,
+      "penalty_epoch": 1,
+      "zero_windows": 0,
+      "banned": 0,
+      "evidence_slots": [
+        0,
+        0,
+        0
+      ],
+      "evidence_policies": [
+        0,
+        0,
+        0
+      ],
+      "ban_final_block": 0
+    }
+  ],
+  "maintenance": [
+    {
+      "owner": "montrealmila",
+      "state": 2,
+      "requested_slot": 1694404386,
+      "effective_slot": 1694404386,
+      "effective_block": 56840,
+      "resumed_slot": 0
+    }
+  ],
+  "bond_config": {
+    "version": 1,
+    "enforced": 1,
+    "refund_delay_sec": 604800,
+    "locked": 2400000000,
+    "slash_pending": 600000000,
+    "slash_settled": 0,
+    "refunded": 0
+  },
+  "bank_balance_atoms": 2656949158,
+  "token_stats": {
+    "eosio.token": {
+      "AIC": {
+        "supply": "100000000.0000 AIC",
+        "max_supply": "2100000000.0000 AIC",
+        "issuer": "eosio"
+      }
+    },
+    "usd": {
+      "USD": {
+        "supply": "100010000.0000 USD",
+        "max_supply": "1000000000.0000 USD",
+        "issuer": "usd"
+      }
+    },
+    "cny": {
+      "CNY": {
+        "supply": "100010000.0000 CNY",
+        "max_supply": "1000000000.0000 CNY",
+        "issuer": "cny"
+      }
+    }
+  },
+  "code_ABI_pins": {
+    "eosio": {
+      "code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "abi_hash": "f19e4c55e11f5029f4a161865ac0b0ea29f730d4f19fbdc6eb30c29c10ef5512"
+    },
+    "eosio.token": {
+      "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+      "abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856"
+    },
+    "eosio.key": {
+      "code_hash": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+      "abi_hash": "b6db52cd47fdf811bee83030e524de35d0b6f55aece386392b56d1a085df2f83"
+    },
+    "eosio.signup": {
+      "code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "abi_hash": "6858916070985e06486fe9131ae6fec06079963699beaea93840adedb2c6020c"
+    },
+    "usd": {
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e"
+    },
+    "cny": {
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e"
+    }
+  },
+  "relay_rows": [
+    {
+      "bp": "anthropiclab",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "canadamilaai",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "deepseekcore",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "gptgenesisbp",
+      "permission": "keyrelay",
+      "endpoint": "https://aic-test.matrixai.one/relay",
+      "enabled": 1
+    },
+    {
+      "bp": "singaporentu",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    }
+  ],
+  "scope": "After user-authorized Baidu/Montreal stop; these24other current-node PIDs are the preservation baseline, not the historical pre-OOM25."
+}

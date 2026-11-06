@@ -1,0 +1,245 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T09:41:59.850201+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "completed": [
+    {
+      "name": "bostonmitlab",
+      "voter": "cambridgeoak",
+      "create": {
+        "transaction_id": "d39bef51defc49b961cdaec7a178327227e8ed3662ba51ed1a02978ee3c35ff6",
+        "block_num": 168731,
+        "block_id": "0002931bbf28418fd87b00b2187bdd9e81cb742c65ab4f1ab4572e8560417a49",
+        "observed_LIB": 168733,
+        "CPU_us": 1958,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "eefcfaaa90c7ea9b3f445127b71b5633c5ca11d2fd6383165859183786b48255",
+        "block_num": 168738,
+        "block_id": "000293221f09c47ed8ca860aaa3bf72ca7deb44cc85c0d17069bde3bcbd233e8",
+        "observed_LIB": 168739,
+        "CPU_us": 1435,
+        "NET_words": 74
+      },
+      "registration": {
+        "transaction_id": "61eec99c38abba3d5aaea248b11364621110520601191db2dedfef15d3101739",
+        "block_num": 168792,
+        "block_id": "00029358285d1a3b261e3f82ac674b93975b6a504b23545072dee6059d93f075",
+        "observed_LIB": 168792,
+        "CPU_us": 3606,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-extra-bostonmitlab-20261106.service",
+        "PID": 37957,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync_samples": [
+          {
+            "UTC": "2026-11-06T09:40:54.585664+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 168757,
+              "last_irreversible_block_num": 168754,
+              "last_irreversible_block_id": "00029332cc02c1cc7905c9a4da9642b7e0c947ae97b524ab01dac98589e5e5ba",
+              "head_block_id": "00029335beca2aef06f46ce13e58e720f024a2a7b662dfe6b98fc225d8cb5f10",
+              "head_block_time": "2026-11-06T09:40:54.000",
+              "head_block_producer": "tencentcloud",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 168757,
+              "fork_db_head_block_id": "00029335beca2aef06f46ce13e58e720f024a2a7b662dfe6b98fc225d8cb5f10",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6444665180",
+              "total_net_weight": 238060000,
+              "earliest_available_block_num": 168719,
+              "last_irreversible_block_time": "2026-11-06T09:40:52.500"
+            }
+          },
+          {
+            "UTC": "2026-11-06T09:40:57.188010+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 168763,
+              "last_irreversible_block_num": 168760,
+              "last_irreversible_block_id": "000293387ce4cb273150e330c24333544a1ea489fa63c0992bdb04ec05b3e408",
+              "head_block_id": "0002933b9186b4c466ed3c35959fe6dd659570c197a8f1e552da69ae037429fe",
+              "head_block_time": "2026-11-06T09:40:57.000",
+              "head_block_producer": "tencentcloud",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 168763,
+              "fork_db_head_block_id": "0002933b9186b4c466ed3c35959fe6dd659570c197a8f1e552da69ae037429fe",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6444665180",
+              "total_net_weight": 238060000,
+              "earliest_available_block_num": 168719,
+              "last_irreversible_block_time": "2026-11-06T09:40:55.500"
+            }
+          },
+          {
+            "UTC": "2026-11-06T09:40:59.934450+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 168768,
+              "last_irreversible_block_num": 168764,
+              "last_irreversible_block_id": "0002933c4ab854df073ed006adedaf2184741a9a0ef63abe9cff50a9a6de0881",
+              "head_block_id": "0002934047134ef61a101e94e45ef3dde6b33778e58db1d5a2e996f35b7864ca",
+              "head_block_time": "2026-11-06T09:40:59.500",
+              "head_block_producer": "tencentcloud",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 168768,
+              "fork_db_head_block_id": "0002934047134ef61a101e94e45ef3dde6b33778e58db1d5a2e996f35b7864ca",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6444665180",
+              "total_net_weight": 238060000,
+              "earliest_available_block_num": 168719,
+              "last_irreversible_block_time": "2026-11-06T09:40:57.500"
+            }
+          }
+        ],
+        "checkpoint": {
+          "block_num": 168718,
+          "block_id": "0002930ebd97bac3c54e58f8864e0bd31380508a723d07e5d55f1caaa636901f"
+        }
+      }
+    },
+    {
+      "name": "torontovectr",
+      "voter": "ontariomaple",
+      "create": {
+        "transaction_id": "15cbe239e9dcb9891632ead36ea174b065a4767d83db9c5107e8759cc4d062fd",
+        "block_num": 168798,
+        "block_id": "0002935e6bfc9ebc7dc6ce6bc78e5cfc8965565f9255bd48bafaacd73fc91aef",
+        "observed_LIB": 168798,
+        "CPU_us": 1304,
+        "NET_words": 58
+      },
+      "fund": {
+        "transaction_id": "d56411316e51631955d78af517688069282b1d5834c9cb9513f38655d949d587",
+        "block_num": 168803,
+        "block_id": "00029363680860f5813c813028404c9da0d54744e86fe7bf28cbda041f53ad05",
+        "observed_LIB": 168803,
+        "CPU_us": 1490,
+        "NET_words": 74
+      },
+      "registration": {
+        "transaction_id": "c767074c9f104c30353505a7c205f1eb6d24f3a8f3948748cbff2cb467cf4228",
+        "block_num": 168856,
+        "block_id": "00029398c9cd678ca8656af4da30145bcadb6beea88740fe2a0fc9d5408bce3f",
+        "observed_LIB": 168856,
+        "CPU_us": 3795,
+        "NET_words": 108
+      },
+      "runtime": {
+        "unit": "pureeos-bp-extra-torontovectr-20261106.service",
+        "PID": 38342,
+        "public_profile_SHA256": "cc11ed2ea1f0f0187d087187a94f9a264a827355b546c9b03d059b22b4ca1711",
+        "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "sync_samples": [
+          {
+            "UTC": "2026-11-06T09:41:32.370846+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 168823,
+              "last_irreversible_block_num": 168817,
+              "last_irreversible_block_id": "000293712e93858d6cecefb10ba4b13f8a02a95b4f2cdde2c52d69a6826e3848",
+              "head_block_id": "000293777db6611466b0c3a84c68d8974fddf3e735b532adb9f159f11eb7ec3f",
+              "head_block_time": "2026-11-06T09:41:27.500",
+              "head_block_producer": "bytedancelab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 168823,
+              "fork_db_head_block_id": "000293777db6611466b0c3a84c68d8974fddf3e735b532adb9f159f11eb7ec3f",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6491365600",
+              "total_net_weight": 240060000,
+              "earliest_available_block_num": 168719,
+              "last_irreversible_block_time": "2026-11-06T09:41:24.500"
+            }
+          },
+          {
+            "UTC": "2026-11-06T09:41:35.665870+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 168837,
+              "last_irreversible_block_num": 168828,
+              "last_irreversible_block_id": "0002937cc18fdb9cb655864aa0dd13f7db090d415c1fd4760b63a9a9b9748bcd",
+              "head_block_id": "0002938507a41fa46dfacbaf3f76cb6faf2ef98bea3933f7d052e028cbdbed56",
+              "head_block_time": "2026-11-06T09:41:35.000",
+              "head_block_producer": "cohereclouds",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 168837,
+              "fork_db_head_block_id": "0002938507a41fa46dfacbaf3f76cb6faf2ef98bea3933f7d052e028cbdbed56",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6491365600",
+              "total_net_weight": 240060000,
+              "earliest_available_block_num": 168719,
+              "last_irreversible_block_time": "2026-11-06T09:41:30.500"
+            }
+          },
+          {
+            "UTC": "2026-11-06T09:41:38.615262+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 168840,
+              "last_irreversible_block_num": 168830,
+              "last_irreversible_block_id": "0002937ee69e7260daa51ff349f26e1e5233149b5dac91799574a0c3f08d5edf",
+              "head_block_id": "0002938817ca375c4a0900546ce122129a970e8e0ddd6a046eeed43e71a4337d",
+              "head_block_time": "2026-11-06T09:41:37.000",
+              "head_block_producer": "deepmindlabs",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 168840,
+              "fork_db_head_block_id": "0002938817ca375c4a0900546ce122129a970e8e0ddd6a046eeed43e71a4337d",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6491365600",
+              "total_net_weight": 240060000,
+              "earliest_available_block_num": 168719,
+              "last_irreversible_block_time": "2026-11-06T09:41:31.500"
+            }
+          }
+        ],
+        "checkpoint": {
+          "block_num": 168718,
+          "block_id": "0002930ebd97bac3c54e58f8864e0bd31380508a723d07e5d55f1caaa636901f"
+        }
+      }
+    }
+  ],
+  "current": "torontovectr",
+  "registered_count": 32,
+  "new_self_votes": 2,
+  "new_other_votes": 2,
+  "all32_vote_totals_distinct": true,
+  "old_votes_bonds_and_contracts_unchanged": true,
+  "existing24_PIDs_unchanged": true,
+  "scope": "Two new owned BP processes synchronized and registered. Real duty/production waits for native FIFO; no duty/throughput qualification claim."
+}

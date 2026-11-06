@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T09:35:28.635949+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "instructions": [
+    "那就关闭掉吧",
+    "再启动2个服务器,维护的那台也关闭",
+    "说错了,是再启动两个节点"
+  ],
+  "only_stopped_units": [
+    "pureeos-devnet-bp-baiduaiworks-20261105.service",
+    "pureeos-bp-demo-montrealmila-20261105.service"
+  ],
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 168106,
+    "last_irreversible_block_num": 168103,
+    "last_irreversible_block_id": "000290a7fc845f3717943638612e47f3e8a508897c8a2697e98029b2aa032b38",
+    "head_block_id": "000290aa8153465c96e16262b58be0644541003abd0f3ad0172d5391b8ec06f4",
+    "head_block_time": "2026-11-06T09:35:28.000",
+    "head_block_producer": "deepmindlabs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 168106,
+    "fork_db_head_block_id": "000290aa8153465c96e16262b58be0644541003abd0f3ad0172d5391b8ec06f4",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6409564770",
+    "total_net_weight": 236060000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-06T09:35:26.500"
+  },
+  "before_processes": {
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "MainPID": "12230",
+      "NRestarts": "53",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-bp-demo-montrealmila-20261105.service": {
+      "MainPID": "12217",
+      "NRestarts": "53",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "preserved24_PIDs": {
+    "pureeos-devnet-bp-alibabacloud-20261105.service": 12992,
+    "pureeos-devnet-bp-anthropiclab-20261105.service": 12995,
+    "pureeos-devnet-bp-berlintulabs-20261105.service": 12996,
+    "pureeos-devnet-bp-bytedancelab-20261105.service": 13000,
+    "pureeos-devnet-bp-canadamilaai-20261105.service": 13004,
+    "pureeos-devnet-bp-cohereclouds-20261105.service": 13009,
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": 13011,
+    "pureeos-devnet-bp-deepseekcore-20261105.service": 13015,
+    "pureeos-devnet-bp-londonucllab-20261105.service": 13016,
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": 13018,
+    "pureeos-devnet-bp-mistralcloud-20261105.service": 13021,
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": 13024,
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": 13027,
+    "pureeos-devnet-bp-openaiclouds-20261105.service": 13029,
+    "pureeos-devnet-bp-parisinriaai-20261105.service": 13030,
+    "pureeos-devnet-bp-perplexityai-20261105.service": 13035,
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": 13040,
+    "pureeos-devnet-bp-stabilityhub-20261105.service": 13042,
+    "pureeos-devnet-bp-tencentcloud-20261105.service": 13045,
+    "pureeos-devnet-bp-zurichethlab-20261105.service": 13046,
+    "pureeos-devnet-founder-20261105.service": 13048,
+    "pureeos-devnet-history-20261105.service": 13051,
+    "pureeos-bp-demo-genevacernai-20261105.service": 15826,
+    "pureeos-bp-demo-sydneyunswai-20261105.service": 12219
+  },
+  "sixth_maintenance": {
+    "owner": "montrealmila",
+    "state": 2,
+    "requested_slot": 1694404386,
+    "effective_slot": 1694404386,
+    "effective_block": 56840,
+    "resumed_slot": 0
+  },
+  "baidu_candidate": {
+    "owner": "baiduaiworks",
+    "rank": "340282366920938463449079229048989016448",
+    "previous_rank": "340282366920938463449079229048989016448",
+    "frozen_epoch": 0,
+    "seen_epoch": 191,
+    "ticket": 0,
+    "penalty_epoch": 1,
+    "zero_windows": 3,
+    "banned": 1,
+    "evidence_slots": [
+      1694472720,
+      1694472972,
+      1694481276
+    ],
+    "evidence_policies": [
+      178,
+      178,
+      191
+    ],
+    "ban_final_block": 112526
+  },
+  "memory_before": "               total        used        free      shared  buff/cache   available\nMem:            7935        5924         232           8        2096        2010\nSwap:           8191        1110        7081\n",
+  "scope": "Two nodes on retained host, not servers. Only bannedBaidu and already-effective-maintenanceMontreal may stop; no data deletion."
+}
