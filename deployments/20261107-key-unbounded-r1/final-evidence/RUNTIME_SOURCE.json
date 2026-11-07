@@ -1,0 +1,15 @@
+{
+  "status": "STAGED_NOT_ACTIVATED",
+  "archive_SHA256": "d611c5afd105f599d3e1456e8fa979e44afef432e126ddab7d0fc12c27e28621",
+  "exact_qualified_SDK28": true,
+  "relay_implementation_unchanged": true,
+  "existing_ABI_layouts_preserved_only_growth_added": true,
+  "files": {
+    "package.json": "1a46d3230ac24669a3a7fc9a91cae2c5699bc059eb3da08bc5c3eb0b5c191833",
+    "package-lock.json": "d014f448c11bc9cca4d3e2b4b71c72d6d18ca7c5a42639e0334c3ed3c24bd0b2",
+    "sdk/index.mjs": "44c77658a5b8bc1113bfe8f2de4123337dbfdc6253afb15e8dc60616f938d1c9",
+    "sdk/fee-profiles.mjs": "1f8e7d6503a6e557ef5c1549ae16a4a75f1c5a6ceb4cfda256ca226c54dcccbd",
+    "abi/eosio.key.abi": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+    "relayer/server.mjs": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44"
+  }
+}

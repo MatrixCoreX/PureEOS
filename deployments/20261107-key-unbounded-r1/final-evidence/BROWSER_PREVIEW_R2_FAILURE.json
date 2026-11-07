@@ -1,0 +1,5 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/browser_preview_r2.py\", line 8, in <module>\n    memory={k:int(v.split()[0])for k,v in(line.split(':',1)for line in Path('/proc/meminfo').read_text().splitlines())if k in ['MemAvailable','SwapFree']};assert memory['MemAvailable']>=1100000 and memory['SwapFree']>=524288,memory\n                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {'MemAvailable': 1889808, 'SwapFree': 469772}\n",
+  "no_signing": true
+}

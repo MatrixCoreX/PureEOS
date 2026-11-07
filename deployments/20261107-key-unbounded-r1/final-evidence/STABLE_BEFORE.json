@@ -1,0 +1,1209 @@
+{
+  "observed_UTC": "2026-11-06T23:03:37.092611+00:00",
+  "head": 262371,
+  "LIB": 262368,
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "permissions": {
+    "eosio": {
+      "privileged": true,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "veto",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6GEbTpdpsfhdUMQbtaAUdcqbb83Mr99bv7DPRmvEwWXCEiMcPH",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio",
+              "action": "devveto"
+            }
+          ]
+        }
+      ]
+    },
+    "eosio.key": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.key",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.signup": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.signup",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.token": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.token",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.dev": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "civicgovlead",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "civicgovlead",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "upgrade",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "civicgovauth",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio",
+              "action": "refreshgov"
+            },
+            {
+              "account": "eosio",
+              "action": "devpropose"
+            },
+            {
+              "account": "eosio",
+              "action": "devcancel"
+            },
+            {
+              "account": "eosio",
+              "action": "devexec"
+            },
+            {
+              "account": "eosio",
+              "action": "syspropose"
+            },
+            {
+              "account": "eosio",
+              "action": "syscancel"
+            },
+            {
+              "account": "eosio",
+              "action": "sysexec"
+            }
+          ]
+        }
+      ]
+    },
+    "eosio.prods": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "prod.major",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "prod.minor",
+          "parent": "prod.major",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.wrap": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.msig": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "eosio.null": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "usd": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "usd",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "cny": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "cny",
+                  "permission": "eosio.code"
+                },
+                "weight": 1
+              },
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "active"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [],
+            "accounts": [
+              {
+                "permission": {
+                  "actor": "eosio.dev",
+                  "permission": "owner"
+                },
+                "weight": 1
+              }
+            ],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "gptgenesisbp": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6fSHMPz79SRbYHvSGB425d93XmHAdVChUyH5LPXtpn1s9PaVsL",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "keyrelay",
+          "parent": "active",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6nTk4tSUrWxjVvE3NgyNkErxiHt2nLp4QGaobZik7EnviWSCRC",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": [
+            {
+              "account": "eosio.key",
+              "action": "ksend"
+            },
+            {
+              "account": "eosio.key",
+              "action": "withdraw"
+            },
+            {
+              "account": "eosio.key",
+              "action": "cancel"
+            }
+          ]
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_6fSHMPz79SRbYHvSGB425d93XmHAdVChUyH5LPXtpn1s9PaVsL",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    },
+    "civicgovauth": {
+      "privileged": false,
+      "permissions": [
+        {
+          "perm_name": "active",
+          "parent": "owner",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_79kzt62c4gsZHw8oXpSyaDB1u7e5ZSG482Nh9fMkjPaf7Vu1Qu",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        },
+        {
+          "perm_name": "owner",
+          "parent": "",
+          "required_auth": {
+            "threshold": 1,
+            "keys": [
+              {
+                "key": "PUB_K1_79kzt62c4gsZHw8oXpSyaDB1u7e5ZSG482Nh9fMkjPaf7Vu1Qu",
+                "weight": 1
+              }
+            ],
+            "accounts": [],
+            "waits": []
+          },
+          "linked_actions": []
+        }
+      ]
+    }
+  },
+  "token_stats": {
+    "eosio.token": [
+      {
+        "supply": "100000000.0000 AIC",
+        "max_supply": "2100000000.0000 AIC",
+        "issuer": "eosio"
+      }
+    ],
+    "usd": [
+      {
+        "supply": "100010000.0000 USD",
+        "max_supply": "1000000000.0000 USD",
+        "issuer": "usd"
+      }
+    ],
+    "cny": [
+      {
+        "supply": "100010000.0000 CNY",
+        "max_supply": "1000000000.0000 CNY",
+        "issuer": "cny"
+      }
+    ]
+  },
+  "consensus": {
+    "chain_config": {
+      "max_block_net_usage": 1048576,
+      "target_block_net_usage_pct": 1000,
+      "max_transaction_net_usage": 524288,
+      "base_per_transaction_net_usage": 12,
+      "net_usage_leeway": 500,
+      "context_free_discount_net_usage_num": 20,
+      "context_free_discount_net_usage_den": 100,
+      "max_block_cpu_usage": 800000,
+      "target_block_cpu_usage_pct": 1000,
+      "max_transaction_cpu_usage": 150000,
+      "min_transaction_cpu_usage": 100,
+      "max_transaction_lifetime": 3600,
+      "deferred_trx_expiration_window": 600,
+      "max_transaction_delay": 3888000,
+      "max_inline_action_size": 524288,
+      "max_inline_action_depth": 4,
+      "max_authority_depth": 6,
+      "max_action_return_value_size": 256
+    },
+    "wasm_config": {
+      "max_mutable_global_bytes": 1024,
+      "max_table_elements": 1024,
+      "max_section_elements": 8192,
+      "max_linear_memory_init": 65536,
+      "max_func_local_bytes": 8192,
+      "max_nested_structures": 1024,
+      "max_symbol_bytes": 8192,
+      "max_module_bytes": 20971520,
+      "max_code_bytes": 20971520,
+      "max_pages": 528,
+      "max_call_depth": 251
+    }
+  },
+  "native_schedule": {
+    "active": {
+      "version": 398,
+      "producers": [
+        {
+          "producer_name": "alibabacloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6SUpnpxb9wAEEzxvQo9rQVWrprbyYsw5ztq18H1fwWJW7pVufK",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "anthropiclab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "bostonmitlab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7ExRjZsbFGQ4f6a7fRDAW8jhxk9rrYWxNd7Hg1bqhbnqQx6Hsb",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "bytedancelab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "canadamilaai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5i2xeLTqGnas8vYR7qaGVCRZPJmHE5LXXmCN7TJWdBN3cMy8Xj",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cohereclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "deepmindlabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7F5q79uQoMkUCggy6iHB5EL6ALhL6uWFaNdjybkqYCyBiodH51",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "deepseekcore",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_82C5R1GCKTEeSteyNLe2NxbEWykxvk91NJ7zYZ72TnnRNYU4NZ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "genevacernai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5ir4vk6a9NtZX4w6wk4RBAYgba98ZsuKSUsC9a9wrdud6xPX44",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "gptgenesisbp",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "minimaxcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "mistralcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "moonshotlabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "nvidiaclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8PZbtYbgJF9phfFF5t6VCt9ZvQ1bkrp1rWSbQGeshh1byxaoAC",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "openaiclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8HkSyD1JbzxrAni7fhbvGzbcRrywkjLUqmukBLnaD3W3eojQPV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "perplexityai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "stabilityhub",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "sydneyunswai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6kMVazebFxne8UrPA1oXT9LfPhExjZTXNYrTWn6F19we2xN5HR",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "tencentcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6ob3t5dNoPgUGmrNsWvoz8bUFzM3zqnBXtr8XZAe5YhdDh4GQe",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "torontovectr",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8TGBHQJWHgzMuKT9M6UtdtbnchHe1GN4fUJKEDmyWfgiZfjDpE",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "zurichethlab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7dJtdWTxJDv372X72cg8xLX3CjbKWya9Xfcs1tFrs5JTtqbJtZ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pending": null,
+    "proposed": null
+  },
+  "processes": {
+    "pureeos-bp-demo-genevacernai-20261105.service": {
+      "PID": 15826,
+      "start_ticks": "253465",
+      "cmdline_sha256": "9f93bf96d93b6de18ccb63a28cfdd797610740f15eb0c3aefc619a1ff6f84e14"
+    },
+    "pureeos-bp-demo-sydneyunswai-20261105.service": {
+      "PID": 12219,
+      "start_ticks": "147096",
+      "cmdline_sha256": "9635afbd9178636047fab25c93fa93570192f85c8f596e65c98343b44f5a557d"
+    },
+    "pureeos-bp-extra-bostonmitlab-20261106.service": {
+      "PID": 37957,
+      "start_ticks": "2424772",
+      "cmdline_sha256": "86d5783b105d0b02104db0531dae10ddf713aed7357a2361521e7bc0ba86e093"
+    },
+    "pureeos-bp-extra-torontovectr-20261106.service": {
+      "PID": 38342,
+      "start_ticks": "2428180",
+      "cmdline_sha256": "13a712807f29adbd51a46e3e3ceca42ca74f4b3a8b4133c8ca903e093acecacc"
+    },
+    "pureeos-devnet-activity-wallet-20261105.service": {
+      "PID": 17002,
+      "start_ticks": "320139",
+      "cmdline_sha256": "768b8e0f54c9ac0adbc3be28fd7631fb2311fc774fe1fa9dc3a5b792f91e8592"
+    },
+    "pureeos-devnet-bp-alibabacloud-20261105.service": {
+      "PID": 12992,
+      "start_ticks": "173973",
+      "cmdline_sha256": "74fa6c05df2c1ec6b0ff91dbc2c2eaa77bc2a79ee795023a49c6d400387dfbe4"
+    },
+    "pureeos-devnet-bp-anthropiclab-20261105.service": {
+      "PID": 12995,
+      "start_ticks": "173975",
+      "cmdline_sha256": "5f6e48cd61ef1904a660de330856a275049972b08776fa7a713934b1a0cceff5"
+    },
+    "pureeos-devnet-bp-berlintulabs-20261105.service": {
+      "PID": 12996,
+      "start_ticks": "173975",
+      "cmdline_sha256": "9ae95c06b23646a768dd3f648c20082013c8efb8d96951fa846b66487c1bd72d"
+    },
+    "pureeos-devnet-bp-bytedancelab-20261105.service": {
+      "PID": 13000,
+      "start_ticks": "173976",
+      "cmdline_sha256": "1ab301e4e0917670efd13bef26b43767dd8089ab3f63d23ce872806e8d64d3cf"
+    },
+    "pureeos-devnet-bp-canadamilaai-20261105.service": {
+      "PID": 13004,
+      "start_ticks": "173976",
+      "cmdline_sha256": "3634e3df61148a274dad604c6eaff872c879315df664ccfbe9097270c31a3c76"
+    },
+    "pureeos-devnet-bp-cohereclouds-20261105.service": {
+      "PID": 13009,
+      "start_ticks": "173977",
+      "cmdline_sha256": "6e690aa2f886096d444272fda587551a5217f86437119bd369911fedf56e2130"
+    },
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": {
+      "PID": 13011,
+      "start_ticks": "173979",
+      "cmdline_sha256": "52ec055695af1c1f6d96c5ac913a0286d0db5675c39d1f47f8f6f8eb688b80d4"
+    },
+    "pureeos-devnet-bp-deepseekcore-20261105.service": {
+      "PID": 13015,
+      "start_ticks": "173980",
+      "cmdline_sha256": "ac1362034a0f95cdde36bfcff54f4477b862518dc7dc1c6ea3ab92f0e49e6673"
+    },
+    "pureeos-devnet-bp-londonucllab-20261105.service": {
+      "PID": 13016,
+      "start_ticks": "173980",
+      "cmdline_sha256": "3f28839b574dacf5514040957321ac2441e598cca4259e1e36b25be74b11607d"
+    },
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": {
+      "PID": 13018,
+      "start_ticks": "173981",
+      "cmdline_sha256": "e3ccf1bcc18646d9e4182dd511ffe41b4d026bc7acc2d72e7f251745132e8d2a"
+    },
+    "pureeos-devnet-bp-mistralcloud-20261105.service": {
+      "PID": 13021,
+      "start_ticks": "173982",
+      "cmdline_sha256": "b677e323f871781342b2f28b431c40ed7dca2678b13b9d97f8fcc67aaaea06b0"
+    },
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": {
+      "PID": 13024,
+      "start_ticks": "173982",
+      "cmdline_sha256": "db116a7c427f465be72434e450ea3e25466c7f1b8908a8835793fd61458b71da"
+    },
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": {
+      "PID": 13027,
+      "start_ticks": "173982",
+      "cmdline_sha256": "9c623720f1495bfcc8f8fafa52200a8ade797c0f6544ca1b419056d48107ea91"
+    },
+    "pureeos-devnet-bp-openaiclouds-20261105.service": {
+      "PID": 13029,
+      "start_ticks": "173983",
+      "cmdline_sha256": "1d0b537d38ccd5397fcf58455243282fc03046cdcee2123fc04b495ccd421bb8"
+    },
+    "pureeos-devnet-bp-parisinriaai-20261105.service": {
+      "PID": 13030,
+      "start_ticks": "173983",
+      "cmdline_sha256": "60a1f09b7f0338358cc7f050c296d525a1d38bb73a9b17950a26a4617b93d09f"
+    },
+    "pureeos-devnet-bp-perplexityai-20261105.service": {
+      "PID": 13035,
+      "start_ticks": "173984",
+      "cmdline_sha256": "8249d867be311b0e65db4b167712e3e274f55c4f28464ccf281af33a00978bce"
+    },
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": {
+      "PID": 13040,
+      "start_ticks": "173985",
+      "cmdline_sha256": "4ca8624fc23c5a1bf4c4303961d1acececa1328daf140a1e2573764b78ec18d0"
+    },
+    "pureeos-devnet-bp-stabilityhub-20261105.service": {
+      "PID": 13042,
+      "start_ticks": "173985",
+      "cmdline_sha256": "2cbf68685dc99a1f2973c7c7e562e1a57499a27e3b75345fd5f31f019c0f8f90"
+    },
+    "pureeos-devnet-bp-tencentcloud-20261105.service": {
+      "PID": 13045,
+      "start_ticks": "173986",
+      "cmdline_sha256": "e459f6095bd2b04eadf96bc94b3f44f419e6f6f92fb77dfae074b3b270007fff"
+    },
+    "pureeos-devnet-bp-zurichethlab-20261105.service": {
+      "PID": 13046,
+      "start_ticks": "173986",
+      "cmdline_sha256": "ae60e0c84d557fae1a5bcb02a2d39d2f3c69b1d558cb6a6ebb91332e37eeb4a6"
+    },
+    "pureeos-devnet-companion-observed-peak-20261105.service": {
+      "PID": 15967,
+      "start_ticks": "261542",
+      "cmdline_sha256": "398977001f73233bbedfd8711ffd85e44bda96bb68153d3e086c1b9dc9763d5c"
+    },
+    "pureeos-devnet-companion-rotation-20261105.service": {
+      "PID": 15968,
+      "start_ticks": "261543",
+      "cmdline_sha256": "5149356dc39cb202d5fd021e016b9a7cce122fef227ff4977393c0f85bb59ff3"
+    },
+    "pureeos-devnet-companion-votes-20261105.service": {
+      "PID": 15969,
+      "start_ticks": "261545",
+      "cmdline_sha256": "173bf0a5b7afd5e18b1c8fc671637147d35dca634a75a11bc2f5bf15fd70f458"
+    },
+    "pureeos-devnet-founder-20261105.service": {
+      "PID": 13048,
+      "start_ticks": "173987",
+      "cmdline_sha256": "5a956be0b8ab95a5792fca2a60b16ecdcf50d9784b5c15cd2aba9092c46c5a86"
+    },
+    "pureeos-devnet-history-20261105.service": {
+      "PID": 13051,
+      "start_ticks": "173987",
+      "cmdline_sha256": "2d90f71f7e46f6a68eb60cec4127e5d1a9075ef5fa1997339078e70ced46c8d7"
+    },
+    "pureeos-devnet-key-history-20261105.service": {
+      "PID": 15972,
+      "start_ticks": "261546",
+      "cmdline_sha256": "a077a673a86907af11a3f96d45ee68cc18a7e5ebff30535032b751eb3800576c"
+    },
+    "pureeos-devnet-ordinary-activity-20261105.service": {
+      "PID": 80724,
+      "start_ticks": "7014061",
+      "cmdline_sha256": "fb6d072f154019be765725468d45d8727c54bb8e5bce106244d70633e32b9033"
+    },
+    "pureeos-devnet-purehistory-api-20261105.service": {
+      "PID": 15970,
+      "start_ticks": "261546",
+      "cmdline_sha256": "942ca32a97e995eae0080f823e961ceef14fa024b490631295f821264a7f7415"
+    },
+    "pureeos-devnet-purehistory-indexer-20261105.service": {
+      "PID": 15971,
+      "start_ticks": "261546",
+      "cmdline_sha256": "eba0e42ad09abe723266e14e2bf3a6c93ca1229602ed3a9e43e8d0edfa43d8bb"
+    },
+    "pureeos-devnet-relay-20261105.service": {
+      "PID": 18382,
+      "start_ticks": "353130",
+      "cmdline_sha256": "e275faf170539ad9815169a146417339d13cf2e9f061d4767e63dd4a31e301f5"
+    }
+  },
+  "KEY_config": [
+    {
+      "version": 2,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "system_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "fee_contract": "eosio.token",
+      "fee_symbol": "4,AIC",
+      "policy": {
+        "minimum_fee": 100,
+        "unit_fee": 10,
+        "new_row_fee": 500,
+        "maximum_multiplier_bps": 100000,
+        "epoch_seconds": 1,
+        "max_wallets": 1000,
+        "max_balances": 4000,
+        "max_assets": 32,
+        "max_native_payers": 1000
+      },
+      "next_wallet": 10,
+      "next_asset": 4,
+      "wallet_count": 9,
+      "balance_count": 32,
+      "asset_count": 3,
+      "native_payer_count": 0,
+      "token_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+    }
+  ],
+  "codes": {
+    "eosio": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "eosio.key": "30f6e44225419c30c180a89195c8ace90f4b24a193d868abc447cbb348ad09ae",
+    "eosio.signup": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+    "eosio.token": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "usd": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+    "cny": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb"
+  }
+}

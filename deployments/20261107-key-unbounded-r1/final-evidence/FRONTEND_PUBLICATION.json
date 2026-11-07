@@ -1,0 +1,17 @@
+{
+  "status": "PUBLISHED_AWAITING_NORMAL_PUBLIC_QA",
+  "UTC": "2026-11-06T23:31:01.286924+00:00",
+  "source_commit": "44f52ac0703e739f0e0aba661df0f9d441acfeff",
+  "previous_release": "/var/www/aic-test/releases/20261106T035606Z-proposal-tabs-r1",
+  "release": "/var/www/aic-test/releases/20261106T233101Z-key-growth-r1",
+  "files": {
+    "index.html": "ddf182055ae1043a042517ca3cf9afd935df8ae261a192808dc5366e99bb2058",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-C5b0Qw-D.js": "296477ebd2728af1495343a83881dfcfc0bc4fbc70cf4b43e2d6e7169a48a6c1",
+    "assets/index-BEIOqYFn.css": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2"
+  },
+  "old_and_new_KEY_compatible": true,
+  "no_server_restart_or_config_change": true
+}

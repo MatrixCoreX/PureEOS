@@ -1,0 +1,19 @@
+{
+  "status": "NEEDS_CANONICAL_RECONCILIATION",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "cases": [],
+  "checks": [],
+  "scope": "New owned keys and small existing test funds; no issuance, old fixture replay, TPS or phone-wallet test",
+  "public_keys": {
+    "A": "PUB_K1_8hsPxuQ4zS9HvXg4dZUS71KDiTCCzJBfT3Hwxdf5gH1ThfaWeE",
+    "B": "PUB_K1_7Ywc82KSRL92PDMNDxtmZR1L21cDxpdMJDAnZ4bUHCRBSbjsp3",
+    "C": "PUB_K1_8S74bmK8t5dcQZPQnpJLuMKLcyuMTb2DksKxN1U94LBqCjB1T6"
+  },
+  "before_growth": [],
+  "legacy_counts_before": {
+    "wallet_count": 9,
+    "balance_count": 32,
+    "asset_count": 3
+  },
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/public_qa.py\", line 99, in <module>\n    oldnative=native('gptgenesisbp');fee=checked('named-to-key '+sym,lambda:deposit(A,'2.0000 '+sym,token),budget)\n                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/public_qa.py\", line 63, in checked\n    result=call();acts=history(result['transaction_id']);fees=unique(acts,'eosio.key','feereceipt');assert len(fees)==1;fee=fees[0]\n           ^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/public_qa.py\", line 99, in <lambda>\n    oldnative=native('gptgenesisbp');fee=checked('named-to-key '+sym,lambda:deposit(A,'2.0000 '+sym,token),budget)\n                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/public_qa.py\", line 86, in deposit\n    return{**session.send('deposit-'+str(len(record['cases'])),p['actions']),'quote':p['quote']}\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/native_session.py\", line 45, in send\n    receipt=o.receipt(tid,start,timeout=180);record.update(status='IRREVERSIBLE',canonical_receipt=receipt,response_exit=p.returncode);o.save(progress,record);return{'transaction_id':tid,'canonical_receipt':receipt}\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/ops_common.py\", line 89, in receipt\n    raise RuntimeError('Canonical receipt still unknown: preserve original packet, no new signature')\nRuntimeError: Canonical receipt still unknown: preserve original packet, no new signature\n"
+}

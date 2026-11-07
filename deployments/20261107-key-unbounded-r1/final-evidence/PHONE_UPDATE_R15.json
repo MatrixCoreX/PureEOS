@@ -1,0 +1,16 @@
+{
+  "status": "FAIL_OR_PARTIAL",
+  "utc": "2026-11-06T22:55:02.650578+00:00",
+  "version": "0.1.0-test.15",
+  "apk_sha256": "3a4f5960e31130d35c783e342c088bb5779ac80f5fbdf549239daa6dbe38c718",
+  "authorization": "Authorized global KEY upgrade requires reviewed client compatibility; prior explicit same-certificate both-Xiaomi update authorization persists",
+  "scope": "Same-certificate overlay, exact installed package/UID/version and normal startup only. No unlock, data clear, uninstall, instrumentation, wallet read, signing or payment. No password/pattern test on phones or private phone data access. Real Keystore/IME/camera/manual acceptance and old full Android suite remain incomplete. Known W02 input issue remains held pending user repair instruction.",
+  "devices": [
+    {
+      "device": "小米 12",
+      "model": "2201123C",
+      "status": "FAIL_REQUIRES_RECONCILIATION",
+      "error": "Unexpected installed version; stop without downgrade"
+    }
+  ]
+}

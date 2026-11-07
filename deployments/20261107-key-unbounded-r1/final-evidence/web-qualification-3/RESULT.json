@@ -1,0 +1,5 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/web-qualification-3/run.py\", line 15, in <module>\n    with(A/'build.log').open('w')as log:subprocess.run(['npm','run','build'],cwd=F,env=env,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=900)\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['npm', 'run', 'build']' returned non-zero exit status 134.\n",
+  "original_failures_preserved": true
+}

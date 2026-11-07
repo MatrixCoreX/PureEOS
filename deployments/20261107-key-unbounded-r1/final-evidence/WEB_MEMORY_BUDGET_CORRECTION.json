@@ -1,0 +1,18 @@
+{
+  "status": "ONLY_OWN_BUILD_MEMORY_BUDGET_CORRECTED",
+  "UTC": "2026-11-06T23:11:52.105320+00:00",
+  "unit": "pureeos-key-growth-web-tail-3-20261107.service",
+  "before_memory_events": "low 0\nhigh 69424\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+  "memory_KiB": {
+    "MemAvailable": 1568980,
+    "SwapFree": 662184
+  },
+  "soft_threshold_MiB": 448,
+  "hard_max_MiB_before_after": [
+    384,
+    512
+  ],
+  "swap_max_unchanged": 0,
+  "original_whole_client_build_hard_budget_MiB": 900,
+  "diagnosis": "Actual tsc RSS349840KiB plus npm61160KiB/Python18112KiB; observed wchan mem_cgroup_handle_over_high and64256high events. The separate384MiB envelope was too low for this build.512MiB remains below original900MiB client budget; no native/global resource cap, CPU priority, test assertion, source or other unit changed."
+}

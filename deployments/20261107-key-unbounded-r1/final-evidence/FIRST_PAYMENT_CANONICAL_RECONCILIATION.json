@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "same_original_ID": true,
+  "canonical_receipt": {
+    "transaction_id": "9f94d4d03dfa611baa6c3abaf7822a739dc48dbb7a7147780f0e15744b448d40",
+    "block_num": 268332,
+    "block_id": "0004182c78af4d430729ec519816857eee07bd1d0300c96369bc0f93f42393b3",
+    "timestamp": "2026-11-06T23:55:11.000",
+    "status": "executed",
+    "irreversible_at_observed_LIB": 268617
+  },
+  "reported_block_hint_not_assumed": true
+}

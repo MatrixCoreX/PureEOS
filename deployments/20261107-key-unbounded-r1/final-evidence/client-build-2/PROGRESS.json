@@ -1,0 +1,8 @@
+{
+  "phase": "web-tests-build",
+  "status": "RUNNING",
+  "memory_KiB": {
+    "MemAvailable": 1668060,
+    "SwapFree": 905704
+  }
+}

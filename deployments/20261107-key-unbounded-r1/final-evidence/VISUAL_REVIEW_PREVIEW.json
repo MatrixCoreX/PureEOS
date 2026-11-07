@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T23:30:26.856184+00:00",
+  "images_SHA256": {
+    "preview-proposal-zh-light-390.png": "c2070b81bfa5fb600c96c4734921b23510db7820804976a40e215a493e6e1565",
+    "preview-proposal-en-light-1440.png": "d484e2b21e7c36f6307f216e3ce63b8fbfa46ebf5fb15f4c62c1e059a041cc0b",
+    "preview-fee-en-dark-390.png": "0c062f54632739265a3bf99e272ae1713155f567c20fbf57b3de6cee9cb40d13",
+    "preview-fee-zh-light-390.png": "a08e14b834be7414f71287bfa02ca499fac56e1494381623ebcb9fdfa3e8ccb1",
+    "preview-fee-en-light-1440.png": "599a3cbaa76ac65411383120501c60bba3a529a5dd5d335fb65078bea548ab22",
+    "preview-proposal-zh-dark-1440.png": "6a19c0fdbcb9a334b179bb630206e936432cd4ef981fd63016497d7a325727da",
+    "preview-proposal-en-dark-390.png": "521eb81c3c738cebbd670b2df92cd6753fe0e94c10768eb18b3555b44607ab3f",
+    "preview-fee-zh-dark-1440.png": "b398a0b57f70f9998eeb2556cf17ae4ee46629f2e2cc8d013192d38a82a3b3e3"
+  },
+  "manual_review": "All eight actual preview screenshots inspected: zh/en, dark/light,1440/390. Proposal4 remains awaiting execution; current-deployed mismatch is correct before upgrade. Fee typography and responsive layout readable without horizontal overflow; displayed total/base/execution/RAM/relay breakdown agrees. This is focused component visual review, not a full explorer or Android claim."
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-07T00:06:18.942541+00:00",
+  "images_SHA256": {
+    "public_post-fee-en-light-1440.png": "c36779fbfcaf4e231a468ed651d803024d6b1cf1044ea9c737052c1de9d8ce14",
+    "public_post-fee-en-dark-390.png": "bbfa96faa4a7848f3a75fea3a789d2a50a29f737173ed843182f80c96bd7cc42",
+    "public_post-fee-zh-dark-1440.png": "18e27d6f11efc4217154bf3235f40d617fe7fcfa5a551467446e603cacc818ae",
+    "public_post-proposal-en-dark-390.png": "25af5ff6bcb7e30bc4ff41fa449df3748533ab756cf39ab271d3a0de9ffcdd85",
+    "public_post-fee-zh-light-390.png": "f6b0960fe915792550a9bc3b2617d9799387238cad5d47fc7299c8b5287bc231",
+    "public_post-proposal-en-light-1440.png": "82e0ad5f168c8221dc68b2ee8392fd52b6ba5d923033482cd2a15bf46db0fad4",
+    "public_post-proposal-zh-light-390.png": "6fcec079feb16d013c3eab629e7ca53f0304e47e1308af8bcc3c4abaca84b43b",
+    "public_post-proposal-zh-dark-1440.png": "140f0efcfff8e4511a6c44d5fca7bab5180dd72801c303352149af1ae4a8c9c0"
+  },
+  "manual_review": "All eight actual normal-public HTTPS post-upgrade screenshots inspected. Four zh/en/light/dark desktop/mobile variants: proposal4 Executed in history, no pending proposal, current testnet header and readable fee decomposition; responsive table scroll remains local and no page overflow. Focused visual scope only."
+}

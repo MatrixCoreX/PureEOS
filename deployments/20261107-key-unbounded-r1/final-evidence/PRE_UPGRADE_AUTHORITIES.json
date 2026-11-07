@@ -1,0 +1,80 @@
+{
+  "eosio.key": [
+    {
+      "perm_name": "active",
+      "parent": "owner",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "eosio",
+              "permission": "eosio.code"
+            },
+            "weight": 1
+          },
+          {
+            "permission": {
+              "actor": "eosio.key",
+              "permission": "eosio.code"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": []
+    },
+    {
+      "perm_name": "owner",
+      "parent": "",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [],
+        "waits": []
+      },
+      "linked_actions": []
+    }
+  ],
+  "eosio.signup": [
+    {
+      "perm_name": "active",
+      "parent": "owner",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [
+          {
+            "permission": {
+              "actor": "eosio",
+              "permission": "eosio.code"
+            },
+            "weight": 1
+          },
+          {
+            "permission": {
+              "actor": "eosio.signup",
+              "permission": "eosio.code"
+            },
+            "weight": 1
+          }
+        ],
+        "waits": []
+      },
+      "linked_actions": []
+    },
+    {
+      "perm_name": "owner",
+      "parent": "",
+      "required_auth": {
+        "threshold": 1,
+        "keys": [],
+        "accounts": [],
+        "waits": []
+      },
+      "linked_actions": []
+    }
+  ]
+}

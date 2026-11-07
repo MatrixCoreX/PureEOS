@@ -1,0 +1,19 @@
+
+> pureeos-explorer@1.0.0 test
+> vitest run --config remote-vitest.config.ts --maxWorkers=1 --testTimeout=45000 src/Queries.test.tsx -t applies advanced history filters and preserves entered fields when switching language
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-key-unbounded-20261107-r1/web-qualification-3/web[39m
+
+ [32m✓[39m src/Queries.test.tsx [2m([22m[2m7 tests[22m[2m | [22m[33m6 skipped[39m[2m)[22m[33m 7618[2mms[22m[39m
+   [32m✓[39m read-only query workflows [2m(7)[22m
+     [33m[2m✓[22m[39m applies advanced history filters and preserves entered fields when switching language[33m 7614[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m6 skipped[39m[90m (7)[39m
+[2m   Start at [22m 23:06:20
+[2m   Duration [22m 33.75s[2m (transform 50%, tests 24%, environment 14%, import 9%, setup 2%)[22m
+

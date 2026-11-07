@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-06T23:49:35.705042+00:00",
+  "images_SHA256": {
+    "public_pre-fee-zh-dark-1440.png": "ba682a92ba9386c2af11345b31757752c1b8748372539ffa9b6b186e2614b8fa",
+    "public_pre-proposal-zh-light-390.png": "701083e202a01ccfe696b4aaf3a8e949f7c6b15c4e9900260aa1915fa2eec31b",
+    "public_pre-proposal-zh-dark-1440.png": "d61c625cf024f2f972ca180c78be4f1857a6fe0e8757b15808faaf73a84ae1de",
+    "public_pre-fee-zh-light-390.png": "5f1befa34e9bd6da0bd0830ad0fbc5ba7342266328b654591c308c86c31e3c3d",
+    "public_pre-proposal-en-dark-390.png": "a87dda95fbc1fb83f991940e62789f83b37965c3a5e78d23a1d4c513554dd1d4",
+    "public_pre-proposal-en-light-1440.png": "5565ed3913205ce1478cd25e4867b9f3acb61d4f9a8531f79ef896008749c497",
+    "public_pre-fee-en-light-1440.png": "78024a3287d7a34e1afb6eaac325908692f5d2fd260b8ba0438b6858a6ae8499",
+    "public_pre-fee-en-dark-390.png": "b4cb5a481e4561b6bb04e95af8c144f4d9c934d9b23b9c40394a0dea5282f500"
+  },
+  "manual_review": "All eight normal public HTTPS screenshots inspected: actual Testnet header; zh/en dark/light desktop1440/mobile390; pending proposal4 and exact fee decomposition legible, no horizontal overflow. No full explorer/Android claim."
+}

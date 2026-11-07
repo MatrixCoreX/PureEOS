@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-07T00:04:33.633611+00:00",
+  "removed_only_own_unsigned_aligned": [
+    {
+      "path": "/opt/pureeos-key-unbounded-20261107-r1/client-build-2/wallet/build/unsigned.apk",
+      "allocated_bytes": 2568192,
+      "bytes": 2566823,
+      "SHA256": "d8d51457b41635316efe62517d7622e51e7205c07a214fb43b4094c2f12493cc"
+    },
+    {
+      "path": "/opt/pureeos-key-unbounded-20261107-r1/client-build-2/wallet/build/aligned.apk",
+      "allocated_bytes": 2568192,
+      "bytes": 2566823,
+      "SHA256": "d8d51457b41635316efe62517d7622e51e7205c07a214fb43b4094c2f12493cc"
+    },
+    {
+      "path": "/opt/pureeos-key-unbounded-20261107-r1/wallet-build-7/wallet/build/unsigned.apk",
+      "allocated_bytes": 2572288,
+      "bytes": 2570535,
+      "SHA256": "c4dc98dc00591bbd9646ceacdf74d0f325e56301c2cfed0f017f02684bd203c7"
+    },
+    {
+      "path": "/opt/pureeos-key-unbounded-20261107-r1/wallet-build-7/wallet/build/aligned.apk",
+      "allocated_bytes": 2572288,
+      "bytes": 2570535,
+      "SHA256": "c4dc98dc00591bbd9646ceacdf74d0f325e56301c2cfed0f017f02684bd203c7"
+    }
+  ],
+  "allocated_bytes_removed": 10280960,
+  "filesystem_available_bytes_before": 78367195136,
+  "filesystem_available_bytes_after": 78398382080,
+  "observed_net_available_delta": 31186944,
+  "signed_APKs_preserved_SHA256": {
+    "/opt/pureeos-key-unbounded-20261107-r1/client-build-2/wallet/dist/PureEOS-Wallet-0.1.0-test.15.apk": "3a4f5960e31130d35c783e342c088bb5779ac80f5fbdf549239daa6dbe38c718",
+    "/opt/pureeos-key-unbounded-20261107-r1/wallet-build-7/wallet/dist/PureEOS-Wallet-0.1.0-test.16.apk": "db6d8f1f6b47f14814dd52dbfe56172564603e03c56b46d0df5e0cb1d3ca2c10"
+  },
+  "offserver_exact_signed_copies_verified": true,
+  "sources_keys_wallets_chain_native_data_and_other_work_untouched": true,
+  "live_filesystem_delta_may_include_other_activity": true
+}

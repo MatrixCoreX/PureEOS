@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "UTC": "2026-11-07T00:07:00.233335+00:00",
+  "KEY": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+  "proposal": 4,
+  "execution_block": 267777,
+  "new_payments": 11,
+  "new_claim_atoms": 2126,
+  "public_checks": 62,
+  "native_checks": {
+    "migration_full": 355,
+    "seeded_boundary": 21
+  },
+  "SDK_tests": 28,
+  "wallet_core": 732,
+  "wallet_API26_helpers": 32,
+  "wallet_APK": "db6d8f1f6b47f14814dd52dbfe56172564603e03c56b46d0df5e0cb1d3ca2c10",
+  "wallet_phone_install": "Not performed; preserve separate active physical campaign",
+  "actual_browser_variants": {
+    "preview": 4,
+    "public_before": 4,
+    "public_after": 4
+  },
+  "native_processes_unchanged": 26,
+  "reviewed_authorities_unchanged": 13,
+  "temporary_owned_signers_closed": true,
+  "signer_inventory_scope": "Actual argv executable token basename keosd plus exact own data/config directory, not substrings of the orchestration Python command",
+  "old_failed_attempts_and_first_payment_reconciliation_retained": true,
+  "Git_reports_finalization": "Separate immediately following"
+}

@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=PureEOS Wallet TEST, OU=Android, O=MatrixCoreX
+Signer #1 certificate SHA-256 digest: 6a0ecbb495429539e69e5e9e1f33b3a5aa715dd90af8a43c32127f85ed24e4d3
+Signer #1 certificate SHA-1 digest: d839a2581c2a866620d96829690a09e8644af2cd
+Signer #1 certificate MD5 digest: 88cd1372991c10cae7363680a99e92e9
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 3072
+Signer #1 public key SHA-256 digest: d843acda296940f9271a3ce7582c75b4f688b6dff71cb558cd9740cb18cb251b
+Signer #1 public key SHA-1 digest: 9289f1eb0aad7ea2f0ae9fccf1a72289185d5e6d
+Signer #1 public key MD5 digest: 46fb32972cf1eaab710fa5e306c0da16

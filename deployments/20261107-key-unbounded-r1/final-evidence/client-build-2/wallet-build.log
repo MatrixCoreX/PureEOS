@@ -1,0 +1,13 @@
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+warning: [options] bootstrap class path not set in conjunction with -source 8
+1 warning
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+CORE TEST PASS: 680 assertions; public mathematical fixtures only
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=1 -XX:+UseSerialGC
+SIGNED APK BUILD PASS 3a4f5960e31130d35c783e342c088bb5779ac80f5fbdf549239daa6dbe38c718

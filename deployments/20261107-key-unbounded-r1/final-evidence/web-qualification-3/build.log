@@ -1,0 +1,27 @@
+
+> pureeos-explorer@1.0.0 build
+> tsc -b && vite build
+
+
+<--- Last few GCs --->
+
+[93613:0x10428000]   301372 ms: Mark-Compact 251.4 (258.6) -> 250.6 (258.8) MB, pooled: 0 MB, 2441.13 / 0.00 ms  (average mu = 0.474, current mu = 0.037) allocation failure; scavenge might not succeed
+[93613:0x10428000]   303097 ms: Mark-Compact 251.6 (258.8) -> 250.7 (259.1) MB, pooled: 0 MB, 1591.84 / 0.00 ms  (average mu = 0.383, current mu = 0.077) allocation failure; scavenge might not succeed
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0xe48bbe node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]
+ 2: 0x1248d00 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [node]
+ 3: 0x1248fd7 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [node]
+ 4: 0x1477ee5  [node]
+ 5: 0x1491779 v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [node]
+ 6: 0x1465e78 v8::internal::HeapAllocator::AllocateRawWithLightRetrySlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [node]
+ 7: 0x1466da5 v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [node]
+ 8: 0x143f9ae v8::internal::Factory::NewFillerObject(int, v8::internal::AllocationAlignment, v8::internal::AllocationType, v8::internal::AllocationOrigin) [node]
+ 9: 0x18a22bc v8::internal::Runtime_AllocateInYoungGeneration(int, unsigned long*, v8::internal::Isolate*) [node]
+10: 0x1e01af6  [node]
+Aborted (core dumped)

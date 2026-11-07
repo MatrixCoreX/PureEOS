@@ -1,0 +1,5 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/controllers/wait_public_qa.py\", line 15, in <module>\n    with(R/'public-qa.log').open('w')as log:subprocess.run(['python3','-B',str(R/'controllers/public_qa.py')],stdout=log,stderr=subprocess.STDOUT,check=True,timeout=1800)\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['python3', '-B', '/opt/pureeos-key-unbounded-20261107-r1/controllers/public_qa.py']' returned non-zero exit status 1.\n",
+  "never_repeat_signed_packet_or_previous_cases": true
+}

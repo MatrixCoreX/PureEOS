@@ -1,0 +1,62 @@
+PASS Recovered first: real native RAM budget and acquired quota
+PASS Recovered first: exact bounded actual fee equation
+PASS Recovered first: direct native route has no commercial relay
+PASS Recovered first: full2AIC principal credited exactly once
+PASS Recovered first: lazy exact counters initialized once
+PASS named-to-key USD allocation budget
+PASS named-to-key USD bounded exact fee equation
+PASS named-to-key USD actual paid native RAM cost/quota
+PASS named-to-key USD exact fee destination
+PASS Named-to-key full principal USD
+PASS Named sender pays additional fee USD
+PASS named-to-key CNY allocation budget
+PASS named-to-key CNY bounded exact fee equation
+PASS named-to-key CNY actual paid native RAM cost/quota
+PASS named-to-key CNY exact fee destination
+PASS Named-to-key full principal CNY
+PASS Named sender pays additional fee CNY
+PASS key-to-key AIC allocation budget
+PASS key-to-key AIC bounded exact fee equation
+PASS key-to-key AIC actual paid native RAM cost/quota
+PASS key-to-key AIC exact fee destination
+PASS Key-to-key full principal AIC
+PASS key-to-key USD allocation budget
+PASS key-to-key USD bounded exact fee equation
+PASS key-to-key USD actual paid native RAM cost/quota
+PASS key-to-key USD exact fee destination
+PASS Key-to-key full principal USD
+PASS key-to-key CNY allocation budget
+PASS key-to-key CNY bounded exact fee equation
+PASS key-to-key CNY actual paid native RAM cost/quota
+PASS key-to-key CNY exact fee destination
+PASS Key-to-key full principal CNY
+PASS atomic KEY-to-Signup allocation budget
+PASS atomic KEY-to-Signup bounded exact fee equation
+PASS atomic KEY-to-Signup existing row purchases no KEY RAM
+PASS atomic KEY-to-Signup exact fee destination
+PASS Signup exact owned C authority, no dev delegation
+PASS Signup real >=4096 RAM and account-owned CPU/NET
+PASS Signup full payment, no retained funds or pending row
+PASS key-to-named AIC allocation budget
+PASS key-to-named AIC bounded exact fee equation
+PASS key-to-named AIC actual paid native RAM cost/quota
+PASS key-to-named AIC exact fee destination
+PASS Key-to-named full principal AIC
+PASS key-to-named USD allocation budget
+PASS key-to-named USD bounded exact fee equation
+PASS key-to-named USD actual paid native RAM cost/quota
+PASS key-to-named USD exact fee destination
+PASS Key-to-named full principal USD
+PASS key-to-named CNY allocation budget
+PASS key-to-named CNY bounded exact fee equation
+PASS key-to-named CNY actual paid native RAM cost/quota
+PASS key-to-named CNY exact fee destination
+PASS Key-to-named full principal CNY
+PASS named-to-USD-only key allocation budget
+PASS named-to-USD-only key bounded exact fee equation
+PASS named-to-USD-only key actual paid native RAM cost/quota
+PASS named-to-USD-only key exact fee destination
+PASS Receiving key needs no AIC; named/key holdings independent
+PASS Claim only new QA execution+relay earnings, fee zero and old reserve preserved
+PASS Exact growth matches compatible config at current scale
+PASS Old1000/4000 fields preserved without raising policy

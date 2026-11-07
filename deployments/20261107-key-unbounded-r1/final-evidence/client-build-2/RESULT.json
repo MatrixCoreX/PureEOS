@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/client-build-2/run.py\", line 47, in <module>\n    with(A/'web-test.log').open('w')as log:subprocess.run(['npm','test','--','--config','remote-vitest.config.ts','--maxWorkers=1'],cwd=F,env=env,stdout=log,stderr=subprocess.STDOUT,check=True,timeout=1200)\n                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['npm', 'test', '--', '--config', 'remote-vitest.config.ts', '--maxWorkers=1']' returned non-zero exit status 1.\n",
+  "memory_KiB": {
+    "MemAvailable": 1685168,
+    "SwapFree": 809296
+  },
+  "do_not_replay_paid_controllers": true
+}

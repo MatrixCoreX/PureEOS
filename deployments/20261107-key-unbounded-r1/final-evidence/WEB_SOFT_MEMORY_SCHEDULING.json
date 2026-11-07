@@ -1,0 +1,17 @@
+{
+  "status": "ONLY_OWN_BUILD_SOFT_THRESHOLD_ADJUSTED",
+  "UTC": "2026-11-06T23:09:33.109095+00:00",
+  "unit": "pureeos-key-growth-web-tail-3-20261107.service",
+  "before_memory_events": "low 0\nhigh 33752\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+  "memory_KiB": {
+    "MemAvailable": 1557520,
+    "SwapFree": 725152
+  },
+  "soft_threshold_MiB_before_after": [
+    256,
+    320
+  ],
+  "hard_max_MiB_unchanged": 384,
+  "swap_max_unchanged": 0,
+  "reason": "Own TypeScript cgroup repeatedly reclaimed above256MiB while actual~268MiB, hard maximum not reached and no OOM. Avoid unnecessary reclaim within the same384MiB hard budget. No source/test assertion/native floor/cap or other service change."
+}

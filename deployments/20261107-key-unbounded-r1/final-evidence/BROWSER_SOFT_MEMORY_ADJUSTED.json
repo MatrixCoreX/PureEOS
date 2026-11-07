@@ -1,0 +1,17 @@
+{
+  "status": "OWN_BROWSER_SOFT_RECLAIM_CORRECTED",
+  "UTC": "2026-11-06T23:25:15.823775+00:00",
+  "unit": "pureeos-key-growth-browser-preview-3-20261107.service",
+  "before_events": "low 0\nhigh 9863\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+  "memory_KiB": {
+    "MemAvailable": 1623936,
+    "SwapFree": 478220
+  },
+  "MemoryHigh_MiB_before_after": [
+    256,
+    288
+  ],
+  "MemoryMax_MiB_unchanged": 320,
+  "swap_max_unchanged": 0,
+  "reason": "9367soft-reclaim events, actual memory held at~255.5MiB, hard max not reached/no OOM. Avoid soft-limit stalls within the same320MiB hard budget; no product/test assertion/native resource or other service change."
+}

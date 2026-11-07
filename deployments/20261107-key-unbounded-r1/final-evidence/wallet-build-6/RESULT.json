@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-key-unbounded-20261107-r1/wallet-build-6/run.py\", line 25, in <module>\n    save('PROGRESS.json',{'phase':'wallet-core-apk','status':'RUNNING','memory_KiB':preflight()})\n                                                                                    ^^^^^^^^^^^\n  File \"/opt/pureeos-key-unbounded-20261107-r1/wallet-build-6/run.py\", line 8, in preflight\n    m=memory();assert m['MemAvailable']>=1800000 and m['SwapFree']>=262144,m\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {'MemAvailable': 1555248, 'SwapFree': 480268}\n",
+  "memory_KiB": {
+    "MemAvailable": 1574340,
+    "SwapFree": 480268
+  },
+  "no_phone_operations": true
+}

@@ -1,5 +1,6 @@
 {
   "publish_frontend.py": "d21dab1dd0915b14819dc7c9f13b6ce42d73de82a464615e29d667b54f4ec49c",
+  "resume_public_qa.py": "e67fecec7788ea03dffc22315b4646a0d0fb5dfe7299f8cd0e32e1f36b5c13d0",
   "native_session.py": "4c6313a976e00f6b8a6ade95928e489e33234c4d497e66cee074764a0be22f61",
   "activate_clients.py": "62e58ebce05d2150b396900d0f94cbddd79e365d19b108092eec28a1e6e19093",
   "ops_common.py": "dbfc19d95354d3c7c2d525979e0b8f640e3d597037d295bceb6d1179286f3515",

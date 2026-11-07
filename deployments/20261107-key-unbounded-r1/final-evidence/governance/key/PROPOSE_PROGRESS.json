@@ -1,0 +1,15 @@
+{
+  "status": "IRREVERSIBLE",
+  "transaction_id": "5cd0e2ba0503f24b3d5dccf89b8a4b0a58d49c888f52e92f6ecedbe0f6cd75b5",
+  "packet_sha256": "ab167ada5758e6e0e41726d03f1d70826dcf798a9a3e6431c5babbde70196025",
+  "start_LIB": 260461,
+  "expiration": "2026-11-06T23:16:58",
+  "block_hint": 260472,
+  "canonical_receipt": {
+    "transaction_id": "5cd0e2ba0503f24b3d5dccf89b8a4b0a58d49c888f52e92f6ecedbe0f6cd75b5",
+    "block_num": 260472,
+    "block_id": "0003f978f8fc570db8845c0d8cd7d8b33654ab520f958e8f4f86ec2f0ae67ace",
+    "timestamp": "2026-11-06T22:47:01.000",
+    "irreversible_at_observed_LIB": 260473
+  }
+}

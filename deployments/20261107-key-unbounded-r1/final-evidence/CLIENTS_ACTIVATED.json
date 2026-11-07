@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "KEY": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+  "observed_LIB": 267861,
+  "units": [
+    "pureeos-devnet-relay-20261105.service",
+    "pureeos-devnet-key-history-20261105.service"
+  ],
+  "health": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "contract": "eosio.key",
+    "fee_bps": 3000,
+    "minimum_fee_bps": 1000,
+    "maximum_fee_bps": 3000,
+    "minimum_service_fee": "0.0001 AIC"
+  },
+  "original_terminal_jobs_preserved": 39,
+  "sole_HTTP_registry_and_founder_authority_unchanged": true,
+  "all_26_native_processes_unchanged": true,
+  "runtime_manifest_SHA256": "9212002a55edba05548dc48c3e1e85c85abd020ae38ffac54c77eb62b3c77452"
+}

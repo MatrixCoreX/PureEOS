@@ -1,0 +1,19 @@
+{
+  "status": "SERIAL_NO_SWAP_SMALLER_CLIENT_PROFILE",
+  "UTC": "2026-11-06T23:19:09.592516+00:00",
+  "admission_physical_available_KiB": 1800000,
+  "admission_swap_free_KiB": 262144,
+  "browser_hard_max_MiB": 320,
+  "preview_hard_max_MiB": 48,
+  "wallet_hard_max_MiB_before_after": [
+    900,
+    640
+  ],
+  "all_own_heavy_jobs_swap_max": 0,
+  "wallet_own_abort_physical_KiB_before_after": [
+    650000,
+    900000
+  ],
+  "wallet_own_abort_swap_free_KiB": 131072,
+  "reason": "Previous browser2 rejected BEFORE launch at1889808KiB physical/469772KiB swap. New profile reserves more physical memory, uses smaller640MiB Android budget and no task swap, serializes all heavy work and strengthens physical abort. No node/BP/sourcehistory/native floor or OS swap configuration changes; previous guard failures retained."
+}

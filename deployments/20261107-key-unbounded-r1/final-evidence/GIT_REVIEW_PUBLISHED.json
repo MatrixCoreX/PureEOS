@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "reviews": {
+    "key": {
+      "sha256": "1152e6be7cfbf341647c6cc6578d083fb03677dddce55ff916662a095b93b430",
+      "new_code_hash": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+      "raw_ABI_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c"
+    }
+  },
+  "published_refs": {
+    "key": {
+      "commit": "7d95fc41981c8041887d6756ce794f1884790003",
+      "branch": "feature/key-unbounded-20261107",
+      "review_url": "https://github.com/MatrixCoreX/PureEOS/blob/7d95fc41981c8041887d6756ce794f1884790003/deployments/20261107-key-unbounded-r1/REVIEW.json",
+      "manifest_SHA256": "d4d26e19437e426beb3d95754eae5ecb39431441f4f8340b0f2f6fedae99dfe1"
+    }
+  },
+  "source_commit": "4b9627ea2aeab8b82839c5488a3034cb07739c08",
+  "scope": "Exact unsigned review/source/artifacts published before native proposal; not active"
+}

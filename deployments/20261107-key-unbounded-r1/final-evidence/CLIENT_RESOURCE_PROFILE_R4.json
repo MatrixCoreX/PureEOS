@@ -1,0 +1,13 @@
+{
+  "status": "SERIAL_EXACT_RESERVE_POLICY",
+  "wallet_admission_KiB": 1703936,
+  "wallet_hard_max_MiB": 640,
+  "browser_plus_preview_admission_KiB": 1425408,
+  "browser_plus_preview_hard_MiB": 368,
+  "guaranteed_physical_reserve_KiB": 1048576,
+  "own_jobs_swap_max": 0,
+  "own_wallet_abort_physical_KiB": 1000000,
+  "swap_free_admission_KiB": 262144,
+  "swap_free_abort_KiB": 131072,
+  "reason": "Wallet6 raced browser shutdown after success file and guarded out before build at1.55GiB. New7waits both own preview/browserPID0 AND exact1GiB physical reserve plus640MiB own hard budget; never controls live units. Previous guard failures retained."
+}

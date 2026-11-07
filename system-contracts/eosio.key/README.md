@@ -1,4 +1,15 @@
-> 2026-11-07 candidate: remove global record-count admission ceilings, retain sender-funded real RAM and exact fees. See [中文规则](docs/UNBOUNDED_GROWTH.zh.md) / [English](docs/UNBOUNDED_GROWTH.en.md). Candidate build is not public activation; full governed review and post-upgrade evidence are required.
+# eosio.key · 全网公钥账户与按需 RAM
+
+2026-11-07 当前代码7db，raw ABI83；提案4已在267777不可逆执行，三币种三路线、原子注册与本轮新增收入领取已实测。固定钱包/余额/资产总量门槛已移除，新增记录仍由本笔费用购买真实RAM；现有布局和完整本金保持。
+
+- [中文实际结果与三种费用流程](docs/GROWTH_TRANSFERS.zh.md)
+- [English activation and fee flows](docs/GROWTH_TRANSFERS.en.md)
+- [中文增长/兼容设计](docs/UNBOUNDED_GROWTH.zh.md)
+- [English growth/compatibility design](docs/UNBOUNDED_GROWTH.en.md)
+
+以下记录按原历史时点保留，不表示当前部署状态。
+
+## 历史候选记录
 
 # eosio.key · Atomic RAM candidate / 自动购 RAM 候选
 

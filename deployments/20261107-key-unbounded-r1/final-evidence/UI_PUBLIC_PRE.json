@@ -1,0 +1,205 @@
+{
+  "status": "PASS",
+  "utc": "2026-11-06T23:46:02.556Z",
+  "origin": "https://aic-test.matrixai.one",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "creationHistory": 8,
+      "upgradeHistory": 3,
+      "pendingUpgrade": true,
+      "exactPublishedProposalHashes": true,
+      "quotes": [
+        {
+          "rows": "0",
+          "total": "0.0233 AIC",
+          "base": "0.0179 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0054 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0251 AIC",
+          "base": "0.0193 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0058 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0283 AIC",
+          "base": "0.0217 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0038 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0066 AIC"
+        }
+      ],
+      "errors": [],
+      "httpFailures": [],
+      "readRetries": []
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "creationHistory": 8,
+      "upgradeHistory": 3,
+      "pendingUpgrade": true,
+      "exactPublishedProposalHashes": true,
+      "quotes": [
+        {
+          "rows": "0",
+          "total": "0.0233 AIC",
+          "base": "0.0179 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0054 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0251 AIC",
+          "base": "0.0193 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0058 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0283 AIC",
+          "base": "0.0217 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0038 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0066 AIC"
+        }
+      ],
+      "errors": [],
+      "httpFailures": [],
+      "readRetries": []
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "creationHistory": 8,
+      "upgradeHistory": 3,
+      "pendingUpgrade": true,
+      "exactPublishedProposalHashes": true,
+      "quotes": [
+        {
+          "rows": "0",
+          "total": "0.0233 AIC",
+          "base": "0.0179 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0054 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0251 AIC",
+          "base": "0.0193 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0058 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0283 AIC",
+          "base": "0.0217 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0038 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0066 AIC"
+        }
+      ],
+      "errors": [],
+      "httpFailures": [],
+      "readRetries": []
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "creationHistory": 8,
+      "upgradeHistory": 3,
+      "pendingUpgrade": true,
+      "exactPublishedProposalHashes": true,
+      "quotes": [
+        {
+          "rows": "0",
+          "total": "0.0233 AIC",
+          "base": "0.0179 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0054 AIC"
+        },
+        {
+          "rows": "1",
+          "total": "0.0251 AIC",
+          "base": "0.0193 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0058 AIC"
+        },
+        {
+          "rows": "2",
+          "total": "0.0283 AIC",
+          "base": "0.0217 AIC",
+          "execution": "0.0179 AIC",
+          "storage": "0.0038 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0066 AIC"
+        }
+      ],
+      "errors": [],
+      "httpFailures": [],
+      "readRetries": []
+    }
+  ],
+  "assets": [
+    {
+      "path": "index.html",
+      "expected": "ddf182055ae1043a042517ca3cf9afd935df8ae261a192808dc5366e99bb2058",
+      "actual": "ddf182055ae1043a042517ca3cf9afd935df8ae261a192808dc5366e99bb2058"
+    },
+    {
+      "path": "theme.js",
+      "expected": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+      "actual": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71"
+    },
+    {
+      "path": "favicon.svg",
+      "expected": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+      "actual": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35"
+    },
+    {
+      "path": "language.js",
+      "expected": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+      "actual": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5"
+    },
+    {
+      "path": "assets/index-C5b0Qw-D.js",
+      "expected": "296477ebd2728af1495343a83881dfcfc0bc4fbc70cf4b43e2d6e7169a48a6c1",
+      "actual": "296477ebd2728af1495343a83881dfcfc0bc4fbc70cf4b43e2d6e7169a48a6c1"
+    },
+    {
+      "path": "assets/index-BEIOqYFn.css",
+      "expected": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2",
+      "actual": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2"
+    }
+  ],
+  "knownReadFailuresRetained": false,
+  "scope": "Focused actual remote Chromium proposal/hash/history and fee equations, four language/theme/viewport variants plus exact deployed assets. Known broad overview get_block400 retained, so this is not full explorer health acceptance. No signing/submission."
+}

@@ -1,0 +1,14 @@
+{
+  "status": "CANDIDATE_SOURCE_PUSHED_REF_VERIFIED",
+  "refs": {
+    "PureEOS-Wallet-KeyGrowth-20261107": {
+      "commit": "ee9131b9b7bcb5419901d9e8dc4adb27f4aea11b",
+      "branch": "feature/key-growth-compat-20261107"
+    },
+    "PureEOS-explorer-KeyGrowth-20261107": {
+      "commit": "44f52ac0703e739f0e0aba661df0f9d441acfeff",
+      "branch": "feature/key-growth-compat-20261107"
+    }
+  },
+  "qualification_and_activation": "Separate; source publication does not imply deployment"
+}
