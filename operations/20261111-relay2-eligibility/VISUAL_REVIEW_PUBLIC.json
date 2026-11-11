@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "observed": [
+    "public-fee-en-dark-390.png"
+  ],
+  "scope": "Manual actualpublicremoteChromium feecomponent screenshot, independentfrom4variantautomatedchecks. No physicalphonepixel or fullExplorerhealth claim.",
+  "utc": "2026-11-11T04:03:13.752950+00:00"
+}

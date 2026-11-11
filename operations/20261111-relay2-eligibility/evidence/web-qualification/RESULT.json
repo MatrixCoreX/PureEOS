@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "tests": 289,
+  "TypeScript_and_production_build": "PASS",
+  "memory_kib_at_start": {
+    "MemAvailable": 3614600,
+    "SwapFree": 54949308
+  },
+  "dist": {
+    "index.html": "74f2cf1407edbd6ccb150ae5016ee54a9e64213d44c2bfd296acc022aa5bea5e",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-ITvsO6GR.js": "83d2ad7dd9f6f3b7f48b7a6f714bacd8296475faf9f04541743e0b17cb6103b3",
+    "assets/index-BEIOqYFn.css": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2"
+  },
+  "tests_log_SHA256": "38764ae29210cd8833afc17fa3ff2f7536e41775e327ddbb098cc43e9f3b3029",
+  "build_log_SHA256": "453706652f88dea5dd3d5f32f82617d4c81e45fc74d72b56409946befccc5212",
+  "scope": "Eligibility filtering only; native contracts and fee math unchanged. Actual browser/public publication separate."
+}

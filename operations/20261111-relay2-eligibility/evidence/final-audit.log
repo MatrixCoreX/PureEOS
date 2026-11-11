@@ -1,0 +1,1 @@
+{"status": "PASS_FINAL_ELIGIBILITY_FIX_WALLET30_RELAY2_AUDIT", "double_snapshot_exact_solvency": [{"token": "eosio.token", "symbol": "4,AIC", "atoms": 30561165}, {"token": "usd", "symbol": "4,USD", "atoms": 32010990}, {"token": "cny", "symbol": "4,CNY", "atoms": 31979990}], "new_relay2_jobs_finalized": 2}

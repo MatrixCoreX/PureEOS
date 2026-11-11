@@ -1,0 +1,108 @@
+{
+  "status": "PASS_FINAL_ELIGIBILITY_FIX_WALLET30_RELAY2_AUDIT",
+  "utc": "2026-11-11T04:01:08.624584+00:00",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 697425,
+    "last_irreversible_block_num": 697420,
+    "last_irreversible_block_id": "000aa44ca42da958cda946b25e254a49873ad82e1c54fd71ae50151ce8329d40",
+    "head_block_id": "000aa4515ddc4a4ac59817ed8be680d331d439b27eb4fafbcaad36b3d0a51ec4",
+    "head_block_time": "2026-11-11T04:01:08.500",
+    "head_block_producer": "openaimodels",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 697425,
+    "fork_db_head_block_id": "000aa4515ddc4a4ac59817ed8be680d331d439b27eb4fafbcaad36b3d0a51ec4",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T04:01:06.000"
+  },
+  "original34_monitored_processes_preserved": true,
+  "native26_physical_processes_and946_binary_preserved": true,
+  "protected6_code_ABI_pins_unchanged": true,
+  "consensus_bans_bonds_maintenance_unchanged": true,
+  "BP_owner_active_andproductionkeys_unchanged": true,
+  "only_new_child_keyrelay_3restrictedlinks": true,
+  "only_anthropiclab_registration_rate_changed": true,
+  "original30percent_service_preserved": true,
+  "public_health": [
+    {
+      "bp": "anthropiclab",
+      "permission": "keyrelay",
+      "contract": "eosio.key",
+      "fee_bps": 1000,
+      "minimum_fee_bps": 1000,
+      "maximum_fee_bps": 3000,
+      "minimum_service_fee": "0.0001 AIC"
+    },
+    {
+      "bp": "gptgenesisbp",
+      "permission": "keyrelay",
+      "contract": "eosio.key",
+      "fee_bps": 3000,
+      "minimum_fee_bps": 1000,
+      "maximum_fee_bps": 3000,
+      "minimum_service_fee": "0.0001 AIC"
+    }
+  ],
+  "canonical_registration_funding_and2payments": [
+    {
+      "transaction_id": "335e693194b3e7aa0c946aff5a3a3cef5c2ffe784c9747a26e306a010beea324",
+      "block_num": 695971,
+      "block_id": "000a9ea32db5c6c8a9a0b443424a2c109d3a64dfaea762170b72f140e5fbc4a8",
+      "timestamp": "2026-11-11T03:49:01.000",
+      "irreversible_at_observed_LIB": 695971
+    },
+    {
+      "transaction_id": "22b404662199363cf052144eed0c81b04d1c4d23ff91e12abfcde9c7bfc875df",
+      "block_num": 696291,
+      "block_id": "000a9fe308e180c2d6f9f54ced94fe6192a5d4ae55ce002a5284830a9800c644",
+      "timestamp": "2026-11-11T03:51:41.000",
+      "irreversible_at_observed_LIB": 696291
+    },
+    {
+      "transaction_id": "820c0ba8c21094e07c157c038b44ba04ee189cf1fe3d919c686715cf43b3ea8e",
+      "block_num": 696298,
+      "block_id": "000a9fea8445532e8e60d0e79bd25089e4efb1ade1b19ebc136bd198cca7a3d4",
+      "timestamp": "2026-11-11T03:51:44.500",
+      "irreversible_at_observed_LIB": 696300
+    },
+    {
+      "transaction_id": "bbebd8396176c71400ab97ee91da2e4ec2b17bcf3380b180b9abd3d94d564072",
+      "block_num": 696309,
+      "block_id": "000a9ff558b213b24dbb02def4827d7755e60e31810298c0d93088479e9717c4",
+      "timestamp": "2026-11-11T03:51:50.000",
+      "irreversible_at_observed_LIB": 696309
+    }
+  ],
+  "new_relay2_jobs_finalized": 2,
+  "all_three_owned_QA_history_entries_present": true,
+  "double_snapshot_exact_solvency": [
+    {
+      "token": "eosio.token",
+      "symbol": "4,AIC",
+      "atoms": 30561165
+    },
+    {
+      "token": "usd",
+      "symbol": "4,USD",
+      "atoms": 32010990
+    },
+    {
+      "token": "cny",
+      "symbol": "4,CNY",
+      "atoms": 31979990
+    }
+  ],
+  "public_4browser_variants_and6assets_PASS": true,
+  "wallet30_BOTH_installed_PASS": true,
+  "temporary_signers_closed": true,
+  "no_new_kernel_OOM": true,
+  "scope": "No contract/native upgrades, BP/node/history restart, reset, ban/vote/bond changes, privatephonefiles or phonepayments. Initialfixturefailures retained; allsuccessfulpayment/installcontrollers complete and mustneverrerun."
+}

@@ -1,0 +1,55 @@
+{
+  "status": "REGISTERED_IRREVERSIBLE",
+  "BP": "anthropiclab",
+  "permission": "keyrelay",
+  "endpoint": "https://relay2.matrixai.one",
+  "fee_bps": 1000,
+  "public_hot_key": "PUB_K1_7Cwz5PEKCBSrrVx2A5Xdo73ieWE57fPLu9JmC8LQLnWmVnZSd4",
+  "canonical_receipt": {
+    "transaction_id": "335e693194b3e7aa0c946aff5a3a3cef5c2ffe784c9747a26e306a010beea324",
+    "block_num": 695971,
+    "block_id": "000a9ea32db5c6c8a9a0b443424a2c109d3a64dfaea762170b72f140e5fbc4a8",
+    "timestamp": "2026-11-11T03:49:01.000",
+    "irreversible_at_observed_LIB": 695971
+  },
+  "owner_active_unchanged": true,
+  "child_permission": {
+    "perm_name": "keyrelay",
+    "parent": "active",
+    "required_auth": {
+      "threshold": 1,
+      "keys": [
+        {
+          "key": "PUB_K1_7Cwz5PEKCBSrrVx2A5Xdo73ieWE57fPLu9JmC8LQLnWmVnZSd4",
+          "weight": 1
+        }
+      ],
+      "accounts": [],
+      "waits": []
+    },
+    "linked_actions": [
+      {
+        "account": "eosio.key",
+        "action": "ksend"
+      },
+      {
+        "account": "eosio.key",
+        "action": "withdraw"
+      },
+      {
+        "account": "eosio.key",
+        "action": "cancel"
+      }
+    ]
+  },
+  "relay": {
+    "bp": "anthropiclab",
+    "permission": "keyrelay",
+    "endpoint": "https://relay2.matrixai.one",
+    "enabled": 1
+  },
+  "rate": {
+    "bp": "anthropiclab",
+    "fee_bps": 1000
+  }
+}

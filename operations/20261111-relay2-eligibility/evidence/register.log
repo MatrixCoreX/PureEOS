@@ -1,0 +1,2 @@
+Created symlink /etc/systemd/system/multi-user.target.wants/pureeos-relay2-anthropiclab-20261111.service → /etc/systemd/system/pureeos-relay2-anthropiclab-20261111.service.
+RELAY2_REGISTERED_IRREVERSIBLE_AND_PUBLIC_HTTPS_HEALTH_PASS

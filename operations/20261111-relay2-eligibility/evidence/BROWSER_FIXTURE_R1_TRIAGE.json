@@ -1,0 +1,4 @@
+{
+  "reason": "Harness expected different English sentence than existing production translation. Product unchanged. Stopped only own preview; all first screenshots/logs retained. R2 uses actual existing translation.",
+  "native_services_touched": false
+}

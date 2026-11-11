@@ -1,0 +1,1 @@
+{"status":"RETAINED_FAILURE","cause":"ApiEndpointTest offline fixture had no relay registration/health/eligibility records; broadcast now rechecks qualification. Fixture updated to use existing healthy AtomicTest responses; product checks unchanged.","failure":"wallet-build-failed-r1/core.log"}

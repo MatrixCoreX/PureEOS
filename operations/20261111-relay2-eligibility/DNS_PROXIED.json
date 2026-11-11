@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "name": "relay2.matrixai.one",
+  "content": "66.245.194.132",
+  "proxied": true,
+  "same_proxy_mode_as_first": true
+}

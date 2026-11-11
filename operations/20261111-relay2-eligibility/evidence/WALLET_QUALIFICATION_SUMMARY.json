@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "version": "0.1.0-test.30",
+  "apk_sha256": "7521c789aacd5155b26f5d6c7a39b7b83bd839cb61356ff070c3954a51e00f50",
+  "signer_certificate_sha256": "6a0ecbb495429539e69e5e9e1f33b3a5aa715dd90af8a43c32127f85ed24e4d3",
+  "SDK": 36,
+  "API26helpers": 39,
+  "core_checks": 872,
+  "Android35software_cases": 44,
+  "protected_classes_byte_identical_to29": 71,
+  "scope": "Read-only relay qualification changes only inNetwork; allotherproductionJava exact29. FullsoftwareUI/financial/phoneKeystoreacceptance notclaimed."
+}

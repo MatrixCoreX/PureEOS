@@ -1,0 +1,402 @@
+{
+  "status": "PASS",
+  "origin": "https://aic-test.matrixai.one",
+  "variants": [
+    {
+      "language": "zh",
+      "theme": "dark",
+      "width": 1440,
+      "options": [
+        {
+          "value": "anthropiclab",
+          "text": "anthropiclab · 10.00%"
+        },
+        {
+          "value": "canadamilaai",
+          "text": "canadamilaai · 10.00% · 未启用"
+        },
+        {
+          "value": "deepseekcore",
+          "text": "deepseekcore · 20.00% · 未启用"
+        },
+        {
+          "value": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "quotes": [
+        {
+          "bp": "anthropiclab",
+          "rows": "0",
+          "total": "0.0215 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0020 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "1",
+          "total": "0.0230 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0021 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "2",
+          "total": "0.0256 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0024 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "0",
+          "total": "0.0254 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0059 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "1",
+          "total": "0.0272 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "2",
+          "total": "0.0302 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0070 AIC"
+        }
+      ],
+      "injected_read_only_cases": [],
+      "errors": [],
+      "httpFailures": []
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "options": [
+        {
+          "value": "anthropiclab",
+          "text": "anthropiclab · 10.00%"
+        },
+        {
+          "value": "canadamilaai",
+          "text": "canadamilaai · 10.00% · Inactive"
+        },
+        {
+          "value": "deepseekcore",
+          "text": "deepseekcore · 20.00% · Inactive"
+        },
+        {
+          "value": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "quotes": [
+        {
+          "bp": "anthropiclab",
+          "rows": "0",
+          "total": "0.0215 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0020 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "1",
+          "total": "0.0230 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0021 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "2",
+          "total": "0.0256 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0024 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "0",
+          "total": "0.0254 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0059 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "1",
+          "total": "0.0272 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "2",
+          "total": "0.0302 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0070 AIC"
+        }
+      ],
+      "injected_read_only_cases": [],
+      "errors": [],
+      "httpFailures": []
+    },
+    {
+      "language": "zh",
+      "theme": "light",
+      "width": 390,
+      "options": [
+        {
+          "value": "anthropiclab",
+          "text": "anthropiclab · 10.00%"
+        },
+        {
+          "value": "canadamilaai",
+          "text": "canadamilaai · 10.00% · 未启用"
+        },
+        {
+          "value": "deepseekcore",
+          "text": "deepseekcore · 20.00% · 未启用"
+        },
+        {
+          "value": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "quotes": [
+        {
+          "bp": "anthropiclab",
+          "rows": "0",
+          "total": "0.0215 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0020 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "1",
+          "total": "0.0230 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0021 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "2",
+          "total": "0.0256 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0024 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "0",
+          "total": "0.0254 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0059 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "1",
+          "total": "0.0272 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "2",
+          "total": "0.0302 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0070 AIC"
+        }
+      ],
+      "injected_read_only_cases": [
+        "Syntheticnewban hides selectedBP and fallsbacktoeligibleenabled",
+        "SyntheticRPCfailure clears old quote andrelayoptions",
+        "Syntheticallineligible stopsquote without fallbackrate",
+        "Recoveryusesfreshqualifieddata"
+      ],
+      "errors": [],
+      "httpFailures": [
+        {
+          "url": "https://aic-test.matrixai.one/api/v1/chain/get_table_rows",
+          "status": 503,
+          "injected": true
+        }
+      ]
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "options": [
+        {
+          "value": "anthropiclab",
+          "text": "anthropiclab · 10.00%"
+        },
+        {
+          "value": "canadamilaai",
+          "text": "canadamilaai · 10.00% · Inactive"
+        },
+        {
+          "value": "deepseekcore",
+          "text": "deepseekcore · 20.00% · Inactive"
+        },
+        {
+          "value": "gptgenesisbp",
+          "text": "gptgenesisbp · 30.00%"
+        }
+      ],
+      "quotes": [
+        {
+          "bp": "anthropiclab",
+          "rows": "0",
+          "total": "0.0215 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0020 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "1",
+          "total": "0.0230 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0021 AIC"
+        },
+        {
+          "bp": "anthropiclab",
+          "rows": "2",
+          "total": "0.0256 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0024 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "0",
+          "total": "0.0254 AIC",
+          "base": "0.0195 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0000 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0059 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "1",
+          "total": "0.0272 AIC",
+          "base": "0.0209 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0014 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0063 AIC"
+        },
+        {
+          "bp": "gptgenesisbp",
+          "rows": "2",
+          "total": "0.0302 AIC",
+          "base": "0.0232 AIC",
+          "execution": "0.0195 AIC",
+          "storage": "0.0037 AIC",
+          "supplement": "0.0000 AIC",
+          "relay": "0.0070 AIC"
+        }
+      ],
+      "injected_read_only_cases": [],
+      "errors": [],
+      "httpFailures": []
+    }
+  ],
+  "assets": [
+    {
+      "path": "index.html",
+      "expected": "74f2cf1407edbd6ccb150ae5016ee54a9e64213d44c2bfd296acc022aa5bea5e",
+      "actual": "74f2cf1407edbd6ccb150ae5016ee54a9e64213d44c2bfd296acc022aa5bea5e"
+    },
+    {
+      "path": "theme.js",
+      "expected": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+      "actual": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71"
+    },
+    {
+      "path": "favicon.svg",
+      "expected": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+      "actual": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35"
+    },
+    {
+      "path": "language.js",
+      "expected": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+      "actual": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5"
+    },
+    {
+      "path": "assets/index-ITvsO6GR.js",
+      "expected": "83d2ad7dd9f6f3b7f48b7a6f714bacd8296475faf9f04541743e0b17cb6103b3",
+      "actual": "83d2ad7dd9f6f3b7f48b7a6f714bacd8296475faf9f04541743e0b17cb6103b3"
+    },
+    {
+      "path": "assets/index-BEIOqYFn.css",
+      "expected": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2",
+      "actual": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2"
+    }
+  ],
+  "scope": "Actual remoteChromium fourlanguage/theme/viewportvariants withliveBPregistration andblacklist. Extra syntheticread-onlyRPCban/outage/emptylist/recovery cases explicitly separated; no chainban/financial mutation. Known unrelatedoverviewget_block400 recorded, no fullExplorerhealthclaim."
+}

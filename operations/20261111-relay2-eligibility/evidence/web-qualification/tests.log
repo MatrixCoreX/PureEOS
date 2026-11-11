@@ -1,0 +1,65 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (remote-vitest.config.ts:1:20). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/opt/pureeos-relay-eligibility-20261111-r1/web[39m
+
+ [32m✓[39m src/App.test.tsx [2m([22m[2m49 tests[22m[2m)[22m[33m 9070[2mms[22m[39m
+   [32m✓[39m explorer workflows in a DOM test environment [2m(49)[22m
+     [33m[2m✓[22m[39m labels the build default  as a testnet in both languages, without labeling custom nodes[33m 322[2mms[22m[39m
+     [33m[2m✓[22m[39m opens with live default data despite retired settings and offers no required setup[33m 395[2mms[22m[39m
+     [33m[2m✓[22m[39m accepts an optional node URL and discovers its Chain ID without an input field[33m 359[2mms[22m[39m
+     [33m[2m✓[22m[39m updates the latest block list automatically and holds historical pagination still[33m 489[2mms[22m[39m
+     [33m[2m✓[22m[39m shows issued token supply and translates the label without replacing its amount[33m 373[2mms[22m[39m
+     [33m[2m✓[22m[39m opens12-block activity by default and retains a manual collapse through language changes[33m 437[2mms[22m[39m
+     [33m[2m✓[22m[39m switches language in place, keeps the selected account tab and restores the language on remount[33m 368[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the overview and searches an account[33m 519[2mms[22m[39m
+     [33m[2m✓[22m[39m shows all 500 ranked accounts below the account search and links each account[33m 496[2mms[22m[39m
+     [33m[2m✓[22m[39m shows indexed recent transactions on the overview despite empty current blocks and keeps them through refresh[33m 355[2mms[22m[39m
+ [32m✓[39m src/Queries.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2711[2mms[22m[39m
+   [32m✓[39m read-only query workflows [2m(7)[22m
+     [33m[2m✓[22m[39m applies advanced history filters and preserves entered fields when switching language[33m 1012[2mms[22m[39m
+     [33m[2m✓[22m[39m exports only visible rows from the current page and exposes the bounded full export[33m 409[2mms[22m[39m
+     [33m[2m✓[22m[39m reads reverse table pages using upper_bound and keeps payer and index options[33m 442[2mms[22m[39m
+     [33m[2m✓[22m[39m opens scopes on demand and fills the selected scope into the form[33m 304[2mms[22m[39m
+     [33m[2m✓[22m[39m shows creation relations and only fetches authority references on request, retaining English state[33m 350[2mms[22m[39m
+ [32m✓[39m src/components/ActiveProducers.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1209[2mms[22m[39m
+   [32m✓[39m overview on-duty roster and global BP totals [2m(3)[22m
+     [33m[2m✓[22m[39m shows eligible BP totals excluding banned accounts independently from active membership, preserving markers and language[33m 536[2mms[22m[39m
+     [33m[2m✓[22m[39m pauses roster, head, arrival and BP summary polling with the overview auto-refresh control[33m 390[2mms[22m[39m
+ [32m✓[39m src/components/KeyFeeEstimate.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1188[2mms[22m[39m
+ [32m✓[39m src/components/PublicKeyHistory.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 568[2mms[22m[39m
+ [32m✓[39m src/components/DeveloperProposals.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 447[2mms[22m[39m
+   [33m[2m✓[22m[39m shows actual native proposal fields, effective veto threshold and chain-time countdown with folded hashes[33m 336[2mms[22m[39m
+ [32m✓[39m src/lib/language.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 355[2mms[22m[39m
+ [32m✓[39m src/components/ProducerBlacklist.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 215[2mms[22m[39m
+ [32m✓[39m src/lib/state.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 217[2mms[22m[39m
+ [32m✓[39m src/components/ProducerBond.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+ [32m✓[39m src/lib/api.test.ts [2m([22m[2m45 tests[22m[2m)[22m[32m 207[2mms[22m[39m
+ [32m✓[39m src/components/DeveloperProposalHistory.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 203[2mms[22m[39m
+ [32m✓[39m src/lib/queries.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 203[2mms[22m[39m
+ [32m✓[39m src/lib/relay-eligibility.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/components/PublicKeyWallet.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 134[2mms[22m[39m
+ [32m✓[39m src/lib/key-fees.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m src/lib/key-history.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m src/lib/key-wallet.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m src/lib/producers.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m src/lib/upgrades.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/lib/creation-history.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/lib/peak-tps.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/lib/rotation-history.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/lib/bonds.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/lib/creations.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m src/lib/i18n.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/lib/producer-votes.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m src/lib/upgrade-history.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/lib/holders.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m29 passed[39m[22m[90m (29)[39m
+[2m      Tests [22m [1m[32m289 passed[39m[22m[90m (289)[39m
+[2m   Start at [22m 03:45:02
+[2m   Duration [22m 48.53s[2m (tests 40%, environment 19%, import 17%, transform 13%, setup 11%)[22m
+
+[2m    Isolate [22m [33m29 workers spawned[39m[2m · ~467ms startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~13.08s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+

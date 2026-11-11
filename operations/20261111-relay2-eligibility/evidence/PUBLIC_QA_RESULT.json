@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "label": "key-to-key",
+      "BP": "anthropiclab",
+      "endpoint": "https://relay2.matrixai.one",
+      "signed_rate_bps": 1000,
+      "principal": "0.0001 AIC",
+      "fee_atoms": 283,
+      "actual_fee_receipt": {
+        "ticket": "820C0BA8C21094E07C157C038B44BA04EE189CF1FE3D919C686715CF43B3EA8E",
+        "request_id": "01BB23E537D6EC0B9285646DFFFB1D1312B07064153D34927C951CB5E035CD06",
+        "total": "0.0283 AIC",
+        "ram_payment": "0.0037 AIC",
+        "retained_base": "0.0220 AIC",
+        "relay_fee": "0.0026 AIC",
+        "allocated_bytes": 1536,
+        "purchased_bytes": "1586"
+      },
+      "canonical_receipt": {
+        "transaction_id": "820c0ba8c21094e07c157c038b44ba04ee189cf1fe3d919c686715cf43b3ea8e",
+        "block_num": 696298,
+        "block_id": "000a9fea8445532e8e60d0e79bd25089e4efb1ade1b19ebc136bd198cca7a3d4",
+        "timestamp": "2026-11-11T03:51:44.500",
+        "irreversible_at_observed_LIB": 696300
+      },
+      "public_HTTPS_submission": true
+    },
+    {
+      "label": "key-to-named",
+      "BP": "anthropiclab",
+      "endpoint": "https://relay2.matrixai.one",
+      "signed_rate_bps": 1000,
+      "principal": "0.0001 AIC",
+      "fee_atoms": 295,
+      "actual_fee_receipt": {
+        "ticket": "BBEBD8396176C71400AB97EE91DA2E4EC2B17BCF3380B180B9ABD3D94D564072",
+        "request_id": "A5840D82F68364F6B352CDA8B199E9EDB9005483334D4FCDCBB7E20F7F49C9DF",
+        "total": "0.0295 AIC",
+        "ram_payment": "0.0000 AIC",
+        "retained_base": "0.0268 AIC",
+        "relay_fee": "0.0027 AIC",
+        "allocated_bytes": 0,
+        "purchased_bytes": "0"
+      },
+      "canonical_receipt": {
+        "transaction_id": "bbebd8396176c71400ab97ee91da2e4ec2b17bcf3380b180b9abd3d94d564072",
+        "block_num": 696309,
+        "block_id": "000a9ff558b213b24dbb02def4827d7755e60e31810298c0d93088479e9717c4",
+        "timestamp": "2026-11-11T03:51:50.000",
+        "irreversible_at_observed_LIB": 696309
+      },
+      "public_HTTPS_submission": true
+    }
+  ],
+  "funding": {
+    "transaction_id": "22b404662199363cf052144eed0c81b04d1c4d23ff91e12abfcde9c7bfc875df",
+    "block_num": 696291,
+    "block_id": "000a9fe308e180c2d6f9f54ced94fe6192a5d4ae55ce002a5284830a9800c644",
+    "timestamp": "2026-11-11T03:51:41.000",
+    "irreversible_at_observed_LIB": 696291
+  },
+  "earnings_before": {
+    "owner": "anthropiclab",
+    "network": 0,
+    "relay_earned": 0
+  },
+  "earnings_after": {
+    "owner": "anthropiclab",
+    "network": 0,
+    "relay_earned": 541
+  },
+  "new_test_relay_income_atoms": 541,
+  "scope": "Fresh relay2 public HTTPS functional QA, new private test keys only.\nOne0.5000AIC native funding and two0.0001AIC owner-authorized transfers.\nNever replays original tasks or signs from phone wallets.\n"
+}

@@ -1,0 +1,26 @@
+[Unit]
+Description=PureEOS TEST second BP relay anthropiclab10percent
+After=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=/opt/pureeos-relay-eligibility-20261111-r1/relay2-runtime
+ExecStart=/opt/pureeos-devnet-20261105-r1/tools/node-current/bin/node --max-old-space-size=96 /opt/pureeos-relay-eligibility-20261111-r1/relay2-runtime/relayer/server.mjs
+Environment=NODEOS_URL=http://127.0.0.1:8888
+Environment=NODEOS_READ_URL=http://127.0.0.1:8890
+Environment=BP_ACCOUNT=anthropiclab
+Environment=BP_PERMISSION=keyrelay
+Environment=RELAY_KEY_FILE=/opt/pureeos-relay-eligibility-20261111-r1/relay2-private/relay.key
+Environment=RELAY_STATE=/opt/pureeos-relay-eligibility-20261111-r1/relay2-state
+Environment=RELAY_ALLOWED_TOKENS=usd,cny
+Environment=KEY_CODE_HASH=cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43
+Environment=PORT=8788
+Nice=10
+CPUWeight=50
+MemoryHigh=128M
+MemoryMax=192M
+MemorySwapMax=64M
+LimitCORE=0
+Restart=on-failure
+RestartSec=10
+[Install]
+WantedBy=multi-user.target

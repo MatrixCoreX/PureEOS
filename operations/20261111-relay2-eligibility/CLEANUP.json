@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "path": "/home/guagua/.local/share/pureeos-wallet-local-20261107/test30-relay-eligibility-r2/build/unsigned.apk",
+      "SHA256": "600d3cf2a1321158b1fb3897db558332a2a67f7e09d55c0388235777f805a773",
+      "allocated_bytes": 2600960
+    },
+    {
+      "path": "/home/guagua/.local/share/pureeos-wallet-local-20261107/test30-relay-eligibility-r2/build/aligned.apk",
+      "SHA256": "600d3cf2a1321158b1fb3897db558332a2a67f7e09d55c0388235777f805a773",
+      "allocated_bytes": 2600960
+    }
+  ],
+  "allocated_bytes_freed": 5201920,
+  "scope": "Onlyown30unsigned/aligned deleted. AllsignedAPKs/source/classes/cache/signer/testfailures/phoneprivatedata preserved."
+}
