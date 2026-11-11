@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "domain": "relay1.matrixai.one",
+  "certificate_validated": true,
+  "origin_loopback_port": 8787,
+  "existing_vhost_unchanged": true
+}

@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "services": [
+    {
+      "url": "https://relay1.matrixai.one/health",
+      "health": {
+        "bp": "gptgenesisbp",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 3000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    },
+    {
+      "url": "https://aic-test.matrixai.one/relay/health",
+      "health": {
+        "bp": "gptgenesisbp",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 3000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    },
+    {
+      "url": "https://relay2.matrixai.one/health",
+      "health": {
+        "bp": "anthropiclab",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 1000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    }
+  ]
+}

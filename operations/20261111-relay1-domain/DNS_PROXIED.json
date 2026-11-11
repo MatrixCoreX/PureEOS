@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "record": {
+    "id": "ad8c79f6e7cbfc450204aca5cff3568b",
+    "name": "relay1.matrixai.one",
+    "type": "A",
+    "content": "66.245.194.132",
+    "proxiable": true,
+    "proxied": true,
+    "ttl": 1,
+    "settings": {},
+    "meta": {},
+    "comment": "User-authorized canonical first PureEOS BP relay domain",
+    "tags": [],
+    "created_on": "2026-11-11T04:14:33.731407Z",
+    "modified_on": "2026-11-11T04:18:30.040735Z",
+    "comment_modified_on": "2026-11-11T04:14:33.731407Z"
+  }
+}

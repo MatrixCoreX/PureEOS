@@ -1,0 +1,21 @@
+{
+  "status": "PASS_IRREVERSIBLE_ENDPOINT_ONLY",
+  "canonical_receipt": {
+    "transaction_id": "27bb007a96d607f8dec2e93def9066c68a2dd3749fffcb27b0e4c738bb2878e6",
+    "block_num": 699709,
+    "block_id": "000aad3d9fffbeb669a1a27ba075d2e94bdbec6c46060e18f59faf7694945c76",
+    "timestamp": "2026-11-11T04:20:13.500",
+    "irreversible_at_observed_LIB": 699710
+  },
+  "relay": {
+    "bp": "gptgenesisbp",
+    "permission": "keyrelay",
+    "endpoint": "https://relay1.matrixai.one",
+    "enabled": 1
+  },
+  "all_rates_unchanged": true,
+  "all_permissions_unchanged": true,
+  "original_journal_byte_exact": true,
+  "backend_services_unchanged": true,
+  "temporary_signer_closed": true
+}

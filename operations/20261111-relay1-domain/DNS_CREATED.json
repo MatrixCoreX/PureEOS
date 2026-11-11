@@ -1,0 +1,8 @@
+{
+  "status": "CREATED_DNS_ONLY_FOR_TLS",
+  "name": "relay1.matrixai.one",
+  "content": "66.245.194.132",
+  "type": "A",
+  "proxied": false,
+  "id": "ad8c79f6e7cbfc450204aca5cff3568b"
+}

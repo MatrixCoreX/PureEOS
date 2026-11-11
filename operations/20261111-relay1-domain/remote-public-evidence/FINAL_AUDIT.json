@@ -1,0 +1,225 @@
+{
+  "status": "PASS_RELAY1_ENDPOINT_MIGRATION",
+  "utc": "2026-11-11T04:21:27.014058+00:00",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 699856,
+    "last_irreversible_block_num": 699852,
+    "last_irreversible_block_id": "000aadcc6f0e0a72c145b7efff42d61138acc5394c5fd175ff19050876c1f276",
+    "head_block_id": "000aadd0c303250097f37ba6d7474589e6ed9eb8eddf2c716d4a56ceda856b47",
+    "head_block_time": "2026-11-11T04:21:27.000",
+    "head_block_producer": "genevacernai",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 699856,
+    "fork_db_head_block_id": "000aadd0c303250097f37ba6d7474589e6ed9eb8eddf2c716d4a56ceda856b47",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T04:21:25.000"
+  },
+  "canonical_receipt": {
+    "transaction_id": "27bb007a96d607f8dec2e93def9066c68a2dd3749fffcb27b0e4c738bb2878e6",
+    "block_num": 699709,
+    "block_id": "000aad3d9fffbeb669a1a27ba075d2e94bdbec6c46060e18f59faf7694945c76",
+    "timestamp": "2026-11-11T04:20:13.500",
+    "irreversible_at_observed_LIB": 699710
+  },
+  "health": [
+    {
+      "endpoint": "https://relay1.matrixai.one",
+      "health": {
+        "bp": "gptgenesisbp",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 3000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    },
+    {
+      "endpoint": "https://aic-test.matrixai.one/relay",
+      "health": {
+        "bp": "gptgenesisbp",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 3000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    },
+    {
+      "endpoint": "https://relay2.matrixai.one",
+      "health": {
+        "bp": "anthropiclab",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 1000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    }
+  ],
+  "registry": [
+    {
+      "bp": "anthropiclab",
+      "permission": "keyrelay",
+      "endpoint": "https://relay2.matrixai.one",
+      "enabled": 1
+    },
+    {
+      "bp": "canadamilaai",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "deepseekcore",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    },
+    {
+      "bp": "gptgenesisbp",
+      "permission": "keyrelay",
+      "endpoint": "https://relay1.matrixai.one",
+      "enabled": 1
+    },
+    {
+      "bp": "singaporentu",
+      "permission": "keyrelay",
+      "endpoint": "",
+      "enabled": 0
+    }
+  ],
+  "rates": [
+    {
+      "bp": "anthropiclab",
+      "fee_bps": 1000
+    },
+    {
+      "bp": "canadamilaai",
+      "fee_bps": 1000
+    },
+    {
+      "bp": "deepseekcore",
+      "fee_bps": 2000
+    },
+    {
+      "bp": "gptgenesisbp",
+      "fee_bps": 3000
+    },
+    {
+      "bp": "singaporentu",
+      "fee_bps": 2500
+    }
+  ],
+  "native26_946_and_original_monitored_processes_preserved": true,
+  "relay2_process_started_before_task": true,
+  "protected6_code_ABI_consensus_bans_bonds_maintenance_unchanged": true,
+  "founder_permissions_unchanged": true,
+  "original_journal_SHA256": "d82cf918fea1d3abe06bef0cdaf2ea0221973a03b30f2f41b81c4ce71efe2f85",
+  "journal_counts": {
+    "finalized": 56,
+    "expired": 2
+  },
+  "same_existing_status_through_both_domains": true,
+  "invalid_unsigned_POST_rejections": [
+    {
+      "endpoint": "https://relay1.matrixai.one",
+      "HTTP": 400,
+      "response": {
+        "error": "Fields must match protocol schema exactly"
+      }
+    },
+    {
+      "endpoint": "https://aic-test.matrixai.one/relay",
+      "HTTP": 400,
+      "response": {
+        "error": "Fields must match protocol schema exactly"
+      }
+    }
+  ],
+  "no_journal_mutation_from_probes": true,
+  "old_nginx_vhost_byteexact": true,
+  "unchanged_frontend_assets": [
+    {
+      "path": "index.html",
+      "SHA256": "74f2cf1407edbd6ccb150ae5016ee54a9e64213d44c2bfd296acc022aa5bea5e"
+    },
+    {
+      "path": "theme.js",
+      "SHA256": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71"
+    },
+    {
+      "path": "favicon.svg",
+      "SHA256": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35"
+    },
+    {
+      "path": "language.js",
+      "SHA256": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5"
+    },
+    {
+      "path": "assets/index-ITvsO6GR.js",
+      "SHA256": "83d2ad7dd9f6f3b7f48b7a6f714bacd8296475faf9f04541743e0b17cb6103b3"
+    },
+    {
+      "path": "assets/index-BEIOqYFn.css",
+      "SHA256": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2"
+    }
+  ],
+  "phones": {
+    "status": "PASS",
+    "utc": "2026-11-11T04:19:47.249388+00:00",
+    "version": "0.1.0-test.31",
+    "apk_sha256": "bda1be11da4873c639c2463f949987a14dc471125f17269a884409f77aef14f3",
+    "authorization": "User explicitly includes wallet eligibility fix and BOTHphoneupdates. Newtest31 canonicalizes legacy founder relay URL torelay1; preserves BP/key/permission/rate30percent/signedpacket and allpreviousfeatures. Relay2_10percent unchanged. No phonepayment.",
+    "devices": [
+      {
+        "device": "小米11",
+        "status": "PASS",
+        "model": "M2011K2C",
+        "UID": 10046,
+        "previous_version": 30,
+        "previous_hash": "7521c789aacd5155b26f5d6c7a39b7b83bd839cb61356ff070c3954a51e00f50",
+        "wallet_foreground_before": false,
+        "action": "UPDATED",
+        "startup": "NOT_LAUNCHED_TO_PRESERVE_OTHER_FOREGROUND_APPLICATION",
+        "installed_hash_matches": true,
+        "version_matches": true,
+        "UID_preserved": true,
+        "wallet_foreground_after": false,
+        "other_foreground_preserved": false,
+        "android": "14"
+      },
+      {
+        "device": "小米12",
+        "status": "PASS",
+        "model": "2201123C",
+        "UID": 10340,
+        "previous_version": 30,
+        "previous_hash": "7521c789aacd5155b26f5d6c7a39b7b83bd839cb61356ff070c3954a51e00f50",
+        "wallet_foreground_before": false,
+        "action": "UPDATED",
+        "startup": "NOT_LAUNCHED_TO_PRESERVE_OTHER_FOREGROUND_APPLICATION",
+        "installed_hash_matches": true,
+        "version_matches": true,
+        "UID_preserved": true,
+        "wallet_foreground_after": false,
+        "other_foreground_preserved": true,
+        "android": "15"
+      }
+    ],
+    "scope": "Samecertificate-r only, no clear/uninstall/privatephonefiles/credentials/instrumentation/signature/payment. Relaunch wallet only when it was already foreground; preserve another foreground application.",
+    "finished_utc": "2026-11-11T04:19:51.775252+00:00"
+  },
+  "scope": "Only one endpoint registration action. Health/status plus deliberately invalid unsigned HTTPPOST validate proxy transport; NO new financial transfer/claim/re-sign/resend or phonefinancial/Keystore/privatefile claim. No native/contract upgrade or BP/node/history restart. Mi11foregroundset changed between metadata snapshots without agent launching/switching apps; no preservation claim for that set."
+}

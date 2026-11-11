@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "version": 31,
+  "apk_sha256": "bda1be11da4873c639c2463f949987a14dc471125f17269a884409f77aef14f3",
+  "core_checks": 877,
+  "API26helpers": 39,
+  "protected_classes": 75,
+  "MainActivity_URI_constant_only": true,
+  "softwareAndroid35_cases": 46,
+  "bothphone_package_hash_UID_verified": true,
+  "real_HTTPS_exact_APK_discovery_pre_and_post_cutover": true,
+  "default": "https://relay1.matrixai.one",
+  "same_BP_permission_bps": [
+    "gptgenesisbp",
+    "keyrelay",
+    3000
+  ],
+  "legacy_config_exact_tuple_migration": true,
+  "scope": "Synthetic AndroidRPC/metadata; real publicread-only discovery; no new payment/phoneUI/Keystore validation. Mi11foregroundpackage set differs across overlay observations without agent launch; no preservation claim for it. Otherforegroundapp onMi12 preserved."
+}

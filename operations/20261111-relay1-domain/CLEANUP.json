@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "removed": [
+    {
+      "name": "unsigned.apk",
+      "SHA256": "3fa1955a64f3da2adf2fc77e499d6ff8f710ac84120c3ee95227423262a9ffad",
+      "allocated_bytes": 2600960
+    },
+    {
+      "name": "aligned.apk",
+      "SHA256": "3fa1955a64f3da2adf2fc77e499d6ff8f710ac84120c3ee95227423262a9ffad",
+      "allocated_bytes": 2600960
+    }
+  ],
+  "freed_allocated_bytes": 5201920,
+  "scope": "Only two own unsigned/aligned intermediates. All signed/source/classes/failures/cache/keys/phonewallets preserved."
+}

@@ -1,0 +1,11 @@
+{
+  "status": "DOCUMENTED",
+  "notes": [
+    "First DNSproxy wrapper mistakenly indexed an already-unwrapped list; failed before any PATCH. Corrected wrapper only; createdrecord thenproxied once.",
+    "First publicurllib health sequence gotHTTP403 for oldroute withgenericPythonUA. Existingpurpose-specificUA succeeds; no W01/UserAgent productfix.",
+    "Initial exactAPKJVM harness omitted existingorg.jsonjar; NoClassDefFoundError retained inlive-readonly/pre-cutover.log. Addedpinnedjar to harnessclasspath; productclasses unchanged.",
+    "Mi11foregroundset changed betweenbefore/after snapshots. Updater never calledamstart becausewalletwasnotforeground. Do notclaimotherappsetpreserved or infercause. Mi12setpreserved.",
+    "Inheritedsoftware report description native3actions correctedto2 reportonly; new2URLmigrationcases explicitlylisted.",
+    "Git preflight rejected new empty opsAGENTS trailing blank line before any commit/push. Removed only trailing blank line; remaining publication resumed separately without rerunning installs/cutover."
+  ]
+}

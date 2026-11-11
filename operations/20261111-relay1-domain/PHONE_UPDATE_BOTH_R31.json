@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "utc": "2026-11-11T04:19:47.249388+00:00",
+  "version": "0.1.0-test.31",
+  "apk_sha256": "bda1be11da4873c639c2463f949987a14dc471125f17269a884409f77aef14f3",
+  "authorization": "User explicitly includes wallet eligibility fix and BOTHphoneupdates. Newtest31 canonicalizes legacy founder relay URL torelay1; preserves BP/key/permission/rate30percent/signedpacket and allpreviousfeatures. Relay2_10percent unchanged. No phonepayment.",
+  "devices": [
+    {
+      "device": "小米11",
+      "status": "PASS",
+      "model": "M2011K2C",
+      "UID": 10046,
+      "previous_version": 30,
+      "previous_hash": "7521c789aacd5155b26f5d6c7a39b7b83bd839cb61356ff070c3954a51e00f50",
+      "wallet_foreground_before": false,
+      "action": "UPDATED",
+      "startup": "NOT_LAUNCHED_TO_PRESERVE_OTHER_FOREGROUND_APPLICATION",
+      "installed_hash_matches": true,
+      "version_matches": true,
+      "UID_preserved": true,
+      "wallet_foreground_after": false,
+      "other_foreground_preserved": false,
+      "android": "14"
+    },
+    {
+      "device": "小米12",
+      "status": "PASS",
+      "model": "2201123C",
+      "UID": 10340,
+      "previous_version": 30,
+      "previous_hash": "7521c789aacd5155b26f5d6c7a39b7b83bd839cb61356ff070c3954a51e00f50",
+      "wallet_foreground_before": false,
+      "action": "UPDATED",
+      "startup": "NOT_LAUNCHED_TO_PRESERVE_OTHER_FOREGROUND_APPLICATION",
+      "installed_hash_matches": true,
+      "version_matches": true,
+      "UID_preserved": true,
+      "wallet_foreground_after": false,
+      "other_foreground_preserved": true,
+      "android": "15"
+    }
+  ],
+  "scope": "Samecertificate-r only, no clear/uninstall/privatephonefiles/credentials/instrumentation/signature/payment. Relaunch wallet only when it was already foreground; preserve another foreground application.",
+  "finished_utc": "2026-11-11T04:19:51.775252+00:00"
+}

@@ -1,0 +1,13 @@
+{
+  "status": "PASS_SHA256_VERIFIED",
+  "files": {
+    "TLS_RESULT.json": "a082fd1ca5b44473064156bd0899fd3c20618bc26e8f95efadb172179d2a128c",
+    "TLS_STARTED.json": "a92dfbf8d0c8b3835fc12a5d0de35d161770241bdeb98f2c51e73ddc70d14c6d",
+    "CUTOVER_STARTED.json": "f3cfd79a0a13c28aac9f3ea1c088ce60e3f60c70ade4d89eb84ba11380e61f5c",
+    "CUTOVER_RESULT.json": "db222cc8fc6b2e5bbf9a5d1f9c27b4de21dbbfa18fb2269caefe09a5385b5efa",
+    "FINAL_AUDIT.json": "999a14b4c12ac0ac4c023850cb96537a35eaceaa10f341e750a7b741124c285c",
+    "PROCESS_BASELINE.json": "41ea66acba79f932236709b95ae861b74b0b47c968101a8c336abfdadf47cf38",
+    "PRE_UPGRADE_AUTHORITIES.json": "352462090f21b4554ee382ee7959688f4509ab61d7aa0d126035cacf812cd57a",
+    "admin-packets/relay1-endpoint-only.json": "ff985dc7d2828061cf42691d13873368df9c30783000b822f0cdbae384174990"
+  }
+}

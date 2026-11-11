@@ -1,0 +1,16 @@
+{
+  "first_rate": 3000,
+  "scope": "PublicHTTPs chain/code/registry/BPqualification/rate/health only. No signing, account selection, privatephonefiles or submissions.",
+  "second_rate": 1000,
+  "first": {
+    "endpoint": "https://relay1.matrixai.one",
+    "permission": "keyrelay",
+    "account": "gptgenesisbp"
+  },
+  "status": "PASS_EXACT_APK_READONLY_DISCOVERY",
+  "second": {
+    "endpoint": "https://relay2.matrixai.one",
+    "permission": "keyrelay",
+    "account": "anthropiclab"
+  }
+}

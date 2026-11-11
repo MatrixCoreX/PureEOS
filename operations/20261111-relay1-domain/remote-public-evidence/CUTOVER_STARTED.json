@@ -1,0 +1,7 @@
+{
+  "utc": "2026-11-11T04:20:12.463321+00:00",
+  "BP": "gptgenesisbp",
+  "old_endpoint": "https://aic-test.matrixai.one/relay",
+  "new_endpoint": "https://relay1.matrixai.one",
+  "journal_SHA256": "d82cf918fea1d3abe06bef0cdaf2ea0221973a03b30f2f41b81c4ce71efe2f85"
+}
