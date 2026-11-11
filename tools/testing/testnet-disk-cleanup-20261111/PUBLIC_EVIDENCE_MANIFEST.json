@@ -1,0 +1,38 @@
+{
+  "APPLY_LAUNCH.json": {
+    "sha256": "261b06f8a4776069f8b5ca9637a3556594fc29e8607893cdb37b5eda8cf3d737",
+    "bytes": 466
+  },
+  "DELETE_R2_PLAN.json": {
+    "sha256": "b6cb4ee826bc8431f3fa434bd37b70495d34d3679285357af8b01fc1072675e2",
+    "bytes": 169570
+  },
+  "DELETE_R2_RESULT.json": {
+    "sha256": "be39d8e373076af747e27a210f9053e30ef37eebc936ae026246a1293cbbff0c",
+    "bytes": 1185
+  },
+  "DETAIL_INVENTORY.json": {
+    "sha256": "7b0f535f6e8d603ba26bdf63806c081c0a2e67196c21699fd99ca9350e7e0a0e",
+    "bytes": 6566
+  },
+  "FINAL_LIVE_R2.json": {
+    "sha256": "88eb521208f7ee945f4238e6c91f2bbbd1622c5af62b3ef480535e7c1c929c6d",
+    "bytes": 16213
+  },
+  "INVENTORY.public.json": {
+    "sha256": "f0c859a540ddbd25cbbd4b19b42c77c0a6a40971aa2a432c557e70d6af5586c6",
+    "bytes": 12530
+  },
+  "LOG_CANDIDATES.json": {
+    "sha256": "9fdff7a1cb2af5441e1263716438ffd5f36e79f20b06726fbe6bdf021399eeb0",
+    "bytes": 13454
+  },
+  "PREPARE_CALL.json": {
+    "sha256": "3205f8dc282b03de805524ffd59f4a6e5f8cebf69d70a5f741175d920cc52bd4",
+    "bytes": 221
+  },
+  "PREPARE_DELETE_R2_CALL.json": {
+    "sha256": "64ed111c7d1bb04bc70fbff3514ac97384be1f4468ffa49ee9853cf6d51a02bf",
+    "bytes": 255
+  }
+}

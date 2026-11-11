@@ -1,0 +1,9 @@
+{
+  "apply_cleanup.py": "6cdc31d357d8e44eb14b64392b28967d1f1788d96f39ec3d81a8b93fbff7c9d9",
+  "delete_logs_r2.py": "c6435eb8aee8e960170d55721a2a73cf5cdb916506d289a7ec59549b006c733f",
+  "inventory.py": "9d017a4c6c6f4388beaff6a0a3642c202691c59b779228a992d64051540190aa",
+  "prepare_cleanup.py": "ae44683d4ba34dd48607d302b736fcfe7c8982fb269ddd38f1bf5a5ef159725e",
+  "prepare_delete_r2.py": "49cad798cf9e6413f610f2589ff13049a9b4ef1f9ce3287db97aa6e01b561f88",
+  "verify_cleanup.py": "fb752edf235286e1530108f1d61c7295980799017b2e3f67a4c3bc6394f626e4",
+  "verify_cleanup_r2.py": "1bc9a709f83a69819d39c863bcda68902c7bdf74a643e4be3bd22f9f293148a2"
+}
