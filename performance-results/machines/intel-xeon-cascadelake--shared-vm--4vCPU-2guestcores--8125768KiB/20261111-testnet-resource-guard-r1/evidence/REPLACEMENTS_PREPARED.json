@@ -1,0 +1,86 @@
+{
+  "status": "PREPARED_NOT_SUBMITTED",
+  "utc": "2026-11-11T01:46:48.198738+00:00",
+  "nodes": [
+    {
+      "name": "alibabaailab",
+      "replaces": "alibabacloud",
+      "rpc_port": 8961,
+      "p2p_port": 9961,
+      "unit": "pureeos-bp-replacement-alibabaailab-20261111.service",
+      "CPU_stake_AIC": "100.0061",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_4uuL5SCh33ycnHGPHZstUAK9CX2pvRmVQ6JqQSksX9F11T2g6u",
+        "production": "PUB_K1_8GKTUx7TDXiPJhaWK8hTfdiKJfPv7shnGbKZjkmMhYwk6b6sov",
+        "peer": "PUB_K1_7uskAVPDHHM6hV9boUoRmWA2NzR75aFTn4xkS9gGQaG7yp3ykY",
+        "bls": "PUB_BLS_KbrdSi-T478HYTTj3wpoxlJg1deoJ3l7PgNnJcIy1U8b6GrPGsPWn1uhmFGOyeoOWBiLz9IcbdJMqjdSZdiHugCnzEiJW33nMWPblOfL33l43LIfP061bx9VhmWG10sU7auMWQ"
+      }
+    },
+    {
+      "name": "deepmindtech",
+      "replaces": "deepmindlabs",
+      "rpc_port": 8962,
+      "p2p_port": 9962,
+      "unit": "pureeos-bp-replacement-deepmindtech-20261111.service",
+      "CPU_stake_AIC": "100.0062",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_8LWN6AYLxjur2j2oHkQNWEU3hSvU1zLNhtAG6QFLWPiChMqHHg",
+        "production": "PUB_K1_5oBfM6FE3K3wHLGTXgCkKCn7KP3KtV5v1pSGHLT4taLmFp4r8F",
+        "peer": "PUB_K1_7tZXma963VMB5wgLQwXHi1HkebjjaMSEro6KFnquk4eXjct4kB",
+        "bls": "PUB_BLS_3R0tYCs6Lho0QksSL-F-AapOdza_yaQJi2_30Dzy3aKBec8kYR9RqUYeLCEVYPUZrIMKnnIpD2saa0aI3un4WPg-gNVq0NwZKU6apynYRvu7skpAJgKmDGtlpBcbWaoOayP9vw"
+      }
+    },
+    {
+      "name": "openaimodels",
+      "replaces": "openaiclouds",
+      "rpc_port": 8963,
+      "p2p_port": 9963,
+      "unit": "pureeos-bp-replacement-openaimodels-20261111.service",
+      "CPU_stake_AIC": "100.0063",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_6TpJcSX7LNiWDyaV9tmjUnzQePmCCPYMQcuDPwWj5vdkhYZt7k",
+        "production": "PUB_K1_5VUKJUABs2pQzvhHGg16u7uU8eQKzWRCCg5TYXV4yTeSLdB9jB",
+        "peer": "PUB_K1_8mVuwyWtqPEo3TBFE9q2auaGHaRiJwpfDDJEncr85uqqCpGnQJ",
+        "bls": "PUB_BLS_7V46WczqqSiv8n3u8DUqrwBGKjwz54pwJzNlUA9_GblvORjOcPMbH8kJoLsp9eIWQbmrPSkNZZs2_fat7mZ8zui7uhxPfiG3AE5Nj2W4ReAuDZTCm_LdT6z_Z-JsZQUDGn9XwA"
+      }
+    },
+    {
+      "name": "sydneyunswcs",
+      "replaces": "sydneyunswai",
+      "rpc_port": 8964,
+      "p2p_port": 9964,
+      "unit": "pureeos-bp-replacement-sydneyunswcs-20261111.service",
+      "CPU_stake_AIC": "100.0064",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_7T95MbvFBbphM6DUxrpy5Eqm8QunHfXSomMF83evbr25Wg3JJx",
+        "production": "PUB_K1_5J6oBjicuqRTzqGiYNB8BM8bkP9QB4bUogc1Cj8DMGscg1CxZo",
+        "peer": "PUB_K1_5AS9wZFvN4rsQirdUrvDhsfFNtzaK6zzcrbszdCV3jZ6wUva5p",
+        "bls": "PUB_BLS_gJ2l0fIi-ATUFlkP7Im_31VT3NnjoEwEG2ViwxNk0JYTAsp_awkmFsAiI3RflI8X1sUrTUjsw1ZKvoqdXWTKC1HHjGqbHg5DPd_XGiSvY7VXgyobTU6GsEDMolJZ7AYF8R4u6g"
+      }
+    }
+  ],
+  "mapping": {
+    "alibabacloud": "alibabaailab",
+    "deepmindlabs": "deepmindtech",
+    "openaiclouds": "openaimodels",
+    "sydneyunswai": "sydneyunswcs"
+  },
+  "physical_BP_target": 25,
+  "history_target": 1,
+  "registered_before": 37,
+  "registered_after": 41,
+  "banned_unchanged": 15,
+  "native_or_consensus_changes": false
+}

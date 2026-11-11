@@ -1,0 +1,9 @@
+[Unit]
+Description=TEST chain headroom and native duty CPU priority
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -B /opt/pureeos-testnet-new-ban-20261111-r1/health_priority_watch.py
+CPUQuota=30%
+MemoryMax=128M
+Nice=10
+TimeoutStartSec=90

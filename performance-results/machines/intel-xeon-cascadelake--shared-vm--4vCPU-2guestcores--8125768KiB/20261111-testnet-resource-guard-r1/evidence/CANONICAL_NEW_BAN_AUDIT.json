@@ -1,0 +1,398 @@
+{
+  "status": "PASS_TWELVE_CANONICAL_ZERO_WINDOWS",
+  "utc": "2026-11-11T01:50:25.613188+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "observed_LIB": 681804,
+  "nodes": [
+    {
+      "owner": "alibabacloud",
+      "candidate": {
+        "owner": "alibabacloud",
+        "rank": "340282366920938463448700880513349268624",
+        "previous_rank": "340282366920938463448700880513349268624",
+        "frozen_epoch": 0,
+        "seen_epoch": 1664,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1695321432,
+          1695321684,
+          1695321936
+        ],
+        "evidence_policies": [
+          613,
+          613,
+          613
+        ],
+        "ban_final_block": 649909
+      },
+      "bond": {
+        "owner": "alibabacloud",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855594,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 649909,
+        "ban_record_block": 649912
+      },
+      "ban_checkpoint_timestamp": "2026-11-10T21:22:54.000",
+      "windows": [
+        {
+          "start_slot": 1695321432,
+          "end_slot": 1695321443,
+          "start_utc": "2026-11-10T21:18:36+00:00",
+          "policy_version": 613,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 649428,
+            "id": "0009e8d45ad8ca8e37d48ba2ca3493b1b6cc09db4962b65a88feb6a9e999328f",
+            "timestamp": "2026-11-10T21:18:35.500",
+            "producer": "zurichethnet"
+          },
+          "after": {
+            "block_num": 649429,
+            "id": "0009e8d52dc403b4e4bae469c8b0d0fabeaf6d20cb0547d72868b47da312c030",
+            "timestamp": "2026-11-10T21:18:42.000",
+            "producer": "anthropiclab"
+          }
+        },
+        {
+          "start_slot": 1695321684,
+          "end_slot": 1695321695,
+          "start_utc": "2026-11-10T21:20:42+00:00",
+          "policy_version": 613,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 649668,
+            "id": "0009e9c44d20562433032ca480cb2d8e752e0d3bc840fb7d342bffa9a8b8f836",
+            "timestamp": "2026-11-10T21:20:41.500",
+            "producer": "zurichethnet"
+          },
+          "after": {
+            "block_num": 649669,
+            "id": "0009e9c53e945f63d13917e908c897bd6c6684496f000c911ba66564f6eb8c4c",
+            "timestamp": "2026-11-10T21:20:48.000",
+            "producer": "anthropiclab"
+          }
+        },
+        {
+          "start_slot": 1695321936,
+          "end_slot": 1695321947,
+          "start_utc": "2026-11-10T21:22:48+00:00",
+          "policy_version": 613,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 649908,
+            "id": "0009eab47a3de7ff4dcfb7c4ec5cf63b3983be0773bf353d8dec1418359f9136",
+            "timestamp": "2026-11-10T21:22:47.500",
+            "producer": "zurichethnet"
+          },
+          "after": {
+            "block_num": 649909,
+            "id": "0009eab53af6f62edab16e545f5a9311bfd68648e0653cabe5df0d2e959a11da",
+            "timestamp": "2026-11-10T21:22:54.000",
+            "producer": "anthropiclab"
+          }
+        }
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "candidate": {
+        "owner": "deepmindlabs",
+        "rank": "340282366920938463450302163195808812928",
+        "previous_rank": "340282366920938463450302163195808812928",
+        "frozen_epoch": 0,
+        "seen_epoch": 1644,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1695299076,
+          1695299328,
+          1695304872
+        ],
+        "evidence_policies": [
+          585,
+          585,
+          593
+        ],
+        "ban_final_block": 633565
+      },
+      "bond": {
+        "owner": "deepmindlabs",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855552,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 633565,
+        "ban_record_block": 633568
+      },
+      "ban_checkpoint_timestamp": "2026-11-10T19:00:42.000",
+      "windows": [
+        {
+          "start_slot": 1695299076,
+          "end_slot": 1695299087,
+          "start_utc": "2026-11-10T18:12:18+00:00",
+          "policy_version": 585,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 627850,
+            "id": "0009948a9df38b1f9f95610e58fa0eeb9a27148384a78ae4fb4aec1bf6f359a5",
+            "timestamp": "2026-11-10T18:12:17.500",
+            "producer": "cohereclouds"
+          },
+          "after": {
+            "block_num": 627851,
+            "id": "0009948b62eb9f3fecb3ecad76ef71a109490a684aa0ce0d3bcfff72fee2cf27",
+            "timestamp": "2026-11-10T18:12:24.000",
+            "producer": "deepseekcore"
+          }
+        },
+        {
+          "start_slot": 1695299328,
+          "end_slot": 1695299339,
+          "start_utc": "2026-11-10T18:14:24+00:00",
+          "policy_version": 585,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 628090,
+            "id": "0009957ad57cf3c770ee1425f0e4cf7365514a259fa7f799f4b2d2a059812733",
+            "timestamp": "2026-11-10T18:14:23.500",
+            "producer": "cohereclouds"
+          },
+          "after": {
+            "block_num": 628091,
+            "id": "0009957b1533730b7a1fe4615a354a01550ad97234bc7f63e5680dab1acbacf1",
+            "timestamp": "2026-11-10T18:14:30.000",
+            "producer": "deepseekcore"
+          }
+        },
+        {
+          "start_slot": 1695304872,
+          "end_slot": 1695304883,
+          "start_utc": "2026-11-10T19:00:36+00:00",
+          "policy_version": 593,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 633564,
+            "id": "0009aadc5dd5bbe9e4f69fbb0382846f4d57757097d91e6e09fcf64d65143e9e",
+            "timestamp": "2026-11-10T19:00:35.500",
+            "producer": "cohereclouds"
+          },
+          "after": {
+            "block_num": 633565,
+            "id": "0009aadd7e8e19dcba12f884df2c7b02121165509660e23069d26f829ca15a4c",
+            "timestamp": "2026-11-10T19:00:42.000",
+            "producer": "genevacernai"
+          }
+        }
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "candidate": {
+        "owner": "openaiclouds",
+        "rank": "340282366920938463456841348067539456896",
+        "previous_rank": "340282366920938463456841348067539456896",
+        "frozen_epoch": 0,
+        "seen_epoch": 1666,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1695320844,
+          1695321096,
+          1695322860
+        ],
+        "evidence_policies": [
+          612,
+          612,
+          615
+        ],
+        "ban_final_block": 650821
+      },
+      "bond": {
+        "owner": "openaiclouds",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793855533,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 650821,
+        "ban_record_block": 650824
+      },
+      "ban_checkpoint_timestamp": "2026-11-10T21:30:36.000",
+      "windows": [
+        {
+          "start_slot": 1695320844,
+          "end_slot": 1695320855,
+          "start_utc": "2026-11-10T21:13:42+00:00",
+          "policy_version": 612,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 648864,
+            "id": "0009e6a00bd1629c2622e0151def3c64469922d11a02bce18e5dafb3f0eb201b",
+            "timestamp": "2026-11-10T21:13:41.500",
+            "producer": "nvidiaailabs"
+          },
+          "after": {
+            "block_num": 648865,
+            "id": "0009e6a16bc5d8d2aa5142d22a2029f58f5acf80a31ad18eae29a48a20ce3755",
+            "timestamp": "2026-11-10T21:13:48.000",
+            "producer": "parisinriaai"
+          }
+        },
+        {
+          "start_slot": 1695321096,
+          "end_slot": 1695321107,
+          "start_utc": "2026-11-10T21:15:48+00:00",
+          "policy_version": 612,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 649104,
+            "id": "0009e79018a30495d3ccf6a24e862633f2157d41f1ef7e6d8796516972863422",
+            "timestamp": "2026-11-10T21:15:47.500",
+            "producer": "nvidiaailabs"
+          },
+          "after": {
+            "block_num": 649105,
+            "id": "0009e7911503e2b992820472f8a79df9cc169aaab9c0a0ec22adb572efde01bb",
+            "timestamp": "2026-11-10T21:15:54.000",
+            "producer": "parisinriaai"
+          }
+        },
+        {
+          "start_slot": 1695322860,
+          "end_slot": 1695322871,
+          "start_utc": "2026-11-10T21:30:30+00:00",
+          "policy_version": 615,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 650820,
+            "id": "0009ee44a47057c563f3beeb5c751bfc2304b1c1d8954d7a0e2caff55b9d58d6",
+            "timestamp": "2026-11-10T21:30:29.500",
+            "producer": "nvidiaailabs"
+          },
+          "after": {
+            "block_num": 650821,
+            "id": "0009ee45f863261a4874ccbeee4b3c2563a563ff78692bdbfdd9e45937f1490c",
+            "timestamp": "2026-11-10T21:30:36.000",
+            "producer": "parisinriaai"
+          }
+        }
+      ]
+    },
+    {
+      "owner": "sydneyunswai",
+      "candidate": {
+        "owner": "sydneyunswai",
+        "rank": "340282366920938463459308760196985588960",
+        "previous_rank": "340282366920938463459308760196985588960",
+        "frozen_epoch": 0,
+        "seen_epoch": 1559,
+        "ticket": 0,
+        "penalty_epoch": 1,
+        "zero_windows": 3,
+        "banned": 1,
+        "evidence_slots": [
+          1695228420,
+          1695228672,
+          1695228924
+        ],
+        "evidence_policies": [
+          508,
+          508,
+          508
+        ],
+        "ban_final_block": 561673
+      },
+      "bond": {
+        "owner": "sydneyunswai",
+        "state": 4,
+        "balance": 0,
+        "forfeited": 100000000,
+        "settled": 0,
+        "bonded_at": 1793881641,
+        "exit_block": 0,
+        "refundable_at": 0,
+        "ban_final_block": 561673,
+        "ban_record_block": 561679
+      },
+      "ban_checkpoint_timestamp": "2026-11-10T08:27:48.000",
+      "windows": [
+        {
+          "start_slot": 1695228420,
+          "end_slot": 1695228431,
+          "start_utc": "2026-11-10T08:23:30+00:00",
+          "policy_version": 508,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 561204,
+            "id": "0008903432a2d55b8a8eb970c51e373224ffdda428e1e908944d0366b54c3b51",
+            "timestamp": "2026-11-10T08:23:29.500",
+            "producer": "stabilityhub"
+          },
+          "after": {
+            "block_num": 561205,
+            "id": "00089035fbcdb2dc5bed6dc816f5276cd24e2306ec509f093978babff8063093",
+            "timestamp": "2026-11-10T08:23:36.000",
+            "producer": "tencentailab"
+          }
+        },
+        {
+          "start_slot": 1695228672,
+          "end_slot": 1695228683,
+          "start_utc": "2026-11-10T08:25:36+00:00",
+          "policy_version": 508,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 561437,
+            "id": "0008911d1c894e079ebecb6c8a2b011a62e78995311b7d55ef8751da73b4afc9",
+            "timestamp": "2026-11-10T08:25:35.500",
+            "producer": "stabilityhub"
+          },
+          "after": {
+            "block_num": 561438,
+            "id": "0008911e134233eed4c9d8f8f92b1c8340e73823ee05d2a3837e59af04f9036f",
+            "timestamp": "2026-11-10T08:25:42.000",
+            "producer": "tencentailab"
+          }
+        },
+        {
+          "start_slot": 1695228924,
+          "end_slot": 1695228935,
+          "start_utc": "2026-11-10T08:27:42+00:00",
+          "policy_version": 508,
+          "produced_blocks": 0,
+          "before": {
+            "block_num": 561672,
+            "id": "00089208794445820ab69c8d9cf8658d35b42153cfba881b50695f18f3fdc66d",
+            "timestamp": "2026-11-10T08:27:41.500",
+            "producer": "stabilityhub"
+          },
+          "after": {
+            "block_num": 561673,
+            "id": "000892098ac3d2871dc93e1c59367d793f27823a050b1f1da6422dc97bc1aa9f",
+            "timestamp": "2026-11-10T08:27:48.000",
+            "producer": "tencentailab"
+          }
+        }
+      ]
+    }
+  ],
+  "definitive_chain_trigger": "Three finalized personal12slot windows with zero blocks; native permanent ban and10000AIC forfeiture each",
+  "infrastructure_observation": "Shared4vCPU8GiB host had load~70,56GiBswap nearlyfull and CPU/IO pressure. Sydney service failed08:15UTC before all three windows. Other three processes remainedrunning, so permanent processdeath doesnotexplain their bans. Per-window OS scheduler/heap rootcause not fully established; no claim that all four were killed by OOM."
+}

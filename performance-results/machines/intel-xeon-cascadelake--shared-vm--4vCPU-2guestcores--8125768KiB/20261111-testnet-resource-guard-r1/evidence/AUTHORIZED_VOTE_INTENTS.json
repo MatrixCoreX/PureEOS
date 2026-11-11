@@ -1,0 +1,189 @@
+{
+  "intents": {
+    "autumnvalley": [
+      "alibabaailab"
+    ],
+    "brightharbor": [
+      "deepmindtech"
+    ],
+    "cosmicaurora": [
+      "alibabaailab"
+    ],
+    "cosmicbreeze": [
+      "deepmindtech"
+    ],
+    "cosmicfalcon": [
+      "openaimodels"
+    ],
+    "frozencanyon": [
+      "openaimodels"
+    ],
+    "frozencomets": [
+      "alibabaailab"
+    ],
+    "pinemoonvale": [
+      "sydneyunswcs"
+    ],
+    "serenefalcon": [
+      "deepmindtech"
+    ],
+    "springcomets": [
+      "openaimodels"
+    ],
+    "sunlitfalcon": [
+      "alibabaailab"
+    ],
+    "sunlitflower": [
+      "alibabaailab"
+    ],
+    "rexliquidaaa": [
+      "alibabaailab"
+    ],
+    "rexliquidaad": [
+      "deepmindtech"
+    ]
+  },
+  "moves": [
+    {
+      "owner": "autumnvalley",
+      "before": [
+        "alibabacloud"
+      ],
+      "after": [
+        "alibabaailab"
+      ],
+      "staked_before": 4270000
+    },
+    {
+      "owner": "brightharbor",
+      "before": [
+        "deepmindlabs"
+      ],
+      "after": [
+        "deepmindtech"
+      ],
+      "staked_before": 2370000
+    },
+    {
+      "owner": "cosmicaurora",
+      "before": [
+        "alibabacloud"
+      ],
+      "after": [
+        "alibabaailab"
+      ],
+      "staked_before": 2690000
+    },
+    {
+      "owner": "cosmicbreeze",
+      "before": [
+        "deepmindlabs"
+      ],
+      "after": [
+        "deepmindtech"
+      ],
+      "staked_before": 1540000
+    },
+    {
+      "owner": "cosmicfalcon",
+      "before": [
+        "openaiclouds"
+      ],
+      "after": [
+        "openaimodels"
+      ],
+      "staked_before": 5590000
+    },
+    {
+      "owner": "frozencanyon",
+      "before": [
+        "openaiclouds"
+      ],
+      "after": [
+        "openaimodels"
+      ],
+      "staked_before": 5340000
+    },
+    {
+      "owner": "frozencomets",
+      "before": [
+        "alibabacloud"
+      ],
+      "after": [
+        "alibabaailab"
+      ],
+      "staked_before": 3210000
+    },
+    {
+      "owner": "pinemoonvale",
+      "before": [
+        "sydneyunswai"
+      ],
+      "after": [
+        "sydneyunswcs"
+      ],
+      "staked_before": 5920000
+    },
+    {
+      "owner": "serenefalcon",
+      "before": [
+        "deepmindlabs"
+      ],
+      "after": [
+        "deepmindtech"
+      ],
+      "staked_before": 2630000
+    },
+    {
+      "owner": "springcomets",
+      "before": [
+        "openaiclouds"
+      ],
+      "after": [
+        "openaimodels"
+      ],
+      "staked_before": 6970000
+    },
+    {
+      "owner": "sunlitfalcon",
+      "before": [
+        "alibabacloud"
+      ],
+      "after": [
+        "alibabaailab"
+      ],
+      "staked_before": 6080000
+    },
+    {
+      "owner": "sunlitflower",
+      "before": [
+        "alibabacloud"
+      ],
+      "after": [
+        "alibabaailab"
+      ],
+      "staked_before": 2440000
+    },
+    {
+      "owner": "rexliquidaaa",
+      "before": [
+        "alibabacloud"
+      ],
+      "after": [
+        "alibabaailab"
+      ],
+      "staked_before": 100020000
+    },
+    {
+      "owner": "rexliquidaad",
+      "before": [
+        "deepmindlabs"
+      ],
+      "after": [
+        "deepmindtech"
+      ],
+      "staked_before": 100020000
+    }
+  ],
+  "scope": "Only owned external voters of these4newlybanned identities; keep all nonbanned choices and all oldbanned selfvotes"
+}

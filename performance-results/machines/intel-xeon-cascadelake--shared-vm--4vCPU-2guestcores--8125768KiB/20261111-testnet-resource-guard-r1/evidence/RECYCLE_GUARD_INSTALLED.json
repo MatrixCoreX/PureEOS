@@ -1,0 +1,28 @@
+{
+  "status": "PASS_MINUTE_MEMORY_GUARD_ENABLED",
+  "utc": "2026-11-11T01:58:46.809294+00:00",
+  "timer": "pureeos-testnet-memory-guard-20261111.timer",
+  "threshold_MiB": 1280,
+  "minimum_other_strong_votes": 18,
+  "next_duty_margin_seconds": 90,
+  "cooldown_seconds": 600,
+  "one_target_only": true,
+  "independent60s_start_safeguard": true,
+  "stale_chain_missing_BP_newban_or_miss_streak_blocks_action": true,
+  "no_native_source_binary_consensus_key_or_safety_reset": true,
+  "prior21_actual_same_data_restarts_qualified": true,
+  "initial_live_check": {
+    "utc": "2026-11-11T01:58:40.911962+00:00",
+    "check_only": true,
+    "threshold_bytes": 1342177280,
+    "cooldown_seconds": 600,
+    "source_binary_chain_rules_unchanged": true,
+    "largest_process_bytes": 72962048,
+    "over_threshold": {},
+    "head": 682796,
+    "LIB": 682792,
+    "recent_strong_votes": 21,
+    "eligible_candidates": [],
+    "status": "NO_ACTION_ALL_BELOW1280MiB"
+  }
+}

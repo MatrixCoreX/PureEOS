@@ -1,0 +1,2024 @@
+{
+  "status": "PASS_26_NODES_SAME_CHAIN_AND_4_REPLACEMENTS",
+  "utc": "2026-11-11T02:04:51.729007+00:00",
+  "start": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 682816,
+    "last_irreversible_block_num": 682800,
+    "last_irreversible_block_id": "000a6b30367dcaa1852db678439da19590f64fa54fad27710bbc3cfb897d89d8",
+    "head_block_id": "000a6b40db8f4a969103854d08a9abc2dc71a1761ee68d38b275fb17c401ecbe",
+    "head_block_time": "2026-11-11T01:58:51.000",
+    "head_block_producer": "minimaxcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 682816,
+    "fork_db_head_block_id": "000a6b40db8f4a969103854d08a9abc2dc71a1761ee68d38b275fb17c401ecbe",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T01:58:43.000"
+  },
+  "end": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 683528,
+    "last_irreversible_block_num": 683519,
+    "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+    "head_block_id": "000a6e08231a8cd1197c09a5efcb1f5785463c21183424abf4b50888769e8d98",
+    "head_block_time": "2026-11-11T02:04:48.000",
+    "head_block_producer": "deepseekcore",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 683528,
+    "fork_db_head_block_id": "000a6e08231a8cd1197c09a5efcb1f5785463c21183424abf4b50888769e8d98",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+  },
+  "soak_samples": [
+    {
+      "utc": "2026-11-11T01:58:51.097748+00:00",
+      "head": 682816,
+      "LIB": 682800,
+      "head_age": 0.097758,
+      "LIB_age": 8.097759,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:58:56.120086+00:00",
+      "head": 682826,
+      "LIB": 682806,
+      "head_age": 0.120098,
+      "LIB_age": 10.120099,
+      "recent10s_strong_votes": 20
+    },
+    {
+      "utc": "2026-11-11T01:59:01.173473+00:00",
+      "head": 682836,
+      "LIB": 682819,
+      "head_age": 0.173486,
+      "LIB_age": 8.673487,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:06.177911+00:00",
+      "head": 682845,
+      "LIB": 682832,
+      "head_age": 0.17792,
+      "LIB_age": 7.177921,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:11.181799+00:00",
+      "head": 682855,
+      "LIB": 682837,
+      "head_age": 0.181808,
+      "LIB_age": 9.681809,
+      "recent10s_strong_votes": 0
+    },
+    {
+      "utc": "2026-11-11T01:59:16.332684+00:00",
+      "head": 682865,
+      "LIB": 682860,
+      "head_age": 0.332696,
+      "LIB_age": 2.832698,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:21.396153+00:00",
+      "head": 682875,
+      "LIB": 682872,
+      "head_age": 0.396167,
+      "LIB_age": 1.896168,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:26.399160+00:00",
+      "head": 682885,
+      "LIB": 682883,
+      "head_age": 0.39917,
+      "LIB_age": 1.399171,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:31.470047+00:00",
+      "head": 682895,
+      "LIB": 682893,
+      "head_age": 0.470057,
+      "LIB_age": 1.470058,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:36.472448+00:00",
+      "head": 682905,
+      "LIB": 682903,
+      "head_age": 0.472456,
+      "LIB_age": 1.472457,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:41.503295+00:00",
+      "head": 682916,
+      "LIB": 682913,
+      "head_age": 0.003305,
+      "LIB_age": 1.503306,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:46.561425+00:00",
+      "head": 682926,
+      "LIB": 682922,
+      "head_age": 0.061437,
+      "LIB_age": 2.061438,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:51.611726+00:00",
+      "head": 682936,
+      "LIB": 682934,
+      "head_age": 0.111737,
+      "LIB_age": 1.111738,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T01:59:56.615967+00:00",
+      "head": 682946,
+      "LIB": 682944,
+      "head_age": 0.115978,
+      "LIB_age": 1.115979,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:01.632195+00:00",
+      "head": 682956,
+      "LIB": 682954,
+      "head_age": 0.132208,
+      "LIB_age": 1.132209,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:06.718789+00:00",
+      "head": 682966,
+      "LIB": 682964,
+      "head_age": 0.218802,
+      "LIB_age": 1.218803,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:11.732102+00:00",
+      "head": 682976,
+      "LIB": 682973,
+      "head_age": 0.232112,
+      "LIB_age": 1.732113,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:16.773231+00:00",
+      "head": 682986,
+      "LIB": 682982,
+      "head_age": 0.273244,
+      "LIB_age": 2.273245,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:21.800578+00:00",
+      "head": 682996,
+      "LIB": 682993,
+      "head_age": 0.300588,
+      "LIB_age": 1.800589,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:26.858573+00:00",
+      "head": 683006,
+      "LIB": 683004,
+      "head_age": 0.358582,
+      "LIB_age": 1.358584,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:31.865075+00:00",
+      "head": 683016,
+      "LIB": 683014,
+      "head_age": 0.365085,
+      "LIB_age": 1.365086,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:36.874751+00:00",
+      "head": 683026,
+      "LIB": 683024,
+      "head_age": 0.374764,
+      "LIB_age": 1.374766,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:41.878560+00:00",
+      "head": 683036,
+      "LIB": 683034,
+      "head_age": 0.378569,
+      "LIB_age": 1.37857,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:46.940268+00:00",
+      "head": 683047,
+      "LIB": 683045,
+      "head_age": -0.059719,
+      "LIB_age": 0.940282,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:51.959040+00:00",
+      "head": 683057,
+      "LIB": 683054,
+      "head_age": -0.04095,
+      "LIB_age": 1.459051,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:00:57.003608+00:00",
+      "head": 683067,
+      "LIB": 683064,
+      "head_age": 0.003619,
+      "LIB_age": 1.50362,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:01:02.006975+00:00",
+      "head": 683076,
+      "LIB": 683073,
+      "head_age": 0.506986,
+      "LIB_age": 2.006987,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:01:07.017101+00:00",
+      "head": 683087,
+      "LIB": 683085,
+      "head_age": 0.017111,
+      "LIB_age": 1.017112,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:01:12.105724+00:00",
+      "head": 683097,
+      "LIB": 683094,
+      "head_age": 0.105736,
+      "LIB_age": 1.605737,
+      "recent10s_strong_votes": 21
+    },
+    {
+      "utc": "2026-11-11T02:01:17.108291+00:00",
+      "head": 683107,
+      "LIB": 683105,
+      "head_age": 0.108301,
+      "LIB_age": 1.108302,
+      "recent10s_strong_votes": 21
+    }
+  ],
+  "all26_nodes": {
+    "anthropiclab": {
+      "unit": "pureeos-devnet-bp-anthropiclab-20261105.service",
+      "state": {
+        "MainPID": "4011126",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 67784704,
+        "VmSwap": 0
+      }
+    },
+    "bytedancelab": {
+      "unit": "pureeos-devnet-bp-bytedancelab-20261105.service",
+      "state": {
+        "MainPID": "4012789",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 81899520,
+        "VmSwap": 0
+      }
+    },
+    "canadamilaai": {
+      "unit": "pureeos-devnet-bp-canadamilaai-20261105.service",
+      "state": {
+        "MainPID": "4011355",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 67526656,
+        "VmSwap": 0
+      }
+    },
+    "cohereclouds": {
+      "unit": "pureeos-devnet-bp-cohereclouds-20261105.service",
+      "state": {
+        "MainPID": "4011467",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 65716224,
+        "VmSwap": 0
+      }
+    },
+    "deepseekcore": {
+      "unit": "pureeos-devnet-bp-deepseekcore-20261105.service",
+      "state": {
+        "MainPID": "4012260",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 74117120,
+        "VmSwap": 0
+      }
+    },
+    "genevacernai": {
+      "unit": "pureeos-bp-demo-genevacernai-20261105.service",
+      "state": {
+        "MainPID": "4011601",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 68481024,
+        "VmSwap": 0
+      }
+    },
+    "gptgenesisbp": {
+      "unit": "pureeos-devnet-founder-20261105.service",
+      "state": {
+        "MainPID": "4011712",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 72876032,
+        "VmSwap": 0
+      }
+    },
+    "londonucllab": {
+      "unit": "pureeos-devnet-bp-londonucllab-20261105.service",
+      "state": {
+        "MainPID": "4012143",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 77996032,
+        "VmSwap": 0
+      }
+    },
+    "minimaxcloud": {
+      "unit": "pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "state": {
+        "MainPID": "4011822",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 72966144,
+        "VmSwap": 0
+      }
+    },
+    "mistralcloud": {
+      "unit": "pureeos-devnet-bp-mistralcloud-20261105.service",
+      "state": {
+        "MainPID": "4011960",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 75948032,
+        "VmSwap": 0
+      }
+    },
+    "moonshotlabs": {
+      "unit": "pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "state": {
+        "MainPID": "4010331",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 67887104,
+        "VmSwap": 0
+      }
+    },
+    "parisinriaai": {
+      "unit": "pureeos-devnet-bp-parisinriaai-20261105.service",
+      "state": {
+        "MainPID": "4010450",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 71299072,
+        "VmSwap": 0
+      }
+    },
+    "perplexityai": {
+      "unit": "pureeos-devnet-bp-perplexityai-20261105.service",
+      "state": {
+        "MainPID": "4009516",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 69611520,
+        "VmSwap": 0
+      }
+    },
+    "seoulkaistai": {
+      "unit": "pureeos-devnet-bp-seoulkaistai-20261105.service",
+      "state": {
+        "MainPID": "4012397",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 74215424,
+        "VmSwap": 0
+      }
+    },
+    "stabilityhub": {
+      "unit": "pureeos-devnet-bp-stabilityhub-20261105.service",
+      "state": {
+        "MainPID": "4010695",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 67555328,
+        "VmSwap": 0
+      }
+    },
+    "torontovectr": {
+      "unit": "pureeos-bp-extra-torontovectr-20261106.service",
+      "state": {
+        "MainPID": "4010804",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683525,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e053f9fb0cc14642300940bb495600ff6bd4f674f9c49130b0a4c73e641",
+        "head_block_time": "2026-11-11T02:04:46.500",
+        "head_block_producer": "deepmindtech",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683525,
+        "fork_db_head_block_id": "000a6e053f9fb0cc14642300940bb495600ff6bd4f674f9c49130b0a4c73e641",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 168719,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 68755456,
+        "VmSwap": 0
+      }
+    },
+    "berlintucomp": {
+      "unit": "pureeos-bp-replacement-berlintucomp-20261110.service",
+      "state": {
+        "MainPID": "4009042",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683529,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "head_block_time": "2026-11-11T02:04:48.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683529,
+        "fork_db_head_block_id": "000a6e09f396b16dfa1643f1de5d163ffd9e28f9770f3b2d3047e6534c4d5d8e",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 71294976,
+        "VmSwap": 0
+      }
+    },
+    "bostonmiteng": {
+      "unit": "pureeos-bp-replacement-bostonmiteng-20261110.service",
+      "state": {
+        "MainPID": "4011245",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 66772992,
+        "VmSwap": 0
+      }
+    },
+    "nvidiaailabs": {
+      "unit": "pureeos-bp-replacement-nvidiaailabs-20261110.service",
+      "state": {
+        "MainPID": "4010560",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 69672960,
+        "VmSwap": 0
+      }
+    },
+    "tencentailab": {
+      "unit": "pureeos-bp-replacement-tencentailab-20261110.service",
+      "state": {
+        "MainPID": "4012512",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 68284416,
+        "VmSwap": 0
+      }
+    },
+    "zurichethnet": {
+      "unit": "pureeos-bp-replacement-zurichethnet-20261110.service",
+      "state": {
+        "MainPID": "4010914",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 70672384,
+        "VmSwap": 0
+      }
+    },
+    "alibabaailab": {
+      "unit": "pureeos-bp-replacement-alibabaailab-20261111.service",
+      "state": {
+        "MainPID": "4014406",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683531,
+        "last_irreversible_block_num": 683520,
+        "last_irreversible_block_id": "000a6e00dd7e9e73c7a76a9e41d084625f966cbb6228618d0b773e26f182b5e8",
+        "head_block_id": "000a6e0b5aae300e1137279571c320e263d407d57a6311947b407e2f94b5d31d",
+        "head_block_time": "2026-11-11T02:04:49.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683531,
+        "fork_db_head_block_id": "000a6e0b5aae300e1137279571c320e263d407d57a6311947b407e2f94b5d31d",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 681374,
+        "last_irreversible_block_time": "2026-11-11T02:04:44.000"
+      },
+      "memory": {
+        "VmRSS": 57708544,
+        "VmSwap": 0
+      }
+    },
+    "deepmindtech": {
+      "unit": "pureeos-bp-replacement-deepmindtech-20261111.service",
+      "state": {
+        "MainPID": "4014915",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 681374,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 60461056,
+        "VmSwap": 0
+      }
+    },
+    "openaimodels": {
+      "unit": "pureeos-bp-replacement-openaimodels-20261111.service",
+      "state": {
+        "MainPID": "4015379",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683531,
+        "last_irreversible_block_num": 683520,
+        "last_irreversible_block_id": "000a6e00dd7e9e73c7a76a9e41d084625f966cbb6228618d0b773e26f182b5e8",
+        "head_block_id": "000a6e0b5aae300e1137279571c320e263d407d57a6311947b407e2f94b5d31d",
+        "head_block_time": "2026-11-11T02:04:49.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683531,
+        "fork_db_head_block_id": "000a6e0b5aae300e1137279571c320e263d407d57a6311947b407e2f94b5d31d",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 681374,
+        "last_irreversible_block_time": "2026-11-11T02:04:44.000"
+      },
+      "memory": {
+        "VmRSS": 66547712,
+        "VmSwap": 0
+      }
+    },
+    "sydneyunswcs": {
+      "unit": "pureeos-bp-replacement-sydneyunswcs-20261111.service",
+      "state": {
+        "MainPID": "4015905",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683530,
+        "last_irreversible_block_num": 683519,
+        "last_irreversible_block_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+        "head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "head_block_time": "2026-11-11T02:04:49.000",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683530,
+        "fork_db_head_block_id": "000a6e0abab89be5f23c1d6c5ea69bb9b6b964efe9e58730b5264c53e2a83639",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 681374,
+        "last_irreversible_block_time": "2026-11-11T02:04:43.500"
+      },
+      "memory": {
+        "VmRSS": 55025664,
+        "VmSwap": 0
+      }
+    },
+    "history": {
+      "unit": "pureeos-devnet-history-20261105.service",
+      "state": {
+        "MainPID": "13051",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "SubState": "running",
+        "UnitFileState": "enabled"
+      },
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 683531,
+        "last_irreversible_block_num": 683520,
+        "last_irreversible_block_id": "000a6e00dd7e9e73c7a76a9e41d084625f966cbb6228618d0b773e26f182b5e8",
+        "head_block_id": "000a6e0b5aae300e1137279571c320e263d407d57a6311947b407e2f94b5d31d",
+        "head_block_time": "2026-11-11T02:04:49.500",
+        "head_block_producer": "deepseekcore",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 683531,
+        "fork_db_head_block_id": "000a6e0b5aae300e1137279571c320e263d407d57a6311947b407e2f94b5d31d",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6583400750",
+        "total_net_weight": 251090000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-11T02:04:44.000"
+      },
+      "memory": {
+        "VmRSS": 79302656,
+        "VmSwap": 2173984768
+      }
+    }
+  },
+  "physical_node_PIDs": [
+    13051,
+    4009042,
+    4009516,
+    4010331,
+    4010450,
+    4010560,
+    4010695,
+    4010804,
+    4010914,
+    4011126,
+    4011245,
+    4011355,
+    4011467,
+    4011601,
+    4011712,
+    4011822,
+    4011960,
+    4012143,
+    4012260,
+    4012397,
+    4012512,
+    4012789,
+    4014406,
+    4014915,
+    4015379,
+    4015905
+  ],
+  "shared_LIB": 683519,
+  "shared_LIB_id": "000a6dff05fefbc192a518221ee3675cc78da3c7d39f23051b0358ec24af6e7a",
+  "new4_history_availability": {
+    "alibabaailab": {
+      "block1": "NOT_LOCAL_NATIVE_CHECKPOINT_BOOTSTRAP",
+      "earliest_available_block_num": 681374,
+      "scope": "Full validation from same-chain irreversible checkpoint; complete genesis history remains on founder and history reader."
+    },
+    "deepmindtech": {
+      "block1": "NOT_LOCAL_NATIVE_CHECKPOINT_BOOTSTRAP",
+      "earliest_available_block_num": 681374,
+      "scope": "Full validation from same-chain irreversible checkpoint; complete genesis history remains on founder and history reader."
+    },
+    "openaimodels": {
+      "block1": "NOT_LOCAL_NATIVE_CHECKPOINT_BOOTSTRAP",
+      "earliest_available_block_num": 681374,
+      "scope": "Full validation from same-chain irreversible checkpoint; complete genesis history remains on founder and history reader."
+    },
+    "sydneyunswcs": {
+      "block1": "NOT_LOCAL_NATIVE_CHECKPOINT_BOOTSTRAP",
+      "earliest_available_block_num": 681374,
+      "scope": "Full validation from same-chain irreversible checkpoint; complete genesis history remains on founder and history reader."
+    }
+  },
+  "founder_and_history_retained_genesis_id": "00000001e6fd833dfd1be6cdd640c594b5c34bf96daaf5b670258d75d5427f36",
+  "old_anchor532319_retained": true,
+  "registered": 41,
+  "eligible": 25,
+  "banned": [
+    "alibabacloud",
+    "baiduaiworks",
+    "berlintulabs",
+    "bostonmitlab",
+    "deepmindlabs",
+    "londonturing",
+    "nvidiaclouds",
+    "openaiclouds",
+    "pariscnrslab",
+    "singaporentu",
+    "sydneyunswai",
+    "tencentcloud",
+    "tokyoaistlab",
+    "tokyorikenai",
+    "zurichethlab"
+  ],
+  "maintenance": [
+    {
+      "owner": "montrealmila",
+      "state": 2,
+      "requested_slot": 1694404386,
+      "effective_slot": 1694404386,
+      "effective_block": 56840,
+      "resumed_slot": 0
+    }
+  ],
+  "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "native_source_binary_consensus_and_system_token_contracts_unchanged": true,
+  "recent_strong_votes": 21,
+  "native_finalizer_policy": {
+    "generation": 620,
+    "threshold": 15,
+    "finalizers": [
+      {
+        "description": "alibabaailab",
+        "weight": 1,
+        "public_key": "PUB_BLS_KbrdSi-T478HYTTj3wpoxlJg1deoJ3l7PgNnJcIy1U8b6GrPGsPWn1uhmFGOyeoOWBiLz9IcbdJMqjdSZdiHugCnzEiJW33nMWPblOfL33l43LIfP061bx9VhmWG10sU7auMWQ"
+      },
+      {
+        "description": "berlintucomp",
+        "weight": 1,
+        "public_key": "PUB_BLS_fRMg43jqpgaVTavzFZd95O5Pcg-W-uVirPq8f8P8NBTxiZJqJYol3aJzumTlkDcL-pCud84Ud3t2010PGZlKjDJWObeVs0doaulKuthOgubEP1GK3ILo2MCfRTOkTBUXROx0FQ"
+      },
+      {
+        "description": "bostonmiteng",
+        "weight": 1,
+        "public_key": "PUB_BLS_1FsFC-f30wi70ApiLGOEvGOTQ-lfxHj4-H-Lr0D0QZUmDMUKmvjSFP3RVU-v0ZoGUVA6ZECfIao5Poj4VFzAvVcjSnBKqmwITnsq2i5xU3lrVKC3GtM8ob8Jee1QEOAUPsSC3A"
+      },
+      {
+        "description": "bytedancelab",
+        "weight": 1,
+        "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA"
+      },
+      {
+        "description": "canadamilaai",
+        "weight": 1,
+        "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w"
+      },
+      {
+        "description": "deepmindtech",
+        "weight": 1,
+        "public_key": "PUB_BLS_3R0tYCs6Lho0QksSL-F-AapOdza_yaQJi2_30Dzy3aKBec8kYR9RqUYeLCEVYPUZrIMKnnIpD2saa0aI3un4WPg-gNVq0NwZKU6apynYRvu7skpAJgKmDGtlpBcbWaoOayP9vw"
+      },
+      {
+        "description": "deepseekcore",
+        "weight": 1,
+        "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA"
+      },
+      {
+        "description": "genevacernai",
+        "weight": 1,
+        "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q"
+      },
+      {
+        "description": "londonucllab",
+        "weight": 1,
+        "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ"
+      },
+      {
+        "description": "minimaxcloud",
+        "weight": 1,
+        "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A"
+      },
+      {
+        "description": "mistralcloud",
+        "weight": 1,
+        "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ"
+      },
+      {
+        "description": "moonshotlabs",
+        "weight": 1,
+        "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ"
+      },
+      {
+        "description": "nvidiaailabs",
+        "weight": 1,
+        "public_key": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA"
+      },
+      {
+        "description": "openaimodels",
+        "weight": 1,
+        "public_key": "PUB_BLS_7V46WczqqSiv8n3u8DUqrwBGKjwz54pwJzNlUA9_GblvORjOcPMbH8kJoLsp9eIWQbmrPSkNZZs2_fat7mZ8zui7uhxPfiG3AE5Nj2W4ReAuDZTCm_LdT6z_Z-JsZQUDGn9XwA"
+      },
+      {
+        "description": "parisinriaai",
+        "weight": 1,
+        "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ"
+      },
+      {
+        "description": "perplexityai",
+        "weight": 1,
+        "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA"
+      },
+      {
+        "description": "seoulkaistai",
+        "weight": 1,
+        "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA"
+      },
+      {
+        "description": "stabilityhub",
+        "weight": 1,
+        "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug"
+      },
+      {
+        "description": "tencentailab",
+        "weight": 1,
+        "public_key": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA"
+      },
+      {
+        "description": "torontovectr",
+        "weight": 1,
+        "public_key": "PUB_BLS_LyihV-aoM7mdkeDhwAAjCuyGM8rBEsWLXfH9i1IXVNzpIEYfdhaTiRab4dQ6-roHXdOrkzxTMihjNzYsGX_8Mwq5jplSWIeEUk4PvoxUs6GafW4GV0C1ArsrdACYru0AuU8Faw"
+      },
+      {
+        "description": "zurichethnet",
+        "weight": 1,
+        "public_key": "PUB_BLS_L-gxuNbOw9rIIRx_M3hgrMYWmdP6CjNhuATecN0QNe0MI5IxjFzkV657W8OyjEAHXR1UZ3qeQOuWZpzNNx5DlCkrGhiHeN9s7eCO-x-gUaeLJjdJLMN42wConAAWLU0WbyVexQ"
+      }
+    ]
+  },
+  "public_RPC": {
+    "reader": {
+      "server_version": "42dda604",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 683535,
+      "last_irreversible_block_num": 683520,
+      "last_irreversible_block_id": "000a6e00dd7e9e73c7a76a9e41d084625f966cbb6228618d0b773e26f182b5e8",
+      "head_block_id": "000a6e0f11a8fced53c6719008a161d340210eca0c224121d0d81ec9e20e5b7a",
+      "head_block_time": "2026-11-11T02:04:51.500",
+      "head_block_producer": "deepseekcore",
+      "virtual_block_cpu_limit": 800000000,
+      "virtual_block_net_limit": 1048576000,
+      "block_cpu_limit": 800000,
+      "block_net_limit": 1048576,
+      "server_version_string": "v1.0.0-test.2-dev",
+      "fork_db_head_block_num": 683535,
+      "fork_db_head_block_id": "000a6e0f11a8fced53c6719008a161d340210eca0c224121d0d81ec9e20e5b7a",
+      "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+      "total_cpu_weight": "6583400750",
+      "total_net_weight": 251090000,
+      "earliest_available_block_num": 1,
+      "last_irreversible_block_time": "2026-11-11T02:04:44.000"
+    },
+    "writer": {
+      "server_version": "42dda604",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 683535,
+      "last_irreversible_block_num": 683520,
+      "last_irreversible_block_id": "000a6e00dd7e9e73c7a76a9e41d084625f966cbb6228618d0b773e26f182b5e8",
+      "head_block_id": "000a6e0f11a8fced53c6719008a161d340210eca0c224121d0d81ec9e20e5b7a",
+      "head_block_time": "2026-11-11T02:04:51.500",
+      "head_block_producer": "deepseekcore",
+      "virtual_block_cpu_limit": 800000000,
+      "virtual_block_net_limit": 1048576000,
+      "block_cpu_limit": 800000,
+      "block_net_limit": 1048576,
+      "server_version_string": "v1.0.0-test.2-dev",
+      "fork_db_head_block_num": 683535,
+      "fork_db_head_block_id": "000a6e0f11a8fced53c6719008a161d340210eca0c224121d0d81ec9e20e5b7a",
+      "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+      "total_cpu_weight": "6583400750",
+      "total_net_weight": 251090000,
+      "earliest_available_block_num": 1,
+      "last_irreversible_block_time": "2026-11-11T02:04:44.000"
+    }
+  },
+  "public_summary": {
+    "schema_version": 1,
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "generated_at": "2026-11-11T02:04:50.636151+00:00",
+    "head": 683532,
+    "LIB": 683520,
+    "available": true,
+    "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "registered_bp_count": 41,
+    "eligible_bp_count": 25,
+    "published_candidate_count": 25,
+    "active_producer_count": 21,
+    "permanent_blacklist_count": 15,
+    "maintenance_excluded_count": 1,
+    "maintenance_active_count": 2,
+    "maintenance_pending_count": 0,
+    "rotation_capacity": 210,
+    "next_capacity": 211,
+    "next_capacity_slot": "1695543508",
+    "next_capacity_estimated_at": "2026-11-12T04:09:14.000+00:00",
+    "count_scope": "All native producer/candidate/maintenance rows; pagination complete; no online-process or history-node count",
+    "eligible_scope": "Active registration, positive integer votes and usable producer/finalizer keys (valid rank), excluding permanent bans and non-normal maintenance; candidate admission still follows ranking snapshots"
+  },
+  "public_history_health": {
+    "product": "PureHistory",
+    "version": "4.1.0-purehistory.1-dirty",
+    "version_hash": "custom",
+    "host": "aic-test.matrixai.one/history",
+    "health": [
+      {
+        "service": "StateHistory",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 49.971482,
+        "service_data": {
+          "nodes": [
+            {
+              "label": "independent-nonproducing-TEST-history",
+              "active": true,
+              "range": {
+                "from": 2,
+                "to": 683536
+              }
+            }
+          ]
+        }
+      },
+      {
+        "service": "RabbitMq",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 106.219768,
+        "service_data": null
+      },
+      {
+        "service": "NodeosRPC",
+        "status": "OK",
+        "cached": false,
+        "query_time_ms": 29.324394,
+        "service_data": {
+          "head_block_num": 683535,
+          "head_block_time": "2026-11-11T02:04:51.500",
+          "time_offset": 106,
+          "last_irreversible_block": 683520,
+          "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+        }
+      },
+      {
+        "service": "Elasticsearch",
+        "status": "OK",
+        "cached": true,
+        "query_time_ms": 57.492889,
+        "service_data": {
+          "active_shards": "100.0%",
+          "disk_status": "green",
+          "head_offset": 1,
+          "first_indexed_block": 2,
+          "last_indexed_block": 683534,
+          "total_indexed_blocks": 683532,
+          "missing_blocks": 0,
+          "missing_pct": "0.00%",
+          "times": [
+            {
+              "phase": "cluster_health",
+              "phase_time_ms": 45.37585,
+              "cache": false
+            },
+            {
+              "phase": "first_indexed_block",
+              "phase_time_ms": 0.18751,
+              "cache": true
+            },
+            {
+              "phase": "last_indexed_block",
+              "phase_time_ms": 11.261631,
+              "cache": false
+            }
+          ]
+        }
+      }
+    ],
+    "limits": {
+      "get_actions": 100,
+      "get_voters": 100,
+      "get_links": 1000,
+      "get_deltas": 100,
+      "get_trx_actions": 1000
+    },
+    "features": {
+      "streaming": {
+        "enable": false,
+        "traces": false,
+        "deltas": false
+      },
+      "tables": {
+        "proposals": true,
+        "accounts": true,
+        "voters": true,
+        "permissions": true,
+        "user_resources": false
+      },
+      "contract_state": {
+        "contracts": {}
+      },
+      "index_deltas": true,
+      "index_transfer_memo": true,
+      "index_all_deltas": true,
+      "index_deltas_deletions": false,
+      "deferred_trx": false,
+      "failed_trx": false,
+      "resource_limits": false,
+      "resource_usage": false
+    },
+    "pruning": {
+      "auto_pruning_enabled": false,
+      "max_retained_blocks": 0
+    },
+    "query_time_ms": 108.799,
+    "last_indexed_block": 683535,
+    "last_indexed_block_time": "2026-11-11T02:04:51.500"
+  },
+  "health": {
+    "utc": "2026-11-11T02:04:50.560035+00:00",
+    "actions": [],
+    "alerts": [],
+    "policy": "Only relative CPU/IO weights. No CPU quotas, node restarts/stops, transactions, data deletion or swap allocation.",
+    "memory": {
+      "MemAvailable": 5088768000,
+      "SwapTotal": 60129521664,
+      "SwapFree": 56230998016
+    },
+    "disk_available_bytes": 26354073600,
+    "pressure": {
+      "cpu": "some avg10=95.13 avg60=94.91 avg300=94.48 total=252045871931\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+      "memory": "some avg10=0.00 avg60=0.00 avg300=0.06 total=14199413954\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=7738750221\n",
+      "io": "some avg10=4.08 avg60=6.30 avg300=7.65 total=59447432542\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1169660854\n"
+    },
+    "chain": {
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 683533,
+      "head_block_time": "2026-11-11T02:04:50.500",
+      "last_irreversible_block_num": 683520,
+      "last_irreversible_block_time": "2026-11-11T02:04:44.000"
+    },
+    "head_age_seconds": 0.258567,
+    "LIB_age_seconds": 6.75858,
+    "recent10s_strong_votes": 21,
+    "priority_duties": [
+      "alibabaailab",
+      "berlintucomp",
+      "bostonmiteng",
+      "bytedancelab",
+      "canadamilaai",
+      "deepmindtech",
+      "deepseekcore",
+      "genevacernai",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaailabs",
+      "openaimodels",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethnet"
+    ],
+    "BP_processes": {
+      "anthropiclab": {
+        "state": {
+          "MainPID": "4011126",
+          "NRestarts": "0",
+          "CPUWeight": "250",
+          "IOWeight": "250",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 67796992,
+          "VmSwap": 0
+        }
+      },
+      "bytedancelab": {
+        "state": {
+          "MainPID": "4012789",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 81932288,
+          "VmSwap": 0
+        }
+      },
+      "canadamilaai": {
+        "state": {
+          "MainPID": "4011355",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 67952640,
+          "VmSwap": 0
+        }
+      },
+      "cohereclouds": {
+        "state": {
+          "MainPID": "4011467",
+          "NRestarts": "0",
+          "CPUWeight": "250",
+          "IOWeight": "250",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 65728512,
+          "VmSwap": 0
+        }
+      },
+      "deepseekcore": {
+        "state": {
+          "MainPID": "4012260",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 74842112,
+          "VmSwap": 0
+        }
+      },
+      "genevacernai": {
+        "state": {
+          "MainPID": "4011601",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 68481024,
+          "VmSwap": 0
+        }
+      },
+      "gptgenesisbp": {
+        "state": {
+          "MainPID": "4011712",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 72908800,
+          "VmSwap": 0
+        }
+      },
+      "londonucllab": {
+        "state": {
+          "MainPID": "4012143",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 78032896,
+          "VmSwap": 0
+        }
+      },
+      "minimaxcloud": {
+        "state": {
+          "MainPID": "4011822",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 72986624,
+          "VmSwap": 0
+        }
+      },
+      "mistralcloud": {
+        "state": {
+          "MainPID": "4011960",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 75972608,
+          "VmSwap": 0
+        }
+      },
+      "moonshotlabs": {
+        "state": {
+          "MainPID": "4010331",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 67899392,
+          "VmSwap": 0
+        }
+      },
+      "parisinriaai": {
+        "state": {
+          "MainPID": "4010450",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 71311360,
+          "VmSwap": 0
+        }
+      },
+      "perplexityai": {
+        "state": {
+          "MainPID": "4009516",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 69619712,
+          "VmSwap": 0
+        }
+      },
+      "seoulkaistai": {
+        "state": {
+          "MainPID": "4012397",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 75264000,
+          "VmSwap": 0
+        }
+      },
+      "stabilityhub": {
+        "state": {
+          "MainPID": "4010695",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 67567616,
+          "VmSwap": 0
+        }
+      },
+      "torontovectr": {
+        "state": {
+          "MainPID": "4010804",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 68759552,
+          "VmSwap": 0
+        }
+      },
+      "berlintucomp": {
+        "state": {
+          "MainPID": "4009042",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 71299072,
+          "VmSwap": 0
+        }
+      },
+      "bostonmiteng": {
+        "state": {
+          "MainPID": "4011245",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 66785280,
+          "VmSwap": 0
+        }
+      },
+      "nvidiaailabs": {
+        "state": {
+          "MainPID": "4010560",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 70098944,
+          "VmSwap": 0
+        }
+      },
+      "tencentailab": {
+        "state": {
+          "MainPID": "4012512",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 68325376,
+          "VmSwap": 0
+        }
+      },
+      "zurichethnet": {
+        "state": {
+          "MainPID": "4010914",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 71376896,
+          "VmSwap": 0
+        }
+      },
+      "alibabaailab": {
+        "state": {
+          "MainPID": "4014406",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 58920960,
+          "VmSwap": 0
+        }
+      },
+      "deepmindtech": {
+        "state": {
+          "MainPID": "4014915",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 62062592,
+          "VmSwap": 0
+        }
+      },
+      "openaimodels": {
+        "state": {
+          "MainPID": "4015379",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 68698112,
+          "VmSwap": 0
+        }
+      },
+      "sydneyunswcs": {
+        "state": {
+          "MainPID": "4015905",
+          "NRestarts": "0",
+          "CPUWeight": "250",
+          "IOWeight": "250",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 55496704,
+          "VmSwap": 0
+        }
+      }
+    },
+    "running_BP_count": 25,
+    "status": "OK"
+  },
+  "memory": {
+    "MemAvailable": 5042040832,
+    "SwapTotal": 60129521664,
+    "SwapFree": 56231522304
+  },
+  "disk_available_bytes": 26353598464,
+  "timers": {
+    "pureeos-syslog-rotation-20261111.timer": {
+      "NextElapseUSecRealtime": "Wed 2026-11-11 03:00:00 UTC",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-testnet-health-priority-20261111.timer": {
+      "NextElapseUSecRealtime": "",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "logrotate_initial_complete": true,
+  "log_files": [
+    {
+      "path": "/var/log/syslog.1.gz",
+      "bytes": 638388415,
+      "allocated": 638394368
+    },
+    {
+      "path": "/var/log/syslog",
+      "bytes": 4513193,
+      "allocated": 4517888
+    }
+  ],
+  "new_nodes_natural_FIFO_no_forced_schedule": true,
+  "not_a_TPS_or_indefinite_uptime_claim": true
+}

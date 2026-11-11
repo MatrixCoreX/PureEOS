@@ -1,0 +1,8 @@
+[Unit]
+Description=Bounded10second TEST chain headroom monitor
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=10s
+AccuracySec=1s
+[Install]
+WantedBy=timers.target

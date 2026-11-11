@@ -1,0 +1,274 @@
+{
+  "status": "RUNNING_R2_NATIVE_SAFETY_RENAME_CORRECTED",
+  "utc": "2026-11-11T01:42:25.812091+00:00",
+  "completed": [
+    {
+      "name": "perplexityai",
+      "oldPID": 3882140,
+      "newPID": 4009516,
+      "before_memory": {
+        "VmRSS": 203399168,
+        "VmSwap": 2159448064
+      },
+      "after_memory": {
+        "VmRSS": 59887616,
+        "VmSwap": 0
+      },
+      "reconciled_after_normal_atomic_safety_rename": true,
+      "not_restarted_again": true,
+      "after_guard": {
+        "utc": "2026-11-11T01:42:25.811751+00:00",
+        "info": {
+          "server_version": "42dda604",
+          "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+          "head_block_num": 680847,
+          "last_irreversible_block_num": 680841,
+          "last_irreversible_block_id": "000a63898abfef4207c0f3a17204305e5156dac99be914c63fbc7fccdb62f10a",
+          "head_block_id": "000a638ff01ab5c7db822c3af82ee1ddbb8638e72f36c3759966e50a6c714489",
+          "head_block_time": "2026-11-11T01:42:25.500",
+          "head_block_producer": "nvidiaailabs",
+          "virtual_block_cpu_limit": 800000000,
+          "virtual_block_net_limit": 1048576000,
+          "block_cpu_limit": 800000,
+          "block_net_limit": 1048576,
+          "server_version_string": "v1.0.0-test.2-dev",
+          "fork_db_head_block_num": 680847,
+          "fork_db_head_block_id": "000a638ff01ab5c7db822c3af82ee1ddbb8638e72f36c3759966e50a6c714489",
+          "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+          "total_cpu_weight": "6543398250",
+          "total_net_weight": 247090000,
+          "earliest_available_block_num": 1,
+          "last_irreversible_block_time": "2026-11-11T01:42:22.500"
+        },
+        "recent_other_strong_votes": [
+          "anthropiclab",
+          "berlintucomp",
+          "bostonmiteng",
+          "bytedancelab",
+          "canadamilaai",
+          "cohereclouds",
+          "deepseekcore",
+          "genevacernai",
+          "gptgenesisbp",
+          "londonucllab",
+          "minimaxcloud",
+          "mistralcloud",
+          "moonshotlabs",
+          "nvidiaailabs",
+          "parisinriaai",
+          "seoulkaistai",
+          "stabilityhub",
+          "tencentailab",
+          "torontovectr",
+          "zurichethnet"
+        ]
+      },
+      "state": {
+        "MainPID": "4009516",
+        "Result": "success",
+        "NRestarts": "0",
+        "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-perplexityai-20261105.service",
+        "TasksCurrent": "10",
+        "ActiveState": "active"
+      }
+    }
+  ],
+  "remaining": [
+    "anthropiclab",
+    "bostonmiteng",
+    "bytedancelab",
+    "canadamilaai",
+    "cohereclouds",
+    "deepseekcore",
+    "genevacernai",
+    "gptgenesisbp",
+    "londonucllab",
+    "minimaxcloud",
+    "mistralcloud",
+    "moonshotlabs",
+    "nvidiaailabs",
+    "parisinriaai",
+    "seoulkaistai",
+    "stabilityhub",
+    "tencentailab",
+    "torontovectr",
+    "zurichethnet"
+  ],
+  "initial_memory": {
+    "MemAvailable": 1200152576,
+    "SwapTotal": 60129521664,
+    "SwapFree": 9368137728
+  },
+  "initial_PIDs": {
+    "anthropiclab": {
+      "MainPID": "3881453",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-anthropiclab-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "bytedancelab": {
+      "MainPID": "3881499",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-bytedancelab-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "canadamilaai": {
+      "MainPID": "3881546",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-canadamilaai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "cohereclouds": {
+      "MainPID": "3881591",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-cohereclouds-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "deepseekcore": {
+      "MainPID": "3881684",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-deepseekcore-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "genevacernai": {
+      "MainPID": "3881730",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-demo-genevacernai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "gptgenesisbp": {
+      "MainPID": "3884778",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-founder-20261105.service",
+      "TasksCurrent": "27",
+      "ActiveState": "active"
+    },
+    "londonucllab": {
+      "MainPID": "3881852",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-londonucllab-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "minimaxcloud": {
+      "MainPID": "3881878",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "mistralcloud": {
+      "MainPID": "3881939",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-mistralcloud-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "moonshotlabs": {
+      "MainPID": "3881990",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "parisinriaai": {
+      "MainPID": "3882091",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-parisinriaai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "perplexityai": {
+      "MainPID": "3882140",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-perplexityai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "seoulkaistai": {
+      "MainPID": "3882265",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-seoulkaistai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "stabilityhub": {
+      "MainPID": "3882479",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-stabilityhub-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "torontovectr": {
+      "MainPID": "38342",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/system.slice/pureeos-bp-extra-torontovectr-20261106.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "berlintucomp": {
+      "MainPID": "4009042",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-berlintucomp-20261110.service",
+      "TasksCurrent": "10",
+      "ActiveState": "active"
+    },
+    "bostonmiteng": {
+      "MainPID": "3886495",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-bostonmiteng-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "nvidiaailabs": {
+      "MainPID": "3887103",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-nvidiaailabs-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "tencentailab": {
+      "MainPID": "3888325",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-tencentailab-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "zurichethnet": {
+      "MainPID": "3889347",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-zurichethnet-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    }
+  },
+  "current": "perplexityai",
+  "next_slot_seconds": 114.5
+}

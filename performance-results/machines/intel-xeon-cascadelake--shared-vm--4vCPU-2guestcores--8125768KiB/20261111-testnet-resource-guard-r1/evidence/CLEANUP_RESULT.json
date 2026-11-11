@@ -1,0 +1,146 @@
+{
+  "status": "PASS_FOUR_NEW_BANS_STOPPED_SEVEN_DATA_ROOTS_CLEARED",
+  "utc": "2026-11-11T01:37:21.719570+00:00",
+  "completed": [
+    {
+      "owner": "alibabacloud",
+      "root": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data",
+      "removed_allocated_bytes": 267726848,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 16162186,
+          "mtime_ns": 1794344641052448405,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "e5630066e787a19fe8eac53dff0c8dc2dc47a0e9886a5b5103faf3a5edf35a93"
+        }
+      ]
+    },
+    {
+      "owner": "alibabacloud",
+      "root": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110",
+      "removed_allocated_bytes": 248270848,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 15767979,
+          "mtime_ns": 1794168107140960892,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "c500d723b172c60aec683b6ba5e6eac6ac620828bbe04e5967ae5acb535de79c"
+        }
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "root": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data",
+      "removed_allocated_bytes": 260120576,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 16160427,
+          "mtime_ns": 1794334343053297762,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "dffbfb63d4e64828dee625044f6a88221eab778b6bcf07086e81d53ed9dc3a18"
+        }
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "root": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110",
+      "removed_allocated_bytes": 166772736,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 15725986,
+          "mtime_ns": 1794064002030575616,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "8d16f61d30ac4aea001e4d72b0ef9e428137cb300ba741d794764a5d8a8ebcd1"
+        }
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "root": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data",
+      "removed_allocated_bytes": 268431360,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 16163193,
+          "mtime_ns": 1794345227052654806,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "a3b69d12f2b0499da8a02b3618a0808e95041d314668dfa1120891f9dadc8c84"
+        }
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "root": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110",
+      "removed_allocated_bytes": 258433024,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 15768127,
+          "mtime_ns": 1794170260153285148,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "a6ba87f8abcb600c24a5f9ff20bd887114438babfb8d7ca0b76e926f7cbca51f"
+        }
+      ]
+    },
+    {
+      "owner": "sydneyunswai",
+      "root": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint",
+      "removed_allocated_bytes": 255102976,
+      "retained_safety": [
+        {
+          "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint/finalizers/safety.dat",
+          "size": 265,
+          "allocated": 4096,
+          "dev": 64770,
+          "ino": 17227465,
+          "mtime_ns": 1794284176166785633,
+          "mode": 33188,
+          "nlink": 1,
+          "sha256": "43ecea97834c21009a6c1e9417715ae2cc6f528ae5b31af37cb3ab8a4e2834a5"
+        }
+      ]
+    },
+    {
+      "owner": "sydneyunswai",
+      "log": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/nodeos.log",
+      "preserved_gzip": "/opt/pureeos-testnet-new-ban-20261111-r1/sydneyunswai-original-nodeos.log.gz",
+      "uncompressed_sha256": "3062b74e046a389a311ee08e591f340bd2423e232432644c02e0720169c68773",
+      "old_allocated": 694198272,
+      "new_allocated": 79949824
+    }
+  ],
+  "removed_data_allocated_bytes": 1724858368,
+  "verified_log_savings_bytes": 614248448,
+  "filesystem_available_delta_bytes": 2334978048,
+  "protected_PIDs_unchanged": true,
+  "old11_cleanup_not_replayed": true,
+  "all_configuration_keys_finalizer_safety_retained": true
+}

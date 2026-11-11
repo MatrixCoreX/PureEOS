@@ -1,0 +1,14 @@
+{
+  "utc": "2026-11-11T02:03:15.003199+00:00",
+  "check_only": true,
+  "threshold_bytes": 1342177280,
+  "cooldown_seconds": 600,
+  "source_binary_chain_rules_unchanged": true,
+  "largest_process_bytes": 80785408,
+  "over_threshold": {},
+  "head": 683342,
+  "LIB": 683339,
+  "recent_strong_votes": 21,
+  "eligible_candidates": [],
+  "status": "NO_ACTION_ALL_BELOW1280MiB"
+}

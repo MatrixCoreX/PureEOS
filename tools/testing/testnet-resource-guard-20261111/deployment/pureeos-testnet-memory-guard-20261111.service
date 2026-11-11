@@ -1,0 +1,9 @@
+[Unit]
+Description=TEST-only guarded single BP memory recycle
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -B /opt/pureeos-testnet-new-ban-20261111-r1/recycle_guard.py
+CPUQuota=20%
+MemoryMax=192M
+Nice=10
+TimeoutStartSec=180

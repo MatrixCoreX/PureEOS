@@ -1,0 +1,807 @@
+{
+  "utc": "2026-11-11T01:36:08.572610+00:00",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 680110,
+    "last_irreversible_block_num": 680100,
+    "last_irreversible_block_id": "000a60a4f4f167be232b1f5f85a42b59e470bc670fe3ac4061065171cc84942a",
+    "head_block_id": "000a60aec2e790355280043f15107e2361ff7b91cd64005e3276c9c67b324cd2",
+    "head_block_time": "2026-11-11T01:36:08.000",
+    "head_block_producer": "nvidiaailabs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 680110,
+    "fork_db_head_block_id": "000a60aec2e790355280043f15107e2361ff7b91cd64005e3276c9c67b324cd2",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6543398250",
+    "total_net_weight": 247090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T01:36:01.500"
+  },
+  "proof": {
+    "alibabacloud": {
+      "owner": "alibabacloud",
+      "rank": "340282366920938463448700880513349268624",
+      "previous_rank": "340282366920938463448700880513349268624",
+      "frozen_epoch": 0,
+      "seen_epoch": 1664,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1695321432,
+        1695321684,
+        1695321936
+      ],
+      "evidence_policies": [
+        613,
+        613,
+        613
+      ],
+      "ban_final_block": 649909
+    },
+    "deepmindlabs": {
+      "owner": "deepmindlabs",
+      "rank": "340282366920938463450302163195808812928",
+      "previous_rank": "340282366920938463450302163195808812928",
+      "frozen_epoch": 0,
+      "seen_epoch": 1644,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1695299076,
+        1695299328,
+        1695304872
+      ],
+      "evidence_policies": [
+        585,
+        585,
+        593
+      ],
+      "ban_final_block": 633565
+    },
+    "openaiclouds": {
+      "owner": "openaiclouds",
+      "rank": "340282366920938463456841348067539456896",
+      "previous_rank": "340282366920938463456841348067539456896",
+      "frozen_epoch": 0,
+      "seen_epoch": 1666,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1695320844,
+        1695321096,
+        1695322860
+      ],
+      "evidence_policies": [
+        612,
+        612,
+        615
+      ],
+      "ban_final_block": 650821
+    },
+    "sydneyunswai": {
+      "owner": "sydneyunswai",
+      "rank": "340282366920938463459308760196985588960",
+      "previous_rank": "340282366920938463459308760196985588960",
+      "frozen_epoch": 0,
+      "seen_epoch": 1559,
+      "ticket": 0,
+      "penalty_epoch": 1,
+      "zero_windows": 3,
+      "banned": 1,
+      "evidence_slots": [
+        1695228420,
+        1695228672,
+        1695228924
+      ],
+      "evidence_policies": [
+        508,
+        508,
+        508
+      ],
+      "ban_final_block": 561673
+    }
+  },
+  "finalizers": {
+    "active_finalizer_policy": {
+      "generation": 617,
+      "threshold": 15,
+      "finalizers": [
+        {
+          "description": "anthropiclab",
+          "weight": 1,
+          "public_key": "PUB_BLS_kXjL6WGrWSVfZLJP0ZJtB2SP7JdBhrR3NNx8DbPzMCUi8QhohlsSpoYKJT8mB9MRPVTxeKS4Jq0P5E9K_YmrqmCik46h3IEb6SqW1xZFGb6EE8JiM142fyi6dkWzxMQAKOfP1Q"
+        },
+        {
+          "description": "berlintucomp",
+          "weight": 1,
+          "public_key": "PUB_BLS_fRMg43jqpgaVTavzFZd95O5Pcg-W-uVirPq8f8P8NBTxiZJqJYol3aJzumTlkDcL-pCud84Ud3t2010PGZlKjDJWObeVs0doaulKuthOgubEP1GK3ILo2MCfRTOkTBUXROx0FQ"
+        },
+        {
+          "description": "bostonmiteng",
+          "weight": 1,
+          "public_key": "PUB_BLS_1FsFC-f30wi70ApiLGOEvGOTQ-lfxHj4-H-Lr0D0QZUmDMUKmvjSFP3RVU-v0ZoGUVA6ZECfIao5Poj4VFzAvVcjSnBKqmwITnsq2i5xU3lrVKC3GtM8ob8Jee1QEOAUPsSC3A"
+        },
+        {
+          "description": "bytedancelab",
+          "weight": 1,
+          "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA"
+        },
+        {
+          "description": "canadamilaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w"
+        },
+        {
+          "description": "cohereclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA"
+        },
+        {
+          "description": "deepseekcore",
+          "weight": 1,
+          "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA"
+        },
+        {
+          "description": "genevacernai",
+          "weight": 1,
+          "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q"
+        },
+        {
+          "description": "gptgenesisbp",
+          "weight": 1,
+          "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg"
+        },
+        {
+          "description": "londonucllab",
+          "weight": 1,
+          "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ"
+        },
+        {
+          "description": "minimaxcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A"
+        },
+        {
+          "description": "mistralcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ"
+        },
+        {
+          "description": "moonshotlabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ"
+        },
+        {
+          "description": "nvidiaailabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA"
+        },
+        {
+          "description": "parisinriaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ"
+        },
+        {
+          "description": "perplexityai",
+          "weight": 1,
+          "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA"
+        },
+        {
+          "description": "seoulkaistai",
+          "weight": 1,
+          "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA"
+        },
+        {
+          "description": "stabilityhub",
+          "weight": 1,
+          "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug"
+        },
+        {
+          "description": "tencentailab",
+          "weight": 1,
+          "public_key": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA"
+        },
+        {
+          "description": "torontovectr",
+          "weight": 1,
+          "public_key": "PUB_BLS_LyihV-aoM7mdkeDhwAAjCuyGM8rBEsWLXfH9i1IXVNzpIEYfdhaTiRab4dQ6-roHXdOrkzxTMihjNzYsGX_8Mwq5jplSWIeEUk4PvoxUs6GafW4GV0C1ArsrdACYru0AuU8Faw"
+        },
+        {
+          "description": "zurichethnet",
+          "weight": 1,
+          "public_key": "PUB_BLS_L-gxuNbOw9rIIRx_M3hgrMYWmdP6CjNhuATecN0QNe0MI5IxjFzkV657W8OyjEAHXR1UZ3qeQOuWZpzNNx5DlCkrGhiHeN9s7eCO-x-gUaeLJjdJLMN42wConAAWLU0WbyVexQ"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "anthropiclab",
+        "public_key": "PUB_BLS_kXjL6WGrWSVfZLJP0ZJtB2SP7JdBhrR3NNx8DbPzMCUi8QhohlsSpoYKJT8mB9MRPVTxeKS4Jq0P5E9K_YmrqmCik46h3IEb6SqW1xZFGb6EE8JiM142fyi6dkWzxMQAKOfP1Q",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60a87a66a659b092d4cd3cf3cd677b9e1e940bb1db9bc7d48c5f04e2ab13",
+        "voted_for_block_num": 680104,
+        "voted_for_block_timestamp": "2026-11-11T01:36:03.500"
+      },
+      {
+        "description": "berlintucomp",
+        "public_key": "PUB_BLS_fRMg43jqpgaVTavzFZd95O5Pcg-W-uVirPq8f8P8NBTxiZJqJYol3aJzumTlkDcL-pCud84Ud3t2010PGZlKjDJWObeVs0doaulKuthOgubEP1GK3ILo2MCfRTOkTBUXROx0FQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "bostonmiteng",
+        "public_key": "PUB_BLS_1FsFC-f30wi70ApiLGOEvGOTQ-lfxHj4-H-Lr0D0QZUmDMUKmvjSFP3RVU-v0ZoGUVA6ZECfIao5Poj4VFzAvVcjSnBKqmwITnsq2i5xU3lrVKC3GtM8ob8Jee1QEOAUPsSC3A",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "bytedancelab",
+        "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "canadamilaai",
+        "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "cohereclouds",
+        "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "deepseekcore",
+        "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "genevacernai",
+        "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "gptgenesisbp",
+        "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "londonucllab",
+        "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "minimaxcloud",
+        "public_key": "PUB_BLS_vz4JasRnigmjovjxI1UU7bCJBSP19i8G54Ai2duMu7LTlQqXCAZWcSmkFvYO-ZgE5UaqE9oKMTgJ7i0tzS7ndTcDhVTSp8zNFIN-8x-NbxXEjZFXWX3_gRJ-zPWMQO0RYhBu5A",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "mistralcloud",
+        "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "moonshotlabs",
+        "public_key": "PUB_BLS_3j4UXGfmBxsK4NwT1r7VEVDd9orPi0kRe-6-bSQGw_OnmD8E---v-qfUl0DOa6oRwj-UdBwBEr0N0rbUZS85Xcd08sZoK7IGigRYZ1F3jS-PQ1MHYj7pq5_PtVsdNL0FeAWNuQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "nvidiaailabs",
+        "public_key": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "parisinriaai",
+        "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60a4f4f167be232b1f5f85a42b59e470bc670fe3ac4061065171cc84942a",
+        "voted_for_block_num": 680100,
+        "voted_for_block_timestamp": "2026-11-11T01:36:01.500"
+      },
+      {
+        "description": "perplexityai",
+        "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "seoulkaistai",
+        "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60a2c1eaba37229f5ff6d0ab7099992d36d68064eb6273bc6456eb2b3e06",
+        "voted_for_block_num": 680098,
+        "voted_for_block_timestamp": "2026-11-11T01:36:00.500"
+      },
+      {
+        "description": "stabilityhub",
+        "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "tencentailab",
+        "public_key": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "torontovectr",
+        "public_key": "PUB_BLS_LyihV-aoM7mdkeDhwAAjCuyGM8rBEsWLXfH9i1IXVNzpIEYfdhaTiRab4dQ6-roHXdOrkzxTMihjNzYsGX_8Mwq5jplSWIeEUk4PvoxUs6GafW4GV0C1ArsrdACYru0AuU8Faw",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      },
+      {
+        "description": "zurichethnet",
+        "public_key": "PUB_BLS_L-gxuNbOw9rIIRx_M3hgrMYWmdP6CjNhuATecN0QNe0MI5IxjFzkV657W8OyjEAHXR1UZ3qeQOuWZpzNNx5DlCkrGhiHeN9s7eCO-x-gUaeLJjdJLMN42wConAAWLU0WbyVexQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 617,
+        "voted_for_block_id": "000a60ab175c119608ee726d696ed3df46306372250306b3bbe54f35f814e529",
+        "voted_for_block_num": 680107,
+        "voted_for_block_timestamp": "2026-11-11T01:36:06.500"
+      }
+    ]
+  },
+  "schedule": {
+    "active": {
+      "version": 616,
+      "producers": [
+        {
+          "producer_name": "anthropiclab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6b7MpaHocbAiPVYXkKw9W8PeVPChuoD5KCYzUB8bUPUcx6ZcEL",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "berlintucomp",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7pzmSmEQEqkJM82omnpPg3gAWgtt47oYR7i3QBK9ggkrUgM8HM",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "bostonmiteng",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6c2TbYrs3PTTrB5oQLhAnsR82KrNKiZQbn294sNdz6Te2brgLF",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "bytedancelab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7TL4hZUx7sZWjojwXnUAma8WjVY738z7DfiH8bTekiRrg7JB7a",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "canadamilaai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5i2xeLTqGnas8vYR7qaGVCRZPJmHE5LXXmCN7TJWdBN3cMy8Xj",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "cohereclouds",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7dzsrX5Wieqy6AU92jUBaiEc1iPH5ECGK7TDb8gVx6eLCHYny7",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "deepseekcore",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_82C5R1GCKTEeSteyNLe2NxbEWykxvk91NJ7zYZ72TnnRNYU4NZ",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "genevacernai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5ir4vk6a9NtZX4w6wk4RBAYgba98ZsuKSUsC9a9wrdud6xPX44",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "gptgenesisbp",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Z7gBb9WkD1bwf6AitWi1hU8dnFEAXjtB9s9wQWSGGg7kEuLeV",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "londonucllab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8FvkzAk4sBXZzDFH8GVZ669eqxztrQPsLtunieUJzstyRdAFMy",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "minimaxcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6LPMsF4UMBF7witPR5UhAi3XxXNLaccyfwcQEii2tHi4cxpqjG",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "mistralcloud",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8U2jg8oadcMoqcrXZzLorgStsArQ2Dzbmqed6dQ7MdwkFAiRX4",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "moonshotlabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8433Wcp4Bw7FZN3v62jfuEXreWhpPkvCAP4vcqMyrPAQeiico2",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "nvidiaailabs",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7szXHbFL9QCy776zGTwkJ6p2L42gBCfD4XhgYc7VoKZTwrLHxd",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "parisinriaai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7KYKjytwBHrSfXKfsQ8y8V954z7CeNUADJprupH6HiH5uMy226",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "perplexityai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8Yn6KLf4U2uX7dneKAo9r76cymTDZtp9EMqiF2M6KeUW4viBkm",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "seoulkaistai",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_6x78eaVRdoXhiLcqx4eh6dEPYWbrmTRZJ8NZd6ZuPVAnz4siGC",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "stabilityhub",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5h6akTuUMugNb2WPo3ZHtXHtmHQwTWb1XH39rgQmGnvsj3hmsf",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "tencentailab",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_7ULjf8bu75ikXtZuF4bQij1KF14837TU7WrLafZdYp6rWybnWH",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "torontovectr",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_8TGBHQJWHgzMuKT9M6UtdtbnchHe1GN4fUJKEDmyWfgiZfjDpE",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "producer_name": "zurichethnet",
+          "authority": [
+            0,
+            {
+              "threshold": 1,
+              "keys": [
+                {
+                  "key": "PUB_K1_5axE1d7N7UAVL7mevm7YWyjBwQYMcuyFafYrZp1y73vcHCPPF5",
+                  "weight": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pending": null,
+    "proposed": null
+  },
+  "memory": {
+    "MemAvailable": 613236736,
+    "SwapTotal": 60129521664,
+    "SwapFree": 204800
+  },
+  "protected_PIDs": {
+    "pureeos-devnet-bp-anthropiclab-20261105.service": "3881453",
+    "pureeos-devnet-bp-bytedancelab-20261105.service": "3881499",
+    "pureeos-devnet-bp-canadamilaai-20261105.service": "3881546",
+    "pureeos-devnet-bp-cohereclouds-20261105.service": "3881591",
+    "pureeos-devnet-bp-deepseekcore-20261105.service": "3881684",
+    "pureeos-bp-demo-genevacernai-20261105.service": "3881730",
+    "pureeos-devnet-founder-20261105.service": "3884778",
+    "pureeos-devnet-bp-londonucllab-20261105.service": "3881852",
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": "3881878",
+    "pureeos-devnet-bp-mistralcloud-20261105.service": "3881939",
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": "3881990",
+    "pureeos-devnet-bp-parisinriaai-20261105.service": "3882091",
+    "pureeos-devnet-bp-perplexityai-20261105.service": "3882140",
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": "3882265",
+    "pureeos-devnet-bp-stabilityhub-20261105.service": "3882479",
+    "pureeos-bp-extra-torontovectr-20261106.service": "38342",
+    "pureeos-bp-replacement-berlintucomp-20261110.service": "3885992",
+    "pureeos-bp-replacement-bostonmiteng-20261110.service": "3886495",
+    "pureeos-bp-replacement-nvidiaailabs-20261110.service": "3887103",
+    "pureeos-bp-replacement-tencentailab-20261110.service": "3888325",
+    "pureeos-bp-replacement-zurichethnet-20261110.service": "3889347",
+    "pureeos-devnet-history-20261105.service": "13051"
+  },
+  "targets": {
+    "alibabacloud": {
+      "MainPID": "3881323",
+      "Result": "success",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "deepmindlabs": {
+      "MainPID": "3881639",
+      "Result": "success",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "openaiclouds": {
+      "MainPID": "3882044",
+      "Result": "success",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "sydneyunswai": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "NRestarts": "59",
+      "ActiveState": "failed",
+      "SubState": "failed",
+      "UnitFileState": "enabled"
+    }
+  }
+}

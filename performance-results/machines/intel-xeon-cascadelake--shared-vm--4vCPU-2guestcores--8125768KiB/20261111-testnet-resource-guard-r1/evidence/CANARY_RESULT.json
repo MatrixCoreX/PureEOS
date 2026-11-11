@@ -1,0 +1,155 @@
+{
+  "status": "PASS_ONE_SAME_DATA_CANARY",
+  "utc": "2026-11-11T01:39:03.269191+00:00",
+  "name": "berlintucomp",
+  "unit": "pureeos-bp-replacement-berlintucomp-20261110.service",
+  "elapsed_seconds": 9.077481294982135,
+  "oldPID": 3885992,
+  "newPID": 4009042,
+  "before_memory": {
+    "VmRSS": 187260928,
+    "VmSwap": 1891250176
+  },
+  "after_memory": {
+    "VmRSS": 54460416,
+    "VmSwap": 0
+  },
+  "host_memory": {
+    "MemAvailable": 1210880000,
+    "SwapTotal": 60129521664,
+    "SwapFree": 9356906496
+  },
+  "state": {
+    "MainPID": "4009042",
+    "Result": "success",
+    "NRestarts": "0",
+    "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-berlintucomp-20261110.service",
+    "TasksCurrent": "10",
+    "ActiveState": "active"
+  },
+  "sync_samples": [
+    {
+      "utc": "2026-11-11T01:38:58.994117+00:00",
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 680435,
+        "last_irreversible_block_num": 680433,
+        "last_irreversible_block_id": "000a61f1487bde1ac5061da5a5605b41181084d179137ec1e4760f6b7fd593bf",
+        "head_block_id": "000a61f36942bf62ca3601e0a6df1316190257dbbc34886c04f837ea48a7327f",
+        "head_block_time": "2026-11-11T01:38:59.000",
+        "head_block_producer": "zurichethnet",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 680435,
+        "fork_db_head_block_id": "000a61f36942bf62ca3601e0a6df1316190257dbbc34886c04f837ea48a7327f",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6543398250",
+        "total_net_weight": 247090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T01:38:58.000"
+      }
+    },
+    {
+      "utc": "2026-11-11T01:39:01.041075+00:00",
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 680439,
+        "last_irreversible_block_num": 680437,
+        "last_irreversible_block_id": "000a61f5857c2709d45a3abe9277536dbda34dd010190447590a5391028c1bb4",
+        "head_block_id": "000a61f77ee1bbdb0255c0697595ef31e2f4713d325c0c8da66e127cd0d4b53f",
+        "head_block_time": "2026-11-11T01:39:01.000",
+        "head_block_producer": "anthropiclab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 680439,
+        "fork_db_head_block_id": "000a61f77ee1bbdb0255c0697595ef31e2f4713d325c0c8da66e127cd0d4b53f",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6543398250",
+        "total_net_weight": 247090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T01:39:00.000"
+      }
+    },
+    {
+      "utc": "2026-11-11T01:39:03.047249+00:00",
+      "info": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 680442,
+        "last_irreversible_block_num": 680438,
+        "last_irreversible_block_id": "000a61f63f7dc11d55de79e101034a85abd0043f6b90b0d0dce0eefa260d9330",
+        "head_block_id": "000a61fa518b4ffed609265ee3e6fc96b13486de6d75c272b0bf26e2c46a5924",
+        "head_block_time": "2026-11-11T01:39:02.500",
+        "head_block_producer": "anthropiclab",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 680442,
+        "fork_db_head_block_id": "000a61fa518b4ffed609265ee3e6fc96b13486de6d75c272b0bf26e2c46a5924",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6543398250",
+        "total_net_weight": 247090000,
+        "earliest_available_block_num": 536420,
+        "last_irreversible_block_time": "2026-11-11T01:39:00.500"
+      }
+    }
+  ],
+  "after_guard": {
+    "utc": "2026-11-11T01:39:03.269156+00:00",
+    "info": {
+      "server_version": "42dda604",
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 680443,
+      "last_irreversible_block_num": 680439,
+      "last_irreversible_block_id": "000a61f77ee1bbdb0255c0697595ef31e2f4713d325c0c8da66e127cd0d4b53f",
+      "head_block_id": "000a61fbab59a72dc23d2e57b3864f9b36507ec8b96ba660bd17ab83c8385944",
+      "head_block_time": "2026-11-11T01:39:03.000",
+      "head_block_producer": "anthropiclab",
+      "virtual_block_cpu_limit": 800000000,
+      "virtual_block_net_limit": 1048576000,
+      "block_cpu_limit": 800000,
+      "block_net_limit": 1048576,
+      "server_version_string": "v1.0.0-test.2-dev",
+      "fork_db_head_block_num": 680443,
+      "fork_db_head_block_id": "000a61fbab59a72dc23d2e57b3864f9b36507ec8b96ba660bd17ab83c8385944",
+      "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+      "total_cpu_weight": "6543398250",
+      "total_net_weight": 247090000,
+      "earliest_available_block_num": 1,
+      "last_irreversible_block_time": "2026-11-11T01:39:01.000"
+    },
+    "recent_other_strong_votes": [
+      "anthropiclab",
+      "bostonmiteng",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepseekcore",
+      "genevacernai",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaailabs",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethnet"
+    ]
+  },
+  "other20_PIDs_unchanged": true
+}

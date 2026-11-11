@@ -1,0 +1,2 @@
+# Diagnostic captures preserve original bytes, including terminal blank lines.
+evidence/diagnostic-failures/*.stderr whitespace=-blank-at-eof

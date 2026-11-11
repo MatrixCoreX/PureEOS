@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "utc": "2026-11-11T01:46:49.469424+00:00",
+  "snapshot": "/opt/pureeos-testnet-new-ban-20261111-r1/replacement-checkpoint.bin",
+  "sha256": "23a343cd4ec50c9457a90bbbdd75223cd4f6bf5e8a64d17e2c3c2b90c6ca35ed",
+  "bytes": 3230410,
+  "block_num": 681373,
+  "block_id": "000a659d7412d6bf843600b731516947feb23b8f8cf7105e1758be1029eff14b",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+}

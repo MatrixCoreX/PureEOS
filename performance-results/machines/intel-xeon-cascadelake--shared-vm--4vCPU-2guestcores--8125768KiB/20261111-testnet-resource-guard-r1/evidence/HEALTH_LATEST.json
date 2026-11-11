@@ -1,0 +1,379 @@
+{
+  "utc": "2026-11-11T02:06:19.571005+00:00",
+  "actions": [],
+  "alerts": [],
+  "policy": "Only relative CPU/IO weights. No CPU quotas, node restarts/stops, transactions, data deletion or swap allocation.",
+  "memory": {
+    "MemAvailable": 5070606336,
+    "SwapTotal": 60129521664,
+    "SwapFree": 56230289408
+  },
+  "disk_available_bytes": 26334228480,
+  "pressure": {
+    "cpu": "some avg10=96.15 avg60=95.57 avg300=94.80 total=252131436490\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+    "memory": "some avg10=0.00 avg60=0.00 avg300=0.03 total=14199428161\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=7738756251\n",
+    "io": "some avg10=11.18 avg60=8.66 avg300=8.17 total=59456517569\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1169667945\n"
+  },
+  "chain": {
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 683711,
+    "head_block_time": "2026-11-11T02:06:19.500",
+    "last_irreversible_block_num": 683709,
+    "last_irreversible_block_time": "2026-11-11T02:06:18.500"
+  },
+  "head_age_seconds": 0.175001,
+  "LIB_age_seconds": 1.175018,
+  "recent10s_strong_votes": 21,
+  "priority_duties": [
+    "alibabaailab",
+    "berlintucomp",
+    "bostonmiteng",
+    "bytedancelab",
+    "canadamilaai",
+    "deepmindtech",
+    "deepseekcore",
+    "genevacernai",
+    "londonucllab",
+    "minimaxcloud",
+    "mistralcloud",
+    "moonshotlabs",
+    "nvidiaailabs",
+    "openaimodels",
+    "parisinriaai",
+    "perplexityai",
+    "seoulkaistai",
+    "stabilityhub",
+    "tencentailab",
+    "torontovectr",
+    "zurichethnet"
+  ],
+  "BP_processes": {
+    "anthropiclab": {
+      "state": {
+        "MainPID": "4011126",
+        "NRestarts": "0",
+        "CPUWeight": "250",
+        "IOWeight": "250",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 67764224,
+        "VmSwap": 0
+      }
+    },
+    "bytedancelab": {
+      "state": {
+        "MainPID": "4012789",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 84983808,
+        "VmSwap": 0
+      }
+    },
+    "canadamilaai": {
+      "state": {
+        "MainPID": "4011355",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 70299648,
+        "VmSwap": 0
+      }
+    },
+    "cohereclouds": {
+      "state": {
+        "MainPID": "4011467",
+        "NRestarts": "0",
+        "CPUWeight": "250",
+        "IOWeight": "250",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 65769472,
+        "VmSwap": 0
+      }
+    },
+    "deepseekcore": {
+      "state": {
+        "MainPID": "4012260",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 77762560,
+        "VmSwap": 0
+      }
+    },
+    "genevacernai": {
+      "state": {
+        "MainPID": "4011601",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 70619136,
+        "VmSwap": 0
+      }
+    },
+    "gptgenesisbp": {
+      "state": {
+        "MainPID": "4011712",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 73494528,
+        "VmSwap": 0
+      }
+    },
+    "londonucllab": {
+      "state": {
+        "MainPID": "4012143",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 81657856,
+        "VmSwap": 0
+      }
+    },
+    "minimaxcloud": {
+      "state": {
+        "MainPID": "4011822",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 77975552,
+        "VmSwap": 0
+      }
+    },
+    "mistralcloud": {
+      "state": {
+        "MainPID": "4011960",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 80183296,
+        "VmSwap": 0
+      }
+    },
+    "moonshotlabs": {
+      "state": {
+        "MainPID": "4010331",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 70639616,
+        "VmSwap": 0
+      }
+    },
+    "parisinriaai": {
+      "state": {
+        "MainPID": "4010450",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 74870784,
+        "VmSwap": 0
+      }
+    },
+    "perplexityai": {
+      "state": {
+        "MainPID": "4009516",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 71675904,
+        "VmSwap": 0
+      }
+    },
+    "seoulkaistai": {
+      "state": {
+        "MainPID": "4012397",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 77824000,
+        "VmSwap": 0
+      }
+    },
+    "stabilityhub": {
+      "state": {
+        "MainPID": "4010695",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 71589888,
+        "VmSwap": 0
+      }
+    },
+    "torontovectr": {
+      "state": {
+        "MainPID": "4010804",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 72835072,
+        "VmSwap": 0
+      }
+    },
+    "berlintucomp": {
+      "state": {
+        "MainPID": "4009042",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 71589888,
+        "VmSwap": 0
+      }
+    },
+    "bostonmiteng": {
+      "state": {
+        "MainPID": "4011245",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 66863104,
+        "VmSwap": 0
+      }
+    },
+    "nvidiaailabs": {
+      "state": {
+        "MainPID": "4010560",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 73269248,
+        "VmSwap": 0
+      }
+    },
+    "tencentailab": {
+      "state": {
+        "MainPID": "4012512",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 68820992,
+        "VmSwap": 0
+      }
+    },
+    "zurichethnet": {
+      "state": {
+        "MainPID": "4010914",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 73412608,
+        "VmSwap": 0
+      }
+    },
+    "alibabaailab": {
+      "state": {
+        "MainPID": "4014406",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 59273216,
+        "VmSwap": 0
+      }
+    },
+    "deepmindtech": {
+      "state": {
+        "MainPID": "4014915",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 62758912,
+        "VmSwap": 0
+      }
+    },
+    "openaimodels": {
+      "state": {
+        "MainPID": "4015379",
+        "NRestarts": "0",
+        "CPUWeight": "500",
+        "IOWeight": "500",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 71258112,
+        "VmSwap": 0
+      }
+    },
+    "sydneyunswcs": {
+      "state": {
+        "MainPID": "4015905",
+        "NRestarts": "0",
+        "CPUWeight": "250",
+        "IOWeight": "250",
+        "ActiveState": "active"
+      },
+      "process_bytes": {
+        "VmRSS": 56049664,
+        "VmSwap": 0
+      }
+    }
+  },
+  "running_BP_count": 25,
+  "status": "OK"
+}

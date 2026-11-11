@@ -1,0 +1,205 @@
+{
+  "status": "STOPPED_NEEDS_READONLY_RECONCILIATION",
+  "utc": "2026-11-11T01:40:52.311480+00:00",
+  "completed": [],
+  "remaining": [
+    "anthropiclab",
+    "bostonmiteng",
+    "bytedancelab",
+    "canadamilaai",
+    "cohereclouds",
+    "deepseekcore",
+    "genevacernai",
+    "gptgenesisbp",
+    "londonucllab",
+    "minimaxcloud",
+    "mistralcloud",
+    "moonshotlabs",
+    "nvidiaailabs",
+    "parisinriaai",
+    "perplexityai",
+    "seoulkaistai",
+    "stabilityhub",
+    "tencentailab",
+    "torontovectr",
+    "zurichethnet"
+  ],
+  "initial_memory": {
+    "MemAvailable": 1200152576,
+    "SwapTotal": 60129521664,
+    "SwapFree": 9368137728
+  },
+  "initial_PIDs": {
+    "anthropiclab": {
+      "MainPID": "3881453",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-anthropiclab-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "bytedancelab": {
+      "MainPID": "3881499",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-bytedancelab-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "canadamilaai": {
+      "MainPID": "3881546",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-canadamilaai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "cohereclouds": {
+      "MainPID": "3881591",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-cohereclouds-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "deepseekcore": {
+      "MainPID": "3881684",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-deepseekcore-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "genevacernai": {
+      "MainPID": "3881730",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-demo-genevacernai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "gptgenesisbp": {
+      "MainPID": "3884778",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-founder-20261105.service",
+      "TasksCurrent": "27",
+      "ActiveState": "active"
+    },
+    "londonucllab": {
+      "MainPID": "3881852",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-londonucllab-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "minimaxcloud": {
+      "MainPID": "3881878",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "mistralcloud": {
+      "MainPID": "3881939",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-mistralcloud-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "moonshotlabs": {
+      "MainPID": "3881990",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "parisinriaai": {
+      "MainPID": "3882091",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-parisinriaai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "perplexityai": {
+      "MainPID": "3882140",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-perplexityai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "seoulkaistai": {
+      "MainPID": "3882265",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-seoulkaistai-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "stabilityhub": {
+      "MainPID": "3882479",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-stabilityhub-20261105.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "torontovectr": {
+      "MainPID": "38342",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/system.slice/pureeos-bp-extra-torontovectr-20261106.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "berlintucomp": {
+      "MainPID": "4009042",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-berlintucomp-20261110.service",
+      "TasksCurrent": "10",
+      "ActiveState": "active"
+    },
+    "bostonmiteng": {
+      "MainPID": "3886495",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-bostonmiteng-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "nvidiaailabs": {
+      "MainPID": "3887103",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-nvidiaailabs-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "tencentailab": {
+      "MainPID": "3888325",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-tencentailab-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    },
+    "zurichethnet": {
+      "MainPID": "3889347",
+      "Result": "success",
+      "NRestarts": "0",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-zurichethnet-20261110.service",
+      "TasksCurrent": "16",
+      "ActiveState": "active"
+    }
+  },
+  "current": "perplexityai",
+  "next_slot_seconds": 114.5,
+  "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-testnet-new-ban-20261111-r1/rolling_optimize.py\", line 61, in <module>\n    assert safety.stat().st_ino==safety_inode,'Never replace finalizer safety'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Never replace finalizer safety\n"
+}

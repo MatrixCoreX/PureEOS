@@ -1,0 +1,999 @@
+{
+  "status": "PASS_TESTNET_OPTIMIZED_REPLACED_AND_GUARDS_ACTIVE",
+  "utc": "2026-11-11T02:05:11.829681+00:00",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 683575,
+    "last_irreversible_block_num": 683571,
+    "last_irreversible_block_id": "000a6e330445800db7dca8ff9f0cfc02a969178e15ce51a79f92948cfdce3bc0",
+    "head_block_id": "000a6e37be7ce71cf3a8aa20d1a18383963fefb5c064851562191e399467e7df",
+    "head_block_time": "2026-11-11T02:05:11.500",
+    "head_block_producer": "minimaxcloud",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 683575,
+    "fork_db_head_block_id": "000a6e37be7ce71cf3a8aa20d1a18383963fefb5c064851562191e399467e7df",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T02:05:09.500"
+  },
+  "profiles_all25": {
+    "anthropiclab": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011126"
+    },
+    "bytedancelab": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4012789"
+    },
+    "canadamilaai": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011355"
+    },
+    "cohereclouds": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011467"
+    },
+    "deepseekcore": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4012260"
+    },
+    "genevacernai": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011601"
+    },
+    "gptgenesisbp": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011712"
+    },
+    "londonucllab": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4012143"
+    },
+    "minimaxcloud": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011822"
+    },
+    "mistralcloud": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011960"
+    },
+    "moonshotlabs": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4010331"
+    },
+    "parisinriaai": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4010450"
+    },
+    "perplexityai": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4009516"
+    },
+    "seoulkaistai": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4012397"
+    },
+    "stabilityhub": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4010695"
+    },
+    "torontovectr": {
+      "profile": {
+        "chain-state-db-size-mb": "4096",
+        "chain-state-db-guard-size-mb": "128",
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4010804"
+    },
+    "berlintucomp": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4009042"
+    },
+    "bostonmiteng": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4011245"
+    },
+    "nvidiaailabs": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4010560"
+    },
+    "tencentailab": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4012512"
+    },
+    "zurichethnet": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4010914"
+    },
+    "alibabaailab": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4014406"
+    },
+    "deepmindtech": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4014915"
+    },
+    "openaimodels": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4015379"
+    },
+    "sydneyunswcs": {
+      "profile": {
+        "chain-threads": "1",
+        "vote-threads": "2",
+        "net-threads": "1",
+        "validation-mode": "full",
+        "wasm-runtime": "eos-vm-jit",
+        "chain-state-db-size-mb": "512",
+        "chain-state-db-guard-size-mb": "32"
+      },
+      "allocator": [
+        "MALLOC_ARENA_MAX=2",
+        "MALLOC_TRIM_THRESHOLD_=131072"
+      ],
+      "PID": "4015905"
+    }
+  },
+  "timers": {
+    "pureeos-testnet-memory-guard-20261111.timer": {
+      "NextElapseUSecRealtime": "",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-testnet-health-priority-20261111.timer": {
+      "NextElapseUSecRealtime": "",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-syslog-rotation-20261111.timer": {
+      "NextElapseUSecRealtime": "Wed 2026-11-11 03:00:00 UTC",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "distinct_vote_totals": 41,
+  "native_bans": 15,
+  "all25_eligible_zero_windows": 0,
+  "old_bonds_unchanged": true,
+  "new_own_bonds_AIC": 40000,
+  "existing_test_funds_transferred_AIC": 64000,
+  "new_RAM_budget_AIC": 4,
+  "owned_external_ballots_redirected": 14,
+  "canonical_new_transactions": 15,
+  "no_kernel_OOM_since": "2026-11-11T01:30:00Z",
+  "kernel_query": "-- No entries --\n",
+  "no_automatic_memory_restart_needed": true,
+  "recycle_latest": {
+    "utc": "2026-11-11T02:05:09.009972+00:00",
+    "check_only": false,
+    "threshold_bytes": 1342177280,
+    "cooldown_seconds": 600,
+    "source_binary_chain_rules_unchanged": true,
+    "largest_process_bytes": 84856832,
+    "over_threshold": {},
+    "head": 683570,
+    "LIB": 683567,
+    "recent_strong_votes": 21,
+    "eligible_candidates": [],
+    "status": "NO_ACTION_ALL_BELOW1280MiB"
+  },
+  "health": {
+    "utc": "2026-11-11T02:05:01.620315+00:00",
+    "actions": [],
+    "alerts": [],
+    "policy": "Only relative CPU/IO weights. No CPU quotas, node restarts/stops, transactions, data deletion or swap allocation.",
+    "memory": {
+      "MemAvailable": 5067354112,
+      "SwapTotal": 60129521664,
+      "SwapFree": 56231493632
+    },
+    "disk_available_bytes": 26351091712,
+    "pressure": {
+      "cpu": "some avg10=95.99 avg60=95.12 avg300=94.54 total=252056540181\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+      "memory": "some avg10=0.00 avg60=0.00 avg300=0.05 total=14199414083\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=7738750350\n",
+      "io": "some avg10=7.07 avg60=6.53 avg300=7.65 total=59448529461\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1169661017\n"
+    },
+    "chain": {
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "head_block_num": 683555,
+      "head_block_time": "2026-11-11T02:05:01.500",
+      "last_irreversible_block_num": 683539,
+      "last_irreversible_block_time": "2026-11-11T02:04:53.500"
+    },
+    "head_age_seconds": 0.387925,
+    "LIB_age_seconds": 8.387939,
+    "recent10s_strong_votes": 21,
+    "priority_duties": [
+      "alibabaailab",
+      "berlintucomp",
+      "bostonmiteng",
+      "bytedancelab",
+      "canadamilaai",
+      "deepmindtech",
+      "deepseekcore",
+      "genevacernai",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "moonshotlabs",
+      "nvidiaailabs",
+      "openaimodels",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethnet"
+    ],
+    "BP_processes": {
+      "anthropiclab": {
+        "state": {
+          "MainPID": "4011126",
+          "NRestarts": "0",
+          "CPUWeight": "250",
+          "IOWeight": "250",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 67817472,
+          "VmSwap": 0
+        }
+      },
+      "bytedancelab": {
+        "state": {
+          "MainPID": "4012789",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 84873216,
+          "VmSwap": 0
+        }
+      },
+      "canadamilaai": {
+        "state": {
+          "MainPID": "4011355",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 70377472,
+          "VmSwap": 0
+        }
+      },
+      "cohereclouds": {
+        "state": {
+          "MainPID": "4011467",
+          "NRestarts": "0",
+          "CPUWeight": "250",
+          "IOWeight": "250",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 65798144,
+          "VmSwap": 0
+        }
+      },
+      "deepseekcore": {
+        "state": {
+          "MainPID": "4012260",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 77778944,
+          "VmSwap": 0
+        }
+      },
+      "genevacernai": {
+        "state": {
+          "MainPID": "4011601",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 71213056,
+          "VmSwap": 0
+        }
+      },
+      "gptgenesisbp": {
+        "state": {
+          "MainPID": "4011712",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 73445376,
+          "VmSwap": 0
+        }
+      },
+      "londonucllab": {
+        "state": {
+          "MainPID": "4012143",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 81465344,
+          "VmSwap": 0
+        }
+      },
+      "minimaxcloud": {
+        "state": {
+          "MainPID": "4011822",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 76656640,
+          "VmSwap": 0
+        }
+      },
+      "mistralcloud": {
+        "state": {
+          "MainPID": "4011960",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 80281600,
+          "VmSwap": 0
+        }
+      },
+      "moonshotlabs": {
+        "state": {
+          "MainPID": "4010331",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 70885376,
+          "VmSwap": 0
+        }
+      },
+      "parisinriaai": {
+        "state": {
+          "MainPID": "4010450",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 74129408,
+          "VmSwap": 0
+        }
+      },
+      "perplexityai": {
+        "state": {
+          "MainPID": "4009516",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 72163328,
+          "VmSwap": 0
+        }
+      },
+      "seoulkaistai": {
+        "state": {
+          "MainPID": "4012397",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 77639680,
+          "VmSwap": 0
+        }
+      },
+      "stabilityhub": {
+        "state": {
+          "MainPID": "4010695",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 71708672,
+          "VmSwap": 0
+        }
+      },
+      "torontovectr": {
+        "state": {
+          "MainPID": "4010804",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 73056256,
+          "VmSwap": 0
+        }
+      },
+      "berlintucomp": {
+        "state": {
+          "MainPID": "4009042",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 72138752,
+          "VmSwap": 0
+        }
+      },
+      "bostonmiteng": {
+        "state": {
+          "MainPID": "4011245",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 67174400,
+          "VmSwap": 0
+        }
+      },
+      "nvidiaailabs": {
+        "state": {
+          "MainPID": "4010560",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 73129984,
+          "VmSwap": 0
+        }
+      },
+      "tencentailab": {
+        "state": {
+          "MainPID": "4012512",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 68419584,
+          "VmSwap": 0
+        }
+      },
+      "zurichethnet": {
+        "state": {
+          "MainPID": "4010914",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 73564160,
+          "VmSwap": 0
+        }
+      },
+      "alibabaailab": {
+        "state": {
+          "MainPID": "4014406",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 59936768,
+          "VmSwap": 0
+        }
+      },
+      "deepmindtech": {
+        "state": {
+          "MainPID": "4014915",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 62697472,
+          "VmSwap": 0
+        }
+      },
+      "openaimodels": {
+        "state": {
+          "MainPID": "4015379",
+          "NRestarts": "0",
+          "CPUWeight": "500",
+          "IOWeight": "500",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 71249920,
+          "VmSwap": 0
+        }
+      },
+      "sydneyunswcs": {
+        "state": {
+          "MainPID": "4015905",
+          "NRestarts": "0",
+          "CPUWeight": "250",
+          "IOWeight": "250",
+          "ActiveState": "active"
+        },
+        "process_bytes": {
+          "VmRSS": 56180736,
+          "VmSwap": 0
+        }
+      }
+    },
+    "running_BP_count": 25,
+    "status": "OK"
+  },
+  "cleanup": {
+    "status": "PASS_FOUR_NEW_BANS_STOPPED_SEVEN_DATA_ROOTS_CLEARED",
+    "utc": "2026-11-11T01:37:21.719570+00:00",
+    "completed": [
+      {
+        "owner": "alibabacloud",
+        "root": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data",
+        "removed_allocated_bytes": 267726848,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 16162186,
+            "mtime_ns": 1794344641052448405,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "e5630066e787a19fe8eac53dff0c8dc2dc47a0e9886a5b5103faf3a5edf35a93"
+          }
+        ]
+      },
+      {
+        "owner": "alibabacloud",
+        "root": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110",
+        "removed_allocated_bytes": 248270848,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 15767979,
+            "mtime_ns": 1794168107140960892,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "c500d723b172c60aec683b6ba5e6eac6ac620828bbe04e5967ae5acb535de79c"
+          }
+        ]
+      },
+      {
+        "owner": "deepmindlabs",
+        "root": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data",
+        "removed_allocated_bytes": 260120576,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 16160427,
+            "mtime_ns": 1794334343053297762,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "dffbfb63d4e64828dee625044f6a88221eab778b6bcf07086e81d53ed9dc3a18"
+          }
+        ]
+      },
+      {
+        "owner": "deepmindlabs",
+        "root": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110",
+        "removed_allocated_bytes": 166772736,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 15725986,
+            "mtime_ns": 1794064002030575616,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "8d16f61d30ac4aea001e4d72b0ef9e428137cb300ba741d794764a5d8a8ebcd1"
+          }
+        ]
+      },
+      {
+        "owner": "openaiclouds",
+        "root": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data",
+        "removed_allocated_bytes": 268431360,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 16163193,
+            "mtime_ns": 1794345227052654806,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "a3b69d12f2b0499da8a02b3618a0808e95041d314668dfa1120891f9dadc8c84"
+          }
+        ]
+      },
+      {
+        "owner": "openaiclouds",
+        "root": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110",
+        "removed_allocated_bytes": 258433024,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 15768127,
+            "mtime_ns": 1794170260153285148,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "a6ba87f8abcb600c24a5f9ff20bd887114438babfb8d7ca0b76e926f7cbca51f"
+          }
+        ]
+      },
+      {
+        "owner": "sydneyunswai",
+        "root": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint",
+        "removed_allocated_bytes": 255102976,
+        "retained_safety": [
+          {
+            "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint/finalizers/safety.dat",
+            "size": 265,
+            "allocated": 4096,
+            "dev": 64770,
+            "ino": 17227465,
+            "mtime_ns": 1794284176166785633,
+            "mode": 33188,
+            "nlink": 1,
+            "sha256": "43ecea97834c21009a6c1e9417715ae2cc6f528ae5b31af37cb3ab8a4e2834a5"
+          }
+        ]
+      },
+      {
+        "owner": "sydneyunswai",
+        "log": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/nodeos.log",
+        "preserved_gzip": "/opt/pureeos-testnet-new-ban-20261111-r1/sydneyunswai-original-nodeos.log.gz",
+        "uncompressed_sha256": "3062b74e046a389a311ee08e591f340bd2423e232432644c02e0720169c68773",
+        "old_allocated": 694198272,
+        "new_allocated": 79949824
+      }
+    ],
+    "removed_data_allocated_bytes": 1724858368,
+    "verified_log_savings_bytes": 614248448,
+    "filesystem_available_delta_bytes": 2334978048,
+    "protected_PIDs_unchanged": true,
+    "old11_cleanup_not_replayed": true,
+    "all_configuration_keys_finalizer_safety_retained": true
+  },
+  "same_binary_source_consensus_no_new_server": true,
+  "financial_signer_closed": true,
+  "all_one_shot_mutation_phases_complete_never_replay": true
+}

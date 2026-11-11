@@ -1,0 +1,2 @@
+# Preserve byte identity of the qualified helper source.
+ops_common.py whitespace=-blank-at-eof

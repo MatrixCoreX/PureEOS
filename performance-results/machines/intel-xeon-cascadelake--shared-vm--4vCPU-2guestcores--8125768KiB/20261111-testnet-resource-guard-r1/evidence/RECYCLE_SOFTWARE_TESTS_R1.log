@@ -1,0 +1,50 @@
+test_below_limit_never_stops (__main__.SafetyTests.test_below_limit_never_stops) ... ok
+test_binary_change_blocks_recycle (__main__.SafetyTests.test_binary_change_blocks_recycle) ... /usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmpg9phprju/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_check_only_never_changes_services (__main__.SafetyTests.test_check_only_never_changes_services) ... ok
+test_existing_miss_streak_blocks_target (__main__.SafetyTests.test_existing_miss_streak_blocks_target) ... /usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmpo5cdvqsv/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmp4y5730cm/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_failed_start_latches_and_keeps_safeguard (__main__.SafetyTests.test_failed_start_latches_and_keeps_safeguard) ... /usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmp_mpg2m31/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmp0mgs2umi/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_insufficient_votes_never_stops (__main__.SafetyTests.test_insufficient_votes_never_stops) ... ok
+test_missing_node_blocks_second_outage (__main__.SafetyTests.test_missing_node_blocks_second_outage) ... /usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmptche9xnf/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_one_standby_recycles_with_safeguard_then_cooldown (__main__.SafetyTests.test_one_standby_recycles_with_safeguard_then_cooldown) ... /usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmplvyvwloj/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.14/ast.py:46: ResourceWarning: unclosed file <_io.FileIO name='/tmp/tmpjczar426/case/operational-restart.lock' mode='ab' closefd=True>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+FAIL
+test_stale_chain_never_stops (__main__.SafetyTests.test_stale_chain_never_stops) ... ok
+
+======================================================================
+FAIL: test_one_standby_recycles_with_safeguard_then_cooldown (__main__.SafetyTests.test_one_standby_recycles_with_safeguard_then_cooldown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/guagua/AntelopeIO/release-work-20261111/testnet-new-ban-r1/test_recycle_guard.py", line 79, in test_one_standby_recycles_with_safeguard_then_cooldown
+    self.assertTrue(any(a[0]=='systemd-run'and'--on-active=60s'in a for a in self.h.calls));self.assertEqual(self.h.execute()['status'],'NO_ACTION_COOLDOWN');self.assertEqual(len(self.h.stops()),1)
+                                                                                            ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ALERT_NO_FURTHER_AUTOMATIC_ACTION' != 'NO_ACTION_COOLDOWN'
+- ALERT_NO_FURTHER_AUTOMATIC_ACTION
++ NO_ACTION_COOLDOWN
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.174s
+
+FAILED (failures=1)

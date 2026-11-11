@@ -1,0 +1,111 @@
+{
+  "utc": "2026-11-11T01:38:53.735447+00:00",
+  "nodes": [
+    {
+      "name": "anthropiclab",
+      "PID_unchanged": 3881453,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "bytedancelab",
+      "PID_unchanged": 3881499,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "canadamilaai",
+      "PID_unchanged": 3881546,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "cohereclouds",
+      "PID_unchanged": 3881591,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "deepseekcore",
+      "PID_unchanged": 3881684,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "genevacernai",
+      "PID_unchanged": 3881730,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "gptgenesisbp",
+      "PID_unchanged": 3884778,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "londonucllab",
+      "PID_unchanged": 3881852,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "minimaxcloud",
+      "PID_unchanged": 3881878,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "mistralcloud",
+      "PID_unchanged": 3881939,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "moonshotlabs",
+      "PID_unchanged": 3881990,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "parisinriaai",
+      "PID_unchanged": 3882091,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "perplexityai",
+      "PID_unchanged": 3882140,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "seoulkaistai",
+      "PID_unchanged": 3882265,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "stabilityhub",
+      "PID_unchanged": 3882479,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "torontovectr",
+      "PID_unchanged": 38342,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "berlintucomp",
+      "PID_unchanged": 3885992,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "bostonmiteng",
+      "PID_unchanged": 3886495,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "nvidiaailabs",
+      "PID_unchanged": 3887103,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "tencentailab",
+      "PID_unchanged": 3888325,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    },
+    {
+      "name": "zurichethnet",
+      "PID_unchanged": 3889347,
+      "logging_sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+    }
+  ],
+  "all21_PIDs_unchanged": true
+}

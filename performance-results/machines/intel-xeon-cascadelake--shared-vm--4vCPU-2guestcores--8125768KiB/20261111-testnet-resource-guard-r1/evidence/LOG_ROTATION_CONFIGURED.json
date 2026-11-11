@@ -1,0 +1,15 @@
+{
+  "status": "PASS_TIMER_CONFIGURED_INITIAL_ROTATION_RUNNING",
+  "utc": "2026-11-11T01:42:08.990194+00:00",
+  "service": "pureeos-syslog-rotation-20261111.service",
+  "timer": "pureeos-syslog-rotation-20261111.timer",
+  "checks": "hourly",
+  "rotate": "daily or over128MiB",
+  "retention": "7compressed rotations/max7days",
+  "initial6GiB_log_preserved_compressed": true,
+  "auth_and_other_logs_policy_unchanged": true,
+  "journal_existing512MiB_cap_retained": true,
+  "fault_evidence_under_case_root_excluded": true,
+  "initial_worker_CPU_percent_cap": 10,
+  "debug_validation": "warning: logrotate in debug mode does nothing except printing debug messages!  Consider using verbose mode (-v) instead if this is not what you want.\n\nreading config file /etc/pureeos-syslog-logrotate.conf\ncompress_options is now  -1\nReading state from file: /var/lib/logrotate/pureeos-syslog.status\nstate file /var/lib/logrotate/pureeos-syslog.status does not exist\nAllocating hash table for state file, size 64 entries\n\nHandling 1 logs\n\nrotating pattern: /var/log/syslog  after 1 days (7 rotations)\nempty log files are not rotated, log files >= 134217728 are rotated earlier, old logs are removed\nswitching euid from 0 to 0 and egid from 0 to 104 (pid 4009891)\nconsidering log /var/log/syslog\nCreating new state\n  Now: 2026-11-11 01:42\n  Last rotated at 2026-11-11 01:00\n  log needs rotating\nrotating log /var/log/syslog, log->rotateCount is 7\ndateext suffix '-20261111'\nglob pattern '-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'\nold log /var/log/syslog.7.gz does not exist\nold log /var/log/syslog.6.gz does not exist\nold log /var/log/syslog.5.gz does not exist\nold log /var/log/syslog.4.gz does not exist\nold log /var/log/syslog.3.gz does not exist\nold log /var/log/syslog.2.gz does not exist\nold log /var/log/syslog.1.gz does not exist\nlog /var/log/syslog.8.gz doesn't exist -- won't try to dispose of it\nrenaming /var/log/syslog to /var/log/syslog.1\ncreating new /var/log/syslog mode = 0640 uid = 103 gid = 4\nrunning postrotate script\nrunning script with args /var/log/syslog  : \"\n        /usr/lib/rsyslog/rsyslog-rotate\n\"\ncompressing log with: /bin/gzip\nswitching euid from 0 to 0 and egid from 104 to 0 (pid 4009891)\n"
+}

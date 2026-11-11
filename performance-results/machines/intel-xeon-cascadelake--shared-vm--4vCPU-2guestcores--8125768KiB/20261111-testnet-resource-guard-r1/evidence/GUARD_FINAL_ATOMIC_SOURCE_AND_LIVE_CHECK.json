@@ -1,0 +1,8 @@
+{
+  "stdout": "{\"utc\": \"2026-11-11T02:03:15.003199+00:00\", \"check_only\": true, \"threshold_bytes\": 1342177280, \"cooldown_seconds\": 600, \"source_binary_chain_rules_unchanged\": true, \"largest_process_bytes\": 80785408, \"over_threshold\": {}, \"head\": 683342, \"LIB\": 683339, \"recent_strong_votes\": 21, \"eligible_candidates\": [], \"status\": \"NO_ACTION_ALL_BELOW1280MiB\"}\n",
+  "stderr": "",
+  "source_sha256": {
+    "recycle_guard.py": "12795695c359a3dd7c18bc23f08060e619f2f3b74dfb4fea88f7af1a3723d7e4",
+    "health_priority_watch.py": "2a62c3d7cec78e62e8bc2326972a95cc53c4f1857d7937194ea553006d702eaa"
+  }
+}

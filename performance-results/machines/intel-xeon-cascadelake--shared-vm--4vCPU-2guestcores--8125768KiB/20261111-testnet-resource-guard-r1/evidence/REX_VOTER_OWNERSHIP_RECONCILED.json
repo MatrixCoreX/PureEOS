@@ -1,0 +1,71 @@
+{
+  "status": "PASS_14_OWNED_AFFECTED_VOTERS",
+  "utc": "2026-11-11T01:49:17.850337+00:00",
+  "additional_owned_REX_accounts": [
+    "rexliquidaaa",
+    "rexliquidaad"
+  ],
+  "ownership_verified_against_current_active_authority": true,
+  "no_authority_changes": true,
+  "financial_submissions": 0,
+  "principals_and_shares_baseline": {
+    "rexliquidaaa": {
+      "rexbal": {
+        "version": 0,
+        "owner": "rexliquidaaa",
+        "vote_stake": "10000.0000 AIC",
+        "rex_balance": "95062546.4024 REX",
+        "matured_rex": 0,
+        "rex_maturities": [
+          {
+            "first": "2026-11-11T00:00:00",
+            "second": "950625464024"
+          }
+        ]
+      },
+      "self_delegated": [
+        {
+          "from": "rexliquidaaa",
+          "to": "rexliquidaaa",
+          "net_weight": "1.0000 AIC",
+          "cpu_weight": "1.0000 AIC"
+        }
+      ],
+      "resources": {
+        "owner": "rexliquidaaa",
+        "net_weight": "3.1614 AIC",
+        "cpu_weight": "59.4231 AIC",
+        "ram_bytes": 8004
+      }
+    },
+    "rexliquidaad": {
+      "rexbal": {
+        "version": 0,
+        "owner": "rexliquidaad",
+        "vote_stake": "10000.0000 AIC",
+        "rex_balance": "95062546.4024 REX",
+        "matured_rex": 0,
+        "rex_maturities": [
+          {
+            "first": "2026-11-11T00:00:00",
+            "second": "950625464024"
+          }
+        ]
+      },
+      "self_delegated": [
+        {
+          "from": "rexliquidaad",
+          "to": "rexliquidaad",
+          "net_weight": "1.0000 AIC",
+          "cpu_weight": "1.0000 AIC"
+        }
+      ],
+      "resources": {
+        "owner": "rexliquidaad",
+        "net_weight": "3.1641 AIC",
+        "cpu_weight": "59.4258 AIC",
+        "ram_bytes": 8117
+      }
+    }
+  }
+}

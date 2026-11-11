@@ -1,0 +1,170 @@
+{
+  "AUTHORIZED_VOTE_INTENTS.json": {
+    "sha256": "a9c875b481922458c3d9bcfb33bcb65872ccf2d8e25cda940dd1a7e218a05cd8",
+    "bytes": 3308
+  },
+  "BASELINE_R4.json": {
+    "sha256": "a43bcdf4a0393187ad91326a20879a5cda394881c67f3900d662ad2f8a3be4d2",
+    "bytes": 162758
+  },
+  "CANARY_RESULT.json": {
+    "sha256": "88b0848581725da60c55e3d5929a36ef706b46bef7251336e37fbd42c6ca9fc9",
+    "bytes": 6406
+  },
+  "CANARY_STARTED.json": {
+    "sha256": "f948b495f1ebb1d4c1fa8c3aab0e97878758e4d79fe69e7210880e645e5c94e7",
+    "bytes": 7980
+  },
+  "CANONICAL_NEW_BAN_AUDIT.json": {
+    "sha256": "808c1ec3b40571384b2fe468a0bd53adcd900607655362934775ddbcf3a1d660",
+    "bytes": 13105
+  },
+  "CLEANUP_RESULT.json": {
+    "sha256": "6fc1cc2a44e505c9dcc972f2b937ec80016fa6912d558eaaa0e930cdafc8db6d",
+    "bytes": 5120
+  },
+  "FINALIZATION_RESULT.json": {
+    "sha256": "f533d71d4490f3ccd4249954983286ae1f9b0124ffa7e1d045d8e59e430a404b",
+    "bytes": 28257
+  },
+  "FINAL_AUDIT.json": {
+    "sha256": "75ec9f164ab2da7a1efcde646078657a13c4f744c420434f1894db0ea1bdc4b5",
+    "bytes": 73633
+  },
+  "FINAL_AUDIT_R2_STARTED.json": {
+    "sha256": "2d1f0ce4bbcb120476a443b0d385e56f59d9c46cc93127c5ed79c0b3558b915e",
+    "bytes": 183
+  },
+  "FINAL_SOAK_PROGRESS.json": {
+    "sha256": "f4a35659a63a97fa1ee28548d9533bed8a1ce8edf28a93690bf88bbd177fb66b",
+    "bytes": 5914
+  },
+  "GUARD_FINAL_ATOMIC_SOURCE_AND_LIVE_CHECK.json": {
+    "sha256": "069637b4e1152c3fddabc5a19c1036c27405b47eb4ae2bf51478c920777b6a1d",
+    "bytes": 628
+  },
+  "HEALTH_LATEST.json": {
+    "sha256": "87e4b108510b4a600e170bd70142cd8ddf41297d0a7771cd422c175b97c61185",
+    "bytes": 8613
+  },
+  "HEALTH_PRIORITY_INSTALLED.json": {
+    "sha256": "71c997ad2631ec45461f30930e47b13e4eab7495a6070ed6d705acdb4c87188d",
+    "bytes": 362
+  },
+  "HOT_LOG_RELOAD.json": {
+    "sha256": "eeee038dd18be194aec8f8cc9b72a5ead72497951aa99132a1db50f1b522d1a3",
+    "bytes": 3581
+  },
+  "LAST_SIGNER_CLOSED.json": {
+    "sha256": "d4018e30f26b7c5b3de0eb9c4275f4f66ff39131a7ff76549430ce3a2b8bd2dc",
+    "bytes": 140
+  },
+  "LOG_ROTATION_CONFIGURED.json": {
+    "sha256": "1c9f36d477fff6ebad3ce3272e760e333b3d3eef0289d264331f803440c836e1",
+    "bytes": 2247
+  },
+  "RECYCLE_CHECK_ONLY.json": {
+    "sha256": "ad44850d665e072d4100225decb1e7a5442a8e7b5d04548324b6bc33a8b0fdd0",
+    "bytes": 373
+  },
+  "RECYCLE_GUARD_INSTALLED.json": {
+    "sha256": "ce8201dec1fae0aea44eff6bbc5baf5d3ed1be71da073aca817078ed32a40920",
+    "bytes": 959
+  },
+  "RECYCLE_LATEST.json": {
+    "sha256": "662b0ff9d19b78428c73a1ccf6240f64bd757bc3c7cff5a2829196f41afbe233",
+    "bytes": 374
+  },
+  "RECYCLE_PUBLISHED_SOURCE_TESTS.log": {
+    "sha256": "4db0db3364a0ccbb61ee2a1c9d828fb049127b39c173b59cf76649ab5d4fe80a",
+    "bytes": 1343
+  },
+  "RECYCLE_SOFTWARE_TESTS_R1.log": {
+    "sha256": "bd10720516dc89c3daf1c583358b3f9da6d2b06c1e13248d9acf682b9c0c532a",
+    "bytes": 4252
+  },
+  "RECYCLE_SOFTWARE_TESTS_R2.log": {
+    "sha256": "8bcbbdc94cc3f4e40897df45144df9a31e0ef3aa14a1f23296847a1b82e82528",
+    "bytes": 1193
+  },
+  "RECYCLE_SOFTWARE_TESTS_R3.log": {
+    "sha256": "d6fc16317e34d2e5de628d9575dcac012bd745bce83949234b24514aaf057d7b",
+    "bytes": 1343
+  },
+  "REPLACEMENTS_PREPARED.json": {
+    "sha256": "a7f3afd3f83d79aa73cbcd115ab28142626408c6c3211a4e07ab852802558d6c",
+    "bytes": 3484
+  },
+  "REPLACEMENT_CHECKPOINT.json": {
+    "sha256": "cd5a86d825d245b4b0ee7489c787d18c9c53bbf2243bce30e818fe1b479f3819",
+    "bytes": 440
+  },
+  "REPLACEMENT_ENROLL_RESULT.json": {
+    "sha256": "0bf0df89f72292a1d4dfe2ff4f76c2ad197540d55d9b2a1683bb452118e39da9",
+    "bytes": 24178
+  },
+  "REPLACEMENT_LIVE_BASELINE.json": {
+    "sha256": "423ac9cc9bdff6e3f01c1c709caf95e80c84bd6f67f22e4fa7a649ec6a6efd7a",
+    "bytes": 94712
+  },
+  "REX_VOTER_OWNERSHIP_RECONCILED.json": {
+    "sha256": "18223d6d6c426bf6b9563ed726e4eeab1044802fdf2d0975f74ff2bb8f798081",
+    "bytes": 1783
+  },
+  "REX_VOTE_REFRESH_RECONCILIATION.json": {
+    "sha256": "8966de3af9fb2376480d3d06b5018c25d4b94f675715db0801a0397d8cacb361",
+    "bytes": 349
+  },
+  "ROLL_FAILURE.json": {
+    "sha256": "49cef269ebb72dee711d0146c3aee330976a64175759997e5338e95ab5e6e3aa",
+    "bytes": 6886
+  },
+  "ROLL_RESULT.json": {
+    "sha256": "b9c7de05414cdb12370580ee9f188ef099db6ba9b91bd553de10e2864f6e4838",
+    "bytes": 140784
+  },
+  "ROLL_RESUME_R2_STARTED.json": {
+    "sha256": "f19b6941561b244ed78250ec554c274f1123d9ecd4918528f4adeae9338ceff2",
+    "bytes": 9108
+  },
+  "ROLL_STARTED.json": {
+    "sha256": "0057b67d10f761cc8ac8eed6718dc44a6014a49b123ad5a93e043e6f7003b043",
+    "bytes": 6476
+  },
+  "STOP_AND_CLEANUP_PLAN.json": {
+    "sha256": "a890fab5a8d51c7554a669398036d2022032eb335c7f74f0e8ee59ca150daf8d",
+    "bytes": 4495123
+  },
+  "STOP_STARTED.json": {
+    "sha256": "9c430f053a13b47cc02f701ac4576bfa08c80ff9e19fe3cdcba2b9181965f981",
+    "bytes": 29576
+  },
+  "diagnostic-failures/BASELINE.json.stderr": {
+    "sha256": "b8a34f82c8caf772ab0f1d8af72c4c0e3ba574de9e68db216e38b6ba7ba8b4ec",
+    "bytes": 1035
+  },
+  "diagnostic-failures/BASELINE_R2.json.stderr": {
+    "sha256": "b8a34f82c8caf772ab0f1d8af72c4c0e3ba574de9e68db216e38b6ba7ba8b4ec",
+    "bytes": 1035
+  },
+  "diagnostic-failures/BASELINE_R3.json.stderr": {
+    "sha256": "f7fa6072929e5a80ea1e3cb9cdf5f90d258f72e04f92ed2119a0e66e02a66ca5",
+    "bytes": 1661
+  },
+  "diagnostic-failures/BASELINE_R4.json.stderr": {
+    "sha256": "e9a16499dcad7cd035734fa28f8c2d9c0d71d8b663d129499580d4a1e3a136f6",
+    "bytes": 104
+  },
+  "diagnostic-failures/FINALIZATION_CALL_OUTPUT.json.stderr": {
+    "sha256": "ad935e189ad829d842e32d84f2ef92a05168eb6ecaf4bcc0bf241200cdb30b56",
+    "bytes": 127
+  },
+  "diagnostic-failures/FINALIZATION_CALL_OUTPUT_R2.json.stderr": {
+    "sha256": "87fea168a0042793bfc700e73142859bc035cf3f5c726be8e3bc237a7d4e86b4",
+    "bytes": 787
+  },
+  "diagnostic-failures/LOG_ROTATION_CONFIGURED.json.stderr": {
+    "sha256": "558dea99bbe7db9367ec2b26605a533a91fc5a8b9cdaf3e12d749079716b06ed",
+    "bytes": 986
+  }
+}

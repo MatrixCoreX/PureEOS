@@ -1,0 +1,10 @@
+[Unit]
+Description=Bounded compressed TEST syslog retention
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/logrotate --state /var/lib/logrotate/pureeos-syslog.status /etc/pureeos-syslog-logrotate.conf
+Nice=19
+CPUQuota=10%
+IOSchedulingClass=idle
+MemoryMax=128M
+TimeoutStartSec=infinity

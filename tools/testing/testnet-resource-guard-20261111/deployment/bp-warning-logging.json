@@ -1,0 +1,24 @@
+{
+  "includes": [],
+  "appenders": [
+    {
+      "name": "stderr",
+      "type": "console",
+      "args": {
+        "stream": "std_error",
+        "level_colors": []
+      }
+    }
+  ],
+  "loggers": [
+    {
+      "name": "default",
+      "level": "warn",
+      "enabled": true,
+      "additivity": false,
+      "appenders": [
+        "stderr"
+      ]
+    }
+  ]
+}

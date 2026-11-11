@@ -1,0 +1,38 @@
+{
+  "pureeos-syslog-logrotate.conf": {
+    "deployed_path": "/etc/pureeos-syslog-logrotate.conf",
+    "sha256": "c8fced5b31ff354d197d7becd535630365b6835fd6e3b3187a222183546c1d8a"
+  },
+  "pureeos-syslog-rotation-20261111.service": {
+    "deployed_path": "/etc/systemd/system/pureeos-syslog-rotation-20261111.service",
+    "sha256": "ee1d93c8df6ab080d999d4a40949e00c325eacd0a9cc7fbd766527b206d1adfb"
+  },
+  "pureeos-syslog-rotation-20261111.timer": {
+    "deployed_path": "/etc/systemd/system/pureeos-syslog-rotation-20261111.timer",
+    "sha256": "4a35f866e20a8aa83a4fd958ab25cf074c5a3586a9cd25a0a347cd7bccbfc9b6"
+  },
+  "pureeos-testnet-health-priority-20261111.service": {
+    "deployed_path": "/etc/systemd/system/pureeos-testnet-health-priority-20261111.service",
+    "sha256": "3244177183cd4c5cdf796ca8f701da03a664b904f35cae501aca5973a8660b7a"
+  },
+  "pureeos-testnet-health-priority-20261111.timer": {
+    "deployed_path": "/etc/systemd/system/pureeos-testnet-health-priority-20261111.timer",
+    "sha256": "1c2febdb545bd6fa738199ad400b4aa0f89903baed263e86cf9843ad6ade1c44"
+  },
+  "pureeos-testnet-memory-guard-20261111.service": {
+    "deployed_path": "/etc/systemd/system/pureeos-testnet-memory-guard-20261111.service",
+    "sha256": "ce4ed93ab98779eb1b56ec1dad46e4c48616f64af28ea6894ec3b20cbe432da5"
+  },
+  "pureeos-testnet-memory-guard-20261111.timer": {
+    "deployed_path": "/etc/systemd/system/pureeos-testnet-memory-guard-20261111.timer",
+    "sha256": "797292bae3f88a7258fbd98cdb296506eddbb7efc20e9415df0905dca089230f"
+  },
+  "bp-warning-logging.json": {
+    "deployed_path": "/opt/pureeos-devnet-20261105-r1/bps/anthropiclab/config/logging.json",
+    "sha256": "8634abc7ded7cfa5da327085931bd47a53b6e8f4dd75e6024d3d850313d881d6"
+  },
+  "30-local-memory.conf": {
+    "deployed_path": "/etc/systemd/system/pureeos-devnet-bp-anthropiclab-20261105.service.d/30-local-memory.conf",
+    "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53"
+  }
+}
