@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "tests": 30,
+  "log_sha256": "1e1110c9803a7db82112254a02d9abe13ff5df2d868647744328beab31ae08ed",
+  "scope": "Local SDK/protocol/relay mocked unit tests, including new native zero-fee quote and custody/code-change guards; private native tests separately tracked."
+}

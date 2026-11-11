@@ -1,0 +1,57 @@
+{
+  "JSON_ABI_SHA256": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "before_target_RAM": {
+    "ram_quota": 2233969,
+    "ram_usage": 1830933
+  },
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "change": "Native named sender deposit uses exactly two root actions and explicitly authorized sender RAM. Remove execution/minimum/relay/application RAM payment on native deposit; no AIC fee funding or automatic RAM purchase. Insufficient sender RAM rejects atomically.",
+  "code_RAM_additional_bytes_estimate": 4096,
+  "code_RAM_sponsor_action": null,
+  "compiled_production_inputs_SHA256": {
+    "include/eosio.key.hpp": "41a9f679fb358d9a199cf8c38c2c06eab5723e3a1158e48ff1b9a10f96f3449d",
+    "include/signup_bridge.hpp": "6805573e37578437c85f65ecc09c86c061c0366508358cbf68406d4d5dc81d16",
+    "include/system_view.hpp": "7075029f41daca0107fda0cdce05608c0ad3dc4fcc432ee5753e9572778f1731",
+    "scripts/build.sh": "5f0adfc16ebdc7680bfab66c3d4cf1a0d741154f24f53fdbc23543e1a9016005",
+    "scripts/generate_allowlist.py": "8ef2a299d821d1c2a3d45ecb76be0fd9e2c4a987f1901a7299c2ab7234a26f28",
+    "src/eosio.key.cpp": "4b7642b43f77e8eacd02ea319cc83ea705b6f160da5272e32c03357ecdd8283c",
+    "token_allowlist.json": "14c95aa341d9d85ea1157a7205fd214581a195ed71ee14cae575cfc37b0ac3b8"
+  },
+  "issuer_code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+  "native_deposit": {
+    "actions": [
+      "eosio.key::deposit(from@active,max_fee=0)",
+      "token::transfer(from@active,principal,memo=atomic key principal)"
+    ],
+    "atomicity": "Pending lock is installed before sender-funded allocation/credit. Only exact actual principal notification can settle; all spending/reentrant paths are locked and any failure rolls back native funds, rows and RAM.",
+    "custody_admission": "Existing audited-token admission remains separate; shared non-AIC custody RAM must already be registered, no silent global token setup or RAM purchases charged to native sender. CurrentAIC/USD/CNY are admitted.",
+    "fees": "All fee receipt amounts and contract-funded RAM byte fields are zero; actual sender RAM is native billing, not metered by fee receipt.",
+    "legacy_native_packets": "Old three-root paid deposit rejected; clients must use new two-root mode. User explicitly requests contract-first rollout, wallet directly adopts new mode without extra activation gate.",
+    "lifetime": "Rows retain their original native RAM payer until a future explicitly reviewed lifecycle change; RAM payer has no asset control.",
+    "ram_payer": "Explicit named sender for newly created wallet, secondary index and balance rows; original payers preserved for existing rows. Fixed-size global growth state retains its original payer."
+  },
+  "new_abi_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+  "new_code_hash": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+  "old_abi_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+  "old_code_hash": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+  "prepared_UTC": "2026-11-11T01:30:31.824597+00:00",
+  "preserved": [
+    "Exact ABI/actions/table layouts/config/deployment domain and existing user records/payers",
+    "Public-key sender price/rate/fee-cap/realRAMbuy/fullprincipal/reserve equations and relay income",
+    "Owner proofs/native IDs/replay/revocation/hot-key permission boundaries",
+    "Allowlist, unsigned user assets/authority protections, Signup3c03 bridge and fee-free claim",
+    "PureEOS native/system/token code and all node processes, votes/bonds/blacklists/quorum/TPS settings"
+  ],
+  "production_review_seconds_unchanged": 604800,
+  "public_activation": "Only exact published-hash developer proposal, complete1800chain-second public review, effective BP veto check and irreversible devexec. No direct setcode/reset/review shortening.",
+  "qualification_SHA256": "5cf4abe84a0f63256b528fb8198c9639583b66d1a9bc34631b98201d9d993778",
+  "qualified_attempt": "qualification",
+  "review_seconds": 1800,
+  "signup_code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+  "source_base_commit": "70abde5325217dde6a2a35aa1364431693b24de3",
+  "source_branch": "feature/key-native-ram-20261111",
+  "system_code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+  "target": "eosio.key",
+  "test_scope": "Local user-authorized private chain on exact retained production native runtime and PureEOS CDT1.0.0. Real payer/RAM/fees/principal/rollback,7db ledger migration, native two-root rejection vectors, unchanged public-key routes/proofs/replay/relay key rotation. No public upgrade or phone financial claim.",
+  "token_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+}

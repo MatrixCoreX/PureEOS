@@ -1,0 +1,17 @@
+{
+  "REVIEW.en.md": "9f5c4d07e7f62011da854d82f3dd3c49554f3a1fe6a38fe7c4bdeeacd47c0656",
+  "REVIEW.json": "b450981280c88b64fa9ed586ed35d88379ff1c768eb70a94fecd329534af85e1",
+  "REVIEW.zh.md": "3c27a4fc7693826aec941257d1f88d12d4aa0ba14d9650fa64726ba1c9752865",
+  "artifacts/eosio.key.abi": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "artifacts/eosio.key.raw.abi": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+  "artifacts/eosio.key.wasm": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+  "qualification/BUILD.json": "81b5b302c51b9bceb08f7a914e1b21f4dbd1ce0cfef7ee363ab531fbb772e7f1",
+  "qualification/FAILURE_TRIAGE.json": "00ba50cbe8382138cb42f91a0624c7c0639678f856f0bd8c8fe54cd03e25c3cf",
+  "qualification/LOCAL_NATIVE_CLIENT.json": "78518cebf031fd32c705975d7ff526c63cb0e2710d1be8aa80120b3262f31f4b",
+  "qualification/LOCAL_TOOL_INPUTS.json": "e95cd2f539c7557b13ea1d31c91a68773ee7825745bb8f7d0df800d3ddbbbb5c",
+  "qualification/NATIVE.log.gz": "34993423dd4e9a29476283f49514ed9b508a44bd76c1bab840cf713708d0c034",
+  "qualification/NATIVE_RESULT.json": "db21c38a6a26c9ec99c030c9ad859a74fb7f6faca055146a1d33d6d693f6db60",
+  "qualification/RESULT.json": "5cf4abe84a0f63256b528fb8198c9639583b66d1a9bc34631b98201d9d993778",
+  "qualification/SDK.log.gz": "4f03057401dc6cf4dab7c0d099aed3f47f38a5f8f444b330c1b651634fa9fb10",
+  "qualification/SDK_RESULT.json": "43dd4b9bfe9f5783822b37e8a98b1def6f9b093ebdd5a90a729668ee27634df6"
+}

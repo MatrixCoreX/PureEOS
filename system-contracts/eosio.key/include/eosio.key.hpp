@@ -250,14 +250,14 @@ class [[eosio::contract("eosio.key")]] key_contract : public contract {
    static int64_t checked(__int128 value);
    static int64_t raw_balance(name token, name owner, symbol sym);
    uint64_t find_wallet(const public_key& key) const;
-   uint64_t ensure_wallet(const public_key& key, uint64_t asset_id);
+   uint64_t ensure_wallet(const public_key& key, uint64_t asset_id, name ram_payer = {});
    uint64_t find_asset(name token, symbol sym) const;
    uint64_t ensure_asset(name token, symbol sym);
    void consume_ram(uint64_t asset_id, uint64_t bytes);
-   void track_allocation(configuration& cfg, uint8_t kind);
+   void track_allocation(configuration& cfg, uint8_t kind, name ram_payer = {});
    void check_asset(uint64_t id) const;
    int64_t balance_of(uint64_t wallet_id, uint64_t asset_id) const;
-   void credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
+   void credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount, name ram_payer = {});
    void debit(uint64_t wallet_id, uint64_t asset_id, int64_t amount);
    void epoch(uint64_t wallet_id, uint64_t expected, uint64_t next);
    uint32_t ram_for(const public_key& key, uint64_t asset_id) const;

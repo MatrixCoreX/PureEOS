@@ -221,7 +221,7 @@ void key_contract::onbuyram(name payer, name receiver, asset quantity, int64_t b
          if (!row.ram_purchased) row.ram_sponsor = get_self();
          row.ram_purchased += uint64_t(bytes); row.funding_tx = p.ticket;
       });
-      p.ram_confirmed = true; p.purchased_bytes = uint64_t(bytes); pending.set(p, get_self()); return;
+      p.ram_confirmed = true; p.purchased_bytes = uint64_t(bytes); pending.set(p, same_payer); return;
    }
    auto raw = raw_transaction(); auto tx = unpack<transaction>(raw);
    // Unassigned gifts do not grant token capacity. Funding and registration are
@@ -296,7 +296,7 @@ void key_contract::consume_ram(uint64_t asset_id, uint64_t bytes) {
          "token RAM budget exhausted; sponsor more RAM before creating rows");
    if (bytes) table.modify(it, same_payer, [&](auto& row) { row.ram_used += bytes; });
 }
-void key_contract::track_allocation(configuration& cfg, uint8_t kind) {
+void key_contract::track_allocation(configuration& cfg, uint8_t kind, name ram_payer) {
    growth_table table(get_self(), get_self().value);
    growth_counters counts;
    if (table.exists()) counts = table.get();
@@ -312,7 +312,7 @@ void key_contract::track_allocation(configuration& cfg, uint8_t kind) {
    auto& value = kind == 0 ? counts.wallet_count : kind == 1 ? counts.balance_count : counts.asset_count;
    check(value != uint64_t(-1), "allocation counter overflow");
    ++value;
-   table.set(counts, get_self());
+   table.set(counts, table.exists() ? same_payer : (ram_payer.value ? ram_payer : get_self()));
    const auto legacy = [](uint64_t value) { return uint32_t(std::min(value, uint64_t(uint32_t(-1)))); };
    cfg.wallet_count = legacy(counts.wallet_count);
    cfg.balance_count = legacy(counts.balance_count);
@@ -398,16 +398,18 @@ uint64_t key_contract::find_wallet(const public_key& key) const {
    check(it->key == key, "public-key identity collision");
    return it->id;
 }
-uint64_t key_contract::ensure_wallet(const public_key& key, uint64_t asset_id) {
+uint64_t key_contract::ensure_wallet(const public_key& key, uint64_t asset_id, name ram_payer) {
    if (auto id = find_wallet(key)) return id;
    validate_key(key);
    auto cfg = config();
    check(cfg.next_wallet != uint64_t(-1), "wallet identifier overflow");
-   consume_ram(asset_id, wallet_ram);
-   track_allocation(cfg, 0);
+   const name payer = ram_payer.value ? ram_payer : get_self();
+   if (payer == get_self()) consume_ram(asset_id, wallet_ram);
+   else require_auth(payer);
+   track_allocation(cfg, 0, payer);
    uint64_t id = cfg.next_wallet++;
    wallets table(get_self(), get_self().value);
-   table.emplace(get_self(), [&](auto& row) { row.id = id; row.key = key; row.key_hash = hash_key(key); });
+   table.emplace(payer, [&](auto& row) { row.id = id; row.key = key; row.key_hash = hash_key(key); });
    config_table(get_self(), get_self().value).set(cfg, get_self());
    return id;
 }
@@ -449,15 +451,17 @@ int64_t key_contract::balance_of(uint64_t wallet_id, uint64_t asset_id) const {
    auto it = table.find(asset_id);
    return it == table.end() ? 0 : it->amount;
 }
-void key_contract::credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount) {
+void key_contract::credit(uint64_t wallet_id, uint64_t asset_id, int64_t amount, name ram_payer) {
    check(amount > 0 && wallet_id && asset_id, "invalid credit");
    balances table(get_self(), wallet_id);
    auto it = table.find(asset_id);
    if (it == table.end()) {
       auto cfg = config();
-      consume_ram(asset_id, balance_ram);
-      table.emplace(get_self(), [&](auto& row) { row.asset_id = asset_id; row.amount = amount; });
-      track_allocation(cfg, 1);
+      const name payer = ram_payer.value ? ram_payer : get_self();
+      if (payer == get_self()) consume_ram(asset_id, balance_ram);
+      else require_auth(payer);
+      table.emplace(payer, [&](auto& row) { row.asset_id = asset_id; row.amount = amount; });
+      track_allocation(cfg, 1, payer);
       config_table(get_self(), get_self().value).set(cfg, get_self());
    } else table.modify(it, same_payer, [&](auto& row) { row.amount = checked(__int128(row.amount) + amount); });
 }
@@ -667,41 +671,38 @@ void key_contract::deposit(name from, name token_contract, public_key to, asset 
    check(from != get_self() && quantity.is_valid() && quantity.amount > 0 && !zero(request_id),
          "invalid direct deposit");
    check(get_first_receiver() == get_self() && !get_sender().value, "top-level deposit required");
-   auto tx = unpack<transaction>(raw_transaction());
-   check(tx.actions.size() == 3 && tx.context_free_actions.empty() &&
+   check(max_fee.is_valid() && max_fee.symbol == cfg.fee_symbol && !max_fee.amount,
+         "native deposit uses sender CPU NET RAM; max_fee must be zero");
+   auto raw = raw_transaction(); auto tx = unpack<transaction>(raw);
+   check(tx.actions.size() == 2 && tx.context_free_actions.empty() &&
          tx.transaction_extensions.empty() && !tx.delay_sec.value &&
          tx.actions[0].authorization.size() == 1 && tx.actions[0].authorization[0].actor == from &&
          tx.actions[0].authorization[0].permission == "active"_n &&
          tx.actions[0].account == get_self() && tx.actions[0].name == "deposit"_n &&
          tx.actions[0].data == pack(std::make_tuple(from, token_contract, to, quantity, max_fee, request_id)),
-         "one atomic sender-authorized deposit envelope required");
-   const auto& funding = tx.actions[1]; const auto& principal = tx.actions[2];
-   check(funding.account == cfg.fee_contract && funding.name == "transfer"_n &&
-         principal.account == token_contract && principal.name == "transfer"_n &&
-         funding.authorization == tx.actions[0].authorization &&
+         "one atomic sender-authorized two-action deposit required");
+   const auto& principal = tx.actions[1];
+   check(principal.account == token_contract && principal.name == "transfer"_n &&
          principal.authorization == tx.actions[0].authorization,
-         "deposit funding actions must have the same explicit sender");
-   auto funding_args = unpack<std::tuple<name,name,asset,std::string>>(funding.data);
-   const auto funded_fee = std::get<2>(funding_args);
-   check(funded_fee.is_valid() && funded_fee.symbol == cfg.fee_symbol && funded_fee.amount > 0 &&
-         funded_fee <= max_fee &&
-         funding.data == pack(std::make_tuple(from, get_self(), funded_fee, std::string("atomic key fee"))) &&
-         principal.data == pack(std::make_tuple(from, get_self(), quantity, std::string("atomic key principal"))),
-         "direct deposit funding or principal bytes mismatch");
+         "deposit principal must have the same explicit sender");
+   check(principal.data == pack(std::make_tuple(from, get_self(), quantity, std::string("atomic key principal"))),
+         "direct deposit principal bytes mismatch");
    validate_key(to); check_token(token_contract, quantity.symbol);
-   auto id = ensure_asset(token_contract, quantity.symbol); check_asset(id); check_asset(1);
-   const uint32_t bytes = ram_for(to, id) + first_asset_bytes(id);
-   auto fee = quote(cfg, 8, bytes, 0); check_max(cfg, fee, max_fee);
-   check(funded_fee.amount >= fee.total, "signed funding below actual deposit fee");
-   check(raw_balance(cfg.fee_contract, from, cfg.fee_symbol) >=
-         checked(__int128(funded_fee.amount) + (id == 1 ? quantity.amount : 0)), "insufficient sender AIC for fee");
+   auto id = find_asset(token_contract, quantity.symbol); check_asset(id);
+   // Shared token admission/custody is prepared independently. Never silently
+   // charge this sender for an issuer's setup or buy contract RAM on this path.
+   check(!first_asset_bytes(id), "token requires RAM registration before native deposits");
    check(raw_balance(token_contract, from, quantity.symbol) >= quantity.amount, "insufficient native principal");
    payment p; p.kind = "deposit"_n; p.native_from = from; p.to_key = to;
    p.token = token_contract; p.quantity = quantity; p.asset_id = id; p.request_id = request_id;
-   p.base = fee.base; p.total = fee.total; p.ram_bytes = bytes;
-   p.fee_funding = funded_fee.amount;
-   p.first_asset = first_asset_bytes(id) != 0;
-   begin_payment(p);
+   p.ticket = sha256(raw.data(), raw.size());
+   pending_table pending(get_self(), get_self().value); pending.set(p, from);
+   // Allocate only in the top-level sender-authorized frame. The pending lock
+   // prevents spending/reentry until the exact next root actually arrives.
+   // Any missing/failed principal or insufficient native RAM rolls back all.
+   p.wallet_id = ensure_wallet(to, id, from);
+   credit(p.wallet_id, id, quantity.amount, from);
+   pending.set(p, same_payer);
 }
 bool key_contract::payment_notification(name from, name to, asset quantity, const std::string& memo) {
    pending_table pending(get_self(), get_self().value);
@@ -721,24 +722,18 @@ bool key_contract::payment_notification(name from, name to, asset quantity, cons
       table.modify(it, same_payer, [&](auto& row) { row.reserve -= quantity.amount; });
       p.ram_transfers |= bit;
    } else if (p.kind == "deposit"_n && from == p.native_from && to == get_self()) {
-      uint8_t bit = 0;
-      if (memo == "atomic key fee") {
-         bit = 1; id = 1;
-         check(get_first_receiver() == cfg.fee_contract && quantity == asset(p.fee_funding, cfg.fee_symbol),
-               "direct deposit fee mismatch");
-      } else if (memo == "atomic key principal") {
-         bit = 2; id = p.asset_id;
-         check(get_first_receiver() == p.token && quantity == p.quantity, "direct deposit principal mismatch");
-      }
-      check(bit && !(p.received & bit), "unexpected or duplicate deposit funding");
+      check(memo == "atomic key principal" && !p.received &&
+            get_first_receiver() == p.token && quantity == p.quantity,
+            "unexpected or duplicate deposit principal");
+      id = p.asset_id;
       assets table(get_self(), get_self().value); auto it = table.require_find(id, "deposit asset missing");
       const auto next = checked(__int128(it->reserve) + quantity.amount);
       check(raw_balance(get_first_receiver(), get_self(), quantity.symbol) == next, "deposit reserve mismatch");
       table.modify(it, same_payer, [&](auto& row) { row.reserve = next; });
-      p.received |= bit;
-      start_ram = p.received == 3;
+      p.received = 2;
+      start_ram = true;
    } else return false;
-   pending.set(p, get_self());
+   pending.set(p, same_payer);
    if (start_ram)
       schedule_ram(p);
    return true;
@@ -751,7 +746,7 @@ void key_contract::schedule_ram(const payment& p) {
    // Queue the native buy directly from the authenticated owner/funding frame.
    // A self-payram hop would exhaust depth4 when the normal fee receiver
    // forwards RAM fees into REX. Settlement remains a subsequent self action.
-   check(p.kind != "deposit"_n || p.received == 3, "direct deposit funding incomplete");
+   check(p.kind != "deposit"_n || p.received == 2, "direct deposit principal incomplete");
    if (p.ram_bytes) {
       check_system(cfg);
       check(p.ram_payment > 1, "RAM payment too small");
@@ -763,14 +758,16 @@ void key_contract::schedule_ram(const payment& p) {
 }
 void key_contract::settleram(checksum256 ticket) {
    auto p = internal_payment(ticket); auto cfg = config();
-   check(p.kind != "deposit"_n || p.received == 3, "direct deposit funding incomplete");
+   check(p.kind != "deposit"_n || p.received == 2, "direct deposit principal incomplete");
    check(p.ram_bytes ? (p.ram_confirmed && p.ram_transfers == 3) :
          (!p.ram_payment && !p.ram_confirmed && !p.ram_transfers), "unconfirmed atomic RAM purchase");
    if (p.first_asset) consume_ram(p.asset_id, asset_ram);
-   credit_fee_bucket(p.relay.value ? p.relay : get_self(),
+   if (p.kind != "deposit"_n) credit_fee_bucket(p.relay.value ? p.relay : get_self(),
                      charge{p.base - p.ram_payment, p.premium, p.total - p.ram_payment},
                      p.relay.value && p.relay != get_self());
-   if (p.kind == "ksend"_n || p.kind == "deposit"_n) {
+   if (p.kind == "deposit"_n) {
+      check(p.wallet_id && !p.total && !p.ram_bytes && !p.ram_payment && !p.fee_funding, "native deposit must be fee free");
+   } else if (p.kind == "ksend"_n) {
       auto recipient = ensure_wallet(p.to_key, p.asset_id);
       credit(recipient, p.asset_id, p.quantity.amount);
    } else {
@@ -778,8 +775,6 @@ void key_contract::settleram(checksum256 ticket) {
       send_out(p.asset_id, p.native_to, p.quantity.amount, p.memo);
    }
    pending_table(get_self(), get_self().value).remove();
-   if (p.kind == "deposit"_n && p.fee_funding > p.total)
-      send_out(1, p.native_from, p.fee_funding - p.total, "unused atomic key fee refund");
    action(permission_level{get_self(), "active"_n}, get_self(), "feereceipt"_n,
           std::make_tuple(p.ticket, p.request_id, asset(p.total, cfg.fee_symbol),
                           asset(p.ram_payment, cfg.fee_symbol), asset(p.base - p.ram_payment, cfg.fee_symbol),
@@ -819,7 +814,7 @@ void key_contract::ontransfer(name from, name to, asset quantity, std::string me
    // Incoming funds are accepted only by the fully signed atomic envelope.
    // Old fee/PK memo deposits reject atomically rather than leaving prepaid
    // credits or silently falling back to finite sponsored RAM capacity.
-   check(false, "use atomic deposit: declaration, AIC fee funding and principal in one transaction");
+   check(false, "use atomic deposit: sender CPU NET RAM, declaration and principal in one transaction");
 }
 void key_contract::ksend(transfer_request request) {
    auto cfg = config();

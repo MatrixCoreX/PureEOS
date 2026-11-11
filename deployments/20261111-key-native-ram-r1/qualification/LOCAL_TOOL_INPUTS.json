@@ -1,0 +1,6 @@
+{
+  "status": "PASS_HASH_VERIFIED_PUBLIC_INPUTS_ONLY",
+  "files": 416,
+  "sha256_manifest": "ddf1fb708ea36dbd7349192807312ff9f063c6c1f31378a810cbe4efde0477b5",
+  "scope": "Public pinned CDT/native runtime/contracts/test helpers only, no server private keys or live state. Local test authorization explicitly granted. No remote build/test/lifecycle mutation."
+}

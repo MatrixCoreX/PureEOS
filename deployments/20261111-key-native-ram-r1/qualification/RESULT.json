@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "KEY_WASM": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+  "JSON_ABI": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "native_checks": 191,
+  "SDK_tests": 30,
+  "native_result_SHA256": "db21c38a6a26c9ec99c030c9ad859a74fb7f6faca055146a1d33d6d693f6db60",
+  "SDK_result_SHA256": "43dd4b9bfe9f5783822b37e8a98b1def6f9b093ebdd5a90a729668ee27634df6",
+  "production_source_inputs": {
+    "src/eosio.key.cpp": "4b7642b43f77e8eacd02ea319cc83ea705b6f160da5272e32c03357ecdd8283c",
+    "include/system_view.hpp": "7075029f41daca0107fda0cdce05608c0ad3dc4fcc432ee5753e9572778f1731",
+    "include/signup_bridge.hpp": "6805573e37578437c85f65ecc09c86c061c0366508358cbf68406d4d5dc81d16",
+    "include/eosio.key.hpp": "41a9f679fb358d9a199cf8c38c2c06eab5723e3a1158e48ff1b9a10f96f3449d",
+    "scripts/build.sh": "5f0adfc16ebdc7680bfab66c3d4cf1a0d741154f24f53fdbc23543e1a9016005",
+    "scripts/generate_allowlist.py": "8ef2a299d821d1c2a3d45ecb76be0fd9e2c4a987f1901a7299c2ab7234a26f28",
+    "token_allowlist.json": "14c95aa341d9d85ea1157a7205fd214581a195ed71ee14cae575cfc37b0ac3b8"
+  },
+  "scope": "Local user-authorized private chain on exact retained production native runtime and PureEOS CDT1.0.0. Real payer/RAM/fees/principal/rollback,7db ledger migration, native two-root rejection vectors, unchanged public-key routes/proofs/replay/relay key rotation. No public upgrade or phone financial claim."
+}

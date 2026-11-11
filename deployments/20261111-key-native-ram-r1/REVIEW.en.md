@@ -1,0 +1,11 @@
+# Native sender resources for named-to-public-key deposits
+
+The candidate changes only native named-account deposits: one sender-signed transaction contains the deposit declaration followed by the exact principal transfer. CPU/NET are supplied by the named sender. Newly allocated wallet, secondary-index and balance rows bill that explicitly authorized sender in the top-level deposit frame; existing payers stay unchanged. No AIC fee funding, execution/minimum/relay fee or automatic RAM purchase remains on this path. Insufficient sender RAM or any principal mismatch rolls back the entire transaction.
+
+All ABI bytes, existing action/table layouts, config and deployment domain remain unchanged. deposit.max_fee must be zero; old three-root paid packets are rejected. A pending transaction lock precedes allocation/credit and only the exact actual next-root principal can settle it. The fee receipt reports zero fee-funded RAM; it does not meter sender RAM usage.
+
+Shared audited-token custody admission remains separate and must already be funded. Current AIC/USD/CNY are prepared. A native sender never silently pays to onboard a new issuer. Public-key senders retain existing charges, real RAM purchases, signed fee caps, proofs, replay controls, reserve accounting, relay income, signup and free claims.
+
+User-authorized local production-runtime qualification passed191 checks, including actual payers/RAM, zero repeated allocation, USD without sender AIC, real late insufficient-RAM rollback, funded7db state compatibility and public-route/proof/replay/hot-key regressions.30 SDK tests passed. Failed harness attempts are preserved; no independent-node/TPS/physical-phone payment claim.
+
+REVIEW.json binds exact source, code/rawABI and qualification hashes. A separate Git publication receipt identifies the immutable commit. Activation requires the existing developer proposal, full1800-chain-second review, effective BP veto checks and irreversible devexec. Existing code RAM suffices; no user-ledger debit, native/system/token/authority change or BP service operation. The user requests contract-first activation and direct wallet support without a new transition-specific activation gate.

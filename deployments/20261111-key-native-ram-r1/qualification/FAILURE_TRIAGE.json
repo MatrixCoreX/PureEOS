@@ -1,0 +1,5 @@
+{
+  "r1": "Test harness initial unix socket/client incompatibility, failed before native chain setup. Used short owned /tmp path plus exact existing qualified native cleos binary in freshR2; no application/native-source change.",
+  "r2": "Named sender actual native RAM/no-fee/full principal/insufficientRAM rollback passed, publicksend also passed. Withdrawal fixture incorrectly targeted governance-disabled eosio.wrap; native rejects all calls/notifications to it. Only fixture recipient changed to ordinary keyramnotify with a deliberately closed AIC row in freshR3. Production WASM unchanged cdfe.",
+  "wallet_core_r1": "NativeTokenTest still expected3root legacy deposit, updated expectation to2root required by user. No product change from that failure."
+}

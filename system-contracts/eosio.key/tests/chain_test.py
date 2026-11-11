@@ -19,6 +19,7 @@ def main():
     p.add_argument('--legacy-artifacts',type=Path,help='Actual prior KEY artifacts for the isolated old-state upgrade check')
     p.add_argument('--growth-fixture',action='store_true',help='TEST ONLY synthetic counter/RAM-boundary state; never a capacity claim')
     p.add_argument('--atomic',action='store_true',help='Sender-paid atomic RAM integration suite')
+    p.add_argument('--native-ram',action='store_true',help='Native named sender RAM and zero-fee integration suite')
     p.add_argument('--fixture',action='store_true',help='TEST ONLY alternate system table source; never production consensus evidence')
     args=p.parse_args()
     sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'sdk-tests'))
@@ -155,6 +156,9 @@ def main():
             self.root.joinpath('config').mkdir();self.root.joinpath('wallet').mkdir()
             profile=(args.package/'config/test-low-cost/config.ini').read_text().splitlines()
             profile=[x for x in profile if not x.startswith(('http-server-address','p2p-listen-endpoint','http-max-response-time-ms','abi-serializer-max-time-ms'))]
+            if args.native_ram:
+                profile=[x for x in profile if not x.startswith(('chain-state-db-size-mb','chain-state-db-guard-size-mb'))]
+                profile+=['chain-state-db-size-mb = 128','chain-state-db-guard-size-mb = 8']
             profile += ['plugin = eosio::producer_api_plugin','enable-stale-production = true',
                         'http-server-address = 127.0.0.1:'+str(self.http_port),
                         'p2p-listen-endpoint = 127.0.0.1:'+str(self.p2p_port),'verbose-http-errors = true',
@@ -279,7 +283,10 @@ def main():
             self.action('init',self.cfg,'eosio.key@owner',contract='eosio.key')
             self.cfg['version']=2
             if args.legacy_artifacts:
-                from storage_growth_cases import upgrade_legacy_state
+                if args.native_ram:
+                    from native_ram_cases import upgrade_legacy_state
+                else:
+                    from storage_growth_cases import upgrade_legacy_state
                 upgrade_legacy_state(self,args)
             for n in ['gptkeyorigin','keyrelaymoon']:
                 self.action('bondbp',{'producer':n},n)
@@ -332,6 +339,9 @@ def main():
             self.check(self.rpc('get_code_hash',{'account_name':'eosio.key'})['code_hash']==self.report['wallet_artifacts']['eosio.key.wasm'],
                 'Actual deployed wallet WASM hash equals the selected production/fixture artifact')
             self.bootstrapping=False
+        def start_node(self,phase,extra=()):
+            if args.native_ram:extra=(*extra,'--resource-monitor-space-absolute-gb','1')
+            return super().start_node(phase,extra)
         def ktable(self,name,scope='eosio.key'):
             return self.table(name,code='eosio.key',scope=scope)
         def token_balance(self,account,token='eosio.token'):
@@ -660,6 +670,9 @@ def main():
             if sig and (request!=sig['prepared']['request'] or actor or attack):signed=self.signed(op,request,owner,original=sig,actor=actor,attack=attack)
             return self.tx(['push','transaction',json.dumps(signed['signed']),'-s'],failure=failure)
         def tests(self):
+            if args.native_ram:
+                from native_ram_cases import run_native_ram
+                return run_native_ram(self,source,args)
             if args.growth_fixture:
                 self.check_reserves()
                 self.report['scope']='TEST ONLY synthetic counter/RAM-boundary states on a private real native runtime; actual candidate execution/purchases/rollback, not billions of real wallets or a capacity/TPS claim'

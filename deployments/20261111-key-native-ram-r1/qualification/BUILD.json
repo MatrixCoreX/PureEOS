@@ -1,0 +1,8 @@
+{
+  "status": "PASS_LOCAL_CDT_BUILD",
+  "WASM": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+  "ABI": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf",
+  "ABI_byte_identical_to_deployed_7db": true,
+  "toolchain": "Exacthashverified PureEOS CDT1.0.0 mirrored from retained prior toolchain",
+  "scope": "Compile only; native senderRAM/fees/public routes qualification pending."
+}

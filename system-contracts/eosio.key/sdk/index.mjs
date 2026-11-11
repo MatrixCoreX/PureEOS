@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-AIC-Noncommercial-3.0
 import {createHash,randomBytes} from 'node:crypto';
 import {Asset,Name,Checksum256,PrivateKey,PublicKey,Serializer,Signature,Transaction,SignedTransaction,PackedTransaction} from '@wharfkit/antelope';
-import {ramFeeProfile} from './fee-profiles.mjs';
+import {ramFeeProfile,nativeRamSender} from './fee-profiles.mjs';
 export const CONTRACT='eosio.key',TAG='PureEOS:eosio.key:transaction';
 const LIMIT=(1n<<62n)-1n;
 const REQUESTS={ksend:'transfer_request',withdraw:'withdrawal_request',selfout:'withdrawal_request',cancel:'cancellation_request',selfcancel:'cancellation_request'};
@@ -39,14 +39,14 @@ export function nativeDepositAction(request,contract=CONTRACT) {
   nativeName(request.from);nativeName(request.token_contract);nativeName(contract);
   normalizePublicKey(request.to);hash(request.request_id);
   const q=atomicAsset(request.quantity),cap=atomicAsset(request.max_fee);
-  if(q.units<=0n||cap.symbol!=='4,AIC'||cap.units<0n||request.from===contract)throw new Error('Invalid direct deposit');
+  if(q.units<=0n||cap.symbol!=='4,AIC'||cap.units!==0n||request.from===contract||request.request_id==='0'.repeat(64))throw new Error('Native deposit requires zero AIC fee and sender CPU/NET/RAM');
   return {account:contract,name:'deposit',authorization:[{actor:request.from,permission:'active'}],data:encode('deposit',request).hexString};
 }
 export function nativeDepositActions(request,{contract=CONTRACT,feeFunding=request.max_fee}={}) {
   const control=nativeDepositAction(request,contract),fund=atomicAsset(feeFunding),cap=atomicAsset(request.max_fee);
-  if(fund.symbol!=='4,AIC'||fund.units<=0n||fund.units>cap.units)throw new Error('Invalid direct deposit funding');
+  if(fund.symbol!=='4,AIC'||fund.units!==0n||cap.units!==0n)throw new Error('Native deposit has no AIC fee funding');
   const transfer=(token,quantity,memo)=>({account:token,name:'transfer',authorization:[{actor:request.from,permission:'active'}],data:encode('token_transfer',{from:request.from,to:contract,quantity,memo}).hexString});
-  return [control,transfer('eosio.token',fund.text,'atomic key fee'),transfer(request.token_contract,request.quantity,'atomic key principal')];
+  return [control,transfer(request.token_contract,request.quantity,'atomic key principal')];
 }
 export function ramRegistrationActions(payer,tokenContract,tokenSymbol,ramPayment,{minimumBytes=4096,contract=CONTRACT}={}) {
   nativeName(payer);nativeName(tokenContract);nativeName(contract);
@@ -221,6 +221,14 @@ export class KeyWalletClient {
       this.rpc('get_code_hash',{account_name:this.contract}),
     ]);
     const ramPricing=ramFeeProfile(walletCode.code_hash);
+    if(operation==='deposit'&&nativeRamSender(walletCode.code_hash)){
+      if(code.code_hash!==cfg.system_hash)throw new Error('System code changed; native sender resources require review');
+      const asset=await this.asset(request.token_contract,atomicAsset(request.quantity).symbol);
+      if(!asset||(request.token_contract!==cfg.fee_contract&&!BigInt(asset.ram_purchased||0)))throw new Error('Token requires RAM registration before native deposits');
+      const finalCode=await this.rpc('get_code_hash',{account_name:this.contract});
+      if(finalCode.code_hash!==walletCode.code_hash)throw new Error('Wallet code changed during fee quote');
+      return {base:0n,premium:0n,total:0n,storage:0n,execution:0n,multiplier:10000n,units:0,rows:0,ram_bytes:0,ram_pricing:ramPricing,relay_fee_bps:0,native_sender_resources:true,ram_payer:request.from,head:info.head_block_num};
+    }
     const exit=['selfout','selfcancel','refundfee'].includes(operation);
     let multiplier=10000n;
     if(code.code_hash!==cfg.system_hash){if(!exit)throw new Error('System code changed; relay profile needs review');}
