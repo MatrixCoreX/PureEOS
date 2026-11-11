@@ -1,0 +1,59 @@
+{
+  "status": "IN_PROGRESS",
+  "native": [
+    {
+      "label": "usd",
+      "quantity": "1.0000 USD",
+      "principal_full": true,
+      "AIC_fee": 0,
+      "contract_RAM_unchanged_observed": true,
+      "actual_fee_receipt": {
+        "ticket": "81dbfa9fae318e6d70547dcc59db0656e6e8cb5f6cf133d83d40b7a233cf40a4",
+        "request_id": "002ab6638191fa76912b50211f05caacc693c33bb1b026f350de38ed326e40c8",
+        "total": "0.0000 AIC",
+        "ram_payment": "0.0000 AIC",
+        "retained_base": "0.0000 AIC",
+        "relay_fee": "0.0000 AIC",
+        "allocated_bytes": 0,
+        "purchased_bytes": 0
+      },
+      "wallet_payer": "gptgenesisbp",
+      "balance_payer": "gptgenesisbp",
+      "canonical_receipt": {
+        "transaction_id": "81dbfa9fae318e6d70547dcc59db0656e6e8cb5f6cf133d83d40b7a233cf40a4",
+        "block_num": 686163,
+        "block_id": "000a7853f7886f3f7ea81ac90ee37eabee29ba12f473c0add836ed181702aaa3",
+        "timestamp": "2026-11-11T02:26:58.500",
+        "irreversible_at_observed_LIB": 686166
+      }
+    },
+    {
+      "label": "cny",
+      "quantity": "1.0000 CNY",
+      "principal_full": true,
+      "AIC_fee": 0,
+      "contract_RAM_unchanged_observed": true,
+      "actual_fee_receipt": {
+        "ticket": "64d1ae3a6189f7e37274c498608bd2753aab27c772f1225e0f5546942169fd3e",
+        "request_id": "55dbb9ce91eeb7dc44983827bda959bcda208882ae89d1f4c22e02e9cf8dea1c",
+        "total": "0.0000 AIC",
+        "ram_payment": "0.0000 AIC",
+        "retained_base": "0.0000 AIC",
+        "relay_fee": "0.0000 AIC",
+        "allocated_bytes": 0,
+        "purchased_bytes": 0
+      },
+      "wallet_payer": "gptgenesisbp",
+      "balance_payer": "gptgenesisbp",
+      "canonical_receipt": {
+        "transaction_id": "64d1ae3a6189f7e37274c498608bd2753aab27c772f1225e0f5546942169fd3e",
+        "block_num": 686174,
+        "block_id": "000a785e859a1a0b8628c48f882c87ab1c7a156cc1314a8d9be009263616f113",
+        "timestamp": "2026-11-11T02:27:04.000",
+        "irreversible_at_observed_LIB": 686174
+      }
+    }
+  ],
+  "relay": [],
+  "scope": "Fresh bounded post-upgrade QA. Never rerun a completed/signed case.\n\nUses only new case-owned public keys and <=1.0100AIC principal plus1USD/1CNY\nfrom the existing authorized test funder. No phone wallets or account changes.\n"
+}

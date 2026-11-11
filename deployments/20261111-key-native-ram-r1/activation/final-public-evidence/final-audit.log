@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-key-native-ram-20261111-r1/final_audit.py", line 68, in <module>
+    kernel=subprocess.run(['journalctl','-k','--since',base['utc'],'--no-pager','-o','cat','--grep','Out of memory|Killed process|oom-kill|invoked oom'],capture_output=True,text=True,timeout=30);assert kernel.returncode==0 and kernel.stdout.strip()in['','-- No entries --']
+                                                                                                                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

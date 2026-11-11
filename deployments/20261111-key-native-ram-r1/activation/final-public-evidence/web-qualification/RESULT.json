@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "tests": 270,
+  "TypeScript_and_production_build": "PASS",
+  "memory_kib_at_start": {
+    "MemAvailable": 4746424,
+    "SwapFree": 54931636
+  },
+  "dist": {
+    "index.html": "36ca8de1adf83aaaa2f378c71a86cb5b92d948a47c25e777de8c9762de0eb9eb",
+    "theme.js": "c2d9493dd607f3ffb3afd4b08878be511b2b34a62f5b1066ae1fb4f82f3e5a71",
+    "favicon.svg": "17560d9ab093039df5f78d70f1cdc13c02fe5194b57940883fd42851c54a2c35",
+    "language.js": "5d6344b19e427c392a6236ec5e770cef68630aa90848197781f0d18f5c7fb8f5",
+    "assets/index-BEIOqYFn.css": "da8f4e643979d0f9c63cc751d3edfd1d2e1dbafacb60c06a85047ecab57beac2",
+    "assets/index-DNILnEvO.js": "6ed47a4f8387fccd987cb989f0455ec58ef6ca5697d2cdcb4f526e66844897e7"
+  },
+  "tests_log_SHA256": "c5d4404bbc7e1bf7aa688c22619e1e64d9c8968a4109453cbfc202cc18e41d08",
+  "build_log_SHA256": "8f36572b6023e56d5c902c08f2c24b06e360db50dcbb2c758285c14e3af21a5c",
+  "scope": "Exact reviewed CDFE public-key fee compatibility; named\u2192key UI belongs to wallet. Actual browser/public publication separate."
+}

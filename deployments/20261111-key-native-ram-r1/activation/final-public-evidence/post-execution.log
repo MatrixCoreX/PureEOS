@@ -1,0 +1,41 @@
+Traceback (most recent call last):
+  File "/opt/pureeos-key-native-ram-20261111-r1/controllers/public_qa.py", line 43, in <module>
+    identity=next(a for a in assets if a['token_contract']==token);existing=wallet(public['owner']);old_balance=next((int(x['amount'])for x in rows('balances',str(existing['id']))if x['asset_id']==identity['id']),0)if existing else 0
+                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-key-native-ram-20261111-r1/controllers/public_qa.py", line 23, in wallet
+    return next((w for w in rows('wallets')if w['key_hash']==digest),None)
+                            ^^^^^^^^^^^^^^^
+  File "/opt/pureeos-key-native-ram-20261111-r1/controllers/public_qa.py", line 20, in rows
+    def rows(table,scope='eosio.key',extra=None):return o.rows('eosio.key',scope,table,extra)
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-key-native-ram-20261111-r1/controllers/ops_common.py", line 68, in rows
+    q.update(extra or{});q['lower_bound']=lower;page=rpc('get_table_rows',q);next_key=str(page.get('next_key',''))
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/pureeos-key-native-ram-20261111-r1/controllers/ops_common.py", line 23, in rpc
+    with urllib.request.urlopen(request,timeout=30)as f:return json.load(f)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 500: Internal Server Error
+Traceback (most recent call last):
+  File "/opt/pureeos-key-native-ram-20261111-r1/post_execution.py", line 4, in <module>
+    for name in ['activate_clients.py','public_qa.py']:subprocess.run(['python3','-B',str(R/'controllers'/name)],check=True,timeout=1000)
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '-B', '/opt/pureeos-key-native-ram-20261111-r1/controllers/public_qa.py']' returned non-zero exit status 1.

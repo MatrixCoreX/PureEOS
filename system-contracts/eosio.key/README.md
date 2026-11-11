@@ -1,6 +1,8 @@
-# eosio.key · 命名账号自付资源候选
+# eosio.key · 命名账号自付资源（TEST已生效）
 
-2026-11-11 候选 `cdfe0f44`：命名转公钥采用发送方 CPU/NET/RAM，两动作同笔授权、本金全额到账，应用手续费为零，RAM不足失败且不自动购买。原生隔离191项、SDK30项通过，ABI与7db完全一致。当前尚待完整1800秒开发者提案公示及不可逆执行，不能把候选构建当成链上生效。
+2026-11-11 当前代码 `cdfe0f44`：命名转公钥采用发送方 CPU/NET/RAM，两动作同笔授权、本金全额到账，应用手续费为零，RAM不足失败且不自动购买。原生隔离191项、SDK30项通过，ABI与7db完全一致。提案5已完成完整1800链秒公示（22名有效选民/15票否决门槛/0票否决），升级在686081不可逆。公网4笔命名充值+2笔公钥出款、准备金及历史核对通过。
+
+[中文实际部署与完整三路线费用](../../deployments/20261111-key-native-ram-r1/activation/REPORT.zh-CN.md) / [English activation and fee flows](../../deployments/20261111-key-native-ram-r1/activation/REPORT.en.md)。
 
 [中文流程与边界](docs/NATIVE_SENDER_RAM.zh.md) / [English review](docs/NATIVE_SENDER_RAM.en.md)。公钥付款路线的既有费用机制保持。
 
@@ -8,7 +10,7 @@
 
 # eosio.key · 全网公钥账户与按需 RAM
 
-2026-11-07 当前代码7db，raw ABI83；提案4已在267777不可逆执行，三币种三路线、原子注册与本轮新增收入领取已实测。固定钱包/余额/资产总量门槛已移除，新增记录仍由本笔费用购买真实RAM；现有布局和完整本金保持。
+2026-11-07 历史代码7db，raw ABI83；提案4已在267777不可逆执行，三币种三路线、原子注册与本轮新增收入领取已实测。固定钱包/余额/资产总量门槛已移除，新增记录仍由本笔费用购买真实RAM；现有布局和完整本金保持。
 
 - [中文实际结果与三种费用流程](docs/GROWTH_TRANSFERS.zh.md)
 - [English activation and fee flows](docs/GROWTH_TRANSFERS.en.md)

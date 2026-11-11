@@ -1,0 +1,2 @@
+{"status": "UPGRADED_IRREVERSIBLE", "target": "eosio.key", "canonical_receipt": {"transaction_id": "3a8bfd814b1d12d99f7f8196b9258c019d82b48531f89c63838017d0380a8a4b", "block_num": 686081, "block_id": "000a7801ba85a9110e1b0e2cada3b7790792a0d95c885ee07bc7bc32fc88648f", "timestamp": "2026-11-11T02:26:17.500", "irreversible_at_observed_LIB": 686084}, "execute_after": "2026-11-11T02:04:00.500"}
+EXISTING_PROPOSAL5_EXECUTION_CONTROLLER_COMPLETED

@@ -1,0 +1,88 @@
+{
+  "status": "PASS_NATIVE_RAM_UPGRADE_AND_POST_DEPLOYMENT_AUDIT",
+  "utc": "2026-11-11T02:33:07.057146+00:00",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 686897,
+    "last_irreversible_block_num": 686893,
+    "last_irreversible_block_id": "000a7b2d8381fe5a15c1b2f497efc3b547e40a90428361f8f8ff49df5d1c3646",
+    "head_block_id": "000a7b312fcf13d9b91cdc9db1d0891ec247de7ff04babd13a7ffa6bcbb28644",
+    "head_block_time": "2026-11-11T02:33:06.500",
+    "head_block_producer": "perplexityai",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 686897,
+    "fork_db_head_block_id": "000a7b312fcf13d9b91cdc9db1d0891ec247de7ff04babd13a7ffa6bcbb28644",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T02:33:04.000"
+  },
+  "execution": {
+    "transaction_id": "3a8bfd814b1d12d99f7f8196b9258c019d82b48531f89c63838017d0380a8a4b",
+    "block_num": 686081,
+    "block_id": "000a7801ba85a9110e1b0e2cada3b7790792a0d95c885ee07bc7bc32fc88648f",
+    "timestamp": "2026-11-11T02:26:17.500",
+    "irreversible_at_observed_LIB": 686084
+  },
+  "review_elapsed_chain_seconds": 3137.0,
+  "effective_voters_at_execution": 22,
+  "effective_vetoes_at_execution": 0,
+  "native26_fresh_baseline_processes_preserved": true,
+  "other6_baseline_application_processes_preserved": true,
+  "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "monitored_KEY_Signup_authorities_unchanged": true,
+  "system_token_Signup_issuer_code_pins_unchanged": true,
+  "token_stats_and_relay_registry_unchanged": true,
+  "finalizer_policy_count_threshold": [
+    21,
+    15
+  ],
+  "all7_execution_and_payment_receipts_canonical": true,
+  "native_cases": 4,
+  "relay_cases": 2,
+  "vault_double_snapshot_equal": true,
+  "reserves": [
+    {
+      "token": "eosio.token",
+      "symbol": "4,AIC",
+      "native_custody_atoms": 30367403,
+      "reserve_atoms": 30367403,
+      "liability_atoms": 30367403
+    },
+    {
+      "token": "usd",
+      "symbol": "4,USD",
+      "native_custody_atoms": 32010990,
+      "reserve_atoms": 32010990,
+      "liability_atoms": 32010990
+    },
+    {
+      "token": "cny",
+      "symbol": "4,CNY",
+      "native_custody_atoms": 31979990,
+      "reserve_atoms": 31979990,
+      "liability_atoms": 31979990
+    }
+  ],
+  "no_persistent_KEY_or_Signup_pending": true,
+  "public_key_history_all6_transactions": true,
+  "public_history_indexing": {
+    "scanned_irreversible_block": 686796,
+    "last_success_utc": "2026-11-11T02:32:48.840Z",
+    "irreversible_block": 686893,
+    "coverage": "indexed_receipts",
+    "stale": false,
+    "paused": false,
+    "complete_lifetime_history": false
+  },
+  "public_browser_four_variants_PASS": true,
+  "temporary_signers_closed": true,
+  "no_kernel_OOM_since_fresh_baseline": true,
+  "scope": "Current26 native processes preserved relative to user-confirmed maintenance baseline, not original pre-maintenance PIDs. No phone financial/Keystore/fullAndroid/TPS/indefinite uptime claim. Initial read-onlyRPC500 and controller failure retained; original successes never replayed."
+}

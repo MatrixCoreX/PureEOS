@@ -1,0 +1,9 @@
+{
+  "status": "PASS_FOCUSED_VISUAL_REVIEW",
+  "utc": "2026-11-11T02:36:37.515434+00:00",
+  "observed": [
+    "public_post-fee-en-dark-390.png",
+    "public_post-proposal-zh-light-390.png"
+  ],
+  "scope": "Actual remote browser screenshots for existing fee layout and ended proposal. No physical-phone/full-explorer visual claim."
+}

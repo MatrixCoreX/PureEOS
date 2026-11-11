@@ -1,0 +1,840 @@
+{
+  "status": "PASS_READONLY_MAINTENANCE_RECONCILIATION",
+  "utc": "2026-11-11T02:21:30.979692+00:00",
+  "user_maintenance_complete": true,
+  "maintenance_receipt_SHA256": "f533d71d4490f3ccd4249954983286ae1f9b0124ffa7e1d045d8e59e430a404b",
+  "maintenance_audit_SHA256": "75ec9f164ab2da7a1efcde646078657a13c4f744c420434f1894db0ea1bdc4b5",
+  "original_baseline_SHA256": "877172ab8fc375673be3daaa571a38af9fa5f24b92a096be96a6227a18c12e3b",
+  "info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 685533,
+    "last_irreversible_block_num": 685531,
+    "last_irreversible_block_id": "000a75db56f72453c80da6796620c856d6d957e3f03ca7c60738fd9f2c22df1e",
+    "head_block_id": "000a75dd2211ac9b3066525becce17f83cb242fcc81e0782b7e7880b597f49a6",
+    "head_block_time": "2026-11-11T02:21:30.500",
+    "head_block_producer": "cohereclouds",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 685533,
+    "fork_db_head_block_id": "000a75dd2211ac9b3066525becce17f83cb242fcc81e0782b7e7880b597f49a6",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583400750",
+    "total_net_weight": 251090000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-11T02:21:29.500"
+  },
+  "governance": {
+    "developer": "eosio.dev",
+    "review_seconds": 1800,
+    "protected_accounts": [
+      "eosio",
+      "eosio.bond",
+      "eosio.bpay",
+      "eosio.bslash",
+      "eosio.fees",
+      "eosio.key",
+      "eosio.msig",
+      "eosio.null",
+      "eosio.prods",
+      "eosio.ram",
+      "eosio.ramfee",
+      "eosio.reserv",
+      "eosio.rex",
+      "eosio.saving",
+      "eosio.signup",
+      "eosio.stake",
+      "eosio.token",
+      "eosio.vpay",
+      "eosio.wrap"
+    ],
+    "current_voters": [
+      "anthropiclab",
+      "berlintucomp",
+      "bostonmiteng",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepseekcore",
+      "genevacernai",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "montrealmila",
+      "moonshotlabs",
+      "nvidiaailabs",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethnet"
+    ],
+    "voters_updated_at": "2026-11-11T01:34:00.500",
+    "proposal_id": 5,
+    "pending": true,
+    "target": "eosio.key",
+    "old_code_hash": "7db295ea153410eed1a1810e6122c594d6a904117db232381cf713d1ab8d8416",
+    "old_abi_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+    "new_code_hash": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+    "new_abi_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c",
+    "review_document_hash": "b450981280c88b64fa9ed586ed35d88379ff1c768eb70a94fecd329534af85e1",
+    "proposed_at": "2026-11-11T01:34:00.500",
+    "execute_after": "2026-11-11T02:04:00.500",
+    "proposal_voters": [
+      "anthropiclab",
+      "berlintucomp",
+      "bostonmiteng",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepseekcore",
+      "genevacernai",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "montrealmila",
+      "moonshotlabs",
+      "nvidiaailabs",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethnet"
+    ],
+    "vetoes": [],
+    "profile_enabled": true,
+    "sealed": true,
+    "required_vetoes": 15,
+    "head_block_num": 685533,
+    "head_block_id": "000a75dd2211ac9b3066525becce17f83cb242fcc81e0782b7e7880b597f49a6",
+    "governance_v2_activated": true,
+    "effective_proposal_voters": [
+      "anthropiclab",
+      "berlintucomp",
+      "bostonmiteng",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepseekcore",
+      "genevacernai",
+      "gptgenesisbp",
+      "londonucllab",
+      "minimaxcloud",
+      "mistralcloud",
+      "montrealmila",
+      "moonshotlabs",
+      "nvidiaailabs",
+      "parisinriaai",
+      "perplexityai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethnet"
+    ],
+    "effective_vetoes": [],
+    "excluded_banned_voters": [],
+    "effective_voter_count": 22,
+    "effective_veto_count": 0,
+    "execution_blocked_no_electorate": false
+  },
+  "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "native_processes": {
+    "anthropiclab": {
+      "service": {
+        "MainPID": "4011126",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:27 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011126,
+        "start_ticks": "42760693",
+        "cmdline_sha256": "83c85b438507aeafeeb1a255706e8004cb4863719d63cfed8bde145ba6863426"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "bytedancelab": {
+      "service": {
+        "MainPID": "4012789",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:45:44 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4012789,
+        "start_ticks": "42774440",
+        "cmdline_sha256": "51f0c60dabd77159f1939f1c90f29731a823772cc68f67695f295be222f2183f"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "canadamilaai": {
+      "service": {
+        "MainPID": "4011355",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:45 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011355,
+        "start_ticks": "42762544",
+        "cmdline_sha256": "5ddf44c52898793f0f2229f0b45996ff8aee29ad3a39db95f7982f9401036857"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "cohereclouds": {
+      "service": {
+        "MainPID": "4011467",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:56 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011467,
+        "start_ticks": "42763638",
+        "cmdline_sha256": "0acfd4f4f7731b11f797f48378ff8b66bc7b7a0614676511c279a0d0cfed859d"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "deepseekcore": {
+      "service": {
+        "MainPID": "4012260",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:49 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4012260,
+        "start_ticks": "42768946",
+        "cmdline_sha256": "c6cc5227e97cac15e6f6472c71290b6308b13039e7242f2ab744f1811a3aad3a"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "genevacernai": {
+      "service": {
+        "MainPID": "4011601",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:05 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011601,
+        "start_ticks": "42764565",
+        "cmdline_sha256": "9f93bf96d93b6de18ccb63a28cfdd797610740f15eb0c3aefc619a1ff6f84e14"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "gptgenesisbp": {
+      "service": {
+        "MainPID": "4011712",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:14 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011712,
+        "start_ticks": "42765402",
+        "cmdline_sha256": "1450543db15e8cdd2b13c0e9ab70e9c795d480a658b1bf6a48b0cd0943c2ec24"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "londonucllab": {
+      "service": {
+        "MainPID": "4012143",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:39 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4012143,
+        "start_ticks": "42767952",
+        "cmdline_sha256": "1fb6fbad6404801e86da678107d05dab6f857d8e4301d2e81372e357b8864208"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "minimaxcloud": {
+      "service": {
+        "MainPID": "4011822",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:23 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011822,
+        "start_ticks": "42766349",
+        "cmdline_sha256": "8e71edf3abb8de94d01a05af3e367a5a2445cb18be7147acd0ee0301a019129b"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "mistralcloud": {
+      "service": {
+        "MainPID": "4011960",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:31 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011960,
+        "start_ticks": "42767152",
+        "cmdline_sha256": "10f3d1f83b565f7bc6b10e3e5712ac9ed6906ee68cd86943e3468c29918a26fc"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "moonshotlabs": {
+      "service": {
+        "MainPID": "4010331",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:42:28 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4010331,
+        "start_ticks": "42754864",
+        "cmdline_sha256": "4f4a2ada07f8b24abaadaeeb5fd28a133143191f41c5937df80581f2541fece6"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "parisinriaai": {
+      "service": {
+        "MainPID": "4010450",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:42:38 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4010450,
+        "start_ticks": "42755861",
+        "cmdline_sha256": "ad508b6a85279669766a98b100561229b005a127e69b2fe78c637fc2a2266b52"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "perplexityai": {
+      "service": {
+        "MainPID": "4009516",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:40:44 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4009516,
+        "start_ticks": "42744444",
+        "cmdline_sha256": "c65c3e97060f24f790243c03aee86440fe0cf9f2948f1b8e71b7cd67c9962fe2"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "seoulkaistai": {
+      "service": {
+        "MainPID": "4012397",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:44:58 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4012397,
+        "start_ticks": "42769793",
+        "cmdline_sha256": "c17715c543afb1c84a135ef4743679edd69ad13246458f6917eda60a3e647225"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "stabilityhub": {
+      "service": {
+        "MainPID": "4010695",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:00 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4010695,
+        "start_ticks": "42757970",
+        "cmdline_sha256": "53fe1ae4288df3e067e4ed08381ebc363b220d0650e42807e8740d7b13805bef"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "torontovectr": {
+      "service": {
+        "MainPID": "4010804",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:09 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4010804,
+        "start_ticks": "42758879",
+        "cmdline_sha256": "2fa1a4ae59c378f7caaa8f08e396e6a6ee99b83aa944f6c6bd2bd52a18ebee65"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "berlintucomp": {
+      "service": {
+        "MainPID": "4009042",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:38:55 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4009042,
+        "start_ticks": "42733500",
+        "cmdline_sha256": "ca2c6093b487004434a6c7ee10a8e9a8f16a1cf987439d77d121dc86473a9132"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "bostonmiteng": {
+      "service": {
+        "MainPID": "4011245",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:36 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4011245,
+        "start_ticks": "42761647",
+        "cmdline_sha256": "c726cf7c0d5e856816137a9016007bbe07572c01d143e9e5f7bb17505d113e4d"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "nvidiaailabs": {
+      "service": {
+        "MainPID": "4010560",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:42:49 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4010560,
+        "start_ticks": "42756894",
+        "cmdline_sha256": "5b0ff219dec591aa8cfc20de5ef7164dc6efa4b95d4ce0c6a3086454be415ca3"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "tencentailab": {
+      "service": {
+        "MainPID": "4012512",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:45:11 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4012512,
+        "start_ticks": "42771071",
+        "cmdline_sha256": "9cd5f4c9bcd6c31684bd0e453974cf5f47eeef26edcdf3f32098b78b9c7ae201"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "zurichethnet": {
+      "service": {
+        "MainPID": "4010914",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:43:18 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4010914,
+        "start_ticks": "42759809",
+        "cmdline_sha256": "5703a912b7ee57986174d97cd98885f98495e12eae5a0b5d37c79faa61171dda"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "alibabaailab": {
+      "service": {
+        "MainPID": "4014406",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:50:01 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4014406,
+        "start_ticks": "42800098",
+        "cmdline_sha256": "5c943c7bc07740aee4d6f0db28c193ebab0c360bcfa12ec15def16c5c34f13d3"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "deepmindtech": {
+      "service": {
+        "MainPID": "4014915",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:50:25 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4014915,
+        "start_ticks": "42802535",
+        "cmdline_sha256": "3c93b850f735344490266af2828067d397f07a688268c286bebe9477a6bf0bfe"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "openaimodels": {
+      "service": {
+        "MainPID": "4015379",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:50:56 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4015379,
+        "start_ticks": "42805642",
+        "cmdline_sha256": "b5caadf98baf8c050ecc090c7d5da854903d5d876c64379f851ff051ea2400e9"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "sydneyunswcs": {
+      "service": {
+        "MainPID": "4015905",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Wed 2026-11-11 01:51:27 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 4015905,
+        "start_ticks": "42808734",
+        "cmdline_sha256": "291b1401e7507d8c72f1abef5191a2b964543f51ececa5e64ae08ba26269adcd"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    },
+    "history": {
+      "service": {
+        "MainPID": "13051",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Fri 2026-11-06 03:25:40 UTC",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 13051,
+        "start_ticks": "173987",
+        "cmdline_sha256": "2d90f71f7e46f6a68eb60cec4127e5d1a9075ef5fa1997339078e70ced46c8d7"
+      },
+      "matches_external_completed_maintenance_PID": true,
+      "native_mapping_verified": true
+    }
+  },
+  "physical_native_PIDs": [
+    13051,
+    4009042,
+    4009516,
+    4010331,
+    4010450,
+    4010560,
+    4010695,
+    4010804,
+    4010914,
+    4011126,
+    4011245,
+    4011355,
+    4011467,
+    4011601,
+    4011712,
+    4011822,
+    4011960,
+    4012143,
+    4012260,
+    4012397,
+    4012512,
+    4012789,
+    4014406,
+    4014915,
+    4015379,
+    4015905
+  ],
+  "other_services": {
+    "pureeos-devnet-activity-wallet-20261105.service": {
+      "state": {
+        "MainPID": "17002",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 17002,
+        "start_ticks": "320139",
+        "cmdline_sha256": "768b8e0f54c9ac0adbc3be28fd7631fb2311fc774fe1fa9dc3a5b792f91e8592"
+      }
+    },
+    "pureeos-devnet-companion-observed-peak-20261105.service": {
+      "state": {
+        "MainPID": "15967",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 15967,
+        "start_ticks": "261542",
+        "cmdline_sha256": "398977001f73233bbedfd8711ffd85e44bda96bb68153d3e086c1b9dc9763d5c"
+      }
+    },
+    "pureeos-devnet-companion-rotation-20261105.service": {
+      "state": {
+        "MainPID": "15968",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 15968,
+        "start_ticks": "261543",
+        "cmdline_sha256": "5149356dc39cb202d5fd021e016b9a7cce122fef227ff4977393c0f85bb59ff3"
+      }
+    },
+    "pureeos-devnet-companion-votes-20261105.service": {
+      "state": {
+        "MainPID": "15969",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 15969,
+        "start_ticks": "261545",
+        "cmdline_sha256": "173bf0a5b7afd5e18b1c8fc671637147d35dca634a75a11bc2f5bf15fd70f458"
+      }
+    },
+    "pureeos-devnet-key-history-20261105.service": {
+      "state": {
+        "MainPID": "108084",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 108084,
+        "start_ticks": "7526938",
+        "cmdline_sha256": "a077a673a86907af11a3f96d45ee68cc18a7e5ebff30535032b751eb3800576c"
+      }
+    },
+    "pureeos-devnet-purehistory-api-20261105.service": {
+      "state": {
+        "MainPID": "15970",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 15970,
+        "start_ticks": "261546",
+        "cmdline_sha256": "942ca32a97e995eae0080f823e961ceef14fa024b490631295f821264a7f7415"
+      }
+    },
+    "pureeos-devnet-purehistory-indexer-20261105.service": {
+      "state": {
+        "MainPID": "15971",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 15971,
+        "start_ticks": "261546",
+        "cmdline_sha256": "eba0e42ad09abe723266e14e2bf3a6c93ca1229602ed3a9e43e8d0edfa43d8bb"
+      }
+    },
+    "pureeos-devnet-relay-20261105.service": {
+      "state": {
+        "MainPID": "107964",
+        "ActiveState": "active"
+      },
+      "process": {
+        "PID": 107964,
+        "start_ticks": "7523412",
+        "cmdline_sha256": "63efbcaff50b3cdf2bf6a6e5d5353841220f97451ebba303528532864eeadae7"
+      }
+    }
+  },
+  "services": {
+    "pureeos-devnet-bp-anthropiclab-20261105.service": {
+      "PID": 4011126,
+      "start_ticks": "42760693",
+      "cmdline_sha256": "83c85b438507aeafeeb1a255706e8004cb4863719d63cfed8bde145ba6863426"
+    },
+    "pureeos-devnet-bp-bytedancelab-20261105.service": {
+      "PID": 4012789,
+      "start_ticks": "42774440",
+      "cmdline_sha256": "51f0c60dabd77159f1939f1c90f29731a823772cc68f67695f295be222f2183f"
+    },
+    "pureeos-devnet-bp-canadamilaai-20261105.service": {
+      "PID": 4011355,
+      "start_ticks": "42762544",
+      "cmdline_sha256": "5ddf44c52898793f0f2229f0b45996ff8aee29ad3a39db95f7982f9401036857"
+    },
+    "pureeos-devnet-bp-cohereclouds-20261105.service": {
+      "PID": 4011467,
+      "start_ticks": "42763638",
+      "cmdline_sha256": "0acfd4f4f7731b11f797f48378ff8b66bc7b7a0614676511c279a0d0cfed859d"
+    },
+    "pureeos-devnet-bp-deepseekcore-20261105.service": {
+      "PID": 4012260,
+      "start_ticks": "42768946",
+      "cmdline_sha256": "c6cc5227e97cac15e6f6472c71290b6308b13039e7242f2ab744f1811a3aad3a"
+    },
+    "pureeos-bp-demo-genevacernai-20261105.service": {
+      "PID": 4011601,
+      "start_ticks": "42764565",
+      "cmdline_sha256": "9f93bf96d93b6de18ccb63a28cfdd797610740f15eb0c3aefc619a1ff6f84e14"
+    },
+    "pureeos-devnet-founder-20261105.service": {
+      "PID": 4011712,
+      "start_ticks": "42765402",
+      "cmdline_sha256": "1450543db15e8cdd2b13c0e9ab70e9c795d480a658b1bf6a48b0cd0943c2ec24"
+    },
+    "pureeos-devnet-bp-londonucllab-20261105.service": {
+      "PID": 4012143,
+      "start_ticks": "42767952",
+      "cmdline_sha256": "1fb6fbad6404801e86da678107d05dab6f857d8e4301d2e81372e357b8864208"
+    },
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": {
+      "PID": 4011822,
+      "start_ticks": "42766349",
+      "cmdline_sha256": "8e71edf3abb8de94d01a05af3e367a5a2445cb18be7147acd0ee0301a019129b"
+    },
+    "pureeos-devnet-bp-mistralcloud-20261105.service": {
+      "PID": 4011960,
+      "start_ticks": "42767152",
+      "cmdline_sha256": "10f3d1f83b565f7bc6b10e3e5712ac9ed6906ee68cd86943e3468c29918a26fc"
+    },
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": {
+      "PID": 4010331,
+      "start_ticks": "42754864",
+      "cmdline_sha256": "4f4a2ada07f8b24abaadaeeb5fd28a133143191f41c5937df80581f2541fece6"
+    },
+    "pureeos-devnet-bp-parisinriaai-20261105.service": {
+      "PID": 4010450,
+      "start_ticks": "42755861",
+      "cmdline_sha256": "ad508b6a85279669766a98b100561229b005a127e69b2fe78c637fc2a2266b52"
+    },
+    "pureeos-devnet-bp-perplexityai-20261105.service": {
+      "PID": 4009516,
+      "start_ticks": "42744444",
+      "cmdline_sha256": "c65c3e97060f24f790243c03aee86440fe0cf9f2948f1b8e71b7cd67c9962fe2"
+    },
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": {
+      "PID": 4012397,
+      "start_ticks": "42769793",
+      "cmdline_sha256": "c17715c543afb1c84a135ef4743679edd69ad13246458f6917eda60a3e647225"
+    },
+    "pureeos-devnet-bp-stabilityhub-20261105.service": {
+      "PID": 4010695,
+      "start_ticks": "42757970",
+      "cmdline_sha256": "53fe1ae4288df3e067e4ed08381ebc363b220d0650e42807e8740d7b13805bef"
+    },
+    "pureeos-bp-extra-torontovectr-20261106.service": {
+      "PID": 4010804,
+      "start_ticks": "42758879",
+      "cmdline_sha256": "2fa1a4ae59c378f7caaa8f08e396e6a6ee99b83aa944f6c6bd2bd52a18ebee65"
+    },
+    "pureeos-bp-replacement-berlintucomp-20261110.service": {
+      "PID": 4009042,
+      "start_ticks": "42733500",
+      "cmdline_sha256": "ca2c6093b487004434a6c7ee10a8e9a8f16a1cf987439d77d121dc86473a9132"
+    },
+    "pureeos-bp-replacement-bostonmiteng-20261110.service": {
+      "PID": 4011245,
+      "start_ticks": "42761647",
+      "cmdline_sha256": "c726cf7c0d5e856816137a9016007bbe07572c01d143e9e5f7bb17505d113e4d"
+    },
+    "pureeos-bp-replacement-nvidiaailabs-20261110.service": {
+      "PID": 4010560,
+      "start_ticks": "42756894",
+      "cmdline_sha256": "5b0ff219dec591aa8cfc20de5ef7164dc6efa4b95d4ce0c6a3086454be415ca3"
+    },
+    "pureeos-bp-replacement-tencentailab-20261110.service": {
+      "PID": 4012512,
+      "start_ticks": "42771071",
+      "cmdline_sha256": "9cd5f4c9bcd6c31684bd0e453974cf5f47eeef26edcdf3f32098b78b9c7ae201"
+    },
+    "pureeos-bp-replacement-zurichethnet-20261110.service": {
+      "PID": 4010914,
+      "start_ticks": "42759809",
+      "cmdline_sha256": "5703a912b7ee57986174d97cd98885f98495e12eae5a0b5d37c79faa61171dda"
+    },
+    "pureeos-bp-replacement-alibabaailab-20261111.service": {
+      "PID": 4014406,
+      "start_ticks": "42800098",
+      "cmdline_sha256": "5c943c7bc07740aee4d6f0db28c193ebab0c360bcfa12ec15def16c5c34f13d3"
+    },
+    "pureeos-bp-replacement-deepmindtech-20261111.service": {
+      "PID": 4014915,
+      "start_ticks": "42802535",
+      "cmdline_sha256": "3c93b850f735344490266af2828067d397f07a688268c286bebe9477a6bf0bfe"
+    },
+    "pureeos-bp-replacement-openaimodels-20261111.service": {
+      "PID": 4015379,
+      "start_ticks": "42805642",
+      "cmdline_sha256": "b5caadf98baf8c050ecc090c7d5da854903d5d876c64379f851ff051ea2400e9"
+    },
+    "pureeos-bp-replacement-sydneyunswcs-20261111.service": {
+      "PID": 4015905,
+      "start_ticks": "42808734",
+      "cmdline_sha256": "291b1401e7507d8c72f1abef5191a2b964543f51ececa5e64ae08ba26269adcd"
+    },
+    "pureeos-devnet-history-20261105.service": {
+      "PID": 13051,
+      "start_ticks": "173987",
+      "cmdline_sha256": "2d90f71f7e46f6a68eb60cec4127e5d1a9075ef5fa1997339078e70ced46c8d7"
+    },
+    "pureeos-devnet-activity-wallet-20261105.service": {
+      "PID": 17002,
+      "start_ticks": "320139",
+      "cmdline_sha256": "768b8e0f54c9ac0adbc3be28fd7631fb2311fc774fe1fa9dc3a5b792f91e8592"
+    },
+    "pureeos-devnet-companion-observed-peak-20261105.service": {
+      "PID": 15967,
+      "start_ticks": "261542",
+      "cmdline_sha256": "398977001f73233bbedfd8711ffd85e44bda96bb68153d3e086c1b9dc9763d5c"
+    },
+    "pureeos-devnet-companion-rotation-20261105.service": {
+      "PID": 15968,
+      "start_ticks": "261543",
+      "cmdline_sha256": "5149356dc39cb202d5fd021e016b9a7cce122fef227ff4977393c0f85bb59ff3"
+    },
+    "pureeos-devnet-companion-votes-20261105.service": {
+      "PID": 15969,
+      "start_ticks": "261545",
+      "cmdline_sha256": "173bf0a5b7afd5e18b1c8fc671637147d35dca634a75a11bc2f5bf15fd70f458"
+    },
+    "pureeos-devnet-key-history-20261105.service": {
+      "PID": 108084,
+      "start_ticks": "7526938",
+      "cmdline_sha256": "a077a673a86907af11a3f96d45ee68cc18a7e5ebff30535032b751eb3800576c"
+    },
+    "pureeos-devnet-purehistory-api-20261105.service": {
+      "PID": 15970,
+      "start_ticks": "261546",
+      "cmdline_sha256": "942ca32a97e995eae0080f823e961ceef14fa024b490631295f821264a7f7415"
+    },
+    "pureeos-devnet-purehistory-indexer-20261105.service": {
+      "PID": 15971,
+      "start_ticks": "261546",
+      "cmdline_sha256": "eba0e42ad09abe723266e14e2bf3a6c93ca1229602ed3a9e43e8d0edfa43d8bb"
+    },
+    "pureeos-devnet-relay-20261105.service": {
+      "PID": 107964,
+      "start_ticks": "7523412",
+      "cmdline_sha256": "63efbcaff50b3cdf2bf6a6e5d5353841220f97451ebba303528532864eeadae7"
+    }
+  },
+  "memory_kib": {
+    "MemAvailable": 4695664,
+    "SwapFree": 54932016
+  },
+  "relay_terminal_jobs": 56,
+  "authority_and_protected_codes_match": true,
+  "scope": "No node restart, signing, transaction, service change or baseline replacement."
+}

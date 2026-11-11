@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "files": {
+    "ops_common.py": {
+      "before": "db725d3b6383741684dbbd8af03aa99c6f256fead14e0378e205b7e6f89ef2b0",
+      "after": "7c2d4a03cccd08172d60031e1b423d9bba9012fc65fa2e83c3c85e3cc84bea4a"
+    },
+    "native_session.py": {
+      "before": "4128046d37f24e66cd2c47a18bd850c6a83f899621c15826c87da4c853a0b0a5",
+      "after": "4128046d37f24e66cd2c47a18bd850c6a83f899621c15826c87da4c853a0b0a5"
+    },
+    "public_qa.py": {
+      "before": "493a5db83ae8b4e25b2734fddefe6a13dd8d72eddfec387727058f498ff5a645",
+      "after": "00812e8b9bb5a1e24d78abe58881725c775b458e8d5fd447c9e4d9883d08d1c2"
+    }
+  },
+  "reason": "User confirmed external maintenance ended. Preserve original baseline, guard all26 real native PIDs from verified new baseline. Latest bounded fresh QA only; not started."
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "label": "key-to-key",
+    "transaction_id": "2a4288de4fd19362594c024b6f19d60ab6015c79c769b6de35e88d4a3a20784f",
+    "fee_receipts": [
+      {
+        "ticket": "2A4288DE4FD19362594C024B6F19D60AB6015C79C769B6DE35E88D4A3A20784F",
+        "request_id": "8A55C406FF4FE73987EF1E19D0F6E8166ECB4A880F2EB6E0690824F1AF8A3DAA",
+        "total": "0.0335 AIC",
+        "ram_payment": "0.0037 AIC",
+        "retained_base": "0.0220 AIC",
+        "relay_fee": "0.0078 AIC",
+        "allocated_bytes": 1536,
+        "purchased_bytes": "1585"
+      }
+    ],
+    "history_response_keys": [
+      "query_time_ms",
+      "executed",
+      "trx_id",
+      "lib",
+      "cached_lib",
+      "actions",
+      "last_indexed_block",
+      "last_indexed_block_time"
+    ]
+  },
+  {
+    "label": "key-to-named",
+    "transaction_id": "098d52891c7a0a1dd86c5c0ebd23b44d5748c1882bfc22c3ddfc2cbb094e2cbe",
+    "fee_receipts": [
+      {
+        "ticket": "098D52891C7A0A1DD86C5C0EBD23B44D5748C1882BFC22C3DDFC2CBB094E2CBE",
+        "request_id": "DA2C4996986B3959B402EC31C14C6F97AD9AD56FCDC61E415D35E568024A613D",
+        "total": "0.0349 AIC",
+        "ram_payment": "0.0000 AIC",
+        "retained_base": "0.0268 AIC",
+        "relay_fee": "0.0081 AIC",
+        "allocated_bytes": 0,
+        "purchased_bytes": "0"
+      }
+    ],
+    "history_response_keys": [
+      "query_time_ms",
+      "executed",
+      "trx_id",
+      "lib",
+      "cached_lib",
+      "actions",
+      "last_indexed_block",
+      "last_indexed_block_time"
+    ]
+  }
+]

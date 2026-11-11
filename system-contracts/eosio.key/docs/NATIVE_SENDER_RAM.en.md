@@ -1,6 +1,8 @@
 # Native sender resources for named-to-public-key deposits
 
-The candidate changes only native named-account deposits: one sender-signed transaction contains the deposit declaration followed by the exact principal transfer. CPU/NET are supplied by the named sender. Newly allocated wallet, secondary-index and balance rows bill that explicitly authorized sender in the top-level deposit frame; existing payers stay unchanged. No AIC fee funding, execution/minimum/relay fee or automatic RAM purchase remains on this path. Insufficient sender RAM or any principal mismatch rolls back the entire transaction.
+This upgrade became irreversible through proposal5 at block686081 on2026-11-11. See the [activation and detailed three-route fee report](../../../deployments/20261111-key-native-ram-r1/activation/REPORT.en.md).
+
+This upgrade changes only native named-account deposits: one sender-signed transaction contains the deposit declaration followed by the exact principal transfer. CPU/NET are supplied by the named sender. Newly allocated wallet, secondary-index and balance rows bill that explicitly authorized sender in the top-level deposit frame; existing payers stay unchanged. No AIC fee funding, execution/minimum/relay fee or automatic RAM purchase remains on this path. Insufficient sender RAM or any principal mismatch rolls back the entire transaction.
 
 All ABI bytes, existing action/table layouts, config and deployment domain remain unchanged. deposit.max_fee must be zero; old three-root paid packets are rejected. A pending transaction lock precedes allocation/credit and only the exact actual next-root principal can settle it. The fee receipt reports zero fee-funded RAM; it does not meter sender RAM usage.
 

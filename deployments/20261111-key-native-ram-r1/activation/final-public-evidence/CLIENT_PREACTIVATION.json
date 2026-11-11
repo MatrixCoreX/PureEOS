@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "utc": "2026-11-11T02:26:11.308002+00:00",
+  "wallet_test29_both_installed_proof_SHA256": "70b2f8c79c1af51a4f9355c02570a86e69e5a6e4bdbf2475bf2497a90bb97203",
+  "SDK_runtime_manifest_SHA256": "24cc804cd6d2640a1e8569392e5819a4be42895c9e49e3a3a822295b1942dca5",
+  "web_270_TS_build_SHA256": "8455aec818f233f7887753a9f692a2c19294e5d13c1a74b2f7c4fab8dcec20af",
+  "preview_four_variants_SHA256": "738a51d11e9493afec5f44b20c33f1fe9bb0a8b36c94f6b1a0f2572c4b2dff07",
+  "browser_source_publication": {
+    "status": "PASS",
+    "branch": "feature/key-native-ram-compat-20261111",
+    "commit": "f68b467b96b5b87ca4659d98e10d9baa51f88efa",
+    "remote_ref_verified": true,
+    "worktree_clean": true
+  },
+  "scope": "SDK/relay exact reviewed artifacts, compatible derived-history pin staged, both-phone wallet29 complete, browser built+preview PASS. Live app activation/static publication only after irreversible exact code."
+}

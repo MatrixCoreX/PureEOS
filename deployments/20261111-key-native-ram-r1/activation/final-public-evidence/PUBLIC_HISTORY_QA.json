@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+  "key_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+  "entries": [
+    {
+      "doc_type": "event",
+      "schema_version": 1,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532:098d52891c7a0a1dd86c5c0ebd23b44d5748c1882bfc22c3ddfc2cbb094e2cbe:7:234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+      "sort_key": "00000000000000732305:0000000007:098d52891c7a0a1dd86c5c0ebd23b44d5748c1882bfc22c3ddfc2cbb094e2cbe",
+      "sequence": "732305",
+      "block_num": 686465,
+      "block_id": "000a7981367f42b4d99dca6045145801b509568991f85d2104130c42b5c3d60a",
+      "transaction_id": "098d52891c7a0a1dd86c5c0ebd23b44d5748c1882bfc22c3ddfc2cbb094e2cbe",
+      "action_ordinal": "7",
+      "timestamp": "2026-11-11T02:29:30.000Z",
+      "kind": "withdraw",
+      "direction": "out",
+      "from": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "to": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "counterparty": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "quantity_atomic": "1",
+      "principal_delta_atomic": "-1",
+      "fee_asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "fee_total_atomic": "349",
+      "fee_charged_atomic": "349",
+      "fee_paid_by": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "affected_assets": [
+        "eosio.token:4,AIC"
+      ],
+      "memo": "nativeRAM upgrade regression",
+      "relayer": "gptgenesisbp"
+    },
+    {
+      "doc_type": "event",
+      "schema_version": 1,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532:2a4288de4fd19362594c024b6f19d60ab6015c79c769b6de35e88d4a3a20784f:25:234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+      "sort_key": "00000000000000732288:0000000025:2a4288de4fd19362594c024b6f19d60ab6015c79c769b6de35e88d4a3a20784f",
+      "sequence": "732288",
+      "block_num": 686457,
+      "block_id": "000a7979f4e114da0426c799c70c8b763079028f29f3c65f2ba168c08764b8c8",
+      "transaction_id": "2a4288de4fd19362594c024b6f19d60ab6015c79c769b6de35e88d4a3a20784f",
+      "action_ordinal": "25",
+      "timestamp": "2026-11-11T02:29:25.500Z",
+      "kind": "ksend",
+      "direction": "out",
+      "from": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "to": {
+        "type": "key",
+        "value": "PUB_K1_4xNnjrdJSiz5QCBUYcsjj8DKVD48LhfrvLxRRsj3FJyrpdavpp",
+        "hash": "52c35d63ebe6866adecd033effd7a650bb7c06b5a3164baf54ffd9bec1877e08"
+      },
+      "counterparty": {
+        "type": "key",
+        "value": "PUB_K1_4xNnjrdJSiz5QCBUYcsjj8DKVD48LhfrvLxRRsj3FJyrpdavpp",
+        "hash": "52c35d63ebe6866adecd033effd7a650bb7c06b5a3164baf54ffd9bec1877e08"
+      },
+      "asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "quantity_atomic": "1",
+      "principal_delta_atomic": "-1",
+      "fee_asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "fee_total_atomic": "335",
+      "fee_charged_atomic": "335",
+      "fee_paid_by": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "affected_assets": [
+        "eosio.token:4,AIC"
+      ],
+      "memo": "nativeRAM upgrade regression",
+      "relayer": "gptgenesisbp"
+    },
+    {
+      "doc_type": "event",
+      "schema_version": 1,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532:dc61dc5fdcf36f8dd3cc9b115bd929ac626f7ba28254887d6555b7e46188f88d:7:234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+      "sort_key": "00000000000000732248:0000000007:dc61dc5fdcf36f8dd3cc9b115bd929ac626f7ba28254887d6555b7e46188f88d",
+      "sequence": "732248",
+      "block_num": 686442,
+      "block_id": "000a796adb303803c1689d527e4eff81976275c7ff7612df444eed7843478bc0",
+      "transaction_id": "dc61dc5fdcf36f8dd3cc9b115bd929ac626f7ba28254887d6555b7e46188f88d",
+      "action_ordinal": "7",
+      "timestamp": "2026-11-11T02:29:18.000Z",
+      "kind": "deposit",
+      "direction": "in",
+      "from": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "to": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "counterparty": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "quantity_atomic": "100",
+      "principal_delta_atomic": "100",
+      "fee_asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "fee_total_atomic": "0",
+      "fee_charged_atomic": "0",
+      "fee_paid_by": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "affected_assets": [
+        "eosio.token:4,AIC"
+      ],
+      "memo": "",
+      "relayer": ""
+    },
+    {
+      "doc_type": "event",
+      "schema_version": 1,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532:8fc862c951129996e71905a7b99e45ba9c0d357b9befbf220d901b9c6adc6106:7:234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+      "sort_key": "00000000000000732230:0000000007:8fc862c951129996e71905a7b99e45ba9c0d357b9befbf220d901b9c6adc6106",
+      "sequence": "732230",
+      "block_num": 686431,
+      "block_id": "000a795f59a3545f34bf713c4a7e402760062415ce297fa07cffbf153ad59701",
+      "transaction_id": "8fc862c951129996e71905a7b99e45ba9c0d357b9befbf220d901b9c6adc6106",
+      "action_ordinal": "7",
+      "timestamp": "2026-11-11T02:29:12.500Z",
+      "kind": "deposit",
+      "direction": "in",
+      "from": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "to": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "counterparty": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "quantity_atomic": "10000",
+      "principal_delta_atomic": "10000",
+      "fee_asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "fee_total_atomic": "0",
+      "fee_charged_atomic": "0",
+      "fee_paid_by": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "affected_assets": [
+        "eosio.token:4,AIC"
+      ],
+      "memo": "",
+      "relayer": ""
+    },
+    {
+      "doc_type": "event",
+      "schema_version": 1,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532:64d1ae3a6189f7e37274c498608bd2753aab27c772f1225e0f5546942169fd3e:7:234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+      "sort_key": "00000000000000731966:0000000007:64d1ae3a6189f7e37274c498608bd2753aab27c772f1225e0f5546942169fd3e",
+      "sequence": "731966",
+      "block_num": 686174,
+      "block_id": "000a785e859a1a0b8628c48f882c87ab1c7a156cc1314a8d9be009263616f113",
+      "transaction_id": "64d1ae3a6189f7e37274c498608bd2753aab27c772f1225e0f5546942169fd3e",
+      "action_ordinal": "7",
+      "timestamp": "2026-11-11T02:27:04.000Z",
+      "kind": "deposit",
+      "direction": "in",
+      "from": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "to": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "counterparty": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "asset": {
+        "contract": "cny",
+        "precision": 4,
+        "symbol": "CNY",
+        "id": "cny:4,CNY"
+      },
+      "quantity_atomic": "10000",
+      "principal_delta_atomic": "10000",
+      "fee_asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "fee_total_atomic": "0",
+      "fee_charged_atomic": "0",
+      "fee_paid_by": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "affected_assets": [
+        "cny:4,CNY"
+      ],
+      "memo": "",
+      "relayer": ""
+    },
+    {
+      "doc_type": "event",
+      "schema_version": 1,
+      "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+      "deployment": "f34e7c1e9b017054ce9be91b8dfeb276dbee58baecbdf7af1910d7012d543f02",
+      "id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532:81dbfa9fae318e6d70547dcc59db0656e6e8cb5f6cf133d83d40b7a233cf40a4:7:234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da",
+      "wallet_public_key": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+      "sort_key": "00000000000000731948:0000000007:81dbfa9fae318e6d70547dcc59db0656e6e8cb5f6cf133d83d40b7a233cf40a4",
+      "sequence": "731948",
+      "block_num": 686163,
+      "block_id": "000a7853f7886f3f7ea81ac90ee37eabee29ba12f473c0add836ed181702aaa3",
+      "transaction_id": "81dbfa9fae318e6d70547dcc59db0656e6e8cb5f6cf133d83d40b7a233cf40a4",
+      "action_ordinal": "7",
+      "timestamp": "2026-11-11T02:26:58.500Z",
+      "kind": "deposit",
+      "direction": "in",
+      "from": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "to": {
+        "type": "key",
+        "value": "PUB_K1_76ZPednuR9dz1uK4UsQqFmyYrtkMWwmcvfCp4VZrcsQgJfXSzX",
+        "hash": "234847057685934e89642240fbaedd004f5b27754004ca310cac76eff6b760da"
+      },
+      "counterparty": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "asset": {
+        "contract": "usd",
+        "precision": 4,
+        "symbol": "USD",
+        "id": "usd:4,USD"
+      },
+      "quantity_atomic": "10000",
+      "principal_delta_atomic": "10000",
+      "fee_asset": {
+        "contract": "eosio.token",
+        "precision": 4,
+        "symbol": "AIC",
+        "id": "eosio.token:4,AIC"
+      },
+      "fee_total_atomic": "0",
+      "fee_charged_atomic": "0",
+      "fee_paid_by": {
+        "type": "account",
+        "value": "gptgenesisbp"
+      },
+      "affected_assets": [
+        "usd:4,USD"
+      ],
+      "memo": "",
+      "relayer": ""
+    }
+  ],
+  "assets": [
+    "eosio.token:4,AIC",
+    "cny:4,CNY",
+    "usd:4,USD"
+  ],
+  "indexing": {
+    "scanned_irreversible_block": 686796,
+    "last_success_utc": "2026-11-11T02:32:48.840Z",
+    "irreversible_block": 686974,
+    "coverage": "indexed_receipts",
+    "stale": false,
+    "paused": false,
+    "complete_lifetime_history": false
+  }
+}

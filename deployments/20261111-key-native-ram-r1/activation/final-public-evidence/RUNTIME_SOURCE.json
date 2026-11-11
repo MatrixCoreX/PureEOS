@@ -1,0 +1,14 @@
+{
+  "status": "STAGED_NOT_ACTIVATED",
+  "archive_sha256": "308a517b8132311f24f61f50c87ff7005f14eb58e6d32195ff6832732ee02421",
+  "files": {
+    "sdk/index.mjs": "dd1b317265f84a0f6bd87ddf729f0a7971a0c3940d443ae5f1732899a3e94f1d",
+    "sdk/fee-profiles.mjs": "d7513285d7d2faac0c694614a5d41e9940917721f6da9ad5640db779e52ac80e",
+    "relayer/server.mjs": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44",
+    "abi/eosio.key.abi": "88f5265c2be8e6233917d2c214c14810b49a2460b457694060b1ea110b4200cf"
+  },
+  "relay_implementation_unchanged": true,
+  "layout_ABI_unchanged": true,
+  "uses_existing_pinned_node_modules": true,
+  "scope": "No service restart, public packet or credential change; staged exact SDK30-qualified source only."
+}
