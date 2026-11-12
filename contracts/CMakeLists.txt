@@ -24,8 +24,10 @@ option(SYSTEM_BLOCKCHAIN_PARAMETERS
 
 find_package(cdt)
 
-set(CDT_VERSION_MIN "3.0")
-set(CDT_VERSION_SOFT_MAX "4.0")
+# This branch targets the new PureEOS chain with the CDT 5 dispatcher/SDK.
+# Retain the version check: an older compiler must not silently build this profile.
+set(CDT_VERSION_MIN "5.0")
+set(CDT_VERSION_SOFT_MAX "5.0")
 # set(CDT_VERSION_HARD_MAX "")
 
 # Check the version of CDT

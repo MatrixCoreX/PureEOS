@@ -1,0 +1,27 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/reference-contracts",
+  "original_head": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+  "original_branch": "feature/cdt5-validation",
+  "original_index_SHA256": "2b1b3d424fd8d6a4a46bd3f28be97876a69dfe766e4e18cc27d4f4bfe62e5248",
+  "excluded_runtime": [],
+  "source_files": [
+    {
+      "path": "contracts/CMakeLists.txt",
+      "SHA256": "c3e8ff4fdbed39acca3a0a1016e0d92b059a20bfb4f1f3be5cb1004f58820662",
+      "bytes": 3759
+    },
+    {
+      "path": "contracts/eosio.system/include/eosio.system/powerup.results.hpp",
+      "SHA256": "029e1f19d9e17e7128270ec89c98e58f5244b15fac7d0a2eeec7548af4465e9c",
+      "bytes": 1003
+    },
+    {
+      "path": "contracts/eosio.system/include/eosio.system/rex.results.hpp",
+      "SHA256": "00025474eb7b94231bd44817a839fd3b49254573abb8976376d3bbd0c809ef7d",
+      "bytes": 1880
+    }
+  ],
+  "submodule_backup_bindings": [],
+  "created_UTC": "2026-11-12T10:03:59.022729+00:00"
+}
