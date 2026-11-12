@@ -1,0 +1,17 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/release-work-20261025/tps-baremetal-NET4-P2P16-1/source-variant",
+  "original_head": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+  "original_branch": "bench/net4-p2p16-20261026",
+  "original_index_SHA256": "52d3832e77cafe308ef1aa9c199ea3e3a52d88b94939987efd5cae1f9a534b00",
+  "excluded_runtime": [],
+  "source_files": [
+    {
+      "path": "plugins/net_plugin/net_plugin.cpp",
+      "SHA256": "d3b0af4ad67b557b1caf90a7f9d06dc0751589d5ca1ef9ff0c9e9751d9d3f09c",
+      "bytes": 247713
+    }
+  ],
+  "submodule_backup_bindings": [],
+  "created_UTC": "2026-11-12T10:04:08.908485+00:00"
+}

@@ -274,6 +274,7 @@ namespace eosio {
    constexpr auto     def_send_buffer_size_mb = 4;
    constexpr auto     def_send_buffer_size = 1024*1024*def_send_buffer_size_mb;
    constexpr auto     def_max_write_queue_size = def_send_buffer_size*10;
+   constexpr uint32_t def_max_incoming_message_size = 16u*1024u*1024u;
    constexpr uint32_t def_max_trx_in_progress_size = 100u*1024u*1024u; // 100 MB
    constexpr uint32_t def_max_trx_entries_per_conn_size = 100u*1024u*1024u; // 100 MB = ~100K TPS
    constexpr auto     def_max_consecutive_immediate_connection_close = 9; // back off if client keeps closing
@@ -2987,7 +2988,7 @@ namespace eosio {
                            uint32_t message_length;
                            auto index = conn->pending_message_buffer.read_index();
                            conn->pending_message_buffer.peek(&message_length, sizeof(message_length), index);
-                           if(message_length > def_send_buffer_size*2 || message_length == 0) {
+                           if(message_length > def_max_incoming_message_size || message_length == 0) {
                               peer_elog( p2p_conn_log, conn, "incoming message length unexpected (${i})", ("i", message_length) );
                               close_connection = true;
                               break;
