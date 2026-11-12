@@ -1,0 +1,18 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/PureEOS-parallel-v1-release",
+  "original_head": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+  "original_branch": "release/parallel-v1",
+  "original_index_SHA256": "c738f3569e14d7e0d6d50d97d54fc975fb81571731aa3bc577813ea5e035728e",
+  "excluded_runtime": [],
+  "source_files": [],
+  "submodule_backup_bindings": [
+    {
+      "path": "libraries/eos-vm",
+      "commit": "9a175c8329385907e0e4b0ac1fb937e0c3ba7fd8",
+      "original": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+      "archive_url": "https://github.com/MatrixCoreX/PureEOS.git"
+    }
+  ],
+  "created_UTC": "2026-11-12T09:59:16.446665+00:00"
+}
