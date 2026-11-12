@@ -7,6 +7,7 @@
 #include <boost/tuple/tuple_io.hpp>
 #include <eosio/chain/database_utils.hpp>
 #include <algorithm>
+#include <limits>
 
 namespace eosio { namespace chain { namespace resource_limits {
 
@@ -18,6 +19,15 @@ using resource_index_set = index_set<
 >;
 
 static_assert( config::rate_limiting_precision > 0, "config::rate_limiting_precision must be positive" );
+
+// Pending account weights are visible before aggregate weights settle. A
+// legitimate allowance can therefore exceed this query's signed 64-bit fields.
+// Clip only that finite representation, never use the -1 unlimited sentinel.
+// Objective usage checks below retain the original 128-bit allowance, and the
+// independent transaction/block budgets are not increased or bypassed.
+static int64_t finite_account_limit(uint128_t value) {
+   return static_cast<int64_t>(std::min(value, uint128_t(std::numeric_limits<int64_t>::max())));
+}
 
 static uint64_t update_elastic_limit(uint64_t current_limit, uint64_t average_usage, const elastic_limit_parameters& params) {
    uint64_t result = current_limit;
@@ -478,10 +488,10 @@ resource_limits_manager::get_account_cpu_limit_ex( const account_name& name, uin
    if( max_user_use_in_window <= cpu_used_in_window )
       arl.available = 0;
    else
-      arl.available = impl::downgrade_cast<int64_t>(max_user_use_in_window - cpu_used_in_window);
+      arl.available = finite_account_limit(max_user_use_in_window - cpu_used_in_window);
 
    arl.used = impl::downgrade_cast<int64_t>(cpu_used_in_window);
-   arl.max = impl::downgrade_cast<int64_t>(max_user_use_in_window);
+   arl.max = finite_account_limit(max_user_use_in_window);
    arl.last_usage_update_time = block_timestamp_type(usage.cpu_usage.last_ordinal);
    arl.current_used = arl.used;
    if ( current_time ) {
@@ -539,10 +549,10 @@ resource_limits_manager::get_account_net_limit_ex( const account_name& name, uin
    if( max_user_use_in_window <= net_used_in_window )
       arl.available = 0;
    else
-      arl.available = impl::downgrade_cast<int64_t>(max_user_use_in_window - net_used_in_window);
+      arl.available = finite_account_limit(max_user_use_in_window - net_used_in_window);
 
    arl.used = impl::downgrade_cast<int64_t>(net_used_in_window);
-   arl.max = impl::downgrade_cast<int64_t>(max_user_use_in_window);
+   arl.max = finite_account_limit(max_user_use_in_window);
    arl.last_usage_update_time = block_timestamp_type(usage.net_usage.last_ordinal);
    arl.current_used = arl.used;
    if ( current_time ) {

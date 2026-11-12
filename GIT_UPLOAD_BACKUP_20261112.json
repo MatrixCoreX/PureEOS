@@ -1,0 +1,2132 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+  "original_head": "3856ab5b0723da1a1c41d60751109af789403945",
+  "original_branch": "feature/v1-hardening-20261022",
+  "original_index_SHA256": "19dd4e41a56c06be65dfbcfa54dc1a3f3b6bd7a9e68beded94ba9cea1d899dab",
+  "excluded_runtime": [
+    "config-dir/config.ini"
+  ],
+  "source_files": [
+    {
+      "path": ".cicd/platforms/ubuntu26.04.Dockerfile",
+      "SHA256": "91ad2530db0f2f30e98d78c4a76771d6f03f3a9da28135f9fb41758b9ba87478",
+      "bytes": 490
+    },
+    {
+      "path": ".cicd/platforms/ubuntu26.10.Dockerfile",
+      "SHA256": "95b2e5f08ab547d420cc36e135714df5cff80e67a4841dc914433658fbe963e7",
+      "bytes": 354
+    },
+    {
+      "path": ".github/workflows/build.yaml",
+      "SHA256": "67b46984a0df83275989f666da23075b5a7532eb73bd260881ce499cf6735e06",
+      "bytes": 2196
+    },
+    {
+      "path": ".github/workflows/build_base.yaml",
+      "SHA256": "7c7412f0629aa9ec1bb2b703c14311d54ed801af66106259977ea0891f6459ff",
+      "bytes": 2837
+    },
+    {
+      "path": ".github/workflows/jiraIssueCreator.yml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/label_new_issues.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/llvm.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/performance_harness_run.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/ph_backward_compatibility.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/pinned_build.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/release.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".github/workflows/submod.yaml",
+      "deleted": true
+    },
+    {
+      "path": ".gitmodules",
+      "SHA256": "bcda5a7917c92e8567ce9ab849363fd670567de1b4a15dc123bd096ad6dc31b8",
+      "bytes": 1525
+    },
+    {
+      "path": "AIC_LICENSE.md",
+      "SHA256": "d6f37989ff7111bf5333022edcc28c82fdcbf8657a0bf78d5c06b0895611d5b9",
+      "bytes": 3590
+    },
+    {
+      "path": "CMakeLists.txt",
+      "SHA256": "0608f11c46301c24a9fceef47142a6602659eb7c05f124c4a5d53000be245e8c",
+      "bytes": 16295
+    },
+    {
+      "path": "LICENSING.md",
+      "SHA256": "dd2f5e5f43e674ecdef4c09a9ce2d688527ebed788cfbbef244c82875e76967a",
+      "bytes": 3299
+    },
+    {
+      "path": "README.md",
+      "SHA256": "d2c8bf54aa0abf0b1ae289375de31909c8a90da05b51b5be3f10ce05de5bdeb3",
+      "bytes": 4627
+    },
+    {
+      "path": "cmake/ParallelSanitizerOptions.cmake",
+      "SHA256": "26646e4f4c869fceca20ec422dbbddb3a9d6a4ebe84bb40ba3f4e39b9068dff0",
+      "bytes": 532
+    },
+    {
+      "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_CLOSEOUT.txt",
+      "SHA256": "36518dd182f5f9a9ce8d0da68e1461117c41accfd61df0d2d2bbbaaacb68fa14",
+      "bytes": 4150
+    },
+    {
+      "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_LIVE_STATUS.txt",
+      "SHA256": "9289ea3b2f9634089c3bec97ca38400dd2763f17d57d29386af202d9e44305fc",
+      "bytes": 1048
+    },
+    {
+      "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_TEST_RESULTS.txt",
+      "SHA256": "612d2764a641d961e8d36979db7952c66cb0c4e0c5f23591d7af031ccfa285c4",
+      "bytes": 18687
+    },
+    {
+      "path": "docs/parallel-execution/PX7_30_40_COMPLETE_RETEST.txt",
+      "SHA256": "19aacfc23b869ce09318ebedbcd9735ebb63d6b68857a4ecee77102ecea5f231",
+      "bytes": 5663
+    },
+    {
+      "path": "docs/parallel-execution/PX7_30_40_RETEST_LIVE_STATUS.txt",
+      "SHA256": "207ae255df702edfd204e006727d4727b00e12d9b9121924e478dd33221cba43",
+      "bytes": 983
+    },
+    {
+      "path": "docs/parallel-execution/PX7_BLACKLIST_SAFE_EVICTION_RESULTS.md",
+      "SHA256": "bb91212705d0f0b9bd0510706f1f367bc5f835981949f20f535f676829a356d5",
+      "bytes": 7129
+    },
+    {
+      "path": "docs/parallel-execution/PX7_BOUNDED_MICROBATCH_RESULTS.txt",
+      "SHA256": "02cd36cc6d601dce79e5a31611e03bf26a1382adc2b721f20e33ce927083d051",
+      "bytes": 4305
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CALLEE_DISCOVERY_RESULTS.md",
+      "SHA256": "b4ca6ff85bd202bf6908ada146f38e5989edd50759b070f783e0f78bab2380ed",
+      "bytes": 9270
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CDT5_UNIFIED_RETEST_LIVE_STATUS.txt",
+      "SHA256": "81d845611c88d17c480f181f4fb9f557dddc01f102505978ce8c2a16b565ddc9",
+      "bytes": 27417
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CDT5_UNIFIED_RETEST_PLAN.txt",
+      "SHA256": "35ec31f18bc6d5972ac7e355b02c78b6df9601b3d485308c770bf3a99ebac79d",
+      "bytes": 7418
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CLOUD_LIGHT_TRANSFER_RESULTS.txt",
+      "SHA256": "86e80751d2686a7d88116d93c27142c2841e1713774359d569b602eaf7561f48",
+      "bytes": 11685
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CLOUD_MIXED_STRESS_RESULTS.txt",
+      "SHA256": "971a8a7f7867bc00e65de6864e22839452e7076828f0b84fcdf6bcc1fec7b200",
+      "bytes": 11188
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CONSOLE_HOST_RESULTS.md",
+      "SHA256": "5566ea8df4664c7f20394a31bb27459fa123ebd9b8b5f02b24f08fbb6379fad6",
+      "bytes": 35228
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CONTROLLER_PREFIX_REFRESH_RESULTS.md",
+      "SHA256": "ee941610766fbb27ef996497f51f9f5c920e8164e1847154735132676ee74d14",
+      "bytes": 10627
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CPU_BILLING_FIX_20261024.md",
+      "SHA256": "2ff3c2a3634d2630fb5e2159d81c8601b558c6c88f38515cbb536da45b715494",
+      "bytes": 12277
+    },
+    {
+      "path": "docs/parallel-execution/PX7_CROSS_MODE_CACHE_RESULTS.md",
+      "SHA256": "43152970ccbf1f91edbfa511d2a9b3a9beecdbfab8ee5615bde57673d22172ef",
+      "bytes": 24438
+    },
+    {
+      "path": "docs/parallel-execution/PX7_FLOAT_HOST_RESULTS.md",
+      "SHA256": "e8a0e8af9c7f7be7731c6504c2258daf7808d6a3f75806ab80ba070a4df4addc",
+      "bytes": 16457
+    },
+    {
+      "path": "docs/parallel-execution/PX7_FULL_CDT_RESULTS.md",
+      "SHA256": "fba3eee62c0bf9707fcd6ecd8ae0688beced4712dce6fb58ee23bf08edec8289",
+      "bytes": 67634
+    },
+    {
+      "path": "docs/parallel-execution/PX7_G5C3C3B_RESULTS.md",
+      "SHA256": "0d4bea888340c5c1f82355ea301dd6a6a9572b6583245abeeae6319810fdf7b1",
+      "bytes": 32615
+    },
+    {
+      "path": "docs/parallel-execution/PX7_G6A_RESULTS.md",
+      "SHA256": "639a68ab81a0883a5dbb16407c141837dcb8e8197bd4b665bb097c208f0d55b0",
+      "bytes": 4612
+    },
+    {
+      "path": "docs/parallel-execution/PX7_G6B_RESULTS.md",
+      "SHA256": "42c161a4f17784ad21b31b1311209f771c43654f661d20bad009965b1be2fe38",
+      "bytes": 24504
+    },
+    {
+      "path": "docs/parallel-execution/PX7_G6D_RESULTS.md",
+      "SHA256": "2d051ce89118811558f6c970713fc32280bd5bb669325ff34de9ad8fb27e79f0",
+      "bytes": 10907
+    },
+    {
+      "path": "docs/parallel-execution/PX7_GENERAL_EXECUTION_PLAN.md",
+      "SHA256": "977ac4d77c96f2d2165b6abc495b2823e6ba8f2630acc72887745f5f55bb96a6",
+      "bytes": 399822
+    },
+    {
+      "path": "docs/parallel-execution/PX7_GLOBAL_INDEPENDENT_12_RESULTS.txt",
+      "SHA256": "12e5b16db80d8057994684aaea173e15e0ff72fc18a67a69cfabfb2f936cb450",
+      "bytes": 13437
+    },
+    {
+      "path": "docs/parallel-execution/PX7_HISTORICAL_EDGE_CASE_RESULTS.txt",
+      "SHA256": "768f1cf073c759f56e4744689cb46f2ed810c6736ae8f65c0093e1cb56c5b18a",
+      "bytes": 3999
+    },
+    {
+      "path": "docs/parallel-execution/PX7_HISTORICAL_REGRESSION_LIVE_STATUS.txt",
+      "SHA256": "66f224935f01a6d78c596588de74d9e0d7bb0b12241564037e9086618caef602",
+      "bytes": 4501
+    },
+    {
+      "path": "docs/parallel-execution/PX7_HISTORICAL_REGRESSION_TEST_PLAN.txt",
+      "SHA256": "d8ee536cb7d895da4d19b41a7de1edbcbf196d041350f78b84fb35db0bdfdb21",
+      "bytes": 10212
+    },
+    {
+      "path": "docs/parallel-execution/PX7_INTEGER_HOST_RESULTS.md",
+      "SHA256": "a53fc35df3e10c2f5bc8ef2a599b1999f360530a6d1e23a79831bce1603113f3",
+      "bytes": 11996
+    },
+    {
+      "path": "docs/parallel-execution/PX7_JIT_RELEASE_INTEGRATION_RESULTS.md",
+      "SHA256": "94d041e2c8e67091a0ca326c7d19310cfe6022b21bf06962da6c24e711756b73",
+      "bytes": 112079
+    },
+    {
+      "path": "docs/parallel-execution/PX7_MIXED_ADOPTION_RESULTS.md",
+      "SHA256": "a2bc0adec8a326315dbfc3fe5ce0666bc763c156311b088ee3519870758f44f9",
+      "bytes": 32475
+    },
+    {
+      "path": "docs/parallel-execution/PX7_MIXED_FAILURE_DIAGNOSTICS.md",
+      "SHA256": "fcfa20fd60eaa5a6040bf3bffcf9a59ea31f7ee4ab087cb6800e970702362aff",
+      "bytes": 5030
+    },
+    {
+      "path": "docs/parallel-execution/PX7_MIXED_POOL_RESULTS.md",
+      "SHA256": "34872f5e0f7fa31e115307cb501087947ff5b39f8a5bfb97939c6ad6537493b4",
+      "bytes": 8808
+    },
+    {
+      "path": "docs/parallel-execution/PX7_MIXED_TREE_PRIVATE_RESULTS.md",
+      "SHA256": "1c024fc801e9384f63fdba9464250589615d5b7a5fb7e0121a28cbfd1ae94c45",
+      "bytes": 17802
+    },
+    {
+      "path": "docs/parallel-execution/PX7_PARALLEL_CAPACITY_BUDGET_PLAN.txt",
+      "SHA256": "9010c092c64947ab76770c52d6d10ff8b4a8f94c1d07a3df3da035aa159ba766",
+      "bytes": 30746
+    },
+    {
+      "path": "docs/parallel-execution/PX7_PREFIX_REFRESH_RESULTS.md",
+      "SHA256": "303e9b48c0ec3b07d25ea027baa39ef1476ef43dec0c3d26419b3a4c34dc87cf",
+      "bytes": 9413
+    },
+    {
+      "path": "docs/parallel-execution/PX7_PREPARATION_BUDGET_RESULTS.md",
+      "SHA256": "78c7a1128c716f2f2f5457b9bc4971b0325d81d82f30bbd7865141d2e289b96b",
+      "bytes": 6757
+    },
+    {
+      "path": "docs/parallel-execution/PX7_PRODUCTION_PHASE_RESULTS.md",
+      "SHA256": "6bc7c9d58dcd3cc4ebc68638821c12f0c8f406b8a574879a0bb5b4d423c063a9",
+      "bytes": 9375
+    },
+    {
+      "path": "docs/parallel-execution/PX7_RESOLVER_LOCK_RESULTS.md",
+      "SHA256": "d0e69ab66bdf9bfc03ea29e1f9700d4359219ad36824c5c8635519e2d1ad1c0f",
+      "bytes": 10791
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SAME_PREFIX_CAPTURE_RESULTS.txt",
+      "SHA256": "e6985a72bcf9742c4ca01850eb5d370460be3fae98241bbfe2d3d3e4e3536cdd",
+      "bytes": 4551
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SCALABLE_RUNTIME_RESULTS.md",
+      "SHA256": "856baa7cef942455da85e470e292c15e6a45d20007614b35f2f3e24515199f22",
+      "bytes": 9405
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SECONDARY_ADOPTION_RESULTS.md",
+      "SHA256": "8d66a84437490b2282a781d1c9ee464cb9da238a7e625813bf159ab1fa21bd69",
+      "bytes": 6981
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SECONDARY_BOUNDARY_RESULTS.md",
+      "SHA256": "4e083db55497eb825bd0a3cd4ca9a21e38c60ffd2aa1f133970d988b54eda11d",
+      "bytes": 12198
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SECONDARY_COST_DIAGNOSTICS.md",
+      "SHA256": "366a17185a953735b27ccb949db368c835e9a4c55856f42c5b6a19f265827411",
+      "bytes": 8171
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SHARED_PREPARATION_BUDGET_RESULTS.md",
+      "SHA256": "b489d1469a3494308e9a6d8f99b526108175b89936ac0ba9b6ddee5af36c0a47",
+      "bytes": 5066
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SMALL_BATCH_CACHE_RESULTS.md",
+      "SHA256": "3c47643e25243c6f62806c7a143222ee7eaa66b0c98bcd32b7426875f57a410c",
+      "bytes": 12899
+    },
+    {
+      "path": "docs/parallel-execution/PX7_SYNC_DEPTH_CACHE_RESULTS.md",
+      "SHA256": "4da8c0d1dddd596f75d34fc435748d2eb130694a72838d9a57a6c4df8a09a621",
+      "bytes": 13084
+    },
+    {
+      "path": "docs/parallel-execution/PX7_TOKEN_ADOPTION_DIAGNOSTICS.md",
+      "SHA256": "85983dc13138d7d72024d89134f87f3e055d46c10d944067613618aca8733241",
+      "bytes": 8651
+    },
+    {
+      "path": "docs/parallel-execution/PX7_TRANSACTION_WORK_CONTEXT.md",
+      "SHA256": "6e6423e4d4ae2fd404864dc3eb4b76a00afdaba88c390c5bef108fd1c96a546c",
+      "bytes": 8922
+    },
+    {
+      "path": "docs/parallel-execution/PX7_TWO_HOST_NODE_CAPACITY_RESULTS.txt",
+      "SHA256": "570f35e5b04f7f0c500b44839a5ea399af099c41046e78ef57921b81e99d0a60",
+      "bytes": 21693
+    },
+    {
+      "path": "docs/parallel-execution/PX7_UBUNTU2610_CLOUD_OPTIMIZATION_RESULTS.txt",
+      "SHA256": "b7c25a55ca7f7bb630ae43e71eae359e3c8a4e6d8700655dbf07f17bd8e75722",
+      "bytes": 11433
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_ACTUAL_VM_RECOVERY_FOLLOWUP_20261023.md",
+      "SHA256": "4537b777d56bfaba200081c517673882858fbfcc59b1dcf30fdc1a0603a56648",
+      "bytes": 7698
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_AIC_CDT_AND_COHORT_RECOVERY.md",
+      "SHA256": "c3adb3c272d59e8ba9c9b0d1f1ee4c75ff9223f5b3e6974e993aa891a675f955",
+      "bytes": 5533
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_BENCHMARK_PROTOCOL.txt",
+      "SHA256": "1c53cc79278ef3ba6959739ca87b47a233feac81116e963e4a25e59abbb4bc98",
+      "bytes": 11142
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_BUILD_VERSION_RESULTS.md",
+      "SHA256": "c025d447b5bfbca1c6bde48bcb7a6ddd1616c708873bf94a9add6da1a8719505",
+      "bytes": 5391
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CANDIDATE_GUIDE.txt",
+      "SHA256": "a0c928b684eaa7471c5e48774b5166cec2d9127136a9f13dc946e53489305a63",
+      "bytes": 12348
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CANDIDATE_TPS_20261024.md",
+      "SHA256": "195c2532e989137150c9f7b8fb18293cf3d616024e3e56976bfcc8e34a858acf",
+      "bytes": 2664
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CDT_RUNTIME_PARAMETERS_20261024.md",
+      "SHA256": "b3995d68c1fa3c87e8f6202bcba6a664c0b6923ceb3640c13e71600f8fe1352a",
+      "bytes": 1989
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CI_DELIVERY_REPAIR_20261024.md",
+      "SHA256": "ae91ed7e0e3356b33a8aa77244928f8d7d480fb84ad243e45bd79c541130e8ce",
+      "bytes": 4929
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CLOUD_ACCEPTANCE_HANDOFF.md",
+      "SHA256": "6493bf01076ed0938eaa1249d1ad19aea1d5b6a7fb4ab6b88912b48e4a5231ac",
+      "bytes": 5671
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CLOUD_COHORT_RETEST_20261023.md",
+      "SHA256": "c81748b14b42618af430778ec5608509d57a08f02b356f0c88d50565bdc952e5",
+      "bytes": 10373
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CLOUD_REAL_DAY_QUEUE_20261023.md",
+      "SHA256": "e39d05f90b5ad1ebf84507c90e40567b3fb8174768560d1bb7fd88dfcd89ec41",
+      "bytes": 5479
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_COHORT_COMPLETION_REPAIR_20261024.md",
+      "SHA256": "96456dafb4803dffd11a55df4ba27ac11adf6d617247f3a55ab3aad9ad3ca3e8",
+      "bytes": 1679
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_COLD_WARM_REPAIR_RESULTS.md",
+      "SHA256": "6707f745ec489945ca492582b7c306533fb7659321f40c472d5fa1b96ceb9eba",
+      "bytes": 5044
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CURRENT_PROFILE_REPAIR_RESULTS.md",
+      "SHA256": "891dcd27c9dbd112fe99e5bda49884f80e4a776275f6ff59497348d9fdd31ebf",
+      "bytes": 9178
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CURRENT_SANITIZER_TIMING_20261024.md",
+      "SHA256": "0c70fa4929635d52fd1a0777edc97e8d59efa2d3e9ee300ce9cd0d4414ac5703",
+      "bytes": 13234
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_CURRENT_STATUS.txt",
+      "SHA256": "5bf09a7f75c15c6f090f44f7b026817c1fa17ab639855116fc494b1bcc6a3ee6",
+      "bytes": 51479
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_DELIVERY_RETEST_20261024.md",
+      "SHA256": "74273ff63d6f590dc09f476b8439961ab91ccdc8d468211d3fb1e571746fc79c",
+      "bytes": 2764
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_DEPENDENCY_AND_DELIVERY_REPAIR_20261023.md",
+      "SHA256": "97781ddbb685114246e1eb0fd796bd88be434cb843767828fe6055fab01aae33",
+      "bytes": 6074
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_FAST_TESTING.md",
+      "SHA256": "8f199c240828d95173dffd1b22d7819f8e0a75a987900cf01c20c5a4acd63f66",
+      "bytes": 9594
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_HARDENING_PHASE1_RESULTS.md",
+      "SHA256": "aa7b2ea5efaf0e83e333add0b011c040dac6bbb1068727127b746f081860057c",
+      "bytes": 6866
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_HARDENING_PHASE2_RESULTS.md",
+      "SHA256": "9d207ffc9a8c401310dea8c0a67745bddda00e4683ad37315ff811e64c099880",
+      "bytes": 36323
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_HARD_REPLAY_REPAIR_20261024.md",
+      "SHA256": "4e3f74ae16361db13d7f9aab18dae3b0c316920dcb05b6f96aa973333f868e9a",
+      "bytes": 3204
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_LIVE_REWARD_TOPOLOGY_REPAIR.md",
+      "SHA256": "1b685bd90506b645d351b2fab9ef209b729f61135873df0ba6404329526551ac",
+      "bytes": 4003
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_LOCAL_RELEASE_WORKFLOWS.md",
+      "SHA256": "2796d1cf8d007b0841ee944df8edde61b9c377f1dfb995e8a277667c7119c0b3",
+      "bytes": 13576
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_NEW_CHAIN_DEFAULT_PROFILE_20261024.md",
+      "SHA256": "3900d9e53ec6a76d5d2961711b9bf409e5bf61fcadbd4e7d2c4ab812e0d759e3",
+      "bytes": 1660
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_PERFORMANCE_PATH_AUDIT_20261024.md",
+      "SHA256": "ce14ca328a7a3a0fa5eba8fb24a00a004d564cd037453d709f9e7c8c16438940",
+      "bytes": 7760
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_PIPELINE_AND_LLVM_DECISION.md",
+      "SHA256": "39a6c3e1c161830e55a882062430709806d0c391ef2fe7cd3d4885697215c4eb",
+      "bytes": 4422
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_POST_REBOOT_TEST_RECOVERY.md",
+      "SHA256": "bd1b623eae7178ef69fd6a7314b5e32d39f57f12a0b66de2edfa3f765b4e802e",
+      "bytes": 4266
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_POST_RELEASE_SINGLE_NODE_TPS.md",
+      "SHA256": "dbb4ab7b33715b53c7588568b584c75bfc12430b597ba7b589776b2bff324b0f",
+      "bytes": 5201
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_PUBLIC_VM_SOURCE_DELIVERY_20261024.md",
+      "SHA256": "5e93483516908492f047f54d125fa5091b9f4b4f43f14c70ed50144033247f47",
+      "bytes": 2226
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_RECENT_CLOUD_ISSUES_20261023.md",
+      "SHA256": "ab80706d45303248b85904b06dabe7b028a916c3df8e1dd0ef5df767e2358fec",
+      "bytes": 16753
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_RECOVERY_VOTE_OBSERVATION_20261024.md",
+      "SHA256": "c68894d57100d8babe31eed8c46fd238bd93d7ea3477b6721e740999a11c360a",
+      "bytes": 3811
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_RELEASE_CHECKLIST.txt",
+      "SHA256": "531d1726d29829e611889723ee17d918d238d75346cf2c13f1c03a5e7796a0cc",
+      "bytes": 71274
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_REMAINING_OPTIMIZATION_DECISION.md",
+      "SHA256": "236bbed46dbf00d48e8b7d1ec5064640053f432b6c850ccf115c207eb06d8bf4",
+      "bytes": 6679
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_RESOURCE_LIMIT_BOUNDARY_RESULTS.md",
+      "SHA256": "8a19ea87172b75d09db5aee32dc142e1477ae4b558fa92256a00a7c8f3dbf4b7",
+      "bytes": 5457
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_RUNTIME_FIXTURE_REPAIR.md",
+      "SHA256": "95e15a16cf723bef52f3e22f496a576dfcd064b102a0c6822a9e15bc537936d0",
+      "bytes": 3597
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_RUNTIME_PACKAGE_RESULTS.md",
+      "SHA256": "29f4b2c91d7477090c2805ba7996e53d5f46271fadeecdd373797ea83ddbe165",
+      "bytes": 2975
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_SANITIZER_DEADLINE_SEMANTICS_20261024.md",
+      "SHA256": "a8028931f948fcd3c59c43723a178ccf7e0e5646d0581e588f53027b0a57ec67",
+      "bytes": 4999
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_SDK_DEPENDENCY_NOTICE_REPAIR_20261024.md",
+      "SHA256": "2e352675fd339e98bc24404504789d7bee7d5dc86bd5303a528c50c0738106cc",
+      "bytes": 3966
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_SOURCE_LICENSE_AUDIT_20261024.md",
+      "SHA256": "7d78bd38030e590c1f4a4392fcf0e6a025b55164af6b8404b6c39c458604769b",
+      "bytes": 6052
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_SPARSE_WORKFLOW_REPAIR_20261024.md",
+      "SHA256": "581c024729e697e3878551b2fb46d497f93184c3a40dfcdd28b7908d757f8479",
+      "bytes": 3964
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_TSAN_GLIBC244_RUNTIME_REPAIR_20261024.md",
+      "SHA256": "2a1669625656d89d6183edc3472bd978103574632ac39278b52bf784c9088281",
+      "bytes": 7535
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_VENDOR_SOURCE_RESULTS.md",
+      "SHA256": "b2f2cdfeade4e11cc2320e5ab388857d157defb192219782a89ae51325020586",
+      "bytes": 4131
+    },
+    {
+      "path": "docs/parallel-execution/PX7_V1_ZERO_PAYMENT_REWARD_GUARD_20261024.md",
+      "SHA256": "4050e684b1591ea9bc636c2a0d8aaf520f22272bdf8d12355a75a8da64736cd4",
+      "bytes": 1784
+    },
+    {
+      "path": "docs/parallel-execution/PX7_WORK_FOOTPRINT_BRIDGE.md",
+      "SHA256": "796929596d1cf396e1fff675f967d338118d53c52cbf3877a3220a836355be69",
+      "bytes": 6585
+    },
+    {
+      "path": "docs/parallel-execution/access-inventory.json",
+      "SHA256": "aec89cfb644e5482f801bc9c5c59dffc2d5352a5b8c9251939e40eca35518b7d",
+      "bytes": 480199
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/build.yaml.txt",
+      "SHA256": "efbcd3e40bc917b884c60943d439c2c0775dbdafabacfe4ee5ed3be3ea6ea0ca",
+      "bytes": 14852
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/build_base.yaml.txt",
+      "SHA256": "ca5f0cf40afc226060b63cd2a1be36ad48c70e47577f76455682a31f8c30df22",
+      "bytes": 1521
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/jiraIssueCreator.yml.txt",
+      "SHA256": "54d3ff05c52197ab457d94a703f1092c91710ab7f19f31b89568fa948b84ea33",
+      "bytes": 1318
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/label_new_issues.yaml.txt",
+      "SHA256": "7e7c178a668a74422d98c8eaa2d8dbeaa5432f48e9bc45a0a9198a20f302ce0d",
+      "bytes": 429
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/llvm.yaml.txt",
+      "SHA256": "3fa1fd7ca3d5c5e9330570f90a11624bed69fe42410bf2a437b49902551a1cb8",
+      "bytes": 1900
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/manifest.json",
+      "SHA256": "4fc11f96ad22fa7cccddab82d166b4351355a6f8a4f30e2441346f8b2c6d5566",
+      "bytes": 1873
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/performance_harness_run.yaml.txt",
+      "SHA256": "3ecde03bfad5f266f17b4766b8b205fdf471fd8676f67aff3a4ecf9d726b2842",
+      "bytes": 5253
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/ph_backward_compatibility.yaml.txt",
+      "SHA256": "5e650815d8b82e38780844052d16234ae1e2883eebc055189dd2660bc1398a02",
+      "bytes": 2548
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/pinned_build.yaml.txt",
+      "SHA256": "d3aa94149c077dc08ce3cb1a88f0760ff873000c9132ac56f0fa8bbc7de4e861",
+      "bytes": 213
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/release.yaml.txt",
+      "SHA256": "6ef89dfa82efdb06dc2acd328ee3890ec91a4889331f8b4dd3383522b1fbe4c5",
+      "bytes": 1431
+    },
+    {
+      "path": "docs/parallel-execution/ci-reference-20261024/submod.yaml.txt",
+      "SHA256": "1bfd90b65524b7609b8c1669195f87009f437008eeb148e4668ac0fcdcf424c6",
+      "bytes": 717
+    },
+    {
+      "path": "docs/releases/PureEOS_PARALLEL_V1_RELEASE_NOTES_DRAFT.md",
+      "SHA256": "90ce77fe7d6ad7e257b543e035e2fd2d64afd4db247f62d18acfddddb3453374",
+      "bytes": 3660
+    },
+    {
+      "path": "docs/ubuntu/CDT5_LATEST_RETEST_RESULTS.txt",
+      "SHA256": "62b09a26360ce4aa30e3eae60f57596af724f5a1c67135f9b72c4b1955050e93",
+      "bytes": 6098
+    },
+    {
+      "path": "docs/ubuntu/PUREEOS_UBUNTU_CDT_UPGRADE_PLAN.txt",
+      "SHA256": "6795ef7fc0a7a04b42ac6922c7ef322dd2ae73550d8b72db5d4bc7f1b6c065e4",
+      "bytes": 18227
+    },
+    {
+      "path": "docs/ubuntu/README_BUILD_REFERENCE_20261024.txt",
+      "SHA256": "b6762c797e413b979cae96511d685d05239e33a02a33dc451bb20a95f85f02f1",
+      "bytes": 15072
+    },
+    {
+      "path": "docs/ubuntu/UBUNTU_MODERN_RESULTS.txt",
+      "SHA256": "4c9ab611a831ef59114b319434495b9598daf2dd9a38a015166ca02d31c1cf39",
+      "bytes": 8176
+    },
+    {
+      "path": "libraries/chain/CMakeLists.txt",
+      "SHA256": "be87d08b0cd5c1f470595555b7b55c65d3b8e393bbf1ab1dec744f6766f2a007",
+      "bytes": 10277
+    },
+    {
+      "path": "libraries/chain/apply_context.cpp",
+      "SHA256": "af77ee6e868a1e3fe3d15494b2e652e123c37571c442a3c169f98c6fd06ad4d1",
+      "bytes": 42197
+    },
+    {
+      "path": "libraries/chain/block_log.cpp",
+      "SHA256": "463c212b1eda7dd9c86462afdd91bb7935d5ad89cd5bffa8526619315816ba11",
+      "bytes": 87922
+    },
+    {
+      "path": "libraries/chain/controller.cpp",
+      "SHA256": "4fd2065a520096e71c27c7939e9faa548337efdd4cd0fed1b3113376a9c6b520",
+      "bytes": 375774
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/chain_config.hpp",
+      "SHA256": "2a8be6448cad235265780251744b8e8e45513445d903dd307172fe8aacba034d",
+      "bytes": 25977
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/controller.hpp",
+      "SHA256": "249562805954276f2a3f1ea7c899e903fcff2a66c901e2dcdf302522d222da2a",
+      "bytes": 29926
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/execution_work_meter.hpp",
+      "SHA256": "fa58cde5e0883f5053cff1bcfc31a08310e80d7119d1191736f42315208720a3",
+      "bytes": 5531
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/native_work_policy_catalog.hpp",
+      "SHA256": "aad9cf3f60a7b92571abb5e94983014e6adf6ad01f74d2a0cb70b0ff95654acd",
+      "bytes": 4917
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/native_work_pricing.hpp",
+      "SHA256": "1ac9d302772a3a96605333cff4a7f85417da064016fec3dd0ebcfbc559f10a92",
+      "bytes": 5893
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_access_hints.hpp",
+      "SHA256": "46b31bd3130ba7a0b764ee35c9a323d28a1aef95e1bc30b7d21badd8a78712f8",
+      "bytes": 3599
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_action_tree.hpp",
+      "SHA256": "c28be4736c78395b43c2e3be564e19d1bfc8f7b97fbbf8d06d80ee4ae2ba55b3",
+      "bytes": 5390
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_canonical_adoption.hpp",
+      "SHA256": "fd340d706fa8090cf414b94001da7ffcac664d0fc0d0188b6831a970811d9857",
+      "bytes": 7850
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_console.hpp",
+      "SHA256": "bc2c0d139366e1a2c019d0111a89a42e0635325414ccb5972de3a17c5f2ba4c4",
+      "bytes": 3492
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_deadline_service.hpp",
+      "SHA256": "69d9582395804ab4de0701908b8251198326c9c30389a86f9f88a0cefa925d8b",
+      "bytes": 6479
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_execution_runtime.hpp",
+      "SHA256": "ff43a57d096d92060ebb787d72ab0e9da4b0f7163e4bd844477f556a4a6e9e7c",
+      "bytes": 1488
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_immutable_input.hpp",
+      "SHA256": "eff1d2680279bbdff945e5bc0bc6c6bb1b2c21eb6b9e544683ceb83d6fccefbb",
+      "bytes": 1990
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_jit_backend.hpp",
+      "SHA256": "834a34c763caff519691656c7bbd40a533c738fa6ce3b0b6f9c43296c839f947",
+      "bytes": 7363
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_mixed_tree.hpp",
+      "SHA256": "0f3309c620f77f1421b1f1602c3c9ebc17541cafc1c8246f00ec6751cef3c2f8",
+      "bytes": 4020
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_mixed_tree_journal.hpp",
+      "SHA256": "98dc9591e06a25e51626d7d388edd692b85469c86152e706a4cf0daa5bb87841",
+      "bytes": 783
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_ordered_batch.hpp",
+      "SHA256": "59746d014ad27a0a9459208cd549eb8aa940fdabb8ed8bd2c0f3504ba29452bd",
+      "bytes": 10552
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_preparation_budget.hpp",
+      "SHA256": "3a849d1bc191353272f94a810dfe3efc6e9d8072ee050d58aafc5f2df100878e",
+      "bytes": 2147
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_production_admission.hpp",
+      "SHA256": "392aba07c07b329bc32ddb16511a81f0093c691d49b099bcbfcba0e7c1495e5e",
+      "bytes": 6636
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_pure_float.hpp",
+      "SHA256": "ec80c64550b4e136d560fdb29dcb8399f2a0396b985aa001b2189f463e13625f",
+      "bytes": 6022
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_pure_hash.hpp",
+      "SHA256": "dd09577221846288396c43f6d47d392bcd10bd712f3a710e2efacfbb198ea809",
+      "bytes": 1065
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_pure_integer.hpp",
+      "SHA256": "95b1196feba82c66e614a5629e21cf678b83cdb06843071ef15d07603450b3ab",
+      "bytes": 2490
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_runtime_limits.hpp",
+      "SHA256": "b861256890e1c5c59865bb200ab02349df835a577c0b8f2102884a1b36c89b0c",
+      "bytes": 1783
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_secondary_journal.hpp",
+      "SHA256": "ca2736ac6d96c2a327705dc199940e2fbb67734fd9f36fd42ec11b72e13737b2",
+      "bytes": 4392
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_secondary_state.hpp",
+      "SHA256": "fe0c7a68713245da10207c1abe1004fdd5bfe0ad0442a763b4173553cfb9ea21",
+      "bytes": 4249
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_state_overlay.hpp",
+      "SHA256": "2951e8acdc4501f6bb51c5e58a1b5d88fc0ab067b75f422642d911ef3344556e",
+      "bytes": 19497
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_sync_call.hpp",
+      "SHA256": "f20c860fc2248425e87e4a14fbe30a742fcb894d54dc92d4f0a2a44040e48e1f",
+      "bytes": 7332
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_sync_discovery.hpp",
+      "SHA256": "d1876c1ee1090a1a3e9401a84e7c289346f2eb6b2d8c6da128a48cdfd2d2c3f8",
+      "bytes": 664
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_transaction_environment.hpp",
+      "SHA256": "9595a24e5c2dfc6a182cee8b42c330b7529ffc87ad43df625f604e06537c2f4b",
+      "bytes": 3228
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_wasm_worker.hpp",
+      "SHA256": "da3d908cca57d0bef3acb169ac794ce54b75a8267551717231f8ca5f92deffcf",
+      "bytes": 15960
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_work_budget.hpp",
+      "SHA256": "10746d6b305c3bf49a9c44713c7340338edaa54056d466619ea1b02276679196",
+      "bytes": 8990
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_work_footprint.hpp",
+      "SHA256": "db28ddc726c8dec2bfeb4dd6a411d295ac99e6fdd0874231ddcba95a5077317a",
+      "bytes": 15976
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_worker_pool.hpp",
+      "SHA256": "630bb8e4243b2361e1af982b00c7dc3dacb301e20a887ea74f63de63ba6da079",
+      "bytes": 8419
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/parallel_worker_signals.hpp",
+      "SHA256": "9985e760f9c8671dd8a8155a42954d9914b51cacded466d721f3e2e44ffdb8e2",
+      "bytes": 1218
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/thread_cpu_billing.hpp",
+      "SHA256": "202a652fcc5ebf8fa6d840c23a0e34f4f4172a1c626445ca77eb26694ed28a41",
+      "bytes": 3131
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/trace.hpp",
+      "SHA256": "aa074edb872363455d5df5bcb0e8ec27d8237f57024e9b1914ab44956fe6165a",
+      "bytes": 9522
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/transaction_context.hpp",
+      "SHA256": "702d1a36ade069e48a176a149b303badb7a95c0a4c5ee3f00c5ab5e6d662475a",
+      "bytes": 17311
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/transaction_state_view.hpp",
+      "SHA256": "972ba920db841c8424ca0ffaf046d8a52ca76950fe83b198ae009e3526b19162",
+      "bytes": 5666
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/transaction_work_context.hpp",
+      "SHA256": "9b1d9b92b54c69130c920e6d8a3a14c4fe1bed6156451375cd36ef31b7555e4f",
+      "bytes": 21645
+    },
+    {
+      "path": "libraries/chain/include/eosio/chain/unapplied_transaction_queue.hpp",
+      "SHA256": "bf178c0a0642a16832d250bd14dfe5d4993887283d12de344f2b484b5d40049b",
+      "bytes": 8149
+    },
+    {
+      "path": "libraries/chain/parallel_action_tree.cpp",
+      "SHA256": "03d7b5cb459d3675ef87824a26fced06cf1019140c95a2341193ebec2059578e",
+      "bytes": 16784
+    },
+    {
+      "path": "libraries/chain/parallel_canonical_adoption.cpp",
+      "SHA256": "6a2b709b10eea97e2a29b0d8388b8c76066ce3f46d8e2c081c3486c8b5774fe4",
+      "bytes": 88179
+    },
+    {
+      "path": "libraries/chain/parallel_mixed_tree_journal.cpp",
+      "SHA256": "9c1637e2deb52eb5b2d5a36846c81466f87871c1860aaf815a814b0bf766e62e",
+      "bytes": 21045
+    },
+    {
+      "path": "libraries/chain/parallel_ordered_batch.cpp",
+      "SHA256": "12700ea1b324dea5b937e60f320f78561fb4d29a7919fea48509a7775678c17c",
+      "bytes": 13353
+    },
+    {
+      "path": "libraries/chain/parallel_secondary_journal.cpp",
+      "SHA256": "598f2b5ce3ff8387684f0639ca463a9255e5f2d139de54cf56b4ab54f44fe8bf",
+      "bytes": 5993
+    },
+    {
+      "path": "libraries/chain/parallel_secondary_state.cpp",
+      "SHA256": "b614217d8842c76b0dc486eb64da897fa146fcdbddfe9f31df786e9aeac58ab6",
+      "bytes": 9642
+    },
+    {
+      "path": "libraries/chain/parallel_state_overlay.cpp",
+      "SHA256": "84e0f157c5b895706a3ca1d3f7820c4b27902895afbbc87f9841ff8a10daa7e1",
+      "bytes": 49786
+    },
+    {
+      "path": "libraries/chain/parallel_sync_call.cpp",
+      "SHA256": "61c7a12b87ccd87464b2588054128a89b85dcb38d63d97a4ab64393063b83fc7",
+      "bytes": 18273
+    },
+    {
+      "path": "libraries/chain/parallel_transaction_environment.cpp",
+      "SHA256": "b08bafc505b8e3ccff13cad6a65c79e9bd54398d19bfce763a626d036897d00f",
+      "bytes": 5785
+    },
+    {
+      "path": "libraries/chain/parallel_wasm_worker.cpp",
+      "SHA256": "47ea88c5c35bab8ac812c5823aba4f7576dc57c017d26c5b1a37885cffb88d26",
+      "bytes": 143847
+    },
+    {
+      "path": "libraries/chain/parallel_worker_pool.cpp",
+      "SHA256": "afcd9c815236e263a7679550768e034636265e87c09ee825d7889f648bbe6da8",
+      "bytes": 21729
+    },
+    {
+      "path": "libraries/chain/resource_limits.cpp",
+      "SHA256": "5563d359921504a99b93edb78980c9dc8defa8379c30e7843e6c61c50a6b6e0b",
+      "bytes": 25607
+    },
+    {
+      "path": "libraries/chain/transaction.cpp",
+      "SHA256": "3edbbc8b8868e2f8beba83d7d7c2eeffd2158e564681fd85f704a245d825fb49",
+      "bytes": 14374
+    },
+    {
+      "path": "libraries/chain/transaction_context.cpp",
+      "SHA256": "b6be122891c3a9bf889a1f65e3962afe93ae942f75beac5373fc921384f7270c",
+      "bytes": 56205
+    },
+    {
+      "path": "libraries/libfc/src/io/console.cpp",
+      "deleted": true
+    },
+    {
+      "path": "libraries/version/CMakeLists.txt",
+      "SHA256": "92e63450bbe0eac5af766ba88437c0d5f2a4ac4e4affdcf3283eec055dd65927",
+      "bytes": 2704
+    },
+    {
+      "path": "libraries/version/include/eosio/version/version.hpp",
+      "SHA256": "9e3dde58d15811f9eac8e71a4f0d38eab07524ed740ce8abfdc4f47640d0ffba",
+      "bytes": 545
+    },
+    {
+      "path": "libraries/version/src/version_impl.cpp.in",
+      "SHA256": "b186853f061999c28975e2dbd10ef8526f4753bec78027aeebbb9555cbdf2a50",
+      "bytes": 1814
+    },
+    {
+      "path": "licenses/UPSTREAM_SPRING_88e9578_LICENSE.txt",
+      "SHA256": "8bb24444d5c6c81f4aaff8843b0bf545a3ba7cbfc02f5d268242cd70be43af69",
+      "bytes": 6051
+    },
+    {
+      "path": "plugins/chain_plugin/chain_plugin.cpp",
+      "SHA256": "bc2ec51106b781881552ae1f4ca1a44ed2b61ee262a9e75347327f0bfc5ba7f8",
+      "bytes": 147611
+    },
+    {
+      "path": "plugins/producer_plugin/include/eosio/producer_plugin/incoming_transaction_batch.hpp",
+      "SHA256": "55b348ab1167cef729ca881e707538330b70846b5cbd263d07913299d1eb4b4e",
+      "bytes": 3516
+    },
+    {
+      "path": "plugins/producer_plugin/include/eosio/producer_plugin/production_pause_vote_tracker.hpp",
+      "SHA256": "9e0fdb37a804c446328972006fa37abb3812b17e33f5635c1dedd42543e441ee",
+      "bytes": 12874
+    },
+    {
+      "path": "plugins/producer_plugin/include/eosio/producer_plugin/production_timer_guard.hpp",
+      "SHA256": "72db327fc3a3ef38e74da3b3f9b583e05618b06fdcd71e13da85c0836207c6fc",
+      "bytes": 931
+    },
+    {
+      "path": "plugins/producer_plugin/producer_plugin.cpp",
+      "SHA256": "577512a6ea6f71d5a1cc0068c669a9fbab8f6b12499c2e0de80ab4ab4abab177",
+      "bytes": 172923
+    },
+    {
+      "path": "plugins/producer_plugin/test/CMakeLists.txt",
+      "SHA256": "f80df7dd4da7b407bdd09b08ea7ab323db4b13a2a1602acbb1a420c7893525bf",
+      "bytes": 1928
+    },
+    {
+      "path": "plugins/producer_plugin/test/test_incoming_transaction_batch.cpp",
+      "SHA256": "b5d767f544bc37a456f53c51b26156fd4490940412588cf70c3fcfd7cab4af6e",
+      "bytes": 7199
+    },
+    {
+      "path": "plugins/producer_plugin/test/test_production_pause_vote_tracker.cpp",
+      "SHA256": "a547d2cf129afa5780824d6c4eab6efe719c00c201b2f9e6e9d543d589a61790",
+      "bytes": 5858
+    },
+    {
+      "path": "plugins/producer_plugin/test/test_production_timer_guard.cpp",
+      "SHA256": "75f5f4097df3b54187264e02117180e83bff90d770035ba5808f80448f908ca8",
+      "bytes": 5137
+    },
+    {
+      "path": "plugins/producer_plugin/test/test_trx_full.cpp",
+      "SHA256": "098d5853ab996205c3f4c68b5aa0cab8998ec4dd23d568ed9c41fb1492043451",
+      "bytes": 12818
+    },
+    {
+      "path": "scripts/parallel_access_audit.py",
+      "SHA256": "5a4f620f361a41e180a339e44018e68aa692b63ee15aa1d8e86a97ac4e580a03",
+      "bytes": 16005
+    },
+    {
+      "path": "tests/PerformanceHarness/benchmark_environment.py",
+      "SHA256": "4fc55da2ad93b3776c7d0df2d00681d9df3ec06c35428d173887e2d5894ce4e2",
+      "bytes": 17755
+    },
+    {
+      "path": "tests/PerformanceHarness/finality_benchmark.py",
+      "SHA256": "e231cc413cc678668cc3d1434bec341c38ce601620c78484864ec22637efc561",
+      "bytes": 9696
+    },
+    {
+      "path": "tests/PerformanceHarness/parallel_budget_model.py",
+      "SHA256": "cc043be001bd3987112fb900a9001635d827d6252aeb4525876b66303f27723f",
+      "bytes": 4881
+    },
+    {
+      "path": "tests/PerformanceHarness/parallel_capacity.py",
+      "SHA256": "03bd37824388f9b4c645385376c50a05232d21caf8599015123221b9eb0e49ca",
+      "bytes": 12100
+    },
+    {
+      "path": "tests/PerformanceHarness/parallel_diagnostic_report.py",
+      "SHA256": "ab1f1d6f789bdb94a158d46a5dcfe7d1a479f53ea6710f5e98e9f16dd227a049",
+      "bytes": 8398
+    },
+    {
+      "path": "tests/PerformanceHarness/test_parallel_budget_model.py",
+      "SHA256": "3c800bddcbde6bdf4826891d0713718c50bd8be7833da2cd69a915cc70790fe2",
+      "bytes": 5427
+    },
+    {
+      "path": "tests/PerformanceHarness/test_parallel_capacity.py",
+      "SHA256": "c92c6a4a9ce4351f59fa54e93de4b31858e632b57ba8b7d9081bf9a457397873",
+      "bytes": 11175
+    },
+    {
+      "path": "tests/PerformanceHarness/test_parallel_diagnostic_report.py",
+      "SHA256": "5b11ed58b05e58a1d5fda37d1cc63eb5152dae7d1a88b17bda751c5b00e5d60f",
+      "bytes": 2897
+    },
+    {
+      "path": "tests/archive_v1_candidate_sources.py",
+      "SHA256": "368b74dda012061f69811cc1f70d1943b4cade032b7743164bcc613b92978f1c",
+      "bytes": 7451
+    },
+    {
+      "path": "tests/archive_v1_candidate_sources_test.py",
+      "SHA256": "2ccf46959adcca1229546eb3e110a2e346f72f0eae008a24ee374fca682888b2",
+      "bytes": 2158
+    },
+    {
+      "path": "tests/audit_safe_eviction_evidence.py",
+      "SHA256": "9c34fde8b122885d4c65e6e6e8e4e98d74b1e992b46ee858916775365499e2ce",
+      "bytes": 7573
+    },
+    {
+      "path": "tests/audit_v1_native_shards.py",
+      "SHA256": "8af29204bb394769c1884e6d89d0d37e78e6ec8c60efda5c4b49a46ac08298b4",
+      "bytes": 2570
+    },
+    {
+      "path": "tests/audit_v1_native_shards_test.py",
+      "SHA256": "6a32a5da422e20ccd041525cdb093522c3bda77d67aa298162f4b7f21576e7f4",
+      "bytes": 1516
+    },
+    {
+      "path": "tests/cdt_runtime_parameter_probe.cpp",
+      "SHA256": "09d19b58868f650ce0d69f940b347e0060b415d827773035e797e22ccc005086",
+      "bytes": 3558
+    },
+    {
+      "path": "tests/checkout_ci_dependencies_test.py",
+      "SHA256": "cfade669a09a563cae071aebe7faa9a95061211bb79f2331b0df27b1d7cc9533",
+      "bytes": 5992
+    },
+    {
+      "path": "tests/ci_delivery_test.py",
+      "SHA256": "45726e1c91dd03d0d6d6766211019f5497b58d8f31fc7fb6181044e9a1b97963",
+      "bytes": 12136
+    },
+    {
+      "path": "tests/console_echo_regression_test.py",
+      "SHA256": "79efd4dafe3621bc7bc00361a230f4e8c5e0019509a4ed2041d4e771206ed460",
+      "bytes": 1498
+    },
+    {
+      "path": "tests/fetch_native_policy_test_cache.py",
+      "SHA256": "9c9760d143e1cb193e8638f10a7963a40e703fb0cbeb94eeb7010fa907c0f456",
+      "bytes": 4035
+    },
+    {
+      "path": "tests/fixtures/cdt_modern_smoke.cpp",
+      "SHA256": "7d8e7dad879e789662153c50afc57a335a23a296adab06858d73a424c994eb06",
+      "bytes": 3611
+    },
+    {
+      "path": "tests/fixtures/console_echo_regression.cpp",
+      "SHA256": "8f88abb14f8197f488a5f61a5ae06f003e2f2e65588dba64450ffae6d97277ac",
+      "bytes": 2281
+    },
+    {
+      "path": "tests/native_policy_boundary_fixture.cpp",
+      "SHA256": "024d7d9fddc890fe7f5cf4fe615cb06489268d4384e6807777abe7319b3b8270",
+      "bytes": 466
+    },
+    {
+      "path": "tests/native_policy_fixture_registration_test.py",
+      "SHA256": "088eb45ceb866be3046b68e26dc219954e4986928920c5f8c9a35618e2d69554",
+      "bytes": 1605
+    },
+    {
+      "path": "tests/native_work_observer_test.cpp",
+      "SHA256": "dd7aa939ab22ef97918b5c47b1a08feb7df62cf7c5e4d79f2eb88c942960dfcd",
+      "bytes": 15296
+    },
+    {
+      "path": "tests/native_work_policy_catalog_test.cpp",
+      "SHA256": "1048101fe0df9235d359f1d9dcf6de0681966d859c5dc54b590fa9e4350205cd",
+      "bytes": 18331
+    },
+    {
+      "path": "tests/native_work_pricing_test.cpp",
+      "SHA256": "ba56e1c2530e6191778b4a1b2143fb05d6aacfa7f6cfe12df6e5bc2b58bc6675",
+      "bytes": 8781
+    },
+    {
+      "path": "tests/package_v1_candidate_runtime.py",
+      "SHA256": "32db30894961762fbc8bacf0bd9c5bb9009a2e6794e95f15e7bcf562c078c867",
+      "bytes": 10514
+    },
+    {
+      "path": "tests/package_v1_candidate_runtime_test.py",
+      "SHA256": "26b25fdd4bf026456f7503717b7313a953a477d47743eb1668622da5807dade1",
+      "bytes": 5945
+    },
+    {
+      "path": "tests/package_v1_local_source.py",
+      "SHA256": "c8bdc0ff6c7549bfcd528cc9c4624f82a4aa05d3434f29ac4b2de9904aa92d51",
+      "bytes": 5525
+    },
+    {
+      "path": "tests/package_v1_local_source_test.py",
+      "SHA256": "6d64a56b6f75b35ff723a7ba3ddc03c4148192ab4d92b660155b19a054840398",
+      "bytes": 2839
+    },
+    {
+      "path": "tests/parallel_access_audit_test.py",
+      "SHA256": "e3e5fb4fcc5c0341e91e609fd5610252bee4d0bfd4b40bfc2d08bbd0c1445797",
+      "bytes": 16280
+    },
+    {
+      "path": "tests/parallel_access_hints_test.cpp",
+      "SHA256": "deaebfd0afc527d5b1f176a3c1c920dc0d4feea4cfc0c1ffad3ba681a4f32595",
+      "bytes": 1748
+    },
+    {
+      "path": "tests/parallel_complex_replay.py",
+      "SHA256": "4ff545a2550a38803512310fd13e659a9baf82079766dbabe9943894484c0744",
+      "bytes": 12224
+    },
+    {
+      "path": "tests/parallel_complex_replay_test.py",
+      "SHA256": "04acabeb2ca05fdfde5f2c7d734c14413db4f34cb76b83d2d0a1b774c46de264",
+      "bytes": 2144
+    },
+    {
+      "path": "tests/parallel_execution_harness_test.py",
+      "SHA256": "4f90a3da661b31111cd72f19daf3458877e4b94ae07d24f33ac7c142fd21fd34",
+      "bytes": 35579
+    },
+    {
+      "path": "tests/parallel_execution_test.py",
+      "SHA256": "ab69621af009b9f132f6f23c5711b3db222603e6a1f1f7015f0c6a8c452d4550",
+      "bytes": 23520
+    },
+    {
+      "path": "tests/parallel_global12_benchmark.py",
+      "SHA256": "0d2cd4161ae158be6936b1914fbc5ece674860e13a5c496c4067af4efdfbff0a",
+      "bytes": 22183
+    },
+    {
+      "path": "tests/parallel_global12_benchmark_test.py",
+      "SHA256": "64a477a699995189ec2e21a0f2aa694fb0352280c37d456bd4e2116aa211a9b0",
+      "bytes": 2600
+    },
+    {
+      "path": "tests/parallel_immutable_input_test.cpp",
+      "SHA256": "04654d38c98f90d50e555b1728a80151804a0c89b03084d5475f738c6285d6e9",
+      "bytes": 3482
+    },
+    {
+      "path": "tests/parallel_loopback_wave.py",
+      "SHA256": "ffdafa99848d813e4a949f0469b60db1108ad50d775da733446a661a9b4ed335",
+      "bytes": 1554
+    },
+    {
+      "path": "tests/parallel_loopback_wave_test.py",
+      "SHA256": "a98d5a75caf22e3281dd76145c4a6bc4920ca7bf3705477bb17cbe8c67155648",
+      "bytes": 2330
+    },
+    {
+      "path": "tests/parallel_mixed_stress_benchmark.py",
+      "SHA256": "a545ebc13f2ba0704a9f921196ec3bb63d00476d578c123e3c497f4a2d7dea2e",
+      "bytes": 22992
+    },
+    {
+      "path": "tests/parallel_mixed_stress_workload.py",
+      "SHA256": "0b207db14e75ad9433b64fd3131703adf4b6b562160b720b31476c4baf831dc9",
+      "bytes": 11842
+    },
+    {
+      "path": "tests/parallel_mixed_stress_workload_test.py",
+      "SHA256": "cbe6cf1b29e545230ee13751b73cd088f117473e05c61845e5b1386b9c1b447e",
+      "bytes": 15831
+    },
+    {
+      "path": "tests/parallel_pool_cloud_guest.py",
+      "SHA256": "bc2626b8801239cb49b02bb190719c81d642eed6fbe3d30f586dd9e12da229e0",
+      "bytes": 4693
+    },
+    {
+      "path": "tests/parallel_pressure_metrics.py",
+      "SHA256": "1604d6ef80a1d0085190d14e6e0cebef497d8fcb5a57eea5d22bf1314c082f8d",
+      "bytes": 3594
+    },
+    {
+      "path": "tests/parallel_pressure_metrics_test.py",
+      "SHA256": "ddeb60fc5ab60149517672107516ebd82dd8265b4988606c991832dac0be3233",
+      "bytes": 2560
+    },
+    {
+      "path": "tests/parallel_producer_process_test.py",
+      "SHA256": "276a78b9cd8949231745c0a45094d9aeaeeef32b5dcd371303fb6935ce9b67e3",
+      "bytes": 41905
+    },
+    {
+      "path": "tests/parallel_release_benchmark.py",
+      "SHA256": "a0089772b9362ec561e723a7cf0e98f02a9cd4d04d402e6aa1d868436dc489cb",
+      "bytes": 50262
+    },
+    {
+      "path": "tests/parallel_release_benchmark_test.py",
+      "SHA256": "27ed6359041a6581937cea05ec128c48b00db0f34f69b1c25507433274255d4e",
+      "bytes": 36520
+    },
+    {
+      "path": "tests/parallel_release_fixture_test.py",
+      "SHA256": "bea3d89807e194b721229bce183f03345618d91296923634d0345fac42f0f9c0",
+      "bytes": 3722
+    },
+    {
+      "path": "tests/parallel_release_recovery.py",
+      "SHA256": "e328eb547f56697f787a7316b01f7c2414852f1b751a52b2420123dcf7b8bdbe",
+      "bytes": 9327
+    },
+    {
+      "path": "tests/parallel_release_recovery_test.py",
+      "SHA256": "ad5301d4a5639aacb6d150daad06bf824bc72dc6816dd0dd65e7fdce90dcfe45",
+      "bytes": 4236
+    },
+    {
+      "path": "tests/parallel_runtime_cli_test.py",
+      "SHA256": "19437c09338f2ca906c6fe54ec0de5de2cd11431259625895d8aa4144a44576e",
+      "bytes": 5017
+    },
+    {
+      "path": "tests/parallel_sanitizer_options_test.py",
+      "SHA256": "758fad2e0c3f70f297df3431f212df7f2b98ade84b12fea3830e1ea0fa24adf5",
+      "bytes": 3767
+    },
+    {
+      "path": "tests/parallel_saturation_metrics.py",
+      "SHA256": "71268325396410f15643bf024fff7aec74be7c42fec5feb6f9c478deea0d48c4",
+      "bytes": 5407
+    },
+    {
+      "path": "tests/parallel_saturation_metrics_test.py",
+      "SHA256": "b16cdaf78a1f2f42c32b6b92a930693100f10165ccef03ada48074faf9d5f822",
+      "bytes": 2401
+    },
+    {
+      "path": "tests/parallel_work_footprint_real_types.cpp",
+      "SHA256": "d7d4e38be255f10f675c26ec79ee4b82cabd9331d8ced3eff47462030961c3fa",
+      "bytes": 633
+    },
+    {
+      "path": "tests/parallel_work_footprint_test.cpp",
+      "SHA256": "5759f884beec83654d3f7515a33e80c4787a52a053207f2caaf40fc9941e1ada",
+      "bytes": 20496
+    },
+    {
+      "path": "tests/parallel_worker_signals_test.cpp",
+      "SHA256": "d4e81047bf256fa8bde45fa069f3632b65933e93f961521fb055a21cbdffb756",
+      "bytes": 2630
+    },
+    {
+      "path": "tests/portable_build_cache_test.py",
+      "SHA256": "bbc6477b6340e15d55669b49511d341cd7335420db9721e3b0ac1f161e6305ea",
+      "bytes": 4975
+    },
+    {
+      "path": "tests/prepare_v1_engine_profile_retest.py",
+      "SHA256": "7834eef9ae70dbdeff4cc043dacf5a0b41a1f5c7c05ee35d37ff8c0d7d8b7532",
+      "bytes": 9452
+    },
+    {
+      "path": "tests/prepare_v1_engine_profile_retest_test.py",
+      "SHA256": "74d932d50a2d5618e09994ca65bb980eeb8f213478749277e66f76cf6e19f742",
+      "bytes": 2893
+    },
+    {
+      "path": "tests/prepare_v1_native_profile_retest.py",
+      "SHA256": "9633eb8d5dabf3469b120587fc63b0643a44db7dd5df39b95e53dfdced180184",
+      "bytes": 8522
+    },
+    {
+      "path": "tests/prepare_v1_native_profile_retest_test.py",
+      "SHA256": "ff66aacfa27f914d4a1130b14c525b929f7008521e429a5b8877d1a45f887fb2",
+      "bytes": 5985
+    },
+    {
+      "path": "tests/prepare_v1_same_build_resume.py",
+      "SHA256": "fc3a1b921b67264c7958a1651978f4c4300dda0a610468e88b1bdc3bf457ac11",
+      "bytes": 9530
+    },
+    {
+      "path": "tests/prepare_v1_same_build_resume_test.py",
+      "SHA256": "7f6cb722700e70e9f1e73cff9203d70cdc8e4b4122fd2ec41c65e71e647c809b",
+      "bytes": 6096
+    },
+    {
+      "path": "tests/presigned_sender_cli_test.py",
+      "SHA256": "67b1ee36b983a7c64e17f8ca5b7ac135a4c3f9d6cbd86f83f70f078b26de0b31",
+      "bytes": 3268
+    },
+    {
+      "path": "tests/presigned_sender_start_test.py",
+      "SHA256": "4ee506bb05195c5891902c37e0be6d64592e22e64daaf592e269f13cc5ffdb59",
+      "bytes": 6572
+    },
+    {
+      "path": "tests/presigned_sender_start_unit_test.py",
+      "SHA256": "22986df565c1fa0abdefb3f9d9f2c65ec51baefe9618b4a4b2579b71933ef1bf",
+      "bytes": 1679
+    },
+    {
+      "path": "tests/pureeos_candidate_sync_test.py",
+      "SHA256": "82c2675c8c219c7d829692e7ef952298f70a5877e6b8bc415f9e4ae570187619",
+      "bytes": 4513
+    },
+    {
+      "path": "tests/pureeos_cloud_regression_runner.py",
+      "SHA256": "5680e1d113327cd5cbfada6425686cecb22138b46b86a8d8e145e1f4469c6a84",
+      "bytes": 10161
+    },
+    {
+      "path": "tests/pureeos_cloud_regression_runner_test.py",
+      "SHA256": "ccd52336f1a6ed90fdf2d3a7878ff85da30c73fe99f58dc49fd889930bebe9eb",
+      "bytes": 4722
+    },
+    {
+      "path": "tests/pureeos_committed_policy_observer.py",
+      "SHA256": "b44adb35fc2aaf90740f213d3c1ffc6cca9e671ff249f9bfbed13cdc7e0eb15c",
+      "bytes": 11211
+    },
+    {
+      "path": "tests/pureeos_committed_policy_observer_test.py",
+      "SHA256": "ad1b4733970964fbc8aad799c57427dac9d7751a448888f55b7941ad92cb57d7",
+      "bytes": 11760
+    },
+    {
+      "path": "tests/pureeos_fourhost_rotation_cloud_test.py",
+      "SHA256": "f6e30b85124d78534013185848e048f3dbdb5034c60407e99f6509b862511f0e",
+      "bytes": 15701
+    },
+    {
+      "path": "tests/pureeos_fourhost_rotation_cloud_test_test.py",
+      "SHA256": "3bfa4767823367b307e7f982df1c46c546848b2c4b13e7b349e262aae96e24a5",
+      "bytes": 10535
+    },
+    {
+      "path": "tests/pureeos_historical_edge_cases_test.py",
+      "SHA256": "657a367b5a34c58211868bba53c66ea844ffe0fb5587de5f8104e072074714de",
+      "bytes": 32766
+    },
+    {
+      "path": "tests/pureeos_historical_edge_cases_unit_test.py",
+      "SHA256": "adaf97f58cd5cd1c03b3ce2600e01ce8c1f68e01c06f7fbe1ffd8b9378623f49",
+      "bytes": 7424
+    },
+    {
+      "path": "tests/pureeos_host_metrics.py",
+      "SHA256": "8126b7a883c2111033da94a40cd8b511b6fea10e04a5b5edb59e7f9ba572abcf",
+      "bytes": 4701
+    },
+    {
+      "path": "tests/pureeos_host_metrics_test.py",
+      "SHA256": "fc479b68d3fe07f0f48a9b1bda797043988f27aa415c09d49a4ffb60b13e88a2",
+      "bytes": 4400
+    },
+    {
+      "path": "tests/pureeos_large_multinode_local_test.py",
+      "SHA256": "fbf236b08fb094c6f4acdc165f711d41e3c5ccf0353fe888b21e8dc4c1224560",
+      "bytes": 18826
+    },
+    {
+      "path": "tests/pureeos_multihost_cloud_test.py",
+      "SHA256": "7caf5c8ff03c4f89fed4541ff401b6f10976352c0ac94c4ba7a50f2190a900ec",
+      "bytes": 21694
+    },
+    {
+      "path": "tests/pureeos_multihost_cloud_test_test.py",
+      "SHA256": "ac9d34b56d2b63f3ba1f70db1046897e6f1c288a5465972ee793757bb45ed706",
+      "bytes": 10569
+    },
+    {
+      "path": "tests/pureeos_multinode_local_test.py",
+      "SHA256": "c6f58c941dc3dd5625d7a9ac10b0980e1d76e821b43faf758864ee6a8cc3b946",
+      "bytes": 23805
+    },
+    {
+      "path": "tests/pureeos_multinode_shutdown_test.py",
+      "SHA256": "d23406221c7c5eef6e5e95ccb02b826772ad1818f87ea85f148ce509ef5482ec",
+      "bytes": 2579
+    },
+    {
+      "path": "tests/pureeos_rotation_cohort_cloud_test.py",
+      "SHA256": "32f6fbf6f27f9b2ba543e58ed9c5a0c237268e985e92f3e30ef5082bf9785266",
+      "bytes": 16987
+    },
+    {
+      "path": "tests/pureeos_rotation_cohort_cloud_test_test.py",
+      "SHA256": "919405d6359bc5446e565b243962910089dcbf1ae9d530d7a4173670645a3d00",
+      "bytes": 4050
+    },
+    {
+      "path": "tests/pureeos_rotation_lifecycle.py",
+      "SHA256": "79917bc2edfb3d6098df77668bc17125bbf4645630ff2872c06b5bfc9832fe05",
+      "bytes": 7061
+    },
+    {
+      "path": "tests/pureeos_rotation_lifecycle_test.py",
+      "SHA256": "36948e03df5385a4599a0aeda4b629c4c9007796ad5e857f2d63b82156bdd359",
+      "bytes": 7883
+    },
+    {
+      "path": "tests/pureeos_single_choice_local_test.py",
+      "SHA256": "db03ebea2e34bd2bc82e2adea57718bf28234b1ba1ca6dae3ad8cb70c453484e",
+      "bytes": 40543
+    },
+    {
+      "path": "tests/run_access_hints_test.py",
+      "SHA256": "224c173a85ae102fcc98ce794dd44d509fe706462b5742bc718336bfaf5cb280",
+      "bytes": 2679
+    },
+    {
+      "path": "tests/run_native_policy_boundary.py",
+      "SHA256": "e30a7a3c131d7e6ed27ca37b1a889e212a59074619bd739ea6eabe9b4bfaf169",
+      "bytes": 6339
+    },
+    {
+      "path": "tests/run_observer_admission_smoke.py",
+      "SHA256": "2af3e4094776cf9a650cf631fac97748554dfdd5f71e9c0b01aaf3a22655a785",
+      "bytes": 6418
+    },
+    {
+      "path": "tests/run_parallel_worker_signals_test.py",
+      "SHA256": "bd86699aba39398a13ccd9fd3099cd8b1d0d22b8733dd90ac177d8b4954d4be7",
+      "bytes": 3001
+    },
+    {
+      "path": "tests/run_safe_eviction_regression.py",
+      "SHA256": "c8980e58aa45616cf1240449f62619323ab0dd2811c8e87cdab1c3682b394091",
+      "bytes": 5945
+    },
+    {
+      "path": "tests/run_v1_candidate_controls.py",
+      "SHA256": "fbf4957124ba0a10e67eb7e8d90c16629fb5b39d68053fb92b0949ec0a50fc21",
+      "bytes": 6256
+    },
+    {
+      "path": "tests/run_v1_candidate_sdk.py",
+      "SHA256": "ee786bd23cd223cd05c50520862cfdfe6dd673482fbc42f5d076f94ca1d828f4",
+      "bytes": 5973
+    },
+    {
+      "path": "tests/run_v1_resource_boundary_probe.py",
+      "SHA256": "f4bd3d77765f0a6436242656181ee8c69e65e6b32d817e57c7a1ff59b59e9bc6",
+      "bytes": 10255
+    },
+    {
+      "path": "tests/run_v1_resource_boundary_probe_test.py",
+      "SHA256": "d5d119da2180a447aaf701a88399de0903665097a0bee83edb303b2c52158255",
+      "bytes": 3119
+    },
+    {
+      "path": "tests/snapshot_v1_phase2_evidence.py",
+      "SHA256": "cab45a41ef1a8b0907da2c9e849e557caf4535f7620ed084cceecc4c43edaa69",
+      "bytes": 11420
+    },
+    {
+      "path": "tests/standalone_fixture_registration_test.py",
+      "SHA256": "acac03dd46cda72c68cb753b498bd7778fd59f3030e535cc29ecf9fafc48b960",
+      "bytes": 2762
+    },
+    {
+      "path": "tests/start_parallel_pool_cloud_check.py",
+      "SHA256": "da101c7522c8693384843cebd7abe936fd7edf5a3345469d3d633a2d8d515617",
+      "bytes": 3211
+    },
+    {
+      "path": "tests/start_v1_integrated_cloud_build.py",
+      "SHA256": "06b4d8c84e9151e5e3c954fe31fd811e428704268e57c63da2522fc54e627747",
+      "bytes": 7538
+    },
+    {
+      "path": "tests/start_v1_same_build_resume.py",
+      "SHA256": "cebc277a3e8c130270f30b0d1b00a590ea9c89944d1aee5792bbab592ee20d2a",
+      "bytes": 7042
+    },
+    {
+      "path": "tests/transaction_work_context_test.cpp",
+      "SHA256": "c1dc923f9869dd7bcb0ae9a1db39556dae419138cdd1578a2de9f7c67822a5f5",
+      "bytes": 18541
+    },
+    {
+      "path": "tests/transaction_work_context_vm_test.cpp",
+      "SHA256": "ca2c59deeb97b1a8b8b097e50afd962447de406e0f257e9bbb28689b55512ec9",
+      "bytes": 6743
+    },
+    {
+      "path": "tests/trx_generator/CMakeLists.txt",
+      "SHA256": "451ded18fff8b3dd42cce24db2c84c49a6b4e16f375bc6af716f9ea6fcc36544",
+      "bytes": 1248
+    },
+    {
+      "path": "tests/trx_generator/presigned_tps_sender.cpp",
+      "SHA256": "3926734ccb4ab52de14622c8507cbe8c0b79116500a0503b1a0265bcba959dc7",
+      "bytes": 7698
+    },
+    {
+      "path": "tests/ubuntu_cdt_runtime_test.py",
+      "SHA256": "0d3b79664f9e701cbe8f6086781efd99c4dacbef9800c6693fabd1bbd05a0f32",
+      "bytes": 15413
+    },
+    {
+      "path": "tests/ubuntu_cdt_runtime_test_test.py",
+      "SHA256": "360102148f174385af83ced07d1fe8287b1d1486a7480828aa140b46e54af65c",
+      "bytes": 2753
+    },
+    {
+      "path": "tests/ubuntu_modern_build_test.py",
+      "SHA256": "817e6c055eb795fb161504954f552cb37fd021c3e039342ff589334b28585d21",
+      "bytes": 7265
+    },
+    {
+      "path": "tests/v1_build_version_test.py",
+      "SHA256": "ab22edd05e164e41ee760ebdd5e93e1fccad6f38e67e3d1bfaaa3938ede48d5d",
+      "bytes": 5095
+    },
+    {
+      "path": "tests/v1_candidate_deployment_test.py",
+      "SHA256": "9613d36ca282a6924dded314f04f55a5ed94f1952a347cc4c7d4c62edd19de0a",
+      "bytes": 11456
+    },
+    {
+      "path": "tests/v1_candidate_deployment_test_test.py",
+      "SHA256": "2f27d3292f0b1d4ce3474550b3bf9fc0121723a88939ae8b618697aa49353176",
+      "bytes": 4607
+    },
+    {
+      "path": "tests/v1_candidate_native_matrix.py",
+      "SHA256": "e44d2f49c034e036623a0e6b1b88e845f2de1181e43e667e5ae1cb36488aac74",
+      "bytes": 11308
+    },
+    {
+      "path": "tests/v1_candidate_native_matrix_test.py",
+      "SHA256": "fd11a0b8d2d0707c4f4957af033f080351ef4038d0a4aaedc51b0e6649b23d29",
+      "bytes": 1347
+    },
+    {
+      "path": "tests/v1_candidate_recovery_test.py",
+      "SHA256": "683143c2824e6a7265c50a329aa9e3c49cfa9d6072255e1d7b9717c4f3980854",
+      "bytes": 9419
+    },
+    {
+      "path": "tests/v1_candidate_recovery_test_test.py",
+      "SHA256": "079bac8f9eda7bc94a413ac94362562a396a82b81b4a56354652c30e8cd203ed",
+      "bytes": 2173
+    },
+    {
+      "path": "tests/v1_cloud_host_power_test.py",
+      "SHA256": "0e27026ffb9a4d9517f731d190837ff90a52c4bfd513269425c8767d74f9a868",
+      "bytes": 19014
+    },
+    {
+      "path": "tests/v1_cloud_host_power_test_test.py",
+      "SHA256": "f8a184b3b09a26a64c2cc7eb2445edf534e6f3e9b74e002ebca5142b3de8c3af",
+      "bytes": 11469
+    },
+    {
+      "path": "tests/v1_early_live_reward_claim_host.py",
+      "SHA256": "aa9e1743ecae5cff515c275eff309046c85b77b27595fa48e205acf49e99e4fe",
+      "bytes": 15025
+    },
+    {
+      "path": "tests/v1_early_live_reward_claim_host_test.py",
+      "SHA256": "22cb18283a81f78bdb9fbf999d3b9fc41bc7f6ba05e4f8ab61525bfe278390b8",
+      "bytes": 6766
+    },
+    {
+      "path": "tests/v1_engine_profile_metrics.py",
+      "SHA256": "15414e190cd54e25fb9a36a4473ac091fc5e07feb590c0d5dcbbe4e6d2598f2b",
+      "bytes": 7981
+    },
+    {
+      "path": "tests/v1_engine_profile_retest_guest.py",
+      "SHA256": "a91e80567ca163a77e7dd5a4d7ec402b659e5e1a31b5b560e3231f675524199d",
+      "bytes": 9125
+    },
+    {
+      "path": "tests/v1_engine_profile_retest_host.py",
+      "SHA256": "388212c11537254e9651bcd9ccb068716ffc9e5954b5465953e14dc5a8336655",
+      "bytes": 6972
+    },
+    {
+      "path": "tests/v1_fast_regression.py",
+      "SHA256": "f92ca0a221a5dbe33b750cc74c2b4e19d2f94a13e0b544a4be0ecc94e46be926",
+      "bytes": 24478
+    },
+    {
+      "path": "tests/v1_fast_regression_test.py",
+      "SHA256": "94fb0220efafbe313fc4e8e56a4c24fc459c0cdbe40a2468214afa6e38b2e800",
+      "bytes": 10156
+    },
+    {
+      "path": "tests/v1_integrated_cloud_build_guest.py",
+      "SHA256": "b318140d5e165a62760bbe079992974527a02d432e9a40fb410b000b285e5d63",
+      "bytes": 10206
+    },
+    {
+      "path": "tests/v1_live_reward_claim_host.py",
+      "SHA256": "04585620f849729898359059f94a26a035e2524346c088857d92fb5b3fa37ce7",
+      "bytes": 11450
+    },
+    {
+      "path": "tests/v1_live_reward_claim_test.py",
+      "SHA256": "e318904b84256c76f47d7a9ae947b9abfe6a659ad0a33fcae8ae8a578c32e51c",
+      "bytes": 27306
+    },
+    {
+      "path": "tests/v1_live_reward_claim_test_test.py",
+      "SHA256": "cd599f9dbd77ed45679610bc5cb1ebe50a8e06c9ce757c2347c67708b40e7e7f",
+      "bytes": 10175
+    },
+    {
+      "path": "tests/v1_local_cohort_release_test.py",
+      "SHA256": "a8fdb596973c23a5e0a2f48e53699c0d1b675c6b34608f6b354353c6be7f993f",
+      "bytes": 10433
+    },
+    {
+      "path": "tests/v1_local_cohort_release_test_test.py",
+      "SHA256": "a453746c9d2ea3551b1d347915f6537f00a16431fd594ebd5bd1822be51e5d64",
+      "bytes": 5524
+    },
+    {
+      "path": "tests/v1_local_release_workflows.py",
+      "SHA256": "4e5ec931e68bfdd2f63fd236b47496d03099bf434f0c2b1dd4f32297062d0075",
+      "bytes": 18734
+    },
+    {
+      "path": "tests/v1_local_release_workflows_test.py",
+      "SHA256": "790f9b9a27790848c070a312be89c4760396de226107b7640d32acff42e6b936",
+      "bytes": 7812
+    },
+    {
+      "path": "tests/v1_local_repair_syntax.py",
+      "SHA256": "8e6ce356e69be6e0a1fb2e514131a49fd77ebbba586260f3441e5a9c67e84f0d",
+      "bytes": 4332
+    },
+    {
+      "path": "tests/v1_local_retest_guest.py",
+      "SHA256": "d7d8af1c58649ea49a17e1cbcad7cb52037895acd38283cf14cfe7afc9a44887",
+      "bytes": 8172
+    },
+    {
+      "path": "tests/v1_local_retest_host.py",
+      "SHA256": "4fe4f01b6cc708534b2bee970f67ad853ba27e6c123c60e524e8280773e57fda",
+      "bytes": 6605
+    },
+    {
+      "path": "tests/v1_local_retest_metrics.py",
+      "SHA256": "85e17c6b8505e81655aa13a807414049e0091f8b9bf5a2310c7f089c6031cf70",
+      "bytes": 6947
+    },
+    {
+      "path": "tests/v1_local_retest_metrics_test.py",
+      "SHA256": "a8a87af9d9eb93bad452f2fed8be62f15dad5b0daca0e304c650c67d956fc2e9",
+      "bytes": 1339
+    },
+    {
+      "path": "tests/v1_native_profile_metrics.py",
+      "SHA256": "2dd8627def76efc13f2a635fbc0c5ae11e7b45fc60d4ec3fca69ae3d4e27dcd2",
+      "bytes": 7986
+    },
+    {
+      "path": "tests/v1_native_profile_retest_guest.py",
+      "SHA256": "57f318b9367262dc55cddbb5d7cf6a251b8ac36c08071e5011e3a498708c5dbe",
+      "bytes": 15579
+    },
+    {
+      "path": "tests/v1_native_profile_retest_host.py",
+      "SHA256": "76050061469177e7ad72e1798eae088fbf37f4fcf052434f786ef7d8c5a9f097",
+      "bytes": 7838
+    },
+    {
+      "path": "tests/v1_offline_portability_test.py",
+      "SHA256": "612180f1acbec8aba6ce5e82cb737c784d432f20b8ee18992bc599fd1d7bf07a",
+      "bytes": 2370
+    },
+    {
+      "path": "tests/v1_runtime_dependencies.py",
+      "SHA256": "1624c39dd84cda1fa1a8b59b01a840aba0daa6a68b4f1b8661c5fe3bc76ab7cd",
+      "bytes": 5172
+    },
+    {
+      "path": "tests/v1_runtime_dependencies_test.py",
+      "SHA256": "ab610a5f67b194985922e20452d1c1d2a13f7ef74376f6f780d7359129e7c11e",
+      "bytes": 4302
+    },
+    {
+      "path": "tests/v1_twohost_cohort_test.py",
+      "SHA256": "cc939f9b988161cb28f3608e03d1c5822f632e74d3e7561528a41e86a1f26f35",
+      "bytes": 8599
+    },
+    {
+      "path": "tests/v1_twohost_cohort_test_test.py",
+      "SHA256": "19c2ea412d335a032d9afd21172ae642e710a5f42f3c3c124c033a61bd89880a",
+      "bytes": 7097
+    },
+    {
+      "path": "tests/v1_vendor_source_test.py",
+      "SHA256": "6e5dbef9e578cd4e0942a703aabf3f47c21b02d752886f4f8a0590d5bf49b319",
+      "bytes": 5556
+    },
+    {
+      "path": "tests/v1_worker_failure_diagnostics.py",
+      "SHA256": "3394f4ab101da68abc1976b52405de73aeb8317070686e1ee613d31df1bea1ad",
+      "bytes": 8045
+    },
+    {
+      "path": "tests/verify_committed_policy_recording.py",
+      "SHA256": "5e3e72dcefbc6a1748a31ba53245bd5e212f78a96028186a5dcc714c10f13aa9",
+      "bytes": 4107
+    },
+    {
+      "path": "tests/wasm_work_entry_binding_test.cpp",
+      "SHA256": "6a3d6cd00f608d89c12c02438448342e7adefb9f9ae55e2604e731eaa1946d41",
+      "bytes": 6816
+    },
+    {
+      "path": "tests/wasm_work_host_bridge_test.cpp",
+      "SHA256": "aad8808cc7279ec129939cf2a0cbc5760a5f37d73c72c8bab55264a543229cbd",
+      "bytes": 10431
+    },
+    {
+      "path": "tests/wasm_work_inventory_test.cpp",
+      "SHA256": "292180a2c63a9be87e7ec6e29288eb061d61fea9cc5910fb386e9104d1d275e0",
+      "bytes": 7991
+    },
+    {
+      "path": "tests/wasm_work_locals_test.cpp",
+      "SHA256": "37d3376a3c0d92214a09763f6501f447b329309cb5941f2995108b760ce8c524",
+      "bytes": 6424
+    },
+    {
+      "path": "tests/wasm_work_memory_test.cpp",
+      "SHA256": "a481057cdb60bff39a1cf275d177be48361fee6412d11b1fb0c587cba3154765",
+      "bytes": 12139
+    },
+    {
+      "path": "tests/wasm_work_runtime_test.cpp",
+      "SHA256": "ce0bea607e5c6735435c6489e28abf71794e0c66f23437226e1bd3ca94999910",
+      "bytes": 18468
+    },
+    {
+      "path": "tests/watch_v1_integrated_cloud_build.py",
+      "SHA256": "18d2318927c735dec184abf4aab372426137194735ed355605faf5a5ddab78e4",
+      "bytes": 6200
+    },
+    {
+      "path": "tests/workflow_inventory_test.py",
+      "SHA256": "0b2b1971067ceccab6632b541155507f6f896b0d22018a57b739828fdf4a3aee",
+      "bytes": 3911
+    },
+    {
+      "path": "tools/checkout_ci_dependencies.py",
+      "SHA256": "8d1ee7935b53dc346b42bbc770a36bb034262c3fc683fad4a05b9d75bb2151a5",
+      "bytes": 5250
+    },
+    {
+      "path": "tools/ci_native_checks.py",
+      "SHA256": "e17df89c6ce27e736d1a17936e205b80c2d06142673000fd1e1eb63539f53d3f",
+      "bytes": 5886
+    },
+    {
+      "path": "tools/portable_build_cache.py",
+      "SHA256": "0706a213a5ce0799e14a6ecd58db399ac125ee306001c6b2ccbcbf900d5250be",
+      "bytes": 2857
+    },
+    {
+      "path": "tools/prepare_vm_vendor.py",
+      "SHA256": "0e305cd42be896bad94665820c2e112ff7c1858d896560e8eda5e4cecd605e38",
+      "bytes": 4889
+    },
+    {
+      "path": "tools/ubuntu-modern-build.sh",
+      "SHA256": "0f8da3442699d1268c382d72b54b2f84b1ec9e7417bcb7f9ad6030931d38c4eb",
+      "bytes": 4916
+    },
+    {
+      "path": "tools/vendor/eos-vm-parallel-v1.json",
+      "SHA256": "3b531568e34fee90e106f56b6ec519a9d0651dfc35e9386c43550a214962b6dc",
+      "bytes": 857
+    },
+    {
+      "path": "tools/vendor/eos-vm-parallel-v1.patch",
+      "SHA256": "873efa04cc5a7e9373037439015c4e39c0d454f9cc1e59ec66a3e52610ddb059",
+      "bytes": 8358
+    },
+    {
+      "path": "tools/vendor/github-ssh-host-keys.json",
+      "SHA256": "c928fbcc833adb7366604a4257b1e71e77f17ac30cc1b2d011d0565fc17f3b5c",
+      "bytes": 1332
+    },
+    {
+      "path": "tools/workflow_inventory.py",
+      "SHA256": "f1f46143b423afe84f2ccde881c34d3220f04d8e29ad589905450fab84770164",
+      "bytes": 3783
+    },
+    {
+      "path": "unittests/CMakeLists.txt",
+      "SHA256": "ccdef72648e919252d0c30d92bffb015e1ea60c83ccac3be14c7c81d4b79d2d6",
+      "bytes": 61452
+    },
+    {
+      "path": "unittests/chain_config_tests.cpp",
+      "SHA256": "ac42937c8638a7e3099bd499aadfbb4dced67ab5030cc89238902aa387599d96",
+      "bytes": 2342
+    },
+    {
+      "path": "unittests/execution_work_meter_tests.cpp",
+      "SHA256": "05310c2d9208be44587066329082d7210e479433cbb29198186b5335a64b060a",
+      "bytes": 8497
+    },
+    {
+      "path": "unittests/full_cdt_deadline_profile.hpp",
+      "SHA256": "71ab05eda1e84298612c310980b95edca5919df03f27090a5ee2f2d684b6dcd9",
+      "bytes": 1843
+    },
+    {
+      "path": "unittests/parallel_action_tree_journal_tests.cpp",
+      "SHA256": "1474f624945f358785e122e8f6fb3c2e337eb76393a5b528997bacecf41981ca",
+      "bytes": 10966
+    },
+    {
+      "path": "unittests/parallel_action_tree_pool_tests.cpp",
+      "SHA256": "31d68a30ace9fff1e7d1785a6c1e070c4678f10e8d7911dc58d71e7ed564cf4d",
+      "bytes": 17099
+    },
+    {
+      "path": "unittests/parallel_action_tree_tests.cpp",
+      "SHA256": "622a10a64233a49d69d77054f7006875d2e01ec36eebf9d84cdd6ed93ab1f3cd",
+      "bytes": 28286
+    },
+    {
+      "path": "unittests/parallel_console_host_tests.cpp",
+      "SHA256": "b8a793c78c904163a46658847ef40d98c28ea7a7cf74a5b2a7edde963336e276",
+      "bytes": 106137
+    },
+    {
+      "path": "unittests/parallel_context_free_tests.cpp",
+      "SHA256": "5ca967e02be7e784d21c97aeffab9bcbd6e98fc603aa970c4949441e7de7a90e",
+      "bytes": 59471
+    },
+    {
+      "path": "unittests/parallel_deadline_service_tests.cpp",
+      "SHA256": "2efca5b5be3d0e6dc61d21c70d0a7d8c53ca0d946e4b696fc5edec067b42be8b",
+      "bytes": 10137
+    },
+    {
+      "path": "unittests/parallel_float_host_tests.cpp",
+      "SHA256": "22ec00ae0df7f430713e62fcaa97608bda853d25454573465ce20c93555e75fc",
+      "bytes": 52362
+    },
+    {
+      "path": "unittests/parallel_full_cdt_tests.cpp",
+      "SHA256": "58d98bb85c03e271c20ffb6c46fe29d2c02b6145934cd50fcd9a261681c741f3",
+      "bytes": 58911
+    },
+    {
+      "path": "unittests/parallel_inline_adoption_tests.cpp",
+      "SHA256": "cbd23899da6d59de1f0e0e5af3b30f866a823ec4bdb582ed500fb11cfe38539d",
+      "bytes": 45177
+    },
+    {
+      "path": "unittests/parallel_integer_host_tests.cpp",
+      "SHA256": "e19b17938bef01894df9258ba6eefa92956fc64f12403d0cbb0d54641dc8621a",
+      "bytes": 34102
+    },
+    {
+      "path": "unittests/parallel_jit_backend_tests.cpp",
+      "SHA256": "cf5a181c0a79f73b77e6b38260410ddd5b03713c943a84738db3e50417b31f41",
+      "bytes": 29952
+    },
+    {
+      "path": "unittests/parallel_jit_finalization_tests.cpp",
+      "SHA256": "866e447c8ca67bd0dda3f2fe72dee2c648a3fa27ae9d32e4b4a96e297b35d8da",
+      "bytes": 5327
+    },
+    {
+      "path": "unittests/parallel_mixed_stress_fixture.hpp",
+      "SHA256": "8d4e5b28366a17eeffdb59acc044b960658965578a9f31ba2e54668e93dee295",
+      "bytes": 18982
+    },
+    {
+      "path": "unittests/parallel_mixed_tree_tests.cpp",
+      "SHA256": "95ebfc6bf46021bad52daa70d57644352821134682cf2d7c11f1483f73f9b39a",
+      "bytes": 159543
+    },
+    {
+      "path": "unittests/parallel_module_cache_tests.cpp",
+      "SHA256": "bba5b0ddb8192ee5a2e1744d4f05b7cf068ba373025cfadf2008b9ca9cbc2918",
+      "bytes": 60135
+    },
+    {
+      "path": "unittests/parallel_ordered_batch_tests.cpp",
+      "SHA256": "e4d0ae6fb0ad66ac7050e0edbfc016108c62985e5552eab28756ccd06c0aeb3d",
+      "bytes": 62647
+    },
+    {
+      "path": "unittests/parallel_prefix_refresh_cases.hpp",
+      "SHA256": "2106c34512fc983142991e40316fc2d30b225e30e54f1e0efe32630be7a3e2be",
+      "bytes": 23734
+    },
+    {
+      "path": "unittests/parallel_production_admission_tests.cpp",
+      "SHA256": "0eba8b5b53240c737396f92dddde1b4e39ea334d4ecdb564f41676bae1ab2caa",
+      "bytes": 8513
+    },
+    {
+      "path": "unittests/parallel_pure_host_tests.cpp",
+      "SHA256": "b8e0c857b835b14311e1f9fdb18437ac2417770e990e4c535043589ccd1c8427",
+      "bytes": 43362
+    },
+    {
+      "path": "unittests/parallel_release_fixture.hpp",
+      "SHA256": "d09852550074808375acf93044762a30d5d9762a566d6b90652195c58424cc7a",
+      "bytes": 10950
+    },
+    {
+      "path": "unittests/parallel_runtime_engine_tests.cpp",
+      "SHA256": "83a2bef7da6447b9354f319e9c1bd251d1ac1b015043a5ee0ed2815bd10cde55",
+      "bytes": 12726
+    },
+    {
+      "path": "unittests/parallel_secondary_state_tests.cpp",
+      "SHA256": "c859ac24c8af3974cc7394e928dbf4c57519c89457dfa38851c382add3bcaaae",
+      "bytes": 97993
+    },
+    {
+      "path": "unittests/parallel_secondary_transcript_tests.cpp",
+      "SHA256": "5ed1c278b7d62418263cf35d1e5a2e46256889c466c644b63838876682d4dcdf",
+      "bytes": 20901
+    },
+    {
+      "path": "unittests/parallel_secondary_wasm_tests.cpp",
+      "SHA256": "0bbc519e9f28fb909e7ae06e4228141147d3d422761b961eac49b4c059ba3e0e",
+      "bytes": 75696
+    },
+    {
+      "path": "unittests/parallel_serial_reference_tests.cpp",
+      "SHA256": "8501d8aea0844c70042fa45218312dbaf8dadbdd3f975c5a56f41cd0ae1a1bc2",
+      "bytes": 25488
+    },
+    {
+      "path": "unittests/parallel_state_view_tests.cpp",
+      "SHA256": "72cc6051b3e75210ccd3f551638e50f01f3bd662e52af42e73eef05395203f3e",
+      "bytes": 80148
+    },
+    {
+      "path": "unittests/parallel_sync_call_tests.cpp",
+      "SHA256": "d214a8d89f766d51d3b3d427e9c81374cfc4086b1e5efe1ff775060ce592c34d",
+      "bytes": 208664
+    },
+    {
+      "path": "unittests/parallel_test_diagnostics.hpp",
+      "SHA256": "519dbd7210bbf2b582c078d5b7857e35b390500dfac121c60369faa0265c3f88",
+      "bytes": 3708
+    },
+    {
+      "path": "unittests/parallel_test_runtime.hpp",
+      "SHA256": "62730bf04d3fdaf610b055a656a36874b5ae8088355f6d87365007b42aec0036",
+      "bytes": 1014
+    },
+    {
+      "path": "unittests/parallel_transaction_environment_tests.cpp",
+      "SHA256": "828912ec34da847f7f226924961cb84eb5a80e412933bdb9e2a042d87c1feb1c",
+      "bytes": 12855
+    },
+    {
+      "path": "unittests/parallel_validation_tests.cpp",
+      "SHA256": "f84041854d20c45e912daf4d7fde506f0d2e26ff8db049538757c90e33c08f01",
+      "bytes": 224067
+    },
+    {
+      "path": "unittests/parallel_wasm_worker_tests.cpp",
+      "SHA256": "fdfbe800eb986e7ab9520ed972d6a22e083d6364693930195fb8bcfd5f3c6d52",
+      "bytes": 164932
+    },
+    {
+      "path": "unittests/parallel_work_budget_tests.cpp",
+      "SHA256": "7306296322753a2ea6c66994d1dc2f87b72cfd7cadd8d59b06f16c38c3db15d4",
+      "bytes": 20198
+    },
+    {
+      "path": "unittests/pureeos_blacklist_current_policy_tests.inc",
+      "SHA256": "73bb7489131bd40bf78930ac8e4fa6d4059377acd8a69c9de18943b5be65de5d",
+      "bytes": 9615
+    },
+    {
+      "path": "unittests/pureeos_committee_boundary_tests.inc",
+      "SHA256": "d79aaba009711a234e5e477673f67e4ef3ba60eb481ccde54a4d5ea3cc669b3d",
+      "bytes": 7443
+    },
+    {
+      "path": "unittests/pureeos_genesis_tests.cpp",
+      "SHA256": "a12404de77d006e496e59768b4351f345aa4f95eb929f8013f8ee9f07e944853",
+      "bytes": 27184
+    },
+    {
+      "path": "unittests/pureeos_governance_tests.cpp",
+      "SHA256": "43f2dec95cfd87f508e38d7cbc60cb510748cca59e0befd63c041364a5ec367c",
+      "bytes": 61405
+    },
+    {
+      "path": "unittests/pureeos_resource_split_tests.inc",
+      "SHA256": "7cb9a0ad16e5310c45ed6876392a8998689c30829255b6410f6630107dbcf9cb",
+      "bytes": 24929
+    },
+    {
+      "path": "unittests/pureeos_reward_activation_tests.inc",
+      "SHA256": "7a8b8ff6de9e83bcd5c8bbb9c7b5d174b7021355571f3ba16cefea144ec5b140",
+      "bytes": 16732
+    },
+    {
+      "path": "unittests/pureeos_reward_halving_tests.inc",
+      "SHA256": "db8d283186ee25f1290081d93e988674313dbce8bb8aa2300aef5cdbcb0f7632",
+      "bytes": 21431
+    },
+    {
+      "path": "unittests/pureeos_sequential_rotation_tests.inc",
+      "SHA256": "4437b2fefc6e354660086f7386ccc8a9bc30eccfd6dab45e1bb0c3454663d4a1",
+      "bytes": 64785
+    },
+    {
+      "path": "unittests/resource_limits_test.cpp",
+      "SHA256": "5bec6e5c64a3f1bd3c03758ea40defd94c92f2f317d4409fdac713d7b4f54765",
+      "bytes": 28573
+    },
+    {
+      "path": "unittests/test-contracts/complex_benchmark/complex_benchmark.cpp",
+      "SHA256": "7eff82fdaa95e68147428c84ef4863899a72630c3ccd5d30fb970226954afeea",
+      "bytes": 1915
+    },
+    {
+      "path": "unittests/test-contracts/complex_benchmark/complex_hash_benchmark.cpp",
+      "SHA256": "94d9d2f2420a6bd587a10bba172bad2647289dfc40790a47e762334aec1cecce",
+      "bytes": 1643
+    },
+    {
+      "path": "unittests/test-contracts/complex_benchmark/complex_hash_intrinsic_benchmark.cpp",
+      "SHA256": "ded0e9f12e5de05713c4076812b84573b2cc8fedf7c00364815570be949f0f15",
+      "bytes": 1959
+    },
+    {
+      "path": "unittests/test-contracts/parallel_lightbench/parallel_lightbench.cpp",
+      "SHA256": "189e96163129dac5b7deb76278dd8e061f9a585db9f84286cf43e7723501067a",
+      "bytes": 2359
+    },
+    {
+      "path": "unittests/test-contracts/parallel_statebench/parallel_statebench.cpp",
+      "SHA256": "db996562dd0d91b62578c1ed84c79215059d73089a68ef4045a4f2cb63126cb1",
+      "bytes": 1057
+    },
+    {
+      "path": "unittests/thread_cpu_billing_tests.cpp",
+      "SHA256": "eca2b93943dcd28a82498676dfbf721116641bfb2b9f3cd6b88cc5a0ad69906e",
+      "bytes": 4967
+    },
+    {
+      "path": "unittests/unapplied_transaction_queue_tests.cpp",
+      "SHA256": "45ee8b7bea63552451d3cc7034be9565faa55583aed121bbd50007660e45e8cd",
+      "bytes": 18640
+    }
+  ],
+  "submodule_backup_bindings": [
+    {
+      "path": "libraries/eos-vm",
+      "commit": "9de88a7ddfcdb8ea7822ad238ef19369427fac0a",
+      "original": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+      "archive_url": "https://github.com/MatrixCoreX/PureEOS.git"
+    }
+  ],
+  "created_UTC": "2026-11-12T10:03:52.633954+00:00"
+}

@@ -10,6 +10,7 @@
 #include <eosio/chain/resource_limits.hpp>
 #include <eosio/chain/controller.hpp>
 #include <eosio/chain/performance_metrics.hpp>
+#include <eosio/chain/parallel_runtime_limits.hpp>
 #include <eosio/chain/generated_transaction_object.hpp>
 #include <eosio/chain/snapshot.hpp>
 #include <eosio/chain/subjective_billing.hpp>
@@ -301,11 +302,17 @@ void chain_plugin::set_program_options(options_description& cli, options_descrip
          ("chain-threads", bpo::value<uint16_t>()->default_value(config::default_controller_thread_pool_size),
           "Number of worker threads in controller thread pool")
          ("experimental-parallel-validation-threads", bpo::value<uint16_t>()->default_value(0),
-          "Restricted parallel block validation workers (0 disables, maximum 16). Requires eos-vm, full validation and an explicit code-hash list. Does not enable parallel block production.")
+          ("Restricted parallel block validation workers (0 disables, maximum " +
+           std::to_string(chain::experimental::parallel_runtime_limits::max_workers) +
+           "). Requires matching wasm-runtime/parallel-engine, full validation and an explicit code-hash list. Does not enable parallel block production.").c_str())
          ("experimental-parallel-validation-batch-size", bpo::value<uint16_t>()->default_value(8),
-          "Maximum transactions per restricted validation batch (1-64). Unsupported work executes serially.")
+          ("Maximum transactions per restricted validation batch (1-" +
+           std::to_string(chain::experimental::parallel_runtime_limits::max_batch_transactions) +
+           "). Unsupported work executes serially.").c_str())
          ("experimental-parallel-production", bpo::bool_switch()->default_value(false),
-          "Also try restricted parallel execution of already queued production transactions. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
+          "Also try restricted parallel execution of queued and bounded live incoming production batches. Requires a nonzero restricted worker pool; CPU limits, order and callbacks are preserved. Disabled by default.")
+         ("experimental-parallel-engine", bpo::value<string>()->default_value("interpreter"),
+          "Local restricted worker engine: interpreter or jit (x86-64). Does not change canonical VM, consensus or resource billing.")
          ("experimental-parallel-code-hash", bpo::value<vector<string>>()->composing(),
           "Reviewed WASM SHA-256 eligible for the local restricted parallel experiment. Repeat for additional hashes. No chain-level contract allowlist is introduced.")
          ("performance-metrics", bpo::bool_switch()->default_value(false),
@@ -498,9 +505,9 @@ namespace {
 
 void
 chain_plugin_impl::do_hard_replay(const variables_map& options) {
-   ilog( "Hard replay requested: deleting state database" );
-   clear_directory_contents( chain_config->state_dir );
+   ilog( "Hard replay requested: repairing block log before rebuilding state database" );
    auto backup_dir = block_log::repair_log( blocks_dir, options.at( "truncate-at-block" ).as<uint32_t>(), config::reversible_blocks_dir_name);
+   clear_directory_contents( chain_config->state_dir );
 }
 
 void chain_plugin_impl::plugin_initialize(const variables_map& options) {
@@ -994,11 +1001,21 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
       chain_config->parallel_validation_threads = options.at("experimental-parallel-validation-threads").as<uint16_t>();
       chain_config->parallel_validation_batch_size = options.at("experimental-parallel-validation-batch-size").as<uint16_t>();
       chain_config->parallel_production_enabled = options.at("experimental-parallel-production").as<bool>();
+      const auto parallel_engine = options.at("experimental-parallel-engine").as<string>();
+      EOS_ASSERT(parallel_engine == "interpreter" || parallel_engine == "jit", plugin_config_exception,
+                 "experimental parallel engine must be interpreter or jit");
+      chain_config->parallel_engine = parallel_engine == "jit" ? chain::experimental::isolated_vm_engine::jit :
+                                                               chain::experimental::isolated_vm_engine::interpreter;
+      EOS_ASSERT(chain::experimental::isolated_vm_engine_supported(chain_config->parallel_engine), plugin_config_exception,
+                 "unsupported parallel execution engine on this platform");
       EOS_ASSERT(!chain_config->parallel_production_enabled || chain_config->parallel_validation_threads > 0,
                  plugin_config_exception, "experimental parallel production requires nonzero parallel validation threads");
-      EOS_ASSERT(chain_config->parallel_validation_threads <= 16 && chain_config->parallel_validation_batch_size > 0 &&
-                 chain_config->parallel_validation_batch_size <= 64, plugin_config_exception,
-                 "experimental parallel validation requires threads 0-16 and batch size 1-64");
+      EOS_ASSERT(chain::experimental::parallel_runtime_limits::valid_configuration(
+                    chain_config->parallel_validation_threads, chain_config->parallel_validation_batch_size),
+                 plugin_config_exception,
+                 "experimental parallel validation requires threads 0-${workers} and batch size 1-${batch}",
+                 ("workers", chain::experimental::parallel_runtime_limits::max_workers)
+                 ("batch", chain::experimental::parallel_runtime_limits::max_batch_transactions));
       if (options.count("experimental-parallel-code-hash")) {
          for (const auto& value : options.at("experimental-parallel-code-hash").as<vector<string>>()) {
             EOS_ASSERT(value.size() == 64 && std::all_of(value.begin(), value.end(), [](unsigned char c) {
@@ -1008,18 +1025,19 @@ void chain_plugin_impl::plugin_initialize(const variables_map& options) {
          }
       }
       if (chain_config->parallel_validation_threads) {
-         EOS_ASSERT(chain_config->wasm_runtime == wasm_interface::vm_type::eos_vm &&
-                    chain_config->block_validation_mode == validation_mode::FULL && chain_config->trusted_producers.empty() &&
+         EOS_ASSERT(chain_config->parallel_vm_matches(), plugin_config_exception,
+                    "parallel engine must match wasm-runtime: interpreter/eos-vm or jit/eos-vm-jit");
+         EOS_ASSERT(chain_config->block_validation_mode == validation_mode::FULL && chain_config->trusted_producers.empty() &&
                     chain_config->profile_accounts.empty() && !options.at("deep-mind").as<bool>() &&
                     !chain_config->parallel_code_allowlist.empty(), plugin_config_exception,
-                    "experimental parallel validation requires eos-vm, full validation, a reviewed code hash, and no trusted-producer, profiling or deep-mind mode");
+                    "experimental parallel validation requires full validation, a reviewed code hash, and no trusted-producer, profiling or deep-mind mode");
 #ifdef EOSIO_EOS_VM_OC_RUNTIME_ENABLED
          EOS_ASSERT(chain_config->eosvmoc_tierup == wasm_interface::vm_oc_enable::oc_none, plugin_config_exception,
                     "experimental parallel validation requires eos-vm-oc-enable=none");
 #endif
-         ilog("Experimental parallel validation enabled: workers=${w}, batch=${b}, reviewed code hashes=${h}; restricted production=${p}",
+         ilog("Experimental parallel validation enabled: workers=${w}, batch=${b}, reviewed code hashes=${h}; restricted production=${p}; engine=${e}",
               ("w", chain_config->parallel_validation_threads)("b", chain_config->parallel_validation_batch_size)
-              ("h", chain_config->parallel_code_allowlist.size())("p", chain_config->parallel_production_enabled));
+              ("h", chain_config->parallel_code_allowlist.size())("p", chain_config->parallel_production_enabled)("e", parallel_engine));
       }
 
       chain.emplace( *chain_config, std::move(pfs), *chain_id );
@@ -1239,15 +1257,28 @@ void chain_plugin::plugin_startup() {
 void chain_plugin::plugin_shutdown() {
    dlog("shutdown");
    if (my->chain) {
+      const auto diagnostics = [](const char* mode, const controller::parallel_execution_stats& s) {
+         // Preparation failures can occur before the first worker batch. Do
+         // not hide those runs merely because batches/adopted remain zero.
+         ilog("Experimental parallel ${mode} diagnostics: prepared_successes=${ps}, preparation_deadlines=${pd}, preparation_budget_fallbacks=${pb}, preparation_other_fallbacks=${po}, worker_deadlines=${wd}, worker_vm_timeouts=${wt}, worker_other_failures=${wf}, discovery_exhaustions=${de}, prefix_refresh_requests=${pr}, prefix_refresh_successes=${px}; local overlapping counters, not finalized transactions",
+              ("mode", mode)("ps", s.prepared_successes)("pd", s.preparation_deadlines)
+              ("pb", s.preparation_budget_fallbacks)("po", s.preparation_other_fallbacks)
+              ("wd", s.worker_deadlines)("wt", s.worker_vm_timeouts)("wf", s.worker_other_failures)
+              ("de", s.discovery_exhaustions)("pr", s.prefix_refresh_requests)("px", s.prefix_refresh_successes));
+      };
       const auto stats = my->chain->get_parallel_execution_stats();
-      if (stats.batches)
+      if (stats.batches || stats.preparation_budget_fallbacks || stats.preparation_other_fallbacks) {
          ilog("Experimental parallel validation totals: batches=${b}, attempts=${a}, succeeded=${s}, adopted=${d}, serial_fallbacks=${f}; counts include later-rolled-back blocks",
               ("b", stats.batches)("a", stats.attempts)("s", stats.succeeded)("d", stats.adopted)("f", stats.serial_fallbacks));
+         diagnostics("validation", stats);
+      }
       const auto production = my->chain->get_parallel_production_stats();
-      if (production.batches)
+      if (production.batches || production.preparation_budget_fallbacks || production.preparation_other_fallbacks) {
          ilog("Experimental parallel production totals: batches=${b}, attempts=${a}, succeeded=${s}, adopted=${d}, serial_fallbacks=${f}; counts include later-aborted blocks",
               ("b", production.batches)("a", production.attempts)("s", production.succeeded)
               ("d", production.adopted)("f", production.serial_fallbacks));
+         diagnostics("production", production);
+      }
    }
 }
 

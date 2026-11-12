@@ -3,6 +3,7 @@
 #include <eosio/producer_plugin/producer_plugin.hpp>
 
 #include <eosio/testing/tester.hpp>
+#include <eosio/testing/bls_utils.hpp>
 
 #include <eosio/chain/genesis_state.hpp>
 #include <eosio/chain/thread_utils.hpp>
@@ -12,6 +13,7 @@
 
 #include <eosio/chain/application.hpp>
 #include <fc/mock_time.hpp>
+#include <map>
 
 namespace eosio::test::detail {
 using namespace eosio::chain::literals;
@@ -99,12 +101,25 @@ BOOST_AUTO_TEST_SUITE(ordered_trxs_full)
 // Integration test of producer_plugin
 // Test verifies that transactions are processed, reported to caller, and not lost
 // even when blocks are aborted and some transactions fail.
-BOOST_AUTO_TEST_CASE(producer) {
+void run_producer(bool parallel) {
    BOOST_REQUIRE_MESSAGE(!fc::mock_time_traits::is_set(), "real producer integration requires an advancing wall clock");
    fc::temp_directory temp;
    appbase::scoped_app app;
    
    auto temp_dir_str = temp.path().string();
+   const auto genesis_path = (temp.path() / "genesis.json").string();
+   auto genesis = eosio::testing::base_tester::default_genesis();
+   const auto signing = private_key_type::regenerate<fc::ecc::private_key_shim>(fc::sha256::hash(std::string("nathan")));
+   auto [bls, pub, pop] = eosio::testing::get_bls_key("eosio"_n);
+   if (parallel) {
+      genesis.initial_timestamp = block_timestamp_type(fc::time_point::now()).to_time_point();
+      genesis.initial_key = signing.get_public_key();
+      genesis.initial_savanna.emplace();
+      genesis.initial_savanna->version = 2;
+      genesis.initial_savanna->finalizer_key = pub;
+      genesis.initial_savanna->proof_of_possession = pop;
+      BOOST_REQUIRE(fc::json::save_to_file(genesis, genesis_path));
+   }
    
    {
       std::promise<std::tuple<producer_plugin*, chain_plugin*>> plugin_promise;
@@ -112,9 +127,25 @@ BOOST_AUTO_TEST_CASE(producer) {
       std::thread app_thread( [&]() {
          try {
             fc::logger::get(DEFAULT_LOGGER).set_log_level(fc::log_level::debug);
-            std::vector<const char*> argv =
-                  {"test", "--data-dir", temp_dir_str.c_str(), "--config-dir", temp_dir_str.c_str(),
-                   "-p", "eosio", "-e", "--disable-subjective-p2p-billing=true" };
+            std::vector<std::string> args{
+               "test", "--data-dir", temp_dir_str, "--config-dir", temp_dir_str,
+               "-p", "eosio", "-e", "--disable-subjective-p2p-billing=true", "--disable-subjective-api-billing=true",
+               "--chain-state-db-size-mb", "64", "--chain-state-db-guard-size-mb", "4"};
+            if (parallel) {
+               const std::vector<std::string> extra{
+                  "--genesis-json", genesis_path,
+                  "--signature-provider", genesis.initial_key.to_string({}) + "=KEY:" + signing.to_string({}),
+                  "--signature-provider", pub.to_string() + "=KEY:" + bls.to_string(),
+                  "--wasm-runtime", "eos-vm-jit", "--experimental-parallel-engine", "jit",
+                  "--experimental-parallel-validation-threads", "4",
+                  "--experimental-parallel-validation-batch-size", "32", "--experimental-parallel-production",
+                  // Native/unsupported actions intentionally fall back. Live CDT
+                  // benchmarks separately require genuine WASM adoption.
+                  "--experimental-parallel-code-hash", std::string(64, '0')};
+               args.insert(args.end(), extra.begin(), extra.end());
+            }
+            std::vector<const char*> argv;
+            for (const auto& arg : args) argv.push_back(arg.c_str());
             app->initialize<chain_plugin, producer_plugin>( argv.size(), (char**) &argv[0] );
             app->startup();
             plugin_promise.set_value(
@@ -134,6 +165,13 @@ BOOST_AUTO_TEST_CASE(producer) {
       std::atomic<size_t> num_acked = 0;
       std::atomic<size_t> next_calls = 0;
       const size_t num_pushes = 4242;
+      // Retain each request, including identical transaction IDs, so pointer
+      // identity cannot be recycled. Aggregate counts alone could hide one
+      // missing delivery and a second duplicate delivery.
+      std::vector<packed_transaction_ptr> all_requests;
+      all_requests.reserve(num_pushes);
+      std::vector<size_t> callbacks_per_request(num_pushes, 0);
+      std::map<const packed_transaction*, size_t> acknowledgements_per_request;
       int num_empty = 10;
       bool completion_signaled = false;
       auto ab = chain_plug->chain().accepted_block().connect( [&](const chain::block_signal_params& t) {
@@ -155,8 +193,9 @@ BOOST_AUTO_TEST_CASE(producer) {
 
       plugin_interface::compat::channels::transaction_ack::channel_type::handle incoming_transaction_ack_subscription =
             app->get_channel<plugin_interface::compat::channels::transaction_ack>().subscribe(
-                  [&num_acked]( const std::pair<fc::exception_ptr, packed_transaction_ptr>& t){
+                  [&num_acked, &acknowledgements_per_request]( const std::pair<fc::exception_ptr, packed_transaction_ptr>& t){
                      ++num_acked;
+                     ++acknowledgements_per_request[t.second.get()];
                   } );
 
       std::deque<packed_transaction_ptr> trxs;
@@ -165,16 +204,19 @@ BOOST_AUTO_TEST_CASE(producer) {
       std::atomic<bool> trx_match = true;
       for( size_t i = 1; i <= num_pushes; ++i ) {
          auto ptrx = make_unique_trx( chain_id );
+         all_requests.push_back(ptrx);
          dlog( "posting ${id}", ("id", ptrx->id()) );
-         app->post( priority::low, [ptrx, &next_calls, &num_posts, &trace_with_except, &trx_match, &trxs, &app]() {
+         app->post( priority::low, [ptrx, request_index = i - 1, &callbacks_per_request,
+                                    &next_calls, &num_posts, &trace_with_except, &trx_match, &trxs, &app]() {
             ++num_posts;
             bool return_failure_traces = num_posts % 2;
             app->get_method<plugin_interface::incoming::methods::transaction_async>()(ptrx,
-               false, // api_trx
+               bool(num_posts % 2), // mix API and P2P arrivals
                transaction_metadata::trx_type::input, // trx_type
                return_failure_traces, // return_failure_traces
-               [ptrx, &next_calls, &trace_with_except, &trx_match, &trxs, return_failure_traces]
+               [ptrx, request_index, &callbacks_per_request, &next_calls, &trace_with_except, &trx_match, &trxs, return_failure_traces]
                (const next_function_variant<transaction_trace_ptr>& result) {
+                  ++callbacks_per_request[request_index];
                   if( !std::holds_alternative<fc::exception_ptr>( result ) && !std::get<chain::transaction_trace_ptr>( result )->except ) {
                      if( std::get<chain::transaction_trace_ptr>( result )->id == ptrx->id() ) {
                         trxs.push_back( ptrx );
@@ -218,11 +260,21 @@ BOOST_AUTO_TEST_CASE(producer) {
       BOOST_CHECK_EQUAL( num_pushes, next_calls );
       BOOST_CHECK_EQUAL( num_pushes, num_acked );
       BOOST_CHECK( trx_match.load() );
+      BOOST_CHECK_EQUAL(acknowledgements_per_request.size(), num_pushes);
+      for (size_t i = 0; i < num_pushes; ++i) {
+         BOOST_TEST_CONTEXT("request " << i) {
+            BOOST_CHECK_EQUAL(callbacks_per_request[i], 1u);
+            BOOST_CHECK_EQUAL(acknowledgements_per_request[all_requests[i].get()], 1u);
+         }
+      }
 
       BOOST_REQUIRE( verify_equal(trxs, all_blocks ) );
 
    } 
 }
+
+BOOST_AUTO_TEST_CASE(producer) { run_producer(false); }
+BOOST_AUTO_TEST_CASE(producer_parallel_fresh) { run_producer(true); }
 
 
 BOOST_AUTO_TEST_SUITE_END()

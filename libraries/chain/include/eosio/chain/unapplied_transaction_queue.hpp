@@ -70,6 +70,8 @@ public:
 
    void clear() {
       queue.clear();
+      incoming_count = 0;
+      size_in_bytes = 0;
    }
 
    size_t incoming_size()const {
@@ -141,6 +143,15 @@ public:
    void add_incoming( const transaction_metadata_ptr& trx, bool api_trx, bool return_failure_trace, next_func_t next ) {
       auto itr = queue.get<by_trx_id>().find( trx->id() );
       if( itr == queue.get<by_trx_id>().end() ) {
+         // Check BEFORE insertion/callback transfer/counters. A full queue
+         // must not retain a rejected transaction or underflow on later erase.
+         const auto size = calc_size(trx);
+         EOS_ASSERT(size < max_transaction_queue_size && size_in_bytes < max_transaction_queue_size - size,
+                    tx_resource_exhaustion,
+                    "Transaction ${id}, size ${s} bytes would exceed configured "
+                    "incoming-transaction-queue-size-mb ${qs}, current queue size ${cs} bytes",
+                    ("id", trx->id())("s", size)("qs", max_transaction_queue_size/(1024*1024))
+                    ("cs", size_in_bytes));
          auto insert_itr = queue.insert(
                { trx, api_trx ? trx_enum_type::incoming_api : trx_enum_type::incoming_p2p, return_failure_trace, std::move( next ) } );
          if( insert_itr.second ) added( insert_itr.first );
@@ -183,11 +194,6 @@ private:
       auto size = calc_size( itr->trx_meta );
       if( itr->trx_type == trx_enum_type::incoming_p2p || itr->trx_type == trx_enum_type::incoming_api ) {
          ++incoming_count;
-         EOS_ASSERT( size_in_bytes + size < max_transaction_queue_size, tx_resource_exhaustion,
-                     "Transaction ${id}, size ${s} bytes would exceed configured "
-                     "incoming-transaction-queue-size-mb ${qs}, current queue size ${cs} bytes",
-                     ("id", itr->trx_meta->id())("s", size)("qs", max_transaction_queue_size/(1024*1024))
-                     ("cs", size_in_bytes) );
       }
       size_in_bytes += size;
    }
@@ -202,7 +208,7 @@ private:
 
    static uint64_t calc_size( const transaction_metadata_ptr& trx ) {
       // packed_trx caches unpacked transaction so double
-      return (trx->packed_trx()->get_unprunable_size() + trx->packed_trx()->get_prunable_size()) * 2 + sizeof( *trx );
+      return (uint64_t(trx->packed_trx()->get_unprunable_size()) + trx->packed_trx()->get_prunable_size()) * 2 + sizeof( *trx );
    }
 
 };

@@ -173,7 +173,9 @@ class LocalTest:
                 print("RETRY: bootstrap setcode exceeded unchanged CPU limit; failure retained", flush=True)
                 self.wait_lib(self.rpc("get_info")["head_block_num"] + 2)
 
-    def wait_produced(self, owner, timeout=100):
+    def wait_produced(self, owner, timeout=900):
+        # A full 21-member rotation interval is already 126 seconds. This is
+        # only the harness watchdog; production slots/CPU limits are unchanged.
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
             if self.node.poll() is not None:
@@ -252,13 +254,13 @@ class LocalTest:
                                 "--config-dir", str(self.root / "config"), *extra], phase + ".log")
 
     @staticmethod
-    def stop(process):
+    def stop(process, shutdown_timeout=15):
         if process is None:
             return
         if process.poll() is None:
             process.terminate()
             try:
-                process.wait(timeout=15)
+                process.wait(timeout=shutdown_timeout)
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait(timeout=5)

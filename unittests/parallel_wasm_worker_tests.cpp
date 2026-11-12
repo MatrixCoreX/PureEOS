@@ -91,7 +91,17 @@ fc::sha256 single_transaction_fingerprint(const fc::sha256& hash, const isolated
 
 struct fallback_import { const char* name; const char* signature; const char* invocation; };
 const std::array fallback_imports{
+   fallback_import{"prints", "(param i32)", "(call $stub (i32.const 0))"},
    fallback_import{"prints_l", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
+   fallback_import{"printi", "(param i64)", "(call $stub (i64.const -1))"},
+   fallback_import{"printui", "(param i64)", "(call $stub (i64.const -1))"},
+   fallback_import{"printi128", "(param i32)", "(call $stub (i32.const 16))"},
+   fallback_import{"printui128", "(param i32)", "(call $stub (i32.const 16))"},
+   fallback_import{"printsf", "(param f32)", "(call $stub (f32.const -0))"},
+   fallback_import{"printdf", "(param f64)", "(call $stub (f64.const 1.25))"},
+   fallback_import{"printqf", "(param i32)", "(call $stub (i32.const 16))"},
+   fallback_import{"printn", "(param i64)", "(call $stub (i64.const 0))"},
+   fallback_import{"printhex", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"send_inline", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"get_sender", "(result i64)", "(drop (call $stub))"},
    fallback_import{"send_context_free_inline", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
@@ -103,7 +113,6 @@ const std::array fallback_imports{
    fallback_import{"set_blockchain_parameters_packed", "(param i32 i32)", "(call $stub (i32.const 0) (i32.const 0))"},
    fallback_import{"get_blockchain_parameters_packed", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
    fallback_import{"set_proposed_producers", "(param i32 i32) (result i64)", "(drop (call $stub (i32.const 0) (i32.const 0)))"},
-   fallback_import{"current_time", "(result i64)", "(drop (call $stub))"},
    fallback_import{"get_active_producers", "(param i32 i32) (result i32)", "(drop (call $stub (i32.const 0) (i32.const 0)))"}
 };
 
@@ -334,7 +343,7 @@ std::vector<char> cursor_replay_wasm(const isolated_notification_result& result,
             body += check(call + ")", query->result);
          }
       } else if (const auto* write = std::get_if<isolated_cursor_write>(&event)) {
-         const auto& mutation = result.state.writes().at(write->write_index);
+         const auto& mutation = result.state.primary_write(write->write_index);
          if (mutation.operation == primary_operation::remove) {
             body += "(call $remove " + i32(write->iterator) + ")";
          } else {
@@ -348,8 +357,10 @@ std::vector<char> cursor_replay_wasm(const isolated_notification_result& result,
             else body += "(call $update " + i32(write->iterator) + args + ")";
             offset += mutation.value.size();
          }
+      } else if (const auto* scheduled = std::get_if<isolated_cursor_notify>(&event)) {
+         body += notify(step.effects.recipients.at(scheduled->notification_index).recipient);
       } else {
-         body += notify(step.effects.recipients.at(std::get<isolated_cursor_notify>(event).notification_index).recipient);
+         throw std::logic_error("primary-only original host oracle cannot replay secondary events");
       }
    }
    return wasm("(module " + notify_import + R"(
@@ -516,7 +527,7 @@ BOOST_AUTO_TEST_CASE(private_wasm_write_matches_original_chain_execution) {
    BOOST_REQUIRE_EQUAL(attempt.state.writes().size(), 1u);
    const auto row = live.read_primary({rows, primary_query_kind::find, 1}, 8);
    BOOST_REQUIRE(row.row);
-   BOOST_CHECK(attempt.state.writes()[0].value == row.row->value);
+   BOOST_CHECK(attempt.state.primary_write(0).value == row.row->value);
    BOOST_CHECK_EQUAL(number(row.row->value), 17u);
    BOOST_CHECK(trace->action_traces.front().account_ram_deltas.empty());
 }
@@ -528,7 +539,7 @@ BOOST_FIXTURE_TEST_CASE(real_wasm_updates_only_private_state_and_returns_origina
       const auto result = machine.execute(base, input());
       BOOST_CHECK_EQUAL(number(result.return_value), 17u);
       BOOST_REQUIRE_EQUAL(result.state.writes().size(), 1u);
-      BOOST_CHECK_EQUAL(number(result.state.writes()[0].value), 17u);
+      BOOST_CHECK_EQUAL(number(result.state.primary_write(0).value), 17u);
       BOOST_CHECK_EQUAL(result.state.read_tables().size(), 1u);
       BOOST_CHECK_EQUAL(canonical(), 10u);
    }
@@ -538,7 +549,7 @@ BOOST_FIXTURE_TEST_CASE(resize_is_logged_but_pointer_failure_discards_prior_writ
    isolated_wasm_module machine(increment_wasm());
    const auto resized = machine.execute(base, input(1, 7, 0, 2));
    BOOST_REQUIRE_EQUAL(resized.state.writes().size(), 2u);
-   BOOST_CHECK_EQUAL(resized.state.writes().back().value.size(), 7u);
+   BOOST_CHECK_EQUAL(require_primary_mutation(resized.state.writes().back()).value.size(), 7u);
    BOOST_CHECK_EQUAL(number(resized.return_value), 17u);
    for (uint32_t mode : {3u}) {
       BOOST_CHECK_THROW(machine.execute(base, input(1, 7, 0, mode)), primary_state_unsupported);
@@ -564,11 +575,11 @@ BOOST_FIXTURE_TEST_CASE(wasm_resize_reads_current_size_and_same_payer_tracks_pri
       const auto result = machine.execute(base, input());
       BOOST_CHECK_EQUAL(number(result.return_value), 12u);
       BOOST_REQUIRE_EQUAL(result.state.writes().size(), 3u);
-      BOOST_CHECK_EQUAL(result.state.writes()[0].value.size(), 8u);
-      BOOST_CHECK_EQUAL(result.state.writes()[1].value.size(), 12u);
-      BOOST_CHECK(result.state.writes()[2].value.empty());
-      BOOST_CHECK(result.state.writes()[1].payer == "bob"_n);
-      BOOST_CHECK(result.state.writes()[2].payer == "bob"_n);
+      BOOST_CHECK_EQUAL(result.state.primary_write(0).value.size(), 8u);
+      BOOST_CHECK_EQUAL(result.state.primary_write(1).value.size(), 12u);
+      BOOST_CHECK(result.state.primary_write(2).value.empty());
+      BOOST_CHECK(result.state.primary_write(1).payer == "bob"_n);
+      BOOST_CHECK(result.state.primary_write(2).payer == "bob"_n);
       BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
       BOOST_CHECK_EQUAL(canonical(), 10u);
    }
@@ -647,7 +658,7 @@ BOOST_FIXTURE_TEST_CASE(one_two_four_workers_execute_wasm_on_independent_modules
             std::chrono::duration_cast<std::chrono::microseconds>(reports[i].end - reports[i].start).count());
          BOOST_CHECK_EQUAL(number(reports[i].result.return_value), (i + 1) * 10 + 7);
          BOOST_REQUIRE_EQUAL(reports[i].result.state.writes().size(), 1u);
-         BOOST_CHECK_EQUAL(number(reports[i].result.state.writes()[0].value), (i + 1) * 10 + 7);
+         BOOST_CHECK_EQUAL(number(reports[i].result.state.primary_write(0).value), (i + 1) * 10 + 7);
          BOOST_CHECK_EQUAL(canonical(i + 1), (i + 1) * 10);
          last_start = std::max(last_start, reports[i].start);
          first_end = std::min(first_end, reports[i].end);
@@ -706,20 +717,81 @@ BOOST_FIXTURE_TEST_CASE(unknown_imports_fail_but_unbounded_memory_can_execute_wi
 
 BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_execution) {
    const std::set<std::string_view> supported{
+      "current_time", "publication_time", "read_transaction", "transaction_size", "expiration",
+      "tapos_block_num", "tapos_block_prefix", "get_action", "get_block_num",
       "current_receiver", "action_data_size", "read_action_data", "has_auth", "require_auth", "require_auth2",
       "db_find_i64", "db_lowerbound_i64", "db_upperbound_i64", "db_end_i64", "db_get_i64", "db_update_i64",
       "db_next_i64", "db_previous_i64", "set_action_return_value",
-      "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "abort",
-      "is_account", "require_recipient", "db_store_i64", "db_remove_i64"};
+      "memcpy", "memmove", "memcmp", "memset", "eosio_assert", "eosio_assert_message", "eosio_assert_code", "eosio_exit", "abort",
+      "is_account", "require_recipient", "db_store_i64", "db_remove_i64",
+      "sha1", "sha256", "sha512", "ripemd160", "assert_sha1", "assert_sha256", "assert_sha512", "assert_ripemd160",
+      "__ashlti3", "__ashrti3", "__lshlti3", "__lshrti3", "__divti3", "__udivti3", "__multi3", "__modti3", "__umodti3",
+      "__addtf3", "__subtf3", "__multf3", "__divtf3", "__negtf2", "__extendsftf2",
+      "__extenddftf2", "__trunctfdf2", "__trunctfsf2", "__fixtfsi", "__fixtfdi", "__fixtfti",
+      "__fixunstfsi", "__fixunstfdi", "__fixunstfti", "__fixsfti", "__fixdfti", "__fixunssfti",
+      "__fixunsdfti", "__floatsidf", "__floatsitf", "__floatditf", "__floatunsitf", "__floatunditf",
+      "__floattidf", "__floatuntidf", "__eqtf2", "__netf2", "__getf2", "__gttf2",
+      "__letf2", "__lttf2", "__cmptf2", "__unordtf2"};
    const std::set<std::string_view> fallback_only{
-      "prints_l",
       "set_blockchain_parameters_packed", "get_blockchain_parameters_packed", "set_proposed_producers",
-      "current_time", "get_active_producers"};
-   const std::set<std::string_view> tree_only{"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data"};
+      "get_active_producers"};
+   const std::set<std::string_view> tree_only{"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data",
+      "prints", "prints_l", "printi", "printui", "printi128", "printui128", "printsf", "printdf", "printqf", "printn", "printhex"};
    const std::set<std::string_view> sync_only{"call", "get_call_return_value", "get_call_data", "set_call_return_value"};
+   const std::set<std::string_view> secondary_only{
+      "db_idx64_store",
+      "db_idx64_update",
+      "db_idx64_remove",
+      "db_idx64_find_primary",
+      "db_idx64_find_secondary",
+      "db_idx64_lowerbound",
+      "db_idx64_upperbound",
+      "db_idx64_end",
+      "db_idx64_next",
+      "db_idx64_previous",
+      "db_idx128_store",
+      "db_idx128_update",
+      "db_idx128_remove",
+      "db_idx128_find_primary",
+      "db_idx128_find_secondary",
+      "db_idx128_lowerbound",
+      "db_idx128_upperbound",
+      "db_idx128_end",
+      "db_idx128_next",
+      "db_idx128_previous",
+      "db_idx256_store",
+      "db_idx256_update",
+      "db_idx256_remove",
+      "db_idx256_find_primary",
+      "db_idx256_find_secondary",
+      "db_idx256_lowerbound",
+      "db_idx256_upperbound",
+      "db_idx256_end",
+      "db_idx256_next",
+      "db_idx256_previous",
+      "db_idx_double_store",
+      "db_idx_double_update",
+      "db_idx_double_remove",
+      "db_idx_double_find_primary",
+      "db_idx_double_find_secondary",
+      "db_idx_double_lowerbound",
+      "db_idx_double_upperbound",
+      "db_idx_double_end",
+      "db_idx_double_next",
+      "db_idx_double_previous",
+      "db_idx_long_double_store",
+      "db_idx_long_double_update",
+      "db_idx_long_double_remove",
+      "db_idx_long_double_find_primary",
+      "db_idx_long_double_find_secondary",
+      "db_idx_long_double_lowerbound",
+      "db_idx_long_double_upperbound",
+      "db_idx_long_double_end",
+      "db_idx_long_double_next",
+      "db_idx_long_double_previous"};
    size_t rejected = 0;
    for (auto name : audited_production_intrinsics) {
-      if (supported.contains(name) || fallback_only.contains(name) || tree_only.contains(name) || sync_only.contains(name)) continue;
+      if (supported.contains(name) || fallback_only.contains(name) || tree_only.contains(name) || sync_only.contains(name) || secondary_only.contains(name)) continue;
       BOOST_TEST_CONTEXT("denied production import=" << name) {
          // Even an UNUSED import must fail, so no unsupported call can reach
          // canonical state after earlier private writes or control flow.
@@ -729,7 +801,9 @@ BOOST_AUTO_TEST_CASE(every_other_production_intrinsic_is_rejected_before_executi
          ++rejected;
       }
    }
-   BOOST_CHECK_EQUAL(rejected, 221u);
+   BOOST_CHECK_EQUAL(rejected, 101u); // nine environment APIs include the former current_time link-only stub
+   BOOST_CHECK_EQUAL(rejected + supported.size() + fallback_only.size() + tree_only.size() +
+      sync_only.size() + secondary_only.size(), audited_production_intrinsics.size());
 }
 
 BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fixture) {
@@ -747,8 +821,10 @@ BOOST_FIXTURE_TEST_CASE(link_only_imports_never_publish_partial_results, wasm_fi
             ") (start $start) (func (export \"apply\") (param i64 i64 i64)))");
          isolated_wasm_module start(start_code);
          BOOST_CHECK_THROW(start.execute(base, input()), primary_state_unsupported);
+         // printdf legitimately has one f64 parameter. None of these hosts
+         // returns f64, so keep this a genuine type mismatch for every entry.
          const auto wrong_signature = wasm("(module (import \"env\" \"" + std::string(item.name) +
-            "\" (func (param f64))) (func (export \"apply\") (param i64 i64 i64)))");
+            "\" (func (param f64) (result f64))) (func (export \"apply\") (param i64 i64 i64)))");
          BOOST_CHECK_THROW(isolated_wasm_module{wrong_signature}, eosio::vm::wasm_link_exception);
       }
    }
@@ -772,11 +848,11 @@ BOOST_FIXTURE_TEST_CASE(primary_lifecycle_hosts_keep_iterator_generations_and_in
       BOOST_CHECK_THROW(module.execute(base, input(1, 7, 0, 3)), primary_state_unsupported);
       const auto result = module.execute(base, input());
       BOOST_REQUIRE_EQUAL(result.state.writes().size(), 3u);
-      BOOST_CHECK(result.state.writes()[0].operation == primary_operation::update);
-      BOOST_CHECK(result.state.writes()[1].operation == primary_operation::remove);
-      BOOST_CHECK(result.state.writes()[2].operation == primary_operation::store);
-      BOOST_CHECK_LT(result.state.writes()[2].object_id, 0);
-      BOOST_CHECK_EQUAL(number(result.state.writes()[2].value), 17u);
+      BOOST_CHECK(result.state.primary_write(0).operation == primary_operation::update);
+      BOOST_CHECK(result.state.primary_write(1).operation == primary_operation::remove);
+      BOOST_CHECK(result.state.primary_write(2).operation == primary_operation::store);
+      BOOST_CHECK_LT(result.state.primary_write(2).object_id, 0);
+      BOOST_CHECK_EQUAL(number(result.state.primary_write(2).value), 17u);
       BOOST_CHECK_EQUAL(number(result.return_value), uint64_t{1} << 32); // old handle 0, recreated row handle 1
       BOOST_CHECK((result.recipients == std::vector<isolated_notification>{
          {"bob"_n, 0}, {"alice"_n, 1}, {"carol"_n, 2}, {"dave"_n, 3}}));
@@ -995,12 +1071,12 @@ BOOST_FIXTURE_TEST_CASE(lifecycle_and_module_switches_share_one_transaction_jour
       const auto result = executor.execute(captured, calls);
       BOOST_REQUIRE_EQUAL(result.actions.size(), 5u);
       BOOST_REQUIRE_EQUAL(result.state.writes().size(), 4u);
-      BOOST_CHECK(result.state.writes()[0].operation == primary_operation::store);
-      BOOST_CHECK(result.state.writes()[1].operation == primary_operation::update);
-      BOOST_CHECK(result.state.writes()[2].operation == primary_operation::remove);
-      BOOST_CHECK(result.state.writes()[3].operation == primary_operation::store);
-      BOOST_CHECK(result.state.writes()[0].object_id != result.state.writes()[3].object_id);
-      BOOST_CHECK(result.state.writes()[0].table_object_id != result.state.writes()[3].table_object_id);
+      BOOST_CHECK(result.state.primary_write(0).operation == primary_operation::store);
+      BOOST_CHECK(result.state.primary_write(1).operation == primary_operation::update);
+      BOOST_CHECK(result.state.primary_write(2).operation == primary_operation::remove);
+      BOOST_CHECK(result.state.primary_write(3).operation == primary_operation::store);
+      BOOST_CHECK(result.state.primary_write(0).object_id != result.state.primary_write(3).object_id);
+      BOOST_CHECK(result.state.primary_write(0).table_object_id != result.state.primary_write(3).table_object_id);
       BOOST_CHECK_EQUAL(number(result.actions[1].return_value), 42u);
       BOOST_CHECK(result.actions[3].return_value == result.actions[4].return_value);
       for (size_t i : {0u, 3u, 4u}) {
@@ -1387,7 +1463,7 @@ BOOST_FIXTURE_TEST_CASE(journal_preflight_binds_write_identity_and_read_dependen
    auto wrong_row = good;
    primary_state_overlay other(base);
    (void)other.locate_primary({rows, primary_query_kind::find, 1});
-   other.update_existing(rows, 2, good.state.writes()[0].payer, good.state.writes()[0].value);
+   other.update_existing(rows, 2, good.state.primary_write(0).payer, good.state.primary_write(0).value);
    wrong_row.state = other.seal();
    BOOST_CHECK(!validate_isolated_notification_journal(wrong_row, roots, programs));
 
@@ -1453,8 +1529,8 @@ BOOST_FIXTURE_TEST_CASE(journal_preflight_reconstructs_table_recreation_and_chil
    isolated_notification_executor executor;
    const auto result = executor.execute(captured, roots, programs);
    BOOST_REQUIRE_EQUAL(result.state.writes().size(), 4u);
-   BOOST_CHECK(result.state.writes()[0].object_id != result.state.writes()[3].object_id);
-   BOOST_CHECK(result.state.writes()[0].table_object_id != result.state.writes()[3].table_object_id);
+   BOOST_CHECK(result.state.primary_write(0).object_id != result.state.primary_write(3).object_id);
+   BOOST_CHECK(result.state.primary_write(0).table_object_id != result.state.primary_write(3).table_object_id);
    BOOST_CHECK(validate_isolated_notification_journal(result, roots, programs));
    BOOST_CHECK(result.state.matches_base_reads(view, [] {}));
    BOOST_CHECK(!view.read_table(created));
@@ -1462,7 +1538,7 @@ BOOST_FIXTURE_TEST_CASE(journal_preflight_reconstructs_table_recreation_and_chil
    const std::array child_roots{input()};
    const auto child = executor.execute(captured, child_roots, child_programs);
    BOOST_REQUIRE_EQUAL(child.state.writes().size(), 2u);
-   BOOST_CHECK(child.state.writes()[1].table == child_rows);
+   BOOST_CHECK(child.state.primary_write(1).table == child_rows);
    BOOST_CHECK(validate_isolated_notification_journal(child, child_roots, child_programs));
    BOOST_CHECK(!view.read_table(child_rows));
    BOOST_CHECK_EQUAL(canonical(), 10u);
@@ -1637,7 +1713,7 @@ BOOST_FIXTURE_TEST_CASE(missing_code_and_state_require_a_fresh_whole_attempt, wa
    BOOST_CHECK(requested);
    const auto result = executor.execute(base, roots, programs);
    BOOST_REQUIRE_EQUAL(result.state.writes().size(), 1u);
-   BOOST_CHECK_EQUAL(number(result.state.writes()[0].value), 17u);
+   BOOST_CHECK_EQUAL(number(result.state.primary_write(0).value), 17u);
    BOOST_CHECK_EQUAL(canonical(), 10u);
 }
 
@@ -1658,9 +1734,9 @@ BOOST_FIXTURE_TEST_CASE(receiver_switch_keeps_foreign_write_protection_and_allow
    programs[1].code = lifecycle_steps_wasm();
    const auto result = executor.execute(captured, roots, programs);
    BOOST_REQUIRE_EQUAL(result.state.writes().size(), 2u);
-   BOOST_CHECK(result.state.writes()[1].table == child_rows);
-   BOOST_CHECK(result.state.writes()[1].operation == primary_operation::store);
-   BOOST_CHECK_EQUAL(number(result.state.writes()[1].value), 7u);
+   BOOST_CHECK(result.state.primary_write(1).table == child_rows);
+   BOOST_CHECK(result.state.primary_write(1).operation == primary_operation::store);
+   BOOST_CHECK_EQUAL(number(result.state.primary_write(1).value), 7u);
    BOOST_REQUIRE_EQUAL(result.steps[1].effects.return_value.size(), 16u);
    int32_t iterator, end;
    std::memcpy(&iterator, result.steps[1].effects.return_value.data(), 4);
@@ -1720,7 +1796,7 @@ BOOST_FIXTURE_TEST_CASE(catalog_input_and_whole_overlay_limits_are_bounded, wasm
    BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
    invalid.clear();
    BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
-   invalid = programs; invalid[0].code.resize(64 * 1024 + 1);
+   invalid = programs; invalid[0].code.resize(isolated_wasm_limits::max_module_code_bytes + 1);
    BOOST_CHECK_THROW(executor.execute(base, roots, invalid), primary_state_budget_exceeded);
    invalid = programs; invalid.push_back({"unused"_n, {}, {}, true});
    for (auto& program : invalid) program.code.resize(64 * 1024);
@@ -1762,7 +1838,7 @@ BOOST_FIXTURE_TEST_CASE(group_and_transaction_step_limits_include_empty_receiver
          const auto result = executor.execute(base, roots, programs);
          BOOST_REQUIRE_EQUAL(result.steps.size(), 256u);
          BOOST_CHECK_EQUAL(result.steps.back().action_ordinal, 256u);
-         BOOST_CHECK_EQUAL(number(result.state.writes().back().value), 38u);
+         BOOST_CHECK_EQUAL(number(require_primary_mutation(result.state.writes().back()).value), 38u);
       } else BOOST_CHECK_THROW(executor.execute(base, roots, programs), primary_state_budget_exceeded);
    }
    BOOST_CHECK_EQUAL(canonical(), 10u);
@@ -1786,7 +1862,7 @@ BOOST_FIXTURE_TEST_CASE(thread_affinity_and_independent_notification_executors, 
          for (unsigned repeat = 0; repeat < 3; ++repeat) {
             const auto result = executor.execute(base, roots, programs);
             if (result.steps.size() != 8 || result.state.writes().size() != 2 ||
-                number(result.state.writes().back().value) != 20) return false;
+                number(require_primary_mutation(result.state.writes().back()).value) != 20) return false;
          }
          return true;
       }));
@@ -1961,9 +2037,9 @@ BOOST_AUTO_TEST_CASE(lifecycle_actions_match_original_transaction_and_failed_tai
    const auto final = live.read_primary({rows, primary_query_kind::find, 7}, 8);
    BOOST_REQUIRE(final.row && final.table);
    BOOST_CHECK_EQUAL(final.table->count, 1u);
-   BOOST_CHECK(final.row->value == result.state.writes().back().value);
+   BOOST_CHECK(final.row->value == require_primary_mutation(result.state.writes().back()).value);
    BOOST_CHECK_EQUAL(number(final.row->value), 99u);
-   BOOST_CHECK(final.row->object_id >= 0 && result.state.writes().back().object_id < 0);
+   BOOST_CHECK(final.row->object_id >= 0 && require_primary_mutation(result.state.writes().back()).object_id < 0);
    original.produce_block();
    base = frozen_primary_state::capture(live, tables);
    calls = {{code, scoped_input(rows.scope, 7, 0, 1), {}},
@@ -2042,6 +2118,51 @@ BOOST_FIXTURE_TEST_CASE(unbounded_memory_growth_matches_original_or_requires_fal
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(parallel_worker_pool_tests)
+
+BOOST_FIXTURE_TEST_CASE(shared_tree_catalog_versions_keep_old_inputs_and_original_budgets, wasm_fixture) {
+   for (auto engine : {isolated_vm_engine::interpreter, isolated_vm_engine::jit})
+   for (size_t threads : {1u, 4u, 16u}) {
+      isolated_worker_pool pool(threads, engine);
+      isolated_action_tree_job builder{{input(1, 7)}, {{rows.code, increment_wasm(), {}}}, {}};
+      joined_input_cache<isolated_action_tree_job> cache;
+      const auto old = cache.get(builder);
+      cache.invalidate(); builder.roots.front() = input(2, 3);
+      const auto next = cache.get(builder);
+      BOOST_REQUIRE(&*old != &*next);
+      for (unsigned wave = 0; wave < 3; ++wave) {
+         const std::array requests{
+            ordered_attempt_batch::request{fc::sha256::hash("old"), isolated_action_tree_fingerprint(
+               std::array{isolated_execution_fingerprint(fc::sha256::hash(old->programs[0].code.data(),
+                  old->programs[0].code.size()), old->programs[0].limits, old->roots[0])}, old->context)},
+            ordered_attempt_batch::request{fc::sha256::hash("next"), isolated_action_tree_fingerprint(
+               std::array{isolated_execution_fingerprint(fc::sha256::hash(next->programs[0].code.data(),
+                  next->programs[0].code.size()), next->programs[0].limits, next->roots[0])}, next->context)}};
+         ordered_attempt_batch batch(base, requests);
+         std::vector<isolated_worker_job> jobs;
+         jobs.emplace_back(batch.get_ticket(0), old);
+         jobs.emplace_back(batch.get_ticket(1), next);
+         BOOST_CHECK(&*jobs[0].tree == &*old && &*jobs[1].tree == &*next);
+         const auto outcomes = pool.run(std::move(jobs));
+         for (size_t i = 0; i < outcomes.size(); ++i) {
+            BOOST_REQUIRE_MESSAGE(outcomes[i].tree_result, isolated_worker_failure_name(outcomes[i].failure));
+            const auto& result = *outcomes[i].tree_result;
+            BOOST_CHECK(result.root_fingerprint == requests[i].execution_fingerprint);
+            BOOST_REQUIRE_EQUAL(result.steps.size(), 1u);
+            BOOST_CHECK_EQUAL(number(result.steps[0].effects.return_value), i ? 23u : 17u);
+         }
+         BOOST_CHECK_EQUAL(canonical(1), 10u); BOOST_CHECK_EQUAL(canonical(2), 20u);
+      }
+      auto oversized = builder;
+      oversized.programs.front().code.resize(isolated_wasm_limits::max_module_code_bytes + 1);
+      // A valid descriptor must reach the pool's byte-budget check. A zero
+      // fingerprint is rejected by the coordinator BEFORE worker dispatch.
+      ordered_attempt_batch batch(base, std::array{ordered_attempt_batch::request{
+         fc::sha256::hash("budget"), fc::sha256::hash("oversized-input-budget-fixture")}});
+      std::vector<isolated_worker_job> invalid;
+      invalid.emplace_back(batch.get_ticket(0), immutable_worker_input<isolated_action_tree_job>{std::move(oversized)});
+      BOOST_CHECK_THROW(pool.run(std::move(invalid)), primary_state_budget_exceeded);
+   }
+}
 
 BOOST_FIXTURE_TEST_CASE(notification_jobs_switch_modes_on_one_two_four_threads, wasm_fixture) {
    const std::vector roots{input(1, 7), input(1, 3)};
@@ -2183,7 +2304,7 @@ BOOST_FIXTURE_TEST_CASE(notification_job_owner_limits_and_cancellation_preserve_
          case 2: data.roots.resize(17, roots[0]); break;
          case 3: data.programs.clear(); break;
          case 4: data.programs.resize(257, programs[0]); break;
-         case 5: data.programs[0].code.resize(65537); break;
+         case 5: data.programs[0].code.resize(isolated_wasm_limits::max_module_code_bytes + 1); break;
          case 6: data.roots[0].data.resize(65537); break;
          case 7: data.roots[0].authorizations.resize(65); break;
       }
@@ -2258,7 +2379,9 @@ BOOST_FIXTURE_TEST_CASE(persistent_one_two_four_threads_run_multiple_bounded_bat
          const auto results = pool.run(std::move(jobs));
          BOOST_REQUIRE_EQUAL(results.size(), args.size());
          for (size_t i = 0; i < results.size(); ++i) {
-            BOOST_REQUIRE(results[i].result);
+            BOOST_REQUIRE_MESSAGE(results[i].result,
+               "threads=" << count << " round=" << round << " job=" << i << " failure=" <<
+               isolated_worker_failure_name(results[i].failure) << " attempt_wall_us=" << results[i].attempt_wall.count());
             BOOST_CHECK_EQUAL(number(results[i].result->actions.front().return_value), (i % 4 + 1) * 10 + 7 + round);
             BOOST_CHECK(results[i].result->execution_fingerprint == requests[i].execution_fingerprint);
             BOOST_CHECK(results[i].elapsed.count() > 0);
@@ -2296,7 +2419,9 @@ BOOST_FIXTURE_TEST_CASE(transaction_jobs_share_prefixes_but_not_workers_and_trac
          for (size_t i = 0; i < calls.size(); ++i) jobs.emplace_back(batch.get_ticket(i), calls[i]);
          const auto results = pool.run(std::move(jobs));
          for (size_t i = 0; i < results.size(); ++i) {
-            BOOST_REQUIRE_MESSAGE(results[i].result, "multi workers=" << threads << " round=" << round << " job=" << i);
+            BOOST_REQUIRE_MESSAGE(results[i].result, "multi workers=" << threads << " round=" << round << " job=" << i
+               << " failure=" << isolated_worker_failure_name(results[i].failure)
+               << " attempt_wall_us=" << results[i].attempt_wall.count());
             const auto& output = *results[i].result;
             BOOST_REQUIRE_EQUAL(output.actions.size(), 2u);
             BOOST_CHECK_EQUAL(number(output.actions[0].return_value), (i % 4 + 1) * 10 + 7);
@@ -2420,7 +2545,7 @@ BOOST_FIXTURE_TEST_CASE(pool_bounds_and_thread_affinity, wasm_fixture) {
    ordered_attempt_batch batch(base, requests);
    isolated_worker_job job{batch.get_ticket(0), increment_wasm(), input(), {}};
    BOOST_CHECK_THROW(pool.run(std::vector<isolated_worker_job>(65, job)), primary_state_budget_exceeded);
-   job.actions.front().code.resize(64 * 1024 + 1);
+   job.actions.front().code.resize(isolated_wasm_limits::max_module_code_bytes + 1);
    BOOST_CHECK_THROW(pool.run({job}), primary_state_budget_exceeded);
    auto worker = std::async(std::launch::async, [&] {
       try { (void)pool.run({}); } catch (const state_view_wrong_thread&) { return true; }

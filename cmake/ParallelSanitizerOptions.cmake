@@ -1,0 +1,8 @@
+# Developer instrumentation profile only; never changes node execution budgets.
+set(PUREEOS_PARALLEL_SANITIZER_OPTIMIZATION "1" CACHE STRING
+    "Optimization level for the private sanitizer targets (1 or 2)")
+set_property(CACHE PUREEOS_PARALLEL_SANITIZER_OPTIMIZATION PROPERTY STRINGS 1 2)
+if(NOT PUREEOS_PARALLEL_SANITIZER_OPTIMIZATION MATCHES "^[12]$")
+  message(FATAL_ERROR "PUREEOS_PARALLEL_SANITIZER_OPTIMIZATION must be 1 or 2")
+endif()
+set(PUREEOS_PARALLEL_SANITIZER_OPT_FLAG "-O${PUREEOS_PARALLEL_SANITIZER_OPTIMIZATION}")

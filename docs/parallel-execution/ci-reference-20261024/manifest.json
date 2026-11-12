@@ -1,0 +1,47 @@
+{
+  "status": "archived-before-ci-repair",
+  "scope": "Historical workflow content only; these files are outside .github/workflows and are not executable GitHub workflows. Includes all prior local edits.",
+  "files": {
+    "build.yaml": {
+      "archive": "build.yaml.txt",
+      "sha256": "efbcd3e40bc917b884c60943d439c2c0775dbdafabacfe4ee5ed3be3ea6ea0ca"
+    },
+    "build_base.yaml": {
+      "archive": "build_base.yaml.txt",
+      "sha256": "ca5f0cf40afc226060b63cd2a1be36ad48c70e47577f76455682a31f8c30df22"
+    },
+    "jiraIssueCreator.yml": {
+      "archive": "jiraIssueCreator.yml.txt",
+      "sha256": "54d3ff05c52197ab457d94a703f1092c91710ab7f19f31b89568fa948b84ea33"
+    },
+    "label_new_issues.yaml": {
+      "archive": "label_new_issues.yaml.txt",
+      "sha256": "7e7c178a668a74422d98c8eaa2d8dbeaa5432f48e9bc45a0a9198a20f302ce0d"
+    },
+    "llvm.yaml": {
+      "archive": "llvm.yaml.txt",
+      "sha256": "3fa1fd7ca3d5c5e9330570f90a11624bed69fe42410bf2a437b49902551a1cb8"
+    },
+    "performance_harness_run.yaml": {
+      "archive": "performance_harness_run.yaml.txt",
+      "sha256": "3ecde03bfad5f266f17b4766b8b205fdf471fd8676f67aff3a4ecf9d726b2842"
+    },
+    "ph_backward_compatibility.yaml": {
+      "archive": "ph_backward_compatibility.yaml.txt",
+      "sha256": "5e650815d8b82e38780844052d16234ae1e2883eebc055189dd2660bc1398a02"
+    },
+    "pinned_build.yaml": {
+      "archive": "pinned_build.yaml.txt",
+      "sha256": "d3aa94149c077dc08ce3cb1a88f0760ff873000c9132ac56f0fa8bbc7de4e861"
+    },
+    "release.yaml": {
+      "archive": "release.yaml.txt",
+      "sha256": "6ef89dfa82efdb06dc2acd328ee3890ec91a4889331f8b4dd3383522b1fbe4c5"
+    },
+    "submod.yaml": {
+      "archive": "submod.yaml.txt",
+      "sha256": "1bfd90b65524b7609b8c1669195f87009f437008eeb148e4668ac0fcdcf424c6"
+    }
+  },
+  "created_utc": "2026-10-23T16:26:33.396463+00:00"
+}

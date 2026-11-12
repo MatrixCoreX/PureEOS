@@ -1,0 +1,152 @@
+PureEOS 并行首版候选使用边界
+日期：2026-10-24；这是候选操作说明，不是发布完成或性能合格声明。
+最终状态以 PX7_V1_RELEASE_CHECKLIST.txt 和绑定程序摘要的实测报告为准。
+运行候选包还须包含准确构建源码的14份依赖许可声明及原LICENSE，全部纳入
+来源清单与SHA256SUMS。这些声明与AIC许可边界一同保留；上游版本的许可
+适用范围核查仍未结束，不因补齐声明就宣称已经获得整链重新授权或稳定发布。
+版本输出不得为unknown。本轮最终候选使用项目2.0.0及显式导出源码清单摘要，
+完整标识为v2.0.0-src-<64位SHA256>；这是构建身份，不是已经正式发行。
+Git构建显示真实提交，准备后的受控VM补丁仍可能如实产生dirty标记；不能
+抹掉未知工作树修改假装干净。具体来源检查见PX7_V1_BUILD_VERSION_RESULTS.md。
+
+一、架构和安全边界
+不同交易可以在私有、不可变输入上并行执行；同一交易内部的 action、inline、
+同步调用仍遵循原顺序和原子性。正式状态按区块交易顺序提交，不并发写Chainbase。
+提交前重新检查读取依赖；前序交易修改了相关行、表/索引范围、账户等依赖时，
+旧结果不能直接落库。受预算约束的当前前缀重试或原子串行路径负责安全处理。
+“有并行worker”不代表每笔交易都会采用私有结果，必须看实际adopted诊断。
+
+新快照复用只消除一次准备调用内已捕获内容的重复读取/复制，不跨提交、回滚、
+新区块或新批次缓存余额。它不是跨批MVCC，也不改变合约对资产的读取语义。
+签名、授权、RAM、CPU/NET账单、交易截止时间、治理和经济模型不因并行而绕过。
+
+二、现代Ubuntu构建
+适用：已安装必需依赖的Ubuntu26.04/26.10 x86_64；不自动修改系统、安装CDT。
+Git检出后先初始化固定版本的依赖：git submodule update --init --recursive。
+主项目入口为MatrixCoreX/PureEOS；六个原失效依赖URL已修正且固定提交不变。
+VM固定提交由独立公开镜像MatrixCoreX/AIC-VM提供，原私有开发仓库保留；
+匿名检出该基线、两个嵌套依赖和三份VM补丁的字节重现已验证。
+从空目录建立的隔离夹具已补全12根/递归188模块并核对固定提交；公开匿名
+检出仍是发布前交付检查，不能把私有读取成功称作公开源码交付已完成。
+配套工具链为AIC CDT1.0.0，须使用其准确SDK摘要；两侧尚未联合正式发布。
+EOS VM的三个本版修改以tools/vendor/eos-vm-parallel-v1.patch及JSON摘要交付，
+不是只提交主仓库gitlink就已经包含。新检出源码须显式运行：
+  python3 -I -B tools/prepare_vm_vendor.py --apply
+只读核验：python3 -I -B tools/prepare_vm_vendor.py --check
+工具固定VM基线16f9c4c3ea7a172716d0bf68c60806e499f5988a，检查三个文件的
+前后摘要、补丁摘要及真实Git根；不联网、不切换Git引用、不暂存或覆盖未知修改。
+已准备版本重复执行不修改文件；混合/未知修改或错误基线拒绝。源码压缩包可按
+内容校验，未准备的无Git压缩包不自动打补丁。显式补丁并非另一套VM运行引擎。
+先运行：bash tools/ubuntu-modern-build.sh --check
+隔离构建：bash tools/ubuntu-modern-build.sh --build --jobs=2 \
+  --build-dir=/你的独立构建目录
+构建入口同时生成pureeos-ubuntu-nodeos、cleos、keosd和helios-util，避免新装
+用户缺少钱包工具或原生最终确认BLS密钥工具。不会自动启动钱包或向节点装私钥。
+节点产物名为pureeos-ubuntu-nodeos，避免覆盖现有nodeos。发布时只能使用最终记录
+了SHA256、且完成整合验收的候选，不能用历史测试程序摘要冒充当版程序。
+实际configure/build/test在CMake之前只读验证上述VM补丁；不会隐式修改依赖。
+现代profile明确ENABLE_OC=OFF；原链WASM与私有worker均选择eos-vm-jit。
+容器测试共享宿主内核，不等同原生26.10内核、ARM或Windows支持已经验收。
+源码适配目标也不等于二进制跨发行版兼容：26.10用户态构建的程序只按其实际
+运行环境验收，不直接声称可在26.04安装。发布包须明确各自工具链、动态依赖
+及测试环境；本机为26.04.1 LTS，不能把26.10容器写成本机原生26.10。
+当前相同ELF在26.04.1宿主的四工具版本/帮助与资源管理器三轮小范围检查已过，
+但不是26.04整链或可移植包验收。nodeos还继承BLS的_dl_argv@GLIBC_PRIVATE
+依赖，不仅看GLIBC最低版本就声明所有Linux通用；保留实测环境和动态依赖说明。
+
+三、新私有测试链的显式启用方式
+只在新的、独立data/config目录内试用，不对用户现用链进行原地迁移。
+config.ini的核心配置示意：
+  wasm-runtime = eos-vm-jit
+  experimental-parallel-engine = jit
+  experimental-parallel-validation-threads = 4
+  experimental-parallel-validation-batch-size = 24
+  experimental-parallel-production = true
+  experimental-parallel-code-hash = <已经部署并验证的合约WASM真实SHA256>
+每个允许的合约版本独立一行code-hash；升级后重新确认实际WASM摘要与回归。
+示例不是完整创世/签名配置，不提供主网密钥，不自动加入外部P2P连接。
+仅验证区块的节点不启用experimental-parallel-production。
+首版支持至多16个软件worker、每批至多64笔；4物理核机器开16个worker不等于
+拥有16个物理核，也不保证更快。配置错配引擎或越界应明确拒绝，而非静默降级。
+不支持的合约能力安全串行；白名单不是授权豁免或全量第三方合约兼容证明。
+
+四、如何解释结果
+adopted/attempts等退出诊断包含后来撤销区块的尝试，不能相加当唯一业务交易数。
+账本、收据、最终分支和完整状态哈希通过，是正确性证据，不是性能证据。
+TPS统计最终确认的唯一成功交易，不能用收包速度、action数或全校验重放速度替代。
+资源额度相同是串并行对比的必要条件；更高的测试创世额度单独标注容量诊断，
+不得说成修改并行调度本身的提升，也不得偷偷修改正式链默认计费参数。
+本轮实际测试矩阵、噪声约束、固定三轮门槛见PX7_V1_BENCHMARK_PROTOCOL.txt。
+报告保留失败、不确定和负提升，不挑选单轮最好成绩宣布首版达标。
+
+五、本轮不做
+不自动购买云主机、不恢复已删除的旧服务器、不接触现用钱包/手动链；
+不引入旧链迁移兼容层、不提高到16以上worker、不并发写正式数据库；
+不以调低检查、放宽CPU/NET或改变奖励/治理规则制造TPS提升。
+
+六、创世、普通矿工与密钥边界
+原生Savanna genesis使用initial_savanna/version=2、finalizer_key及其
+proof_of_possession；必须使用自己生成并妥善保存的K1/BLS密钥。测试生成器、
+TEST-ONLY-keys、示例默认公钥和100万/10亿SYS测试资金不能用于正式链。
+发行上限、初始发行、外部挖矿映射和实际主网创世是另一个需确认的配置流程，
+发布候选不会自动替你发行、映射、升级现网或写入现有手工链。
+
+bootstrap必须先通过真实bios动作激活PUREEOS_ROTATION_CONTEXT，再部署匹配的
+system/token/bpay/REX/PowerUp辅助合约，完成资源配置后才govinit封存。
+review_seconds固定1209600，不是可在主网任意缩短的参数。完整执行顺序以
+tests/pureeos_single_choice_local_test.py::setup及同候选实测为准；不提供
+省略权限/激活步骤的一行“主网启动”。
+
+eosio是bootstrap/系统账号，不是普通收益钱包。封存后旧genesis管理钥不能再
+签eosio管理动作或代领eosio奖励，不应把投票长期集中到这个特殊账号。
+正常矿工使用独立账号与签名钥；升级开发者权限不放在出块服务器上。
+出块K1/BLS签名钥与账号管理/开发者升级钥可以分开，热节点仅装必要签名材料。
+
+七、新矿工加入的实际条件（既有新链，不是创建主网的快捷方式）
+1. 用普通已有账号创建矿工账号，分配RAM/CPU/NET并准备自己的管理/出块K1钥。
+2. 使用helios-util bls create key --to-console生成最终确认签名材料。这个命令
+   会显示私钥，必须在私密终端保存；链上只提交公钥和proof of possession。
+3. 用该账号签eosio::regproducer，提交producer/producer_key/url/location；
+   再签eosio::regfinkey，提交finalizer_name/finalizer_key/proof_of_possession。
+4. 先在自己的独立data/config目录启动相同chain_id节点并追上不可逆块，配置
+   自己的producer-name、出块和BLS签名provider及可信P2P地址，不复制别人的钥。
+5. 投票者调用cleos system voteproducer approve VOTER PRODUCER，选择唯一矿工。
+   正票、完整注册/最终确认钥及有效名次才构成候选；持REX也必须保留唯一选择。
+6. 正常合约按名次和FIFO逐席接入。名次用于候选/入岗，现任出块窗口仍遵守
+   native proposer policy的排序；不能把“按票数入岗”说成窗口内按票数抢出块。
+7. 以独立节点在同一不可逆高度取到同一block_id、实际已提交policy和产块记录
+   判断加入成功；head在涨、注册成功、进程在线或有票，都不是已经产块的证据。
+
+重启不要求重复regfinkey；现有最终确认钥仍在时重复注册会正确拒绝。
+黑名单账号regproducer成功不代表恢复轮岗资格，永久账号禁入不会因此消失。
+不冻结资产/历史收益；claimrewards用自己的账号权限，仍受实际出块与24h限制。
+若主动unregprod导致无有效注册key，先恢复正常注册key再申请历史收益，不能
+通过注册清除黑名单。0产出无任何节点奖励；排名或配置并行worker本身不发钱。
+
+八、故障排查与回退边界
+先保留原始日志、准确ELF/合约摘要、chain_id、LIB及OOM/CPU/磁盘证据。
+2/3人阶段缺少一个确认会停最终确认；4人需要3个；满21人仍需要15个。
+不能用强改finality阈值、setprods、删除故障记录或跳过校验“修复”正式链。
+满21时三完整本人零窗口的永久禁入由最终链上证据确定，不是现任21人投票。
+历史裁剪/快照不是全历史API；本版不强制每台机器运行全历史服务。
+
+串行降级配置只能在干净停机、保存可核验备份后，在同一受支持的程序/链规则
+内调整；不能拿任意旧EOS程序打开本链数据库。旧链迁移兼容不在本版承诺内。
+测试环境的真实快照/dirty拒绝/全校验重放结果，必须以同候选验收报告为准。
+任何改源码/合约/SDK/运行额度后的性能数据另立候选，不拼成一次已通过结果。
+
+九、非正常停机后的状态重放
+真实云主机停启已复现Chainbase的Database dirty flag set保护。普通重启不能
+把未干净关闭的派生数据库当作可信状态。先备份并保留原blocks、finalizers和
+配置/密钥；完整区块日志从1开始且尾部完好时，可沿用原data/config以
+--replay-blockchain重建派生state。若日志尾部不完整，普通重放无法修补，须使用
+本版已验证的--hard-replay-blockchain，先修复有效前缀，再重建派生state。
+原日志须完整保留在备份，blocks/reversible/recovery须留在原活动路径，启动日志
+须明确记录实际恢复的journal区块数。这两个选项都不删除独立finalizers安全
+数据；不要手工清空该目录，也不要用--delete-all-blocks代替恢复。
+裁剪日志的节点不能据此从创世重放，需配套匹配快照和保留区块，按实际版本验证。
+2026-10-24实际双VM停启补测已通过：供应商确认halt/start，boot_id变化；61份
+记录保留，实际恢复31块；共同LIB585超过停机期间最高head571加12，恢复节点
+未领取出块计数55升到67，原日志备份与独立安全文件保留。结果绑定nodeos
+c91c25bc和源码清单981bb67f；此前失败轮次原样保留。61份记录与实际恢复31块
+是不同指标。详见PX7_V1_RECOVERY_VOTE_OBSERVATION_20261024.md。
