@@ -1,0 +1,54 @@
+PureEOS 并行首版候选使用边界
+日期：2026-10-20；这是候选操作说明，不是发布完成或性能合格声明。
+最终状态以 PX7_V1_RELEASE_CHECKLIST.txt 和绑定程序摘要的实测报告为准。
+
+一、架构和安全边界
+不同交易可以在私有、不可变输入上并行执行；同一交易内部的 action、inline、
+同步调用仍遵循原顺序和原子性。正式状态按区块交易顺序提交，不并发写Chainbase。
+提交前重新检查读取依赖；前序交易修改了相关行、表/索引范围、账户等依赖时，
+旧结果不能直接落库。受预算约束的当前前缀重试或原子串行路径负责安全处理。
+“有并行worker”不代表每笔交易都会采用私有结果，必须看实际adopted诊断。
+
+新快照复用只消除一次准备调用内已捕获内容的重复读取/复制，不跨提交、回滚、
+新区块或新批次缓存余额。它不是跨批MVCC，也不改变合约对资产的读取语义。
+签名、授权、RAM、CPU/NET账单、交易截止时间、治理和经济模型不因并行而绕过。
+
+二、现代Ubuntu构建
+适用：已安装必需依赖的Ubuntu26.04/26.10 x86_64；不自动修改系统、安装CDT。
+先运行：bash tools/ubuntu-modern-build.sh --check
+隔离构建：bash tools/ubuntu-modern-build.sh --build --jobs=2 \
+  --build-dir=/你的独立构建目录
+产物名为pureeos-ubuntu-nodeos，避免覆盖现有nodeos。发布时只能使用最终记录
+了SHA256、且完成整合验收的候选，不能用历史测试程序摘要冒充当版程序。
+现代profile明确ENABLE_OC=OFF；原链WASM与私有worker均选择eos-vm-jit。
+容器测试共享宿主内核，不等同原生26.10内核、ARM或Windows支持已经验收。
+
+三、新私有测试链的显式启用方式
+只在新的、独立data/config目录内试用，不对用户现用链进行原地迁移。
+config.ini的核心配置示意：
+  wasm-runtime = eos-vm-jit
+  experimental-parallel-engine = jit
+  experimental-parallel-validation-threads = 4
+  experimental-parallel-validation-batch-size = 24
+  experimental-parallel-production = true
+  experimental-parallel-code-hash = <已经部署并验证的合约WASM真实SHA256>
+每个允许的合约版本独立一行code-hash；升级后重新确认实际WASM摘要与回归。
+示例不是完整创世/签名配置，不提供主网密钥，不自动加入外部P2P连接。
+仅验证区块的节点不启用experimental-parallel-production。
+首版支持至多16个软件worker、每批至多64笔；4物理核机器开16个worker不等于
+拥有16个物理核，也不保证更快。配置错配引擎或越界应明确拒绝，而非静默降级。
+不支持的合约能力安全串行；白名单不是授权豁免或全量第三方合约兼容证明。
+
+四、如何解释结果
+adopted/attempts等退出诊断包含后来撤销区块的尝试，不能相加当唯一业务交易数。
+账本、收据、最终分支和完整状态哈希通过，是正确性证据，不是性能证据。
+TPS统计最终确认的唯一成功交易，不能用收包速度、action数或全校验重放速度替代。
+资源额度相同是串并行对比的必要条件；更高的测试创世额度单独标注容量诊断，
+不得说成修改并行调度本身的提升，也不得偷偷修改正式链默认计费参数。
+本轮实际测试矩阵、噪声约束、固定三轮门槛见PX7_V1_BENCHMARK_PROTOCOL.txt。
+报告保留失败、不确定和负提升，不挑选单轮最好成绩宣布首版达标。
+
+五、本轮不做
+不自动购买云主机、不恢复已删除的旧服务器、不接触现用钱包/手动链；
+不引入旧链迁移兼容层、不提高到16以上worker、不并发写正式数据库；
+不以调低检查、放宽CPU/NET或改变奖励/治理规则制造TPS提升。

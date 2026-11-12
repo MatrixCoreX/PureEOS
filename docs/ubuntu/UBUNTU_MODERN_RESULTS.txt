@@ -1,0 +1,108 @@
+PureEOS：Ubuntu26.04/26.10与CDT检查结果
+日期：2026-10-20；开发分支，非正式发布/非TPS结论。
+
+本轮快照优化候选的最新增量（优先于下文上一轮微批历史状态）
+* Ubuntu26.10/GCC15.3全新目录的完整Release节点源码构建成功，不再仅为组件检查。
+  新节点SHA256 b4b572954abf41d0bc2b862d469f01a4a7965622760473fe17fdb525c11fb8cd；
+  在真实26.10用户态运行8项CLI配置检查全部通过，仍共享宿主26.04内核。
+* 本机26.04/GCC15.2本轮节点也已链接并通过8项CLI检查，SHA256
+  7996bd191950e6289d289cec46939745b06566f917ee37e133b0aa02b74c3b32。
+* 两份节点均包含本轮同前缀不可变快照复用；不是下文微批50920139的同一程序。
+  配套工具、core/worker完整回归与staging尚在推进，没有本轮TPS通过结论。
+* 26.10外层执行连接曾以143结束，原因未确认；检查容器未退出、OOMKilled=false、
+  编译继续推进，已重新接管监控。完整节点阶段确实返回0；外层退出记录保留，
+  最终源码摘要核对和内层完整报告尚待完成，不能把外层连接标为原始成功执行。
+* 当前状态层普通66项、ASan/UBSan状态/二级与TSan状态实现各固定三轮通过，
+  Python工具223项完整重跑通过；插桩覆盖边界见并行首版收敛清单。
+证据：build/local-tests/parallel-v1-20261020/，含新节点副本、8项CLI报告、
+ubuntu2610/full-node-build.log、监控恢复和源清单。新云端尚未创建实例。
+
+下列详细结果为上一轮微批与初步系统适配历史，不替代本轮整合验收。
+
+实际支持与验证范围
+1. Ubuntu26.04.1 LTS x86_64，本机原生GCC15.2.0、CMake4.2.3：
+   当前Release/JIT生产插件及组件源码构建通过；18项单元各三轮通过；
+   真实生产者3项/23057断言通过，含两组各4242请求及原生Savanna重启。
+   完整实验nodeos程序构建成功，最终摘要及启动检查见本文件末尾。
+2. Ubuntu26.10 x86_64隔离用户态，GCC15.3.0、CMake4.3.4、glibc2.44：
+   真实/etc/os-release确认26.10；完整CMake配置、两组件源码构建和18项测试通过。
+   同一新生产插件集成程序在此再次跑真实链3项，全部通过。
+   容器共享宿主内核，不代表原生26.10内核启动/全硬件矩阵已验证。
+   26.10整节点全部源码/打包/安装CI仍待完成，不能由两组件构建替代。
+3. README支持清单已列26.04 LTS与26.10，并逐项写明上述边界；不冒称有新deb发行。
+   新CI平台定义已加入，但未推送、触发外部CI或发布。
+
+版本官方依据（2026-10-20核对）
+Ubuntu26.10为当前正式interim版，26.04为当前LTS系列：
+https://lists.ubuntu.com/archives/ubuntu-announce/2026-October/000330.html
+https://documentation.ubuntu.com/release-notes/26.04/
+
+代码/构建适配
+* tools/ubuntu-modern-build.sh：只读检查、隔离配置/构建/定向测试入口；
+  使用单独目录及pureeos-ubuntu-nodeos名称，拒绝根目录、源码根、默认build、
+  home以及不属于此profile/其他checkout的现有缓存，不覆盖原节点程序。
+  默认两个编译作业；有Ninja则使用，没有则用Make，避免本机缺Ninja就无法检查。
+  不自动apt安装、修改系统或替换现有CDT；动作互斥、作业参数校验。
+* .cicd/platforms/ubuntu26.04.Dockerfile、ubuntu26.10.Dockerfile：
+  现代发行版自己的编译器/依赖，不注入旧llvm-11-dev。
+* .github/workflows/build_base.yaml：仅新平台marker启用明确ENABLE_OC=OFF。
+  现代并行profile使用eos-vm-jit；旧OC仅支持LLVM7–11，不能由换新版主机LLVM
+  就宣称已经移植该后端。未修改旧计费/治理/经济政策。
+* 生产者微批计时器改用当前Boost.Asio cancel()接口；增加真实计时器回归。
+  详见docs/parallel-execution/PX7_BOUNDED_MICROBATCH_RESULTS.txt。
+* README修正CMake最低版本为源码要求的3.21，现代JIT依赖与示例去掉强制LLVM11。
+  不启用fast-math、Ofast、native CPU专用指令或未经验证的LTO/PGO。
+
+CDT检查与升级空间
+1. 当前实际使用CDT4.1.1，不作无必要覆盖。上游最新稳定发布页为：
+   https://github.com/AntelopeIO/cdt/releases/tag/v4.1.1
+2. 源码/home/guagua/AntelopeIO/cdt基线e677213d9，5.0.0-dev1开发系，
+   LLVM_VERSION_MAJOR=9。它与安装的4.1.1不是同一构建，不把开发版本号当升级完成。
+3. 已检查本地HEAD包含d658c90b6现代Clang/jsoncons修复及a53fc34ce的bool首参数
+   action_wrapper修复，不重复移植或倒退这些已有代码。
+4. 26.10使用现用4.1.1真实编译lightbench，WASM摘要
+   9140e472e48ef3d8b03a44a3e0f0d8e43d3a160ac4e56e4d348c28f3489481eb，
+   与此次云端实际执行的合约逐字节相同；ABI解析/action列表检查通过。
+5. 新增tests/fixtures/cdt_modern_smoke.cpp，真实编译boolfirst/sendbool（inline）/
+   putrow（带uint64二级索引）合约，检查bool首字段、动作与表ABI，全部通过。
+   这是编译/ABI兼容检查，不冒充已部署执行此新fixture。
+6. 升级空间：先补现代主机完整CDT源码构建/集成CI；LLVM9向现代LLVM的大迁移
+   需要移植EOSIO专用pass、softfloat、ABI、链接与runtime，不是改一个版本号。
+   先做独立收益/正确性评估，不默认生成节点VM不支持的WASM扩展。
+   本轮未升级开发版CDT/LLVM内核，未声称CDT改动提高实时TPS。
+
+测试与失败记录
+* 新构建入口8项与原性能工具60项，共68项Python回归通过。
+* 26.10的source-final/integration/cdt/candidate四份报告均passed。
+* 初次本机检查缺Ninja，构建入口已改为安全Make回退。
+* 本地Docker没有buildx，--progress参数不支持；改用普通构建调用，未修改Docker权限。
+* 初次完整插件编译发现Asio旧cancel重载移除，修复后重建/真实回归通过。
+* 初次26.10 source检查的组件/CDT步骤均成功，随后执行归档ELF因抽取时未恢复
+  执行位而PermissionError；只对测试副本恢复执行位，保留失败source/report.json，
+  source-recheck与source-final均通过。未以此修改系统库或关闭安全机制。
+* unittest discovery误扫需生成core_symbol的旧harness包；改用明确模块列表运行，
+  未开发兼容层；68项最终回归通过，原误调用保留在工具记录。
+* 完整候选构建仍出现GCC15的state_history/variant maybe-uninitialized和BP gossip
+  signedness告警；没有关闭告警或盲改密码学/网络代码。告警不是全节点sanitizer通过。
+
+证据路径
+build/local-tests/ubuntu-modern-20261020-v1/{source-final,integration,cdt}/report.json
+同目录各阶段日志、冻结镜像ID/命令、首次失败报告与生成的WASM/ABI。
+26.10基础镜像摘要sha256:93e29beff5257b2cdf1c024d831f6d2997e53655a653ff76a811fc9e6564a719。
+本机微批三轮与生产者记录在build/local-tests/parallel-microbatch-20261020-v1/checks/。
+原程序摘要检查通过，未改变用户手动测试链或现用CDT安装。
+
+未完成项必须保留
+26.10整节点源码/打包CI、原生26.10内核/ARM验收、CDT5开发源码完整构建、LLVM大迁移，
+新微批TPS多轮对照和全版本发布验收未完成；不宣称这些均通过。
+优先计划见PUREEOS_UBUNTU_CDT_UPGRADE_PLAN.txt。
+云端本轮16组业务/账本测试及完整备份已结束，唯一测试裸机已按要求删除；
+此处后续检查均在本机，不自动购买或保留计费服务器。
+
+最终实验程序（Release构建通过）
+/run/media/guagua/新加卷/pureeos-release-reboot-20261017-J9fami/programs/nodeos/pureeos-parallel-nodeos
+SHA256：5092013974d1c0a5b511d25c2271a8d98b216e70644ee317fc931896aa8cd080。
+v2.0.0-dev1.3-3856ab5b0723da1a1c41d60751109af789403945-dirty；尚未发布。
+此新程序在本机及26.10用户态的--full-version通过，在26.10的--help和并行参数
+检查通过。真实生产者三项运行回归是同一当前源码构建的集成程序，不将CLI检查
+冒充新节点程序的全量多节点/第三方合约压力验收；新TPS改善仍未测定。

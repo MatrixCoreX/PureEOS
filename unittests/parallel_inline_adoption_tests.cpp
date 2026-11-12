@@ -20,6 +20,7 @@ using namespace eosio::testing;
 using namespace eosio::chain::experimental;
 
 #include "parallel_test_diagnostics.hpp"
+#include "parallel_test_runtime.hpp"
 
 namespace {
 const std::array contracts{"test"_n, "bob"_n, "carol"_n};
@@ -182,6 +183,7 @@ struct inline_corpus {
    inline_corpus() {
       auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
       genesis.initial_savanna.emplace();
+      genesis.initial_savanna->version = 2;
       genesis.initial_savanna->finalizer_key = public_key; genesis.initial_savanna->proof_of_possession = proof;
       for (const auto& code : codes) reviewed.insert(fc::sha256::hash(reinterpret_cast<const char*>(code.data()), code.size()));
       reviewed.insert(fc::sha256::hash(reinterpret_cast<const char*>(native_root.data()), native_root.size()));
@@ -193,7 +195,7 @@ struct inline_corpus {
    }
    controller::config configuration(const fc::temp_directory& dir, uint16_t workers, bool production = false) const {
       auto cfg = base_tester::default_config(dir).first;
-      cfg.wasm_runtime = wasm_interface::vm_type::eos_vm;
+      eosio::testing::configure_parallel_test_runtime(cfg);
       cfg.parallel_validation_threads = workers; cfg.parallel_production_enabled = production && workers != 0;
       cfg.parallel_code_allowlist = reviewed; return cfg;
    }
@@ -272,7 +274,7 @@ BOOST_FIXTURE_TEST_CASE(mixed_inline_tree_production_validation_and_conflicting_
             producer.start();
          };
          run({"alice"_n, "dave"_n}, 2, 2, 0);
-         run({"alice"_n, "alice"_n, "dave"_n}, 1, 1, 2);
+         run({"alice"_n, "alice"_n, "dave"_n}, 1, 3, 0); // refresh the full tree; retain independent dave
          for (name scope : {"alice"_n, "dave"_n}) {
             const uint64_t increments = scope == "alice"_n ? 4 : 3;
             BOOST_CHECK_EQUAL(inline_row(producer, "test"_n, scope), 10 + increments);
@@ -533,11 +535,13 @@ BOOST_AUTO_TEST_CASE(export_fresh_inline_producer_fixture) {
    genesis.initial_timestamp = block_timestamp_type(fc::time_point::now() - fc::seconds(5)).to_time_point();
    auto [private_key, public_key, proof] = get_bls_key("eosio"_n);
    genesis.initial_savanna.emplace();
+   genesis.initial_savanna->version = 2;
    genesis.initial_savanna->finalizer_key = public_key; genesis.initial_savanna->proof_of_possession = proof;
    BOOST_REQUIRE(fc::json::from_string(fc::json::to_string(genesis, fc::time_point::maximum()))
       .as<genesis_state>().compute_chain_id() == genesis.compute_chain_id());
    fc::temp_directory source_dir;
-   auto cfg = base_tester::default_config(source_dir).first; cfg.wasm_runtime = wasm_interface::vm_type::eos_vm;
+   auto cfg = base_tester::default_config(source_dir).first;
+   eosio::testing::configure_parallel_test_runtime(cfg);
    inline_chain source(cfg, genesis); source.set_node_finalizers(std::array<name, 1>{"eosio"_n});
    const std::array<std::vector<uint8_t>, 3> codes{inline_code(0), inline_code(1), inline_code(2)};
    fc::variants checkpoints;

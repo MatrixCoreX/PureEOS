@@ -85,7 +85,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu22, reproducible]
+        platform: [ubuntu22, ubuntu26.04, ubuntu26.10, reproducible]
     runs-on: ubuntu-latest
     container: ${{fromJSON(needs.platform-cache.outputs.platforms)[matrix.platform].image}}
     steps:
@@ -125,6 +125,40 @@ jobs:
           name: pureeos-helios-deb-amd64
           path: build/pureeos-helios_*.deb
           compression-level: 0
+
+  modern-parallel-tests:
+    name: Modern Ubuntu parallel checks (${{matrix.platform}})
+    needs: [platform-cache, build-base]
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu26.04, ubuntu26.10]
+    runs-on: ["self-hosted", "enf-x86-hightier"]
+    container: ${{fromJSON(needs.platform-cache.outputs.platforms)[matrix.platform].image}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{matrix.platform}}-build
+      - name: Build excluded queue and timer regressions
+        run: |
+          chown -R $(id -u):$(id -g) $PWD
+          zstdcat build.tar.zst | tar x
+          cmake --build build --target test_incoming_transaction_batch test_production_timer_guard -j2
+      - name: Run same-engine parallel correctness, not a TPS claim
+        run: |
+          ctest --test-dir build --output-on-failure -j1 --timeout 1200 \
+            -R '^(pureeos_parallel_(chain_config|production_admission|deadline_service|state_view|secondary_state|validation|production|inline_adoption|context_free|release_jit_.*)|test_(incoming_transaction_batch|production_timer_guard|producer_plugin_integration))$'
+          build/unittests/parallel_validation_test --run_test=parallel_prefix_refresh_tests \
+            --report_level=detailed --color_output=no -- --eos-vm-jit
+          python3 tests/console_echo_regression_test.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: modern-parallel-logs-${{matrix.platform}}
+          path: build/Testing/Temporary/*.log
 
   tests:
     name: Tests (${{matrix.cfg.name}})

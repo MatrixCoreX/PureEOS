@@ -9,12 +9,177 @@
 #include <array>
 #include <limits>
 #include <random>
+#include <type_traits>
 
 using namespace eosio::chain;
 using namespace eosio::chain::experimental;
 using namespace eosio::testing;
 
 namespace {
+template<class Key>
+Key original_secondary_number(uint64_t n) {
+   if constexpr (std::is_same_v<Key, float64_t>) return ui64_to_f64(n);
+   else if constexpr (std::is_same_v<Key, float128_t>) {
+      float128_t result; ui64_to_f128M(n, &result); return result;
+   }
+   else if constexpr (std::is_same_v<Key, key256_t>) return {uint128_t{n}, uint128_t{n + 1}};
+   else return Key{n};
+}
+template<class Key>
+secondary_key owned_secondary_key(const Key& key) {
+   if constexpr (std::is_same_v<Key, float64_t>) return secondary_float64{key.v};
+   else if constexpr (std::is_same_v<Key, float128_t>) {
+      uint128_t bits; fc::float128_to_uint128(key, bits); return secondary_float128{bits};
+   } else return key;
+}
+template<class Key>
+decltype(auto) original_secondary_argument(Key& key) {
+   if constexpr (std::is_same_v<Key, key256_t>) return key.data();
+   else return (key);
+}
+
+// Exercise the ACTUAL original generic_index, not the scan oracle or an
+// independently rewritten cursor. The immutable snapshot is captured before
+// either implementation changes rows. This is host-level semantics only;
+// pointer conversion/aliasing and accepted WASM transactions are separate tests.
+template<class Index>
+void compare_secondary_cursor_with_original(apply_context& context, Index& original, Index& setup,
+                                            const table_key& rows) {
+   using key_type = typename Index::secondary_key_type;
+   const auto number = [](uint64_t n) { return original_secondary_number<key_type>(n); };
+   const auto owned = [&](uint64_t n) { return owned_secondary_key(number(n)); };
+   const std::array primary{uint64_t{0}, uint64_t{7}, uint64_t{19}, std::numeric_limits<uint64_t>::max()};
+   const std::array original_values{10u, 20u, 20u, 30u};
+   for (size_t i = 0; i < primary.size(); ++i) {
+      auto value = number(original_values[i]);
+      setup.store(rows.scope.to_uint64_t(), rows.table.to_uint64_t(), "alice"_n,
+                  primary[i], original_secondary_argument(value));
+   }
+   const table_key empty{rows.code, "empty"_n, rows.table}, missing{rows.code, "missing"_n, rows.table};
+   // A primary row makes the shared table exist while this secondary index is empty.
+   context.db_store_i64(empty.scope, empty.table, "alice"_n, 0, "x", 1);
+   const std::array tables{rows, empty, missing};
+   const std::array values{0u, 5u, 10u, 20u, 30u, 40u, 50u};
+   const std::array query_primary{uint64_t{0}, uint64_t{7}, uint64_t{19}, uint64_t{99},
+                                 std::numeric_limits<uint64_t>::max()};
+   std::vector<secondary_query> queries;
+   // Fixed, finite capture avoids learning a new dependency from the already
+   // mutated original database. Unknown queries must still throw, not infer.
+   for (const auto& table : tables) {
+      for (auto p : query_primary) queries.push_back({table, secondary_query_kind::find_primary, owned(0), p});
+      queries.push_back({table, secondary_query_kind::first, owned(0), 0});
+      queries.push_back({table, secondary_query_kind::last, owned(0), 0});
+      for (auto n : values) {
+         for (auto kind : {secondary_query_kind::find_secondary, secondary_query_kind::lower_bound,
+                           secondary_query_kind::upper_bound})
+            queries.push_back({table, kind, owned(n), 0});
+         for (auto p : query_primary) for (auto kind : {secondary_query_kind::next, secondary_query_kind::previous})
+            queries.push_back({table, kind, owned(n), p});
+      }
+   }
+   chainbase_transaction_state_view live(context.db);
+   const auto base = frozen_primary_state::capture_queries_with_secondary(live, tables, {}, queries);
+   primary_state_overlay state(base);
+   secondary_overlay_cursor cursor(state, rows.code, secondary_kind(owned(0)));
+   const auto find = [&](uint64_t p) {
+      auto expected_key = number(50); secondary_key actual_key = owned_secondary_key(expected_key);
+      const auto expected = original.find_primary(rows.code.to_uint64_t(), rows.scope.to_uint64_t(),
+         rows.table.to_uint64_t(), original_secondary_argument(expected_key), p);
+      const auto actual = cursor.find_primary(rows, actual_key, p);
+      BOOST_CHECK_EQUAL(actual, expected); BOOST_CHECK(actual_key == owned_secondary_key(expected_key));
+      return actual;
+   };
+   const auto adjacent = [&](int iterator) {
+      uint64_t expected = 1234, actual = expected;
+      BOOST_CHECK_EQUAL(cursor.next(iterator, actual), original.next_secondary(iterator, expected));
+      BOOST_CHECK_EQUAL(actual, expected);
+      if (iterator != -1) {
+         expected = actual = 1234;
+         BOOST_CHECK_EQUAL(cursor.previous(iterator, actual), original.previous_secondary(iterator, expected));
+         BOOST_CHECK_EQUAL(actual, expected);
+      }
+   };
+   const auto ranges = [&] {
+      for (const auto& table : tables) {
+         const auto end = cursor.end(table);
+         BOOST_CHECK_EQUAL(end, original.end_secondary(table.code.to_uint64_t(), table.scope.to_uint64_t(),
+                                                       table.table.to_uint64_t()));
+         if (end < -1) adjacent(end);
+         for (auto n : values) for (unsigned operation = 0; operation < 3; ++operation) {
+            auto expected_key = number(n); secondary_key actual_key = owned_secondary_key(expected_key);
+            uint64_t expected_primary = 4321, actual_primary = expected_primary;
+            int expected = -1, actual = -1;
+            const auto c = table.code.to_uint64_t(), s = table.scope.to_uint64_t(), t = table.table.to_uint64_t();
+            if (operation == 0) {
+               expected = original.find_secondary(c, s, t, original_secondary_argument(expected_key), expected_primary);
+               actual = cursor.find_secondary(table, actual_key, actual_primary);
+            } else if (operation == 1) {
+               expected = original.lowerbound_secondary(c, s, t, original_secondary_argument(expected_key), expected_primary);
+               actual = cursor.lower_bound(table, actual_key, actual_primary);
+            } else {
+               expected = original.upperbound_secondary(c, s, t, original_secondary_argument(expected_key), expected_primary);
+               actual = cursor.upper_bound(table, actual_key, actual_primary);
+            }
+            BOOST_CHECK_EQUAL(actual, expected); BOOST_CHECK_EQUAL(actual_primary, expected_primary);
+            BOOST_CHECK(actual_key == owned_secondary_key(expected_key));
+            if (actual >= 0) adjacent(actual);
+         }
+      }
+   };
+   for (auto p : primary) adjacent(find(p));
+   BOOST_CHECK_LT(find(99), 0);
+   ranges();
+   // Reuse the SAME handle after repeatedly moving its key, including ties.
+   const auto moving = find(7);
+   for (auto n : {40u, 5u, 20u, 0u, 50u, 10u}) {
+      auto key = number(n);
+      const name payer = n == 5 ? rows.code : name{};
+      cursor.update(moving, payer, owned_secondary_key(key));
+      original.update(moving, payer, original_secondary_argument(key));
+      adjacent(moving); ranges();
+   }
+   // Another notification receiver shares caches but has no write authority;
+   // reading another receiver's table must still preserve original handles.
+   context.receiver = "alice"_n; cursor.set_receiver_for_notification("alice"_n);
+   ranges();
+   context.receiver = rows.code; cursor.set_receiver_for_notification(rows.code);
+   const auto removed = find(19);
+   cursor.remove(removed); original.remove(removed);
+   BOOST_CHECK_LT(find(19), 0); ranges();
+   auto recreated_key = number(5);
+   const auto recreated = cursor.store(rows, 19, "alice"_n, owned_secondary_key(recreated_key));
+   BOOST_CHECK_EQUAL(recreated, original.store(rows.scope.to_uint64_t(), rows.table.to_uint64_t(), "alice"_n,
+                                               19, original_secondary_argument(recreated_key)));
+   BOOST_CHECK_NE(recreated, removed); adjacent(recreated); ranges();
+   // Absent -> secondary-only table -> absent -> new table identity.
+   for (unsigned generation = 0; generation < 2; ++generation) {
+      auto key = number(20);
+      const auto handle = cursor.store(missing, 99, "alice"_n, owned_secondary_key(key));
+      BOOST_CHECK_EQUAL(handle, original.store(missing.scope.to_uint64_t(), missing.table.to_uint64_t(), "alice"_n,
+                                               99, original_secondary_argument(key)));
+      ranges();
+      cursor.remove(handle); original.remove(handle);
+      BOOST_CHECK_EQUAL(cursor.end(missing), original.end_secondary(missing.code.to_uint64_t(),
+                         missing.scope.to_uint64_t(), missing.table.to_uint64_t()));
+   }
+   // Compare every current row and the shared table metadata, not only cursors.
+   for (auto p : query_primary) {
+      const secondary_query q{rows, secondary_query_kind::find_primary, owned(0), p};
+      const auto actual = state.read_secondary(q), expected = live.read_secondary(q);
+      BOOST_REQUIRE(actual.table && expected.table);
+      BOOST_CHECK(*actual.table == *expected.table);
+      BOOST_REQUIRE_EQUAL(bool(actual.row), bool(expected.row));
+      if (actual.row) {
+         BOOST_CHECK_EQUAL(actual.row->primary_key, expected.row->primary_key);
+         BOOST_CHECK(actual.row->key == expected.row->key); BOOST_CHECK(actual.row->payer == expected.row->payer);
+         // New private object IDs are deliberately not canonical IDs.
+         if (p != 19) BOOST_CHECK_EQUAL(actual.row->object_id, expected.row->object_id);
+      }
+   }
+   const auto result = state.seal();
+   BOOST_CHECK(!result.primary_only()); BOOST_CHECK_EQUAL(result.writes().size(), 12u);
+}
+
 struct trace_summary {
    std::vector<char> transaction_id;
    std::vector<char> receipt;
@@ -38,6 +203,34 @@ trace_summary summarize(const transaction_trace_ptr& trace) {
 } // namespace
 
 BOOST_AUTO_TEST_SUITE(parallel_serial_reference_tests)
+
+BOOST_AUTO_TEST_CASE(all_secondary_cursors_match_original_hosts_through_key_moves_payers_and_recreation) {
+   tester chain;
+   chain.create_accounts({"token"_n, "alice"_n});
+   const auto before = chain.control->calculate_integrity_hash();
+   signed_transaction trx;
+   action act; act.account = "token"_n; act.name = "probe"_n;
+   act.authorization = {{"alice"_n, config::active_name}};
+   trx.actions.push_back(act);
+   packed_transaction packed(trx, packed_transaction::compression_type::none);
+   platform_timer timer;
+   transaction_context transaction(*chain.control, packed, packed.id(), transaction_checktime_timer(timer),
+      action_digests_t::store_which_t::both, fc::time_point::now(), transaction_metadata::trx_type::input);
+   transaction.trace->action_traces.emplace_back(*transaction.trace, act, "token"_n, false, 1, 0, 0);
+   apply_context setup(*chain.control, transaction, 1), original(*chain.control, transaction, 1);
+   compare_secondary_cursor_with_original(original, original.idx64, setup.idx64,
+                                          {"token"_n, "alice"_n, "sec.a"_n});
+   compare_secondary_cursor_with_original(original, original.idx128, setup.idx128,
+                                          {"token"_n, "alice"_n, "sec.b"_n});
+   compare_secondary_cursor_with_original(original, original.idx256, setup.idx256,
+                                          {"token"_n, "alice"_n, "sec.c"_n});
+   compare_secondary_cursor_with_original(original, original.idx_double, setup.idx_double,
+                                          {"token"_n, "alice"_n, "sec.d"_n});
+   compare_secondary_cursor_with_original(original, original.idx_long_double, setup.idx_long_double,
+                                          {"token"_n, "alice"_n, "sec.e"_n});
+   transaction.undo();
+   BOOST_CHECK(chain.control->calculate_integrity_hash() == before);
+}
 
 // Exercise the original host implementation, not a second implementation of
 // its expected values. No WASM execution or parallel adoption is claimed here.

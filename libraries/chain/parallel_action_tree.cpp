@@ -14,7 +14,8 @@ fc::sha256 context_free_data_hash(const std::vector<std::vector<char>>& data) {
 }
 bool same_input(const isolated_action_input& a, const isolated_action_input& b) {
    return a.receiver == b.receiver && a.account == b.account && a.action == b.action &&
-      a.authorizations == b.authorizations && a.data == b.data && a.max_return_bytes == b.max_return_bytes;
+      a.authorizations == b.authorizations && a.data == b.data && a.max_return_bytes == b.max_return_bytes &&
+      same_isolated_environment(a.environment, b.environment);
 }
 bool same_action(const action& a, const action& b) {
    return a.account == b.account && a.name == b.name && a.authorization == b.authorization && a.data == b.data;
@@ -61,13 +62,14 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
        result.state.writes().size() > bounds.max_write_operations ||
        result.state.read_tables().size() > bounds.max_read_tables ||
        result.state.read_queries().size() > bounds.max_read_queries ||
+       result.state.secondary_read_queries().size() > bounds.max_read_queries - result.state.read_queries().size() ||
        result.state.read_accounts().size() > bounds.max_read_accounts) return false;
    struct entry { const isolated_receiver_program* program; fc::sha256 hash; };
    std::map<name, entry> catalog;
    size_t code_bytes = 0, data_bytes = 0, write_bytes = 0;
    for (const auto& program : programs) {
       check();
-      if (program.code.size() > 64 * 1024 ||
+      if (program.code.size() > isolated_wasm_limits::max_module_code_bytes ||
           program.code.size() > isolated_transaction_executor::max_total_code_bytes - code_bytes) return false;
       code_bytes += program.code.size();
       if (!program.receiver || !catalog.emplace(program.receiver, entry{&program,
@@ -78,7 +80,8 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
    for (size_t i = 0; i < roots.size(); ++i) {
       check();
       const auto& root = roots[i]; const auto& group = result.groups[i];
-      if (root.receiver != root.account || root.data.size() > 64 * 1024 ||
+      if (!same_isolated_environment(root.environment, roots.front().environment) ||
+          root.receiver != root.account || root.data.size() > 64 * 1024 ||
           root.data.size() > isolated_transaction_executor::max_total_action_bytes - data_bytes ||
           root.authorizations.size() > 64 || root.max_return_bytes > 4096 ||
           group.root_index != i || group.action_ordinal != i + 1 || group.creator_action_ordinal != 0 ||
@@ -90,12 +93,14 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
       fingerprints.push_back(isolated_execution_fingerprint(entry->second.hash, entry->second.program->limits, root));
    }
    if (isolated_action_tree_fingerprint(fingerprints, context) != result.root_fingerprint) return false;
-   for (const auto& write : result.state.writes()) {
+   for (const auto& mutation : result.state.writes()) {
       check();
-      if (write.value.size() > bounds.max_write_value_bytes - write_bytes) return false;
-      write_bytes += write.value.size();
+      const auto bytes = isolated_state_write_bytes(mutation);
+      if (bytes > bounds.max_write_value_bytes - write_bytes) return false;
+      write_bytes += bytes;
    }
    primary_state_overlay replay(result.state.base());
+   isolated_console_budget console_budget;
    size_t next_step = 0, next_group = roots.size(), next_write = 0, event_count = 0, inline_bytes = 0;
    uint32_t next_ordinal = roots.size() + 1;
    std::chrono::microseconds elapsed{};
@@ -104,6 +109,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
       check();
       const auto& group = result.groups[group_index];
       primary_overlay_cursor cursor(replay, group.input.receiver);
+      secondary_cursor_group secondary(replay, group.input.receiver);
       std::set<name> notified{group.input.receiver};
       std::vector<pending_receiver> pending{{group.input.receiver, group.action_ordinal,
          group.creator_action_ordinal, group.closest_unnotified_ancestor, group.sender}};
@@ -136,15 +142,23 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
          // A context-free step cannot read state, mutate cursors, schedule any
          // receiver/child, or use the context-aware action-return-value API.
          if (group.context_free && (!context.context_free_data || !group.input.authorizations.empty() ||
-               !step.events.empty() || !effects.recipients.empty() || !effects.return_value.empty() ||
+               !effects.recipients.empty() || !effects.return_value.empty() ||
                effects.writes_end != next_write)) return false;
          cursor.set_receiver_for_notification(step.receiver);
+         secondary.set_receiver_for_notification(step.receiver);
          size_t next_notification = 0;
          for (const auto& event : step.events) {
             // The owner checkpoint is OUTSIDE the local replay catch. Its
             // interrupt/deadline exception must not become a successful fallback.
             check();
             try {
+               if (const auto* nested = std::get_if<isolated_cursor_event>(&event)) {
+                  if (const auto* console = std::get_if<isolated_console_event>(nested)) {
+                     if (!console_budget.accept(*console, next_write, context.console_enabled)) return false;
+                     continue;
+                  }
+               }
+               if (group.context_free) return false; // printing is CF; all remaining journal events are not
                if (const auto* nested = std::get_if<isolated_cursor_event>(&event)) {
                   if (const auto* query = std::get_if<isolated_cursor_query>(nested)) {
                      using kind = isolated_cursor_query_kind;
@@ -170,7 +184,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
                      if (actual != query->result) return false;
                   } else if (const auto* write_event = std::get_if<isolated_cursor_write>(nested)) {
                      if (write_event->write_index != next_write || next_write >= effects.writes_end) return false;
-                     const auto& write = result.state.writes()[next_write++];
+                     const auto& write = result.state.primary_write(next_write++);
                      if (write.table.code != step.receiver) return false;
                      switch (write.operation) {
                         case primary_operation::store:
@@ -181,6 +195,9 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
                         case primary_operation::remove: cursor.remove(write_event->iterator); break;
                         default: return false;
                      }
+                  } else if (const auto* secondary_event = std::get_if<isolated_secondary_cursor_event>(nested)) {
+                     if (!replay_isolated_secondary_cursor_event(secondary, *secondary_event, result.state,
+                           next_write, effects.writes_end, false)) return false;
                   } else if (const auto* notify = std::get_if<isolated_cursor_notify>(nested)) {
                      if (notify->notification_index != next_notification || next_notification >= effects.recipients.size()) return false;
                      const auto& recipient = effects.recipients[next_notification++];
@@ -210,6 +227,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
                   isolated_action_input input;
                   input.receiver = input.account = decoded->decoded.account; input.action = decoded->decoded.name;
                   input.data = decoded->decoded.data; input.max_return_bytes = group.input.max_return_bytes;
+                  input.environment = group.input.environment;
                   for (const auto& p : decoded->decoded.authorization) input.authorizations.emplace_back(p.actor, p.permission);
                   if (!same_input(input, child.input)) return false;
                   (send->context_free ? context_free_children : children).push_back(next_group++); ++next_ordinal;
@@ -227,22 +245,7 @@ bool validate_isolated_action_tree_journal(const isolated_action_tree_result& re
    for (size_t i = 0; i < roots.size(); ++i) if (!replay_group(i)) return false;
    if (next_step != result.steps.size() || next_group != result.groups.size() || next_write != result.state.writes().size()) return false;
    const auto reconstructed = replay.seal();
-   if (reconstructed.writes().size() != result.state.writes().size()) return false;
-   for (size_t i = 0; i < reconstructed.writes().size(); ++i) {
-      check();
-      const auto& actual = reconstructed.writes()[i]; const auto& expected = result.state.writes()[i];
-      if (actual.table != expected.table || actual.primary_key != expected.primary_key || actual.payer != expected.payer ||
-          actual.value != expected.value || actual.operation != expected.operation ||
-          actual.object_id != expected.object_id || actual.table_object_id != expected.table_object_id) return false;
-   }
-   for (const auto& table : reconstructed.read_tables()) {
-      check(); if (!result.state.read_tables().contains(table)) return false;
-   }
-   for (const auto& query : reconstructed.read_queries()) {
-      check(); if (!result.state.read_queries().contains(query)) return false;
-   }
-   check();
-   return true;
+   return validate_isolated_replay_state(reconstructed, result.state, checkpoint);
 }
 
 } // namespace eosio::chain::experimental

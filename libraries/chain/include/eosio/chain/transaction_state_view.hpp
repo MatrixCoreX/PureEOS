@@ -97,6 +97,9 @@ struct state_view_unsupported_query : std::logic_error {
    state_view_unsupported_query() : std::logic_error("unsupported primary state query") {}
 };
 
+struct secondary_query;
+struct secondary_read_result;
+
 class transaction_state_view {
 public:
    virtual ~transaction_state_view() = default;
@@ -105,6 +108,9 @@ public:
    virtual primary_metadata_result locate_primary(const primary_query&) const = 0;
    virtual primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const = 0;
    virtual primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const = 0;
+   // Old/read-limited adapters must explicitly decline this capability. An
+   // unsupported secondary query is NEVER evidence that no row exists.
+   virtual secondary_read_result read_secondary(const secondary_query&) const;
 };
 
 // Live, serial adapter. The database must outlive the view, have the table and
@@ -125,8 +131,10 @@ public:
    primary_metadata_result locate_primary(const primary_query&) const override;
    primary_prefix_result read_primary_prefix(const primary_query&, size_t max_bytes) const override;
    primary_read_result read_primary(const primary_query&, size_t max_value_bytes) const override;
+   secondary_read_result read_secondary(const secondary_query&) const override;
 
 private:
+   friend class chainbase_secondary_state_view; // owner-affine same-database read adapter only
    void require_owner_thread() const;
    const chainbase::database& db_;
    const std::thread::id owner_;

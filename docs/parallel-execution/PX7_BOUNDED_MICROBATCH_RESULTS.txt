@@ -1,0 +1,58 @@
+PureEOS 有界微批：实现与功能验证
+日期：2026-10-20；分支feature/parallel-tx-execution；未发布，尚无此优化的TPS增益结论。
+
+为什么改
+云端全语料独立测试证明：设置12 worker并不意味着持续供给12份工作；入口立即
+post排空会产生大量单笔小批。同时存在状态发现重试、批屏障与owner按序提交成本。
+本次只先改入口，不宣称已解决后面几项；云端冻结9f6446a6结果不归入此新代码。
+
+改动
+1. plugins/producer_plugin/include/eosio/producer_plugin/incoming_transaction_batch.hpp：
+   新增纯策略：有意聚合等待最多2000us；距块截止不足5000us时不等待，
+   5000–7000us时缩短等待。并行准入为0时立即post，不浪费串行保留/退避窗口。
+2. plugins/producer_plugin/producer_plugin.cpp：
+   首笔安排steady_timer，后续到达不延长；达到配置批量立即处理，仍受64笔/4MiB限制。
+   定时器线程只post到owner，不读链状态；两跳都检查generation，取消前先失效。
+   使用weak_ptr，避免停机后的计时器操作持有插件形成环；回调消费一次机制保留。
+   排空在所有权转移的try块之外，避免异常时再次分发已经移动的entry。
+   新增timed_arms/timer_drains/target_drains/immediate_posts/cancel_failures诊断。
+   2ms是有意等待窗口，不是含owner排队延迟在内的端到端实时保证。
+3. 当前Asio已移除cancel(error_code)重载，首次完整编译因此失败。改用cancel()，
+   noexcept取消路径捕获失败并计数；generation已经失效，所以旧回调不能消费新批。
+4. tests与CMake：新增策略边界、真实Asio取消、已post后失效、满批排空后重新arm
+   回归，沿用重复/过期/失败/重入/ACK与反复abort的真实生产者测试。
+
+功能验证（当前源码）
+本地Ubuntu26.04.1，GCC15.2.0、CMake4.2.3、Release/JIT：
+* 队列/策略9项、generation/真实Asio9项，各重复三轮全部通过。
+* 真实生产者3项/23057断言通过：两组各4242次提交，每个请求的callback与ACK
+  各一次，含重复tx ID、过期、坏签名、动作失败与反复abort；原生Savanna
+  单节点出块、最终确认、无peer重启通过。这不是第三方WASM高压吞吐验收。
+* 并行native组实际staged2668、drains85、target_drains83、timer_drains1，
+  timed_arms58、immediate_posts27、cancel_failures0。它们是调度分发统计，
+  不是唯一交易采纳数量，更不是TPS；不能与云端不同负载直接作速度对照。
+* 新构建入口/保护和性能工具Python回归共68项通过。
+* 两个受保护原nodeos程序摘要检查通过，未替换原程序或改动手动测试链。
+
+Ubuntu26.10隔离用户态补测：
+* GCC15.3.0/CMake4.3.4从源码配置项目并构建上述两组件，18项测试通过。
+* 同一新生产插件集成程序在26.10中再次跑3项，全部通过。
+* 完整系统适配范围与CDT检查见docs/ubuntu/UBUNTU_MODERN_RESULTS.txt。
+
+证据
+build/local-tests/parallel-microbatch-20261020-v1/checks/report.json，含冻结源码与二进制摘要。
+同目录保留构建、各三轮单元、真实生产者及原程序校验日志。
+build/local-tests/ubuntu-modern-20261020-v1/保存独立26.10组件/运行检查。
+首次完整构建失败及修复不被当成通过；最终checks/report.json仅对应修复后源码。
+
+没有做/不能声称
+没有改变正式CPU/NET计费、资源额度、50ms生产准备保护、共识、节点治理或奖励。
+没有缓存过期余额、开放worker并发写canonical数据库或取消授权检查。
+尚未做新微批版本的多轮持续负载TPS对照、全节点sanitizer与完整发布验收。
+状态访问预取/提示、减少重复快照/分配与owner有序提交成本仍是后续重点。
+原Vultr测试服务器已在报告与完整备份校验后删除，不会自动重新购买。
+
+完整实验节点已构建通过：pureeos-parallel-nodeos，Release/JIT，
+SHA256 5092013974d1c0a5b511d25c2271a8d98b216e70644ee317fc931896aa8cd080。
+路径为/run/media/guagua/新加卷/pureeos-release-reboot-20261017-J9fami/programs/nodeos/。
+本机及26.10用户态版本检查、26.10帮助/并行参数检查通过；不是新版本TPS验收。

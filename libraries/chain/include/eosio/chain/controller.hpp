@@ -11,6 +11,7 @@
 #include <eosio/chain/vote_message.hpp>
 #include <eosio/chain/finalizer.hpp>
 #include <eosio/chain/peer_keys_db.hpp>
+#include <eosio/chain/parallel_execution_runtime.hpp>
 
 #include <chainbase/pinnable_mapped_file.hpp>
 
@@ -143,11 +144,12 @@ namespace eosio::chain {
             uint32_t                 sig_cpu_bill_pct       =  chain::config::default_sig_cpu_bill_pct;
             uint16_t                 chain_thread_pool_size =  chain::config::default_controller_thread_pool_size;
             uint16_t                 vote_thread_pool_size  =  0;
-            // Local, default-off restricted interpreter experiment. No new wire
+            // Local, default-off restricted execution. No new wire
             // format or consensus parameters; unsupported work stays serial.
             uint16_t                 parallel_validation_threads = 0;
             uint16_t                 parallel_validation_batch_size = 8;
             bool                     parallel_production_enabled = false;
+            experimental::isolated_vm_engine parallel_engine = experimental::isolated_vm_engine::interpreter;
             flat_set<digest_type>    parallel_code_allowlist;
             bool                     read_only              =  false;
             bool                     force_all_checks       =  false;
@@ -163,6 +165,14 @@ namespace eosio::chain {
             bool                     integrity_hash_on_stop = false;
 
             wasm_interface::vm_type  wasm_runtime = chain::config::default_wasm_runtime;
+            // Keep the fallback/oracle and isolated path on the same engine.
+            // This is a local admission policy, not a consensus parameter.
+            bool parallel_vm_matches() const noexcept {
+               return (parallel_engine == experimental::isolated_vm_engine::interpreter &&
+                       wasm_runtime == wasm_interface::vm_type::eos_vm) ||
+                      (parallel_engine == experimental::isolated_vm_engine::jit &&
+                       wasm_runtime == wasm_interface::vm_type::eos_vm_jit);
+            }
             eosvmoc::config          eosvmoc_config;
             wasm_interface::vm_oc_enable eosvmoc_tierup     = wasm_interface::vm_oc_enable::oc_auto;
             flat_set<account_name>   eos_vm_oc_whitelist_suffixes;
@@ -236,11 +246,27 @@ namespace eosio::chain {
             // which counts transactions routed by an already prepared batch.
             uint64_t preparation_deadlines = 0, preparation_budget_fallbacks = 0, preparation_other_fallbacks = 0;
             uint64_t worker_deadlines = 0, worker_vm_timeouts = 0, worker_other_failures = 0;
+            // Successful slots ONLY in the final prepared batch returned to
+            // the owner. Unlike succeeded, excludes discarded discovery rounds;
+            // it does not imply adoption, current dependencies or authorization.
+            uint64_t prepared_successes = 0;
+            // Batches ending at the bounded discovery-round limit, not timeouts.
+            uint64_t discovery_exhaustions = 0;
+            // Owner requests to refresh the current conflicting slot, including
+            // requests refused by the remaining shared budget. Success means a
+            // new private result, NOT authorization or canonical adoption. Real
+            // worker executions continue to be counted only in attempts.
+            uint64_t prefix_refresh_requests = 0, prefix_refresh_successes = 0;
          };
          // Serial owner only; local diagnostics, never serialized into state.
          parallel_execution_stats get_parallel_execution_stats() const;
          parallel_execution_stats get_parallel_production_stats() const;
          uint16_t get_parallel_production_batch_size() const;
+         // Owner-only local recommendation for this queue head and remaining
+         // window. Re-query after each batch; zero means original serial path.
+         // The no-argument overload above remains the configured upper bound.
+         uint16_t get_parallel_production_batch_size(const transaction_metadata_ptr& head,
+            fc::time_point block_deadline) const;
          // Synchronous owner-only scope. The callback retains original queue,
          // push/receipt/resource and RPC handling. False stops without calling
          // later entries; return value counts callbacks, never accepted trxs.

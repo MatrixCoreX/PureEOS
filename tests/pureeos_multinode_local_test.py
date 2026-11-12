@@ -345,8 +345,10 @@ class MultiNodeTest(LocalTest):
             self.setup(register_candidates=False)
             self.tests()
             self.report["status"] = "passed"
-        except Exception as error:
+        except (Exception, KeyboardInterrupt) as error:
             self.report["status"], self.report["error"] = "failed", self.redact(str(error))
+            if isinstance(error, KeyboardInterrupt):
+                self.report["status"] = "interrupted"
             if isinstance(error, urllib.error.HTTPError):
                 self.report["error"] += ": " + self.redact(error.read().decode(errors="replace"))
             self.report["traceback"] = self.redact(traceback.format_exc())
