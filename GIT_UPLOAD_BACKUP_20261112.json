@@ -1,0 +1,22 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+  "original_head": "d126cae28057edfcd0e2eb84654afd8efd6da257",
+  "original_branch": "development/baseline-20261030",
+  "original_index_SHA256": "6c91919a975f7277ac55ec97e0b0ffa3df7e5f007c633853553d5da7b247aab7",
+  "excluded_runtime": [],
+  "source_files": [
+    {
+      "path": "docs/plans/aic-system-namespace-change-plan-20261031.md",
+      "SHA256": "4f7138afb2298422e5b8cc980fc25f84c0945e860f521d6ac765dabee08a8664",
+      "bytes": 27335
+    },
+    {
+      "path": "docs/plans/short-name-leasing-plan-20261031.md",
+      "SHA256": "29dd2e84c314e997248c9a15cee4b96b3f4f96b1a58f54a0dba15342bf619a68",
+      "bytes": 9231
+    }
+  ],
+  "submodule_backup_bindings": [],
+  "created_UTC": "2026-11-12T09:59:11.226649+00:00"
+}
