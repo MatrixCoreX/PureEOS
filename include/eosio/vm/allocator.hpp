@@ -351,12 +351,18 @@ namespace eosio { namespace vm {
          if constexpr (IsJit) {
             auto & jit_alloc = jit_allocator::instance();
             void * executable_code = jit_alloc.alloc(_code_size);
+            bool published = false;
+            scope_guard release_failed_code{[&] {
+               if (!published) jit_alloc.free(executable_code);
+            }};
             int err = mprotect(executable_code, _code_size, PROT_READ | PROT_WRITE);
             EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "mprotect failed");
             std::memcpy(executable_code, _code_base, _code_size);
+            err = mprotect(executable_code, _code_size, PROT_EXEC);
+            EOS_VM_ASSERT(err == 0, wasm_bad_alloc, "executable mprotect failed");
             _code_base = (char*)executable_code;
-            enable_code(IsJit);
             _is_jit = true;
+            published = true;
             _offset = (char*)code_base - _base;
          }
       }

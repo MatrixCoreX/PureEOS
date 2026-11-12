@@ -1,0 +1,27 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/PureEOS/libraries/eos-vm",
+  "original_head": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+  "original_branch": "pureeos/native-nested-vm-guards-20261012",
+  "original_index_SHA256": "c4534c9994161ce781c5cdee4ccda412ebc4af874996e931d7cc744488ecf490",
+  "excluded_runtime": [],
+  "source_files": [
+    {
+      "path": "include/eosio/vm/allocator.hpp",
+      "SHA256": "568b79d428a2ae12eaf64c4a89f74bb168044057f194308034f8b42207bb7cef",
+      "bytes": 21954
+    },
+    {
+      "path": "include/eosio/vm/parser.hpp",
+      "SHA256": "9a33cfc5e1a9042df49e9a4e4a0d517fe6d9178d9739503883977ab959544d40",
+      "bytes": 70375
+    },
+    {
+      "path": "include/eosio/vm/x86_64.hpp",
+      "SHA256": "ccbd6877ed08f80e59057424823243ae5bf829adbba7cb1d57d16d117bc31fc5",
+      "bytes": 97863
+    }
+  ],
+  "submodule_backup_bindings": [],
+  "created_UTC": "2026-11-12T09:58:35.788519+00:00"
+}
