@@ -2,6 +2,8 @@
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/transaction_context.hpp>
 #include <eosio/chain/parallel_action_tree.hpp>
+#include <eosio/chain/parallel_sync_call.hpp>
+#include <eosio/chain/parallel_mixed_tree.hpp>
 #include <eosio/chain/authorization_manager.hpp>
 #include <eosio/chain/exceptions.hpp>
 #include <eosio/chain/resource_limits.hpp>
@@ -72,6 +74,9 @@ namespace eosio::chain {
       parallel_sync_result = nullptr;
       parallel_sync_input = nullptr;
       parallel_sync_replay_guard = nullptr;
+      parallel_mixed_result = nullptr;
+      parallel_mixed_input = nullptr;
+      parallel_mixed_replay_guard = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -497,6 +502,9 @@ namespace eosio::chain {
       parallel_sync_result = nullptr;
       parallel_sync_input = nullptr;
       parallel_sync_replay_guard = nullptr;
+      parallel_mixed_result = nullptr;
+      parallel_mixed_input = nullptr;
+      parallel_mixed_replay_guard = nullptr;
       parallel_action_limits = nullptr;
       parallel_transaction_elapsed.reset();
       parallel_next_action = 0;
@@ -601,9 +609,13 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() &&
                  !is_implicit() && !is_scheduled() && action_ordinal > 0 &&
                  !parallel_notification_result && !parallel_tree_result && isolated_cpu_notification_steps == 0 &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
                  ((!parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard) ||
-                  (parallel_sync_result && parallel_sync_input && parallel_sync_replay_guard && action_ordinal == 1 &&
-                   packed_trx.get_transaction().actions.size() == 1)) &&
+                  (parallel_sync_result && parallel_sync_input && parallel_sync_replay_guard && !parallel_transaction_result &&
+                   parallel_next_action < parallel_sync_result->roots.size() &&
+                   parallel_sync_result->roots.size() == packed_trx.get_transaction().actions.size() &&
+                   parallel_sync_input->roots.size() == parallel_sync_result->roots.size() &&
+                   action_ordinal == parallel_next_action + 1)) &&
                  action_ordinal == isolated_cpu_last_action_ordinal + 1 &&
                  action_ordinal <= packed_trx.get_transaction().actions.size() &&
                  elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
@@ -619,6 +631,7 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
                  parallel_notification_result && !parallel_tree_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
                  !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_notification_result->steps.size() && action_ordinal > 0 &&
                  parallel_notification_result->steps[step_index].action_ordinal == action_ordinal &&
@@ -636,6 +649,7 @@ namespace eosio::chain {
       EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
                  parallel_tree_result && !parallel_notification_result && !parallel_transaction_result && isolated_cpu_last_action_ordinal == 0 &&
                  !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 !parallel_mixed_result && !parallel_mixed_input && !parallel_mixed_replay_guard &&
                  step_index == parallel_next_receiver && step_index == isolated_cpu_notification_steps &&
                  step_index < parallel_tree_result->steps.size() && action_ordinal > 0 &&
                  parallel_tree_result->steps[step_index].action_ordinal == action_ordinal &&
@@ -645,6 +659,34 @@ namespace eosio::chain {
                  transaction_exception, "invalid isolated tree CPU charge");
       checktime();
       ++isolated_cpu_notification_steps; // shared receiver-order guard forbids changing modes mid-transaction
+      apply_isolated_cpu_charge(elapsed);
+   }
+
+   void transaction_context::charge_isolated_mixed_cpu(fc::microseconds elapsed, size_t step_index,
+                                                      uint32_t action_ordinal) {
+      EOS_ASSERT(is_initialized && !explicit_billed_cpu_time && !is_transient() && !is_implicit() && !is_scheduled() &&
+                 parallel_mixed_result && parallel_mixed_input && parallel_mixed_replay_guard &&
+                 !parallel_tree_result && !parallel_notification_result && !parallel_transaction_result &&
+                 !parallel_sync_result && !parallel_sync_input && !parallel_sync_replay_guard &&
+                 isolated_cpu_last_action_ordinal == 0 && step_index == parallel_next_receiver &&
+                 step_index == isolated_cpu_notification_steps && step_index < parallel_mixed_result->steps.size() &&
+                 action_ordinal > 0 && parallel_mixed_result->steps[step_index].action_ordinal == action_ordinal &&
+                 elapsed.count() >= 0 && elapsed <= fc::seconds(1) - isolated_cpu_charge &&
+                 pseudo_start.time_since_epoch() >= elapsed,
+                 transaction_exception, "invalid isolated mixed CPU charge");
+      const auto& step = parallel_mixed_result->steps[step_index];
+      auto expected = fc::microseconds(step.effects.elapsed.count());
+      EOS_ASSERT(expected.count() >= 0 && expected <= fc::milliseconds(500), transaction_exception,
+                 "invalid isolated mixed ordinary CPU");
+      for (const auto& call : step.calls) {
+         const auto cpu = fc::microseconds(call.exclusive_elapsed.count());
+         EOS_ASSERT(cpu.count() >= 0 && cpu <= fc::milliseconds(500) - expected, transaction_exception,
+                    "invalid isolated mixed child CPU");
+         expected += cpu;
+      }
+      EOS_ASSERT(expected == elapsed, transaction_exception, "isolated mixed CPU sum mismatch");
+      checktime();
+      ++isolated_cpu_notification_steps;
       apply_isolated_cpu_charge(elapsed);
    }
 

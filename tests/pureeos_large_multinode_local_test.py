@@ -47,7 +47,7 @@ class LargeMultiNodeTest(MultiNodeTest):
             # Production-clock admission can take over an hour without wallet
             # traffic. This private disposable test wallet must remain usable
             # for the late fault/re-registration actions; it exits with the test.
-            command = [*command, "--unlock-timeout", "14400"]
+            command = [*command, "--unlock-timeout", str(getattr(self, "wallet_unlock_seconds", 14400))]
         if command[0] == str(self.nodeos):
             command = list(command)
             position = command.index("--data-dir") + 1
@@ -56,6 +56,7 @@ class LargeMultiNodeTest(MultiNodeTest):
             # Only these disposable RAM-filesystem chains use a 1 GiB reserve.
             # Existing/manual node settings and consensus CPU limits are untouched.
             options = {"--resource-monitor-space-absolute-gb": "1", "--p2p-max-nodes-per-host": "64",
+                       "--max-clients": "128",
                        "--chain-threads": "1", "--http-threads": "1", "--net-threads": "1",
                        "--vote-threads": "1", "--http-max-response-time-ms": "200",
                        "--abi-serializer-max-time-ms": "200"}

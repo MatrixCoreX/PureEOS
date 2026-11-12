@@ -1,4 +1,4 @@
-# Helios
+# PureEOS / Helios
 
 1. [Branches](#branches)
 2. [Supported Operating Systems](#supported-operating-systems)
@@ -12,8 +12,21 @@ Helios is a C++ implementation of the [PureEOS](https://github.com/PureEOSIO) pr
 The `main` branch is the development branch; do not use it for production. Refer to the [release page](https://github.com/PureEOSIO/helios/releases) for current information on releases, pre-releases, and obsolete releases, as well as the corresponding tags for those releases.
 
 ## Supported Operating Systems
-We currently support the following operating systems.
-- Ubuntu 22.04 Jammy
+The new-chain parallel JIT profile targets **Ubuntu 26.04 LTS and Ubuntu 26.10, x86_64**.
+Support and verification are scoped as follows (2026-10-20):
+
+| Platform | Profile | Verification |
+|---|---|---|
+| Ubuntu 26.04 LTS | Primary native build / JIT | Full native Release node and producer-plugin builds; queue, timer, producer and Savanna restart checks passed. |
+| Ubuntu 26.10 | Current interim release / JIT | Fresh full-node Release source build and 8 CLI checks passed; earlier component, producer-plugin userland and CDT 4.1.1 compilation checks also passed. Current tools/full integration, staging and package CI are still pending. |
+
+See the [modern Ubuntu verification report](docs/ubuntu/UBUNTU_MODERN_RESULTS.txt) for exact tools,
+test scope and remaining gaps. The 26.10 container tests share the host kernel; they do not certify
+a fresh 26.10 kernel installation. Existing Ubuntu 22.04 CI and Ubuntu 24.04 cloud results remain
+historical references, not substitutes for testing this new profile. No new release package is implied.
+
+Ubuntu 26.10 is the current interim release according to the [official release announcement](https://lists.ubuntu.com/archives/ubuntu-announce/2026-October/000330.html);
+26.04 is the current [LTS series](https://documentation.ubuntu.com/release-notes/26.04/).
 
 Other Unix derivatives such as macOS are tended to on a best-effort basis and may not be full featured. If you aren't using Ubuntu, please visit the "[Build Unsupported OS](./docs/00_install/01_build-from-source/00_build-unsupported-os.md)" page to explore your options.
 
@@ -50,15 +63,29 @@ You will need to build on a [supported operating system](#supported-operating-sy
 
 Requirements to build:
 - C++20 compiler and standard library
-- CMake 3.16+
-- LLVM 7 - 11 - for Linux only
-  - newer versions do not work
+- CMake 3.21+
+- Modern Ubuntu JIT profile: no separate LLVM development package is required.
+  - The optional `eos-vm-oc` backend still requires LLVM 7–11 and is disabled in this profile.
+  - Installing a newer LLVM does not make that backend supported.
 - libcurl 7.40.0+
 - git
 - GMP
 - Python 3
 - python3-numpy
 - zlib
+
+For an isolated modern Ubuntu build, use:
+
+```bash
+bash tools/ubuntu-modern-build.sh --check
+bash tools/ubuntu-modern-build.sh --build --jobs=2
+bash tools/ubuntu-modern-build.sh --test --jobs=2
+```
+
+The script uses a separate build directory and the executable name `pureeos-ubuntu-nodeos`,
+refuses unrelated existing build caches, and does not install packages or replace CDT.
+It uses Ninja when available, otherwise Make. `--test` runs targeted functional checks, not full
+release or TPS acceptance. Parallel execution still requires its explicit runtime configuration.
 
 ### Step 1 - Clone
 If you don't have the Helios repo cloned to your computer yet, [open a terminal](https://itsfoss.com/open-terminal-ubuntu) and navigate to the folder where you want to clone the Helios repository:
@@ -129,7 +156,9 @@ sudo apt-get install -y \
         git \
         libcurl4-openssl-dev \
         libgmp-dev \
-        llvm-11-dev \
+        ninja-build \
+        pkg-config \
+        python3-venv \
         python3-numpy \
         file \
         zlib1g-dev
@@ -140,7 +169,7 @@ To build, make sure you are in the root of the `helios` repo, then run the follo
 mkdir -p build
 cd build
 
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/lib/llvm-11 ..
+cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OC=OFF ..
 
 make -j "$(nproc)" package
 ```

@@ -110,7 +110,8 @@ def run(args):
     journal = Journal(args.evidence)
     stop_observer = threading.Event()
     fatal_collection_error = threading.Event()
-    observer = Observer(args.endpoint, args.chain_id, journal, args.timeout)
+    observer = Observer(getattr(args, "observer_endpoint", None) or args.endpoint,
+                        args.chain_id, journal, args.timeout)
     executor = None
     thread = None
     inflight = threading.BoundedSemaphore(args.inflight)

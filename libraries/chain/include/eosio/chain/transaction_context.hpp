@@ -7,11 +7,16 @@ namespace eosio::benchmark {
    struct interface_in_benchmark; // for benchmark testing
 }
 
+namespace eosio::testing {
+   struct mixed_adoption_test_access; // defined only in the mixed boundary test TU
+}
+
 namespace eosio::chain {
 
    namespace experimental {
       struct isolated_transaction_result; struct isolated_notification_result; struct isolated_action_tree_result;
-      struct isolated_wasm_limits; struct isolated_sync_result; struct isolated_sync_job; class isolated_sync_replay;
+      struct isolated_wasm_limits; struct isolated_sync_transaction_result; struct isolated_sync_transaction_job; class isolated_sync_replay;
+      struct isolated_mixed_tree_result; struct isolated_mixed_tree_job; class isolated_mixed_replay;
    }
 
    struct transaction_checktime_timer {
@@ -191,6 +196,7 @@ namespace eosio::chain {
          // to the controller-owned receiver step and consume that step once.
          void charge_isolated_notification_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          void charge_isolated_tree_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
+         void charge_isolated_mixed_cpu(fc::microseconds elapsed, size_t step_index, uint32_t action_ordinal);
          fc::microseconds isolated_cpu_charged() const { return isolated_cpu_charge; }
 
          std::tuple<int64_t, int64_t, bool, bool> max_bandwidth_billed_accounts_can_pay( bool force_elastic_limits = false )const;
@@ -212,6 +218,8 @@ namespace eosio::chain {
          friend struct controller_impl;
          friend class apply_context;
          friend class experimental::isolated_sync_replay;
+         friend class experimental::isolated_mixed_replay;
+         friend struct eosio::testing::mixed_adoption_test_access;
          friend struct benchmark::interface_in_benchmark; // defined in benchmark/bls.cpp
 
          // Non-owning, ordered capability supplied only by the serial
@@ -219,11 +227,14 @@ namespace eosio::chain {
          const experimental::isolated_transaction_result* parallel_transaction_result = nullptr;
          const experimental::isolated_notification_result* parallel_notification_result = nullptr;
          const experimental::isolated_action_tree_result* parallel_tree_result = nullptr;
-         const experimental::isolated_sync_result* parallel_sync_result = nullptr;
-         const experimental::isolated_sync_job* parallel_sync_input = nullptr;
+         const experimental::isolated_sync_transaction_result* parallel_sync_result = nullptr;
+         const experimental::isolated_sync_transaction_job* parallel_sync_input = nullptr;
          // Only a successfully preflighted, stack-owned root replay can arm
          // this capability. The host's child hook cannot install or retain it.
          experimental::isolated_sync_replay* parallel_sync_replay_guard = nullptr;
+         const experimental::isolated_mixed_tree_result* parallel_mixed_result = nullptr;
+         const experimental::isolated_mixed_tree_job* parallel_mixed_input = nullptr;
+         experimental::isolated_mixed_replay* parallel_mixed_replay_guard = nullptr;
          const experimental::isolated_wasm_limits* parallel_action_limits = nullptr;
          std::optional<fc::microseconds> parallel_transaction_elapsed;
          size_t parallel_next_action = 0;

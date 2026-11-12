@@ -33,23 +33,40 @@ class ScannerTests(unittest.TestCase):
         allowlist = tests.split("const std::set<std::string_view> supported{", 1)[1].split("};", 1)[0]
         expected = set(re.findall(r'"(\w+)"', allowlist))
         self.assertEqual(supported, expected)
-        self.assertEqual(len(supported), 27)
+        self.assertEqual(len(supported), 88)
         fallback = set(re.findall(r'^\s+ISOLATED_FALLBACK\((\w+)\);$', implementation, re.MULTILINE))
         fallback_list = tests.split("const std::set<std::string_view> fallback_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(fallback, set(re.findall(r'"(\w+)"', fallback_list)))
-        self.assertEqual(len(fallback), 6)
+        self.assertEqual(len(fallback), 4)
         tree = set(re.findall(r'^\s+ISOLATED_TREE_HOST\((\w+)\);', implementation, re.MULTILINE))
         tree_list = tests.split("const std::set<std::string_view> tree_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(tree, set(re.findall(r'"(\w+)"', tree_list)))
-        self.assertEqual(tree, {"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data"})
+        self.assertEqual(tree, {"send_inline", "get_sender", "send_context_free_inline", "get_context_free_data",
+            "prints", "prints_l", "printi", "printui", "printi128", "printui128", "printsf", "printdf",
+            "printqf", "printn", "printhex"})
         sync = set(re.findall(r'^\s+ISOLATED_SYNC_HOST\((\w+)\);', implementation, re.MULTILINE))
         sync_list = tests.split("const std::set<std::string_view> sync_only{", 1)[1].split("};", 1)[0]
         self.assertEqual(sync, set(re.findall(r'"(\w+)"', sync_list)))
         self.assertEqual(sync, {"call", "get_call_return_value", "get_call_data", "set_call_return_value"})
+        secondary = set(re.findall(r'^\s+ISOLATED_SECONDARY_HOST\((\w+)\);', implementation, re.MULTILINE))
+        secondary_list = tests.split("const std::set<std::string_view> secondary_only{", 1)[1].split("};", 1)[0]
+        self.assertEqual(secondary, set(re.findall(r'"(\w+)"', secondary_list)))
+        self.assertEqual(secondary, {"db_" + family + "_" + operation
+            for family in ("idx64", "idx128", "idx256", "idx_double", "idx_long_double")
+            for operation in ("store", "update", "remove", "find_primary", "find_secondary",
+                              "lowerbound", "upperbound", "end", "next", "previous")})
+        self.assertFalse(secondary & (supported | fallback | tree | sync))
+        self.assertTrue(secondary <= production)
         self.assertFalse(sync & (supported | fallback | tree))
         self.assertFalse(supported & fallback)
         self.assertFalse(tree & (supported | fallback))
         self.assertTrue((supported | fallback | tree | sync) <= production)
+        # Fail the cheap source audit if a newly supported host is omitted from
+        # the executable denied-import fixture's explicit remainder count.
+        denied_count = re.search(r'BOOST_CHECK_EQUAL\(rejected, (\d+)u\);', tests)
+        self.assertIsNotNone(denied_count)
+        self.assertEqual(int(denied_count.group(1)),
+                         len(production - (supported | fallback | tree | sync | secondary)))
         # Every link-only host also has a correctly typed executable fixture;
         # simply excluding its name from the denied-import loop is not enough.
         stub_cases = tests.split("const std::array fallback_imports{", 1)[1].split("\n};", 1)[0]
