@@ -312,6 +312,8 @@ namespace eosio { namespace vm {
 
       template <typename... Args>
       inline std::optional<operand_stack_elem> execute(host_type* host, jit_visitor, uint32_t func_index, Args&&... args) {
+         EOS_VM_ASSERT(uint64_t(func_index) < uint64_t(_mod->jit_mod->get_imported_functions_size()) + _mod->jit_mod->functions.size(),
+                       wasm_interpreter_exception, "cannot execute function, function index out of range");
          auto saved_host = _host;
          auto saved_os_size = get_operand_stack().size();
          auto g = scope_guard([&](){ _host = saved_host; get_operand_stack().eat(saved_os_size); });
@@ -769,8 +771,8 @@ namespace eosio { namespace vm {
 
       template <typename Visitor, typename... Args>
       inline std::optional<operand_stack_elem> execute(host_type* host, Visitor&& visitor, uint32_t func_index, Args&&... args) {
-         EOS_VM_ASSERT(func_index < std::numeric_limits<uint32_t>::max(), wasm_interpreter_exception,
-                       "cannot execute function, function not found");
+         EOS_VM_ASSERT(uint64_t(func_index) < uint64_t(_mod->get_imported_functions_size()) + _mod->functions.size(),
+                       wasm_interpreter_exception, "cannot execute function, function index out of range");
 
          auto last_last_op_index = _last_op_index;
 

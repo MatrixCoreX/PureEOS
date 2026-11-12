@@ -1331,6 +1331,8 @@ namespace eosio { namespace vm {
             code_writer.finalize(fb);
          }
          imap.on_code_end(code_writer.get_addr(), code.raw());
+         if constexpr (requires { code_writer.finish_code(); })
+            code_writer.finish_code();
       }
 
       template <uint8_t id>
