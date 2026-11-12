@@ -135,6 +135,7 @@ namespace eosio { namespace vm {
       guarded_vector<local_entry> locals;
       opcode*                     code;
       std::size_t                 jit_code_offset;
+      uint64_t                    execution_entry_work = 0;
    };
 
    struct data_segment {
@@ -184,6 +185,8 @@ namespace eosio { namespace vm {
       guarded_vector<uint32_t> type_aliases     = { allocator, 0 };
       guarded_vector<uint32_t> fast_functions   = { allocator, 0 };
       uint64_t                 maximum_stack    = 0;
+      bool                     execution_work_metered = false;
+      uint64_t                 execution_work_data_bytes = 0;
       // If non-null, indicates that the parser encountered an error
       // that would prevent successful instantiation.  Must refer
       // to memory with static storage duration.
@@ -196,6 +199,8 @@ namespace eosio { namespace vm {
       // are redefined by std::vector in jit_mod_t.
       // This is to make it possible parsing WASM only once for JIT.
       struct jit_mod_t {
+         bool execution_work_metered = false;
+         uint64_t execution_work_data_bytes = 0;
          struct jit_func_type {
             value_type                 form;
             std::vector<value_type>    param_types;
@@ -252,6 +257,8 @@ namespace eosio { namespace vm {
       // Called from backend::construct() after parsing is finalized.
       void make_jit_module() {
          jit_mod = std::make_unique<jit_mod_t>();
+         jit_mod->execution_work_metered = execution_work_metered;
+         jit_mod->execution_work_data_bytes = execution_work_data_bytes;
 
          if (auto types_size = types.size(); types_size > 0) {
             jit_mod->types.reserve(types_size);

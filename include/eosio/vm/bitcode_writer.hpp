@@ -25,6 +25,9 @@ namespace eosio { namespace vm {
          fb(alloc, source_bytes),
          _mod(&mod) {}
       ~bitcode_writer() { _allocator.end_code<false>(_code_segment_base); }
+      void set_execution_work_checkpoints(bool enabled) { _work_checkpoints = enabled; }
+      uint64_t* emit_execution_work_block() { return &append_instr(execution_work_t{}).units; }
+      void set_execution_work_block_units(uint64_t* patch, uint64_t units) { *patch = units; }
       void emit_unreachable() { fb[op_index++] = unreachable_t{}; };
       void emit_nop() { fb[op_index++] = nop_t{}; }
       uint32_t emit_end() { return op_index; }
@@ -32,7 +35,11 @@ namespace eosio { namespace vm {
          return emit_br(depth_change);
       }
       void emit_block() {}
-      uint32_t emit_loop() { return op_index; }
+      uint32_t emit_loop() {
+         const auto target = op_index;
+         if (_work_checkpoints) append_instr(execution_work_t{1});
+         return target;
+      }
       uint32_t* emit_if() { 
          if_t& instr = append_instr(if_t{});
          return &instr.pc;
@@ -283,7 +290,13 @@ namespace eosio { namespace vm {
       void emit_prologue(const func_type& ft, const guarded_vector<local_entry>&, uint32_t idx) {
          op_index = 0;
          // pre-allocate for the function body code, so we have a big blob of memory to work with during function code parsing
-         fb = guarded_vector<opcode>{_allocator, _mod->code[idx].size };
+         const uint64_t capacity = _work_checkpoints ? uint64_t(_mod->code[idx].size) * 2 + 2
+                                                    : _mod->code[idx].size;
+         EOS_VM_ASSERT(capacity <= UINT32_MAX && _base_offset <= UINT32_MAX - capacity,
+                       wasm_parse_exception, "instrumented code exceeds PC range");
+         fb = guarded_vector<opcode>{_allocator, static_cast<std::size_t>(capacity)};
+         // Function entry/local work is charged by setup_locals BEFORE its
+         // operand allocation. Loop entry still uses its own checkpoint.
       }
      void emit_epilogue(const func_type& ft, const guarded_vector<local_entry>& locals, uint32_t idx) {
          fb.resize(op_index + 1);
@@ -313,6 +326,7 @@ namespace eosio { namespace vm {
       guarded_vector<opcode> fb;
       module* _mod;
       std::size_t _base_offset = 0;
+      bool _work_checkpoints = false;
    };
 
 }}

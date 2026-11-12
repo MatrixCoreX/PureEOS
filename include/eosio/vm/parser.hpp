@@ -10,6 +10,7 @@
 #include <eosio/vm/utils.hpp>
 #include <eosio/vm/vector.hpp>
 #include <eosio/vm/debug_info.hpp>
+#include <eosio/vm/work_instrumentation.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -302,6 +303,8 @@ namespace eosio { namespace vm {
 
       void parse_module(wasm_code_ptr& code_ptr, size_t sz, module& mod, DebugInfo& debug) {
          _mod = &mod;
+         if constexpr (requires { _options.enable_execution_work_checkpoints; })
+            mod.execution_work_metered = _options.enable_execution_work_checkpoints;
          EOS_VM_ASSERT(parse_magic(code_ptr) == constants::magic, wasm_parse_exception, "magic number did not match");
          EOS_VM_ASSERT(parse_version(code_ptr) == constants::version, wasm_parse_exception,
                        "version number did not match");
@@ -344,6 +347,16 @@ namespace eosio { namespace vm {
             }
          }
          EOS_VM_ASSERT(_mod->code.size() == _mod->functions.size(), wasm_parse_exception, "code section must have the same size as the function section" );
+
+         mod.execution_work_data_bytes = 0;
+         if (mod.execution_work_metered) {
+            for (uint32_t i=0;i<mod.data.size();++i) {
+               const auto& segment=mod.data[i];
+               EOS_VM_ASSERT(segment.data.size() <= UINT64_MAX-mod.execution_work_data_bytes,
+                             wasm_parse_exception, "initialization work size overflow");
+               mod.execution_work_data_bytes += segment.data.size();
+            }
+         }
 
          debug.set(std::move(imap));
          debug.relocate(_allocator.get_code_start());
@@ -794,11 +807,15 @@ namespace eosio { namespace vm {
                           wasm_parse_exception, "code after function end");
          };
 
+         work_instrumentation<Writer,Options> work(code_writer,_options);
          while (code.offset() < bounds) {
             EOS_VM_ASSERT(pc_stack.size() <= detail::get_max_nested_structures(_options), wasm_parse_exception,
                           "nested structures validation failure");
 
             imap.on_instr_start(code_writer.get_addr(), code.raw());
+
+            const uint8_t source_opcode = *code;
+            work.before(source_opcode);
 
             switch (*code++) {
                case opcodes::unreachable: check_in_bounds(); code_writer.emit_unreachable(); op_stack.start_unreachable(); break;
@@ -1220,7 +1237,9 @@ namespace eosio { namespace vm {
 #undef BINOP
                default: EOS_VM_ASSERT(false, wasm_parse_exception, "Illegal instruction");
             }
+            work.after(source_opcode);
          }
+         work.finish();
          EOS_VM_ASSERT( pc_stack.empty(), wasm_parse_exception, "function body too long" );
          _mod->maximum_stack = std::max(_mod->maximum_stack, static_cast<uint64_t>(op_stack.maximum_operand_depth) + local_types.locals_count());
       }
@@ -1319,9 +1338,29 @@ namespace eosio { namespace vm {
 
       void write_code_out(growable_allocator& allocator, wasm_code_ptr& code, const void* code_start) {
          Writer code_writer(allocator, code.bounds() - code.offset(), *_mod);
+         // Experimental metering is explicit per compiled module. Validation
+         // still accepts only source WASM opcodes, never internal checkpoints.
+         if constexpr (requires { _options.enable_execution_work_checkpoints; }) {
+            if constexpr (requires { code_writer.set_execution_work_checkpoints(bool{}); })
+               code_writer.set_execution_work_checkpoints(_options.enable_execution_work_checkpoints);
+            else
+               EOS_VM_ASSERT(!_options.enable_execution_work_checkpoints, wasm_parse_exception,
+                             "writer does not support execution work checkpoints");
+         }
          imap.on_code_start(code_writer.get_base_addr(), code_start);
          for (size_t i = 0; i < _function_bodies.size(); i++) {
             function_body& fb = _mod->code[i];
+            fb.execution_entry_work = 0;
+            if (_mod->execution_work_metered) {
+               // One entry, each declaration group (even count zero), and
+               // each implicit zero local. Precompute immutable source work.
+               fb.execution_entry_work = 1+uint64_t(fb.locals.size());
+               for (uint32_t j=0;j<fb.locals.size();++j) {
+                  EOS_VM_ASSERT(fb.locals[j].count <= UINT64_MAX-fb.execution_entry_work,
+                                wasm_parse_exception, "function entry work overflow");
+                  fb.execution_entry_work += fb.locals[j].count;
+               }
+            }
             func_type& ft = _mod->types.at(_mod->functions.at(i));
             local_types_t local_types(ft, fb.locals);
             imap.on_function_start(code_writer.get_addr(), _function_bodies[i].first.raw());
@@ -1331,6 +1370,8 @@ namespace eosio { namespace vm {
             code_writer.finalize(fb);
          }
          imap.on_code_end(code_writer.get_addr(), code.raw());
+         if constexpr (requires { code_writer.finish_code(); })
+            code_writer.finish_code();
       }
 
       template <uint8_t id>

@@ -212,8 +212,9 @@
    opcode_macro(f64_reinterpret_i64, 0xBF)
 #define EOS_VM_EXIT_OP(opcode_macro)            \
    opcode_macro(exit, 0xC0)
+#define EOS_VM_EXECUTION_WORK_OP(opcode_macro)  \
+   opcode_macro(execution_work, 0xC1)
 #define EOS_VM_EMPTY_OPS(opcode_macro)          \
-   opcode_macro(empty0xC1, 0xC1)                \
    opcode_macro(empty0xC2, 0xC2)                \
    opcode_macro(empty0xC3, 0xC3)                \
    opcode_macro(empty0xC4, 0xC4)                \

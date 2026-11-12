@@ -96,15 +96,43 @@ namespace eosio { namespace vm {
             assert(code == _code_end);
          }
       }
-      ~machine_code_writer() { _allocator.end_code<true>(_code_segment_base); }
+      // Finalization allocates and changes code permissions. It must be a
+      // normal throwing parser operation, never run from a noexcept destructor
+      // or while unwinding an invalid body.
+      ~machine_code_writer() = default;
+      void finish_code() { _allocator.end_code<true>(_code_segment_base); }
 
-      static constexpr std::size_t max_prologue_size = 21;
+      // Context-specific private execution hook. Ordinary JIT contexts have
+      // no hook and retain their exact existing code generation.
+      static constexpr bool has_execution_budget_checkpoint = requires(Context& context) {
+         context.check_execution_budget();
+      };
+      static constexpr bool has_execution_budget_flag = has_execution_budget_checkpoint && requires {
+         Context::execution_budget_flag_offset();
+      };
+      static constexpr std::size_t checkpoint_fast_path_size = has_execution_budget_flag ? 13 : 0;
+      static constexpr std::size_t max_checkpoint_size =
+         has_execution_budget_checkpoint ? 48 + checkpoint_fast_path_size : 0;
+      static constexpr std::size_t max_prologue_size = 21 + max_checkpoint_size;
       static constexpr std::size_t max_epilogue_size = 10;
+      void set_execution_work_checkpoints(bool enabled) {
+         if constexpr (!requires(Context& context) { context.charge_execution_work(uint64_t{}); })
+            EOS_VM_ASSERT(!enabled, wasm_parse_exception, "context does not support execution work");
+         _work_checkpoints = enabled;
+      }
+      static constexpr std::size_t max_work_checkpoint_size = 64;
       void emit_prologue(const func_type& /*ft*/, const guarded_vector<local_entry>& locals, uint32_t funcnum) {
          _ft = &_mod.types[_mod.functions[funcnum]];
          // FIXME: This is not a tight upper bound
-         const std::size_t instruction_size_ratio_upper_bound = use_softfloat?(Context::async_backtrace()?63:49):79;
-         std::size_t code_size = max_prologue_size + _mod.code[funcnum].size * instruction_size_ratio_upper_bound + max_epilogue_size;
+         const std::size_t instruction_size_ratio_upper_bound =
+            (use_softfloat?(Context::async_backtrace()?63:49):79) + max_checkpoint_size
+            + (_work_checkpoints ? max_work_checkpoint_size : 0);
+         const auto prologue_bound = max_prologue_size + (_work_checkpoints ? max_work_checkpoint_size : 0);
+         EOS_VM_ASSERT(_mod.code[funcnum].size <=
+                       (std::numeric_limits<std::size_t>::max() - prologue_bound - max_epilogue_size) /
+                          instruction_size_ratio_upper_bound,
+                       wasm_parse_exception, "instrumented native code size overflow");
+         std::size_t code_size = prologue_bound + _mod.code[funcnum].size * instruction_size_ratio_upper_bound + max_epilogue_size;
          _code_start = _allocator.alloc<unsigned char>(code_size);
          _code_end = _code_start + code_size;
          code = _code_start;
@@ -120,6 +148,10 @@ namespace eosio { namespace vm {
             count += locals[i].count;
          }
          _local_count = count;
+         if (_work_checkpoints) {
+            emit_execution_budget_checkpoint();
+            emit_work_charge(_mod.code[funcnum].execution_entry_work);
+         }
          if (_local_count > 0) {
             // xor %rax, %rax
             emit_bytes(0x48, 0x31, 0xc0);
@@ -143,7 +175,8 @@ namespace eosio { namespace vm {
                }
             }
          }
-         assert((char*)code <= (char*)_code_start + max_prologue_size);
+         if (!_work_checkpoints) emit_execution_budget_checkpoint();
+         assert((char*)code <= (char*)_code_start + prologue_bound);
       }
       void emit_epilogue(const func_type& ft, const guarded_vector<local_entry>& locals, uint32_t /*funcnum*/) {
 #ifndef NDEBUG
@@ -173,7 +206,12 @@ namespace eosio { namespace vm {
          return emit_br(depth_change);
       }
       void emit_block() {}
-      void* emit_loop() { return code; }
+      void* emit_loop() {
+         void* target = code;
+         emit_execution_budget_checkpoint();
+         if (_work_checkpoints) emit_work_charge(1);
+         return target; // every back edge must execute the checkpoint too
+      }
       void* emit_if() {
          auto icount = fixed_size_instr(9);
          // pop RAX
@@ -643,6 +681,57 @@ namespace eosio { namespace vm {
          emit_store_impl(offset, 0x89, 0x08);
       }
 
+      void emit_execution_budget_checkpoint() {
+         if constexpr (has_execution_budget_checkpoint) {
+            auto icount = variable_size_instr(29 + checkpoint_fast_path_size, 47 + checkpoint_fast_path_size);
+            void* healthy = nullptr;
+            if constexpr (has_execution_budget_flag) {
+               // Opt-in x86 ABI: an inline lock-free byte at [RDI + disp32].
+               // It is set while unbound and on interruption, so both enter
+               // the existing exception bridge. Keep EVERY entry/backedge.
+               emit_bytes(0x80, 0xbf); // cmpb $0, disp32(%rdi), acquire on x86
+               emit_operand32(Context::execution_budget_flag_offset());
+               emit_bytes(0x00);
+               emit_bytes(0x0f, 0x84); // healthy -> skip the entire helper call
+               healthy = emit_branch_target32();
+            }
+            emit_setup_backtrace();
+            // Preserve context/linear memory; all WASM operands stay on stack.
+            emit_bytes(0x57, 0x56); // push %rdi; push %rsi
+            emit_align_stack();
+            emit_bytes(0x48, 0xb8); // movabsq helper, %rax
+            emit_operand_ptr(&check_execution_budget);
+            emit_bytes(0xff, 0xd0); // call *%rax
+            emit_restore_stack();
+            emit_bytes(0x5e, 0x5f); // pop %rsi; pop %rdi
+            emit_restore_backtrace();
+            if constexpr (has_execution_budget_flag) fix_branch(healthy, code);
+         }
+      }
+
+      void* emit_execution_work_block() { return emit_work_charge(0); }
+      void set_execution_work_block_units(void* patch, uint64_t units) { std::memcpy(patch,&units,sizeof(units)); }
+
+      void* emit_work_charge(uint64_t units) {
+         if constexpr (requires(Context& context) { context.charge_execution_work(units); }) {
+            auto icount = variable_size_instr(39, max_work_checkpoint_size);
+            emit_setup_backtrace();
+            emit_bytes(0x57, 0x56); // preserve context and linear-memory pointer
+            emit_align_stack();
+            emit_bytes(0x48, 0xbe); // movabs units, %rsi (second SysV argument)
+            void* patch = code;
+            emit_operand64(units);
+            emit_bytes(0x48, 0xb8); // movabs helper, %rax
+            emit_operand_ptr(&charge_execution_work);
+            emit_bytes(0xff, 0xd0);
+            emit_restore_stack();
+            emit_bytes(0x5e, 0x5f);
+            emit_restore_backtrace();
+            return patch;
+         }
+         return nullptr;
+      }
+
       void emit_current_memory() {
          auto icount = variable_size_instr(17, 35);
          emit_setup_backtrace();
@@ -664,7 +753,12 @@ namespace eosio { namespace vm {
          emit_bytes(0x50);
       }
       void emit_grow_memory() {
-         auto icount = variable_size_instr(21, 39);
+         // Private contexts may throw from their budget guard. Even with an
+         // exception bridge, the native helper must enter with the SysV stack
+         // alignment: WASM locals/operands can leave either stack parity.
+         const bool aligned_bridge = has_execution_budget_checkpoint || _work_checkpoints;
+         const uint32_t alignment_size = aligned_bridge ? 13 : 0;
+         auto icount = variable_size_instr(21 + alignment_size, 39 + alignment_size);
          // popq %rax
          emit_bytes(0x58);
          emit_setup_backtrace();
@@ -674,11 +768,14 @@ namespace eosio { namespace vm {
          emit_bytes(0x56);
          // movq %rax, %rsi
          emit_bytes(0x48, 0x89, 0xc6);
+         if (aligned_bridge) emit_align_stack();
          // movabsq $grow_memory, %rax
          emit_bytes(0x48, 0xb8);
-         emit_operand_ptr(&grow_memory);
+         if (_work_checkpoints) emit_operand_ptr(&grow_memory_work);
+         else emit_operand_ptr(&grow_memory);
          // call *%rax
          emit_bytes(0xff, 0xd0);
+         if (aligned_bridge) emit_restore_stack();
          // pop %rsi
          emit_bytes(0x5e);
          // pop %rdi
@@ -2162,6 +2259,7 @@ namespace eosio { namespace vm {
       void* stack_overflow_handler;
       void* jmp_table;
       uint32_t _local_count;
+      bool _work_checkpoints = false;
       uint32_t _table_element_size;
 
       void emit_byte(uint8_t val) { *code++ = val; }
@@ -2705,12 +2803,27 @@ namespace eosio { namespace vm {
          return result;
       }
 
+      static void check_execution_budget(Context* context /*rdi*/) {
+         if constexpr (has_execution_budget_checkpoint)
+            vm::longjmp_on_exception([&] { context->check_execution_budget(); });
+      }
+
+      static void charge_execution_work(Context* context, uint64_t units) {
+         if constexpr (requires { context->charge_execution_work(units); })
+            vm::longjmp_on_exception([&] { context->charge_execution_work(units); });
+      }
+
       static int32_t current_memory(Context* context /*rdi*/) {
          return context->current_linear_memory();
       }
 
       static int32_t grow_memory(Context* context /*rdi*/, int32_t pages) {
          return context->grow_linear_memory(pages);
+      }
+      static int32_t grow_memory_work(Context* context, int32_t pages) {
+         int32_t result=-1;
+         vm::longjmp_on_exception([&] {result=context->grow_linear_memory(pages);});
+         return result;
       }
 
       static int32_t get_global_i32(Context* context /*rdi*/, uint32_t index /*rsi*/) {

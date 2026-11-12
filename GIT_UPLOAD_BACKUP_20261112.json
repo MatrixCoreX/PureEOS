@@ -1,0 +1,102 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/PureEOS-v1-hardening/libraries/eos-vm",
+  "original_head": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+  "original_branch": null,
+  "original_index_SHA256": "8bc6218c611b8f13ac3622997c7b027763e02e18851804125e8fd8b1a86b5593",
+  "excluded_runtime": [],
+  "source_files": [
+    {
+      "path": "include/eosio/vm/allocator.hpp",
+      "SHA256": "84eb2e9bc7d436382137b3f31994a86bc9babc4d7ebd65288d8e61647c8cb338",
+      "bytes": 23253
+    },
+    {
+      "path": "include/eosio/vm/backend.hpp",
+      "SHA256": "c0819b29c30acbff913945af951aea88bfc1d551891e3704cb928f3d417c0985",
+      "bytes": 16821
+    },
+    {
+      "path": "include/eosio/vm/base_visitor.hpp",
+      "SHA256": "fa01d9aef62b07e3b26b07124a3d8513b7a9e2e61150ddb9ece52f64759effd2",
+      "bytes": 13679
+    },
+    {
+      "path": "include/eosio/vm/bitcode_writer.hpp",
+      "SHA256": "0b51ea217ffb62e7945c91a10e3b409befa52b7c80eb51a7920b7eb8e6acdbd6",
+      "bytes": 10850
+    },
+    {
+      "path": "include/eosio/vm/debug_visitor.hpp",
+      "SHA256": "4ca590cac3b392dd102e7b734920a1da393f50f6b29cf8a96168bc893a0d5e7c",
+      "bytes": 2704
+    },
+    {
+      "path": "include/eosio/vm/execution_context.hpp",
+      "SHA256": "569e5912343436c4da54f206ad43f76ed74f0da3aaeb494aef6b6af14fa6d7dd",
+      "bytes": 47847
+    },
+    {
+      "path": "include/eosio/vm/execution_work_budget.hpp",
+      "SHA256": "32008337a058f0baeb0b01240ccf56ab9b83595b1ec9eb212c29fd433187b012",
+      "bytes": 2064
+    },
+    {
+      "path": "include/eosio/vm/interpret_visitor.hpp",
+      "SHA256": "9112a7ba23cf332ad16c62ec979084a7d5b6881fe12c02399fcb43ecf63e6ea7",
+      "bytes": 55462
+    },
+    {
+      "path": "include/eosio/vm/memory_dump.hpp",
+      "SHA256": "fd1610bc872818755c41bd55c75248659da83982d33313654cb6455d325134dd",
+      "bytes": 3379
+    },
+    {
+      "path": "include/eosio/vm/null_writer.hpp",
+      "SHA256": "0cd1b09b306610061e6dedb4394cb5a110c0252b8d483d31b15401892aee9cf9",
+      "bytes": 7348
+    },
+    {
+      "path": "include/eosio/vm/observed_host_functions.hpp",
+      "SHA256": "f0336c11754600efff7980e8f5921b1eb94cfb1f1770286601d7e5b273296f81",
+      "bytes": 5229
+    },
+    {
+      "path": "include/eosio/vm/opcodes.hpp",
+      "SHA256": "3df1897507d6a6ca3a63a5ed3a46ebbcdce1e6733836e6796599eb76de07471a",
+      "bytes": 4177
+    },
+    {
+      "path": "include/eosio/vm/opcodes_def.hpp",
+      "SHA256": "894ff30175f371a7a70cf1b9a62b9ca51111b40b2f66e095ab8a51bec980e166",
+      "bytes": 25005
+    },
+    {
+      "path": "include/eosio/vm/parser.hpp",
+      "SHA256": "e4abac916092f9e9167dd52283c49769e189548d51ad9049b482d5dca284a2a8",
+      "bytes": 72570
+    },
+    {
+      "path": "include/eosio/vm/types.hpp",
+      "SHA256": "4bb32adbb14aea25a815375077e747288c722f4805e8f387e91ab83f9f6e50f3",
+      "bytes": 15645
+    },
+    {
+      "path": "include/eosio/vm/work_block_inventory.hpp",
+      "SHA256": "e8a6b1bc40990b581b505ac310850807180d55f052d09a7ce058ff7205ce0343",
+      "bytes": 5407
+    },
+    {
+      "path": "include/eosio/vm/work_instrumentation.hpp",
+      "SHA256": "337e447896d5932824f17b191b7897f0074b5af0ee0069e6f65c956611c23c6c",
+      "bytes": 1892
+    },
+    {
+      "path": "include/eosio/vm/x86_64.hpp",
+      "SHA256": "5dd36695d4412c6fb26c4c5ef0cdb795453a919eeb8f11628021680aadd6f33e",
+      "bytes": 100574
+    }
+  ],
+  "submodule_backup_bindings": [],
+  "created_UTC": "2026-11-12T09:59:04.548381+00:00"
+}

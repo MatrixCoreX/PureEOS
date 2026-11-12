@@ -7,6 +7,9 @@ class null_writer {
    struct branch_t {};
    struct label_t {};
    explicit null_writer(growable_allocator& alloc, std::size_t source_bytes, module& mod) {}
+   void set_execution_work_checkpoints(bool) {}
+   void* emit_execution_work_block() { return nullptr; }
+   void set_execution_work_block_units(void*, uint64_t) {}
    void emit_unreachable() {}
    void emit_nop() {}
    label_t emit_end() { return {}; }

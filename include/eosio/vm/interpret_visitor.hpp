@@ -50,6 +50,14 @@ namespace eosio { namespace vm {
 
       [[gnu::always_inline]] inline void operator()(const nop_t& op) { context.inc_pc(); }
 
+      [[gnu::always_inline]] inline void operator()(const execution_work_t& op) {
+         if constexpr (requires { context.charge_execution_work(op.units); })
+            context.charge_execution_work(op.units);
+         else
+            throw wasm_interpreter_exception{"context does not support execution work"};
+         context.inc_pc();
+      }
+
       [[gnu::always_inline]] inline void operator()(const end_t& op) { context.inc_pc(); }
       [[gnu::always_inline]] inline void operator()(const return_t& op) { context.apply_pop_call(op.data, op.pc); }
       [[gnu::always_inline]] inline void operator()(const block_t& op) { context.inc_pc(); }
