@@ -216,6 +216,13 @@ namespace eosiosystem {
          producer_per_block_pay = integer_reward_share(_gstate.perblock_bucket, prod.unpaid_blocks,
                                                        _gstate.total_unpaid_blocks);
       }
+#ifdef PUREEOS_SINGLE_CHOICE_VOTING
+      // A small pool or share can round below one token unit. Reject the whole
+      // claim before consuming block credits or its cooldown. Transaction undo
+      // also preserves the fill timestamp and fractional accrual interval.
+      check(producer_per_block_pay > 0,
+            "no payable block rewards yet; unpaid blocks are preserved");
+#endif
 
 #ifndef PUREEOS_SINGLE_CHOICE_VOTING
       double new_votepay_share = update_producer_votepay_share( prod2,

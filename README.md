@@ -1,127 +1,57 @@
-# Reference contracts
+# PureEOS 系统合约
 
-Reference contracts are a collection of contracts deployable to an [Antelope](https://github.com/AntelopeIO) blockchain which implements a lot of critical functionality that goes beyond what is provided by the base Antelope protocol.
+本仓库维护 PureEOS 新链使用的系统、代币、资源及奖励合约，配套工具链为
+AIC CDT 1.0.0。节点和系统合约必须使用同一份经过验证的发行组合。
+当前首版仍在验收，不能将开发分支或历史二进制视作已经完成联合发布。
 
-The Antelope protocol includes capabilities such as:
-* an accounts and permissions system which enables a flexible permission system that allows authorization authority over specific actions in a transaction to be satisfied by the appropriate combination of signatures;
-* a consensus algorithm to propose and finalize blocks by a set of active block producers that can be arbitrarily selected by privileged smart contracts running on the blockchain;
-* a basic resource management system that tracks usage of CPU/NET and RAM per account and enforces limits based on per-account quotas that can be adjusted by privileged smart contracts.
+## 本版规则
 
-However, the Antelope protocol itself does not immediately provide:
-* a mechanism for multiple accounts to reach consensus on authorization of a proposed transaction on-chain before executing it;
-* a consensus mechanism that goes beyond the consensus algorithm to determine how block producers are selected and to align incentives by providing appropriate rewards and punishments to block producers or the entities that get them into that position;
-* more sophisticated resource management systems that create markets for users to acquire resource rights;
-* or, even something as seemingly basic as the concept of tokens (whether fungible or non-fungible).
+- 每个投票者只选择一个节点，按代币最小单位整数计票；代理投票关闭，买入REX必须保持唯一投票选择。
+- 合格候选初始上限210，按四年翻倍的速度线性增长；从一个节点起链，逐步加入。
+- 最多21个节点同时出块，按候选顺序逐次替换一人；轮岗资格和实际出块窗口顺序分别由合约及原生共识规则确定。
+- 不由现任21人预检其他节点。满21时连续三个完整本人窗口零产出，永久禁止该账号再次轮岗；不足21时不拉黑。
+- 节点仅按实际出块获取奖励，没有按排名或票数分发的备用节点奖励。保留历史收益和账户资产；领奖仍受正常权限和24小时规则约束。
+- 节点增发初始约1%年率，四年减半；原储备账户80%增发取消。
+- 直接质押及REX租赁合计动态占约10%资源权重，其余由PowerUp提供；保留REX租赁。
+- 系统升级由独立开发者账号申报，固定公示14天，合格节点可按原生规则反对；不通过eosio.msig或eosio.wrap授予升级权。
 
-The reference contracts in this repository provide all of the above and more by building higher-level features or abstractions on top of the primitive mechanisms provided by the Antelope protocol.
+实际执行边界以本仓库代码、匹配的节点原生治理实现和发行验证记录为准。
+满席离线安全移除的说明见[SAFE_BLACKLIST_EVICTION.md](SAFE_BLACKLIST_EVICTION.md)。
 
-The collection of reference contracts consists of the following individual contracts:
+## 构建
 
-* [boot contract](contracts/eosio.boot/include/eosio.boot/eosio.boot.hpp): A minimal contract that only serves the purpose of activating protocol features which enables other more sophisticated contracts to be deployed onto the blockchain. (Note: this contract must be deployed to the privileged `eosio` account.)
-* [bios contract](contracts/eosio.bios/include/eosio.bios/eosio.bios.hpp): A simple alternative to the core contract which is suitable for test chains or perhaps centralized blockchains. (Note: this contract must be deployed to the privileged `eosio` account.)
-* [token contract](contracts/eosio.token/include/eosio.token/eosio.token.hpp): A contract enabling fungible tokens.
-* [core contract](contracts/eosio.system/include/eosio.system/eosio.system.hpp): A monolithic contract that includes a variety of different functions which enhances a base Antelope blockchain for use as a public, decentralized blockchain in an opinionated way. (Note: This contract must be deployed to the privileged `eosio` account. Additionally, this contract requires that the token contract is deployed to the `eosio.token` account and has already been used to setup the core token.) The functions contained within this monolithic contract include (non-exhaustive):
-   + Delegated Proof of Stake (DPoS) consensus mechanism for selecting and paying (via core token inflation) a set of block producers that are chosen through delegation of the staked core tokens.
-   + Allocation of CPU/NET resources based on core tokens in which the core tokens are either staked for an indefinite allocation of some fraction of available CPU/NET resources, or they are paid as a fee in exchange for a time-limited allocation of CPU/NET resources via REX or via PowerUp.
-   + An automated market maker enabling a market for RAM resources which allows users to buy or sell available RAM allocations.
-   + An auction for bidding for premium account names.
-* [multisig contract](contracts/eosio.msig/include/eosio.msig/eosio.msig.hpp): A contract that enables proposing Antelope transactions on the blockchain, collecting authorization approvals for many accounts, and then executing the actions within the transaction after authorization requirements of the transaction have been reached. (Note: this contract must be deployed to a privileged account.)
-* [wrap contract](contracts/eosio.wrap/include/eosio.wrap/eosio.wrap.hpp): A contract that wraps around any Antelope transaction and allows for executing its actions without needing to satisfy the authorization requirements of the transaction. If used, the permissions of the account hosting this contract should be configured to only allow highly trusted parties (e.g. the operators of the blockchain) to have the ability to execute its actions. (Note: this contract must be deployed to a privileged account.)
+使用新建的独立构建目录及已经核验的AIC CDT 1.0.0 SDK，环境需要CMake、Ninja
+和原生C/C++编译器。下列路径应替换成自己的实际SDK和输出目录：
 
-## Repository organization
-
-The `main` branch contains the latest state of development; do not use this for production. Refer to the [releases page](https://github.com/AntelopeIO/reference-contracts/releases) for current information on releases, pre-releases, and obsolete releases as well as the corresponding tags for those releases.
-
-## Supported Operating Systems
-
-[CDT](https://github.com/AntelopeIO/cdt) is required to build contracts. Any operating systems supported by CDT is sufficient to build the reference contracts.
-
-To build and run the tests as well, [Spring](https://github.com/AntelopeIO/spring) is also required as a dependency, which may have its further restrictions on supported operating systems.
-## Building
-
-The build guide below will assume you are running Ubuntu 20.04. However, as mentioned above, other operating systems may also be supported.
-
-### Build or install CDT dependency
-
-The CDT dependency is required with a minimum version of 3.0.
-
-The easiest way to satisfy this dependency is to install CDT on your system through a package. Find the release of a compatible version of CDT from its [releases page](https://github.com/AntelopeIO/cdt/releases), download the package file appropriate for your OS from the attached assets, and install the package.
-
-Alternatively, you can build CDT from source. Please refer to the guide in the [CDT README](https://github.com/AntelopeIO/cdt#building-from-source) for instructions on how to do this. If you choose to go with building CDT from source, please keep the path to the build directory in the shell environment variable `CDT_BUILD_PATH` for later use when building the reference contracts.
-
-### Optionally build Spring dependency
-
-The Spring dependency is optional. It is only needed if you wish to also build the tests using the `BUILD_TESTS` CMake flag.
-
-Unfortunately, it is not currently possible to satisfy the contract testing dependencies through the Spring packages made available from the [Spring releases page](https://github.com/AntelopeIO/spring/releases). So if you want to build the contract tests, you will first need to build Spring from source.
-
-Please refer to the guide in the [Spring README](https://github.com/AntelopeIO/spring#building-from-source) for instructions on how to do this. If you choose to go with building Spring from source, please keep the path to the build directory in the shell environment variable `SPRING_BUILD_PATH` for later use when building the reference contracts.
-
-### Build reference contracts
-
-Beyond CDT and optionally Spring (if also building the tests), no additional dependencies are required to build the reference contracts.
-
-The instructions below assume you are building the reference contracts with tests, have already built Spring from source, and have the CDT dependency installed on your system. For some other configurations, expand the hidden panels placed lower within this section.
-
-For all configurations, you should first `cd` into the directory containing cloned reference contracts repository.
-
-Build reference contracts with tests using Spring built from source and with installed CDT package:
-
-```
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -Dspring_DIR="${SPRING_BUILD_PATH}/lib/cmake/spring" ..
-make -j $(nproc)
+```bash
+cmake -S . -B /your/output/pureeos-contracts -G Ninja \
+  -DCDT_ROOT=/your/aic-cdt-1.0.0 \
+  -Dcdt_DIR=/your/aic-cdt-1.0.0/lib/cmake/cdt \
+  -DBUILD_TESTS=OFF
+cmake --build /your/output/pureeos-contracts --parallel 2
 ```
 
-**Note:** `CMAKE_BUILD_TYPE` has no impact on the WASM files generated for the contracts. It only impacts how the test binaries are built. Use `-DCMAKE_BUILD_TYPE=Debug` if you want to create test binaries that you can debug.
+四项新链功能默认开启且必须开启：`PUREEOS_UPGRADE_GOVERNANCE`、
+`PUREEOS_SINGLE_CHOICE_VOTING`、`PUREEOS_RESOURCE_SPLIT`、
+`PUREEOS_SEQUENTIAL_ROTATION`。旧构建缓存若关闭其中任何一项会明确报错，
+不会生成一份仍采用旧投票、奖励或资源规则的系统合约。
 
-<details>
-<summary>Build reference contracts with tests using Spring and CDT both built from source</summary>
+也可以直接构建`contracts/`，需要显式选择SDK中的WASM工具链；默认功能要求相同。
+AIC CDT源码中的`tests/hardening/build_system_contracts.py`提供隔离重建和逐文件摘要记录。
+完整构建还会生成若干继承的工具/示例合约；首版系统部署只使用发行清单指定的合约。
+生成一个msig或wrap文件，不代表它获得系统治理或升级权限。
 
-```
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -Dcdt_DIR="${CDT_BUILD_PATH}/lib/cmake/cdt" -Dspring_DIR="${SPRING_BUILD_PATH}/lib/cmake/spring" ..
-make -j $(nproc)
-```
-</details>
+## 部署
 
-<details>
-<summary>Build reference contracts without tests and with CDT build from source</summary>
+此分支用于原生Savanna新创世链。必须先激活匹配的`PUREEOS_ROTATION_CONTEXT`，
+部署发行清单中的system/token/bpay及REX、PowerUp辅助合约，完成资源初始化后再
+调用`govinit`封存开发者权限与固定14天公示规则。不能使用默认测试私钥或测试资金
+作为正式创世配置。准确操作顺序参照节点仓库的候选使用说明和同版本测试脚本。
 
-```
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -Dcdt_DIR="${CDT_BUILD_PATH}/lib/cmake/cdt" ..
-make -j $(nproc)
-```
+系统升级、注册矿工、出块签名及账号管理是不同权限；不要把开发者升级私钥装入
+普通出块服务器。普通应用可以保留自己的业务权限结构，不因此取得系统升级权。
 
-</details>
+## 许可
 
-#### Supported CMake options
-
-The following is a list of custom CMake options supported in building the reference contracts (default values are shown below):
-
-```
--DBUILD_TESTS=OFF                       Do not build the tests
-
--DSYSTEM_CONFIGURABLE_WASM_LIMITS=ON    Enable use of the CONFIGURABLE_WASM_LIMITS
-                                        protocol feature
-
--DSYSTEM_BLOCKCHAIN_PARAMETERS=ON       Enable use of the BLOCKCHAIN_PARAMETERS
-                                        protocol feature
-```
-
-### Running tests
-
-Assuming you built with `BUILD_TESTS=ON`, you can run the tests.
-
-```
-cd build/tests
-ctest -j $(nproc)
-```
-
-## License
-
-[MIT](LICENSE)
+继承代码及第三方声明按[LICENSE](LICENSE)保留；有权授权的自有原创部分适用
+[AIC开源许可1.0](AIC_LICENSE.md)。具体范围见[LICENSING.md](LICENSING.md)。

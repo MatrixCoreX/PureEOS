@@ -1,0 +1,67 @@
+{
+  "scope": "Historical working-source backup; unqualified/not deployed. OriginalHEAD/index/files untouched.",
+  "source_path": "/home/guagua/AntelopeIO/reference-contracts-v1-hardening",
+  "original_head": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+  "original_branch": "feature/v1-blacklist-safe-eviction-20261022",
+  "original_index_SHA256": "a9a4652f1abf93b9ec995698a604dcbe76d1c46da47d2a4a6861ecf51324d07d",
+  "excluded_runtime": [],
+  "source_files": [
+    {
+      "path": "AIC_LICENSE.md",
+      "SHA256": "d6f37989ff7111bf5333022edcc28c82fdcbf8657a0bf78d5c06b0895611d5b9",
+      "bytes": 3590
+    },
+    {
+      "path": "CMakeLists.txt",
+      "SHA256": "d0506305d0a261dbdfeffe0df229628abe987adbd367924321043a2145c8011f",
+      "bytes": 2921
+    },
+    {
+      "path": "LICENSING.md",
+      "SHA256": "ca540349886b3213b3e50217a397d63769ddefe1f89429ddecbb0b3e33853ff3",
+      "bytes": 1850
+    },
+    {
+      "path": "README.md",
+      "SHA256": "2f83d012f09881a98fa75bac61c898492f3a003ddb7047fc08232e178eb5126b",
+      "bytes": 3627
+    },
+    {
+      "path": "SAFE_BLACKLIST_EVICTION.md",
+      "SHA256": "ae4715d950b4f84697cab93331d3a03b0abc76e77504fbcdca0115adada4e6ed",
+      "bytes": 2693
+    },
+    {
+      "path": "contracts/CMakeLists.txt",
+      "SHA256": "e3d837f9b62c6b225bd69d6f26b93c538eda39af97748ecdefc1361a4479f325",
+      "bytes": 3625
+    },
+    {
+      "path": "contracts/eosio.system/include/eosio.system/powerup.results.hpp",
+      "SHA256": "029e1f19d9e17e7128270ec89c98e58f5244b15fac7d0a2eeec7548af4465e9c",
+      "bytes": 1003
+    },
+    {
+      "path": "contracts/eosio.system/include/eosio.system/rex.results.hpp",
+      "SHA256": "00025474eb7b94231bd44817a839fd3b49254573abb8976376d3bbd0c809ef7d",
+      "bytes": 1880
+    },
+    {
+      "path": "contracts/eosio.system/include/eosio.system/rotation_state.hpp",
+      "SHA256": "bdbebea9c0607062c0aee67c3a12541aa6a159c6efaef12bf74b38b3a311196b",
+      "bytes": 6760
+    },
+    {
+      "path": "contracts/eosio.system/src/producer_pay.cpp",
+      "SHA256": "8e190163ec836d5bfcee0c85dee42cf7cc7091da77895dba12943fe6d3f10582",
+      "bytes": 13512
+    },
+    {
+      "path": "contracts/eosio.system/src/rotation_state.cpp",
+      "SHA256": "1485646007b5a276e12e7c5edd594d3b4603b856777804b286156219b14e4207",
+      "bytes": 22942
+    }
+  ],
+  "submodule_backup_bindings": [],
+  "created_UTC": "2026-11-12T10:04:06.548102+00:00"
+}

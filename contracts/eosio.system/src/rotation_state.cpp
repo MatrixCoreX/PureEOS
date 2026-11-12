@@ -278,8 +278,19 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
       } else if (s.stage == 1) {
          s.active = s.target;
          s.retry_outgoing = name{};
-         s.stage = 2;
-         begin_observation(s, ctx.slot);
+         if (!s.incoming) {
+            // Removal-only: BOTH native policies have completed their normal
+            // finalized handoff (exact_target above). There is no entrant to
+            // observe. Do not count this as a successful admission or retain
+            // the banned seat merely because no replacement is registered.
+            s.stage = 0;
+            s.target.clear();
+            s.outgoing = name{};
+            s.next_attempt_slot = ctx.slot;
+         } else {
+            s.stage = 2;
+            begin_observation(s, ctx.slot);
+         }
       } else if (s.stage == 2) {
          if (observation_gap || uint64_t(ctx.slot) - ctx.final_slot > rotation::pause_guard_slots) {
             // A whole-chain/finality pause is not evidence against the entrant.
@@ -395,17 +406,23 @@ void system_contract::advance_rotation(const block_timestamp& timestamp, name pr
    }
    if (s.selecting) { table.set(s, get_self()); return; }
    s.next_attempt_slot = uint64_t(ctx.slot) + rotation::normal_epoch_slots;
-   const bool membership_change = bool(incoming);
+   // A permanent ban revokes the current seat as well as future eligibility.
+   // Prefer the ordinary one-for-one replacement. With no replacement, remove
+   // just this banned member through the SAME native joint-policy handoff.
+   // Neither a transient miss nor loss of registration authorizes shrinking.
+   // Never emit an empty policy, even for a malformed external starting state.
+   const bool eviction = !incoming && outgoing && banned(outgoing) && s.active.size() > 1;
+   const bool membership_change = bool(incoming) || eviction;
    auto target = s.active;
-   if (incoming) {
+   if (membership_change) {
       if (outgoing) target.erase(std::find(target.begin(), target.end(), outgoing));
-      target.push_back(incoming);
+      if (incoming) target.push_back(incoming);
    } else if (fault || retry) s.blocked = 2;
 
    std::vector<eosio::producer_authority> proposers;
    std::vector<finalizer_auth_info> finalizers;
-   // Retain the *actual* keys of any now-unregistered incumbent until one-seat
-   // replacement is possible. Never construct an empty/invalid bulk removal.
+   // Retain actual keys of any unregistered, non-banned incumbent until a
+   // one-seat replacement is possible. Banned seats leave via the target above.
    for (auto n : target) {
       auto p = _producers.find(n.value);
       auto f = _finalizers.find(n.value);
