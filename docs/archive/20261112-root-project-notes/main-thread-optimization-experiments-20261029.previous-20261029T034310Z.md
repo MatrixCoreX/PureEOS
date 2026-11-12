@@ -1,0 +1,127 @@
+# PureEOS 主线程优化实验台账
+
+状态：持续更新；剩余优化尚在实验，本文不是最终完成报告。
+
+更新时间（UTC）：2026-10-29T02:20:17.389857+00:00
+
+## 范围与采用规则
+
+覆盖本轮 EPYC 4345P（8 物理核/16 线程/64 GiB）服务器现存机器记录和主线程代码版本。旧机器的历史报告保留在原位置，不将其参数混入本轮结果。完整记录包括准备检查、纯转账筛查、复杂合约稳定性、组件与诊断；没有节点 TPS 的项目明确标记。
+
+成功且稳定的优化才作为最新开发基线；没有明显收益的候选独立保留。当前参考为 fc7；新近候选尚未晋升。门槛沿用事前规则：固定窗口和整批 TPS 均至少提升 2%，主线程 CPU 时间/笔不升，再完成复杂稳定性和独立串行检查。新夹具参考复核将另记，不改写历史结果。
+
+默认开发 CPU16=3,200,000 µs/块；本轮实验 CPU32=6,400,000 µs/块。NET32 MiB/块、P2P64 MiB/消息、队列1 GiB、逐笔限制、计费和系统合约模式保持。RAM64 GiB，测量前 setramrate1024。纯转账为 SYS/TKN 混合；复杂轮 90% 转账+10% 支持的复杂操作；禁用 deferred。
+
+单块折算峰值、固定窗口和整批 TPS 分别保留；稳定性轮/诊断/组件数据不得写成纯转账稳定容量。80k offered 的饱和筛查没有达到 offered 门槛，不自动等于节点崩溃或账本错误。
+
+## 测试方法纠正
+
+首轮 ab9 与首轮干净 3f 漏掉 harness/sender 的整进程树 CPU 隔离。原 TPS 保留，历史性能淘汰比较暂缓；相应 affinity-fixed 记录已补全：主线程 CPU0，CPU8 不使用，其余节点/发送/采集线程仅 CPU1–7,9–15；MemoryMax56 GiB、swap0；窗口前后独立验证全部进程线程。
+
+## 按版本索引
+
+| 代码版本 | 改动 | 详情 |
+|---|---|---|
+| c0cb2cb9f6268271f0ca04b7be0af432953e048c | Server baseline matching verified R14 dce2bb38;identity ac1645f6 | [c0cb2cb9f6268271f0ca04b7be0af432953e048c.md](main-thread-experiments/versions/c0cb2cb9f6268271f0ca04b7be0af432953e048c.md) |
+| 1258c1f8fe1f6cf74f4c6de6bc410155ed75b393 | Bind immutable preflight to complete current action bytes;reclaim one bounded immutable batch on worker and drain before next capture | [1258c1f8fe1f6cf74f4c6de6bc410155ed75b393.md](main-thread-experiments/versions/1258c1f8fe1f6cf74f4c6de6bc410155ed75b393.md) |
+| 0e05bfcc99570b7b92d8904838a6bcb0fe1b393d | Use current object identity for exact positive read validation | [0e05bfcc99570b7b92d8904838a6bcb0fe1b393d.md](main-thread-experiments/versions/0e05bfcc99570b7b92d8904838a6bcb0fe1b393d.md) |
+| b8407259d544a2442e0808b30e96f9b5a5d4481d | Remove bounded hint FIFO shifts and redundant key lookups | [b8407259d544a2442e0808b30e96f9b5a5d4481d.md](main-thread-experiments/versions/b8407259d544a2442e0808b30e96f9b5a5d4481d.md) |
+| 4e1852d173e2d1d030b7b0bd547fec3fa6ca77f0 | Reuse bounded raw storage for original per-index Undo session wrappers | [4e1852d173e2d1d030b7b0bd547fec3fa6ca77f0.md](main-thread-experiments/versions/4e1852d173e2d1d030b7b0bd547fec3fa6ca77f0.md) |
+| 75a55efddaa671b7f2a104dd94126104e8e82ca8 | Serialize mapped database lifetimes while retaining concurrent session regression | [75a55efddaa671b7f2a104dd94126104e8e82ca8.md](main-thread-experiments/versions/75a55efddaa671b7f2a104dd94126104e8e82ca8.md) |
+| 448eb0536875215291615d30b1516d99d8b73570 | perf: reduce owner input copies and recycle empty batch storage | [448eb0536875215291615d30b1516d99d8b73570.md](main-thread-experiments/versions/448eb0536875215291615d30b1516d99d8b73570.md) |
+| 3dcc4677afe98138d6c4510adaedab726eab3532 | perf: bound transaction action digest reuse and compact immutable snapshot directories | [3dcc4677afe98138d6c4510adaedab726eab3532.md](main-thread-experiments/versions/3dcc4677afe98138d6c4510adaedab726eab3532.md) |
+| ccac1f1b54f1a906a4af89b45889bb6086dacd20 | test: keep allocation failure injection out of compiler inlining and verify failure was exercised | [ccac1f1b54f1a906a4af89b45889bb6086dacd20.md](main-thread-experiments/versions/ccac1f1b54f1a906a4af89b45889bb6086dacd20.md) |
+| fc7b5908922cb0eb276209c7f7d8b5599eb8a85b | perf: defer unused host iterator cache allocations until first use | [fc7b5908922cb0eb276209c7f7d8b5599eb8a85b.md](main-thread-experiments/versions/fc7b5908922cb0eb276209c7f7d8b5599eb8a85b.md) |
+| 2e032ce7a8b23ae7ef220a39018d21f0052e6710 | perf: preserve exact SHA256 byte ordering with fixed-width chunk comparisons | [2e032ce7a8b23ae7ef220a39018d21f0052e6710.md](main-thread-experiments/versions/2e032ce7a8b23ae7ef220a39018d21f0052e6710.md) |
+| 022785e70b0524a93d57c8d1960cc3710f0ede61 | perf: coallocate owned inputs and reduce small trace growth and join contention | [022785e70b0524a93d57c8d1960cc3710f0ede61.md](main-thread-experiments/versions/022785e70b0524a93d57c8d1960cc3710f0ede61.md) |
+| 23a0a4d3aec9fbcde1b4074f912d7f21091c9b9d | perf: batch and inline owner snapshots without changing canonical validation | [23a0a4d3aec9fbcde1b4074f912d7f21091c9b9d.md](main-thread-experiments/versions/23a0a4d3aec9fbcde1b4074f912d7f21091c9b9d.md) |
+| 3b0c6aa85a09d33a283576007d47091a2aac45da | perf: keep short block-tail deadlines from penalizing healthy admission | [3b0c6aa85a09d33a283576007d47091a2aac45da.md](main-thread-experiments/versions/3b0c6aa85a09d33a283576007d47091a2aac45da.md) |
+| 679a733e9f27a9c4e739ec94d049a4acbdc586c8 | perf: defer unaffordable block-tail preparation without penalizing healthy workloads | [679a733e9f27a9c4e739ec94d049a4acbdc586c8.md](main-thread-experiments/versions/679a733e9f27a9c4e739ec94d049a4acbdc586c8.md) |
+| cabd1aa23db0f875bfc02063f57998276731f517 | Retain bounded unknown-cost probes for learned mixed-batch admission | [cabd1aa23db0f875bfc02063f57998276731f517.md](main-thread-experiments/versions/cabd1aa23db0f875bfc02063f57998276731f517.md) |
+| 882ed34363b6984eb869c2d37e0e5f6718e6472f | perf: reuse four owned root programs within one unchanged preparation prefix | [882ed34363b6984eb869c2d37e0e5f6718e6472f.md](main-thread-experiments/versions/882ed34363b6984eb869c2d37e0e5f6718e6472f.md) |
+| ee3818eeff5c9aa1cc60a6a240566953790572b9 | perf: inline immutable single-row snapshot directories with bounded spill | [ee3818eeff5c9aa1cc60a6a240566953790572b9.md](main-thread-experiments/versions/ee3818eeff5c9aa1cc60a6a240566953790572b9.md) |
+| 24c9cadbc67c6543e693ee37a4a6c86564a5c5fb | perf: batch owned snapshot directory storage with bounded inline bookkeeping | [24c9cadbc67c6543e693ee37a4a6c86564a5c5fb.md](main-thread-experiments/versions/24c9cadbc67c6543e693ee37a4a6c86564a5c5fb.md) |
+| 2bb4d7489ed4b5cac638763f4ed9f1bb7c3bab55 | perf: preserve SHA256 byte ordering with direct native-word comparisons | [2bb4d7489ed4b5cac638763f4ed9f1bb7c3bab55.md](main-thread-experiments/versions/2bb4d7489ed4b5cac638763f4ed9f1bb7c3bab55.md) |
+| 4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0 | perf: fuse owner primary snapshot observations and reduce owned context allocations | [4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0.md](main-thread-experiments/versions/4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0.md) |
+| 42d6e8affa04747f125a55dac84c2424ef770651 | Reduce owner validation lookups with fresh exact identity membership | [42d6e8affa04747f125a55dac84c2424ef770651.md](main-thread-experiments/versions/42d6e8affa04747f125a55dac84c2424ef770651.md) |
+| f153c330a66e093188c923d30de3c8d4f1bdc1df | Add opt-in bounded owner admission routing diagnostics | [f153c330a66e093188c923d30de3c8d4f1bdc1df.md](main-thread-experiments/versions/f153c330a66e093188c923d30de3c8d4f1bdc1df.md) |
+| 5cfdd6ac795145b177acfb782d1f86f3a40175e6 | Reduce bounded owner authorization and notification allocations | [5cfdd6ac795145b177acfb782d1f86f3a40175e6.md](main-thread-experiments/versions/5cfdd6ac795145b177acfb782d1f86f3a40175e6.md) |
+| 57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2 | Reduce task queue overhead and retain callback ownership on failure | [57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2.md](main-thread-experiments/versions/57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2.md) |
+| 9aee6083cf95065b033a378ceae51b3465645fde | Fix pending callback ownership on queue clear and failed insertion | [9aee6083cf95065b033a378ceae51b3465645fde.md](main-thread-experiments/versions/9aee6083cf95065b033a378ceae51b3465645fde.md) |
+| d38e96ec5162c2922b5df61f99210c83fa781da8 | Preserve functional admission-tail and callback ownership fixes on accepted baseline | [d38e96ec5162c2922b5df61f99210c83fa781da8.md](main-thread-experiments/versions/d38e96ec5162c2922b5df61f99210c83fa781da8.md) |
+| 61b753bc8e609e17d8c42177da12b9510cee4bf6 | Fix named thread pool startup ownership and failure recovery | [61b753bc8e609e17d8c42177da12b9510cee4bf6.md](main-thread-experiments/versions/61b753bc8e609e17d8c42177da12b9510cee4bf6.md) |
+| 3dc673c01d1f9fd164264b93cf9c39162550e15c | WIP: add ordered ready processing for owned worker results; producer integration pending | [3dc673c01d1f9fd164264b93cf9c39162550e15c.md](main-thread-experiments/versions/3dc673c01d1f9fd164264b93cf9c39162550e15c.md) |
+| ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b | WIP: opt-in ordered adoption of completed owned results with original safety paths | [ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b.md](main-thread-experiments/versions/ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b.md) |
+| 3f622b5d54f133b2b650dd3b02c4c7da39d2e685 | perf: preserve SHA256 byte ordering with direct native-word comparisons | [3f622b5d54f133b2b650dd3b02c4c7da39d2e685.md](main-thread-experiments/versions/3f622b5d54f133b2b650dd3b02c4c7da39d2e685.md) |
+
+## 全部现存机器记录与 TPS
+
+| 记录/用例 | 代码 | 范围 | 窗口 TPS | 整批 TPS | 详情 |
+|---|---|---|---:|---:|---|
+| 20261027-epyc4345p-cpu32-owner-hint-fifo-round4-single-round / screen-cpu32-owner-batch4-round1 | b8407259d544a2442e0808b30e96f9b5a5d4481d | 单节点纯转账筛查 | 32,901.92 | 33,923.49 | [20261027-epyc4345p-cpu32-owner-hint-fifo-round4-single-round.md](main-thread-experiments/records/20261027-epyc4345p-cpu32-owner-hint-fifo-round4-single-round.md) |
+| 20261027-epyc4345p-cpu32-owner-main-thread-round2-single-round / screen-cpu32-owner-batch2-round1 | 1258c1f8fe1f6cf74f4c6de6bc410155ed75b393 | 单节点纯转账筛查 | 32,454.33 | 33,703.73 | [20261027-epyc4345p-cpu32-owner-main-thread-round2-single-round.md](main-thread-experiments/records/20261027-epyc4345p-cpu32-owner-main-thread-round2-single-round.md) |
+| 20261027-epyc4345p-cpu32-undo-session-cache-single-round / screen-cpu32-undo-slots-round1 | 75a55efddaa671b7f2a104dd94126104e8e82ca8 | 单节点纯转账筛查 | 35,540.42 | 35,923.20 | [20261027-epyc4345p-cpu32-undo-session-cache-single-round.md](main-thread-experiments/records/20261027-epyc4345p-cpu32-undo-session-cache-single-round.md) |
+| 20261028-epyc4345p-cpu32-SHA-order-main-diagnostic / 无节点TPS | 2bb4d7489ed4b5cac638763f4ed9f1bb7c3bab55 | 诊断采样（不作容量结果） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-cpu32-SHA-order-main-diagnostic.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-SHA-order-main-diagnostic.md) |
+| 20261028-epyc4345p-cpu32-admission-mixed-probe-single-round / screen-cpu32-admission-mixed-probe-round1 | cabd1aa23db0f875bfc02063f57998276731f517 | 单节点纯转账筛查 | 34,693.92 | 35,789.64 | [20261028-epyc4345p-cpu32-admission-mixed-probe-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-admission-mixed-probe-single-round.md) |
+| 20261028-epyc4345p-cpu32-current4b8-expanded-complex-security-single-round / stability-cpu32-expanded-contracts-round1 | 4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0 | 90%转账+10%复杂合约稳定性 | 8,000.00 | 7,990.42 | [20261028-epyc4345p-cpu32-current4b8-expanded-complex-security-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-current4b8-expanded-complex-security-single-round.md) |
+| 20261028-epyc4345p-cpu32-expanded-complex-security-single-round / stability-cpu32-expanded-contracts-round1 | cabd1aa23db0f875bfc02063f57998276731f517 | 90%转账+10%复杂合约稳定性 | 8,000.00 | 7,984.11 | [20261028-epyc4345p-cpu32-expanded-complex-security-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-expanded-complex-security-single-round.md) |
+| 20261028-epyc4345p-cpu32-fresh-next2-baseline-single-round / screen-cpu32-bulk-baseline-next2-round1 | fc7b5908922cb0eb276209c7f7d8b5599eb8a85b | 单节点纯转账筛查 | 37,555.00 | 36,429.95 | [20261028-epyc4345p-cpu32-fresh-next2-baseline-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-fresh-next2-baseline-single-round.md) |
+| 20261028-epyc4345p-cpu32-lazy-iterator-reserve-single-round / screen-cpu32-lazy-iterator-round1 | fc7b5908922cb0eb276209c7f7d8b5599eb8a85b | 单节点纯转账筛查 | 36,912.83 | 37,083.98 | [20261028-epyc4345p-cpu32-lazy-iterator-reserve-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-lazy-iterator-reserve-single-round.md) |
+| 20261028-epyc4345p-cpu32-owned-digest-snapshot-single-round / screen-cpu32-owned-digest-round1 | ccac1f1b54f1a906a4af89b45889bb6086dacd20 | 单节点纯转账筛查 | 36,600.75 | 37,084.03 | [20261028-epyc4345p-cpu32-owned-digest-snapshot-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owned-digest-snapshot-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-admission-routing-diagnostic / 无节点TPS | f153c330a66e093188c923d30de3c8d4f1bdc1df | 诊断采样（不作容量结果） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-cpu32-owner-admission-routing-diagnostic.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-admission-routing-diagnostic.md) |
+| 20261028-epyc4345p-cpu32-owner-alloc-notify-reserve-single-round / screen-cpu32-owner-alloc-notify-round1 | 022785e70b0524a93d57c8d1960cc3710f0ede61 | 单节点纯转账筛查 | 36,818.67 | 36,558.50 | [20261028-epyc4345p-cpu32-owner-alloc-notify-reserve-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-alloc-notify-reserve-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-batch48-single-round / screen-cpu32-owner-batch48-round1 | 4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0 | 单节点纯转账筛查 | 35,372.83 | 36,422.24 | [20261028-epyc4345p-cpu32-owner-batch48-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-batch48-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-bounded-allocations-single-round / screen-cpu32-owner-bounded-allocations-round1 | 5cfdd6ac795145b177acfb782d1f86f3a40175e6 | 单节点纯转账筛查 | 35,297.58 | 36,407.69 | [20261028-epyc4345p-cpu32-owner-bounded-allocations-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-bounded-allocations-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-bulk-inline-snapshot-reserve-single-round / screen-cpu32-owner-bulk-inline-snapshot-round1 | 23a0a4d3aec9fbcde1b4074f912d7f21091c9b9d | 单节点纯转账筛查 | 37,050.08 | 37,619.26 | [20261028-epyc4345p-cpu32-owner-bulk-inline-snapshot-reserve-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-bulk-inline-snapshot-reserve-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-current-root-views-single-round / screen-cpu32-owner-views-round1 | 448eb0536875215291615d30b1516d99d8b73570 | 单节点纯转账筛查 | 36,261.75 | 36,554.85 | [20261028-epyc4345p-cpu32-owner-current-root-views-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-current-root-views-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-fused-primary-capture-single-round / screen-cpu32-owner-fused-primary-capture-round1 | 4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0 | 单节点纯转账筛查 | 35,210.58 | 37,348.69 | [20261028-epyc4345p-cpu32-owner-fused-primary-capture-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-fused-primary-capture-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-identity-lookup-single-round / screen-cpu32-owner-identity-lookup-round1 | 42d6e8affa04747f125a55dac84c2424ef770651 | 单节点纯转账筛查 | 35,267.75 | 36,412.71 | [20261028-epyc4345p-cpu32-owner-identity-lookup-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-identity-lookup-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-root-program-cache-single-round / screen-cpu32-owner-root-program-cache-round1 | 882ed34363b6984eb869c2d37e0e5f6718e6472f | 单节点纯转账筛查 | 34,856.92 | 36,820.15 | [20261028-epyc4345p-cpu32-owner-root-program-cache-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-root-program-cache-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-sha-order-single-round / screen-cpu32-owner-sha-order-round1 | 2bb4d7489ed4b5cac638763f4ed9f1bb7c3bab55 | 单节点纯转账筛查 | 36,551.17 | 36,303.36 | [20261028-epyc4345p-cpu32-owner-sha-order-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-sha-order-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-snapshot-batch-single-round / screen-cpu32-owner-snapshot-batch-round1 | 24c9cadbc67c6543e693ee37a4a6c86564a5c5fb | 单节点纯转账筛查 | 35,168.17 | 36,406.68 | [20261028-epyc4345p-cpu32-owner-snapshot-batch-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-snapshot-batch-single-round.md) |
+| 20261028-epyc4345p-cpu32-owner-task-queue-single-round / screen-cpu32-owner-task-queue-round1 | 57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2 | 单节点纯转账筛查 | 34,895.50 | 36,037.78 | [20261028-epyc4345p-cpu32-owner-task-queue-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-owner-task-queue-single-round.md) |
+| 20261028-epyc4345p-cpu32-sha256-order-single-round / screen-cpu32-sha256-order-round1 | 2e032ce7a8b23ae7ef220a39018d21f0052e6710 | 单节点纯转账筛查 | 36,761.33 | 36,298.77 | [20261028-epyc4345p-cpu32-sha256-order-single-round.md](main-thread-experiments/records/20261028-epyc4345p-cpu32-sha256-order-single-round.md) |
+| 20261028-epyc4345p-current57-main-thread-profile / 无节点TPS | 57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2 | 诊断采样（不作容量结果） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-current57-main-thread-profile.md](main-thread-experiments/records/20261028-epyc4345p-current57-main-thread-profile.md) |
+| 20261028-epyc4345p-native-ledger-workflow-equivalence-v1 / 无节点TPS | 4b8ace5fcec7d7a5512350ec1d1c60f0fe7364c0 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-native-ledger-workflow-equivalence-v1.md](main-thread-experiments/records/20261028-epyc4345p-native-ledger-workflow-equivalence-v1.md) |
+| 20261028-epyc4345p-offline-owned-parallel-capture-oracle / 无节点TPS | 组件/未绑定 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-offline-owned-parallel-capture-oracle.md](main-thread-experiments/records/20261028-epyc4345p-offline-owned-parallel-capture-oracle.md) |
+| 20261028-epyc4345p-single-key-authorization-component-oracle / 无节点TPS | 组件/未绑定 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-single-key-authorization-component-oracle.md](main-thread-experiments/records/20261028-epyc4345p-single-key-authorization-component-oracle.md) |
+| 20261028-epyc4345p-task-queue-component-oracle / 无节点TPS | 组件/未绑定 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-task-queue-component-oracle.md](main-thread-experiments/records/20261028-epyc4345p-task-queue-component-oracle.md) |
+| 20261028-epyc4345p-task-queue-ownership-only-fix / 无节点TPS | 9aee6083cf95065b033a378ceae51b3465645fde | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261028-epyc4345p-task-queue-ownership-only-fix.md](main-thread-experiments/records/20261028-epyc4345p-task-queue-ownership-only-fix.md) |
+| 20261029-epyc4345p-SHA-order-3f622b5d-affinity-fixed-single-screen / screen-cpu32-owner-sha-order-round1 | 3f622b5d54f133b2b650dd3b02c4c7da39d2e685 | 组件/安全/工具验证（无节点TPS） | 38,594.83 | 36,821.64 | [20261029-epyc4345p-SHA-order-3f622b5d-affinity-fixed-single-screen.md](main-thread-experiments/records/20261029-epyc4345p-SHA-order-3f622b5d-affinity-fixed-single-screen.md) |
+| 20261029-epyc4345p-SHA-order-3f622b5d-single-screen / screen-cpu32-owner-sha-order-round1 | 3f622b5d54f133b2b650dd3b02c4c7da39d2e685 | 单节点纯转账筛查 | 34,615.75 | 35,799.23 | [20261029-epyc4345p-SHA-order-3f622b5d-single-screen.md](main-thread-experiments/records/20261029-epyc4345p-SHA-order-3f622b5d-single-screen.md) |
+| 20261029-epyc4345p-hardened-read-capture-component / 无节点TPS | ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261029-epyc4345p-hardened-read-capture-component.md](main-thread-experiments/records/20261029-epyc4345p-hardened-read-capture-component.md) |
+| 20261029-epyc4345p-ordered-ready-adoption-ab9fa2d7-affinity-fixed-single-screen / screen-cpu32-owner-ready-adoption-round1 | ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b | 组件/安全/工具验证（无节点TPS） | 37,527.42 | 37,758.85 | [20261029-epyc4345p-ordered-ready-adoption-ab9fa2d7-affinity-fixed-single-screen.md](main-thread-experiments/records/20261029-epyc4345p-ordered-ready-adoption-ab9fa2d7-affinity-fixed-single-screen.md) |
+| 20261029-epyc4345p-ordered-ready-adoption-single-screen / screen-cpu32-owner-ready-adoption-round1 | ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b | 单节点纯转账筛查 | 35,622.25 | 36,553.24 | [20261029-epyc4345p-ordered-ready-adoption-single-screen.md](main-thread-experiments/records/20261029-epyc4345p-ordered-ready-adoption-single-screen.md) |
+| 20261029-epyc4345p-p2p-capacity-release-gate / 无节点TPS | ab9fa2d7d | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261029-epyc4345p-p2p-capacity-release-gate.md](main-thread-experiments/records/20261029-epyc4345p-p2p-capacity-release-gate.md) |
+| 20261029-epyc4345p-ready-adoption-main-thread-profile / 无节点TPS | ab9fa2d7d7cf2fb29b8148905f4dc65399c8e81b | 诊断采样（不作容量结果） | 未测/该记录未给出 | 未测/该记录未给出 | [20261029-epyc4345p-ready-adoption-main-thread-profile.md](main-thread-experiments/records/20261029-epyc4345p-ready-adoption-main-thread-profile.md) |
+| 20261029-epyc4345p-ready-coordinator-safety-prototype / 无节点TPS | 57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261029-epyc4345p-ready-coordinator-safety-prototype.md](main-thread-experiments/records/20261029-epyc4345p-ready-coordinator-safety-prototype.md) |
+| 20261029-epyc4345p-staged-partition-component-rejected / 无节点TPS | 57fcb6d215ec7ba5a1fe8198763a0fba6defa7e2 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261029-epyc4345p-staged-partition-component-rejected.md](main-thread-experiments/records/20261029-epyc4345p-staged-partition-component-rejected.md) |
+| 20261029-epyc4345p-startup-ownership-functional-fix / 无节点TPS | 61b753bc8e609e17d8c42177da12b9510cee4bf6 | 组件/安全/工具验证（无节点TPS） | 未测/该记录未给出 | 未测/该记录未给出 | [20261029-epyc4345p-startup-ownership-functional-fix.md](main-thread-experiments/records/20261029-epyc4345p-startup-ownership-functional-fix.md) |
+
+## 组件与研究补充
+
+| 方案 | 已验证范围 | 当前处理 |
+|---|---|
+| 离线并行只读 capture | 每个变体 2,677,344 次查询结果比较；旧版17、加固版26生命周期检查；normal/ASan/UBSan/TSan | 离线通过；在线写隔离、Undo/分叉生命周期与接线待完成；没有节点TPS |
+| staged capture 分区 | 23,266 oracle；8项正常/sanitizer 检查通过；组件 CPU 新/旧约1.137 | 组件成本上升，未接节点 |
+| ready coordinator / canonical bridge | 规范顺序、停止前缀、异常、取消、中断、重入；8个真实 controller oracle 双VM及 scoped sanitizer | 已接入 ab9 的实验开关；尚未性能/稳定性采用 |
+| named pool startup | reserve 分配失败和首个 pthread 创建失败可复现；每个变体80检查、11项正常/ASan/UBSan/TSan | 单独功能修复61b保留 |
+| task queue 所有权 | 原 clear 漏3个callback、插入失败漏1个已复现；11项正常/sanitizer检查 | 单独功能修复9aee保留；不依赖队列替换性能 |
+| Native 只读账本验证工具 | 同一历史全量用例与原RPC断言等价；工具检查加速 | 仅压测工作流加速，不能算链TPS改进 |
+| TSan/glibc signal 恢复兼容调查 | 独立最小复现，限定 runtime 正/负对照保留；真实race/不安全handler仍报告 | 仅隔离研究测试，不改生产运行时，不关闭安全报告 |
+
+## 尚待完成的增量优化实验
+
+| 方案 | 状态 | 完成条件 |
+|---|---|
+| 在线只读状态并行采集 | 待接线验证 | 严格写入隔离、完整拥有复制、4 MiB界限、Undo/分叉/取消、normal与sanitizer，再看节点收益 |
+| 提前整理不可变交易输入 | 待独立实现/验证 | 完整输入绑定；owner仍核对当前状态、权限、资源、重复交易与提交 |
+| 每4/8笔就绪结果分组交接 | 待实验 | 保持规范顺序、停止前缀、异常回收、不可变所有权；证明交接成本下降 |
+| trace/receipt/input 临时存储预留复用 | 待独立热点实验 | 不跨有效期复用、不影响异步持有者、回滚与内存上界 |
+| 交易ID查找/插入提示复用 | 待实验 | 唯一性检查保留，提示有明确失效规则，Undo/分叉/写入后回原路径 |
+
+真正并行提交数据库需要 MVCC/分片等更大架构研究，未当成已完成的增量补丁。当前按用户要求仍只做单节点；实际多节点风险另见 [single-node-network-followups-20261029.md](single-node-network-followups-20261029.md)。
+
+## 完整性
+
+本次覆盖 39 个现存机器 JSON、31 个代码版本；生成 39 份记录 MD 与 31 份版本 MD。所有条目链接到原始证据，失败记录和方法纠正均保留。

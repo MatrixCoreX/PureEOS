@@ -1,0 +1,3608 @@
+{
+  "status": "LOCAL_AUDIT_COMPLETE",
+  "utc": "2026-11-12T10:07:35.725605+00:00",
+  "repositories": [
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-Key-AutoRAM-20261105",
+      "remotes": {
+        "origin": "https://github.com/MatrixCoreX/PureEOS.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-Key",
+        "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+        "/home/guagua/AntelopeIO/PureEOS-Key-AutoRAM-20261105",
+        "/home/guagua/AntelopeIO/PureEOS-Key-Signup-Bridge-20261105",
+        "/home/guagua/AntelopeIO/PureEOS-Key-Unbounded-20261107",
+        "/home/guagua/AntelopeIO/PureEOS-PQC-Plan-20261104",
+        "/home/guagua/AntelopeIO/PureEOS-Signup-20261104",
+        "/home/guagua/AntelopeIO/PureEOS-Signup-Bridge-20261105"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "remotes": {
+        "origin": "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+        "publish": "https://github.com/MatrixCoreX/PureEOS.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-Test",
+        "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+        "/home/guagua/AntelopeIO/PureEOS-Testnet-Ops-20261111"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-Wallet/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-Wallet",
+      "remotes": {
+        "origin": "https://github.com/MatrixCoreX/PureEOS-Wallet.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-Wallet",
+        "/home/guagua/AntelopeIO/PureEOS-Wallet-KeyGrowth-20261107"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "remotes": {},
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102",
+      "remotes": {
+        "origin": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/received-sources/bond-contract.bundle"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-explorer-dev-genesis-20261105",
+      "remotes": {
+        "origin": "https://github.com/MatrixCoreX/PureEOS-Explorer.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-explorer",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-KeyGrowth-20261107",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-blacklist-20261101",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-bond-20261102",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-browser-language-20261101",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-dev-genesis-20261105",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-high-snapshot-20261102",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-key-20261103",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-key-history-20261103",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-release-v1-20261101",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-rotation-demo-20261031",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-schedule-compact-20261101",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-signup-bridge-20261105",
+        "/home/guagua/AntelopeIO/PureEOS-explorer-test-default-20261102"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030",
+      "remotes": {
+        "origin": "/home/guagua/AntelopeIO/release-work-20261030/parallel-network-continued-1/source-handoff/functional-harness-source.bundle"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative": "/home/guagua/AntelopeIO/PureEOS-parallel-autoscale",
+      "remotes": {
+        "origin": "git@github.com:MatrixCoreX/PureEOS.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureEOS",
+        "/home/guagua/AntelopeIO/PureEOS-deployed-node-20261102",
+        "/home/guagua/AntelopeIO/PureEOS-group8-baseline-20261029",
+        "/home/guagua/AntelopeIO/PureEOS-parallel-autoscale",
+        "/home/guagua/AntelopeIO/PureEOS-parallel-v1-release",
+        "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+        "/home/guagua/AntelopeIO/PureEOS-work-capacity",
+        "/home/guagua/AntelopeIO/release-work-20261025/tps-baremetal-NET4-P2P16-1/source-variant"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative": "/home/guagua/AntelopeIO/PureHistory-key-history-20261103",
+      "remotes": {
+        "origin": "https://github.com/MatrixCoreX/PureHistory.git",
+        "upstream": "https://github.com/eosrio/hyperion-history-api.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/PureHistory",
+        "/home/guagua/AntelopeIO/PureHistory-deployed-20261102",
+        "/home/guagua/AntelopeIO/PureHistory-dev-genesis-20261105",
+        "/home/guagua/AntelopeIO/PureHistory-key-history-20261103",
+        "/home/guagua/AntelopeIO/PureHistory-release-v1-20261101"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative": "/home/guagua/AntelopeIO/cdt-parallel-v1-release",
+      "remotes": {
+        "origin": "https://github.com/AntelopeIO/cdt",
+        "pureeos": "https://github.com/MatrixCoreX/PureEOS-CDT.git"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/cdt",
+        "/home/guagua/AntelopeIO/cdt-parallel-v1-release",
+        "/home/guagua/AntelopeIO/cdt-v1-hardening"
+      ]
+    },
+    {
+      "common": "/home/guagua/AntelopeIO/reference-contracts/.git",
+      "representative": "/home/guagua/AntelopeIO/reference-contracts-v1-hardening",
+      "remotes": {
+        "origin": "https://github.com/AntelopeIO/reference-contracts"
+      },
+      "worktrees": [
+        "/home/guagua/AntelopeIO/reference-contracts",
+        "/home/guagua/AntelopeIO/reference-contracts-parallel-v1-release",
+        "/home/guagua/AntelopeIO/reference-contracts-v1-hardening"
+      ]
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS",
+        "HEAD": "3856ab5b0723da1a1c41d60751109af789403945",
+        "branch": "refs/heads/feature/parallel-tx-execution"
+      },
+      "status": "DIRTY",
+      "branch": "feature/parallel-tx-execution",
+      "head": "3856ab5b0723da1a1c41d60751109af789403945",
+      "upstream": null,
+      "last_commit": "2026-10-14 feat: prove bounded multi-root synchronous execution in isolation",
+      "changes": [
+        {
+          "status": " M",
+          "path": ".github/workflows/build.yaml"
+        },
+        {
+          "status": " M",
+          "path": ".github/workflows/build_base.yaml"
+        },
+        {
+          "status": " M",
+          "path": "README.md"
+        },
+        {
+          "status": " M",
+          "path": "docs/parallel-execution/PX7_GENERAL_EXECUTION_PLAN.md"
+        },
+        {
+          "status": " M",
+          "path": "docs/parallel-execution/access-inventory.json"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/apply_context.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/controller.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/chain_config.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/controller.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_action_tree.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_canonical_adoption.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_ordered_batch.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_state_overlay.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_sync_call.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_wasm_worker.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/parallel_worker_pool.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/transaction_context.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/transaction_state_view.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/unapplied_transaction_queue.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_action_tree.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_canonical_adoption.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_ordered_batch.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_state_overlay.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_sync_call.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_wasm_worker.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/parallel_worker_pool.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/transaction_context.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/eos-vm"
+        },
+        {
+          "status": " M",
+          "path": "libraries/libfc/src/io/console.cpp"
+        },
+        {
+          "status": " M",
+          "path": "plugins/chain_plugin/chain_plugin.cpp"
+        },
+        {
+          "status": " M",
+          "path": "plugins/producer_plugin/producer_plugin.cpp"
+        },
+        {
+          "status": " M",
+          "path": "plugins/producer_plugin/test/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "plugins/producer_plugin/test/test_trx_full.cpp"
+        },
+        {
+          "status": " M",
+          "path": "scripts/parallel_access_audit.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/PerformanceHarness/benchmark_environment.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/PerformanceHarness/finality_benchmark.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/parallel_access_audit_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/parallel_execution_harness_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/parallel_execution_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/parallel_producer_process_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/pureeos_large_multinode_local_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/pureeos_multinode_local_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/trx_generator/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "unittests/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_action_tree_journal_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_action_tree_pool_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_action_tree_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_inline_adoption_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_module_cache_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_ordered_batch_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_serial_reference_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_state_view_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_sync_call_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_test_diagnostics.hpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_validation_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_wasm_worker_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/unapplied_transaction_queue_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": ".cicd/platforms/ubuntu26.04.Dockerfile"
+        },
+        {
+          "status": "??",
+          "path": ".cicd/platforms/ubuntu26.10.Dockerfile"
+        },
+        {
+          "status": "??",
+          "path": "config-dir/"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_CLOSEOUT.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_TEST_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_COMPLETE_RETEST.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_RETEST_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_BOUNDED_MICROBATCH_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CALLEE_DISCOVERY_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CDT5_UNIFIED_RETEST_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CDT5_UNIFIED_RETEST_PLAN.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CLOUD_LIGHT_TRANSFER_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CLOUD_MIXED_STRESS_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CONSOLE_HOST_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CONTROLLER_PREFIX_REFRESH_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CROSS_MODE_CACHE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_FLOAT_HOST_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_FULL_CDT_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G5C3C3B_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G6A_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G6B_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G6D_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_GLOBAL_INDEPENDENT_12_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_HISTORICAL_EDGE_CASE_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_HISTORICAL_REGRESSION_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_HISTORICAL_REGRESSION_TEST_PLAN.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_INTEGER_HOST_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_JIT_RELEASE_INTEGRATION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_ADOPTION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_FAILURE_DIAGNOSTICS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_POOL_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_TREE_PRIVATE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PARALLEL_CAPACITY_BUDGET_PLAN.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PREFIX_REFRESH_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PREPARATION_BUDGET_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PRODUCTION_PHASE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_RESOLVER_LOCK_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SAME_PREFIX_CAPTURE_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SCALABLE_RUNTIME_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SECONDARY_ADOPTION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SECONDARY_BOUNDARY_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SECONDARY_COST_DIAGNOSTICS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SHARED_PREPARATION_BUDGET_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SMALL_BATCH_CACHE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SYNC_DEPTH_CACHE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_TOKEN_ADOPTION_DIAGNOSTICS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_TWO_HOST_NODE_CAPACITY_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_UBUNTU2610_CLOUD_OPTIMIZATION_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_BENCHMARK_PROTOCOL.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CANDIDATE_GUIDE.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RELEASE_CHECKLIST.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/ubuntu/"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_console.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_deadline_service.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_execution_runtime.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_jit_backend.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_mixed_tree.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_mixed_tree_journal.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_preparation_budget.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_production_admission.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_pure_float.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_pure_hash.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_pure_integer.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_runtime_limits.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_secondary_journal.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_secondary_state.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_sync_discovery.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_transaction_environment.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_mixed_tree_journal.cpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_secondary_journal.cpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_secondary_state.cpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_transaction_environment.cpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/include/eosio/producer_plugin/incoming_transaction_batch.hpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/include/eosio/producer_plugin/production_timer_guard.hpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/test/test_incoming_transaction_batch.cpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/test/test_production_timer_guard.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/parallel_budget_model.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/parallel_capacity.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/parallel_diagnostic_report.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/test_parallel_budget_model.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/test_parallel_capacity.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/test_parallel_diagnostic_report.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/console_echo_regression_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/fixtures/"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_complex_replay.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_complex_replay_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_global12_benchmark.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_global12_benchmark_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_loopback_wave.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_loopback_wave_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_mixed_stress_benchmark.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_mixed_stress_workload.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_mixed_stress_workload_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_pressure_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_pressure_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_benchmark.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_benchmark_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_fixture_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_recovery.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_recovery_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_runtime_cli_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_saturation_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_saturation_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/presigned_sender_cli_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/presigned_sender_start_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/presigned_sender_start_unit_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_candidate_sync_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_cloud_regression_runner.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_cloud_regression_runner_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_fourhost_rotation_cloud_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_fourhost_rotation_cloud_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_historical_edge_cases_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_historical_edge_cases_unit_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_host_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_host_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_multihost_cloud_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_multihost_cloud_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_cohort_cloud_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_cohort_cloud_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_lifecycle.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_lifecycle_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/trx_generator/presigned_tps_sender.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/ubuntu_cdt_runtime_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/ubuntu_cdt_runtime_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/ubuntu_modern_build_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tools/ubuntu-modern-build.sh"
+        },
+        {
+          "status": "??",
+          "path": "unittests/chain_config_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_console_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_deadline_service_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_float_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_full_cdt_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_integer_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_jit_backend_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_jit_finalization_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_mixed_stress_fixture.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_mixed_tree_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_prefix_refresh_cases.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_production_admission_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_pure_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_release_fixture.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_runtime_engine_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_secondary_state_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_secondary_transcript_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_secondary_wasm_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_test_runtime.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_transaction_environment_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/test-contracts/complex_benchmark/"
+        },
+        {
+          "status": "??",
+          "path": "unittests/test-contracts/parallel_lightbench/"
+        },
+        {
+          "status": "??",
+          "path": "unittests/test-contracts/parallel_statebench/"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+        "HEAD": "00e373d3f70e6e4079913b77014702d92859ebe8",
+        "branch": "refs/heads/feature/supply-cap-veto-20261104"
+      },
+      "status": "CLEAN",
+      "branch": "feature/supply-cap-veto-20261104",
+      "head": "00e373d3f70e6e4079913b77014702d92859ebe8",
+      "upstream": "origin/feature/supply-cap-veto-20261104",
+      "last_commit": "2026-11-04 Record unanimous native BP veto and unchanged AIC issuance cap",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Key",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Key",
+        "HEAD": "23fa32adb307b2a2f756703f6faef16b14313ab2",
+        "branch": "refs/heads/feature/activate-ram-fees-20261104"
+      },
+      "status": "CLEAN",
+      "branch": "feature/activate-ram-fees-20261104",
+      "head": "23fa32adb307b2a2f756703f6faef16b14313ab2",
+      "upstream": "origin/feature/activate-ram-fees-20261104",
+      "last_commit": "2026-11-04 Preserve canonical RAM activation and real fee verification",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Key-AutoRAM-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Key-AutoRAM-20261105",
+        "HEAD": "2c6398f0c19b7fd47b76e72e60aceb8ea9206652",
+        "branch": "refs/heads/ops/bp-add-two-stop-two-20261106"
+      },
+      "status": "CLEAN",
+      "branch": "ops/bp-add-two-stop-two-20261106",
+      "head": "2c6398f0c19b7fd47b76e72e60aceb8ea9206652",
+      "upstream": "origin/ops/bp-add-two-stop-two-20261106",
+      "last_commit": "2026-11-06 Start two BPs and stop Baidu and maintained Montreal",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Key-Signup-Bridge-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Key-Signup-Bridge-20261105",
+        "HEAD": "d64c588dc064e0871e3197e3ce63f082aff08ebd",
+        "branch": "refs/heads/feature/key-signup-bridge-20261105"
+      },
+      "status": "CLEAN",
+      "branch": "feature/key-signup-bridge-20261105",
+      "head": "d64c588dc064e0871e3197e3ce63f082aff08ebd",
+      "upstream": null,
+      "last_commit": "2026-11-05 Record irreversible Signup and KEY bridge deployment",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Key-Unbounded-20261107",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Key-Unbounded-20261107",
+        "HEAD": "152cb3a7f700b4b9dee4680ca595e7efc68b2e3f",
+        "branch": "refs/heads/feature/key-native-ram-20261111"
+      },
+      "status": "CLEAN",
+      "branch": "feature/key-native-ram-20261111",
+      "head": "152cb3a7f700b4b9dee4680ca595e7efc68b2e3f",
+      "upstream": null,
+      "last_commit": "2026-11-11 Record irreversible native sender RAM deployment and fee flows",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-PQC-Plan-20261104",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-PQC-Plan-20261104",
+        "HEAD": "cf2d5919cf3cc96dd03a757d3c7ed3df7739260e",
+        "branch": "refs/heads/docs/full-chain-pqc-plan-20261104"
+      },
+      "status": "CLEAN",
+      "branch": "docs/full-chain-pqc-plan-20261104",
+      "head": "cf2d5919cf3cc96dd03a757d3c7ed3df7739260e",
+      "upstream": "origin/docs/full-chain-pqc-plan-20261104",
+      "last_commit": "2026-11-04 docs: plan whole-chain post-quantum migration in Chinese and English",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Signup-20261104",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Signup-20261104",
+        "HEAD": "aeb53ba4d81da93c7ee7b70f4ed10f5819ddf12b",
+        "branch": "refs/heads/feature/system-signup-20261104"
+      },
+      "status": "CLEAN",
+      "branch": "feature/system-signup-20261104",
+      "head": "aeb53ba4d81da93c7ee7b70f4ed10f5819ddf12b",
+      "upstream": "origin/feature/system-signup-20261104",
+      "last_commit": "2026-11-05 Record passing native signup repair qualification",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Signup-Bridge-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Signup-Bridge-20261105",
+        "HEAD": "59c77526b025375e8013a7dea9fbf4eef143d598",
+        "branch": "refs/heads/feature/signup-key-bridge-20261105"
+      },
+      "status": "CLEAN",
+      "branch": "feature/signup-key-bridge-20261105",
+      "head": "59c77526b025375e8013a7dea9fbf4eef143d598",
+      "upstream": null,
+      "last_commit": "2026-11-05 Record irreversible governed bridge deployment",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+        "HEAD": "7a133dea41f210cb73f0dfdeeddb535e3dbde926",
+        "branch": "refs/heads/feature/system-account-proposals-20261105"
+      },
+      "status": "CLEAN",
+      "branch": "feature/system-account-proposals-20261105",
+      "head": "7a133dea41f210cb73f0dfdeeddb535e3dbde926",
+      "upstream": "publish/feature/system-account-proposals-20261105",
+      "last_commit": "2026-11-05 Record irreversible four-service deployment and canonical recovery evidence",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Test",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Test",
+        "HEAD": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+        "branch": "refs/heads/feature/test-governance-30min-20261103"
+      },
+      "status": "CLEAN",
+      "branch": "feature/test-governance-30min-20261103",
+      "head": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+      "upstream": null,
+      "last_commit": "2026-11-03 Keep TEST governance activation aligned with thirty-minute review",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Testnet-Ops-20261111",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Testnet-Ops-20261111",
+        "HEAD": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+        "branch": "refs/heads/ops/relay2-eligibility-20261111"
+      },
+      "status": "CLEAN",
+      "branch": "ops/relay2-eligibility-20261111",
+      "head": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+      "upstream": null,
+      "last_commit": "2026-11-11 Move founder relay to independent relay1 domain with irreversible endpoint registration",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Wallet",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Wallet",
+        "HEAD": "294fef615f6504ebdfbdcf009dc73e19dbf3784f",
+        "branch": "refs/heads/feature/named-wallet-resources-20261105"
+      },
+      "status": "CLEAN",
+      "branch": "feature/named-wallet-resources-20261105",
+      "head": "294fef615f6504ebdfbdcf009dc73e19dbf3784f",
+      "upstream": "origin/feature/named-wallet-resources-20261105",
+      "last_commit": "2026-11-12 Recommend PUB_K1 keys in wallet UI while preserving legacy compatibility",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-Wallet-KeyGrowth-20261107",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-Wallet-KeyGrowth-20261107",
+        "HEAD": "0de126dd6c778580398a420be2cae1d0c483c7ec",
+        "branch": "refs/heads/feature/key-growth-compat-20261107"
+      },
+      "status": "CLEAN",
+      "branch": "feature/key-growth-compat-20261107",
+      "head": "0de126dd6c778580398a420be2cae1d0c483c7ec",
+      "upstream": null,
+      "last_commit": "2026-11-07 Qualify wallet16 reviewed KEY compatibility on installed QR baseline",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+        "HEAD": "d126cae28057edfcd0e2eb84654afd8efd6da257",
+        "branch": "refs/heads/development/baseline-20261030"
+      },
+      "status": "DIRTY",
+      "branch": "development/baseline-20261030",
+      "head": "d126cae28057edfcd0e2eb84654afd8efd6da257",
+      "upstream": null,
+      "last_commit": "2026-10-30 Document current system profile and add independent exact reward regression",
+      "changes": [
+        {
+          "status": "??",
+          "path": "docs/plans/"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-deployed-node-20261102",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-deployed-node-20261102",
+        "HEAD": "e62a7ea30632ad5069a9640fc6bd0e1fe819b159",
+        "branch": "refs/heads/archive/high-spec-node-20261102"
+      },
+      "status": "CLEAN",
+      "branch": "archive/high-spec-node-20261102",
+      "head": "e62a7ea30632ad5069a9640fc6bd0e1fe819b159",
+      "upstream": null,
+      "last_commit": "2026-11-01 docs: expand mirrored bilingual guide with TPS hardware and operator rules",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102",
+        "HEAD": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+        "branch": "refs/heads/archive/high-spec-system-20261102"
+      },
+      "status": "CLEAN",
+      "branch": "archive/high-spec-system-20261102",
+      "head": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+      "upstream": null,
+      "last_commit": "2026-11-01 feat: require fixed AIC BP bonds with safe exits and locked forfeitures",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+        "HEAD": "50f07cf0aad18495403eef56f93e014274dd3b24",
+        "branch": "refs/heads/main"
+      },
+      "status": "CLEAN",
+      "branch": "main",
+      "head": "50f07cf0aad18495403eef56f93e014274dd3b24",
+      "upstream": "origin/main",
+      "last_commit": "2026-11-02 Show on-chain BP bond amounts, refund state and locked forfeitures",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-KeyGrowth-20261107",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-KeyGrowth-20261107",
+        "HEAD": "a5a938234130dac911f00c7c7ac001d054e86f3b",
+        "branch": "refs/heads/feature/relay-eligibility-20261111"
+      },
+      "status": "CLEAN",
+      "branch": "feature/relay-eligibility-20261111",
+      "head": "a5a938234130dac911f00c7c7ac001d054e86f3b",
+      "upstream": null,
+      "last_commit": "2026-11-11 Filter ineligible BP relays from fee estimates and clear stale quotes",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-blacklist-20261101",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-blacklist-20261101",
+        "HEAD": "366bf0c6e9d6ce12ea01c6f7eae6da6c1098029d",
+        "branch": "refs/heads/feature/producer-blacklist-20261101"
+      },
+      "status": "CLEAN",
+      "branch": "feature/producer-blacklist-20261101",
+      "head": "366bf0c6e9d6ce12ea01c6f7eae6da6c1098029d",
+      "upstream": null,
+      "last_commit": "2026-11-01 Record live blacklist and compact producer deployment",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-bond-20261102",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-bond-20261102",
+        "HEAD": "50f07cf0aad18495403eef56f93e014274dd3b24",
+        "branch": "refs/heads/feature/bp-bond-display-20261102"
+      },
+      "status": "CLEAN",
+      "branch": "feature/bp-bond-display-20261102",
+      "head": "50f07cf0aad18495403eef56f93e014274dd3b24",
+      "upstream": null,
+      "last_commit": "2026-11-02 Show on-chain BP bond amounts, refund state and locked forfeitures",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-browser-language-20261101",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-browser-language-20261101",
+        "HEAD": "cc740b9dc3385c6d794abadf23c4f2fc07a776b4",
+        "branch": "refs/heads/feat/browser-language-20261101"
+      },
+      "status": "CLEAN",
+      "branch": "feat/browser-language-20261101",
+      "head": "cc740b9dc3385c6d794abadf23c4f2fc07a776b4",
+      "upstream": "origin/main",
+      "last_commit": "2026-11-01 Record deployed browser language and testnet verification",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-dev-genesis-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-dev-genesis-20261105",
+        "HEAD": "7c029f65e551e2b28e2ebb6da0c4a6b5ea5ffaf6",
+        "branch": "refs/heads/feature/bp-demo-capacity-time-20261105"
+      },
+      "status": "CLEAN",
+      "branch": "feature/bp-demo-capacity-time-20261105",
+      "head": "7c029f65e551e2b28e2ebb6da0c4a6b5ea5ffaf6",
+      "upstream": "origin/feature/bp-demo-capacity-time-20261105",
+      "last_commit": "2026-11-05 Show next candidate capacity increase on producer card",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-high-snapshot-20261102",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-high-snapshot-20261102",
+        "HEAD": "8234c1c1c9994bd3713e45331c9baca03c5f98f1",
+        "branch": "refs/heads/feature/high-spec-page-snapshot-20261102"
+      },
+      "status": "CLEAN",
+      "branch": "feature/high-spec-page-snapshot-20261102",
+      "head": "8234c1c1c9994bd3713e45331c9baca03c5f98f1",
+      "upstream": "origin/feature/high-spec-page-snapshot-20261102",
+      "last_commit": "2026-11-02 Verify snapshot entry route after high-server retirement",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-key-20261103",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-key-20261103",
+        "HEAD": "fe125105d9918d70a5ff0c384867105a9eb8bd7f",
+        "branch": "refs/heads/feature/key-wallet-balances-20261103"
+      },
+      "status": "DIRTY",
+      "branch": "feature/key-wallet-balances-20261103",
+      "head": "fe125105d9918d70a5ff0c384867105a9eb8bd7f",
+      "upstream": null,
+      "last_commit": "2026-11-02 Fix testnet label for build-configured RPC defaults",
+      "changes": [
+        {
+          "status": " M",
+          "path": "AGENTS.md"
+        },
+        {
+          "status": " M",
+          "path": "package-lock.json"
+        },
+        {
+          "status": " M",
+          "path": "package.json"
+        },
+        {
+          "status": " M",
+          "path": "src/lib/api.ts"
+        },
+        {
+          "status": " M",
+          "path": "src/lib/format.ts"
+        },
+        {
+          "status": " M",
+          "path": "src/lib/translations.ts"
+        },
+        {
+          "status": " M",
+          "path": "src/pages/Transactions.tsx"
+        },
+        {
+          "status": "??",
+          "path": "src/components/PublicKeyWallet.test.tsx"
+        },
+        {
+          "status": "??",
+          "path": "src/components/PublicKeyWallet.tsx"
+        },
+        {
+          "status": "??",
+          "path": "src/lib/key-wallet.test.ts"
+        },
+        {
+          "status": "??",
+          "path": "src/lib/key-wallet.ts"
+        },
+        {
+          "status": "??",
+          "path": "src/lib/public-key.ts"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-key-history-20261103",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-key-history-20261103",
+        "HEAD": "8f601a7fef2f00285d5cb936d8da1fa0209659b4",
+        "branch": "refs/heads/feature/native-upgrade-history-20261104"
+      },
+      "status": "CLEAN",
+      "branch": "feature/native-upgrade-history-20261104",
+      "head": "8f601a7fef2f00285d5cb936d8da1fa0209659b4",
+      "upstream": "origin/feature/native-upgrade-history-20261104",
+      "last_commit": "2026-11-04 Archive published proposal history, navigation QA and cleanup",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-release-v1-20261101",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-release-v1-20261101",
+        "HEAD": "62a82fde118ce0aa1f05cc8777221a141dab2153",
+        "branch": "refs/heads/release/v1.0.0-20261101"
+      },
+      "status": "CLEAN",
+      "branch": "release/v1.0.0-20261101",
+      "head": "62a82fde118ce0aa1f05cc8777221a141dab2153",
+      "upstream": null,
+      "last_commit": "2026-11-01 release: prepare 1.0.0 current baseline and bilingual documentation",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-rotation-demo-20261031",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-rotation-demo-20261031",
+        "HEAD": "afa6f3ddafc728fe283dbe93a516b2ede7e7a104",
+        "branch": "refs/heads/feature/automated-rotation-demo-20261031"
+      },
+      "status": "CLEAN",
+      "branch": "feature/automated-rotation-demo-20261031",
+      "head": "afa6f3ddafc728fe283dbe93a516b2ede7e7a104",
+      "upstream": null,
+      "last_commit": "2026-11-01 Record live maintenance detail qualification and publication",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-schedule-compact-20261101",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-schedule-compact-20261101",
+        "HEAD": "096f57299f520556c640a36c49708aad31cd199b",
+        "branch": "refs/heads/feature/compact-producer-schedule-20261101"
+      },
+      "status": "CLEAN",
+      "branch": "feature/compact-producer-schedule-20261101",
+      "head": "096f57299f520556c640a36c49708aad31cd199b",
+      "upstream": "origin/main",
+      "last_commit": "2026-11-01 docs: record public vote breakdown and maintenance exit verification",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-signup-bridge-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-signup-bridge-20261105",
+        "HEAD": "063fb0f075bccde3faef0794a4203ba48665d32d",
+        "branch": "refs/heads/feature/proposal-tabs-20261106"
+      },
+      "status": "CLEAN",
+      "branch": "feature/proposal-tabs-20261106",
+      "head": "063fb0f075bccde3faef0794a4203ba48665d32d",
+      "upstream": null,
+      "last_commit": "2026-11-06 docs: verify deployed proposal tabs and public fee views",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-explorer-test-default-20261102",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-explorer-test-default-20261102",
+        "HEAD": "fe125105d9918d70a5ff0c384867105a9eb8bd7f",
+        "branch": "refs/heads/fix/build-default-testnet-label-20261102"
+      },
+      "status": "CLEAN",
+      "branch": "fix/build-default-testnet-label-20261102",
+      "head": "fe125105d9918d70a5ff0c384867105a9eb8bd7f",
+      "upstream": null,
+      "last_commit": "2026-11-02 Fix testnet label for build-configured RPC defaults",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030",
+        "HEAD": "4605405556608a4912733410b29acaafbce26dad",
+        "branch": "refs/heads/review/functional-harness-20261030"
+      },
+      "status": "CLEAN",
+      "branch": "review/functional-harness-20261030",
+      "head": "4605405556608a4912733410b29acaafbce26dad",
+      "upstream": "origin/review/functional-harness-20261030",
+      "last_commit": "2026-10-30 Preserve remote multi-node discovery and planned-maintenance functional harnesses",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-group8-baseline-20261029",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-group8-baseline-20261029",
+        "HEAD": "36b4bf5670e20ec74307e8cbd013c3112083afb3",
+        "branch": "refs/heads/development/baseline-20261030"
+      },
+      "status": "CLEAN",
+      "branch": "development/baseline-20261030",
+      "head": "36b4bf5670e20ec74307e8cbd013c3112083afb3",
+      "upstream": null,
+      "last_commit": "2026-11-01 Explain manual maintenance cancellation and sub21 quorum requirements",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-parallel-autoscale",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-parallel-autoscale",
+        "HEAD": "785f8b10edbd21d410b28a5b901d07aeafce29a3",
+        "branch": "refs/heads/perf/auto-parallel-workers-20261026"
+      },
+      "status": "CLEAN",
+      "branch": "perf/auto-parallel-workers-20261026",
+      "head": "785f8b10edbd21d410b28a5b901d07aeafce29a3",
+      "upstream": null,
+      "last_commit": "2026-10-26 fix: size shared capture metadata for larger parallel batches",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-parallel-v1-release",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-parallel-v1-release",
+        "HEAD": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+        "branch": "refs/heads/release/parallel-v1"
+      },
+      "status": "DIRTY",
+      "branch": "release/parallel-v1",
+      "head": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+      "upstream": null,
+      "last_commit": "2026-10-25 docs: finalize parallel v1 joint release acceptance",
+      "changes": [
+        {
+          "status": " M",
+          "path": "libraries/eos-vm"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+        "HEAD": "3856ab5b0723da1a1c41d60751109af789403945",
+        "branch": "refs/heads/feature/v1-hardening-20261022"
+      },
+      "status": "DIRTY",
+      "branch": "feature/v1-hardening-20261022",
+      "head": "3856ab5b0723da1a1c41d60751109af789403945",
+      "upstream": null,
+      "last_commit": "2026-10-14 feat: prove bounded multi-root synchronous execution in isolation",
+      "changes": [
+        {
+          "status": "MM",
+          "path": ".github/workflows/build.yaml"
+        },
+        {
+          "status": "MM",
+          "path": ".github/workflows/build_base.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/jiraIssueCreator.yml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/label_new_issues.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/llvm.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/performance_harness_run.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/ph_backward_compatibility.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/pinned_build.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/release.yaml"
+        },
+        {
+          "status": " D",
+          "path": ".github/workflows/submod.yaml"
+        },
+        {
+          "status": " M",
+          "path": ".gitmodules"
+        },
+        {
+          "status": " M",
+          "path": "CMakeLists.txt"
+        },
+        {
+          "status": "MM",
+          "path": "README.md"
+        },
+        {
+          "status": "MM",
+          "path": "docs/parallel-execution/PX7_GENERAL_EXECUTION_PLAN.md"
+        },
+        {
+          "status": "M ",
+          "path": "docs/parallel-execution/access-inventory.json"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/CMakeLists.txt"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/apply_context.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/block_log.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/controller.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/chain_config.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/controller.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/parallel_action_tree.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/parallel_canonical_adoption.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/parallel_ordered_batch.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/parallel_state_overlay.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/parallel_sync_call.hpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/include/eosio/chain/parallel_wasm_worker.hpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/include/eosio/chain/parallel_worker_pool.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/include/eosio/chain/trace.hpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/include/eosio/chain/transaction_context.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/transaction_state_view.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/include/eosio/chain/unapplied_transaction_queue.hpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/parallel_action_tree.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/parallel_canonical_adoption.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/parallel_ordered_batch.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/parallel_state_overlay.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/chain/parallel_sync_call.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/parallel_wasm_worker.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/parallel_worker_pool.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/resource_limits.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/chain/transaction.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "libraries/chain/transaction_context.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/eos-vm"
+        },
+        {
+          "status": "M ",
+          "path": "libraries/libfc/src/io/console.cpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/version/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "libraries/version/include/eosio/version/version.hpp"
+        },
+        {
+          "status": " M",
+          "path": "libraries/version/src/version_impl.cpp.in"
+        },
+        {
+          "status": "MM",
+          "path": "plugins/chain_plugin/chain_plugin.cpp"
+        },
+        {
+          "status": " M",
+          "path": "plugins/producer_plugin/include/eosio/producer_plugin/production_pause_vote_tracker.hpp"
+        },
+        {
+          "status": "MM",
+          "path": "plugins/producer_plugin/producer_plugin.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "plugins/producer_plugin/test/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "plugins/producer_plugin/test/test_production_pause_vote_tracker.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "plugins/producer_plugin/test/test_trx_full.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "scripts/parallel_access_audit.py"
+        },
+        {
+          "status": "MM",
+          "path": "tests/PerformanceHarness/benchmark_environment.py"
+        },
+        {
+          "status": "M ",
+          "path": "tests/PerformanceHarness/finality_benchmark.py"
+        },
+        {
+          "status": "M ",
+          "path": "tests/parallel_access_audit_test.py"
+        },
+        {
+          "status": "M ",
+          "path": "tests/parallel_execution_harness_test.py"
+        },
+        {
+          "status": "M ",
+          "path": "tests/parallel_execution_test.py"
+        },
+        {
+          "status": "M ",
+          "path": "tests/parallel_producer_process_test.py"
+        },
+        {
+          "status": "MM",
+          "path": "tests/pureeos_large_multinode_local_test.py"
+        },
+        {
+          "status": "MM",
+          "path": "tests/pureeos_multinode_local_test.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/pureeos_single_choice_local_test.py"
+        },
+        {
+          "status": "M ",
+          "path": "tests/trx_generator/CMakeLists.txt"
+        },
+        {
+          "status": "MM",
+          "path": "unittests/CMakeLists.txt"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_action_tree_journal_tests.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "unittests/parallel_action_tree_pool_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_action_tree_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/parallel_context_free_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_inline_adoption_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_module_cache_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_ordered_batch_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_serial_reference_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_state_view_tests.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "unittests/parallel_sync_call_tests.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/parallel_test_diagnostics.hpp"
+        },
+        {
+          "status": "MM",
+          "path": "unittests/parallel_validation_tests.cpp"
+        },
+        {
+          "status": "MM",
+          "path": "unittests/parallel_wasm_worker_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_committee_boundary_tests.inc"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_genesis_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_governance_tests.cpp"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_resource_split_tests.inc"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_reward_activation_tests.inc"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_reward_halving_tests.inc"
+        },
+        {
+          "status": " M",
+          "path": "unittests/pureeos_sequential_rotation_tests.inc"
+        },
+        {
+          "status": " M",
+          "path": "unittests/resource_limits_test.cpp"
+        },
+        {
+          "status": "M ",
+          "path": "unittests/unapplied_transaction_queue_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": ".cicd/platforms/ubuntu26.04.Dockerfile"
+        },
+        {
+          "status": "??",
+          "path": ".cicd/platforms/ubuntu26.10.Dockerfile"
+        },
+        {
+          "status": "??",
+          "path": "AIC_LICENSE.md"
+        },
+        {
+          "status": "??",
+          "path": "LICENSING.md"
+        },
+        {
+          "status": "??",
+          "path": "cmake/"
+        },
+        {
+          "status": "??",
+          "path": "config-dir/"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_CLOSEOUT.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_CANDIDATE_TEST_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_COMPLETE_RETEST.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_30_40_RETEST_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_BLACKLIST_SAFE_EVICTION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_BOUNDED_MICROBATCH_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CALLEE_DISCOVERY_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CDT5_UNIFIED_RETEST_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CDT5_UNIFIED_RETEST_PLAN.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CLOUD_LIGHT_TRANSFER_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CLOUD_MIXED_STRESS_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CONSOLE_HOST_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CONTROLLER_PREFIX_REFRESH_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CPU_BILLING_FIX_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_CROSS_MODE_CACHE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_FLOAT_HOST_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_FULL_CDT_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G5C3C3B_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G6A_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G6B_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_G6D_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_GLOBAL_INDEPENDENT_12_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_HISTORICAL_EDGE_CASE_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_HISTORICAL_REGRESSION_LIVE_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_HISTORICAL_REGRESSION_TEST_PLAN.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_INTEGER_HOST_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_JIT_RELEASE_INTEGRATION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_ADOPTION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_FAILURE_DIAGNOSTICS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_POOL_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_MIXED_TREE_PRIVATE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PARALLEL_CAPACITY_BUDGET_PLAN.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PREFIX_REFRESH_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PREPARATION_BUDGET_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_PRODUCTION_PHASE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_RESOLVER_LOCK_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SAME_PREFIX_CAPTURE_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SCALABLE_RUNTIME_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SECONDARY_ADOPTION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SECONDARY_BOUNDARY_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SECONDARY_COST_DIAGNOSTICS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SHARED_PREPARATION_BUDGET_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SMALL_BATCH_CACHE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_SYNC_DEPTH_CACHE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_TOKEN_ADOPTION_DIAGNOSTICS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_TRANSACTION_WORK_CONTEXT.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_TWO_HOST_NODE_CAPACITY_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_UBUNTU2610_CLOUD_OPTIMIZATION_RESULTS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_ACTUAL_VM_RECOVERY_FOLLOWUP_20261023.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_AIC_CDT_AND_COHORT_RECOVERY.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_BENCHMARK_PROTOCOL.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_BUILD_VERSION_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CANDIDATE_GUIDE.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CANDIDATE_TPS_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CDT_RUNTIME_PARAMETERS_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CI_DELIVERY_REPAIR_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CLOUD_ACCEPTANCE_HANDOFF.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CLOUD_COHORT_RETEST_20261023.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CLOUD_REAL_DAY_QUEUE_20261023.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_COHORT_COMPLETION_REPAIR_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_COLD_WARM_REPAIR_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CURRENT_PROFILE_REPAIR_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CURRENT_SANITIZER_TIMING_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_CURRENT_STATUS.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_DELIVERY_RETEST_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_DEPENDENCY_AND_DELIVERY_REPAIR_20261023.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_FAST_TESTING.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_HARDENING_PHASE1_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_HARDENING_PHASE2_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_HARD_REPLAY_REPAIR_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_LIVE_REWARD_TOPOLOGY_REPAIR.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_LOCAL_RELEASE_WORKFLOWS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_NEW_CHAIN_DEFAULT_PROFILE_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_PERFORMANCE_PATH_AUDIT_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_PIPELINE_AND_LLVM_DECISION.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_POST_REBOOT_TEST_RECOVERY.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_POST_RELEASE_SINGLE_NODE_TPS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_PUBLIC_VM_SOURCE_DELIVERY_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RECENT_CLOUD_ISSUES_20261023.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RECOVERY_VOTE_OBSERVATION_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RELEASE_CHECKLIST.txt"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_REMAINING_OPTIMIZATION_DECISION.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RESOURCE_LIMIT_BOUNDARY_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RUNTIME_FIXTURE_REPAIR.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_RUNTIME_PACKAGE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_SANITIZER_DEADLINE_SEMANTICS_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_SDK_DEPENDENCY_NOTICE_REPAIR_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_SOURCE_LICENSE_AUDIT_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_SPARSE_WORKFLOW_REPAIR_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_TSAN_GLIBC244_RUNTIME_REPAIR_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_VENDOR_SOURCE_RESULTS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_V1_ZERO_PAYMENT_REWARD_GUARD_20261024.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/PX7_WORK_FOOTPRINT_BRIDGE.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/parallel-execution/ci-reference-20261024/"
+        },
+        {
+          "status": "??",
+          "path": "docs/releases/"
+        },
+        {
+          "status": "??",
+          "path": "docs/ubuntu/"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/execution_work_meter.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/native_work_policy_catalog.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/native_work_pricing.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_access_hints.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_console.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_deadline_service.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_execution_runtime.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_immutable_input.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_jit_backend.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_mixed_tree.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_mixed_tree_journal.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_preparation_budget.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_production_admission.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_pure_float.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_pure_hash.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_pure_integer.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_runtime_limits.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_secondary_journal.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_secondary_state.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_sync_discovery.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_transaction_environment.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_work_budget.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_work_footprint.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/parallel_worker_signals.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/thread_cpu_billing.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/include/eosio/chain/transaction_work_context.hpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_mixed_tree_journal.cpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_secondary_journal.cpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_secondary_state.cpp"
+        },
+        {
+          "status": "??",
+          "path": "libraries/chain/parallel_transaction_environment.cpp"
+        },
+        {
+          "status": "??",
+          "path": "licenses/"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/include/eosio/producer_plugin/incoming_transaction_batch.hpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/include/eosio/producer_plugin/production_timer_guard.hpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/test/test_incoming_transaction_batch.cpp"
+        },
+        {
+          "status": "??",
+          "path": "plugins/producer_plugin/test/test_production_timer_guard.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/parallel_budget_model.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/parallel_capacity.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/parallel_diagnostic_report.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/test_parallel_budget_model.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/test_parallel_capacity.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/PerformanceHarness/test_parallel_diagnostic_report.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/archive_v1_candidate_sources.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/archive_v1_candidate_sources_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/audit_safe_eviction_evidence.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/audit_v1_native_shards.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/audit_v1_native_shards_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/cdt_runtime_parameter_probe.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/checkout_ci_dependencies_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/ci_delivery_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/console_echo_regression_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/fetch_native_policy_test_cache.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/fixtures/"
+        },
+        {
+          "status": "??",
+          "path": "tests/native_policy_boundary_fixture.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/native_policy_fixture_registration_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/native_work_observer_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/native_work_policy_catalog_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/native_work_pricing_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/package_v1_candidate_runtime.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/package_v1_candidate_runtime_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/package_v1_local_source.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/package_v1_local_source_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_access_hints_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_complex_replay.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_complex_replay_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_global12_benchmark.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_global12_benchmark_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_immutable_input_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_loopback_wave.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_loopback_wave_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_mixed_stress_benchmark.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_mixed_stress_workload.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_mixed_stress_workload_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_pool_cloud_guest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_pressure_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_pressure_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_benchmark.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_benchmark_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_fixture_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_recovery.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_release_recovery_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_runtime_cli_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_sanitizer_options_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_saturation_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_saturation_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_work_footprint_real_types.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_work_footprint_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/parallel_worker_signals_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/portable_build_cache_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/prepare_v1_engine_profile_retest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/prepare_v1_engine_profile_retest_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/prepare_v1_native_profile_retest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/prepare_v1_native_profile_retest_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/prepare_v1_same_build_resume.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/prepare_v1_same_build_resume_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/presigned_sender_cli_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/presigned_sender_start_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/presigned_sender_start_unit_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_candidate_sync_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_cloud_regression_runner.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_cloud_regression_runner_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_committed_policy_observer.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_committed_policy_observer_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_fourhost_rotation_cloud_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_fourhost_rotation_cloud_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_historical_edge_cases_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_historical_edge_cases_unit_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_host_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_host_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_multihost_cloud_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_multihost_cloud_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_multinode_shutdown_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_cohort_cloud_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_cohort_cloud_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_lifecycle.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/pureeos_rotation_lifecycle_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_access_hints_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_native_policy_boundary.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_observer_admission_smoke.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_parallel_worker_signals_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_safe_eviction_regression.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_v1_candidate_controls.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_v1_candidate_sdk.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_v1_resource_boundary_probe.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/run_v1_resource_boundary_probe_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/snapshot_v1_phase2_evidence.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/standalone_fixture_registration_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/start_parallel_pool_cloud_check.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/start_v1_integrated_cloud_build.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/start_v1_same_build_resume.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/transaction_work_context_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/transaction_work_context_vm_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/trx_generator/presigned_tps_sender.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/ubuntu_cdt_runtime_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/ubuntu_cdt_runtime_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/ubuntu_modern_build_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_build_version_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_candidate_deployment_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_candidate_deployment_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_candidate_native_matrix.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_candidate_native_matrix_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_candidate_recovery_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_candidate_recovery_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_cloud_host_power_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_cloud_host_power_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_early_live_reward_claim_host.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_early_live_reward_claim_host_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_engine_profile_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_engine_profile_retest_guest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_engine_profile_retest_host.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_fast_regression.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_fast_regression_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_integrated_cloud_build_guest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_live_reward_claim_host.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_live_reward_claim_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_live_reward_claim_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_cohort_release_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_cohort_release_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_release_workflows.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_release_workflows_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_repair_syntax.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_retest_guest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_retest_host.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_retest_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_local_retest_metrics_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_native_profile_metrics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_native_profile_retest_guest.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_native_profile_retest_host.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_offline_portability_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_runtime_dependencies.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_runtime_dependencies_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_twohost_cohort_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_twohost_cohort_test_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_vendor_source_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/v1_worker_failure_diagnostics.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/verify_committed_policy_recording.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/wasm_work_entry_binding_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/wasm_work_host_bridge_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/wasm_work_inventory_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/wasm_work_locals_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/wasm_work_memory_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/wasm_work_runtime_test.cpp"
+        },
+        {
+          "status": "??",
+          "path": "tests/watch_v1_integrated_cloud_build.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/workflow_inventory_test.py"
+        },
+        {
+          "status": "??",
+          "path": "tools/checkout_ci_dependencies.py"
+        },
+        {
+          "status": "??",
+          "path": "tools/ci_native_checks.py"
+        },
+        {
+          "status": "??",
+          "path": "tools/portable_build_cache.py"
+        },
+        {
+          "status": "??",
+          "path": "tools/prepare_vm_vendor.py"
+        },
+        {
+          "status": "??",
+          "path": "tools/ubuntu-modern-build.sh"
+        },
+        {
+          "status": "??",
+          "path": "tools/vendor/"
+        },
+        {
+          "status": "??",
+          "path": "tools/workflow_inventory.py"
+        },
+        {
+          "status": "??",
+          "path": "unittests/chain_config_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/execution_work_meter_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/full_cdt_deadline_profile.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_console_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_deadline_service_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_float_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_full_cdt_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_integer_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_jit_backend_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_jit_finalization_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_mixed_stress_fixture.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_mixed_tree_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_prefix_refresh_cases.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_production_admission_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_pure_host_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_release_fixture.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_runtime_engine_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_secondary_state_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_secondary_transcript_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_secondary_wasm_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_test_runtime.hpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_transaction_environment_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/parallel_work_budget_tests.cpp"
+        },
+        {
+          "status": "??",
+          "path": "unittests/pureeos_blacklist_current_policy_tests.inc"
+        },
+        {
+          "status": "??",
+          "path": "unittests/test-contracts/complex_benchmark/"
+        },
+        {
+          "status": "??",
+          "path": "unittests/test-contracts/parallel_lightbench/"
+        },
+        {
+          "status": "??",
+          "path": "unittests/test-contracts/parallel_statebench/"
+        },
+        {
+          "status": "??",
+          "path": "unittests/thread_cpu_billing_tests.cpp"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureEOS-work-capacity",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureEOS-work-capacity",
+        "HEAD": "810ed89accbf304dfde6ad6b40a1d037c75fe135",
+        "branch": "refs/heads/feature/deterministic-work-capacity"
+      },
+      "status": "CLEAN",
+      "branch": "feature/deterministic-work-capacity",
+      "head": "810ed89accbf304dfde6ad6b40a1d037c75fe135",
+      "upstream": null,
+      "last_commit": "2026-10-25 chore: preserve deterministic work and capacity development before V1 release split",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureHistory",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureHistory",
+        "HEAD": "d6065813bd7bfd037018eab4306940baaa1cad25",
+        "branch": "refs/heads/main"
+      },
+      "status": "CLEAN",
+      "branch": "main",
+      "head": "d6065813bd7bfd037018eab4306940baaa1cad25",
+      "upstream": "origin/main",
+      "last_commit": "2026-11-01 fix: bind reviewed governance ABI to its qualified system code",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureHistory-deployed-20261102",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureHistory-deployed-20261102",
+        "HEAD": "2889d694848287b2084a22d8ee74a3c9ceacda06",
+        "branch": "refs/heads/archive/high-spec-deployed-20261102"
+      },
+      "status": "CLEAN",
+      "branch": "archive/high-spec-deployed-20261102",
+      "head": "2889d694848287b2084a22d8ee74a3c9ceacda06",
+      "upstream": "origin/archive/high-spec-deployed-20261102",
+      "last_commit": "2026-11-02 Retain high-spec deployed history source and local overlay",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureHistory-dev-genesis-20261105",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureHistory-dev-genesis-20261105",
+        "HEAD": "1c1a6ec3799ced44f6ae6ad9e3ae05424de258fa",
+        "branch": "refs/heads/feature/dev-genesis-20261105"
+      },
+      "status": "CLEAN",
+      "branch": "feature/dev-genesis-20261105",
+      "head": "1c1a6ec3799ced44f6ae6ad9e3ae05424de258fa",
+      "upstream": "origin/feature/dev-genesis-20261105",
+      "last_commit": "2026-11-05 Record canonical eight-proposal and actual key-receipt integration evidence",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureHistory-key-history-20261103",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureHistory-key-history-20261103",
+        "HEAD": "83080a452b804424bf172e9f6ccb87543debec73",
+        "branch": "refs/heads/feature/native-upgrade-history-20261104"
+      },
+      "status": "CLEAN",
+      "branch": "feature/native-upgrade-history-20261104",
+      "head": "83080a452b804424bf172e9f6ccb87543debec73",
+      "upstream": "origin/feature/native-upgrade-history-20261104",
+      "last_commit": "2026-11-04 Preserve actual native proposal history API and browser verification",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/PureHistory-release-v1-20261101",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/PureHistory-release-v1-20261101",
+        "HEAD": "59ab60156a2eabd1b248450a786c57ea9e0751d5",
+        "branch": "refs/heads/release/v1.0.0-20261101"
+      },
+      "status": "CLEAN",
+      "branch": "release/v1.0.0-20261101",
+      "head": "59ab60156a2eabd1b248450a786c57ea9e0751d5",
+      "upstream": null,
+      "last_commit": "2026-11-01 release: prepare 1.0.0 current baseline and bilingual documentation",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/cdt",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/cdt",
+        "HEAD": "e677213d9a0f2702af7fb81f33589b49720036c7",
+        "branch": "refs/heads/main"
+      },
+      "status": "CLEAN",
+      "branch": "main",
+      "head": "e677213d9a0f2702af7fb81f33589b49720036c7",
+      "upstream": "origin/main",
+      "last_commit": "2026-04-23 PureEOS CDT baseline",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/cdt-parallel-v1-release",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/cdt-parallel-v1-release",
+        "HEAD": "317d639a94a6bbfcee4c8490348613101dab5374",
+        "branch": "refs/heads/development/baseline-20261030"
+      },
+      "status": "CLEAN",
+      "branch": "development/baseline-20261030",
+      "head": "317d639a94a6bbfcee4c8490348613101dab5374",
+      "upstream": null,
+      "last_commit": "2026-10-31 Document current PureEOS CDT usage and qualified Ubuntu LTS scope [skip ci]",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/cdt-v1-hardening",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/cdt-v1-hardening",
+        "HEAD": "714543c5a001ac4a9f5b2baa4b55fb5064dadd62",
+        "branch": "refs/heads/feature/v1-hardening-20261022"
+      },
+      "status": "DIRTY",
+      "branch": "feature/v1-hardening-20261022",
+      "head": "714543c5a001ac4a9f5b2baa4b55fb5064dadd62",
+      "upstream": null,
+      "last_commit": "2026-10-22 Resolve contract source layouts and record exact rebuilt artifact equivalence",
+      "changes": [
+        {
+          "status": " M",
+          "path": ".github/workflows/build.yaml"
+        },
+        {
+          "status": "D ",
+          "path": ".github/workflows/label_new_issues.yaml"
+        },
+        {
+          "status": "D ",
+          "path": ".github/workflows/release.yaml"
+        },
+        {
+          "status": " M",
+          "path": "CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "DEVELOPMENT_STATUS.md"
+        },
+        {
+          "status": " M",
+          "path": "README.md"
+        },
+        {
+          "status": " M",
+          "path": "libraries/eosiolib/contracts/eosio/system.hpp"
+        },
+        {
+          "status": " M",
+          "path": "modules/CDTWasmToolchain.cmake.in"
+        },
+        {
+          "status": " M",
+          "path": "modules/cdt-config.cmake"
+        },
+        {
+          "status": " M",
+          "path": "tests/hardening/build_system_contracts.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/hardening/package_sdk_candidate.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/hardening/sdk_archive.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/hardening/test_cdt_init.py"
+        },
+        {
+          "status": " M",
+          "path": "tests/hardening/test_package_sdk_candidate.py"
+        },
+        {
+          "status": " M",
+          "path": "tools/abidiff/cdt-abidiff.cpp.in"
+        },
+        {
+          "status": " M",
+          "path": "tools/cc/cdt-cc.cpp.in"
+        },
+        {
+          "status": " M",
+          "path": "tools/cc/cdt-cpp.cpp.in"
+        },
+        {
+          "status": " M",
+          "path": "tools/include/compiler_options.hpp.in"
+        },
+        {
+          "status": " M",
+          "path": "tools/init/cdt-init.cpp"
+        },
+        {
+          "status": " M",
+          "path": "tools/ld/cdt-ld.cpp.in"
+        },
+        {
+          "status": "??",
+          "path": "AIC_CDT_1.0.0_IDENTITY.md"
+        },
+        {
+          "status": "??",
+          "path": "AIC_LICENSE.md"
+        },
+        {
+          "status": "??",
+          "path": "LICENSING.md"
+        },
+        {
+          "status": "??",
+          "path": "UPSTREAM_BASELINE.json"
+        },
+        {
+          "status": "??",
+          "path": "VERSION"
+        },
+        {
+          "status": "??",
+          "path": "docs/CI_SOURCE_CHECKS.md"
+        },
+        {
+          "status": "??",
+          "path": "docs/ci-reference-20261024/"
+        },
+        {
+          "status": "??",
+          "path": "licenses/"
+        },
+        {
+          "status": "??",
+          "path": "modules/AICCDTVersion.cmake"
+        },
+        {
+          "status": "??",
+          "path": "tests/fixtures/"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/aic_identity.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/check_runtime_parameters.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/contract_artifacts.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/rebuild_runtime_library.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/sdk_notices.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/source_revision.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/test_aic_identity.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/test_ci_delivery.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/test_contract_artifacts.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/test_sdk_notices.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/test_source_revision.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/test_workflow_inventory.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/hardening/workflow_inventory.py"
+        },
+        {
+          "status": "??",
+          "path": "tests/unit/runtime_parameters_tests.cpp"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/reference-contracts",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/reference-contracts",
+        "HEAD": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+        "branch": "refs/heads/feature/cdt5-validation"
+      },
+      "status": "DIRTY",
+      "branch": "feature/cdt5-validation",
+      "head": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+      "upstream": null,
+      "last_commit": "2026-10-11 chore: checkpoint current system contracts before parallel execution",
+      "changes": [
+        {
+          "status": " M",
+          "path": "contracts/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/include/eosio.system/powerup.results.hpp"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/include/eosio.system/rex.results.hpp"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/reference-contracts-parallel-v1-release",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/reference-contracts-parallel-v1-release",
+        "HEAD": "74f46fa4029f49f14a8902bb8098aa2fc719675b",
+        "branch": "refs/heads/release/parallel-v1"
+      },
+      "status": "CLEAN",
+      "branch": "release/parallel-v1",
+      "head": "74f46fa4029f49f14a8902bb8098aa2fc719675b",
+      "upstream": null,
+      "last_commit": "2026-10-25 Prepare original parallel V1 system contracts with zero-payment reward guard",
+      "changes": []
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/reference-contracts-v1-hardening",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/reference-contracts-v1-hardening",
+        "HEAD": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+        "branch": "refs/heads/feature/v1-blacklist-safe-eviction-20261022"
+      },
+      "status": "DIRTY",
+      "branch": "feature/v1-blacklist-safe-eviction-20261022",
+      "head": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+      "upstream": null,
+      "last_commit": "2026-10-11 chore: checkpoint current system contracts before parallel execution",
+      "changes": [
+        {
+          "status": " M",
+          "path": "CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "README.md"
+        },
+        {
+          "status": " M",
+          "path": "contracts/CMakeLists.txt"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/include/eosio.system/powerup.results.hpp"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/include/eosio.system/rex.results.hpp"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/include/eosio.system/rotation_state.hpp"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/src/producer_pay.cpp"
+        },
+        {
+          "status": " M",
+          "path": "contracts/eosio.system/src/rotation_state.cpp"
+        },
+        {
+          "status": "??",
+          "path": "AIC_LICENSE.md"
+        },
+        {
+          "status": "??",
+          "path": "LICENSING.md"
+        },
+        {
+          "status": "??",
+          "path": "SAFE_BLACKLIST_EVICTION.md"
+        }
+      ]
+    },
+    {
+      "path": "/home/guagua/AntelopeIO/release-work-20261025/tps-baremetal-NET4-P2P16-1/source-variant",
+      "registration": {
+        "worktree": "/home/guagua/AntelopeIO/release-work-20261025/tps-baremetal-NET4-P2P16-1/source-variant",
+        "HEAD": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+        "branch": "refs/heads/bench/net4-p2p16-20261026"
+      },
+      "status": "DIRTY",
+      "branch": "bench/net4-p2p16-20261026",
+      "head": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+      "upstream": null,
+      "last_commit": "2026-10-25 docs: finalize parallel v1 joint release acceptance",
+      "changes": [
+        {
+          "status": " M",
+          "path": "plugins/net_plugin/net_plugin.cpp"
+        }
+      ]
+    }
+  ]
+}

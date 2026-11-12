@@ -1,0 +1,521 @@
+PureEOS 与 EOS/Antelope 治理及代码差异说明
+核对日期：2026-10-09
+2026-10-09 增补：取消整数投票配置的固定奖励激活门槛，首次正票即可激活。
+常规 1432 个 CTest 目标有通过证据（保留 1 次环境超时及三次原样补测）；
+22 独立进程的 1→21 扩容、全部账号不可逆出块、单席轮换、三窗口永久禁入及
+禁入后重启/重新注册/转账/历史收益保护已分阶段补齐；本机满载仍有确认积压，
+不是一次连续全程或生产性能验收通过。保留两次等待超时及一次续测脚本误判。
+最新规则与补测结果见 PureEOS_正票激活与22节点测试.txt 第七节。
+下述 10 月 8 日结果为历史验收，详见 PureEOS_节点奖励减半与重新起链测试.txt。
+2026-10-08 本轮主验收 1420 个不同 CTest 目标全部通过，另补充 11 个；
+重复专项、真实恢复和两轮四节点流程均通过。具体范围见第十五节，不能
+把历史批次、当前本地测试或模型验证等同于所有功能及生产环境验收完成。
+测试状态更新：后续底层修复和最终构建验收见 PureEOS_剩余问题修复与回归测试.txt；
+下文早期环境限制和测试批次属于历史记录，追加代码差异见第十四节。
+
+一、先说明比较对象与结论
+
+本文比较的是当前本地工作区，与以下两个本地 Git 基线的差异：
+  PureEOS：a171f806c6fb9cd9241c91d643426b63f1ba9e71
+  reference-contracts：c526479a48370981a1e9f0ac6b3bb0e4f737afa2
+“经典 EOS”用于解释原有治理方式；上述代码基线已包含 Antelope/Savanna、
+PowerUp、REX 等功能，并不等同于 EOS 最早版本或今天 EOS 主网的全部配置。
+本文未联网核对当前 EOS 主网参数，不把源代码默认值冒充主网实际配置。
+
+本地新版的整体方向是：
+  开发者公开升级，节点只能集体否决；持币者一票一投决定候选排名；
+  排名内候选按队列依次轮岗，实际出块/最终确认成员最多 21；
+  满 21 时连续三个完整本人窗口零产出的账号，永久禁止再次轮岗；
+  候选名额每四年分段线性翻倍；直接质押和 REX 租赁约占 10% 资源权重，
+  其余权重属于 PowerUp；取消储备部分增发和节点投票奖励，约 1% 初始
+  节点发行速率每四年减半，新增资金 100% 按未结算出块数分配。
+
+这些规则需要同时使用新 nodeos、原生创世 profile 2，以及启用了下列开关的合约：
+  PUREEOS_UPGRADE_GOVERNANCE=ON
+  PUREEOS_SINGLE_CHOICE_VOTING=ON
+  PUREEOS_RESOURCE_SPLIT=ON
+  PUREEOS_SEQUENTIAL_ROTATION=ON
+默认构建仍保留旧行为。不是改完源码就自动改变所有已有链。
+本轮未升级、重置或删除之前供手工测试的链，也未部署正式链。
+2026-10-08 补充大文件测试曾触发手动链磁盘保护停机，随后已恢复，
+另修复启动辅助脚本的进程身份竞态；详情见最新奖励测试报告。
+最终轮岗 v2 构建目录为 reference-contracts/build/pureeos-rotation-v2；
+此前 build/pureeos-rotation 的产物属于加固前阶段，不应混用其状态或部署包。
+早期新增范围是“三窗口永久禁入”和“候选容量线性增长”；随后增加了
+底层恢复修复，以及本次 100% 出块奖励和四年减半，详见第九、十四节及奖励报告。
+综合旧计划中的统一 REX 估值、最终确认奖励账本和旧链迁移等另见第十二节，
+不能把这两项完成等同于整套历史计划或生产上线验收完成。
+
+二、系统升级与治理：从节点批准，改为开发者公示、节点否决
+
+原模式：
+  经典 EOS 通常通过 eosio.prods 权限和 eosio.msig，由出块节点批准系统升级。
+  谁能提交 msig 提案，与谁有权批准/执行提案，是不同问题。
+
+当前新版：
+1. 只有独立 developer 账号可以发布受保护合约升级，使用 developer@upgrade。
+   普通用户、普通节点不能发布此类升级提案。不是任何人都能发系统升级提案。
+2. 开发者先调用 eosio::refreshgov，再在同一交易内紧接 eosio::devpropose；
+   原生层检查两者顺序和上下文，不能复用陈旧名单或插入动作绕过检查。
+3. 每次升级固定公示 14 天，即 1,209,600 秒。代码和 ABI 升级都在保护范围内。
+   发布时登记旧/新代码与 ABI 哈希，以及审阅文档哈希，绑定具体升级内容。
+4. 节点没有“同意票”，只调用 eosio::devveto 投反对票。
+   合约从有效、正票数、签名授权和 BLS 密钥合法的候选中，取前 210 名，
+   排除 developer，形成此次升级的冻结否决名单；不是仅取在岗 21 人。
+   排名变化不追改已发布升级的名单；重复反对不重复计数。
+5. 否决门槛为 ceil(2N/3)，N 是本次冻结名单人数：
+   1 人需 1 票；2 人需 2 票；3 人需 2 票；5 人需 4 票；210 人需 140 票。
+   不满 210 时按实际合法人数计算，不要求凑齐 210。
+6. 公示到期前达到门槛，开发者不能执行该升级；未达门槛，到期后开发者
+   可以调用 eosio::devexec。不是到期自动部署，仍须发送执行交易。
+   撤回用 devcancel；换一份升级内容必须重新公示，不能继承旧等待时间。
+7. 公示结束的时间点不再接受反对，开始允许符合条件的执行。
+   没有合法候选的初创阶段，仅在实际唯一生产者仍为 eosio 时允许创世回退；
+   成熟链的空名单不会自动降级成在岗 21 人或开发者一人说了算。
+8. eosio.msig、eosio.wrap、eosio.prods 的旧系统治理通路被封存。
+   封存后，原生层拒绝发送给 eosio.msig/eosio.wrap 的动作，并不是只隐藏 CLI。
+   源码目录仍在，可用于旧配置编译；“仍有文件”不等于新链仍可调用。
+9. 普通账号的 owner/active 权限及合法多密钥授权没有被删除。
+   取消 eosio.msig 系统治理，不等于取消底层所有账号多签能力。
+10. 节点仍负责出块、BLS 最终确认，以及上述狭窄的升级否决权。
+    因此准确说法是“取消原节点主动治理/批准升级模式，保留集体否决”，
+    不是节点完全没有任何治理行为，也不是把共识确认变成治理投票。
+11. developer 将来可由 AI 驱动的签名/审阅系统操作；当前未实现 AI 自主治理。
+    AI 身份不是特殊链上权限，不能跳过公示、否决和原生限制。
+
+三、封存与防绕过：不只是改 eosio.system WASM
+
+新增原生 upgrade_governance 状态、动作校验和执行能力检查。
+govinit 在单节点 eosio 启动阶段由 eosio@owner 一次性封存：
+  - 必须保护 eosio、eosio.token，并保护已有 eosio.* 系统账号及指定的额外账号；
+  - developer 是独立普通账号，不与受保护系统账号混用；
+  - 收回其他账号的 privileged 标记，只保留 eosio 的系统特权；
+  - 封闭受保护账号的普通 owner/custom 权限修改及 link/unlink/delete 旁路；
+  - 必要 active 仅保留合约代码执行权限，不继续由生产者委员会控制；
+  - eosio@veto 只保留创世阶段需要的狭窄反对入口，不恢复 owner/升级权限；
+  - 封存后禁止再创建新的 eosio.* 账号钻命名空间保护空子；
+  - 不再动态生成 eosio.prods 来接管系统权限。
+
+直接 setcode/setabi 不能跳过公示。devexec 获得的是绑定目标和哈希、
+只用于当次执行的原生能力；失败原子回滚，不能拿去更新另一个账号或另一份代码。
+只替换系统合约无法取消这些原生门槛。修改它们需要节点软件配套升级。
+不过任何未来协议/软件版本都可能另行改变规则，“永久”不是对未来硬分叉的承诺。
+
+四、创世与共识：原生 Savanna，一台开始，最多 21 人在岗
+
+原代码基线已经有 Savanna。本项目不是重新发明 Savanna，也不是改为 PoW。
+新增的是原生 Savanna 单节点创世清单与初始化路径：
+  - 创世即带合法 BLS 密钥、持有证明和协议特性依赖；
+  - 单个 eosio 同时作为 proposer/finalizer，门槛为 1；
+  - 无须先凑 21 或 210 人，也无须先以旧 DPoS 出块再过渡到 Savanna。
+  - profile 1 为原生 Savanna 保留旧治理；profile 2 才是开发者公示/否决治理。
+
+共识最终确认门槛仍为 floor(2N/3)+1，与升级否决的 ceil(2N/3) 不同：
+  实际 1 人：1 人确认。
+  实际 2 人：2 人确认，少 1 人无法形成新最终确认。
+  实际 3 人：3 人确认，少 1 人无法形成新最终确认。
+  实际 4 人：3 人确认，可缺 1 人。
+  实际 21 人：15 人确认，可缺 6 人；只剩 14 人不能形成新最终确认。
+继续出现链头区块，不一定表示最终确认仍在推进。
+
+候选池达到 210、420、840，不会把最终确认人数同步扩大到这些数字。
+不要求所有候选都同时在线确认每个区块。最终确认不足时不能假装安全踢人自愈；
+必须先恢复足够的合法签名能力，才能完成正常交接和确认处罚。
+
+五、选举和轮岗：从前 21 常驻，改为排名入围、队列单席轮换
+
+原模式：按票数选择前 21 名出块，其他注册节点通常作为待选/备用；
+排名变化可能同时替换多个席位。原候选身份与奖励规则允许仅靠票数获益。
+
+当前新版：
+1. 从正票数、有效注册、出块签名授权和 BLS 密钥合法者中取前 C(t) 名。
+   票数降序，同票按账号数值升序。没有在线探测、ping、候选就绪证书，
+   也不需要现任 21 人批准或见证新人。
+2. 初始队列按排名建立；仍然入围的人保持相对先后，新入围者进队尾。
+   已在队内的人涨票不会反复跳回队头；名次决定资格，不是每次重新洗牌。
+3. 创世 eosio 不永久占据一个席位。有候选后先交接给第一人，再依次增员。
+   不足 21 时一次最多增加一人；满 21 时一次只替换一个人，先入先出。
+   失去资格者或已被禁入者优先单席替换；没有替代者不提交空名单。
+4. 冻结目标成员、出块/BLS 密钥，等待两份原生策略的版本、摘要、成员真实匹配，
+   且无在途策略，再观察新人完整排班轮次里的实际产出及最终确认。
+   不能把 set_proposed_producers 返回成功当作已经生效；Savanna 的接收标记
+   不是实际 proposer policy 版本。
+5. 新人至少在自己的完整窗口出一个合法块，观察范围最终确认后，才完成接入。
+   不要求旧成员全员出块，不能给单个旧成员额外的“一票否决入场”权力。
+6. 正常接入观察完成后，至少再等 252 slot（126 秒）才尝试下一次轮换。
+   真实策略交接、排名分页和观察会增加时间，不是每 126 秒强制换一个人。
+7. 未解决的零产出故障会暂停正常换人，优先等恢复或处理故障，避免连续堆积
+   陌生离线成员。满 21 时按第六节自动禁入并尝试下一位；不足 21 不拉黑。
+8. 同一身份内存在“在岗”和“排队”两种临时状态，不再设固定备用领奖身份。
+   入围且未禁入者都需要轮到时履行出块责任，不是所有入围者同时出块。
+9. 实际物理出块顺序仍遵循原生按账号排序的排班，每人连续 12 slot，
+   一个 slot 0.5 秒，即本人窗口约 6 秒。不是按票数从第一名依次签每个区块。
+
+六、三次零产出永久禁入：本次补齐
+
+触发条件：真实已生效 proposer/finalizer 名单满 21 人，映射一致；
+连续三个完整“本人 12-slot 窗口”，每个窗口都没有最终确认的有效产出。
+
+具体行为：
+  - 等待窗口整体进入确定性最终确认范围才计次，不使用本机 RPC LIB 或网络报告。
+  - 一个窗口有至少一个最终确认有效块，连续计数归零；只漏部分块不触发此规则。
+  - 第三个连续零窗口确认后，记录三个窗口起点、策略版本和最终确认块，
+    将账号 banned=true，永久禁止其再次进入轮岗。
+  - 不是漏三个块，也不是三次不同上岗机会，更不是固定过 18 秒就踢人。
+    21 人一轮 126 秒，还需考虑入场对齐、最终确认及交接延迟。
+  - 1～20 人不累计此处罚；首次满 21 不追罚以前的窗口。
+    降到不足 21 或全局暂停会使未完成连续计数失效，已有永久禁入不清除。
+  - 等待轮岗的人没有实际本人窗口，不因等待或未启动而被预先拉黑。
+  - 当前生效成员里的旧成员也被同一规则观察，不仅检查新加入的人。
+  - 注销、重注册、修改票数、更换出块/BLS 密钥、重启均不能解除账号禁入。
+    不提供手工解禁 action；不冻结资产、不扣押代币、不删除历史收益记录。
+  - 按排名取前 C(t) 后跳过禁入者；不会擅自补进第 C(t)+1 名。
+    其投票仍可保留；禁入只限制轮岗，不自动剥夺原有升级否决资格。
+  - 有替代者时优先更换故障席位，每次一席。没有替代者时记录受阻，
+    保留非空原生名单；不会立刻吊销仍在实际共识策略中的签名权限导致停链。
+
+全局保护：
+  出块间隔或确定性最终确认落后超过 1008 slot（504 秒，四个满员轮次），
+  暂停处罚并丢弃尚未结算的观察，恢复后重新观察；不把全链停顿追算成人人故障。
+  21→21 交接只丢弃不完整窗口，保留已完整观察的证据及个人连续计数；
+  纯改钥不改变本人窗口的归属。
+  这一保护是明确的协议规则，不是证明能区分所有网络隔离和恶意行为。
+  同一运营者换新账号并重新获得选票仍可能入围，本规则不识别现实身份。
+
+七、候选数量：本次补齐四年分段线性翻倍
+
+当前实现采用规则初始化时的链上时间作为起点；一个周期固定 1461 天。
+“固定 1461 天”不是在所有年份都等于公历四年，起点也不是原始创世文件时间。
+这两个口径已在本轮实施中说明；迁移已有链时不能悄悄重新起算。
+
+令 e 为已完成周期数，r 为本周期已过 slot，P=1461×86400×2：
+  C(t) = 210×2^e + floor(210×2^e×r/P)
+  起点 210；首周期 1/4 为 262，1/2 为 315，3/4 为 367；
+  第一个周期末 420；两个周期末 840；三个周期末 1680。
+按整数名额逐个开放，不等四年到期一次跳增，也不是永久每年只加 52.5 人。
+全链长时间停顿后按恢复时链上时间计算容量，但不追算离线处罚。
+容量计算有整数溢出保护，理论数值上限为 uint32 最大值；原生 slot 时间范围
+仍有自身上限，不能理解为已保证无限年代、无限节点规模运行。
+
+为避免候选增多导致每块整表扫描：
+  - 每次 onblock 最多处理 16 个排名扫描/同步项、16 个队列项、8 个到期观察窗口；
+  - 候选注册时由自己支付固定大小 rotcands 表记录，记录不因注销而删除；
+  - 使用“快照开始时的容量 + 扫描期间不可变的排名副本”分批构建稳定排名；
+    扫描中投票变化只改 live 排名，不把半新半旧排名拼在一起；
+    通过 dirty 索引有界同步副本后才开启下一快照。同步阶段的新改票直接更新
+    两份排名，不追加待同步积压；高频改票不能持续插入扫描键拖延本批完成。
+  - 完整快照才用于选人，新扩出的名额不改写已经开始构建的旧快照；
+  - 队列用持久化 ticket 索引，不把无限增长的候选列表每块全量打包；
+  - 待最终确认观察队列最多 192 项；达到保护边界暂停处罚，不制造处罚证据。
+这些是每步工作边界，不等于已经做过生产规模 TPS、长期 RAM 或万节点压力验收。
+轮岗容量增长不修改升级否决名单上限 210，也不修改最多 21 人的共识规模。
+
+八、投票与 REX：一份锁定代币只投一个候选
+
+本地原代码：最多可选 30 个生产者，可代理投票；stake2vote 含时间倍数，
+生产者票数使用浮点计算。REX 部分以本地具体基线为准，不将其他历史 EOS
+版本的“须投满若干人”等要求当成本仓库原行为。
+
+当前新版：
+  - 每个账号只能选择 0 或 1 个候选；持有 REX 时必须保留 1 个选择。
+  - 1.0000 核心 Token 对应 1 票，内部按代币最小精度整数计票。
+  - 票权来自自己拥有的 CPU/NET 质押，加上已经结算的 REX 核心币等值。
+    普通钱包余额、RAM、PowerUp、租来的资源、尚未买 REX 的 fund 不产生票权。
+  - 取消时间倍数、代理登记、代理委托和代理权重传播；不是只取消客户端按钮。
+  - 无特殊 b1 系统代投旁路；选择/改投需要持有人本人链上授权。
+  - 允许零余额预选，为买 REX 做准备，但零余额不产生虚构票数。
+  - 改投在同一动作中扣旧加新，质押所有权与资源接收人分开，不重复算本金。
+  - 新表 producersv2/votersv2/globalv2、votepolicy=2，使用整数复合排名索引。
+  - buyrex、unstaketorex、新增 REX 份额要求已经直接选定一个有效候选；
+    未成熟、成熟、储蓄和排队未成交份额都算持仓，不能提交卖单后立即撤票。
+  - 全部实际卖清、票权正确结清后才可撤票；仍可保留 fund，不强制先提现。
+  - 可原子改投；所投候选失效不阻断正常赎回/退款，再次买入须换有效目标。
+  - 第三方成交排队卖单立即反映票数，之后本人领取不能再次扣同一笔票。
+  - 单纯 deposit/withdraw、CPU/NET 租赁及续租资金管理不要求投票。
+
+取消的是系统原生代理票池，不是 REX 资金池。不能因此保证杜绝场外买票卖票、
+交易所集中持币、共享私钥或普通账号权限委托；也不是“一人一票”。
+REX 池收益变化后仍有个人惰性重估，统一持有人估值尚未实现，详见第十二节。
+
+九、资源、手续费与节点收益
+
+资源：
+  保留直接 CPU/NET 质押、REX 30 天资源租赁、PowerUp，未删除租赁。
+  CPU 和 NET 分别计算：L=直接质押权重+实际 REX 出租权重，
+  P=max(9×max(L,1), 已出租尚未回收的 PowerUp 权重)。
+  正常 L:P=1:9；长期资源合计约 10%，PowerUp 约 90%。
+  若 L 减少但用户付费 PowerUp 订单仍有效，保留订单，长期份额暂时低于 10%。
+  没有 L 时采用一单位市场下限；不是每个区块 CPU 微秒/NET 字节强行 10/90 切片。
+  respolicy 维护增量总账，eosio.reserv 持有未租出的 PowerUp 权重。
+  禁止手工 CPU/NET 覆盖和任意调比例旁路，启动封存前必须配置 PowerUp。
+  PowerUp 期限、价格仍按实际配置；并未改成所有链固定 1 天或一定比 REX 便宜。
+  REX 到期可按现价续租，资金不足等条件则回收；到期由有界队列处理，
+  不是没有任何交易也会按现实时间自动清空。PowerUp 到期也走已有清理机制。
+
+手续费：没有另行更改原收费分配方向。
+  RAM 交易手续费经 eosio.ramfee 归集到 eosio.fees；PowerUp 费用进入 eosio.fees。
+  部署了 eosio.fees 合约且 REX 可用时，转账通知调用 donatetorex，进入 REX
+  收益池及原有收益释放机制。如果合约未部署/REX 不可用，不能保证自动转入。
+  REX 租金从租户 fund 扣除，进入 REX 池的租赁/收益记账；不是节点的出块奖金。
+  REX 收益属于 REX 持有份额的经济权益，不是“投给谁，谁就获得这笔 REX 收益”。
+
+节点奖励：最新确认规则是取消投票奖励，新增节点资金 100% 给出块。
+  原默认 5% 规则中拨给 eosio.saving 的 80% 不再增发，不转赠给节点。
+  保留原节点资金初始速率 ln(1.05)/5，约年化 1%，沿用原 364 天计息年。
+  从原投票激活时刻起，每 1461 天速率减半；跨界分段累计，升级和重启
+  不重新起算。按领取时供应量计算，因此不是承诺绝对发行量严格减半。
+  新增 unpaid_blocks>0 领取条件，未出块不能领奖；票数只影响轮岗资格。
+  新增资金全部进入出块池，不再累计、计算或支付节点投票奖励，旧
+  revision=1 也无法恢复票奖；producers2 旧表保留，新注册不新增票奖记录。
+  本次奖励=floor(出块池余额×本人未结算块数/全网未结算块数)，乘法使用
+  128 位整数。候选名额和票数不直接参与公式；节点多了不会增加发行预算。
+  更多实际轮岗者通常意味着每个节点平均出块机会减少；不是每块固定价格。
+  原有储备、旧投票池余额不销毁、不挪用，旧投票池不再由新 claimrewards
+  分发。若需处理这些历史公共资金，必须另行明确升级政策。
+  独立 eosio.bpay 关闭了非系统来款触发按排名分发的入口，保留系统拨款
+  和历史 rewards 领取路径，不清空历史收益。
+  激活改为首次正票权投票，有效注册限制保留；每次领取间隔须超过 24 小时，首次领取也须
+  距注册超过 24 小时。轮下去或票数清零后，尚未结算出块记录仍可按规则领取。
+  固定政策禁用 setinflation/setpayfactor/setschedule/delschedule/execschedule
+  和 updtrevision；兼容用未启用整数投票的旧构建仍保留旧奖励行为。
+  不要求节点为了得到出块奖励而自己买 REX；REX 投资收益和生产者奖励是两条路径。
+  轮岗和新版奖励均不再要求原 15% 固定激活量。奖励以首次正票为起点，
+  零票预选不激活，撤票不重置时钟；既有正票的未激活链升级后无需重投。
+  “已经出块”仍不等于“马上能领奖”：24 小时冷却及有效注册限制仍适用。
+  黑名单不冻结或没收历史收益，但旧 claimrewards 的资格/时间限制仍保留，
+  尚未新增独立于注册状态的最终确认历史债权领取账本。
+
+十、接口、存储、工具方面的代码差异
+
+1. 原生只读 get_rotation_context_v1，提供执行父块实际排班、策略版本、
+   finality core 的最终确认位置、在途策略等。使用前必须显式激活
+   PUREEOS_ROTATION_CONTEXT 特性；不读取异步到票或本机在线情况作为共识输入。
+   eos-vm 与 OC 映射均注册；本轮真实执行验证的是 eos-vm/JIT，不是 OC。
+2. 新 RPC get_upgrade_state：治理是否封存、开发者、公示/反对/门槛等。
+3. get_producers 按 ABI 分流新旧票数表，v2 返回精确十进制字符串及小数位数，
+   适配 uint128 索引和分页；不在查询失败时伪造 active-21 零票列表。
+   兼容 double 展示字段不应用作精确排序或财务计算。
+4. get_account 的 v2 票权字段无损输出。cleos 在新配置禁代理/多选，
+   approve 表示改投唯一候选；旧链的旧命令行为仍保留。
+5. cleos push transaction 遇到 HTTP 成功但执行 trace 失败时返回非零退出码，
+   修复部署工具误判成功的问题。
+6. 新合约 rotation.version=2：最多 21 人 active/target，加固定有界观察状态；
+   rotcands 持久记录候选排名、队列 ticket、连续窗口和永久禁入证据。
+   不再使用旧 rotation v1 的候选 vector；不提供 v1→v2 自动迁移。
+   可用普通 get_table_rows 查询 eosio/eosio 的 rotation 和 rotcands。
+   penalty_epoch 不一致的旧 zero_windows 不作为当前连续次数；
+   ranking=true 时是构建中快照，不能把半成品 seen_epoch 当完整已发布队列。
+7. 原生完整创世区块日志新增 v4 编码，旧链仍保持 v1/v2/v3 兼容路径；
+   非创世部分日志继续使用 v3。修复裁剪/整理时不能按旧固定长度破坏新头部。
+8. 快照版本 v10 增加原生治理对象；旧快照无该对象时保持旧治理，不自动封存。
+   修复 shared_vector JSON 恢复时未真正赋回目标的问题。
+   新合约表自然随快照/重放保存，但这不等于旧业务表已经实现数据迁移。
+9. producer_plugin 启动时先追平持久化 fork DB 链头再开始生产，
+   避免从较旧 LIB 直接生产与保存的 BLS safety lock 冲突。
+10. 增加升级辅助脚本、原生创世/开发者治理文档和隔离测试入口；
+    旧 bios 教程遇到原生创世提前拒绝，不继续错误地引导向 eosio.prods 交权。
+
+十一、这次如何测试，哪些证据可以复查
+
+以下是早期轮岗/扩容批次结果，不是 2026-10-08 奖励修改后的最终验收。
+当时选定范围全部通过，不代表仓库所有测试或生产网络验收完成。
+  - 原生创世：12 个用例，107 项断言。
+  - 原生开发者升级治理：22 个用例，594 项断言。
+  - 真实系统合约治理：2 个用例，17 项断言。
+  - 一票一投/REX/RPC/零块领奖：18 个用例，227 项断言。
+  - 历史区块日志兼容：90 个用例，1,856 项断言。
+  - 10%/90% 资源分配：8 个用例，447 项断言。
+  - 未启用轮岗的委员会对照：3 个用例，7,977 项断言。
+  - 最终轮岗 v2：16 个用例，102,386 项断言。
+  合计 171 个集成用例、113,611 项断言全部通过。
+  另有 25 个模型/容量公式用例，在 Release 与 ASan/UBSan 下各通过 14,923 项断言；
+  关闭的是环境不支持的 LeakSanitizer，不声称已做泄漏检查。
+  升级辅助工具的 3 个用例通过，两个仓库 git diff --check 通过。
+  CDT 4.1.1 合约、native_savanna_test、nodeos、cleos 构建通过；保留现有
+  CDT 版本、Ricardian 等编译警告，不宣称零警告构建。
+证据目录：PureEOS/build/local-tests/rotation-growth-ban-sjff3S/
+汇总与代码/产物哈希：上述目录的 summary.json。
+最终轮岗报告：v2-fifo-report.log、v2-faults-report.log、v2-boundaries-final-report.log。
+覆盖：三窗口禁入/单席替换/防重新注册、两窗口恢复清零、
+全局暂停不误罚、不足 21 不处罚、单个新增名额、4/8/12 年边界、
+排名扫描时并发改票与重启。真实控制器使用实际 WASM、签名、BLS 和 QC，
+独立无私钥控制器重放后核对轮岗表、候选表及链状态。
+长周期场景从原生单节点增长到 21 人，23 候选连续 25 次单席替换，
+最终独立重放 2,360 块一致；满员故障/恢复另有 2,001 块独立重放。
+永久禁入状态通过注销重注册、换钥、重启、快照恢复及 607 块重放验证。
+初次增长断言、扫描测试激活/资源准备与预执行状态假设的失败日志均保留；
+已修正并重新通过，不把中途失败结果作为通过证据，也不重复累计定向复测数量。
+
+这不是 21 个独立 nodeos 网络进程的测试：该早期批次的环境禁止创建 socket。
+后续已解除该运行限制，并做本地真实多进程测试；最新批次状态见奖励报告。
+不能把一个测试进程中的多个真实签名器称为多机 P2P、丢包/时延/分区压力验收。
+增长和 14 天等时间边界通过测试链时间推进验证，不是假称现实等待多年/多日。
+历史已跑过的 nodeos 资源演示测试，不算本轮新版轮岗二进制的联网复测结果。
+回归包含未开启轮岗开关的旧前 21 直选“对照配置”；该组日志中“没有轮岗/
+黑名单”描述的是对照配置，不是本次启用全部开关的新系统合约。
+
+十二、仍然存在的边界，不应误认为已经完成
+
+  A. 当前不是完整生产发布：已有本地四进程 P2P 和故障恢复测试，但跨地域、
+     大规模独立服务器、持续 TPS/RAM 压力、所有历史项目测试、安全审计、
+     eos-vm-oc 执行验收仍未完成，不能把本机测试等同于生产网络验收。
+  B. 没有旧 EOS 链、旧投票表、旧 rotation v1 到当前 v2 的状态迁移程序。
+     init 有新链保护，不得直接将新 WASM 覆盖已有业务状态。
+  C. REX 全体持有人的同一估值时点/有界统一重估尚未完成。
+     当前整数计账解决精度和成交重复扣票，但不能消除惰性估值造成的排名差异。
+  D. 当前已经取消票奖、100% 按未结算块数分配，但未改成“仅最终确认产出”
+     的独立债权账本，也不是每块固定价格。不同时间池余额和未结算总块数
+     不同，相同块数不保证永远同收入。分叉内状态虽会回滚，onblock 记账
+     本身不是逐窗口最终确认结算证明，不能与黑名单的证据标准混称。
+  E. 不足 21 人不处罚；尤其 2/3 人缺一人时最终确认会停滞，不能自动跳人自愈。
+     21 人不足 15 个合法确认者时也不能依靠黑名单绕过共识。
+  F. 永久禁入是账号级；不证明现实服务器断电，也无法禁止运营者换账号重来。
+  G. 取消旧储备部分通胀，保留约 1% 起步且每四年减半的节点资金速率；
+     不挪用 REX 收入、不没收资产；AI 升级操作者尚未实现。
+  H. 轮岗候选容量增长、最多 21 人共识、最多 210 人升级否决，是三个独立参数。
+
+十三、源文件定位
+
+以下路径相对工作区 /home/guagua/AntelopeIO。
+精确已修改/新增文件及最终产物哈希，另见本轮测试目录的 summary.json。
+
+原生创世与格式：
+  PureEOS/libraries/chain/genesis_state.cpp
+  PureEOS/libraries/chain/include/eosio/chain/genesis_state.hpp
+  PureEOS/libraries/chain/block_state.cpp
+  PureEOS/libraries/chain/include/eosio/chain/block_state.hpp
+  PureEOS/libraries/chain/block_log.cpp
+  PureEOS/libraries/chain/controller.cpp
+  PureEOS/libraries/chain/include/eosio/chain/controller.hpp
+  PureEOS/libraries/chain/snapshot.cpp
+  PureEOS/libraries/chain/include/eosio/chain/chain_snapshot.hpp
+  PureEOS/libraries/chain/include/eosio/chain/snapshot_detail.hpp
+  PureEOS/libraries/chain/include/eosio/chain/database_utils.hpp
+
+治理与原生宿主：
+  PureEOS/libraries/chain/upgrade_governance.cpp
+  PureEOS/libraries/chain/include/eosio/chain/upgrade_governance.hpp
+  PureEOS/libraries/chain/include/eosio/chain/rotation_context.hpp
+  PureEOS/libraries/chain/apply_context.cpp
+  PureEOS/libraries/chain/eosio_contract.cpp
+  PureEOS/libraries/chain/transaction_context.cpp
+  PureEOS/libraries/chain/include/eosio/chain/transaction_context.hpp
+  PureEOS/libraries/chain/include/eosio/chain/types.hpp
+  PureEOS/libraries/chain/protocol_feature_manager.cpp
+  PureEOS/libraries/chain/include/eosio/chain/protocol_feature_manager.hpp
+  PureEOS/libraries/chain/webassembly/privileged.cpp
+  PureEOS/libraries/chain/include/eosio/chain/webassembly/interface.hpp
+  PureEOS/libraries/chain/include/eosio/chain/webassembly/eos-vm-oc/intrinsic_mapping.hpp
+  PureEOS/libraries/chain/webassembly/runtimes/eos-vm.cpp
+  PureEOS/libraries/chain/host_context.cpp
+  reference-contracts/contracts/eosio.system/src/upgrade_governance.cpp
+  reference-contracts/contracts/eosio.system/include/eosio.system/upgrade_governance.hpp
+
+轮岗、黑名单、扩容：
+  reference-contracts/contracts/eosio.system/include/eosio.system/rotation_state.hpp
+  reference-contracts/contracts/eosio.system/src/rotation_state.cpp
+  reference-contracts/contracts/eosio.system/include/eosio.system/rotation_growth.hpp
+  reference-contracts/contracts/eosio.system/include/eosio.system/rotation.hpp
+  reference-contracts/contracts/eosio.system/src/rotation.cpp
+  最后两项含历史规则模型及共享常量；模型中的旧 preflight 状态不是新版生产
+  合约的线上预检，v2 生产选择由 rotation_state.cpp 的分页状态机负责。
+
+投票、REX、资源、奖励及共同入口：
+  reference-contracts/contracts/eosio.system/include/eosio.system/eosio.system.hpp
+  reference-contracts/contracts/eosio.system/src/eosio.system.cpp
+  reference-contracts/contracts/eosio.system/src/voting.cpp
+  reference-contracts/contracts/eosio.system/src/direct_voting.cpp
+  reference-contracts/contracts/eosio.system/src/finalizer_key.cpp
+  reference-contracts/contracts/eosio.system/src/delegate_bandwidth.cpp
+  reference-contracts/contracts/eosio.system/src/rex.cpp
+  reference-contracts/contracts/eosio.system/src/resource_split.cpp
+  reference-contracts/contracts/eosio.system/src/powerup.cpp
+  reference-contracts/contracts/eosio.system/src/producer_pay.cpp
+  reference-contracts/contracts/eosio.system/src/reward_policy.cpp
+  reference-contracts/contracts/eosio.system/include/eosio.system/reward_halving.hpp
+  reference-contracts/contracts/eosio.bpay/src/eosio.bpay.cpp
+
+接口与启动工具：
+  PureEOS/plugins/chain_plugin/chain_plugin.cpp
+  PureEOS/plugins/chain_plugin/include/eosio/chain_plugin/chain_plugin.hpp
+  PureEOS/plugins/chain_api_plugin/chain_api_plugin.cpp
+  PureEOS/plugins/producer_plugin/producer_plugin.cpp
+  PureEOS/programs/cleos/main.cpp
+  PureEOS/scripts/pureeos_upgrade.py
+  PureEOS/tutorials/bios-boot-tutorial/bios-boot-tutorial.py
+
+测试、构建、文档：
+  PureEOS/unittests/pureeos_genesis_tests.cpp
+  PureEOS/unittests/pureeos_governance_tests.cpp
+  PureEOS/unittests/pureeos_resource_split_tests.inc
+  PureEOS/unittests/pureeos_committee_boundary_tests.inc
+  PureEOS/unittests/pureeos_sequential_rotation_tests.inc
+  PureEOS/unittests/pureeos_reward_halving_tests.inc
+  PureEOS/tests/block_log.cpp
+  PureEOS/tests/native_savanna_genesis_test.py
+  PureEOS/tests/pureeos_single_choice_local_test.py
+  PureEOS/tests/pureeos_multinode_local_test.py
+  PureEOS/tests/pureeos_upgrade_helper_test.py
+  PureEOS/tests/pureeos_reward_chain.py
+  PureEOS/tests/pureeos_reward_chain_test.py
+  PureEOS/tests/pureeos_reward_regression.py
+  PureEOS/tests/full-version-label.sh（修正 dirty 工作区的版本测试预期）
+  PureEOS/plugins/http_plugin/tests/unit_tests.cpp（隔离端口、短 socket 路径及线程捕获）
+  reference-contracts/tests/pureeos_rotation_tests.cpp
+  两仓库相关 CMakeLists.txt、reference-contracts/tests/rotation/、Ricardian 生成规则、
+  reference-contracts/tests/SINGLE_CHOICE_VOTING.md、PureEOS/genesis/ 下新增说明、
+  独立实施计划及本说明。测试代码存在不代表相应测试本轮都已执行。
+
+十四、追加的底层可靠性与测试改动（2026-10-07）
+
+以下追加不改变前文投票、轮岗、奖励、资源分配和治理公示规则：
+1. 崩溃恢复：保存带链 ID 与校验的可逆分支恢复记录，在本地签名安全状态
+   推进前持久化；恢复缺失或损坏时拒绝启动。safety.dat 使用原子替换与
+   同步写入，保留历史密钥记录；不可逆日志落盘后才清理相应恢复记录。
+   文件：libraries/chain/reversible_recovery.cpp 及其头文件；controller、
+   finalizer、fork_database、block_log 的实现和相关头文件。
+2. 协议特性 API：修复递归插入 flat_map 后旧迭代器失效造成的漏报，保证
+   新轮岗协议特性可通过真实 API 完整读取，不修改既有协议特性摘要。
+   文件：plugins/producer_plugin/producer_plugin.cpp。
+3. 计时中断：外部取消在 WASM 暂停计费与恢复之间不再丢失；下一笔交易
+   不继承旧取消。OC 内部重试通知与外部取消分开，不调整链上 CPU 限额。
+   文件：platform_timer 三后端、transaction_context 及其头文件、
+   include/eosio/chain/wasm_interface_private.hpp。
+4. 十六进制编码：libfc 一次分配后直接填充，降低大 ABI 回退开销；输出
+   格式和字节值不变，不改变签名、交易或区块编码。
+   文件：libraries/libfc/src/crypto/hex.cpp。
+5. 验证工具：修正集群构造越界、历史协议夹具、协议摘要生成器与计时测试
+   的计费口径；真实多节点脚本读取完整排名分页，并按交易 ID 查找已最终
+   确认的成功收据。新增故障、竞态和客户端回归；保留各次失败原始证据。
+
+此处路径均相对 PureEOS。系统合约产物没有因这批底层修复再次改变。
+底层修复需要运行新 nodeos 才生效，仅重部署系统合约不足以启用；现有
+manual-test-chain 的程序与数据没有被自动替换。这批底层修复的历史测试见
+PureEOS_剩余问题修复与回归测试.txt；当前奖励版本的结果以本轮奖励报告为准。
+
+十五、100% 出块奖励版的本轮最终验收（2026-10-08）
+
+最新系统合约取消整数投票配置的投票奖励累计和支付，新增资金全部按
+未结算出块数分配；取消原储备部分增发，约 1% 初始速率每 1461 天减半。
+既有整数 v2 链升级后保留原激活起点和历史资金，不恢复旧 revision 票奖。
+旧浮点配置为兼容而保留原行为，不能与本轮新链部署配置混用。
+
+本轮主验收 49 个批次全部通过，锁定的 165 个源码/产物哈希前后一致。
+主验收 1420 个不同 CTest 目标，工具和基础库补充 11 个，去重共 1431 个；
+另有 280 个插件用例、轮岗模型 ASan/UBSan/LeakSanitizer、双引擎重复专项、
+两种创世各三次真实强制终止恢复。两轮独立四节点链各 72 项检查、78 笔
+已确认交易通过，包含接入、票数、出块顺序、单/双故障、恢复和 CPU/NET 租金。
+新手动链独立目录 manual-block-rewards-20261008 保留运行，钱包锁定；
+隔离时钟副本实际验证了增发与领奖，但该笔收入不在正常时钟主手动链上。
+本轮还修复了测试端口冲突、长 Unix socket 路径、测试线程局部引用、版本
+测试 dirty 后缀预期，以及手动链启动身份读取竞态，详情和失败证据见奖励报告。
+
+这不是所有仓库测试、21/841 个真实节点集群、跨地域/压力/长期运行或
+生产安全审计；第十二节的统一 REX 估值、独立最终确认奖励账本和迁移等
+未完成项目仍然有效。测试通过不表示这些尚未实现的功能已经存在。
+
+结论：这是保留 Antelope 账户/合约/Savanna 基础的定制新链配置，
+核心改变是开发者公示升级与节点否决、唯一选择整数投票、单席 FIFO 轮岗、
+动态候选规模、链上自动禁入、10/90 资源权重，以及约 1% 起步每四年减半、
+100% 按实际未结算出块分配的奖励政策。
+它不是 EOS 原样换名，也不是完全去中心化治理、PoW 挖矿或已经完成生产验收。

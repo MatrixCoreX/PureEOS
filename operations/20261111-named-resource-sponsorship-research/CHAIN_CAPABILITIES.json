@@ -1,0 +1,32 @@
+{
+  "status": "PASS_READONLY_CAPABILITY_SNAPSHOT",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "head": 733853,
+  "LIB": 733850,
+  "supported_compute_transaction": true,
+  "first_authorizer_feature": [
+    {
+      "feature_digest": "8ba52fe7a3956c5cd3a656a3174b931d3bb2abb45578befc59f283ecd816a405",
+      "activation_ordinal": 7,
+      "activation_block_num": 1,
+      "description_digest": "2f1f13e291c79da5a2bbad259ed7c1f2d34f697ea460b14b565ac33b063b73e2",
+      "dependencies": [],
+      "protocol_feature_type": "builtin",
+      "specification": [
+        {
+          "name": "builtin_feature_codename",
+          "value": "ONLY_BILL_FIRST_AUTHORIZER"
+        }
+      ]
+    }
+  ],
+  "code_hashes": {
+    "eosio": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+    "eosio.key": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+    "eosio.token": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "usd": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+    "cny": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb"
+  },
+  "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "scope": "Read-onlyAPI/feature/code metadata; no computeexecution, keyaccess, signatures, chainwrites or servicechanges."
+}

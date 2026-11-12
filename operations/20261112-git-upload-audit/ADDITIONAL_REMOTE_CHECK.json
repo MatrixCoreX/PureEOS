@@ -1,0 +1,92 @@
+[
+  {
+    "path": "/home/guagua/AntelopeIO/cdt/cdt-llvm",
+    "remote_heads": {
+      "rc": 0,
+      "stdout": "7823875797fe911680ad967ab78e29cb430bcd48\trefs/heads/cmp0148\n0208c62e04c2cf0e9fac53b9fe93204b109fe084\trefs/heads/gh_1697\nb919709985457410dcc976419f4577886c3617f0\trefs/heads/long_names\n34c0de54049689382e3ca28f9defe21d31ed538b\trefs/heads/main",
+      "stderr": ""
+    },
+    "shallow": {
+      "rc": 0,
+      "stdout": "false",
+      "stderr": ""
+    },
+    "reachable_count": {
+      "rc": 0,
+      "stdout": "182550",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/cdt/cdt-llvm/tools/clang",
+    "remote_heads": {
+      "rc": 0,
+      "stdout": "b86434da3d31f50de2c6220adbef8f329f8fcf58\trefs/heads/call_tag\n102445a96bfc4b6a6849b9c19df49a3411f0f00a\trefs/heads/gh_1697\n8a391069b4c16a6a66059e952d717f6fa07d289d\trefs/heads/main",
+      "stderr": ""
+    },
+    "shallow": {
+      "rc": 0,
+      "stdout": "false",
+      "stderr": ""
+    },
+    "reachable_count": {
+      "rc": 0,
+      "stdout": "78423",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/cdt/cdt-llvm/tools/lld",
+    "remote_heads": {
+      "rc": 0,
+      "stdout": "5ded4020a1b1ddfbfe58db2aa24ba93b48da14d0\trefs/heads/main",
+      "stderr": ""
+    },
+    "shallow": {
+      "rc": 0,
+      "stdout": "false",
+      "stderr": ""
+    },
+    "reachable_count": {
+      "rc": 0,
+      "stdout": "12365",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/incomplete-history-bundle-checkout",
+    "remote_heads": {
+      "rc": 0,
+      "stdout": "2889d694848287b2084a22d8ee74a3c9ceacda06\trefs/heads/archive/high-spec-deployed-20261102\n1c1a6ec3799ced44f6ae6ad9e3ae05424de258fa\trefs/heads/feature/dev-genesis-20261105\n7c99faa15ad71385553eb00555460f216e0786ff\trefs/heads/feature/eoskey-history-20261103\n83080a452b804424bf172e9f6ccb87543debec73\trefs/heads/feature/native-upgrade-history-20261104\n59ab60156a2eabd1b248450a786c57ea9e0751d5\trefs/heads/main",
+      "stderr": ""
+    },
+    "shallow": {
+      "rc": 0,
+      "stdout": "false",
+      "stderr": ""
+    },
+    "reachable_count": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "error: Could not read 2c7d2c093fa20a9d764e545cc56be6bff02eed2a\nfatal: Failed to traverse parents of commit a11de79438a26434ea9024a89d877efa8272e22d"
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs",
+    "remote_heads": {
+      "rc": 0,
+      "stdout": "0fa6b9b5313a46a7353d1f402bfcfae9b8718b44\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-libraries-appbase\n7d5bfc55fe9aa7ac297e85a1d016972fb58f3b95\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-libraries-cli11-cli11\ndce37186dfaafa95ec21e7dc2319f650c3c8fbd3\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-libraries-eos-vm\n5170786f6df048d7f25e8d4d2744112768198045\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-libraries-libfc-libraries-bls12-381\n9cffc45a8e3cbc8a04cfc13a00c5c7bc2036149d\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-libraries-libfc-libraries-bn256\n1f4d789b561a587283f77cc2dccdcdd9f09e3299\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-libraries-softfloat\n9a175c8329385907e0e4b0ac1fb937e0c3ba7fd8\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-parallel-v1-release-libraries-eos-vm\n9de88a7ddfcdb8ea7822ad238ef19369427fac0a\trefs/heads/backup/git-upload-20261112/dependencies/pureeos-v1-hardening-libraries-eos-vm\n6709f0e0b12d1abf37d2a6c8175e627cdfbca6ff\trefs/heads/backup/git-upload-20261112/heads/pureeos-baseline-group8-qualified-20261029-5ffee9305b\n132a1e7287cdc62c3b57dfc145f6c4e501f788a3\trefs/heads/backup/git-upload-20261112/heads/pureeos-bench-cpu32-custom-token-saturation-20261027-3c38d79cb7\nc149970f37187c7e39841f09536cae47cab5b131\trefs/heads/backup/git-upload-20261112/heads/pureeos-bench-cpu32-powerup-transfers-20261027-f878ab6e38\n424f97e1fa246098327b2c09537e8874acdf8341\trefs/heads/backup/git-upload-20261112/heads/pureeos-bp-system-candidate-20261030-feature-blacklist-capacity-governance-docs-20261101-15dea1aa8a\n952f752e503163c47ae1ca858c0b161263b04fbb\trefs/heads/backup/git-upload-20261112/heads/pureeos-deployed-system-20261102-archive-high-spec-system-20261102-b230c7e12d\n9d4d478c61c6a1b3283a89c3c07dc69836b59f01\trefs/heads/backup/git-upload-20261112/heads/pureeos-development-cpu16-net16-defaults-20261029-24e8dac4d4\nd1748af5875eb411f2ef79320af0a1667ff36912\trefs/heads/backup/git-upload-20261112/heads/pureeos-development-parallel-required-hardware-20261030-eec21c3f51\n3505b4f01890636039c1d3726f17694ab2d05dc3\trefs/heads/backup/git-upload-20261112/heads/pureeos-feature-deterministic-work-capacity-810ed89acc\nf7de2c40dac869cb979955eb57053438bd011b0c\trefs/heads/backup/git-upload-20261112/heads/pureeos-functional-harness-20261030-review-functional-harness-20261030-4605405556\na2b58e40d11577c5b7d2f52f1452c89612290607\trefs/heads/backup/git-upload-20261112/heads/pureeos-libraries-cli11-cli11-main-c1978c69b4\ncc5739d4087ed750b3918f0dc47f59a814ac8c04\trefs/heads/backup/git-upload-20261112/heads/pureeos-libraries-eos-vm-feature-deterministic-work-capacity-a0b460b2a6\n0d84548a0a35b369faa19c0a7320b845f4fb5b54\trefs/heads/backup/git-upload-20261112/heads/pureeos-libraries-eos-vm-main-377c046ec8\n3d83036a5480c1dd68ec84b4403e081189919abb\trefs/heads/backup/git-upload-20261112/heads/pureeos-perf-cpu32-batched-owner-optimization-20261027-945983a755\n3391642a36a3ca7ecf87b2c324b33b16182f581c\trefs/heads/backup/git-upload-20261112/heads/pureeos-perf-cpu32-current-root-views-20261028-ed0ed2fb2e\n95125d68ef0b5e279917d8fc617b553e1971da71\trefs/heads/backup/git-upload-20261112/heads/pureeos-perf-cpu32-lazy-host-iterator-20261028-3ce154b02b\n2b8bc7fcbbdd84bad7a9e9721df60781bbd25c49\trefs/heads/backup/git-upload-20261112/heads/reference-contracts-release-parallel-v1-74f46fa402\neb748227539b96dcf5c2b2f6ab96ad0ca1a143d3\trefs/heads/backup/git-upload-20261112/staged/pureeos-v1-hardening\n5e61889e45f5fa7811cb2d1aa3ce40ec23466da1\trefs/heads/backup/git-upload-20261112/working/pureeos\nbf0d259563cc96cc68953a8e24966ecacd8504ea\trefs/heads/backup/git-upload-20261112/working/pureeos-bp-system-candidate-20261030\n34932529a9fdaff1d57719cf07317c93315a73f5\trefs/heads/backup/git-upload-20261112/working/pureeos-parallel-v1-release\nd79ba21bead14a99cff5b05b35887c814ca22fff\trefs/heads/backup/git-upload-20261112/working/pureeos-v1-hardening\n6e6de35a3496b015c0aee25d2fb1290b95d9d977\trefs/heads/backup/git-upload-20261112/working/reference-contracts\n6e4cf7dd8fe27e4aef6ee565400a6f6d11e5b54c\trefs/heads/backup/git-upload-20261112/working/reference-contracts-v1-hardening\nc41b9f449267451f616cfec203c65cf785c8796f\trefs/heads/backup/git-upload-20261112/working/release-work-20261025-tps-baremetal-net4-p2p16-1-source-variant\ncf2d5919cf3cc96dd03a757d3c7ed3df7739260e\trefs/heads/docs/full-chain-pqc-plan-20261104\n9d12fb5c74c0b45622aa0c19bcec654da249824a\trefs/heads/docs/high-spec-rebuild-20261102\n6b5cb02a619039cf766caa84febbcf305950710e\trefs/heads/docs/testnet-maintenance-five-20261102\n23fa32adb307b2a2f756703f6faef16b14313ab2\trefs/heads/feature/activate-ram-fees-20261104\n2f0ecd88775bbb15cc8867bcce81ef1a6158259f\trefs/heads/feature/atomic-ram-20261105\na9b6858c92d3d84c41b46196a10dc646caf0a8f6\trefs/heads/feature/bp-bond-20261102\n5d95aa18fea665f4ee60eda13b01dec82ff43535\trefs/heads/feature/governance-seven-day-20261101\n6f7bf0632a98e7b678b003c6895e06ca3d5fa42d\trefs/heads/feature/governance-seven-day-evidence-20261101\n152cb3a7f700b4b9dee4680ca595e7efc68b2e3f\trefs/heads/feature/key-native-ram-20261111\nd64c588dc064e0871e3197e3ce63f082aff08ebd\trefs/heads/feature/key-signup-bridge-20261105\n70abde5325217dde6a2a35aa1364431693b24de3\trefs/heads/feature/key-unbounded-20261107\nd5c176e7d9f14ad98129c5631f3bbdece8a3ba3e\trefs/heads/feature/ram-market-fees-20261104\nf0e259b7c5a4768c6ce55fe74badc9b328cb3ce7\trefs/heads/feature/relay-execution-income-20261105\n40e7e5a912ca8b660d65e3d22592c1e552016a46\trefs/heads/feature/relay-rates-20261104\n59c77526b025375e8013a7dea9fbf4eef143d598\trefs/heads/feature/signup-key-bridge-20261105\n00e373d3f70e6e4079913b77014702d92859ebe8\trefs/heads/feature/supply-cap-veto-20261104\n7a133dea41f210cb73f0dfdeeddb535e3dbde926\trefs/heads/feature/system-account-proposals-20261105\naeb53ba4d81da93c7ee7b70f4ed10f5819ddf12b\trefs/heads/feature/system-signup-20261104\n7372b1de773e339d3c9b4f62fc161c459e85d66a\trefs/heads/fix/version-identity-20261031\na0bacba27e59bd215fd94c978f9b217ec9a09ee3\trefs/heads/main\n2c6398f0c19b7fd47b76e72e60aceb8ea9206652\trefs/heads/ops/bp-add-two-stop-two-20261106\n24ce91fabc7162e8426718cc0d15a944a88a684d\trefs/heads/ops/bp-demo-six-20261105\n55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2\trefs/heads/ops/relay2-eligibility-20261111\n4112bbe229542ce0a0c34c5c4075e1895551ecd5\trefs/heads/ops/testnet-resource-guard-20261111\n46fe95c0d526e126118c9da2f0a003b90e3667e0\trefs/heads/ops/usd-cny-test-issuance-20261105\n7f80a9bc7312d8912bbda99c15c5c214452739df\trefs/heads/release/parallel-v1\n2208fac7e6f84e3fffc3804eeaa9faaa3e70e097\trefs/heads/testing/low-cost-cpu4-v1\n8586782e4d8bf1dfb332708072482fefa563fdb1\trefs/heads/wip/eosio-key-v2-security-20261103",
+      "stderr": ""
+    },
+    "shallow": {
+      "rc": 0,
+      "stdout": "false",
+      "stderr": ""
+    },
+    "reachable_count": {
+      "rc": 0,
+      "stdout": "113",
+      "stderr": ""
+    }
+  }
+]

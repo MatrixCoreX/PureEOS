@@ -1,0 +1,145 @@
+{
+  "files": [
+    {
+      "path": "PureEOS_210候选轮岗_预检与离线跳过_实施计划.md",
+      "SHA256": "c62425fd0521d50bf4d6c6568a170abc07cf83de1f89b52884ed16ed92294df6",
+      "bytes": 82500
+    },
+    {
+      "path": "PureEOS_BP串通停机与恢复机制_研究备忘录_20261101.md",
+      "SHA256": "144d57cd53896e9065e3122eedea0a2e79e81bec7d81029826a1b7e8e4153a2f",
+      "bytes": 10698
+    },
+    {
+      "path": "PureEOS_REX租金划款修复与回归测试.txt",
+      "SHA256": "e68ba4cf6890c3772d54480c08d8460e08a36d954e4e8e4caf4524dae0866424",
+      "bytes": 12266
+    },
+    {
+      "path": "PureEOS_一票一投_210候选随机轮换21节点_独立账号升级方案.md",
+      "SHA256": "6197d88b38b268e7a346d0d2f5b449c93b35f3ccf245cf25b8679815f4604ce3",
+      "bytes": 153745
+    },
+    {
+      "path": "PureEOS_与EOS治理及代码差异说明.txt",
+      "SHA256": "986d328c255d9265cf28d158f27a552f9b56230145244108bb6c422aa7b4b636",
+      "bytes": 38606
+    },
+    {
+      "path": "PureEOS_出块节点全历史账本_协议强制保存_实施计划.md",
+      "SHA256": "b71d33324020edc6710e638badc96261b9a03fec924252d3ecf277d7ea2f1c69",
+      "bytes": 44094
+    },
+    {
+      "path": "PureEOS_前210候选顺序轮换21节点_单节点启动与按出块奖励_最终确认版.md",
+      "SHA256": "b7155583279b1d12842f101df8787e23541b063157b25ca23d6abbb499183db7",
+      "bytes": 53752
+    },
+    {
+      "path": "PureEOS_剩余问题修复与回归测试.txt",
+      "SHA256": "446d05a1439928c06e1e84d7fece524549baa13163efd9e769a17b1dbd8efd28",
+      "bytes": 15360
+    },
+    {
+      "path": "PureEOS_多核并行交易执行_实施计划.md",
+      "SHA256": "321e946b253cf844a47bf6482cf4460a2e1657d70be52540e2d7dc7bbf02e0fa",
+      "bytes": 61210
+    },
+    {
+      "path": "PureEOS_崩溃恢复修复与测试.txt",
+      "SHA256": "512e7b587daa8ee28008fa5e11c4a051598a2e42012d7407e3bcfa3ad6b18a26",
+      "bytes": 8032
+    },
+    {
+      "path": "PureEOS_已知风险修复与回归测试.txt",
+      "SHA256": "33bba4da3be6f0b2281a23aded5c5358f8ad64ec1f7b45226a35dcd0808003fa",
+      "bytes": 11153
+    },
+    {
+      "path": "PureEOS_并行首版与CDT加固优化_实施计划.md",
+      "SHA256": "dddcd3f6121fdf5e7c8398228b3d6599b1acec8d1abb46e17ac77d953227d491",
+      "bytes": 51642
+    },
+    {
+      "path": "PureEOS_性能优化与TPS提升_实施计划.md",
+      "SHA256": "bad32eea2f457d965d2a7847d7af340ad3fa9e91bf5e00b3418d29dc317ab2da",
+      "bytes": 60739
+    },
+    {
+      "path": "PureEOS_正票激活与22节点测试.txt",
+      "SHA256": "e790d39f578416db20c506a3ba3e3ea049925c8aa12fdc42fda959a0f002ee1e",
+      "bytes": 28400
+    },
+    {
+      "path": "PureEOS_测试链新链部署与TPS测试标准流程.md",
+      "SHA256": "d9dabc05a75d227b0061843c456e79cea46e257dfed0e7526ef93c76f09a3f60",
+      "bytes": 84479
+    },
+    {
+      "path": "PureEOS_节点奖励减半与重新起链测试.txt",
+      "SHA256": "a030bb1772d7f7e3484d431a5fea8726202c57d2136057b12de854478c62922c",
+      "bytes": 15431
+    },
+    {
+      "path": "PureEOS_补充测试与真实多节点验收清单.txt",
+      "SHA256": "a5bb6073f98e8bfd87cbdc45f92b72bf131588e2e4ac11b74c0b9ff0354b935c",
+      "bytes": 13064
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.md",
+      "SHA256": "b53478d0d5283b8fd06533f1cf329c250d6acdaf989a17517b32357be27501f0",
+      "bytes": 134829
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.previous-20261029T034310Z.md",
+      "SHA256": "ba17144c990540419ab22cda9402f3ccfca503a021ea0e564716bb81fdb1a79a",
+      "bytes": 26641
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.previous-20261029T051748Z.md",
+      "SHA256": "ffe1384caa984d87088bb43298ef0f682b8d2c6b4247bdbcc606deb6c1232037",
+      "bytes": 28829
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.previous-20261029T075127.md",
+      "SHA256": "1ce8fac9316b362206d4f252ac19ba23e12008820cc98310e1690664163a36c1",
+      "bytes": 35641
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.previous-20261029T075325.md",
+      "SHA256": "bb9ff7ad63e2702c3b42960f1e9c0eeb8d20852ff3ca97553485ba7f58dd115e",
+      "bytes": 43927
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.previous-20261029T092248.md",
+      "SHA256": "127bd59b1019a036a81c3f64357f6e7e8ef01f80fbb41e4e833ac431512652a3",
+      "bytes": 44300
+    },
+    {
+      "path": "main-thread-optimization-experiments-20261029.previous-20261029T105034Z.md",
+      "SHA256": "bab619e7f70676c1b6a91d26c0a9f84a4e643b574f3cefe306a5abbb2ec54a6b",
+      "bytes": 45178
+    },
+    {
+      "path": "nodeos-parallel-required-hardware-20261030.md",
+      "SHA256": "e92cc97703560d02eb41f8d3ef92a8874b2c6ca7fb481f02c0a16367119c9362",
+      "bytes": 2262
+    },
+    {
+      "path": "p2p-auto-discovery-design-20261029.md",
+      "SHA256": "0efc2c4aac2883ed53f464fd2cd713f89aff0d2f9ecda5b4016fec6bbd083615",
+      "bytes": 21456
+    },
+    {
+      "path": "p2p-discovery-multinode-functional-test-plan-20261030.md",
+      "SHA256": "aa1b60282df8d00e58b9070f628777148ae6d81b360d945b821a0641eda27ca1",
+      "bytes": 35629
+    },
+    {
+      "path": "rotation-and-planned-maintenance-mechanism-20261030.md",
+      "SHA256": "111985aad4957c3e0b8c6995a2049f9a326465addaf8a25c8d4b717311247709",
+      "bytes": 26839
+    }
+  ],
+  "findings": []
+}

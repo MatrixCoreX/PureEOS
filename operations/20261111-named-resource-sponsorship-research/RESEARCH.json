@@ -1,0 +1,118 @@
+{
+  "status": "COMPLETE_RESEARCH_ONLY",
+  "utc": "2026-11-11T09:11:04.781801+00:00",
+  "scope": "Source review andread-onlyliveAPI/activatedfeature/nativehashmetadata. No sourceedits/builds/computeexecution/signatures/chainwrites/services/phoneactions/subagents/Gitpublication.",
+  "facts": {
+    "first_authorizer_activated_block": 1,
+    "compute_endpoint_advertised": true,
+    "native_hash_946_unchanged": true,
+    "current_relay1_and2_support_only_key_ksend_withdraw_cancel": true,
+    "KEY_native_deposit_requires_exact2roots_firstonly_sender_active_and0fee": true,
+    "wallet_native_plan_sign_rebuild_rejects_sponsor_additions": true
+  },
+  "recommended_design": {
+    "identity": "KeepqualifiedBP registryidentity; isolate funding/CPU resources/hotpermission in a bounded operational account. Existingkeyrelay3restrictedlinks stayunchanged.",
+    "CPU_NET": "Usechainfirstauthorizerbilling. Fundingaccountmustbe firstdeclaredauthorizer of firstordinaryaction; signaturearray orderalone hasnoeffect. Finaltransaction isassembled/reviewed beforeusernative signature, then resourcepayercosigns exactsamebytes.",
+    "RAM": "Buy onlysenderRAMshortfall into senderaccount. SenderremainsRAMpayer fornewnative-token/KEYrows, preservingcurrentnativeRAMmodel. Include sourcebalancepayer migration, destinationrow/KEYsecondaryindex/userres accounting; do not assume existingrowmeanszeroRAMgrowth. CurrentnativeRAMquota verification occurs attransactionfinalize; do not falselyrequire peaktemporaryallocations tofit finalquota solelyfromnettrace.",
+    "money_flow": "Oneatomictransaction combines boundedRAMpurchase ifneeded, nativeAICservicepayment, principaltransfer. Example fundingaccountfrontsfixedAICRAMquant thenreceives quotedtotal fromsender; insufficientquota/price/caps/principal failure rollsbackfinancialactions. Fundingaccount mustretainseedliquidity andCPU/NET; failedexecution/servercost remainsprovider risk.",
+    "RAM_quote": "PreferfixedAIC buyram quantity forstrictcashcap; purchasedbytescanvarywithmarket, insufficientresultingquota makeswholetxfail. Unboundedmarketpricedbuyrambytes mustnotbeclaimedno-loss whenfee isfixed. ActualsystemRAMfee included. No repeatedRAMpurchase whenaccountquota enough.",
+    "CPU_quote": "CPU/NET service price agreed before signing. REX/stake/PowerUp amortizedcost is not identical to pertransaction microseconds/bytes. Optionalregistered10/30percentmarkup musthaveclearexactbaseandintegerrounding; do not silently reuseexistingkeyfee policy asnativeimplementation.",
+    "fee_currency": "Initialservice feeAIC in sendernativebalance, noKEYpredeposit. USD/CNY-only sender needsAIC unlessproviderexplicitly adds reviewednonAICfeeconversionquoted/signedbyuser.",
+    "named_to_named": "Basicjointsignature/fee/automaticRAM canuseexistingnative system/token actions andwallet+relaychanges. Ifeligibility ofBPmustbeconsensus-enforced, addmandatorycontractgate; wallet/serverfiltersalone do not preventalready-signed ordinary sponsoredtransactionfromexecutingafterBPban.",
+    "named_to_key": "Keeporiginaldirecttwo-root zerofee route intact. Addseparategoverned sponsoreddeposit entry withboundedexactprefix/tail andregisteredfundingBPqualification, nativeuser/funder authorizations, fullprincipal/pendinglock/assetadmission checks. Currentstrictdepositcannotacceptfeeprefix/buyram/extraauth.",
+    "API_wallet": "Separate nativequote/native-submit schema/capability flag from existingownerproof /submit. Walletmustreviewtotalspend/recipient/token/BP/funder/RAMbeneficiary/fees, signimmutabletx, storeexactpacketandID, no automaticre-sign/newTAPOS orsilentfallbacktoanotherpayer."
+  },
+  "compute_transaction": {
+    "useful": [
+      "UnsigneddraftCPU/NETestimate",
+      "contractexecution/errors/RAMpayerdeltas/finalresourcequota check",
+      "near-broadcastpreflightofsamefullyassembledtransaction"
+    ],
+    "limits": [
+      "Dryrunpermitsunsatisfiedsignaturechecks; successisnotauthorizationproof",
+      "Transientdryrunskipsnormal subjectivepenalties",
+      "State/market/CPUtimingcanchangetoexecution",
+      "NotexactAICpriceorrentamortizationguarantee",
+      "No onchainguaranteedpost-executionCPUreimbursement canbeassumed"
+    ]
+  },
+  "validation_plan": [
+    "isolatedactualnative946firstpayer proof with senderCPU/NET exhausted",
+    "nativeAIC/USD/CNY allroutes andfullprincipal",
+    "new/oldreceiverrows andsenderbalanceRAMpayermigration",
+    "fee-tokenrowmigration andzeroRAMsender; accountuserres overhead",
+    "atomiclatefailure: fee/buyRAM/principal allrollback",
+    "quotepricejump/fixedRAMcap/insufficientRAMresult",
+    "currentKEY2root direct/zeroFee untouched; newprefix strictwhitelist/reentry/fullprincipal",
+    "BPdisabled/banned/maintenance/bondstate signing/execution race; distinguishchaingate fromserverpolicy",
+    "hotfundkeyriskisolated fromBPowner/active/production/finalizer; userdoesnotdelegateauthority",
+    "exactpacketjournal/canonicalfinality/expirywithoutautomaticnewsignature"
+  ],
+  "sources": {
+    "native_first_authorizer": {
+      "path": "PureEOS-Test/libraries/chain/transaction_context.cpp",
+      "line": 209,
+      "file_SHA256": "23d39e056e1b064d2e9b9b7dba6d1cfbf0367159382dde3cdf2e72b03985d5a7"
+    },
+    "first_authorizer_order": {
+      "path": "PureEOS-Test/libraries/chain/include/eosio/chain/transaction.hpp",
+      "line": 93,
+      "file_SHA256": "7fcc41432b650e91321afa73d9c4a7637055e9f3f096c05a83460e3b0d2bcbae"
+    },
+    "RAM_final_transaction_quota_check": {
+      "path": "PureEOS-Test/libraries/chain/transaction_context.cpp",
+      "line": 459,
+      "file_SHA256": "23d39e056e1b064d2e9b9b7dba6d1cfbf0367159382dde3cdf2e72b03985d5a7"
+    },
+    "native_compute_dry_run": {
+      "path": "PureEOS-Test/plugins/chain_plugin/chain_plugin.cpp",
+      "line": 2878,
+      "file_SHA256": "d13fec233ff14b2b4729e8328402feeec7a158c4af5aa0d0821516ff7e7fc6e0"
+    },
+    "dry_run_missing_signature_tolerance": {
+      "path": "PureEOS-Test/libraries/chain/controller.cpp",
+      "line": 4378,
+      "file_SHA256": "01cba07393c1abff413d8c1ee827ed762a904ab9f4cd3c9f1cd46b3e3e75e08b"
+    },
+    "auth_check_but_dont_fail": {
+      "path": "PureEOS-Test/libraries/chain/authorization_manager.cpp",
+      "line": 566,
+      "file_SHA256": "640c33206df424d1b00d70bc5e5a14fb71beb84c3ca42a89f579cc71c413325b"
+    },
+    "subjective_billing_transient_exemption": {
+      "path": "PureEOS-Test/plugins/producer_plugin/producer_plugin.cpp",
+      "line": 2826,
+      "file_SHA256": "9bfeda76d3c65543bfe6a1f7f42371e33ed65160b04bacd88e1f558762ef52c2"
+    },
+    "KEY_current_deposit_strict_two_roots": {
+      "path": "PureEOS-Key-Unbounded-20261107/system-contracts/eosio.key/src/eosio.key.cpp",
+      "line": 668,
+      "file_SHA256": "4b7642b43f77e8eacd02ea319cc83ea705b6f160da5272e32c03357ecdd8283c"
+    },
+    "current_relay_only_key_envelopes": {
+      "path": "PureEOS-Key-Unbounded-20261107/system-contracts/eosio.key/relayer/server.mjs",
+      "line": 68,
+      "file_SHA256": "1f313bb0101ba8a0495adb6dd0f7e9d58dbad504b1b83097722a3ca04637ee44"
+    },
+    "current_wallet_native_sign_rebuild": {
+      "path": "PureEOS-Wallet/app/src/main/java/one/matrixai/wallet/Network.java",
+      "line": 247,
+      "file_SHA256": "2d2dbbb52807ad054991c6dcb855729ae7050d7e6697d8804f2cefe8d6388b2f"
+    },
+    "token_sender_balance_RAM_rebill": {
+      "path": "PureEOS-Cap-Veto-20261104/system-contracts/proposals/supply-cap-veto-20261104/src/eosio.token.cpp",
+      "line": 140,
+      "file_SHA256": "f5d7d001310eb403015a00ca44e897a37b6c33b9d55e3c946b57503a89191622"
+    },
+    "reference_system_RAM_fixed_spend": {
+      "path": "PureEOS-deployed-system-20261102/contracts/eosio.system/src/delegate_bandwidth.cpp",
+      "line": 42,
+      "file_SHA256": "53cd141d9ff5ea03cd41a50093098912c725c35efdcd7cbc5aab43924f0f9739"
+    }
+  },
+  "external_primary_sources": [
+    "https://wharfkit.com/docs/utilities/resource-provider-spec",
+    "https://raw.githubusercontent.com/AntelopeIO/leap/main/plugins/chain_plugin/chain_plugin.cpp"
+  ],
+  "claim_boundary": "Designfeasibility established from source andlivefeaturemetadata. No sponsorednative transferprototype orlive financial test hasbeenrun."
+}

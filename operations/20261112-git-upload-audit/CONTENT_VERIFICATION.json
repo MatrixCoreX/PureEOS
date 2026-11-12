@@ -1,0 +1,103 @@
+{
+  "status": "PASS_ARCHIVE_CONTENT_MATCHES_REVIEWED_SOURCE_AND_ORIGINAL_STAGED_TREES",
+  "utc": "2026-11-12T10:07:06.575950+00:00",
+  "working_snapshots": [
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS",
+      "commit": "5e61889e45f5fa7811cb2d1aa3ce40ec23466da1",
+      "reviewed_paths_verified": 211,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "commit": "bf0d259563cc96cc68953a8e24966ecacd8504ea",
+      "reviewed_paths_verified": 2,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-explorer-key-20261103",
+      "commit": "5420ef2ee0a8936f39d8c0d3a3d27193788e3b90",
+      "reviewed_paths_verified": 12,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-parallel-v1-release",
+      "commit": "34932529a9fdaff1d57719cf07317c93315a73f5",
+      "reviewed_paths_verified": 0,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+      "commit": "d79ba21bead14a99cff5b05b35887c814ca22fff",
+      "reviewed_paths_verified": 424,
+      "sparse_unmaterialized_index_sources_preserved": [
+        "libraries/libfc/src/io/console.cpp"
+      ]
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/cdt-v1-hardening",
+      "commit": "8bb69f80fa13821b3d15d6782296bac6dae456a6",
+      "reviewed_paths_verified": 50,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/reference-contracts",
+      "commit": "6e6de35a3496b015c0aee25d2fb1290b95d9d977",
+      "reviewed_paths_verified": 3,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/reference-contracts-v1-hardening",
+      "commit": "6e4cf7dd8fe27e4aef6ee565400a6f6d11e5b54c",
+      "reviewed_paths_verified": 11,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/release-work-20261025/tps-baremetal-NET4-P2P16-1/source-variant",
+      "commit": "c41b9f449267451f616cfec203c65cf785c8796f",
+      "reviewed_paths_verified": 1,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS/libraries/eos-vm",
+      "commit": "dce37186dfaafa95ec21e7dc2319f650c3c8fbd3",
+      "reviewed_paths_verified": 3,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-parallel-v1-release/libraries/eos-vm",
+      "commit": "9a175c8329385907e0e4b0ac1fb937e0c3ba7fd8",
+      "reviewed_paths_verified": 4,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-v1-hardening/libraries/eos-vm",
+      "commit": "9de88a7ddfcdb8ea7822ad238ef19369427fac0a",
+      "reviewed_paths_verified": 18,
+      "sparse_unmaterialized_index_sources_preserved": []
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/incomplete-history-bundle-checkout",
+      "commit": "0d53e4b47cdc5dae56bab294bda679d9feb1cc01",
+      "reviewed_paths_verified": 3,
+      "sparse_unmaterialized_index_sources_preserved": []
+    }
+  ],
+  "staged_snapshots": [
+    {
+      "source": "/home/guagua/AntelopeIO/PureEOS-v1-hardening",
+      "commit": "eb748227539b96dcf5c2b2f6ab96ad0ca1a143d3",
+      "exact_original_index_entries": 2548
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/cdt-v1-hardening",
+      "commit": "7eed24f7a93c95eef6810ca3ec76240552ea5e37",
+      "exact_original_index_entries": 5746
+    },
+    {
+      "source": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/incomplete-history-bundle-checkout",
+      "commit": "ad71ab8a91eb9931934dfea01fb09c65d4174f87",
+      "exact_original_index_entries": 287
+    }
+  ]
+}

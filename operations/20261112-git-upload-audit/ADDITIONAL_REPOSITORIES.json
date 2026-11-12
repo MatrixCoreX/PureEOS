@@ -1,0 +1,200 @@
+[
+  {
+    "path": "/home/guagua/AntelopeIO",
+    "head": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "common": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "branch": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "remotes": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "status": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git"
+    },
+    "branches": {
+      "rc": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git"
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/cdt/cdt-llvm",
+    "head": {
+      "rc": 0,
+      "stdout": "34c0de54049689382e3ca28f9defe21d31ed538b",
+      "stderr": ""
+    },
+    "common": {
+      "rc": 0,
+      "stdout": "/home/guagua/AntelopeIO/cdt/.git/modules/cdt-llvm",
+      "stderr": ""
+    },
+    "branch": {
+      "rc": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "remotes": {
+      "rc": 0,
+      "stdout": "origin\thttps://github.com/AntelopeIO/cdt-llvm (fetch)\norigin\thttps://github.com/AntelopeIO/cdt-llvm (push)",
+      "stderr": ""
+    },
+    "status": {
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "branches": {
+      "rc": 0,
+      "stdout": "main\t34c0de54049689382e3ca28f9defe21d31ed538b",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/cdt/cdt-llvm/tools/clang",
+    "head": {
+      "rc": 0,
+      "stdout": "8a391069b4c16a6a66059e952d717f6fa07d289d",
+      "stderr": ""
+    },
+    "common": {
+      "rc": 0,
+      "stdout": "/home/guagua/AntelopeIO/cdt/.git/modules/cdt-llvm/modules/tools/clang",
+      "stderr": ""
+    },
+    "branch": {
+      "rc": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "remotes": {
+      "rc": 0,
+      "stdout": "origin\thttps://github.com/AntelopeIO/cdt-clang (fetch)\norigin\thttps://github.com/AntelopeIO/cdt-clang (push)",
+      "stderr": ""
+    },
+    "status": {
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "branches": {
+      "rc": 0,
+      "stdout": "main\t8a391069b4c16a6a66059e952d717f6fa07d289d",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/cdt/cdt-llvm/tools/lld",
+    "head": {
+      "rc": 0,
+      "stdout": "5ded4020a1b1ddfbfe58db2aa24ba93b48da14d0",
+      "stderr": ""
+    },
+    "common": {
+      "rc": 0,
+      "stdout": "/home/guagua/AntelopeIO/cdt/.git/modules/cdt-llvm/modules/tools/lld",
+      "stderr": ""
+    },
+    "branch": {
+      "rc": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "remotes": {
+      "rc": 0,
+      "stdout": "origin\thttps://github.com/AntelopeIO/cdt-lld (fetch)\norigin\thttps://github.com/AntelopeIO/cdt-lld (push)",
+      "stderr": ""
+    },
+    "status": {
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "branches": {
+      "rc": 0,
+      "stdout": "main\t5ded4020a1b1ddfbfe58db2aa24ba93b48da14d0",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/incomplete-history-bundle-checkout",
+    "head": {
+      "rc": 0,
+      "stdout": "2837894d40fb8e58866fb7c7def62717ad714785",
+      "stderr": ""
+    },
+    "common": {
+      "rc": 0,
+      "stdout": ".git",
+      "stderr": ""
+    },
+    "branch": {
+      "rc": 0,
+      "stdout": "archive/high-spec-deployed-20261102",
+      "stderr": ""
+    },
+    "remotes": {
+      "rc": 0,
+      "stdout": "origin\thttps://github.com/MatrixCoreX/PureHistory.git (fetch)\norigin\thttps://github.com/MatrixCoreX/PureHistory.git (push)",
+      "stderr": ""
+    },
+    "status": {
+      "rc": 0,
+      "stdout": "A  deployments/high-spec-20261102/README.md\nA  deployments/high-spec-20261102/hyperion-loopback.patch\nM  scripts/pureeos-producer-summary/producer_summary.py\n?? scripts/pureeos-producer-summary/__pycache__/",
+      "stderr": ""
+    },
+    "branches": {
+      "rc": 0,
+      "stdout": "archive/high-spec-deployed-20261102\t2837894d40fb8e58866fb7c7def62717ad714785",
+      "stderr": ""
+    }
+  },
+  {
+    "path": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs",
+    "head": {
+      "rc": 0,
+      "stdout": "6b5cb02a619039cf766caa84febbcf305950710e",
+      "stderr": ""
+    },
+    "common": {
+      "rc": 0,
+      "stdout": ".git",
+      "stderr": ""
+    },
+    "branch": {
+      "rc": 0,
+      "stdout": "docs/testnet-maintenance-five-20261102",
+      "stderr": ""
+    },
+    "remotes": {
+      "rc": 0,
+      "stdout": "origin\thttps://github.com/MatrixCoreX/PureEOS.git (fetch)\norigin\thttps://github.com/MatrixCoreX/PureEOS.git (push)",
+      "stderr": ""
+    },
+    "status": {
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "branches": {
+      "rc": 0,
+      "stdout": "docs/high-spec-rebuild-20261102\t9d12fb5c74c0b45622aa0c19bcec654da249824a\ndocs/testnet-maintenance-five-20261102\t6b5cb02a619039cf766caa84febbcf305950710e\nrelease/parallel-v1\t7f80a9bc7312d8912bbda99c15c5c214452739df",
+      "stderr": ""
+    }
+  }
+]

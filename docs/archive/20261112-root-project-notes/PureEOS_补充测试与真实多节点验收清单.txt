@@ -1,0 +1,167 @@
+PureEOS 补充测试与真实多节点验收清单
+更新提示：以下为上一轮复现/测试记录。最新遗留问题修复及最终构建回归
+请看同目录 PureEOS_剩余问题修复与回归测试.txt；崩溃恢复修复过程另见
+PureEOS_崩溃恢复修复与测试.txt。不要把下文的“未修复”“环境禁止 socket”
+或“正在运行”当作最新状态。原始失败证据保留。
+日期：2026-10-07
+状态：完整验收未通过；已复现恢复故障，部分长测仍在执行。
+最近记录：2026-10-07 12:18（北京时间）。以下运行中数字不是最终结果。
+
+本轮证据目录：
+  PureEOS/build/local-tests/extended-regression-mmErrJ/
+上轮证据目录：
+  PureEOS/build/local-tests/rotation-growth-ban-sjff3S/
+
+本轮重要发现（未修复，禁止标记完整验收通过）：
+A. 原生 Savanna 单节点强制终止后的重放无法恢复最终确认。
+   测试用真实 nodeos，明确关闭 P2P、HTTP 和 UNIX 监听，不突破沙箱；
+   正常创世出块至 head=20 / LIB=18，正常重启后至 head=38 / LIB=36，
+   对该测试子进程发送 SIGKILL。连续三次直接重启都正确拒绝 dirty database。
+   --replay-blockchain 可重放 36 个历史区块，但不能继续推进最终确认，
+   120 秒后恢复断言失败。原始失败证据：offline-nodeos-process-fixed-1.log，
+   详细日志在 offline-nodeos-s8q3wnkx/replay-after-kill.log。
+   三条全新链均复现：offline-nodeos-s8q3wnkx、offline-nodeos-5_iy5prp、
+   offline-nodeos-c163anob；每条链独立随机测试密钥，恢复均等待 120 秒失败。
+   日志显示 finalizer 仍锁定原分支第 37 块，而重放只有到第 36 块的区块日志；
+   新分支无法满足安全投票条件，随后触发无近期投票的出块暂停。
+   代码依据：fork_database.cpp 的 close() 才保存分支库；finalizer.cpp 则独立
+   持久化投票安全状态。已有签名的未最终确认分支缺少崩溃恢复数据。
+   不能用删除 finalizer 安全文件、放宽签名规则或关闭保护来掩盖问题。
+   修复方向：为投票所依赖的可逆区块/分支持久化恢复证据，确保恢复与安全
+   记录一致；需要改链底层，不是只修改系统合约。本轮尚未实施此底层改动。
+B. 原 checktime_interrupt_test 在解释器模式整组运行 1,500 秒超时；
+   单独运行两次也各触发 45 秒超时，JIT 同一用例通过（19 个断言）。
+   verbose 日志确认调用了 Interrupting apply block trx，原因仍在核实。
+   固定等待 100ms 与冷模块加载期间暂停计时器之间可能存在时序问题；
+   这是待验证的解释，不能仅靠延长超时就认定通过。
+
+本轮新增加的真实 WASM + 原生控制器测试（不是独立 nodeos 网络）：
+1. 841 个真实注册/投票账号，经过 315、420、630、840 名额；
+   每次已提交 onblock 排名扫描最多 16 条，名额边界、固定候选行大小、
+   重启、快照、独立重放一致。
+2. 固定种子 17 / 2027 / 65537 选择不同现任节点；分别 1 / 2 / 3 个掉线。
+   连续两个零产出窗口后恢复，清除计数；重新连续三个完整本人窗口
+   零产出才禁入。验证未达阈值不处罚、其他成员不误伤、资产和历史
+   unpaid_blocks 不清除、无替补时保留非空原生委员会、快照与重放。
+3. 保留原 EOS 奖励公式的正向领取，零出块候选拒绝领取，重复领取拒绝。
+4. 实际部署 eosio.fees、封存系统权限后，验证 REX 未初始化时费用暂存，
+   初始化后新 PowerUp/RAM 手续费进入 REX；不把费用仅停留 eosio.fees
+   当作完整资金流测试。初始化前积存费用不会因以后新费用通知而自动清扫。
+5. 已运行轮岗链上的系统合约自升级：提前执行拒绝，14 天后在 2/4 反对
+   未达到 ceil(2N/3) 门槛时通过；轮岗表、资源表保持，升级后快照及重放一致。
+6. 真实 producer_plugin 应用线程的原生 Savanna profile 2 启动与正常重启：
+   不使用 tester::produce_block，不启用网络/HTTP；每次启动实际出块并推进 LIB，
+   检查重启前区块 ID 保持。三遍全部通过，共 9 次启动、6 次正常重启，
+   每遍 19 个断言。此项不是独立 nodeos 多进程 P2P 或 OS 强制崩溃测试。
+
+已完成的新增用例第一轮结果：
+- 841 候选与正向领奖：2 个用例，25,693 个断言通过。
+- 单/双/三现任节点离线：3 个用例，17,942 个断言通过。
+- 实际手续费流向：JIT、解释器通过；包含该用例的 9 项资源套件连续三遍通过。
+- 运行中自升级：JIT 三遍、解释器三遍，各遍 772 个断言通过。
+
+测试基础设施修复：
+- 原出块插件压力测试只等待 15 秒且忽略是否超时，处理未完就比较结果，
+  还会在线程继续写入时读取容器。首次运行出现 64 个断言失败，集中于此用例。
+- 重建旧测试程序；等待全部 4,242 笔交易回调和确认完成及后续空块，
+  设 120 秒上限且明确检查超时，先停止/加入线程再读取结果。
+- 不放宽交易数量一致性或入块验证。修复后的整个出块插件套件连续三遍通过，
+  用时分别 44.91、46.20、40.48 秒。修改的是测试，不是生产出块逻辑。
+  这里指添加真实重启用例前的 7 项套件，不能代表后续合并套件通过。
+- 新重启用例独立运行三遍通过，但与旧计时测试合并时超时：旧计时测试
+  永久启用 fc::mock_time_traits，将进程时间停在 2023-10-29，导致实际出块
+  线程等不到下一个时隙。失败证据保留为 producer-plugin-final.log。
+  已将真实交易压力与重启测试拆为 test_producer_plugin_integration 独立进程，
+  入口明确拒绝已开启的模拟时钟；不修改生产时钟或任何出块规则。
+  隔离后的两组均连续三遍通过；真实应用集成组用时 60.76、58.96、64.54 秒。
+  证据：producer-plugin-isolated.log / .xml。
+- 非轮岗对照委员会测试首次整组执行触发 1,200 秒看门狗超时，不算通过。
+  原日志保留为 committee-repeat.log；以 3,600 秒上限重跑通过，
+  3 项 / 8,043 个断言，用时 31 分 42 秒，证据：committee-final.log。
+  CMake 将该测试上限调整为 3,600 秒、扩充后的整套轮岗上限调整为 10,800 秒，
+  只改变测试超时，不改变任何链上规则。已经运行的旧 CTest 进程不会自动采用新上限。
+- chain_plugin 原配置测试在未编译 OC 的构建里，仍要求接受 OC 专属选项，
+  因 Unknown option 失败。已按编译开关区分：启用时测试白名单；未启用时
+  明确验证拒绝该选项，并隔离配置目录。chain/net/resource_monitor 三组
+  修复后均连续三遍通过，证据 plugin-unit-fixed.log / .xml；不算 OC 执行验证。
+
+重复与兼容验证：
+- 创世、原生治理、真实治理合约、单选投票、资源、区块日志：三遍。
+- 历史轮岗参考模型及共享扩容公式：Release 三遍；ASan/UBSan 三遍。
+  历史参考模型不等于 v2 生产轮岗状态机。
+- eos-vm 解释器：首批 62 个用例、1392 个断言通过。
+- 新增用例和全项目底层回归仍在执行，最终数字以完成日志为准。
+- full-unit-matrix.log / .xml：159 项底层回归运行（包含两种 VM 模式）。
+  最近记录时已结束 22 项：20 通过、2 超时；其余未完成，不计为通过。
+- full-rotation.log / .xml：21 项轮岗用例 JIT 长测；启动时还未加入第 22 项
+  自升级用例，后者已在 live-upgrade-*.log 单独双模式各三遍通过。
+  该整组触发旧 3,600 秒上限，未作为整组通过；日志已走到双现任掉线场景，
+  没有因此把未结束的三现任掉线场景或整组报告计为通过。
+- full-rotation-interpreter.log：同一 21 项轮岗套件的解释器长测。
+- build-wasm-spec.log：WASM 规范测试程序构建；构建成功不等于测试通过。
+- wasm-spec-matrix.log / .xml：1,242 项 WASM 规范测试已启动，结果待完成。
+  最近记录时已完成 205 项，均通过；剩余 1,037 项仍未完成。
+- native-plugin-restart-1/2/3.log：三遍真实插件启动/重启结果。
+- api-part1 解释器首轮触发 1,500 秒旧看门狗上限，不算通过；已以 10,800 秒
+  上限单独重跑，证据为 api-part1-interpreter-extended.log。
+- chain_plugin、net_plugin、resource_monitor_plugin 单元测试：三组各三遍通过。
+  网络插件的纯逻辑单元测试不等于实际 P2P 通信测试。
+
+明确未能执行的环境项目：
+- 当前会话创建 AF_INET/SOCK_STREAM 即报 EPERM，尚未到绑定端口阶段。
+  因此不能运行有联网通信的独立 nodeos 节点、真实 P2P 延迟/丢包/分区。
+  后续通过完全关闭监听，已经执行了真实单进程 SIGKILL 测试，但恢复失败，
+  详见本清单 A 项；不能继续把这一项笼统称为“环境不允许，未测试”。
+  控制器签名/QC/逻辑分区测试不能替代这些网络验收。
+- eos-vm-oc 未启用；当前只有 LLVM 20/21，仓库 OC 要求 LLVM 7～11。
+- LeakSanitizer 开启后，在退出检测阶段报告 ptrace 环境不支持并失败。
+  ASan/UBSan 关闭 leak detection 通过，不代表 LeakSanitizer 通过。
+
+真实联网测试的验收范围（必须在允许本地监听端口的环境另行执行）：
+1. 每个节点独立数据目录、P2P/HTTP 端口、出块密钥与 BLS 密钥。
+2. 原生单节点启动，通过真实注册与投票增长到 2、3、4、21 人。
+3. 22/23 候选顺序轮岗，多次循环；每次实际策略只替换一个席位。
+4. 改票、等票、资格取消/恢复、BLS 换钥、重启途中维持队列。
+5. 未到 21 人不拉黑；21 人时连续三次本人完整窗口零产出永久禁入。
+6. 20/21、15/21 继续最终确认；14/21 不形成新最终确认；恢复后追赶。
+7. 正常退出、强制终止、断连、重新连接、快照恢复、独立重放。
+8. 投票、REX、租赁、PowerUp、手续费与奖励同链联动。
+9. 每组至少三轮，新建独立测试链，不覆盖手动测试链；保存日志和产物哈希。
+10. 持续压力与内存/磁盘增长测试另列时长、负载和硬件，不能以短单测代替。
+
+尚未实现，不能仅靠测试变成“完成”的功能：
+- 旧链/旧轮岗表向 v2 的迁移。
+- 所有 REX 持仓统一同时估值投票。
+- 仅对最终确认区块记账的专门奖励账本。
+这些不是本轮已实现功能；不得从其测试缺失推断已经可以用于生产迁移。
+
+本轮文件改动范围：
+- PureEOS/unittests/pureeos_governance_tests.cpp：大规模测试账号命名。
+- PureEOS/unittests/pureeos_sequential_rotation_tests.inc：六项扩容/故障/奖励/升级用例。
+- PureEOS/unittests/pureeos_resource_split_tests.inc：真实 fees->REX 资金流用例。
+- PureEOS/unittests/CMakeLists.txt：两组长测的测试看门狗上限。
+- PureEOS/plugins/producer_plugin/test/test_trx_full.cpp：等候条件和线程读取安全。
+- PureEOS/plugins/producer_plugin/test/test_native_savanna_restart.cpp：真实应用重启测试。
+- PureEOS/plugins/producer_plugin/test/CMakeLists.txt：模拟时钟与真实应用分进程测试。
+- PureEOS/plugins/chain_plugin/test/plugin_config_test.cpp：有/无 OC 的选项行为区分。
+- PureEOS/tests/native_savanna_offline_process_test.py：真实 nodeos 强杀与恢复测试，
+  不监听端口；此用例目前失败，故保留作为待修复的验收关卡。
+- PureEOS/tests/CMakeLists.txt：注册上述离线进程测试。
+- 本清单。以上不包括此前已有的业务源码改动；本轮没有修改生产源码或手动测试链。
+
+本次复现使用的生产产物 SHA256（本轮保持不变）：
+nodeos：aa6c55494538608edf4e073d83d13f7fad5d70c7c88627d92b2252e756c1bef9
+eosio.system.wasm：835fe72c588114de4bac1c9a2259862bc4631e24d4e78d303d1169f486a6aa02
+eosio.system.abi：79e676bd9cbd4cccf108a39c11b344245fc7f248db645a3ea0beec3593026904
+
+后续执行入口：
+1. 先决定/实施单节点崩溃恢复修复，再在全新测试目录执行：
+   python3 tests/native_savanna_offline_process_test.py --output-parent build/local-tests
+   （工作目录为 PureEOS；至少三遍；必须保留安全签名记录。）
+2. 收集仍在运行的 full-unit-matrix、wasm-spec-matrix、full-rotation-interpreter、
+   api-part1-interpreter-extended 日志；没有最终退出结果的不做通过结论。
+3. 定位解释器 interrupt 用例；重新跑被超时中断的轮岗整组，采用新上限。
+4. 在允许本地网络监听的会话完成前述独立 P2P 验收；当前不能代替该环节。
+
+说明：完整测试必须有明确范围、运行环境和证据；不能承诺覆盖所有可能状态。
+当前结果不支持“完整测试通过”或“可以安全上线”的结论。

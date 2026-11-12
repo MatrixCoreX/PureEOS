@@ -1,0 +1,40 @@
+{
+  "status": "PASS_SOURCE_AND_TAG_UPLOADS_VERIFIED",
+  "verified_UTC": "2026-11-12T10:06:01.625426+00:00",
+  "scope": "Project Git source/documentation/history backup only; runtime configuration, credentials, keys, wallet files, build artifacts and chain data excluded.",
+  "planned_source_worktrees": 59,
+  "git_common_repositories": 19,
+  "original_registered_worktrees": 49,
+  "additional_historical_repositories": 2,
+  "legacy_or_dirty_submodule_worktrees": 8,
+  "dirty_source_worktrees_archived": 13,
+  "unique_local_head_commits_covered": 121,
+  "new_backup_branches": 37,
+  "backup_kinds": {
+    "dependency-head": 5,
+    "dependency-working-snapshot": 3,
+    "working-source-snapshot": 10,
+    "original-staged-source": 3,
+    "unpublished-source-head": 16
+  },
+  "local_tag_records_verified": 33,
+  "new_archive_tags": 19,
+  "reviewed_source_paths_verified": 742,
+  "staged_trees_verified": 3,
+  "root_documents_archived": 28,
+  "ops_missing_branch_repaired": {
+    "remote": "https://github.com/MatrixCoreX/PureEOS.git",
+    "branch": "ops/relay2-eligibility-20261111",
+    "repaired_head": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+    "reason": "origin resolves to a local repository; previous local pushes did not publish this branch to GitHub. Explicit publish remote used."
+  },
+  "original_sources_branches_and_indexes_preserved_before_document_commit": true,
+  "expected_followup": "Only the clean Ops worktree receives the audit/research/root-document archival commit. Historical original worktrees and staged states stay untouched.",
+  "excluded_runtime_configuration_paths": [
+    "PureEOS/config-dir/config.ini",
+    "PureEOS-v1-hardening/config-dir/config.ini"
+  ],
+  "clean_official_CDT_dependencies": "LLVM/Clang/LLD clean detached heads exactly match official GitHub main; no upstream pushes.",
+  "no_build_chain_finance_server_phone_or_subagent_actions": true,
+  "document_publication": "These records are included in the containing Ops Git commit. Final publication/ref verification is retained in the original local audit FINALIZATION_RESULT.json."
+}

@@ -1,0 +1,1354 @@
+{
+  "status": "PASS_ALL_129_LOCAL_BRANCH_POINTERS_121_UNIQUE_HEADS_REACHABLE_ON_GITHUB",
+  "utc": "2026-11-12T10:09:01.014092+00:00",
+  "local_branch_pointers": [
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "archive/high-spec-node-20261102",
+      "local_commit": "e62a7ea30632ad5069a9640fc6bd0e1fe819b159",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "baseline/group8-qualified-20261029",
+      "local_commit": "5ffee9305b4e1168937c7c57192041f1ee2dfa54",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "bench/cpu32-custom-token-saturation-20261027",
+      "local_commit": "3c38d79cb7396e8aa148e98c085f18536ae312b8",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "bench/cpu32-powerup-transfers-20261027",
+      "local_commit": "f878ab6e382412f165051e5ae88ddeafbeb61d45",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "bench/epyc4345p-cpu16-netdesc-ram1024-20261026",
+      "local_commit": "6371c62dd233335f6f403bc2edc4dc57cd1809c4",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "bench/epyc9354p-32c-net32-20261026",
+      "local_commit": "086f198bcdc0eb3db6189e32fd1ef58da4dbcaab",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "bench/net4-p2p16-20261026",
+      "local_commit": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "release/parallel-v1"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "development/baseline-20261030",
+      "local_commit": "36b4bf5670e20ec74307e8cbd013c3112083afb3",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "development/cpu16-net16-defaults-20261029",
+      "local_commit": "24e8dac4d4803b37e2c7bc612575d0b1a5cc1e92",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "development/parallel-required-hardware-20261030",
+      "local_commit": "eec21c3f512222275acf5c05e09ea0f2bf722f2b",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "feature/deterministic-work-capacity",
+      "local_commit": "810ed89accbf304dfde6ad6b40a1d037c75fe135",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "feature/governance-seven-day-20261101",
+      "local_commit": "5d95aa18fea665f4ee60eda13b01dec82ff43535",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/governance-seven-day-20261101"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "feature/governance-seven-day-evidence-20261101",
+      "local_commit": "6f7bf0632a98e7b678b003c6895e06ca3d5fa42d",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/governance-seven-day-evidence-20261101"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "feature/parallel-tx-execution",
+      "local_commit": "3856ab5b0723da1a1c41d60751109af789403945",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "feature/v1-hardening-20261022",
+      "local_commit": "3856ab5b0723da1a1c41d60751109af789403945",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "fix/version-identity-20261031",
+      "local_commit": "7372b1de773e339d3c9b4f62fc161c459e85d66a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "fix/version-identity-20261031"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "main",
+      "local_commit": "a4a40a6a1e72c531cd8267758074229ccc0655ce",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "ops/relay2-eligibility-20261111",
+      "local_commit": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "ops/relay2-eligibility-20261111"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/auto-parallel-workers-20261026",
+      "local_commit": "785f8b10edbd21d410b28a5b901d07aeafce29a3",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/canonical-code-digest-cache-20261026",
+      "local_commit": "bb91950ba99e89699ed37f63f5543f7db92acba3",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-batched-owner-optimization-20261027",
+      "local_commit": "945983a755e047dcd02a5c6d45593aa5938e0caf",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-borrowed-input-fingerprint-20261027",
+      "local_commit": "11b3bd1c681f7705b7636b366e154fadd92c4678",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-borrowed-state-compare-20261027",
+      "local_commit": "53fa563a63a9b79f90b13e890e102a67987332c9",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-combined-resource-query-20261027",
+      "local_commit": "bf4a222151875975423eef2b6018c1206d8c0f4a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-current-root-views-20261028",
+      "local_commit": "ed0ed2fb2e65b89c5619e378e1414c7668797adf",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-lazy-host-iterator-20261028",
+      "local_commit": "3ce154b02be24ad94d34e11b3c4d5cab0e73d25a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-mixed-head-admission-20261027",
+      "local_commit": "e05edd4f548e5bead57e57a302565edc67106813",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-mixed-token-pipeline-20261027",
+      "local_commit": "9ca4ff3fd1111cf5edb8f6c81d7641c077a93781",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-owned-digest-snapshot-20261028",
+      "local_commit": "bc3d4c18dcd5c05d42b3dca3f4c63981563d70f2",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-owner-hint-fifo-20261027",
+      "local_commit": "b0240aa8da62e69909a8c815e37735bbbe6db00c",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-owner-main-thread-round2-20261027",
+      "local_commit": "82dcd40e38ffd010addefffe77615774594ce331",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-parallel-preflight-pipeline-20261027",
+      "local_commit": "dce2bb38bf7137245b38f9f88c860b9249340d7b",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/cpu32-undo-session-cache-20261027",
+      "local_commit": "fb89b3c9b3ebf5d4a4346bb6ef0e8ef35373d3ea",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "perf/parallel-token-prefetch-20261026",
+      "local_commit": "692145265f0ae0c6649f93d7c93eb503cda2d210",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "release/parallel-v1",
+      "local_commit": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "release/parallel-v1"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "release/v1.0.0-20261101",
+      "local_commit": "e62a7ea30632ad5069a9640fc6bd0e1fe819b159",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "review/bp-discovery-parallel-0cfbc1a2",
+      "local_commit": "0cfbc1a245ea7af027348f42e93d851abce1e851",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "review/bp-discovery-roster-0b2d4a1b",
+      "local_commit": "0b2d4a1ba1943e8e9b1a3054c74aabcfc52e1bfe",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "review/bp-discovery-startup-7041fb61",
+      "local_commit": "7041fb612454179c475a71ce278c7d57035833dd",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "review/bp-missing-peer-key-00443330",
+      "local_commit": "00443330a0d29673700a4eebee78de3b0234c281",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS",
+      "local_branch": "review/bp-standby-fix-4ede04b47",
+      "local_commit": "4ede04b47318fdff90389a0450098bc94dd9d3c0",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "docs/full-chain-pqc-plan-20261104",
+      "local_commit": "cf2d5919cf3cc96dd03a757d3c7ed3df7739260e",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "docs/full-chain-pqc-plan-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "docs/testnet-maintenance-five-20261102",
+      "local_commit": "6b5cb02a619039cf766caa84febbcf305950710e",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "docs/testnet-maintenance-five-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/activate-ram-fees-20261104",
+      "local_commit": "23fa32adb307b2a2f756703f6faef16b14313ab2",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/activate-ram-fees-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/atomic-ram-20261105",
+      "local_commit": "2f0ecd88775bbb15cc8867bcce81ef1a6158259f",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/atomic-ram-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/key-native-ram-20261111",
+      "local_commit": "152cb3a7f700b4b9dee4680ca595e7efc68b2e3f",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/key-native-ram-20261111"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/key-signup-bridge-20261105",
+      "local_commit": "d64c588dc064e0871e3197e3ce63f082aff08ebd",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/key-signup-bridge-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/key-unbounded-20261107",
+      "local_commit": "70abde5325217dde6a2a35aa1364431693b24de3",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/key-unbounded-20261107"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/ram-market-fees-20261104",
+      "local_commit": "d5c176e7d9f14ad98129c5631f3bbdece8a3ba3e",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/ram-market-fees-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/relay-execution-income-20261105",
+      "local_commit": "f0e259b7c5a4768c6ce55fe74badc9b328cb3ce7",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/relay-execution-income-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/relay-rates-20261104",
+      "local_commit": "40e7e5a912ca8b660d65e3d22592c1e552016a46",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/relay-rates-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/signup-key-bridge-20261105",
+      "local_commit": "59c77526b025375e8013a7dea9fbf4eef143d598",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/signup-key-bridge-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/supply-cap-veto-20261104",
+      "local_commit": "00e373d3f70e6e4079913b77014702d92859ebe8",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/supply-cap-veto-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "feature/system-signup-20261104",
+      "local_commit": "aeb53ba4d81da93c7ee7b70f4ed10f5819ddf12b",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/system-signup-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "ops/bp-add-two-stop-two-20261106",
+      "local_commit": "2c6398f0c19b7fd47b76e72e60aceb8ea9206652",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "ops/bp-add-two-stop-two-20261106"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "ops/bp-demo-six-20261105",
+      "local_commit": "24ce91fabc7162e8426718cc0d15a944a88a684d",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "ops/bp-demo-six-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "ops/usd-cny-test-issuance-20261105",
+      "local_commit": "46fe95c0d526e126118c9da2f0a003b90e3667e0",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "ops/usd-cny-test-issuance-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Key/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Cap-Veto-20261104",
+      "local_branch": "wip/eosio-key-v2-security-20261103",
+      "local_commit": "9ab0b578304dc239d9feb5e58f0d77e07cf47f78",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "local_branch": "feature/system-account-proposals-20261105",
+      "local_commit": "7a133dea41f210cb73f0dfdeeddb535e3dbde926",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "feature/system-account-proposals-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "local_branch": "feature/test-governance-30min-20261103",
+      "local_commit": "057e1731660d3b8423c960cb81fe1758ae9c29f6",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "local_branch": "feature/v1-hardening-20261022",
+      "local_commit": "3856ab5b0723da1a1c41d60751109af789403945",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "local_branch": "ops/relay2-eligibility-20261111",
+      "local_commit": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "ops/relay2-eligibility-20261111"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "local_branch": "ops/testnet-resource-guard-20261111",
+      "local_commit": "4112bbe229542ce0a0c34c5c4075e1895551ecd5",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "ops/testnet-resource-guard-20261111"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Test/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-System-Accounts-20261105",
+      "local_branch": "testing/low-cost-cpu4-v1",
+      "local_commit": "2208fac7e6f84e3fffc3804eeaa9faaa3e70e097",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "testing/low-cost-cpu4-v1"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Wallet/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Wallet",
+      "local_branch": "feature/key-growth-compat-20261107",
+      "local_commit": "0de126dd6c778580398a420be2cae1d0c483c7ec",
+      "destination": "PureEOS-Wallet",
+      "direct_remote_refs": [
+        "feature/key-growth-compat-20261107"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Wallet/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Wallet",
+      "local_branch": "feature/named-wallet-resources-20261105",
+      "local_commit": "294fef615f6504ebdfbdcf009dc73e19dbf3784f",
+      "destination": "PureEOS-Wallet",
+      "direct_remote_refs": [
+        "feature/named-wallet-resources-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-Wallet/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-Wallet",
+      "local_branch": "main",
+      "local_commit": "845d10da1de494bd801428e34ef0ec36469c030f",
+      "destination": "PureEOS-Wallet",
+      "direct_remote_refs": [
+        "main"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "local_branch": "development/baseline-20261030",
+      "local_commit": "d126cae28057edfcd0e2eb84654afd8efd6da257",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "local_branch": "development/bp-peer-keys-20261030",
+      "local_commit": "a240fc708a0088cafd985f19a619163598d1f7ab",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "local_branch": "feature/blacklist-capacity-governance-docs-20261101",
+      "local_commit": "15dea1aa8a4b158eb771c5b13947ddeaafd28910",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "local_branch": "review/bp-global-pause-6f3160ed",
+      "local_commit": "6f3160ed23b725e8cd97790f7a0e9042afbfdc9a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "local_branch": "review/bp-maintenance-63255178d",
+      "local_commit": "63255178dd824948afc723859cebe9321691a0e9",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-bp-system-candidate-20261030",
+      "local_branch": "review/bp-maintenance-79b36c44e",
+      "local_commit": "79b36c44eba984a9c44124cb7a16e20b13f3a657",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102",
+      "local_branch": "archive/high-spec-system-20261102",
+      "local_commit": "b230c7e12d7cd0bc05ad8269140dc030f8b5fe79",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feat/browser-language-20261101",
+      "local_commit": "cc740b9dc3385c6d794abadf23c4f2fc07a776b4",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/automated-rotation-demo-20261031",
+      "local_commit": "afa6f3ddafc728fe283dbe93a516b2ede7e7a104",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/bp-bond-display-20261102",
+      "local_commit": "50f07cf0aad18495403eef56f93e014274dd3b24",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/bp-bond-display-20261102",
+        "main"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/bp-demo-capacity-time-20261105",
+      "local_commit": "7c029f65e551e2b28e2ebb6da0c4a6b5ea5ffaf6",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/bp-demo-capacity-time-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/compact-producer-schedule-20261101",
+      "local_commit": "096f57299f520556c640a36c49708aad31cd199b",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/dev-genesis-20261105",
+      "local_commit": "495fe6d11bd1e7718fbe5679d34e3aa4848b66cc",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/dev-genesis-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/dev-proposals-20261104",
+      "local_commit": "e74c844ae415ba76fc7ad96ec1d564da3d821489",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/dev-proposals-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/high-spec-page-snapshot-20261102",
+      "local_commit": "8234c1c1c9994bd3713e45331c9baca03c5f98f1",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/high-spec-page-snapshot-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/key-fee-estimate-20261103",
+      "local_commit": "956c882d13290432ec4e65dadc1a8a751197b32d",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/key-fee-estimate-20261103"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/key-growth-compat-20261107",
+      "local_commit": "bed2c42557b750d3dd20123b6722122beab04e6e",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/key-growth-compat-20261107"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/key-native-ram-compat-20261111",
+      "local_commit": "bf6e83458b1c31a0ef6df92d8b73e4aaf015e966",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/key-native-ram-compat-20261111"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/key-wallet-balances-20261103",
+      "local_commit": "fe125105d9918d70a5ff0c384867105a9eb8bd7f",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "fix/build-default-testnet-label-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/key-wallet-history-20261103",
+      "local_commit": "38a8419c4baef1787cc66fbec843e965f6a3415f",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/key-wallet-history-20261103"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/native-upgrade-history-20261104",
+      "local_commit": "8f601a7fef2f00285d5cb936d8da1fa0209659b4",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/native-upgrade-history-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/producer-blacklist-20261101",
+      "local_commit": "366bf0c6e9d6ce12ea01c6f7eae6da6c1098029d",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/proposal-tabs-20261106",
+      "local_commit": "063fb0f075bccde3faef0794a4203ba48665d32d",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/proposal-tabs-20261106"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/ram-market-fees-20261104",
+      "local_commit": "0c182ff80b329bdec502abebb1e58e9a8f131316",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/ram-market-fees-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/relay-eligibility-20261111",
+      "local_commit": "a5a938234130dac911f00c7c7ac001d054e86f3b",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/relay-eligibility-20261111"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/relay-execution-income-20261105",
+      "local_commit": "07249b599b22f09af36e87aa60070f31bbfe20c1",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/relay-execution-income-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/relay-rate-formulas-20261104",
+      "local_commit": "1f1ec1d0f6d1ea8fa61fe6baae1f48026833fa1c",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/relay-rate-formulas-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "feature/signup-bridge-fees-20261105",
+      "local_commit": "5c305cddf8143634c9481b1ad1c36f005d89465f",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/signup-bridge-fees-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "fix/build-default-testnet-label-20261102",
+      "local_commit": "fe125105d9918d70a5ff0c384867105a9eb8bd7f",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "fix/build-default-testnet-label-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "main",
+      "local_commit": "50f07cf0aad18495403eef56f93e014274dd3b24",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [
+        "feature/bp-bond-display-20261102",
+        "main"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-explorer/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-explorer",
+      "local_branch": "release/v1.0.0-20261101",
+      "local_commit": "62a82fde118ce0aa1f05cc8777221a141dab2153",
+      "destination": "PureEOS-Explorer",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS-functional-harness-20261030",
+      "local_branch": "review/functional-harness-20261030",
+      "local_commit": "4605405556608a4912733410b29acaafbce26dad",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureHistory",
+      "local_branch": "archive/high-spec-deployed-20261102",
+      "local_commit": "2889d694848287b2084a22d8ee74a3c9ceacda06",
+      "destination": "PureHistory",
+      "direct_remote_refs": [
+        "archive/high-spec-deployed-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureHistory",
+      "local_branch": "feature/dev-genesis-20261105",
+      "local_commit": "1c1a6ec3799ced44f6ae6ad9e3ae05424de258fa",
+      "destination": "PureHistory",
+      "direct_remote_refs": [
+        "feature/dev-genesis-20261105"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureHistory",
+      "local_branch": "feature/eoskey-history-20261103",
+      "local_commit": "7c99faa15ad71385553eb00555460f216e0786ff",
+      "destination": "PureHistory",
+      "direct_remote_refs": [
+        "feature/eoskey-history-20261103"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureHistory",
+      "local_branch": "feature/native-upgrade-history-20261104",
+      "local_commit": "83080a452b804424bf172e9f6ccb87543debec73",
+      "destination": "PureHistory",
+      "direct_remote_refs": [
+        "feature/native-upgrade-history-20261104"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureHistory",
+      "local_branch": "main",
+      "local_commit": "d6065813bd7bfd037018eab4306940baaa1cad25",
+      "destination": "PureHistory",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureHistory/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureHistory",
+      "local_branch": "release/v1.0.0-20261101",
+      "local_commit": "59ab60156a2eabd1b248450a786c57ea9e0751d5",
+      "destination": "PureHistory",
+      "direct_remote_refs": [
+        "main"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/cdt",
+      "local_branch": "development/baseline-20261030",
+      "local_commit": "317d639a94a6bbfcee4c8490348613101dab5374",
+      "destination": "PureEOS-CDT",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/cdt",
+      "local_branch": "feature/aic-cdt-1.0.0-source-closure-20261024-1918-54357b",
+      "local_commit": "64d75b436b84ed895099a314a7682e544a98d58c",
+      "destination": "PureEOS-CDT",
+      "direct_remote_refs": [
+        "feature/aic-cdt-1.0.0-source-closure-20261024-1918-54357b"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/cdt",
+      "local_branch": "feature/v1-hardening-20261022",
+      "local_commit": "714543c5a001ac4a9f5b2baa4b55fb5064dadd62",
+      "destination": "PureEOS-CDT",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/cdt",
+      "local_branch": "main",
+      "local_commit": "e677213d9a0f2702af7fb81f33589b49720036c7",
+      "destination": "PureEOS-CDT",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/cdt",
+      "local_branch": "release/aic-cdt-1.0.0",
+      "local_commit": "d5816c442dd03db13413645f99c61a01c82fdda6",
+      "destination": "PureEOS-CDT",
+      "direct_remote_refs": [
+        "release/aic-cdt-1.0.0"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/cdt/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/cdt",
+      "local_branch": "release/v1.0.0-20261101",
+      "local_commit": "996d47bcfa8d511c8611b8fd1d85588a9cbe4a9a",
+      "destination": "PureEOS-CDT",
+      "direct_remote_refs": [
+        "develop"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/reference-contracts/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/reference-contracts",
+      "local_branch": "feature/cdt5-validation",
+      "local_commit": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/reference-contracts/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/reference-contracts",
+      "local_branch": "feature/v1-blacklist-safe-eviction-20261022",
+      "local_commit": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/reference-contracts/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/reference-contracts",
+      "local_branch": "main",
+      "local_commit": "c454378bf2efc4e15fa2c55169ba4749795f3534",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/reference-contracts/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/reference-contracts",
+      "local_branch": "release/parallel-v1",
+      "local_commit": "74f46fa4029f49f14a8902bb8098aa2fc719675b",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/appbase",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/appbase",
+      "local_branch": "main",
+      "local_commit": "74ac065ddacc46b28318f46965b6686976e84e3c",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/eos-vm",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/eos-vm",
+      "local_branch": "feature/deterministic-work-capacity",
+      "local_commit": "a0b460b2a6119f058e98cc906314c2ae934b43d1",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/eos-vm",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/eos-vm",
+      "local_branch": "main",
+      "local_commit": "377c046ec834750614aec33e31ec739c2443f54d",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/eos-vm",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/eos-vm",
+      "local_branch": "pureeos/native-nested-vm-guards-20261012",
+      "local_commit": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/eos-vm",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/eos-vm",
+      "local_branch": "release/parallel-v1",
+      "local_commit": "16f9c4c3ea7a172716d0bf68c60806e499f5988a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/softfloat",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/softfloat",
+      "local_branch": "main",
+      "local_commit": "19cbea6c254cdbb5d539584e5696675de997721d",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/libfc/libraries/bn256",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/libfc/libraries/bn256",
+      "local_branch": "main",
+      "local_commit": "161ca72af4c647ad0b23ccd97d2dd84201fc2b37",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/cli11/cli11",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/cli11/cli11",
+      "local_branch": "main",
+      "local_commit": "c1978c69b4b9ab3e1821c9bdebf56939811d89b5",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/cli11/cli11",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/cli11/cli11",
+      "local_branch": "DETACHED",
+      "local_commit": "0860a139578f699df286048808583fcc4846a703",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/PureEOS/.git/modules/libraries/libfc/libraries/bls12-381",
+      "representative_worktree": "/home/guagua/AntelopeIO/PureEOS/libraries/libfc/libraries/bls12-381",
+      "local_branch": "main",
+      "local_commit": "472a13f1f8bb225078f1aa3a4bc27cd5d8450402",
+      "destination": "PureEOS",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/incomplete-history-bundle-checkout/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/incomplete-history-bundle-checkout",
+      "local_branch": "archive/high-spec-deployed-20261102",
+      "local_commit": "2837894d40fb8e58866fb7c7def62717ad714785",
+      "destination": "PureHistory",
+      "direct_remote_refs": [],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs",
+      "local_branch": "docs/high-spec-rebuild-20261102",
+      "local_commit": "9d12fb5c74c0b45622aa0c19bcec654da249824a",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "docs/high-spec-rebuild-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs",
+      "local_branch": "docs/testnet-maintenance-five-20261102",
+      "local_commit": "6b5cb02a619039cf766caa84febbcf305950710e",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "docs/testnet-maintenance-five-20261102"
+      ],
+      "reachable_on_actual_GitHub": true
+    },
+    {
+      "source_common_repository": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs/.git",
+      "representative_worktree": "/home/guagua/AntelopeIO/release-work-20261102/high-server-freeze-backup-r1/git-rebuild-docs",
+      "local_branch": "release/parallel-v1",
+      "local_commit": "7f80a9bc7312d8912bbda99c15c5c214452739df",
+      "destination": "PureEOS",
+      "direct_remote_refs": [
+        "release/parallel-v1"
+      ],
+      "reachable_on_actual_GitHub": true
+    }
+  ],
+  "recent_release_heads_before_audit_document_commit": [
+    {
+      "component": "PureEOS-Wallet",
+      "repository": "PureEOS-Wallet",
+      "branch": "feature/named-wallet-resources-20261105",
+      "local_HEAD": "294fef615f6504ebdfbdcf009dc73e19dbf3784f",
+      "remote_HEAD": "294fef615f6504ebdfbdcf009dc73e19dbf3784f",
+      "verified": true
+    },
+    {
+      "component": "PureEOS-Key-Unbounded-20261107",
+      "repository": "PureEOS",
+      "branch": "feature/key-native-ram-20261111",
+      "local_HEAD": "152cb3a7f700b4b9dee4680ca595e7efc68b2e3f",
+      "remote_HEAD": "152cb3a7f700b4b9dee4680ca595e7efc68b2e3f",
+      "verified": true
+    },
+    {
+      "component": "PureEOS-Signup-Bridge-20261105",
+      "repository": "PureEOS",
+      "branch": "feature/signup-key-bridge-20261105",
+      "local_HEAD": "59c77526b025375e8013a7dea9fbf4eef143d598",
+      "remote_HEAD": "59c77526b025375e8013a7dea9fbf4eef143d598",
+      "verified": true
+    },
+    {
+      "component": "PureEOS-System-Accounts-20261105",
+      "repository": "PureEOS",
+      "branch": "feature/system-account-proposals-20261105",
+      "local_HEAD": "7a133dea41f210cb73f0dfdeeddb535e3dbde926",
+      "remote_HEAD": "7a133dea41f210cb73f0dfdeeddb535e3dbde926",
+      "verified": true
+    },
+    {
+      "component": "PureEOS-explorer-KeyGrowth-20261107",
+      "repository": "PureEOS-Explorer",
+      "branch": "feature/relay-eligibility-20261111",
+      "local_HEAD": "a5a938234130dac911f00c7c7ac001d054e86f3b",
+      "remote_HEAD": "a5a938234130dac911f00c7c7ac001d054e86f3b",
+      "verified": true
+    },
+    {
+      "component": "PureHistory-key-history-20261103",
+      "repository": "PureHistory",
+      "branch": "feature/native-upgrade-history-20261104",
+      "local_HEAD": "83080a452b804424bf172e9f6ccb87543debec73",
+      "remote_HEAD": "83080a452b804424bf172e9f6ccb87543debec73",
+      "verified": true
+    },
+    {
+      "component": "PureEOS-PQC-Plan-20261104",
+      "repository": "PureEOS",
+      "branch": "docs/full-chain-pqc-plan-20261104",
+      "local_HEAD": "cf2d5919cf3cc96dd03a757d3c7ed3df7739260e",
+      "remote_HEAD": "cf2d5919cf3cc96dd03a757d3c7ed3df7739260e",
+      "verified": true
+    },
+    {
+      "component": "PureEOS-Testnet-Ops-20261111",
+      "repository": "PureEOS",
+      "branch": "ops/relay2-eligibility-20261111",
+      "local_HEAD": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+      "remote_HEAD": "55dfdcd1d0f8b12f4d87a653f1cbfbe9b280cda2",
+      "verified": true
+    }
+  ],
+  "note": "Some historical branch names are absent or behind current remote branches. All their commit content is reachable on GitHub, and this manifest preserves original local branch names/SHAs. No existing remote branch was forced backward."
+}
