@@ -1,0 +1,34 @@
+test_config_change_rejected_before_watchdog_or_stop (test_stability_lifecycle.LifecycleTest.test_config_change_rejected_before_watchdog_or_stop) ... ok
+test_new_ban_after_stop_prevents_any_restart (test_stability_lifecycle.LifecycleTest.test_new_ban_after_stop_prevents_any_restart) ... ok
+test_one_stop_start_preserves_safety_and_records_proof (test_stability_lifecycle.LifecycleTest.test_one_stop_start_preserves_safety_and_records_proof) ... ok
+test_transient_after_start_keeps_event_for_readonly_reconciliation (test_stability_lifecycle.LifecycleTest.test_transient_after_start_keeps_event_for_readonly_reconciliation) ... FAIL
+test_banned_never_restart (test_stability_policy.PolicyTest.test_banned_never_restart) ... ok
+test_cooldown (test_stability_policy.PolicyTest.test_cooldown) ... ok
+test_disk_reserve (test_stability_policy.PolicyTest.test_disk_reserve) ... ok
+test_historical_strikes_not_permanent_exclusion (test_stability_policy.PolicyTest.test_historical_strikes_not_permanent_exclusion) ... ok
+test_memory_threshold_and_global_headroom (test_stability_policy.PolicyTest.test_memory_threshold_and_global_headroom) ... ok
+test_missing_node (test_stability_policy.PolicyTest.test_missing_node) ... ok
+test_native_policy_not_weakened (test_stability_policy.PolicyTest.test_native_policy_not_weakened) ... ok
+test_near_duty_never_restart (test_stability_policy.PolicyTest.test_near_duty_never_restart) ... ok
+test_prefer_standby_then_largest (test_stability_policy.PolicyTest.test_prefer_standby_then_largest) ... ok
+test_reconcile_requires_positive_identity_and_canonical_proof (test_stability_policy.PolicyTest.test_reconcile_requires_positive_identity_and_canonical_proof) ... ok
+test_restart_memory_headroom (test_stability_policy.PolicyTest.test_restart_memory_headroom) ... ok
+test_slot_distance_and_pending_duty (test_stability_policy.PolicyTest.test_slot_distance_and_pending_duty) ... ok
+test_stale_head (test_stability_policy.PolicyTest.test_stale_head) ... ok
+test_stale_lib (test_stability_policy.PolicyTest.test_stale_lib) ... ok
+test_two_strikes_require_longer_margin (test_stability_policy.PolicyTest.test_two_strikes_require_longer_margin) ... ok
+test_weak_quorum (test_stability_policy.PolicyTest.test_weak_quorum) ... ok
+
+======================================================================
+FAIL: test_transient_after_start_keeps_event_for_readonly_reconciliation (test_stability_lifecycle.LifecycleTest.test_transient_after_start_keeps_event_for_readonly_reconciliation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/guagua/AntelopeIO/release-work-20261116/testnet-stall-recovery-r1/test_stability_lifecycle.py", line 24, in test_transient_after_start_keeps_event_for_readonly_reconciliation
+    r=self.invoke(post_error=True);self.assertEqual(r['status'],'NEEDS_POSITIVE_RECONCILIATION_NO_SECOND_STOP');self.assertEqual(sum(a[:2]==['systemctl','start']for a in self.ops),1);self.assertEqual(r['phase'],'START_REQUESTED');self.assertIn('synthetic transient',r['error']);self.assertTrue((self.root/'GUARD_INFLIGHT.json').exists())
+                                                                                                                                                                                                                                      ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'synthetic transient' not found in 'Traceback (most recent call last):\n  File "/home/guagua/AntelopeIO/release-work-20261116/testnet-stall-recovery-r1/stability_guard.py", line 54, in perform\n    assert good>=3,\'Post-start canonical/quorum checks not yet stable; next tick only reconciles this operation\'\n           ^^^^^^^\nAssertionError: Post-start canonical/quorum checks not yet stable; next tick only reconciles this operation\n'
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.008s
+
+FAILED (failures=1)

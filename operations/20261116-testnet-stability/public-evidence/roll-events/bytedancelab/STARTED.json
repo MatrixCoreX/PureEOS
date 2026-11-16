@@ -1,0 +1,30 @@
+{
+  "name": "bytedancelab",
+  "utc": "2026-11-16T12:42:44.369828+00:00",
+  "oldPID": "122003",
+  "before_bytes": 2838220800,
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1293058,
+    "last_irreversible_block_num": 1293056,
+    "last_irreversible_block_id": "0013bb00be0b365b687f1f539cd5d7f2a489dcce0eb8dc7c03ecdc2d2ed34ba1",
+    "head_block_id": "0013bb02f7c5872a0548457664fdaec9780177c5d58cb94402db2c4e3536eab5",
+    "head_block_time": "2026-11-16T12:42:44.000",
+    "head_block_producer": "canadamilaai",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1293058,
+    "fork_db_head_block_id": "0013bb02f7c5872a0548457664fdaec9780177c5d58cb94402db2c4e3536eab5",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-16T12:42:43.000"
+  },
+  "next_duty_seconds": 106.0,
+  "recent_other_strong": 18
+}

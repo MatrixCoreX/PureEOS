@@ -1,0 +1,303 @@
+{
+  "status": "PASS_RETIRED_UNIT_CONFIG_AND_DEDICATED_LOGS_DELETED",
+  "utc": "2026-11-16T12:57:50.445751+00:00",
+  "unit_files": [
+    {
+      "path": "/etc/systemd/system/pureeos-bp-demo-londonturing-20261105.service",
+      "sha256": "9f35b4996299dc9c5b179fbb38c291996163d7d02afac73c437f2edde77c9d0d",
+      "bytes": 810
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-demo-pariscnrslab-20261105.service",
+      "sha256": "13ad11e779053e96a3816c0d94d610f8b7414fa3a347894efbdecfc3b22823d4",
+      "bytes": 810
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-demo-sydneyunswai-20261105.service",
+      "sha256": "0b040d11c7f1344bdf354873063462fab806defcf18b44a4757d525e46af49d3",
+      "bytes": 810
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-demo-sydneyunswai-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-demo-tokyoaistlab-20261105.service",
+      "sha256": "7ecd96b93e8abc5a7c72ce9fffc944f31603274df9238d218699d5ec2f2044dd",
+      "bytes": 810
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-extra-bostonmitlab-20261106.service",
+      "sha256": "d9d407a49c06ef4fa0b3e205dc0a866fe2cd48858368035e70f2e242e5255196",
+      "bytes": 870
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-replacement-berlintucomp-20261110.service",
+      "sha256": "0a5b131f9bfcec04f615eeb67f84e47e1aca2b7dff046a62d2339fbb7e7ba39d",
+      "bytes": 779
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-replacement-berlintucomp-20261110.service.d/30-local-memory.conf",
+      "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53",
+      "bytes": 83
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-bp-replacement-berlintucomp-20261110.service.d/50-IOWeight.conf",
+      "sha256": "71ca6feed9981c22ed8f61136fa15626920a8352ac22b32f382dba914b35f774",
+      "bytes": 144
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-bp-replacement-berlintucomp-20261110.service.d/50-CPUWeight.conf",
+      "sha256": "e838b756036ac8cfe40ebd89b5ca81308cdb939d3dbe8594cde8269c72dbfd95",
+      "bytes": 145
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-replacement-bostonmiteng-20261110.service",
+      "sha256": "3ba4af867ebfa349724941f0e0f5e9db58388bcc23133df5bb6c737e760c1579",
+      "bytes": 779
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-replacement-bostonmiteng-20261110.service.d/30-local-memory.conf",
+      "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53",
+      "bytes": 83
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-bp-replacement-bostonmiteng-20261110.service.d/50-IOWeight.conf",
+      "sha256": "62f1fdb41588111e0963c0677b7d8e72d6ffc4db7c572a6cc3f9fe1b1981a725",
+      "bytes": 144
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-bp-replacement-bostonmiteng-20261110.service.d/50-CPUWeight.conf",
+      "sha256": "ba4f56465b4ff1ad55d4e4d697e6cd86ae58ef9daa8e2824c7325a32e9963e83",
+      "bytes": 145
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-replacement-zurichethnet-20261110.service",
+      "sha256": "8cbafc8068640b211fb4329bbd46c6bd8ff6c69b4beb02a516e917b7dff8c851",
+      "bytes": 779
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-bp-replacement-zurichethnet-20261110.service.d/30-local-memory.conf",
+      "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53",
+      "bytes": 83
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-bp-replacement-zurichethnet-20261110.service.d/50-IOWeight.conf",
+      "sha256": "62f1fdb41588111e0963c0677b7d8e72d6ffc4db7c572a6cc3f9fe1b1981a725",
+      "bytes": 144
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-bp-replacement-zurichethnet-20261110.service.d/50-CPUWeight.conf",
+      "sha256": "ba4f56465b4ff1ad55d4e4d697e6cd86ae58ef9daa8e2824c7325a32e9963e83",
+      "bytes": 145
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-alibabacloud-20261105.service",
+      "sha256": "913135f87821bd9c1d44c25bfa22bf2088c7f877095048626ba7093cdc51b954",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-alibabacloud-20261105.service.d/91-recovered-data.conf",
+      "sha256": "4468e7c6f009ba9dc3e8947e4cc9eff0e8f582568a960e9273183042436e9c9e",
+      "bytes": 120
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-alibabacloud-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-baiduaiworks-20261105.service",
+      "sha256": "d839495492b07c3447b076bba6bffec3d0fb79f483b7592541c3edfd06a0abb6",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-berlintulabs-20261105.service",
+      "sha256": "616cb921bc5e269bd9e10ab142b39a417566e81c7ac32df123560453fe37c9c9",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepmindlabs-20261105.service",
+      "sha256": "bc5079bbd77eaa53dfd6f395053d3e52a1537e11efee469cf01f4003c37fafa4",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepmindlabs-20261105.service.d/91-recovered-data.conf",
+      "sha256": "91e454db915f8ab0b66f87e84716012645f61ffb75c1448e8605f847b6d5ff19",
+      "bytes": 120
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepmindlabs-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepseekcore-20261105.service",
+      "sha256": "a839e38196ee999f0c27252618edf67181b5f6b5cb424b20b59274353038454e",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepseekcore-20261105.service.d/30-local-memory.conf",
+      "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53",
+      "bytes": 83
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepseekcore-20261105.service.d/91-recovered-data.conf",
+      "sha256": "a96e688e4b30ffcea47feb96989b2aa443509e3250661bce6563e57ce1d3fbfd",
+      "bytes": 120
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-deepseekcore-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-devnet-bp-deepseekcore-20261105.service.d/50-IOWeight.conf",
+      "sha256": "71ca6feed9981c22ed8f61136fa15626920a8352ac22b32f382dba914b35f774",
+      "bytes": 144
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-devnet-bp-deepseekcore-20261105.service.d/50-CPUWeight.conf",
+      "sha256": "e838b756036ac8cfe40ebd89b5ca81308cdb939d3dbe8594cde8269c72dbfd95",
+      "bytes": 145
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "sha256": "bca9134fe97318688687f39a84941f49c12e9964911530970a409a670e344938",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-minimaxcloud-20261105.service.d/30-local-memory.conf",
+      "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53",
+      "bytes": 83
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-minimaxcloud-20261105.service.d/91-recovered-data.conf",
+      "sha256": "fdba9b995c74861bbd582619a10273d5cbbf03bf7adff9594e4f15b153f92a5a",
+      "bytes": 120
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-minimaxcloud-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-devnet-bp-minimaxcloud-20261105.service.d/50-IOWeight.conf",
+      "sha256": "62f1fdb41588111e0963c0677b7d8e72d6ffc4db7c572a6cc3f9fe1b1981a725",
+      "bytes": 144
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-devnet-bp-minimaxcloud-20261105.service.d/50-CPUWeight.conf",
+      "sha256": "ba4f56465b4ff1ad55d4e4d697e6cd86ae58ef9daa8e2824c7325a32e9963e83",
+      "bytes": 145
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "sha256": "acf3f782f7e50d83d527a5b6d074330493438156357b138ecb48fe95f87bf8e2",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-moonshotlabs-20261105.service.d/30-local-memory.conf",
+      "sha256": "d70a6b6ae68e70cfc673fb14cd1e3c116032e63169fd97f9732ef97a25917d53",
+      "bytes": 83
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-moonshotlabs-20261105.service.d/91-recovered-data.conf",
+      "sha256": "5899d795e4b0055d91a06369426671efd08c00ca745ec58e515e67632a787fd5",
+      "bytes": 120
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-moonshotlabs-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-devnet-bp-moonshotlabs-20261105.service.d/50-IOWeight.conf",
+      "sha256": "62f1fdb41588111e0963c0677b7d8e72d6ffc4db7c572a6cc3f9fe1b1981a725",
+      "bytes": 144
+    },
+    {
+      "path": "/run/systemd/system.control/pureeos-devnet-bp-moonshotlabs-20261105.service.d/50-CPUWeight.conf",
+      "sha256": "ba4f56465b4ff1ad55d4e4d697e6cd86ae58ef9daa8e2824c7325a32e9963e83",
+      "bytes": 145
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-nvidiaclouds-20261105.service",
+      "sha256": "241070aaef225b409b2ca40051bd56fa4e54f6f3d3b80cbadeb897dc24aaf374",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-openaiclouds-20261105.service",
+      "sha256": "79a4fdd40a2e9305bf0d5e893449767cd924dc755ea9d33d508f80220308415f",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-openaiclouds-20261105.service.d/91-recovered-data.conf",
+      "sha256": "167ac98197b903878eb023c6e998cfba3f0bb4a8a0f1add2cb4f004945915c81",
+      "bytes": 120
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-openaiclouds-20261105.service.d/90-resilience.conf",
+      "sha256": "8ae1809a14971330056ed4cbcd2ba0d64ab72809140b2345c4924f1f10765cb4",
+      "bytes": 394
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-singaporentu-20261105.service",
+      "sha256": "d4408df52e66b616fc98a9ea22995f9276f5b866ea3ff04bdc068fcbc10c6947",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-tencentcloud-20261105.service",
+      "sha256": "1b40b1d5257ca26da88b120af53045b926575a0ae74a20247edf6640cccc8776",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-tokyorikenai-20261105.service",
+      "sha256": "b05b32eed295e532b333dfd106bb4c32be9f843d0ccbf4ed48d643ad8567a03b",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-devnet-bp-zurichethlab-20261105.service",
+      "sha256": "254e379e1efb1eb9ee5f2fba64754bfbbc3d4735e9102a36f0f3fe4ccebf1737",
+      "bytes": 767
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-keynet-bp-deepseekcore-20261103.service",
+      "sha256": "63f87df843be2e024036fef01e2f160908649d4e3f95ad250b86987399a3444f",
+      "bytes": 770
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-keynet2-bp-deepseekcore-20261103.service",
+      "sha256": "f879947b07fa85580b461e0c51836719587704b4504bee5bc3506cfa8e68e322",
+      "bytes": 770
+    },
+    {
+      "path": "/etc/systemd/system/pureeos-test45-bp-deepseekcore-20261102.service",
+      "sha256": "a7576bb60b94623c1c49bcdc8ca4e5c47fb821464d1e19ae94c33e05b9544eb5",
+      "bytes": 770
+    }
+  ],
+  "retired_logs": [
+    {
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/nodeos.log",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "inode": 15718533
+    },
+    {
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/nodeos.log",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "inode": 15718227
+    },
+    {
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/nodeos.log",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "inode": 15718386
+    }
+  ],
+  "unit_file_count": 55,
+  "dedicated_log_allocated_bytes": 0
+}

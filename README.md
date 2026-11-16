@@ -1,5 +1,6 @@
 > **PureEOS TEST 1.0.0-test.1 — 4 vCPU / 8 GB-class test-only prerelease. 独立测试版。**
 > 使用、参数对照和隔离目录说明见 [TEST guide](docs/TEST_LOW_COST.md)。下方正式版要求不适用于带 PUREEOS_TEST_BUILD 的测试二进制。
+> 2026-11-16 测试网恢复与稳定性优化：25 BP＋历史源，新增受保护的内存回收和日志清理。见[中文报告](operations/20261116-testnet-stability/REPORT.zh-CN.md) / [English report](operations/20261116-testnet-stability/REPORT.en.md)。该目录的一次性恢复及资金脚本已执行完成，禁止重放。
 
 # PureEOS 1.0.0
 

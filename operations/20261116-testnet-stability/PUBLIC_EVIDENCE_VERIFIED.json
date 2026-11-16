@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "files": 99,
+  "local_remote_public_snapshot_SHA256_verified": true,
+  "deployed_sources_exact_local": true,
+  "server_privatekeys/signedpackets/safetybinary_not_exported": true
+}

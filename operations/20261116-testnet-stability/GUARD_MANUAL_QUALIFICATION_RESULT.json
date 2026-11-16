@@ -1,0 +1,1 @@
+{"status": "PASS_ONE_GUARDED_RECYCLE", "target": "sydneyunswcs", "proof": {"new_pid": "1184576", "old_pid": "1173836", "other_pids_unchanged": true, "anchor_matches": true, "target_fresh": true, "other_recent": 21, "safety_exists": true, "config_unchanged": true, "banned": false}, "before_bytes": 61718528}

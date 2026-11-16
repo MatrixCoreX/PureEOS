@@ -1,0 +1,177 @@
+{
+  "utc": "2026-11-16T13:12:13.575486+00:00",
+  "public": {
+    "reader": {
+      "status": 200,
+      "value": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 1296591,
+        "last_irreversible_block_num": 1296588,
+        "last_irreversible_block_id": "0013c8cc585ffc28cb7f0c057a56935172b3487f293513d03837fc1f48e83a8c",
+        "head_block_id": "0013c8cfedcfc7f492effd5aa4a20032ef788ea085bce638fb3a2de23bd7ece9",
+        "head_block_time": "2026-11-16T13:12:13.000",
+        "head_block_producer": "parisinriaai",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 1296591,
+        "fork_db_head_block_id": "0013c8cfedcfc7f492effd5aa4a20032ef788ea085bce638fb3a2de23bd7ece9",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6643905160",
+        "total_net_weight": 257590000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-16T13:12:11.500"
+      }
+    },
+    "writer": {
+      "status": 200,
+      "value": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 1296591,
+        "last_irreversible_block_num": 1296588,
+        "last_irreversible_block_id": "0013c8cc585ffc28cb7f0c057a56935172b3487f293513d03837fc1f48e83a8c",
+        "head_block_id": "0013c8cfedcfc7f492effd5aa4a20032ef788ea085bce638fb3a2de23bd7ece9",
+        "head_block_time": "2026-11-16T13:12:13.000",
+        "head_block_producer": "parisinriaai",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 1296591,
+        "fork_db_head_block_id": "0013c8cfedcfc7f492effd5aa4a20032ef788ea085bce638fb3a2de23bd7ece9",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6643905160",
+        "total_net_weight": 257590000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-16T13:12:11.500"
+      }
+    },
+    "history": {
+      "status": 200,
+      "value": {
+        "product": "PureHistory",
+        "version": "4.1.0-purehistory.1-dirty",
+        "version_hash": "custom",
+        "host": "aic-test.matrixai.one/history",
+        "health": [
+          {
+            "service": "StateHistory",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 113.943936,
+            "service_data": {
+              "nodes": [
+                {
+                  "label": "independent-nonproducing-TEST-history",
+                  "active": true,
+                  "range": {
+                    "from": 2,
+                    "to": 1296592
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "service": "RabbitMq",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 143.553305,
+            "service_data": null
+          },
+          {
+            "service": "NodeosRPC",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 39.984274,
+            "service_data": {
+              "head_block_num": 1296591,
+              "head_block_time": "2026-11-16T13:12:13.000",
+              "time_offset": -23,
+              "last_irreversible_block": 1296588,
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+            }
+          },
+          {
+            "service": "Elasticsearch",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 308.927148,
+            "service_data": {
+              "active_shards": "100.0%",
+              "disk_status": "green",
+              "head_offset": 1,
+              "first_indexed_block": 2,
+              "last_indexed_block": 1296590,
+              "total_indexed_blocks": 1296588,
+              "missing_blocks": 0,
+              "missing_pct": "0.00%",
+              "times": [
+                {
+                  "phase": "cluster_health",
+                  "phase_time_ms": 61.660578,
+                  "cache": false
+                },
+                {
+                  "phase": "first_indexed_block",
+                  "phase_time_ms": 226.503802,
+                  "cache": false
+                },
+                {
+                  "phase": "last_indexed_block",
+                  "phase_time_ms": 12.002811,
+                  "cache": false
+                }
+              ]
+            }
+          }
+        ],
+        "limits": {
+          "get_actions": 100,
+          "get_voters": 100,
+          "get_links": 1000,
+          "get_deltas": 100,
+          "get_trx_actions": 1000
+        },
+        "features": {
+          "streaming": {
+            "enable": false,
+            "traces": false,
+            "deltas": false
+          },
+          "tables": {
+            "proposals": true,
+            "accounts": true,
+            "voters": true,
+            "permissions": true,
+            "user_resources": false
+          },
+          "contract_state": {
+            "contracts": {}
+          },
+          "index_deltas": true,
+          "index_transfer_memo": true,
+          "index_all_deltas": true,
+          "index_deltas_deletions": false,
+          "deferred_trx": false,
+          "failed_trx": false,
+          "resource_limits": false,
+          "resource_usage": false
+        },
+        "pruning": {
+          "auto_pruning_enabled": false,
+          "max_retained_blocks": 0
+        },
+        "query_time_ms": 338.923,
+        "last_indexed_block": 1296590,
+        "last_indexed_block_time": "2026-11-16T13:12:12.500"
+      }
+    }
+  },
+  "scope": "Publicunsignedgetrequests only; explicitHTTPUserAgent fixture, noappUserAgentchange."
+}

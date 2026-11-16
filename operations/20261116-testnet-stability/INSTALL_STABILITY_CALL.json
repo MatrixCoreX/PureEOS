@@ -1,0 +1,7 @@
+
+Traceback (most recent call last):
+  File "/opt/pureeos-testnet-stall-recovery-20261116-r1/install_stability.py", line 8, in <module>
+    v['config_sha256']=g.sha(Path(v['config_dir'])/'config.ini');pid=g.state(v['unit'])['MainPID'];assert pid!='0';g.assert_native_binding(v,pid);assert(Path(v['data_dir'])/'finalizers/safety.dat').is_file();assert any((Path(v['data_dir'])/'state'/x).is_file()for x in ['shared_memory.bin','chain_head.dat'])
+                                                                                                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+

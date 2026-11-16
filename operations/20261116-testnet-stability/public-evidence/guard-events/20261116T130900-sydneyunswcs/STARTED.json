@@ -1,0 +1,43 @@
+{
+  "status": "STARTED",
+  "phase": "WATCHDOG_ARMED",
+  "utc": "2026-11-16T13:09:00.698195+00:00",
+  "event": "guard-events/20261116T130900-sydneyunswcs",
+  "target": "sydneyunswcs",
+  "oldPID": "1173836",
+  "other_PIDs": {
+    "anthropiclab": "1175783",
+    "bytedancelab": "1175846",
+    "canadamilaai": "1172976",
+    "cohereclouds": "1173117",
+    "genevacernai": "1173204",
+    "gptgenesisbp": "1176053",
+    "londonucllab": "1173516",
+    "mistralcloud": "1173279",
+    "parisinriaai": "1175316",
+    "perplexityai": "1173599",
+    "seoulkaistai": "1173687",
+    "stabilityhub": "1173769",
+    "torontovectr": "1175686",
+    "nvidiaailabs": "1173360",
+    "tencentailab": "1175466",
+    "alibabaailab": "1172888",
+    "deepmindtech": "1175964",
+    "openaimodels": "1173448",
+    "berlintulab2": "1178393",
+    "bostonmitcs1": "1178741",
+    "deepseeklabs": "1179111",
+    "minimaxaihub": "1179498",
+    "moonshottech": "1179888",
+    "zurichethcs1": "1180306"
+  },
+  "anchor_num": 1296204,
+  "anchor_id": "0013c74c03ea6fe97f06745479c4b18bdd78b43666f8220d186597ca5cf8ad84",
+  "before_bytes": 61718528,
+  "before_memory": {
+    "MemAvailable": 4839407616,
+    "SwapFree": 56277401600
+  },
+  "next_duty_seconds": 10000,
+  "watchdog": "pureeos-stability-restore-20261116t130900"
+}

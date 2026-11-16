@@ -1,0 +1,1241 @@
+{
+  "status": "ALL_BANNED_STOPPED_EXACT_DELETE_READY",
+  "utc": "2026-11-16T12:29:00.557227+00:00",
+  "stopped": {
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-demo-sydneyunswai-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "failed",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "failed",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-extra-bostonmitlab-20261106.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-replacement-berlintucomp-20261110.service": {
+      "before": {
+        "MainPID": "4009042",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-replacement-bostonmiteng-20261110.service": {
+      "before": {
+        "MainPID": "4011245",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-replacement-zurichethnet-20261110.service": {
+      "before": {
+        "MainPID": "4010914",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-alibabacloud-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-berlintulabs-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-deepseekcore-20261105.service": {
+      "before": {
+        "MainPID": "4012260",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": {
+      "before": {
+        "MainPID": "4011822",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": {
+      "before": {
+        "MainPID": "4010331",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-openaiclouds-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-tencentcloud-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-zurichethlab-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-keynet-bp-deepseekcore-20261103.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-test45-bp-deepseekcore-20261102.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    }
+  },
+  "targets": [
+    {
+      "owner": "baiduaiworks",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/config",
+      "delete_children_only": true,
+      "config_sha256": "80cf8927becad6c932a59f536aca7a45a96e1011f5b7526af34f734f927b4916",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "baiduaiworks",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "singaporentu",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/config",
+      "delete_children_only": true,
+      "config_sha256": "9ad16bef31857f408eeeacc6695d7552ac4d438bfa1d101655ac4b8341fb3513",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "singaporentu",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "openaiclouds",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/config",
+      "delete_children_only": true,
+      "config_sha256": "47d63fcce3705806c9689dccf41abb8658d88733e4f03d7f8f9f667c32d7774e",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "openaiclouds",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "openaiclouds",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "alibabacloud",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/config",
+      "delete_children_only": true,
+      "config_sha256": "f5b4c03294771c883eb03db0b5b258003a6e539c4f573745db7741269e9d79dd",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "alibabacloud",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "alibabacloud",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/config",
+      "delete_children_only": true,
+      "config_sha256": "dd6b5b81860dc54fcedbc6524a3631d21018d9bc90749ee8c35c8843653327c3",
+      "allocated_bytes": 122880,
+      "entries": 31
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data",
+      "delete_children_only": true,
+      "allocated_bytes": 522919936,
+      "entries": 260
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data.pre-resilience-20261110",
+      "delete_children_only": true,
+      "allocated_bytes": 181829632,
+      "entries": 420
+    },
+    {
+      "owner": "deepmindlabs",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/config",
+      "delete_children_only": true,
+      "config_sha256": "73b5ad7393b0d37d2df483991352cbaa980ce61dc0b7fa6b06343f6cc94e85be",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "deepmindlabs",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "deepmindlabs",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "nvidiaclouds",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/config",
+      "delete_children_only": true,
+      "config_sha256": "71f0f43827a85c1f28763296df89f6cedb95aa221fed7d137bc923a585e272e3",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "nvidiaclouds",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/data",
+      "delete_children_only": true,
+      "allocated_bytes": 8192,
+      "entries": 3
+    },
+    {
+      "owner": "moonshotlabs",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/config",
+      "delete_children_only": true,
+      "config_sha256": "25fd489c774c4bff7e5ca832ef7085d13083aaa19cd1bc2bc5df185f53127875",
+      "allocated_bytes": 122880,
+      "entries": 31
+    },
+    {
+      "owner": "moonshotlabs",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data",
+      "delete_children_only": true,
+      "allocated_bytes": 517144576,
+      "entries": 211
+    },
+    {
+      "owner": "moonshotlabs",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data.pre-resilience-20261110",
+      "delete_children_only": true,
+      "allocated_bytes": 253026304,
+      "entries": 3155
+    },
+    {
+      "owner": "minimaxcloud",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/config",
+      "delete_children_only": true,
+      "config_sha256": "f3ee03e80ef8fa6638affae52c9cd0a08cdfb09e27e73e72a3db4f28bc99f0c9",
+      "allocated_bytes": 122880,
+      "entries": 31
+    },
+    {
+      "owner": "minimaxcloud",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data",
+      "delete_children_only": true,
+      "allocated_bytes": 391200768,
+      "entries": 204
+    },
+    {
+      "owner": "minimaxcloud",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data.pre-resilience-20261110",
+      "delete_children_only": true,
+      "allocated_bytes": 215244800,
+      "entries": 359
+    },
+    {
+      "owner": "berlintulabs",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/config",
+      "delete_children_only": true,
+      "config_sha256": "98f6546f20408e0588073075a5be913d16fd06d825b8e27c1ad9a6ffb19573ed",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "berlintulabs",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "zurichethlab",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/config",
+      "delete_children_only": true,
+      "config_sha256": "41c291d8b36e017d7617dfe63bad3d1e44cb7527a87fe30c0b100d91848664c4",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "zurichethlab",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "tokyorikenai",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/config",
+      "delete_children_only": true,
+      "config_sha256": "bc731b2ea401d8770f67606eded1b27b1209d55379a5566e0a6ca4d34bc680bd",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "tokyorikenai",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "tencentcloud",
+      "kind": "configuration",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/config",
+      "delete_children_only": true,
+      "config_sha256": "1ffbbbae8f57fa00739afb29a572b52186a105f4ddd9208206cc7be7ccfc4f18",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "tencentcloud",
+      "kind": "data",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/data",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "openaiclouds",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/openaiclouds",
+      "delete_children_only": true,
+      "config_sha256": "cbf2d0aed54416d61f9327157e13408394367d2ce1b9a820c95cc57ab9f7bc80",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "alibabacloud",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/alibabacloud",
+      "delete_children_only": true,
+      "config_sha256": "36515be8869f6ae184bf3b0b75ccabd9f65bfde12b6114f9589c61803f4b61ab",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepseekcore",
+      "delete_children_only": true,
+      "config_sha256": "22ae4a054cbffc36db7407ce9ee7a4ef2037160fbf6439d6a539883c5da28b61",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "deepmindlabs",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepmindlabs",
+      "delete_children_only": true,
+      "config_sha256": "36a0f5214e52b414189808a0578383e623a5a979ca720d06e64fa6d40c4621db",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "moonshotlabs",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/moonshotlabs",
+      "delete_children_only": true,
+      "config_sha256": "2751f5097feb4c48b63e6f4ca5cd095748ac471ae84806dbbc93abd3380e39c1",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "minimaxcloud",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/minimaxcloud",
+      "delete_children_only": true,
+      "config_sha256": "6dd58c4c08f76e87897dc5d4c9ffcfd2ddf4a0d744607f96d5f4fa28721add2c",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "bostonmiteng",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/config",
+      "delete_children_only": true,
+      "config_sha256": "8562b8f17b9b74c6a87324632a6b87fd2286b2b91b43eb417f977c6deecbafc2",
+      "allocated_bytes": 122880,
+      "entries": 31
+    },
+    {
+      "owner": "bostonmiteng",
+      "kind": "data",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/data",
+      "delete_children_only": true,
+      "allocated_bytes": 264077312,
+      "entries": 216
+    },
+    {
+      "owner": "berlintucomp",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/config",
+      "delete_children_only": true,
+      "config_sha256": "40b95ff4598d647a07a5c6e37bb9359e5821e7b147392ba2c6979c95ab59990d",
+      "allocated_bytes": 122880,
+      "entries": 31
+    },
+    {
+      "owner": "berlintucomp",
+      "kind": "data",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/data",
+      "delete_children_only": true,
+      "allocated_bytes": 306851840,
+      "entries": 327
+    },
+    {
+      "owner": "zurichethnet",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/config",
+      "delete_children_only": true,
+      "config_sha256": "0cbfaf2c5ce935f4610e9c5156eab7005b6de734e927f64f2202b2362d7a9f6a",
+      "allocated_bytes": 122880,
+      "entries": 31
+    },
+    {
+      "owner": "zurichethnet",
+      "kind": "data",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/data",
+      "delete_children_only": true,
+      "allocated_bytes": 144060416,
+      "entries": 158
+    },
+    {
+      "owner": "bostonmiteng",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/bostonmiteng",
+      "delete_children_only": true,
+      "config_sha256": "36eec74113f6617c84b8d0224aff60ea5a536bf0bf4d2076175c28ff687e09fd",
+      "allocated_bytes": 8192,
+      "entries": 2
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/deepseekcore",
+      "delete_children_only": true,
+      "config_sha256": "4fd03516fea59d7ca112abf828f2a4a676145d8755a63f2e86c80ee5d0f23a5e",
+      "allocated_bytes": 8192,
+      "entries": 2
+    },
+    {
+      "owner": "berlintucomp",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/berlintucomp",
+      "delete_children_only": true,
+      "config_sha256": "547bec4dd6cedd94ef34eef5b2c21d02915acd12c8e12b5fddf0b03ae5cacdbb",
+      "allocated_bytes": 4096,
+      "entries": 1
+    },
+    {
+      "owner": "moonshotlabs",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/moonshotlabs",
+      "delete_children_only": true,
+      "config_sha256": "b9afb7ca7230f47b5e0591f5860a54819383e329331babd19a977dbc25e8ee34",
+      "allocated_bytes": 8192,
+      "entries": 2
+    },
+    {
+      "owner": "minimaxcloud",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/minimaxcloud",
+      "delete_children_only": true,
+      "config_sha256": "a367063a9d503dd66dbeb5c98a685008ebb4aede5626e76a4910d4f7846f932b",
+      "allocated_bytes": 8192,
+      "entries": 2
+    },
+    {
+      "owner": "zurichethnet",
+      "kind": "configuration",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/zurichethnet",
+      "delete_children_only": true,
+      "config_sha256": "81617e9f3d5212362c0414bbb443788fc78b76a7de45464e573d21e5a668c229",
+      "allocated_bytes": 8192,
+      "entries": 2
+    },
+    {
+      "owner": "sydneyunswai",
+      "kind": "configuration",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/config",
+      "delete_children_only": true,
+      "config_sha256": "28cf9b01f51ddaf9382532c02b3541f4617de75bc796be472ecc33fb7686de28",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "sydneyunswai",
+      "kind": "data",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "pariscnrslab",
+      "kind": "configuration",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/config",
+      "delete_children_only": true,
+      "config_sha256": "4cd50a2f423de6f74c756ea6ab0338972a8453aabf70181d4b0fa640d85d8214",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "pariscnrslab",
+      "kind": "data",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/data-checkpoint",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "londonturing",
+      "kind": "configuration",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/config",
+      "delete_children_only": true,
+      "config_sha256": "7b18218d9ff817323c7624191873f02a868041927990fcb26a72522585dc2317",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "londonturing",
+      "kind": "data",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/data-checkpoint",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "tokyoaistlab",
+      "kind": "configuration",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/config",
+      "delete_children_only": true,
+      "config_sha256": "466ed02c973e9c48f4e08664830cbb423ff0eb8a7262865a1f1f693feb089348",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "tokyoaistlab",
+      "kind": "data",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data-checkpoint",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "tokyoaistlab",
+      "kind": "data",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data",
+      "delete_children_only": true,
+      "allocated_bytes": 0,
+      "entries": 0
+    },
+    {
+      "owner": "bostonmitlab",
+      "kind": "configuration",
+      "path": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/bostonmitlab/config",
+      "delete_children_only": true,
+      "config_sha256": "1f1d250f552218dce1f4824e64ba344e91775ddd6514f9a3ab4234e6c07f39ad",
+      "allocated_bytes": 118784,
+      "entries": 30
+    },
+    {
+      "owner": "bostonmitlab",
+      "kind": "data",
+      "path": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/bostonmitlab/data-checkpoint",
+      "delete_children_only": true,
+      "allocated_bytes": 4096,
+      "entries": 2
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "configuration",
+      "path": "/opt/pureeos-keynet-20261103-r1/bps/deepseekcore/config",
+      "delete_children_only": true,
+      "config_sha256": "082439deb8e99cfacbd92f27e50653043de358684cd2f2f1cb0953c979a202b4",
+      "allocated_bytes": 114688,
+      "entries": 29
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "configuration",
+      "path": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/config",
+      "delete_children_only": true,
+      "config_sha256": "cf8a44df33e0074a360caf9010e9670deb8a67083afe5ddcc734164ff0a26ba1",
+      "allocated_bytes": 114688,
+      "entries": 29
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "data",
+      "path": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/data",
+      "delete_children_only": true,
+      "allocated_bytes": 122671104,
+      "entries": 274
+    },
+    {
+      "owner": "deepseekcore",
+      "kind": "configuration",
+      "path": "/opt/pureeos-test45-20261102-r1/bps/deepseekcore/config",
+      "delete_children_only": true,
+      "config_sha256": "66cb3e0ebedb004fb0eb069127ff387c36c4173108569a308acdb8bfaa8b328b",
+      "allocated_bytes": 114688,
+      "entries": 29
+    }
+  ],
+  "private_credential_escrow": [
+    {
+      "owner": "baiduaiworks",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "singaporentu",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "openaiclouds",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "alibabacloud",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "deepseekcore",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "deepmindlabs",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "nvidiaclouds",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "moonshotlabs",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "minimaxcloud",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "berlintulabs",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "zurichethlab",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "tokyorikenai",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "tencentcloud",
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "openaiclouds",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/openaiclouds",
+      "credential_line_count": 3,
+      "escrow_bytes": 665
+    },
+    {
+      "owner": "alibabacloud",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/alibabacloud",
+      "credential_line_count": 3,
+      "escrow_bytes": 665
+    },
+    {
+      "owner": "deepseekcore",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepseekcore",
+      "credential_line_count": 3,
+      "escrow_bytes": 665
+    },
+    {
+      "owner": "deepmindlabs",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepmindlabs",
+      "credential_line_count": 3,
+      "escrow_bytes": 665
+    },
+    {
+      "owner": "moonshotlabs",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/moonshotlabs",
+      "credential_line_count": 3,
+      "escrow_bytes": 665
+    },
+    {
+      "owner": "minimaxcloud",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/minimaxcloud",
+      "credential_line_count": 3,
+      "escrow_bytes": 665
+    },
+    {
+      "owner": "bostonmiteng",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "berlintucomp",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "zurichethnet",
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "bostonmiteng",
+      "source": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/bostonmiteng",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "deepseekcore",
+      "source": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/deepseekcore",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "berlintucomp",
+      "source": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/berlintucomp",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "moonshotlabs",
+      "source": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/moonshotlabs",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "minimaxcloud",
+      "source": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/minimaxcloud",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "zurichethnet",
+      "source": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/zurichethnet",
+      "credential_line_count": 3,
+      "escrow_bytes": 648
+    },
+    {
+      "owner": "sydneyunswai",
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 641
+    },
+    {
+      "owner": "pariscnrslab",
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 641
+    },
+    {
+      "owner": "londonturing",
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 641
+    },
+    {
+      "owner": "tokyoaistlab",
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 641
+    },
+    {
+      "owner": "bostonmitlab",
+      "source": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/bostonmitlab/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 649
+    },
+    {
+      "owner": "deepseekcore",
+      "source": "/opt/pureeos-keynet-20261103-r1/bps/deepseekcore/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "deepseekcore",
+      "source": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    },
+    {
+      "owner": "deepseekcore",
+      "source": "/opt/pureeos-test45-20261102-r1/bps/deepseekcore/config",
+      "credential_line_count": 3,
+      "escrow_bytes": 634
+    }
+  ],
+  "safety_preserved": [
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "47e4498d24cca32be1b1279b6bfe90e054ad1a5db4ba4dcd07414b1a2da5215a"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "15a884f1a0e80426b935244b49d26260ee95ee5ec9083e29c7d4826eb9be94dc"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "a3b69d12f2b0499da8a02b3618a0808e95041d314668dfa1120891f9dadc8c84"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "a6ba87f8abcb600c24a5f9ff20bd887114438babfb8d7ca0b76e926f7cbca51f"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "e5630066e787a19fe8eac53dff0c8dc2dc47a0e9886a5b5103faf3a5edf35a93"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "c500d723b172c60aec683b6ba5e6eac6ac620828bbe04e5967ae5acb535de79c"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "c16d21270c25538efed938e1bbb537d7e58f58f71b22fb8d432f798f76b3ad0f"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data.pre-resilience-20261110/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "49eb129b042d94ecbac972143fe0426a7ac5cd0701065a326342f67677b9bb71"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "dffbfb63d4e64828dee625044f6a88221eab778b6bcf07086e81d53ed9dc3a18"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "8d16f61d30ac4aea001e4d72b0ef9e428137cb300ba741d794764a5d8a8ebcd1"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "44081632dd71057971c235932326bb3d468fc3ea9542116f7cad42e1f7274ebd"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/data/finalizers/safety.dat.tmp",
+      "bytes": 265,
+      "sha256": "e872c3446038d5c9a3d8b44b5a0eebb251448780284086b8694c8e57c4fab73c"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "21e3a45b8d5b9f3880581413054418467079b84348fc99d3b97ebeaea272f3a9"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data.pre-resilience-20261110/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "718ff8e82c7d877be047487b495759e2e5f6fc65134f546088e35e880eeeff43"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "9ac5b1af21029e05ced6d0eb3b41a56934a5fc1291a015fe8eba7bc2ab72d072"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data.pre-resilience-20261110/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "20bb21db882dcfc68fb530f4e714d7fc6b7607439acf4fcb98ddb31577fa6a81"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "a99bf81cce3cc9bed89d2af75a58e6a6165c057e8b06320086f5dcb8d6ec48c0"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "2c0a04cf4d0536abf55083768e1ee639e96887eb4af5306fcf3335124a597ad3"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "7a3a2087cbf10b8ae9d556d2317238aa81922b1ce08e22143482bebd577ba6cd"
+    },
+    {
+      "source": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "982760244b7d6f4fa7a928b15335c3f3691ad35bf6d9b5b1e7e07bd8773f1a9f"
+    },
+    {
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "7ebd3e610b3e41efc152f9ecc7ee0f517aab58fb0dbe47dc93ff8234603832f5"
+    },
+    {
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "478f8c7b61c258ac409bc61c23b65bfcd5a3cb13227c4e87d88d5e1e9a8668cb"
+    },
+    {
+      "source": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "e5fa2c8f723891d5047db799262a3e3e8c3a689873c34c32f9d91d001c786bc3"
+    },
+    {
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "43ecea97834c21009a6c1e9417715ae2cc6f528ae5b31af37cb3ab8a4e2834a5"
+    },
+    {
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/data-checkpoint/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "a23b12594620f7340381066854fc40860d07518d5dc3af3d28d3096f80ddbefa"
+    },
+    {
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/data-checkpoint/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "8b40e1d9c6cb4807a6f9c680216ce01c234a982c5cf6e140a11bcf73f9655932"
+    },
+    {
+      "source": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data-checkpoint/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "e909385b7a3ca791840f1ef4fc1a460afbda1d0529ffccac80b9cbd720b40dfa"
+    },
+    {
+      "source": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/bostonmitlab/data-checkpoint/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "6225652660fc05c27d2975ebe721ba7749e9b7ece27239c8d14fb9b2f61c6657"
+    },
+    {
+      "source": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/data/finalizers/safety.dat",
+      "bytes": 265,
+      "sha256": "b49557d79371d7f13df339e840628fb501550bf47b73a8f5f57d31c94512011b"
+    }
+  ],
+  "protected_PIDs": {
+    "pureeos-devnet-bp-anthropiclab-20261105.service": "4011126",
+    "pureeos-devnet-bp-bytedancelab-20261105.service": "122003",
+    "pureeos-devnet-bp-canadamilaai-20261105.service": "4011355",
+    "pureeos-devnet-bp-cohereclouds-20261105.service": "4011467",
+    "pureeos-bp-demo-genevacernai-20261105.service": "4011601",
+    "pureeos-devnet-founder-20261105.service": "4011712",
+    "pureeos-devnet-bp-londonucllab-20261105.service": "155047",
+    "pureeos-devnet-bp-mistralcloud-20261105.service": "4011960",
+    "pureeos-devnet-bp-parisinriaai-20261105.service": "4010450",
+    "pureeos-devnet-bp-perplexityai-20261105.service": "4009516",
+    "pureeos-devnet-bp-seoulkaistai-20261105.service": "4012397",
+    "pureeos-devnet-bp-stabilityhub-20261105.service": "4010695",
+    "pureeos-bp-extra-torontovectr-20261106.service": "4010804",
+    "pureeos-bp-replacement-nvidiaailabs-20261110.service": "4010560",
+    "pureeos-bp-replacement-tencentailab-20261110.service": "4012512",
+    "pureeos-bp-replacement-alibabaailab-20261111.service": "4014406",
+    "pureeos-bp-replacement-deepmindtech-20261111.service": "4014915",
+    "pureeos-bp-replacement-openaimodels-20261111.service": "4015379",
+    "pureeos-bp-replacement-sydneyunswcs-20261111.service": "4015905",
+    "pureeos-devnet-history-20261105.service": "13051"
+  },
+  "estimated_allocated_bytes": 2922037248,
+  "scope": "User explicitly requests ALL banned blocks/config deletion. Independent server-only credentials/safety retained. Sharedgenesis/history/currenteligible/maintenance andother source/receipts untouched."
+}

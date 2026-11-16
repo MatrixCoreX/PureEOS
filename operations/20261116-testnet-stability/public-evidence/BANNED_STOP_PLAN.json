@@ -1,0 +1,907 @@
+{
+  "utc": "2026-11-16T12:27:09.580874+00:00",
+  "chain": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1291745,
+    "last_irreversible_block_num": 1291734,
+    "last_irreversible_block_id": "0013b5d6b08c28cf67288586de679f337b6c5f1c4b64d1d1b6cb2e5d7433753a",
+    "head_block_id": "0013b5e189b3599671ba71444d8962fcc7164ae7742658469b8a10e4a2cff2aa",
+    "head_block_time": "2026-11-14T15:13:12.000",
+    "head_block_producer": "sydneyunswcs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1291745,
+    "fork_db_head_block_id": "0013b5e189b3599671ba71444d8962fcc7164ae7742658469b8a10e4a2cff2aa",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-14T14:51:13.000"
+  },
+  "banned": [
+    "alibabacloud",
+    "baiduaiworks",
+    "berlintucomp",
+    "berlintulabs",
+    "bostonmiteng",
+    "bostonmitlab",
+    "deepmindlabs",
+    "deepseekcore",
+    "londonturing",
+    "minimaxcloud",
+    "moonshotlabs",
+    "nvidiaclouds",
+    "openaiclouds",
+    "pariscnrslab",
+    "singaporentu",
+    "sydneyunswai",
+    "tencentcloud",
+    "tokyoaistlab",
+    "tokyorikenai",
+    "zurichethlab",
+    "zurichethnet"
+  ],
+  "active_banned": [
+    "berlintucomp",
+    "deepseekcore"
+  ],
+  "active_nonbanned_count": 19,
+  "native_threshold": 15,
+  "all_known_nodes": {
+    "alibabacloud": {
+      "name": "alibabacloud",
+      "unit": "pureeos-devnet-bp-alibabacloud-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data",
+      "rpc_port": 8910,
+      "p2p": "127.0.0.1:9910",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "anthropiclab": {
+      "name": "anthropiclab",
+      "unit": "pureeos-devnet-bp-anthropiclab-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/anthropiclab/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/anthropiclab/data",
+      "rpc_port": 8902,
+      "p2p": "127.0.0.1:9902",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "bytedancelab": {
+      "name": "bytedancelab",
+      "unit": "pureeos-devnet-bp-bytedancelab-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/bytedancelab/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/bytedancelab/data",
+      "rpc_port": 8913,
+      "p2p": "127.0.0.1:9913",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "canadamilaai": {
+      "name": "canadamilaai",
+      "unit": "pureeos-devnet-bp-canadamilaai-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/canadamilaai/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/canadamilaai/data",
+      "rpc_port": 8923,
+      "p2p": "127.0.0.1:9923",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "cohereclouds": {
+      "name": "cohereclouds",
+      "unit": "pureeos-devnet-bp-cohereclouds-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/cohereclouds/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/cohereclouds/data",
+      "rpc_port": 8906,
+      "p2p": "127.0.0.1:9906",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "deepmindlabs": {
+      "name": "deepmindlabs",
+      "unit": "pureeos-devnet-bp-deepmindlabs-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data",
+      "rpc_port": 8904,
+      "p2p": "127.0.0.1:9904",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "deepseekcore": {
+      "name": "deepseekcore",
+      "unit": "pureeos-devnet-bp-deepseekcore-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data",
+      "rpc_port": 8903,
+      "p2p": "127.0.0.1:9903",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "genevacernai": {
+      "name": "genevacernai",
+      "unit": "pureeos-bp-demo-genevacernai-20261105.service",
+      "config_dir": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/genevacernai/config",
+      "data_dir": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/genevacernai/data-checkpoint",
+      "rpc_port": 8934,
+      "p2p": "127.0.0.1:9934",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "gptgenesisbp": {
+      "name": "gptgenesisbp",
+      "unit": "pureeos-devnet-founder-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/founder/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/founder/data",
+      "rpc_port": 8888,
+      "p2p": "127.0.0.1:9876",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "londonucllab": {
+      "name": "londonucllab",
+      "unit": "pureeos-devnet-bp-londonucllab-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/londonucllab/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/londonucllab/data",
+      "rpc_port": 8918,
+      "p2p": "127.0.0.1:9918",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "minimaxcloud": {
+      "name": "minimaxcloud",
+      "unit": "pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data",
+      "rpc_port": 8914,
+      "p2p": "127.0.0.1:9914",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "mistralcloud": {
+      "name": "mistralcloud",
+      "unit": "pureeos-devnet-bp-mistralcloud-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/mistralcloud/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/mistralcloud/data",
+      "rpc_port": 8905,
+      "p2p": "127.0.0.1:9905",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "moonshotlabs": {
+      "name": "moonshotlabs",
+      "unit": "pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data",
+      "rpc_port": 8915,
+      "p2p": "127.0.0.1:9915",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "openaiclouds": {
+      "name": "openaiclouds",
+      "unit": "pureeos-devnet-bp-openaiclouds-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data",
+      "rpc_port": 8901,
+      "p2p": "127.0.0.1:9901",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "parisinriaai": {
+      "name": "parisinriaai",
+      "unit": "pureeos-devnet-bp-parisinriaai-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/parisinriaai/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/parisinriaai/data",
+      "rpc_port": 8921,
+      "p2p": "127.0.0.1:9921",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "perplexityai": {
+      "name": "perplexityai",
+      "unit": "pureeos-devnet-bp-perplexityai-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/perplexityai/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/perplexityai/data",
+      "rpc_port": 8907,
+      "p2p": "127.0.0.1:9907",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "seoulkaistai": {
+      "name": "seoulkaistai",
+      "unit": "pureeos-devnet-bp-seoulkaistai-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/seoulkaistai/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/seoulkaistai/data",
+      "rpc_port": 8920,
+      "p2p": "127.0.0.1:9920",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "stabilityhub": {
+      "name": "stabilityhub",
+      "unit": "pureeos-devnet-bp-stabilityhub-20261105.service",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/stabilityhub/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/stabilityhub/data",
+      "rpc_port": 8908,
+      "p2p": "127.0.0.1:9908",
+      "before": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      }
+    },
+    "sydneyunswai": {
+      "name": "sydneyunswai",
+      "unit": "pureeos-bp-demo-sydneyunswai-20261105.service",
+      "config_dir": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/config",
+      "data_dir": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint",
+      "rpc_port": 8935,
+      "p2p": "127.0.0.1:9935",
+      "before": {
+        "MainPID": "12219",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "torontovectr": {
+      "name": "torontovectr",
+      "unit": "pureeos-bp-extra-torontovectr-20261106.service",
+      "config_dir": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/torontovectr/config",
+      "data_dir": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/torontovectr/data-checkpoint",
+      "rpc_port": 8942,
+      "p2p": "127.0.0.1:9942",
+      "before": {
+        "MainPID": "38342",
+        "Result": "success",
+        "ActiveState": "active",
+        "SubState": "running"
+      }
+    },
+    "berlintucomp": {
+      "name": "berlintucomp",
+      "replaces": "berlintulabs",
+      "index": 51,
+      "rpc_port": 8951,
+      "p2p_port": 9951,
+      "unit": "pureeos-bp-replacement-berlintucomp-20261110.service",
+      "CPU_stake_AIC": "100.0051",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "RAM_budget_AIC": "1.0000",
+      "public_keys": {
+        "account": "PUB_K1_79uFEGJnBgHrU83gSAf4o4s4KhgYwsWEapSTGUJ58WsB9uap1T",
+        "production": "PUB_K1_7pzmSmEQEqkJM82omnpPg3gAWgtt47oYR7i3QBK9ggkrUgM8HM",
+        "peer": "PUB_K1_6dNhUDF3Q7tfD5wYoUrxaei6p7VvvTSjbgp77T7qBNz3ksLqtg",
+        "bls": "PUB_BLS_fRMg43jqpgaVTavzFZd95O5Pcg-W-uVirPq8f8P8NBTxiZJqJYol3aJzumTlkDcL-pCud84Ud3t2010PGZlKjDJWObeVs0doaulKuthOgubEP1GK3ILo2MCfRTOkTBUXROx0FQ"
+      }
+    },
+    "bostonmiteng": {
+      "name": "bostonmiteng",
+      "replaces": "bostonmitlab",
+      "index": 52,
+      "rpc_port": 8952,
+      "p2p_port": 9952,
+      "unit": "pureeos-bp-replacement-bostonmiteng-20261110.service",
+      "CPU_stake_AIC": "100.0052",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "RAM_budget_AIC": "1.0000",
+      "public_keys": {
+        "account": "PUB_K1_5Sbe3XHsUhZuNcbKjPGL7i5zSmN6sLJDTUzvaTbALSNMopswAd",
+        "production": "PUB_K1_6c2TbYrs3PTTrB5oQLhAnsR82KrNKiZQbn294sNdz6Te2brgLF",
+        "peer": "PUB_K1_7m7hcxAaEw5jEKVRJU31hWpnquLCxySoHyQ5ci1xPeDYw5FYWY",
+        "bls": "PUB_BLS_1FsFC-f30wi70ApiLGOEvGOTQ-lfxHj4-H-Lr0D0QZUmDMUKmvjSFP3RVU-v0ZoGUVA6ZECfIao5Poj4VFzAvVcjSnBKqmwITnsq2i5xU3lrVKC3GtM8ob8Jee1QEOAUPsSC3A"
+      }
+    },
+    "nvidiaailabs": {
+      "name": "nvidiaailabs",
+      "replaces": "nvidiaclouds",
+      "index": 53,
+      "rpc_port": 8953,
+      "p2p_port": 9953,
+      "unit": "pureeos-bp-replacement-nvidiaailabs-20261110.service",
+      "CPU_stake_AIC": "100.0053",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "RAM_budget_AIC": "1.0000",
+      "public_keys": {
+        "account": "PUB_K1_61Hx2F6Hv9orqRMrgRpbgfARgmRK7bzsPGMYtbKmRe1WvbNFzR",
+        "production": "PUB_K1_7szXHbFL9QCy776zGTwkJ6p2L42gBCfD4XhgYc7VoKZTwrLHxd",
+        "peer": "PUB_K1_4ztz33ocQ97HV2oBzifNat4guYEruL9sGjEvv7A2YftAWNBZSM",
+        "bls": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA"
+      }
+    },
+    "tencentailab": {
+      "name": "tencentailab",
+      "replaces": "tencentcloud",
+      "index": 54,
+      "rpc_port": 8954,
+      "p2p_port": 9954,
+      "unit": "pureeos-bp-replacement-tencentailab-20261110.service",
+      "CPU_stake_AIC": "100.0054",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "RAM_budget_AIC": "1.0000",
+      "public_keys": {
+        "account": "PUB_K1_6fY5b4no2D3yaUH7vhqanHZ6gt9SqoG2dGtWKUYMEs8niXccQD",
+        "production": "PUB_K1_7ULjf8bu75ikXtZuF4bQij1KF14837TU7WrLafZdYp6rWybnWH",
+        "peer": "PUB_K1_6qrm6VHv4mV5fjojnsUJozbeFQJSFkbejEWMBQBk3cjDUdQ87e",
+        "bls": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA"
+      }
+    },
+    "zurichethnet": {
+      "name": "zurichethnet",
+      "replaces": "zurichethlab",
+      "index": 55,
+      "rpc_port": 8955,
+      "p2p_port": 9955,
+      "unit": "pureeos-bp-replacement-zurichethnet-20261110.service",
+      "CPU_stake_AIC": "100.0055",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "RAM_budget_AIC": "1.0000",
+      "public_keys": {
+        "account": "PUB_K1_6oigZwDLMFForfoT7XZ8ZYzBNbBmtTbEm7pRj62kAKS2g91CX7",
+        "production": "PUB_K1_5axE1d7N7UAVL7mevm7YWyjBwQYMcuyFafYrZp1y73vcHCPPF5",
+        "peer": "PUB_K1_5pisv5kS5bCUqy6uHH184eDZcM6mm79UW8LMG73mwrvmr9ktVC",
+        "bls": "PUB_BLS_L-gxuNbOw9rIIRx_M3hgrMYWmdP6CjNhuATecN0QNe0MI5IxjFzkV657W8OyjEAHXR1UZ3qeQOuWZpzNNx5DlCkrGhiHeN9s7eCO-x-gUaeLJjdJLMN42wConAAWLU0WbyVexQ"
+      }
+    },
+    "alibabaailab": {
+      "name": "alibabaailab",
+      "replaces": "alibabacloud",
+      "rpc_port": 8961,
+      "p2p_port": 9961,
+      "unit": "pureeos-bp-replacement-alibabaailab-20261111.service",
+      "CPU_stake_AIC": "100.0061",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_4uuL5SCh33ycnHGPHZstUAK9CX2pvRmVQ6JqQSksX9F11T2g6u",
+        "production": "PUB_K1_8GKTUx7TDXiPJhaWK8hTfdiKJfPv7shnGbKZjkmMhYwk6b6sov",
+        "peer": "PUB_K1_7uskAVPDHHM6hV9boUoRmWA2NzR75aFTn4xkS9gGQaG7yp3ykY",
+        "bls": "PUB_BLS_KbrdSi-T478HYTTj3wpoxlJg1deoJ3l7PgNnJcIy1U8b6GrPGsPWn1uhmFGOyeoOWBiLz9IcbdJMqjdSZdiHugCnzEiJW33nMWPblOfL33l43LIfP061bx9VhmWG10sU7auMWQ"
+      }
+    },
+    "deepmindtech": {
+      "name": "deepmindtech",
+      "replaces": "deepmindlabs",
+      "rpc_port": 8962,
+      "p2p_port": 9962,
+      "unit": "pureeos-bp-replacement-deepmindtech-20261111.service",
+      "CPU_stake_AIC": "100.0062",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_8LWN6AYLxjur2j2oHkQNWEU3hSvU1zLNhtAG6QFLWPiChMqHHg",
+        "production": "PUB_K1_5oBfM6FE3K3wHLGTXgCkKCn7KP3KtV5v1pSGHLT4taLmFp4r8F",
+        "peer": "PUB_K1_7tZXma963VMB5wgLQwXHi1HkebjjaMSEro6KFnquk4eXjct4kB",
+        "bls": "PUB_BLS_3R0tYCs6Lho0QksSL-F-AapOdza_yaQJi2_30Dzy3aKBec8kYR9RqUYeLCEVYPUZrIMKnnIpD2saa0aI3un4WPg-gNVq0NwZKU6apynYRvu7skpAJgKmDGtlpBcbWaoOayP9vw"
+      }
+    },
+    "openaimodels": {
+      "name": "openaimodels",
+      "replaces": "openaiclouds",
+      "rpc_port": 8963,
+      "p2p_port": 9963,
+      "unit": "pureeos-bp-replacement-openaimodels-20261111.service",
+      "CPU_stake_AIC": "100.0063",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_6TpJcSX7LNiWDyaV9tmjUnzQePmCCPYMQcuDPwWj5vdkhYZt7k",
+        "production": "PUB_K1_5VUKJUABs2pQzvhHGg16u7uU8eQKzWRCCg5TYXV4yTeSLdB9jB",
+        "peer": "PUB_K1_8mVuwyWtqPEo3TBFE9q2auaGHaRiJwpfDDJEncr85uqqCpGnQJ",
+        "bls": "PUB_BLS_7V46WczqqSiv8n3u8DUqrwBGKjwz54pwJzNlUA9_GblvORjOcPMbH8kJoLsp9eIWQbmrPSkNZZs2_fat7mZ8zui7uhxPfiG3AE5Nj2W4ReAuDZTCm_LdT6z_Z-JsZQUDGn9XwA"
+      }
+    },
+    "sydneyunswcs": {
+      "name": "sydneyunswcs",
+      "replaces": "sydneyunswai",
+      "rpc_port": 8964,
+      "p2p_port": 9964,
+      "unit": "pureeos-bp-replacement-sydneyunswcs-20261111.service",
+      "CPU_stake_AIC": "100.0064",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "16000.0000",
+      "public_keys": {
+        "account": "PUB_K1_7T95MbvFBbphM6DUxrpy5Eqm8QunHfXSomMF83evbr25Wg3JJx",
+        "production": "PUB_K1_5J6oBjicuqRTzqGiYNB8BM8bkP9QB4bUogc1Cj8DMGscg1CxZo",
+        "peer": "PUB_K1_5AS9wZFvN4rsQirdUrvDhsfFNtzaK6zzcrbszdCV3jZ6wUva5p",
+        "bls": "PUB_BLS_gJ2l0fIi-ATUFlkP7Im_31VT3NnjoEwEG2ViwxNk0JYTAsp_awkmFsAiI3RflI8X1sUrTUjsw1ZKvoqdXWTKC1HHjGqbHg5DPd_XGiSvY7VXgyobTU6GsEDMolJZ7AYF8R4u6g"
+      }
+    }
+  },
+  "units_to_stop": {
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-bp-demo-sydneyunswai-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "failed",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-bp-extra-bostonmitlab-20261106.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-bp-replacement-berlintucomp-20261110.service": {
+      "MainPID": "4009042",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-berlintucomp-20261110.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled",
+      "paths": {}
+    },
+    "pureeos-bp-replacement-bostonmiteng-20261110.service": {
+      "MainPID": "4011245",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-bostonmiteng-20261110.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled",
+      "paths": {}
+    },
+    "pureeos-bp-replacement-zurichethnet-20261110.service": {
+      "MainPID": "4010914",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-bp-replacement-zurichethnet-20261110.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-alibabacloud-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/data"
+      }
+    },
+    "pureeos-devnet-bp-berlintulabs-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/data"
+      }
+    },
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-deepseekcore-20261105.service": {
+      "MainPID": "4012260",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-deepseekcore-20261105.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": {
+      "MainPID": "4011822",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-minimaxcloud-20261105.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": {
+      "MainPID": "4010331",
+      "ControlGroup": "/pureeos.slice/pureeos-consensus.slice/pureeos-devnet-bp-moonshotlabs-20261105.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/data"
+      }
+    },
+    "pureeos-devnet-bp-openaiclouds-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {}
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data"
+      }
+    },
+    "pureeos-devnet-bp-tencentcloud-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/data"
+      }
+    },
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data"
+      }
+    },
+    "pureeos-devnet-bp-zurichethlab-20261105.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/config",
+        "data-dir": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/data"
+      }
+    },
+    "pureeos-keynet-bp-deepseekcore-20261103.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-keynet-20261103-r1/bps/deepseekcore/config",
+        "data-dir": "/opt/pureeos-keynet-20261103-r1/bps/deepseekcore/data"
+      }
+    },
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/config",
+        "data-dir": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/data"
+      }
+    },
+    "pureeos-test45-bp-deepseekcore-20261102.service": {
+      "MainPID": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled",
+      "paths": {
+        "config-dir": "/opt/pureeos-test45-20261102-r1/bps/deepseekcore/config",
+        "data-dir": "/opt/pureeos-test45-20261102-r1/bps/deepseekcore/data"
+      }
+    }
+  },
+  "exact_config_roots": [
+    {
+      "name": "baiduaiworks",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/data",
+      "config_sha256": "80cf8927becad6c932a59f536aca7a45a96e1011f5b7526af34f734f927b4916",
+      "data_exists": true
+    },
+    {
+      "name": "singaporentu",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data",
+      "config_sha256": "9ad16bef31857f408eeeacc6695d7552ac4d438bfa1d101655ac4b8341fb3513",
+      "data_exists": true
+    },
+    {
+      "name": "openaiclouds",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data",
+      "config_sha256": "47d63fcce3705806c9689dccf41abb8658d88733e4f03d7f8f9f667c32d7774e",
+      "data_exists": true,
+      "unit": "pureeos-devnet-bp-openaiclouds-20261105.service"
+    },
+    {
+      "name": "alibabacloud",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data",
+      "config_sha256": "f5b4c03294771c883eb03db0b5b258003a6e539c4f573745db7741269e9d79dd",
+      "data_exists": true,
+      "unit": "pureeos-devnet-bp-alibabacloud-20261105.service"
+    },
+    {
+      "name": "deepseekcore",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data",
+      "config_sha256": "dd6b5b81860dc54fcedbc6524a3631d21018d9bc90749ee8c35c8843653327c3",
+      "data_exists": true,
+      "unit": "pureeos-devnet-bp-deepseekcore-20261105.service"
+    },
+    {
+      "name": "deepmindlabs",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data",
+      "config_sha256": "73b5ad7393b0d37d2df483991352cbaa980ce61dc0b7fa6b06343f6cc94e85be",
+      "data_exists": true,
+      "unit": "pureeos-devnet-bp-deepmindlabs-20261105.service"
+    },
+    {
+      "name": "nvidiaclouds",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/data",
+      "config_sha256": "71f0f43827a85c1f28763296df89f6cedb95aa221fed7d137bc923a585e272e3",
+      "data_exists": true
+    },
+    {
+      "name": "moonshotlabs",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data",
+      "config_sha256": "25fd489c774c4bff7e5ca832ef7085d13083aaa19cd1bc2bc5df185f53127875",
+      "data_exists": true,
+      "unit": "pureeos-devnet-bp-moonshotlabs-20261105.service"
+    },
+    {
+      "name": "minimaxcloud",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data",
+      "config_sha256": "f3ee03e80ef8fa6638affae52c9cd0a08cdfb09e27e73e72a3db4f28bc99f0c9",
+      "data_exists": true,
+      "unit": "pureeos-devnet-bp-minimaxcloud-20261105.service"
+    },
+    {
+      "name": "berlintulabs",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/data",
+      "config_sha256": "98f6546f20408e0588073075a5be913d16fd06d825b8e27c1ad9a6ffb19573ed",
+      "data_exists": true
+    },
+    {
+      "name": "zurichethlab",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/data",
+      "config_sha256": "41c291d8b36e017d7617dfe63bad3d1e44cb7527a87fe30c0b100d91848664c4",
+      "data_exists": true
+    },
+    {
+      "name": "tokyorikenai",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data",
+      "config_sha256": "bc731b2ea401d8770f67606eded1b27b1209d55379a5566e0a6ca4d34bc680bd",
+      "data_exists": true
+    },
+    {
+      "name": "tencentcloud",
+      "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/config",
+      "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/data",
+      "config_sha256": "1ffbbbae8f57fa00739afb29a572b52186a105f4ddd9208206cc7be7ccfc4f18",
+      "data_exists": true
+    },
+    {
+      "name": "openaiclouds",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/openaiclouds",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/data",
+      "config_sha256": "cbf2d0aed54416d61f9327157e13408394367d2ce1b9a820c95cc57ab9f7bc80",
+      "data_exists": false
+    },
+    {
+      "name": "alibabacloud",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/alibabacloud",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/data",
+      "config_sha256": "36515be8869f6ae184bf3b0b75ccabd9f65bfde12b6114f9589c61803f4b61ab",
+      "data_exists": false
+    },
+    {
+      "name": "deepseekcore",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepseekcore",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/data",
+      "config_sha256": "22ae4a054cbffc36db7407ce9ee7a4ef2037160fbf6439d6a539883c5da28b61",
+      "data_exists": false
+    },
+    {
+      "name": "deepmindlabs",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepmindlabs",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/data",
+      "config_sha256": "36a0f5214e52b414189808a0578383e623a5a979ca720d06e64fa6d40c4621db",
+      "data_exists": false
+    },
+    {
+      "name": "moonshotlabs",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/moonshotlabs",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/data",
+      "config_sha256": "2751f5097feb4c48b63e6f4ca5cd095748ac471ae84806dbbc93abd3380e39c1",
+      "data_exists": false
+    },
+    {
+      "name": "minimaxcloud",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/minimaxcloud",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/data",
+      "config_sha256": "6dd58c4c08f76e87897dc5d4c9ffcfd2ddf4a0d744607f96d5f4fa28721add2c",
+      "data_exists": false
+    },
+    {
+      "name": "bostonmiteng",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/config",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/data",
+      "config_sha256": "8562b8f17b9b74c6a87324632a6b87fd2286b2b91b43eb417f977c6deecbafc2",
+      "data_exists": true,
+      "unit": "pureeos-bp-replacement-bostonmiteng-20261110.service"
+    },
+    {
+      "name": "berlintucomp",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/config",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/data",
+      "config_sha256": "40b95ff4598d647a07a5c6e37bb9359e5821e7b147392ba2c6979c95ab59990d",
+      "data_exists": true,
+      "unit": "pureeos-bp-replacement-berlintucomp-20261110.service"
+    },
+    {
+      "name": "zurichethnet",
+      "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/config",
+      "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/data",
+      "config_sha256": "0cbfaf2c5ce935f4610e9c5156eab7005b6de734e927f64f2202b2362d7a9f6a",
+      "data_exists": true,
+      "unit": "pureeos-bp-replacement-zurichethnet-20261110.service"
+    },
+    {
+      "name": "bostonmiteng",
+      "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/bostonmiteng",
+      "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/data",
+      "config_sha256": "36eec74113f6617c84b8d0224aff60ea5a536bf0bf4d2076175c28ff687e09fd",
+      "data_exists": false
+    },
+    {
+      "name": "deepseekcore",
+      "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/deepseekcore",
+      "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/data",
+      "config_sha256": "4fd03516fea59d7ca112abf828f2a4a676145d8755a63f2e86c80ee5d0f23a5e",
+      "data_exists": false
+    },
+    {
+      "name": "berlintucomp",
+      "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/berlintucomp",
+      "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/data",
+      "config_sha256": "547bec4dd6cedd94ef34eef5b2c21d02915acd12c8e12b5fddf0b03ae5cacdbb",
+      "data_exists": false
+    },
+    {
+      "name": "moonshotlabs",
+      "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/moonshotlabs",
+      "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/data",
+      "config_sha256": "b9afb7ca7230f47b5e0591f5860a54819383e329331babd19a977dbc25e8ee34",
+      "data_exists": false
+    },
+    {
+      "name": "minimaxcloud",
+      "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/minimaxcloud",
+      "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/data",
+      "config_sha256": "a367063a9d503dd66dbeb5c98a685008ebb4aede5626e76a4910d4f7846f932b",
+      "data_exists": false
+    },
+    {
+      "name": "zurichethnet",
+      "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/zurichethnet",
+      "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/data",
+      "config_sha256": "81617e9f3d5212362c0414bbb443788fc78b76a7de45464e573d21e5a668c229",
+      "data_exists": false
+    }
+  ],
+  "scope": "STOP/DISABLEonly bannedidentity nativeunits; delete planlater afterprivatekey/safety preservation. No chainwrite/ordinaryfinancialcontroller."
+}

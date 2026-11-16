@@ -1,0 +1,28 @@
+{
+  "utc": "2026-11-16T12:30:18.148596+00:00",
+  "before": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1291745,
+    "last_irreversible_block_num": 1291734,
+    "last_irreversible_block_id": "0013b5d6b08c28cf67288586de679f337b6c5f1c4b64d1d1b6cb2e5d7433753a",
+    "head_block_id": "0013b5e189b3599671ba71444d8962fcc7164ae7742658469b8a10e4a2cff2aa",
+    "head_block_time": "2026-11-14T15:13:12.000",
+    "head_block_producer": "sydneyunswcs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1291745,
+    "fork_db_head_block_id": "0013b5e189b3599671ba71444d8962fcc7164ae7742658469b8a10e4a2cff2aa",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-14T14:51:13.000"
+  },
+  "all19_head_and_LIB_identical": true,
+  "paused_before": true,
+  "scope": "One normal producer/resume call on alreadyrunning founder. No restart/config/timeout/consensus/DB/safety changes."
+}

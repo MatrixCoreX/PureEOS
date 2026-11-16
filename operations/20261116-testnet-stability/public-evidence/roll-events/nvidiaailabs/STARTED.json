@@ -1,0 +1,30 @@
+{
+  "name": "nvidiaailabs",
+  "utc": "2026-11-16T12:35:56.269783+00:00",
+  "oldPID": "4010560",
+  "before_bytes": 3702226944,
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1292242,
+    "last_irreversible_block_num": 1292240,
+    "last_irreversible_block_id": "0013b7d0978d0c1cbc01da290076f63f18226b5cda8f6375d5dd1da8e076ae61",
+    "head_block_id": "0013b7d2661c9685a54763e92c609196acdcdb25c19707599b20af4fb8fff61c",
+    "head_block_time": "2026-11-16T12:35:56.000",
+    "head_block_producer": "openaimodels",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1292242,
+    "fork_db_head_block_id": "0013b7d2661c9685a54763e92c609196acdcdb25c19707599b20af4fb8fff61c",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-16T12:35:55.000"
+  },
+  "next_duty_seconds": 106.0,
+  "recent_other_strong": 18
+}

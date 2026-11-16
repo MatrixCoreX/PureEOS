@@ -1,0 +1,13 @@
+{
+  "utc": "2026-11-16T12:50:43.757911+00:00",
+  "mapping": {
+    "berlintucomp": "berlintulab2",
+    "bostonmiteng": "bostonmitcs1",
+    "deepseekcore": "deepseeklabs",
+    "minimaxcloud": "minimaxaihub",
+    "moonshotlabs": "moonshottech",
+    "zurichethnet": "zurichethcs1"
+  },
+  "accounts_absent": true,
+  "no_chain_submissions_yet": true
+}

@@ -1,0 +1,467 @@
+{
+  "status": "PASS",
+  "accounts": [
+    {
+      "account": "astralstream",
+      "public_key_sha256": "a7e822880ed27234d9b0800b0c421dfeb1881ed5393e09ca2df93078c7225d13",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "astralstream"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "astralvalley",
+      "public_key_sha256": "33e5ee316aaede655870999fcdb37402209c2ef1ea776c0cc18850317a79b485",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "astralvalley"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "autumnflower",
+      "public_key_sha256": "c386955129fccd03311ae699ec886626d7883f2e02efe249fa4c4298d0e87a48",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "autumnflower"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "birchmeadows",
+      "public_key_sha256": "90c4e3149e386e07fce461fc7b11ca8301225e5e08e2b2fd2fdb8ab7edeee816",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-bp-demo-six-20261105-r1/private/keys.json",
+        "json_path": [
+          "londonturing",
+          "voter"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "brightgarden",
+      "public_key_sha256": "a034a2ce84c3258c090e9f99615c80094008ce68484d2b655747ae1fac6f2924",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "brightgarden"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "cambridgeoak",
+      "public_key_sha256": "c6650028daf7dbba79a0424dde8d4ddc20fe8c9a8c4f794b8d3e3a2a3623956f",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/private/keys.json",
+        "json_path": [
+          "bostonmitlab",
+          "voter"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "cedarharbors",
+      "public_key_sha256": "aa8ad024ff51a70594443e030d50d76908f1d122cfdeac3a32acdedc0d23cf85",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-bp-demo-six-20261105-r1/private/keys.json",
+        "json_path": [
+          "tokyoaistlab",
+          "voter"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "civicuserone",
+      "public_key_sha256": "20e26dc4be456e0ff11ecdedc0c6665702d66d671f63185f7f93b52bdc4b2db9",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "civicuserone"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "civicusertwo",
+      "public_key_sha256": "95659d01ebf608c31a3366379c948769e9d5422a1daaebb7e2857a69cdbaac52",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "civicusertwo"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "cobaltcanyon",
+      "public_key_sha256": "40b281d2f176e9c1b9a2f422a84522aef9b722b68eb2c0e390cd7b3a5ea19352",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "cobaltcanyon"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "cobaltflower",
+      "public_key_sha256": "75e1842b3cc7ff3bf369aac450982b32b376e4bec413b7d991187f93b81bd22c",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "cobaltflower"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "cosmicmeadow",
+      "public_key_sha256": "ee9e2ca5912dba3e9dbeb6759cfc25730860c71b77822c232047eed5051cc4ee",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "cosmicmeadow"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "frozenbreeze",
+      "public_key_sha256": "8fc5136b0b4c29753b0e1f8be6683979ed71fcbe24de7a5d0f691ffd6098c521",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "frozenbreeze"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "gentleaurora",
+      "public_key_sha256": "b314b4aa35208ce94a03689d53d9f9fefbe3fc771d8f5edb9a117e618f41537e",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "gentleaurora"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "gentlevalley",
+      "public_key_sha256": "e6390c870b0042d895f243e3ac2bbc3a6fcbdc8e07ce3a3dc25e5145b01e7605",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "gentlevalley"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "mapleharbors",
+      "public_key_sha256": "09703469fa560d2c4f5f57aee1318a291fa2c89d72d4348fdd426debc12754f8",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-bp-demo-six-20261105-r1/private/keys.json",
+        "json_path": [
+          "pariscnrslab",
+          "voter"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "mellowflower",
+      "public_key_sha256": "c94702c73ecabbfca1c252361cef8bc020de554a1d5a407ed05077aa134985ff",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "mellowflower"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "purpleaurora",
+      "public_key_sha256": "a83221662b60b784bd560f0261fda6cf8c6c7e81038b852710374af6c6f87b75",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "purpleaurora"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "rexliquidaab",
+      "public_key_sha256": "513fcbce916e2ab4fc71673c7bbf0456593e9e645019f0f1a5bbb1acfd9fffc4",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-rex-liquidity-batch-20261106-r1/private/keys.json",
+        "json_path": [
+          "rexliquidaab",
+          "active"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "rexliquidaaf",
+      "public_key_sha256": "2fec0e53101bec7b045efba6da960edfd72878b29c84805f31c5210f7fa5b136",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-rex-liquidity-batch-20261106-r1/private/keys.json",
+        "json_path": [
+          "rexliquidaaf",
+          "active"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "serenecanyon",
+      "public_key_sha256": "9c04f2cb01a35bd0b3c994afae3b3ac07a132b2fc4eb298c1bdbd300d283caf7",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "serenecanyon"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "sereneflower",
+      "public_key_sha256": "3987ba3029a0cb453fe09e9b7e8c9043a011649f312c530d19afa6fc276ceac4",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "sereneflower"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "serenewillow",
+      "public_key_sha256": "a2f9d434d3859d166d188d15a42ace5c79c3f2e7fd0d5abd30335ea510b02f60",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "serenewillow"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "silentcanyon",
+      "public_key_sha256": "0e5e96356b8a491cc36ece8341190145572375f432f6578b7ba51e4f81ef37a2",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "silentcanyon"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "silentcomets",
+      "public_key_sha256": "e0cc0017f6f3b5d34301f5de3c75e39d21ce4d0ba1c99955d6047903d6bde1d9",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "silentcomets"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "silentharbor",
+      "public_key_sha256": "cd4f99761992c1870eca0e39859e2678d7987a9aa5f72f4cdf750317a8053541",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "silentharbor"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "silentvalley",
+      "public_key_sha256": "560cac4f862e1b23d1418c0ba6cd9d55cbed3422be50a69d3bdc3c52c34a1476",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "silentvalley"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "silveraurora",
+      "public_key_sha256": "d2ea517e93e0fced68e3c6de8da29d70acc3e997ce9c4d24ed160536395a12b2",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "silveraurora"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "silverfalcon",
+      "public_key_sha256": "fa942b0aab4b549940425ba1d885a78a7bf2670a88352b604a8ce4702c9bd676",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "silverfalcon"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "springbreeze",
+      "public_key_sha256": "e1e59b18a3a1d1f8be1d3ac0ddbf04f4e31b47918dbe15dcfffc08beb64280ed",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "springbreeze"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "summergarden",
+      "public_key_sha256": "ac1bc7a74d4aa3fdb44137fb17dc714d4f8507c0900501265c69866ded3e41f2",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "summergarden"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "sunlitgarden",
+      "public_key_sha256": "162d40fae2635c701dbebae17da6925012a8ff86a459705a5241a75d6c40adcb",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "sunlitgarden"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "velvetwillow",
+      "public_key_sha256": "0e15def767a99b1634ce844a6dadb5ff9e88e726de380a6c2a6318b56125d8e3",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "velvetwillow"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "winterflower",
+      "public_key_sha256": "4d24ffde61e3f25094abdb33adec93e252cd9c7425c0b1bfcbcf4e6785ff804e",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "winterflower"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    },
+    {
+      "account": "winterharbor",
+      "public_key_sha256": "542d8aab9c45c26bf743ff88e816f1a52ec6b934f8ea5d294624b1cf05f7c57d",
+      "owned_test_signer_found": true,
+      "key_source": {
+        "source": "/opt/pureeos-devnet-20261105-r1/private/ordinary-keys.json",
+        "json_path": [
+          "winterharbor"
+        ],
+        "public_field": "Public key",
+        "private_field": "Private key"
+      }
+    }
+  ],
+  "unowned_unchanged": []
+}

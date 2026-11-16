@@ -1,0 +1,30 @@
+{
+  "name": "stabilityhub",
+  "utc": "2026-11-16T12:36:32.893328+00:00",
+  "oldPID": "4010695",
+  "before_bytes": 2519351296,
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1292315,
+    "last_irreversible_block_num": 1292313,
+    "last_irreversible_block_id": "0013b81906857ade3ad66ee522f7856fd3151f2b19e737b24e40d02941788597",
+    "head_block_id": "0013b81b78df10369360f7863c5c75e7dcae71240b0795cc8b406ad4e04cbd17",
+    "head_block_time": "2026-11-16T12:36:32.500",
+    "head_block_producer": "tencentailab",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1292315,
+    "fork_db_head_block_id": "0013b81b78df10369360f7863c5c75e7dcae71240b0795cc8b406ad4e04cbd17",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-16T12:36:31.500"
+  },
+  "next_duty_seconds": 99.5,
+  "recent_other_strong": 18
+}

@@ -1,0 +1,26 @@
+{
+  "status": "PASS_BOUNDED_LOG_CLEANUP",
+  "utc": "2026-11-16T13:07:32.715881+00:00",
+  "results": [
+    {
+      "program": "/usr/sbin/logrotate",
+      "rc": 0,
+      "out": "",
+      "err": ""
+    },
+    {
+      "program": "/usr/bin/journalctl",
+      "rc": 0,
+      "out": "",
+      "err": "Vacuuming done, freed 0B of archived journals from /run/log/journal.\nVacuuming done, freed 0B of archived journals from /var/log/journal.\nDeleted archived journal /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a/system@8f961eba1b0c4d97856254ee37764c41-0000000001d5097f-0006606093871504.journal (47.0M).\nDeleted archived journal /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a/system@8f961eba1b0c4d97856254ee37764c41-0000000001d65be4-00066060e9eda44c.journal (47.0M).\nDeleted archived journal /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a/system@8f961eba1b0c4d97856254ee37764c41-0000000001d7ae2d-00066061406360ee.journal (47.0M).\nDeleted archived journal /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a/system@8f961eba1b0c4d97856254ee37764c41-0000000001d90067-0006606196d2a0e5.journal (47.0M).\nDeleted archived journal /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a/system@8f961eba1b0c4d97856254ee37764c41-0000000001da526c-00066061ed530a06.journal (47.0M).\nDeleted archived journal /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a/system@8f961eba1b0c4d97856254ee37764c41-0000000001dba491-00066062442b1832.journal (47.0M).\nVacuuming done, freed 282.5M of archived journals from /var/log/journal/4cca4de7a3bd4d4db6c436a841f5b49a.\n"
+    }
+  ],
+  "syslog_maxsize_MiB": 64,
+  "syslog_compressed_rotations": 5,
+  "max_age_days": 3,
+  "checks_minutes": 15,
+  "journal_archived_budget_MiB": 256,
+  "existing_journald_512MiB_global_cap_unchanged": true,
+  "filesystem_available_delta_bytes": 295989248,
+  "scope": "Only syslog rotation and archived journal vacuum. Currentnodeblocks/keys/configs/history/uniqueevidence untouched."
+}

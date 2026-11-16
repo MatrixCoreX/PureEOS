@@ -1,0 +1,28 @@
+{
+  "initial_banned": [
+    "alibabacloud",
+    "baiduaiworks",
+    "berlintucomp",
+    "berlintulabs",
+    "bostonmiteng",
+    "bostonmitlab",
+    "deepmindlabs",
+    "deepseekcore",
+    "londonturing",
+    "minimaxcloud",
+    "moonshotlabs",
+    "nvidiaclouds",
+    "openaiclouds",
+    "pariscnrslab",
+    "singaporentu",
+    "sydneyunswai",
+    "tencentcloud",
+    "tokyoaistlab",
+    "tokyorikenai",
+    "zurichethlab",
+    "zurichethnet"
+  ],
+  "policy_tests": 30,
+  "native_chain_rules_unchanged": true,
+  "scope": "25whitelisted BP identities; no financial or native source actions."
+}

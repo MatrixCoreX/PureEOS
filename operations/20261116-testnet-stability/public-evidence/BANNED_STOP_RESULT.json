@@ -1,0 +1,295 @@
+{
+  "status": "PASS_ALL21_IDENTITIES_STOPPED_DISABLED",
+  "utc": "2026-11-16T12:29:00.558355+00:00",
+  "units": {
+    "pureeos-bp-demo-londonturing-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-demo-pariscnrslab-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-demo-sydneyunswai-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "failed",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "failed",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-demo-tokyoaistlab-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-extra-bostonmitlab-20261106.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-replacement-berlintucomp-20261110.service": {
+      "before": {
+        "MainPID": "4009042",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-replacement-bostonmiteng-20261110.service": {
+      "before": {
+        "MainPID": "4011245",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-bp-replacement-zurichethnet-20261110.service": {
+      "before": {
+        "MainPID": "4010914",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-alibabacloud-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-baiduaiworks-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-berlintulabs-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-deepmindlabs-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-deepseekcore-20261105.service": {
+      "before": {
+        "MainPID": "4012260",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-minimaxcloud-20261105.service": {
+      "before": {
+        "MainPID": "4011822",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-moonshotlabs-20261105.service": {
+      "before": {
+        "MainPID": "4010331",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-nvidiaclouds-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-openaiclouds-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-singaporentu-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-tencentcloud-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-tokyorikenai-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-devnet-bp-zurichethlab-20261105.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-keynet-bp-deepseekcore-20261103.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-keynet2-bp-deepseekcore-20261103.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    },
+    "pureeos-test45-bp-deepseekcore-20261102.service": {
+      "before": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      },
+      "after": {
+        "MainPID": "0",
+        "ActiveState": "inactive",
+        "UnitFileState": "disabled"
+      }
+    }
+  },
+  "protected_PIDs_unchanged": true
+}

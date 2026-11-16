@@ -1,0 +1,485 @@
+{
+  "anthropiclab": {
+    "name": "anthropiclab",
+    "unit": "pureeos-devnet-bp-anthropiclab-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/anthropiclab/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/anthropiclab/data",
+    "rpc_port": 8902,
+    "p2p": "127.0.0.1:9902",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4011126",
+    "config_sha256": "5af99865e690d6a42abcc02cb25c3b289d719af5ceb77f38f4115df1f5a99a3d",
+    "safety_present_at_install": true
+  },
+  "bytedancelab": {
+    "name": "bytedancelab",
+    "unit": "pureeos-devnet-bp-bytedancelab-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/bytedancelab/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/bytedancelab/data",
+    "rpc_port": 8913,
+    "p2p": "127.0.0.1:9913",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "122003",
+    "config_sha256": "805c71b996eab334ec53cca9cbac50909a04c8ddde8a71681e2af440d37901c5",
+    "safety_present_at_install": true
+  },
+  "canadamilaai": {
+    "name": "canadamilaai",
+    "unit": "pureeos-devnet-bp-canadamilaai-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/canadamilaai/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/canadamilaai/data",
+    "rpc_port": 8923,
+    "p2p": "127.0.0.1:9923",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4011355",
+    "config_sha256": "883cc6700e98ee4ea9c866c94115d38a18c2736e98ec11f821df0d24be62ff68",
+    "safety_present_at_install": true
+  },
+  "cohereclouds": {
+    "name": "cohereclouds",
+    "unit": "pureeos-devnet-bp-cohereclouds-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/cohereclouds/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/cohereclouds/data",
+    "rpc_port": 8906,
+    "p2p": "127.0.0.1:9906",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4011467",
+    "config_sha256": "32334b2513671fbadc9d7d574cbec3987eee813d08ec9ff9fe4ff71d1e5b812d",
+    "safety_present_at_install": true
+  },
+  "genevacernai": {
+    "name": "genevacernai",
+    "unit": "pureeos-bp-demo-genevacernai-20261105.service",
+    "config_dir": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/genevacernai/config",
+    "data_dir": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/genevacernai/data-checkpoint",
+    "rpc_port": 8934,
+    "p2p": "127.0.0.1:9934",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4011601",
+    "config_sha256": "e30692d4a91b45b024038abec3a8d67de3d800924a2a0139a13715caf7a2c423",
+    "safety_present_at_install": true
+  },
+  "gptgenesisbp": {
+    "name": "gptgenesisbp",
+    "unit": "pureeos-devnet-founder-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/founder/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/founder/data",
+    "rpc_port": 8888,
+    "p2p": "127.0.0.1:9876",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4011712",
+    "config_sha256": "ad119bac5ecbafb7838ea7dc4cc0b6531c27e9f6afec239aaecee504fc2c46c8",
+    "safety_present_at_install": true
+  },
+  "londonucllab": {
+    "name": "londonucllab",
+    "unit": "pureeos-devnet-bp-londonucllab-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/londonucllab/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/londonucllab/data",
+    "rpc_port": 8918,
+    "p2p": "127.0.0.1:9918",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "155047",
+    "config_sha256": "040ae106db5606df4db015defec7b5ff15ba05dd6300c629e0add3ebe2c53c2c",
+    "safety_present_at_install": true
+  },
+  "mistralcloud": {
+    "name": "mistralcloud",
+    "unit": "pureeos-devnet-bp-mistralcloud-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/mistralcloud/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/mistralcloud/data",
+    "rpc_port": 8905,
+    "p2p": "127.0.0.1:9905",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4011960",
+    "config_sha256": "ac2ef1f99a971fa721a673dbebe0ef90cd94997f2d493466a7aaee44f12cf1a0",
+    "safety_present_at_install": true
+  },
+  "parisinriaai": {
+    "name": "parisinriaai",
+    "unit": "pureeos-devnet-bp-parisinriaai-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/parisinriaai/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/parisinriaai/data",
+    "rpc_port": 8921,
+    "p2p": "127.0.0.1:9921",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4010450",
+    "config_sha256": "89bef85a5d23a118e4b07adee5a63a6dd53e10a67a2bb38508ab73e78dc6a37a",
+    "safety_present_at_install": true
+  },
+  "perplexityai": {
+    "name": "perplexityai",
+    "unit": "pureeos-devnet-bp-perplexityai-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/perplexityai/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/perplexityai/data",
+    "rpc_port": 8907,
+    "p2p": "127.0.0.1:9907",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4009516",
+    "config_sha256": "101bdbc4bad5c84b26f5545f8bfd268e1ba5532c4cb2c275d9f1dc2d33ddfdb0",
+    "safety_present_at_install": true
+  },
+  "seoulkaistai": {
+    "name": "seoulkaistai",
+    "unit": "pureeos-devnet-bp-seoulkaistai-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/seoulkaistai/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/seoulkaistai/data",
+    "rpc_port": 8920,
+    "p2p": "127.0.0.1:9920",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4012397",
+    "config_sha256": "2b58941d0beeb14d4ad9e1015501b447e6625717d501274b8c32362e63ed3376",
+    "safety_present_at_install": true
+  },
+  "stabilityhub": {
+    "name": "stabilityhub",
+    "unit": "pureeos-devnet-bp-stabilityhub-20261105.service",
+    "config_dir": "/opt/pureeos-devnet-20261105-r1/bps/stabilityhub/config",
+    "data_dir": "/opt/pureeos-devnet-20261105-r1/bps/stabilityhub/data",
+    "rpc_port": 8908,
+    "p2p": "127.0.0.1:9908",
+    "before": {
+      "MainPID": "0",
+      "Result": "exit-code",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "PID": "4010695",
+    "config_sha256": "ce8329f2ddc1dd056ff83f521daebe8d486f52bc40c2a20e6ef0d73dbe57f7b3",
+    "safety_present_at_install": true
+  },
+  "torontovectr": {
+    "name": "torontovectr",
+    "unit": "pureeos-bp-extra-torontovectr-20261106.service",
+    "config_dir": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/torontovectr/config",
+    "data_dir": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/torontovectr/data-checkpoint",
+    "rpc_port": 8942,
+    "p2p": "127.0.0.1:9942",
+    "before": {
+      "MainPID": "38342",
+      "Result": "success",
+      "ActiveState": "active",
+      "SubState": "running"
+    },
+    "PID": "4010804",
+    "config_sha256": "a40b63165c1e2442710459e69c49b19ee4de47e7bd5ba9399ce7da1471b7a0ff",
+    "safety_present_at_install": true
+  },
+  "nvidiaailabs": {
+    "name": "nvidiaailabs",
+    "replaces": "nvidiaclouds",
+    "index": 53,
+    "rpc_port": 8953,
+    "p2p_port": 9953,
+    "unit": "pureeos-bp-replacement-nvidiaailabs-20261110.service",
+    "CPU_stake_AIC": "100.0053",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "16000.0000",
+    "RAM_budget_AIC": "1.0000",
+    "public_keys": {
+      "account": "PUB_K1_61Hx2F6Hv9orqRMrgRpbgfARgmRK7bzsPGMYtbKmRe1WvbNFzR",
+      "production": "PUB_K1_7szXHbFL9QCy776zGTwkJ6p2L42gBCfD4XhgYc7VoKZTwrLHxd",
+      "peer": "PUB_K1_4ztz33ocQ97HV2oBzifNat4guYEruL9sGjEvv7A2YftAWNBZSM",
+      "bls": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA"
+    },
+    "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/nvidiaailabs/data",
+    "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/nvidiaailabs/config",
+    "PID": "4010560",
+    "config_sha256": "3fcbed712a276a733d59faca1910396155f32886a99b4bc72d9d0592036ecbf7",
+    "safety_present_at_install": true
+  },
+  "tencentailab": {
+    "name": "tencentailab",
+    "replaces": "tencentcloud",
+    "index": 54,
+    "rpc_port": 8954,
+    "p2p_port": 9954,
+    "unit": "pureeos-bp-replacement-tencentailab-20261110.service",
+    "CPU_stake_AIC": "100.0054",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "16000.0000",
+    "RAM_budget_AIC": "1.0000",
+    "public_keys": {
+      "account": "PUB_K1_6fY5b4no2D3yaUH7vhqanHZ6gt9SqoG2dGtWKUYMEs8niXccQD",
+      "production": "PUB_K1_7ULjf8bu75ikXtZuF4bQij1KF14837TU7WrLafZdYp6rWybnWH",
+      "peer": "PUB_K1_6qrm6VHv4mV5fjojnsUJozbeFQJSFkbejEWMBQBk3cjDUdQ87e",
+      "bls": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA"
+    },
+    "data_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/tencentailab/data",
+    "config_dir": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/tencentailab/config",
+    "PID": "4012512",
+    "config_sha256": "0924ab3acd4b385a666e4dc16c121a6bf2de5246504632ef9839b49a02508de9",
+    "safety_present_at_install": true
+  },
+  "alibabaailab": {
+    "name": "alibabaailab",
+    "replaces": "alibabacloud",
+    "rpc_port": 8961,
+    "p2p_port": 9961,
+    "unit": "pureeos-bp-replacement-alibabaailab-20261111.service",
+    "CPU_stake_AIC": "100.0061",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "16000.0000",
+    "public_keys": {
+      "account": "PUB_K1_4uuL5SCh33ycnHGPHZstUAK9CX2pvRmVQ6JqQSksX9F11T2g6u",
+      "production": "PUB_K1_8GKTUx7TDXiPJhaWK8hTfdiKJfPv7shnGbKZjkmMhYwk6b6sov",
+      "peer": "PUB_K1_7uskAVPDHHM6hV9boUoRmWA2NzR75aFTn4xkS9gGQaG7yp3ykY",
+      "bls": "PUB_BLS_KbrdSi-T478HYTTj3wpoxlJg1deoJ3l7PgNnJcIy1U8b6GrPGsPWn1uhmFGOyeoOWBiLz9IcbdJMqjdSZdiHugCnzEiJW33nMWPblOfL33l43LIfP061bx9VhmWG10sU7auMWQ"
+    },
+    "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/alibabaailab/data",
+    "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/alibabaailab/config",
+    "PID": "4014406",
+    "config_sha256": "a9091709989fe53c96a067bbbe8517a3d6feb0f0e1d3af2d12877c62f650b99b",
+    "safety_present_at_install": true
+  },
+  "deepmindtech": {
+    "name": "deepmindtech",
+    "replaces": "deepmindlabs",
+    "rpc_port": 8962,
+    "p2p_port": 9962,
+    "unit": "pureeos-bp-replacement-deepmindtech-20261111.service",
+    "CPU_stake_AIC": "100.0062",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "16000.0000",
+    "public_keys": {
+      "account": "PUB_K1_8LWN6AYLxjur2j2oHkQNWEU3hSvU1zLNhtAG6QFLWPiChMqHHg",
+      "production": "PUB_K1_5oBfM6FE3K3wHLGTXgCkKCn7KP3KtV5v1pSGHLT4taLmFp4r8F",
+      "peer": "PUB_K1_7tZXma963VMB5wgLQwXHi1HkebjjaMSEro6KFnquk4eXjct4kB",
+      "bls": "PUB_BLS_3R0tYCs6Lho0QksSL-F-AapOdza_yaQJi2_30Dzy3aKBec8kYR9RqUYeLCEVYPUZrIMKnnIpD2saa0aI3un4WPg-gNVq0NwZKU6apynYRvu7skpAJgKmDGtlpBcbWaoOayP9vw"
+    },
+    "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/deepmindtech/data",
+    "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/deepmindtech/config",
+    "PID": "4014915",
+    "config_sha256": "05124a5173c6dfa032d4af47a4788a884a4e451a7c0e88c4a79b0f003be69618",
+    "safety_present_at_install": true
+  },
+  "openaimodels": {
+    "name": "openaimodels",
+    "replaces": "openaiclouds",
+    "rpc_port": 8963,
+    "p2p_port": 9963,
+    "unit": "pureeos-bp-replacement-openaimodels-20261111.service",
+    "CPU_stake_AIC": "100.0063",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "16000.0000",
+    "public_keys": {
+      "account": "PUB_K1_6TpJcSX7LNiWDyaV9tmjUnzQePmCCPYMQcuDPwWj5vdkhYZt7k",
+      "production": "PUB_K1_5VUKJUABs2pQzvhHGg16u7uU8eQKzWRCCg5TYXV4yTeSLdB9jB",
+      "peer": "PUB_K1_8mVuwyWtqPEo3TBFE9q2auaGHaRiJwpfDDJEncr85uqqCpGnQJ",
+      "bls": "PUB_BLS_7V46WczqqSiv8n3u8DUqrwBGKjwz54pwJzNlUA9_GblvORjOcPMbH8kJoLsp9eIWQbmrPSkNZZs2_fat7mZ8zui7uhxPfiG3AE5Nj2W4ReAuDZTCm_LdT6z_Z-JsZQUDGn9XwA"
+    },
+    "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/openaimodels/data",
+    "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/openaimodels/config",
+    "PID": "4015379",
+    "config_sha256": "df3dea810531982b684431bed797f984af96e07b3f731602a481bfd9478f3ddd",
+    "safety_present_at_install": true
+  },
+  "sydneyunswcs": {
+    "name": "sydneyunswcs",
+    "replaces": "sydneyunswai",
+    "rpc_port": 8964,
+    "p2p_port": 9964,
+    "unit": "pureeos-bp-replacement-sydneyunswcs-20261111.service",
+    "CPU_stake_AIC": "100.0064",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "16000.0000",
+    "public_keys": {
+      "account": "PUB_K1_7T95MbvFBbphM6DUxrpy5Eqm8QunHfXSomMF83evbr25Wg3JJx",
+      "production": "PUB_K1_5J6oBjicuqRTzqGiYNB8BM8bkP9QB4bUogc1Cj8DMGscg1CxZo",
+      "peer": "PUB_K1_5AS9wZFvN4rsQirdUrvDhsfFNtzaK6zzcrbszdCV3jZ6wUva5p",
+      "bls": "PUB_BLS_gJ2l0fIi-ATUFlkP7Im_31VT3NnjoEwEG2ViwxNk0JYTAsp_awkmFsAiI3RflI8X1sUrTUjsw1ZKvoqdXWTKC1HHjGqbHg5DPd_XGiSvY7VXgyobTU6GsEDMolJZ7AYF8R4u6g"
+    },
+    "data_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/sydneyunswcs/data",
+    "config_dir": "/opt/pureeos-testnet-new-ban-20261111-r1/nodes/sydneyunswcs/config",
+    "PID": "4015905",
+    "config_sha256": "77c78ccd1da2e9b53bb0f203ac854fad2cde686fe71cceebfc4b687991ddfc9d",
+    "safety_present_at_install": true
+  },
+  "berlintulab2": {
+    "name": "berlintulab2",
+    "replaces": "berlintucomp",
+    "rpc_port": 8971,
+    "p2p_port": 9971,
+    "unit": "pureeos-bp-replacement-berlintulab2-20261116.service",
+    "CPU_stake_AIC": "100.0071",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "14000.0000",
+    "public_keys": {
+      "account": "PUB_K1_6FWFVvMGXiG8PnEyfuMGVVnH1fTLnd7oh2PoLRowpCgwS11B8s",
+      "production": "PUB_K1_8JTLAy4ewXjohHB62PRjNFi6AJfxVBYWL5JUdo3uqFafkzDU5R",
+      "peer": "PUB_K1_7UND4JGhXBku4bmpHA4zMJCuXKMSif3oyxvtYSB427oiUmkpCZ",
+      "bls": "PUB_BLS_8W5E0Sv7rXShjoFVTbaworrsTj3k7RndJEwUc_3p_rAsQlVE3ftKyimze04X2scKhVxgFWUPmEQ_AWlCvly-nm8P0hUvZlOF9-x1QNykMEw-bR1GMdOYIqHx0Jiu4McY1k5rCg"
+    },
+    "config_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/berlintulab2/config",
+    "data_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/berlintulab2/data",
+    "config_sha256": "fd15eb5a49f9b573909140eea693c2e55f09676b4785ad6978eb777e1bd363f1",
+    "safety_present_at_install": true
+  },
+  "bostonmitcs1": {
+    "name": "bostonmitcs1",
+    "replaces": "bostonmiteng",
+    "rpc_port": 8972,
+    "p2p_port": 9972,
+    "unit": "pureeos-bp-replacement-bostonmitcs1-20261116.service",
+    "CPU_stake_AIC": "100.0072",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "14000.0000",
+    "public_keys": {
+      "account": "PUB_K1_5yK6e7EBQH1ckiEixVcETRKUnPZEjShLLU8MEv4bNrsVquH6UP",
+      "production": "PUB_K1_8hqgN49zxGXxUTw2AeXU4H68EKahbxrXpinhLz5uT3jqSmvhuN",
+      "peer": "PUB_K1_8EGV4eAbpJwGqJ44wUgonAYkq8HHoQEsmoWHiQySZh1soXFZVy",
+      "bls": "PUB_BLS_NXZhDI0o5R4NXYfNg-3EHSWC0Fv1JXCktYSJtCYi8ItJhgKutOB3cTDSVfBJxpMZEL_1BHa_WvYxfV-rdj8a3qpJJug8o2ysksq6h3J9UcVIVmTDj6sbwZvz0OThNBsTsgvL4g"
+    },
+    "config_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/bostonmitcs1/config",
+    "data_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/bostonmitcs1/data",
+    "config_sha256": "5fd3f86aca47e96cfb991941648bc9a5b437de45bf94e259f26120ec692734bb",
+    "safety_present_at_install": true
+  },
+  "deepseeklabs": {
+    "name": "deepseeklabs",
+    "replaces": "deepseekcore",
+    "rpc_port": 8973,
+    "p2p_port": 9973,
+    "unit": "pureeos-bp-replacement-deepseeklabs-20261116.service",
+    "CPU_stake_AIC": "100.0073",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "14000.0000",
+    "public_keys": {
+      "account": "PUB_K1_6sTGoZSsugVRsYZiD9MpJpGkzj2kcKanzkWodujPfEWQ9dgstQ",
+      "production": "PUB_K1_7pH3SrMoCfgsYxtLL8z7eRVJwgupboKMBmAcy1YJVtjaWapXnG",
+      "peer": "PUB_K1_6bSTF9By5X9rtF4yZcXLnUcb5RBoKYA6ZXdPa2dCaip5AcHVVw",
+      "bls": "PUB_BLS_y68rnOT5LbzmL6ASV8-9dXqmEF_a-ArndIvQe-i87MZoNczzb832J1HhWAzydGASQq6Neq0qvDniXME5KaDTCNx-bhdeqBjuwW8LxrLh2AVMWjPLRdV-E4uJmxFhljUKhc4tEQ"
+    },
+    "config_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/deepseeklabs/config",
+    "data_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/deepseeklabs/data",
+    "config_sha256": "2540d6a344ecf9ef3e6abd994ffe9edee0d2178e5946473b3755a619ce1de8a3",
+    "safety_present_at_install": true
+  },
+  "minimaxaihub": {
+    "name": "minimaxaihub",
+    "replaces": "minimaxcloud",
+    "rpc_port": 8974,
+    "p2p_port": 9974,
+    "unit": "pureeos-bp-replacement-minimaxaihub-20261116.service",
+    "CPU_stake_AIC": "100.0074",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "14000.0000",
+    "public_keys": {
+      "account": "PUB_K1_7c2RCGR3AqCW4Pq3Apsxoc3wTGQHTmLJVSYfJX5aabquo1NeVS",
+      "production": "PUB_K1_8jHisbJ8RN438aM4q3NgVURnLNNXFb2PW2RJ2T5iohHS7mCmAm",
+      "peer": "PUB_K1_5vnjALjHMEJ4gqAkdee6g5mc3Ao9u3AUwCs2ASvngoqLNziJi4",
+      "bls": "PUB_BLS_a4K_68mBnjvnu7y9coiOUcgJzJRd5OgdpMafVdh1MDGBduXdfvrsFxjASBzp6L8AD-XlH1IFItTpWsueoHedCNQKoTIaT6wHM9n51cNQekJXCPVm-J6SqmuPjsjSAQYKPTPldA"
+    },
+    "config_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/minimaxaihub/config",
+    "data_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/minimaxaihub/data",
+    "config_sha256": "7c5f2344700c6acc45c99e3a27ef0d8545a326d97f10af286b576f03d1b0cce2",
+    "safety_present_at_install": false
+  },
+  "moonshottech": {
+    "name": "moonshottech",
+    "replaces": "moonshotlabs",
+    "rpc_port": 8975,
+    "p2p_port": 9975,
+    "unit": "pureeos-bp-replacement-moonshottech-20261116.service",
+    "CPU_stake_AIC": "100.0075",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "14000.0000",
+    "public_keys": {
+      "account": "PUB_K1_8WxSSbk52nazbQNinaFojBiUWGtpXbmpeiPKR6E3SjJKZ3sAPz",
+      "production": "PUB_K1_733rayYxhVdRqc6datQboqAdVoywVA7NRGzkNoQMPGXx9vPiyL",
+      "peer": "PUB_K1_5ioStaCVw9t8mdeJEJxnqRCccqaiYFZXS3hHriMUbdeVg99Bwc",
+      "bls": "PUB_BLS_6rBRglRZ2oLpzxq61-_N2CXWx0uNZ5pfyrqljh8ntzcHLSMP5Qtto3sxvTMgu4kTlJ7FayyChqT02gkWn8Tx5Nzk_JtqeYk62EyGHCazpBa87EXpavoP19SXFcbwon0BpX5sFg"
+    },
+    "config_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/moonshottech/config",
+    "data_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/moonshottech/data",
+    "config_sha256": "60f6953cfee472978d62da3b6451368fd4b3fdb50c9e5fd10a2a759a7f45b9d8",
+    "safety_present_at_install": false
+  },
+  "zurichethcs1": {
+    "name": "zurichethcs1",
+    "replaces": "zurichethnet",
+    "rpc_port": 8976,
+    "p2p_port": 9976,
+    "unit": "pureeos-bp-replacement-zurichethcs1-20261116.service",
+    "CPU_stake_AIC": "100.0076",
+    "NET_stake_AIC": "10.0000",
+    "bond_AIC": "10000.0000",
+    "funding_AIC": "14000.0000",
+    "public_keys": {
+      "account": "PUB_K1_7jkzo3cdt5ckfbJRkbv6PFUrghoHZHwcqENEdDP4nnUFMDDNP8",
+      "production": "PUB_K1_58xxEbAWMTE4XUvo6tHjzdChQCzYuJzgp3NYR3B8qSB9k6Nfmd",
+      "peer": "PUB_K1_8Be7jiR3xgckEgiWKJKdqmwWUt2AgnKPLBNQBbjUJufFuo3EsV",
+      "bls": "PUB_BLS_nkICt8ng04J7tf8K92pou9IkxgfydpT-HeDfsiiO3maOWi78FuwCzj2hMB7fDrkU9TqudzgZjJOi-vVAH4zQJmX_k26ww7KcwZObevXeQfFAFu324fYkzH6PpsHehzQOfTAk1A"
+    },
+    "config_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/zurichethcs1/config",
+    "data_dir": "/opt/pureeos-testnet-stall-recovery-20261116-r1/nodes/zurichethcs1/data",
+    "config_sha256": "e494f7502521b73e1f6ba738f29e56d46723287308bf291ad25b9009c78796e9",
+    "safety_present_at_install": false
+  }
+}

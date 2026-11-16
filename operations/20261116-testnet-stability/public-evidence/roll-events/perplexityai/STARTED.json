@@ -1,0 +1,30 @@
+{
+  "name": "perplexityai",
+  "utc": "2026-11-16T12:36:18.110098+00:00",
+  "oldPID": "4009516",
+  "before_bytes": 2323759104,
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1292285,
+    "last_irreversible_block_num": 1292283,
+    "last_irreversible_block_id": "0013b7fb36928ccbfbe821c81a2dbea2480ea6a71db907f75c879e85656f91dd",
+    "head_block_id": "0013b7fd6a0999a653daf7e9355ce0682a88f82aa7682276c08d709c701ae4ed",
+    "head_block_time": "2026-11-16T12:36:17.500",
+    "head_block_producer": "seoulkaistai",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1292285,
+    "fork_db_head_block_id": "0013b7fd6a0999a653daf7e9355ce0682a88f82aa7682276c08d709c701ae4ed",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-16T12:36:16.500"
+  },
+  "next_duty_seconds": 102.5,
+  "recent_other_strong": 18
+}

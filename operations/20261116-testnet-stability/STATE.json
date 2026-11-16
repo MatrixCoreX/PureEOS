@@ -1,0 +1,80 @@
+{
+  "status": "RUNTIME_COMPLETE",
+  "utc": "2026-11-16T12:27:03.924928+00:00",
+  "server": "66.245.194.132",
+  "remote_root": "/opt/pureeos-testnet-stall-recovery-20261116-r1",
+  "authorization": [
+    "Inspect stall",
+    "Clean server and replenish banned nodes",
+    "Stop ALL banned nodes and delete ALL their blocks and configurations",
+    "Prioritize stability over speed; add automatic cleanup/resource protection"
+  ],
+  "banned_now": [
+    "alibabacloud",
+    "baiduaiworks",
+    "berlintucomp",
+    "berlintulabs",
+    "bostonmiteng",
+    "bostonmitlab",
+    "deepmindlabs",
+    "deepseekcore",
+    "londonturing",
+    "minimaxcloud",
+    "moonshotlabs",
+    "nvidiaclouds",
+    "openaiclouds",
+    "pariscnrslab",
+    "singaporentu",
+    "sydneyunswai",
+    "tencentcloud",
+    "tokyoaistlab",
+    "tokyorikenai",
+    "zurichethlab",
+    "zurichethnet"
+  ],
+  "new_bans": [
+    "berlintucomp",
+    "bostonmiteng",
+    "deepseekcore",
+    "minimaxcloud",
+    "moonshotlabs",
+    "zurichethnet"
+  ],
+  "diagnostic_evidence": "../testnet-stall-check-r1",
+  "constraints": [
+    "No native/system/token/contract/source/binary/quorum/reset/unban changes",
+    "No phone/privatefile/subagent/newserver/planupgrade actions",
+    "Preserve server-only privatekeys andfinalizer safety independentof deletedconfigs; protect allnonbanned/maintenance/history/sharedchain source",
+    "Never rerun completedhistorical controllers; one-shot currentcase markers andcanonicaltx reconciliation"
+  ],
+  "phase": "RUNTIME_COMPLETE_GIT_RECEIPT_SEPARATE",
+  "banned_current": 21,
+  "all_banned_stopped_and_data_config_deleted": true,
+  "old_surviving_19_same_data_restarted": true,
+  "new_registered_nodes": [
+    "berlintulab2",
+    "bostonmitcs1",
+    "deepseeklabs",
+    "minimaxaihub",
+    "moonshottech",
+    "zurichethcs1"
+  ],
+  "registration_transactions": 25,
+  "affected_owned_external_ballots": 35,
+  "automatic_policy_software_tests": 39,
+  "live_guard_canary": "sydneyunswcs/PASS",
+  "automatic_timers_installed": true,
+  "source_branch": "ops/testnet-stability-20261116",
+  "note": "All runtime work completed and verified; no completed stop/delete/resume/roll/keygen/fund/reg/vote/install/canary/audit/export controller may be replayed. Git publication is verified separately in FINAL_GIT_RESULT.json.",
+  "runtime_qualified_utc": "2026-11-16T13:14:47.468323+00:00",
+  "canonical_unique_transactions": 25,
+  "source_publication_receipt": "release-work-20261116/testnet-stall-recovery-r1/FINAL_GIT_RESULT.json",
+  "fresh_check_utc": "2026-11-16T13:25:32.974153+00:00",
+  "pagination_patch": {
+    "status": "PASS_PAGINATION_47_ROWS_21_BANS_39_TESTS_TIMED_GUARD_RECOVERED",
+    "utc": "2026-11-16T13:28:27.345945+00:00",
+    "latest_timer_status": "NO_SAFE_OVERSIZED_TARGET",
+    "current_source_SHA_proof": "PAGINATION_READONLY_CALL.json",
+    "original_99_file_archive_immutable": true
+  }
+}

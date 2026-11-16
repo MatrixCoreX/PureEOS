@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "utc": "2026-11-16T12:50:45.210814+00:00",
+  "snapshot": "/opt/pureeos-testnet-stall-recovery-20261116-r1/replacement-checkpoint.bin",
+  "sha256": "d7645cfae5f74af53807bd163cdd2a3c252713182833d388155774ea05e52f41",
+  "bytes": 3237782,
+  "block_num": 1294019,
+  "block_id": "0013bec322177be761029d0b82fb88fd61d560d0d36c3d487fa6ee889fe34d8d",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+}

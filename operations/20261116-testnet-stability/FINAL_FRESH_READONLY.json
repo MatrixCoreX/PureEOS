@@ -1,0 +1,156 @@
+{
+  "status": "PASS_FRESH_HEAD_LIB_25BP_BOTH_TIMERS",
+  "utc": "2026-11-16T13:25:32.974153+00:00",
+  "head": 1298188,
+  "LIB": 1298186,
+  "head_age": 0.47417,
+  "LIB_age": 1.474176,
+  "memory": {
+    "MemAvailable": 4520202240,
+    "SwapTotal": 60129521664,
+    "SwapFree": 56328519680
+  },
+  "disk_available_bytes": 40099393536,
+  "units": {
+    "anthropiclab": {
+      "MainPID": "1175783",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "bytedancelab": {
+      "MainPID": "1175846",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "canadamilaai": {
+      "MainPID": "1172976",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "cohereclouds": {
+      "MainPID": "1173117",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "genevacernai": {
+      "MainPID": "1173204",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "gptgenesisbp": {
+      "MainPID": "1176053",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "londonucllab": {
+      "MainPID": "1173516",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "mistralcloud": {
+      "MainPID": "1173279",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "parisinriaai": {
+      "MainPID": "1175316",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "perplexityai": {
+      "MainPID": "1173599",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "seoulkaistai": {
+      "MainPID": "1173687",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "stabilityhub": {
+      "MainPID": "1173769",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "torontovectr": {
+      "MainPID": "1175686",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "nvidiaailabs": {
+      "MainPID": "1173360",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "tencentailab": {
+      "MainPID": "1175466",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "alibabaailab": {
+      "MainPID": "1172888",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "deepmindtech": {
+      "MainPID": "1175964",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "openaimodels": {
+      "MainPID": "1173448",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "sydneyunswcs": {
+      "MainPID": "1184576",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "berlintulab2": {
+      "MainPID": "1178393",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "bostonmitcs1": {
+      "MainPID": "1178741",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "deepseeklabs": {
+      "MainPID": "1179111",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "minimaxaihub": {
+      "MainPID": "1179498",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "moonshottech": {
+      "MainPID": "1179888",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "zurichethcs1": {
+      "MainPID": "1180306",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "timers": {
+    "pureeos-stability-memory-20261116.timer": {
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "pureeos-stability-logs-20261116.timer": {
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "latest_guard": {
+    "status": "ALERT_READ_OR_PREFLIGHT_RETRY_NO_NEW_STOP",
+    "utc": "2026-11-16T13:25:32.964739+00:00",
+    "error": "Traceback (most recent call last):\n  File \"/opt/pureeos-testnet-stall-recovery-20261116-r1/stability_guard.py\", line 98, in <module>\n    try:main()\n        ^^^^^^\n  File \"/opt/pureeos-testnet-stall-recovery-20261116-r1/stability_guard.py\", line 87, in main\n    retired=retire_confirmed(sys.modules[__name__],nodes)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/pureeos-testnet-stall-recovery-20261116-r1/retire_banned_runtime.py\", line 6, in retire_confirmed\n    ro=g.rows();done=[]\n       ^^^^^^^^\n  File \"/opt/pureeos-testnet-stall-recovery-20261116-r1/stability_guard.py\", line 16, in rows\n    d=rpc('get_table_rows',{'code':'eosio','scope':'eosio','table':'rotcands','json':True,'limit':1000});assert not d['more'],'Incomplete native ban list';return{v['owner']:v for v in d['rows']}\n                                                                                                                ^^^^^^^^^^^^^\nAssertionError: Incomplete native ban list\n"
+  }
+}

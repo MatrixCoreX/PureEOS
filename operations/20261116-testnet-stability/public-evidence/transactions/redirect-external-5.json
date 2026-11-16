@@ -1,0 +1,17 @@
+{
+  "status": "IRREVERSIBLE",
+  "UTC": "2026-11-16T12:54:36.699150+00:00",
+  "transaction_id": "9ccee7ecf6b55fec57b59c4ed3f063dfb50006e54c104144e03ab1d83559cf71",
+  "start_LIB": 1294481,
+  "packet_SHA256": "f260c0e94396442d6e9f6d2786bd60740510f58b8300c479ed2fe456a380f92a",
+  "attempts": [],
+  "reported_block": 1294484,
+  "canonical_receipt": {
+    "transaction_id": "9ccee7ecf6b55fec57b59c4ed3f063dfb50006e54c104144e03ab1d83559cf71",
+    "block_num": 1294484,
+    "block_id": "0013c09493bb31bf2f69e98ae1ea75a697b984134c93094ff9f276fa4a841c98",
+    "observed_LIB": 1294485,
+    "CPU_us": 1442,
+    "NET_words": 55
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "status": "PASS_TEST_ONLY_PUBLICATION_VALIDATION",
+  "utc": "2026-11-16T13:28:55.059658+00:00",
+  "source_deployed_hashes_verified": 12,
+  "public_archive_files_verified": 99,
+  "isolated_software_tests": 39,
+  "production_guard_live_canary": "PASS_ONE_GUARDED_RECYCLE",
+  "bounded_readonly_soak_seconds": 150,
+  "fresh_readonly_check": "PASS_FRESH_HEAD_LIB_25BP_BOTH_TIMERS",
+  "scope": [
+    "AGENTS.md",
+    "README.md",
+    "operations/20261116-testnet-stability",
+    "tools/testing/testnet-stability-20261116"
+  ],
+  "private_key_pattern_scan": "PASS",
+  "completed_controller_replays": 0,
+  "raw_wrapper_newlines_preserved": [
+    "INSTALL_STABILITY_CALL.json",
+    "INSTALL_STABILITY_R2_CALL.json"
+  ],
+  "publication_remote": "https://github.com/MatrixCoreX/PureEOS.git",
+  "branch": "ops/testnet-stability-20261116",
+  "current_source_deployed_hashes_verified": 12,
+  "pagination_guard_timer_verified": {
+    "status": "NO_SAFE_OVERSIZED_TARGET",
+    "utc": "2026-11-16T13:28:12.923358+00:00",
+    "memory": {
+      "MemAvailable": 4501684224,
+      "SwapFree": 56330354688
+    },
+    "head": 1298507,
+    "LIB": 1298504,
+    "fresh_strong_votes": 21,
+    "target": null,
+    "over768MiB": {},
+    "policy": {
+      "limit_MiB": 768,
+      "emergency_MiB": 512,
+      "cooldown_seconds": 180,
+      "one_native_operation": true,
+      "historical_strikes_preserved": true
+    }
+  },
+  "pagination_readonly_3samples_40seconds": "PASS_PAGINATION_47_ROWS_21_BANS_39_TESTS_TIMED_GUARD_RECOVERED"
+}

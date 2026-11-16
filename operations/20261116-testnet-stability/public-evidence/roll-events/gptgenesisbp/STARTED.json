@@ -1,0 +1,30 @@
+{
+  "name": "gptgenesisbp",
+  "utc": "2026-11-16T12:43:12.220519+00:00",
+  "oldPID": "4011712",
+  "before_bytes": 983592960,
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1293113,
+    "last_irreversible_block_num": 1293111,
+    "last_irreversible_block_id": "0013bb376b01fe1c567bc49de1dc50efe81ce8606094a5a2c6d91dffa1c16f66",
+    "head_block_id": "0013bb3984c1c13d491a27d8fc3d8bc9c7c75ed33e5a8bcd9071847058ab4908",
+    "head_block_time": "2026-11-16T12:43:11.500",
+    "head_block_producer": "gptgenesisbp",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1293113,
+    "fork_db_head_block_id": "0013bb3984c1c13d491a27d8fc3d8bc9c7c75ed33e5a8bcd9071847058ab4908",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-16T12:43:10.500"
+  },
+  "next_duty_seconds": 108.0,
+  "recent_other_strong": 18
+}

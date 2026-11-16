@@ -1,0 +1,462 @@
+{
+  "intents": {
+    "astralstream": [
+      "deepseeklabs"
+    ],
+    "astralvalley": [
+      "moonshottech"
+    ],
+    "autumnflower": [
+      "bostonmitcs1"
+    ],
+    "birchmeadows": [
+      "bostonmitcs1"
+    ],
+    "brightgarden": [
+      "bostonmitcs1"
+    ],
+    "cambridgeoak": [
+      "bostonmitcs1"
+    ],
+    "cedarharbors": [
+      "zurichethcs1"
+    ],
+    "civicuserone": [
+      "bostonmitcs1"
+    ],
+    "civicusertwo": [
+      "deepseeklabs"
+    ],
+    "cobaltcanyon": [
+      "moonshottech"
+    ],
+    "cobaltflower": [
+      "zurichethcs1"
+    ],
+    "cosmicmeadow": [
+      "zurichethcs1"
+    ],
+    "frozenbreeze": [
+      "bostonmitcs1"
+    ],
+    "gentleaurora": [
+      "deepseeklabs"
+    ],
+    "gentlevalley": [
+      "zurichethcs1"
+    ],
+    "mapleharbors": [
+      "bostonmitcs1"
+    ],
+    "mellowflower": [
+      "deepseeklabs"
+    ],
+    "purpleaurora": [
+      "minimaxaihub"
+    ],
+    "rexliquidaab": [
+      "berlintulab2"
+    ],
+    "rexliquidaaf": [
+      "minimaxaihub"
+    ],
+    "serenecanyon": [
+      "moonshottech"
+    ],
+    "sereneflower": [
+      "zurichethcs1"
+    ],
+    "serenewillow": [
+      "berlintulab2"
+    ],
+    "silentcanyon": [
+      "minimaxaihub"
+    ],
+    "silentcomets": [
+      "zurichethcs1"
+    ],
+    "silentharbor": [
+      "moonshottech"
+    ],
+    "silentvalley": [
+      "minimaxaihub"
+    ],
+    "silveraurora": [
+      "deepseeklabs"
+    ],
+    "silverfalcon": [
+      "minimaxaihub"
+    ],
+    "springbreeze": [
+      "zurichethcs1"
+    ],
+    "summergarden": [
+      "bostonmitcs1"
+    ],
+    "sunlitgarden": [
+      "berlintulab2"
+    ],
+    "velvetwillow": [
+      "berlintulab2"
+    ],
+    "winterflower": [
+      "zurichethcs1"
+    ],
+    "winterharbor": [
+      "bostonmitcs1"
+    ]
+  },
+  "moves": [
+    {
+      "owner": "astralstream",
+      "before": [
+        "deepseekcore"
+      ],
+      "after": [
+        "deepseeklabs"
+      ],
+      "staked_before": 3430000
+    },
+    {
+      "owner": "astralvalley",
+      "before": [
+        "moonshotlabs"
+      ],
+      "after": [
+        "moonshottech"
+      ],
+      "staked_before": 1470000
+    },
+    {
+      "owner": "autumnflower",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 8040000
+    },
+    {
+      "owner": "birchmeadows",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 1990000
+    },
+    {
+      "owner": "brightgarden",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 7280000
+    },
+    {
+      "owner": "cambridgeoak",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 2610000
+    },
+    {
+      "owner": "cedarharbors",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 6650000
+    },
+    {
+      "owner": "civicuserone",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 11762131
+    },
+    {
+      "owner": "civicusertwo",
+      "before": [
+        "deepseekcore"
+      ],
+      "after": [
+        "deepseeklabs"
+      ],
+      "staked_before": 7260000
+    },
+    {
+      "owner": "cobaltcanyon",
+      "before": [
+        "moonshotlabs"
+      ],
+      "after": [
+        "moonshottech"
+      ],
+      "staked_before": 6770000
+    },
+    {
+      "owner": "cobaltflower",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 4750000
+    },
+    {
+      "owner": "cosmicmeadow",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 8720000
+    },
+    {
+      "owner": "frozenbreeze",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 7860000
+    },
+    {
+      "owner": "gentleaurora",
+      "before": [
+        "deepseekcore"
+      ],
+      "after": [
+        "deepseeklabs"
+      ],
+      "staked_before": 6660000
+    },
+    {
+      "owner": "gentlevalley",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 9000000
+    },
+    {
+      "owner": "mapleharbors",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 9060000
+    },
+    {
+      "owner": "mellowflower",
+      "before": [
+        "deepseekcore"
+      ],
+      "after": [
+        "deepseeklabs"
+      ],
+      "staked_before": 5240000
+    },
+    {
+      "owner": "purpleaurora",
+      "before": [
+        "minimaxcloud"
+      ],
+      "after": [
+        "minimaxaihub"
+      ],
+      "staked_before": 6720000
+    },
+    {
+      "owner": "rexliquidaab",
+      "before": [
+        "berlintucomp"
+      ],
+      "after": [
+        "berlintulab2"
+      ],
+      "staked_before": 100038284
+    },
+    {
+      "owner": "rexliquidaaf",
+      "before": [
+        "minimaxcloud"
+      ],
+      "after": [
+        "minimaxaihub"
+      ],
+      "staked_before": 100020000
+    },
+    {
+      "owner": "serenecanyon",
+      "before": [
+        "moonshotlabs"
+      ],
+      "after": [
+        "moonshottech"
+      ],
+      "staked_before": 6050000
+    },
+    {
+      "owner": "sereneflower",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 6540000
+    },
+    {
+      "owner": "serenewillow",
+      "before": [
+        "berlintucomp"
+      ],
+      "after": [
+        "berlintulab2"
+      ],
+      "staked_before": 6850000
+    },
+    {
+      "owner": "silentcanyon",
+      "before": [
+        "minimaxcloud"
+      ],
+      "after": [
+        "minimaxaihub"
+      ],
+      "staked_before": 4180000
+    },
+    {
+      "owner": "silentcomets",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 5100000
+    },
+    {
+      "owner": "silentharbor",
+      "before": [
+        "moonshotlabs"
+      ],
+      "after": [
+        "moonshottech"
+      ],
+      "staked_before": 2620000
+    },
+    {
+      "owner": "silentvalley",
+      "before": [
+        "minimaxcloud"
+      ],
+      "after": [
+        "minimaxaihub"
+      ],
+      "staked_before": 1850000
+    },
+    {
+      "owner": "silveraurora",
+      "before": [
+        "deepseekcore"
+      ],
+      "after": [
+        "deepseeklabs"
+      ],
+      "staked_before": 2720000
+    },
+    {
+      "owner": "silverfalcon",
+      "before": [
+        "minimaxcloud"
+      ],
+      "after": [
+        "minimaxaihub"
+      ],
+      "staked_before": 3510000
+    },
+    {
+      "owner": "springbreeze",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 7430000
+    },
+    {
+      "owner": "summergarden",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 5400000
+    },
+    {
+      "owner": "sunlitgarden",
+      "before": [
+        "berlintucomp"
+      ],
+      "after": [
+        "berlintulab2"
+      ],
+      "staked_before": 3130000
+    },
+    {
+      "owner": "velvetwillow",
+      "before": [
+        "berlintucomp"
+      ],
+      "after": [
+        "berlintulab2"
+      ],
+      "staked_before": 7240000
+    },
+    {
+      "owner": "winterflower",
+      "before": [
+        "zurichethnet"
+      ],
+      "after": [
+        "zurichethcs1"
+      ],
+      "staked_before": 6400000
+    },
+    {
+      "owner": "winterharbor",
+      "before": [
+        "bostonmiteng"
+      ],
+      "after": [
+        "bostonmitcs1"
+      ],
+      "staked_before": 2060000
+    }
+  ],
+  "scope": "Only owned external voters of these4newlybanned identities; keep all nonbanned choices and all oldbanned selfvotes"
+}

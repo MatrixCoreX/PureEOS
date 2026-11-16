@@ -1,0 +1,44 @@
+test_arm_failure_does_not_latch_or_request_native_stop (test_stability_lifecycle.LifecycleTest.test_arm_failure_does_not_latch_or_request_native_stop) ... ok
+test_config_change_rejected_before_watchdog_or_stop (test_stability_lifecycle.LifecycleTest.test_config_change_rejected_before_watchdog_or_stop) ... ok
+test_missing_safety_is_never_fabricated_or_restarted (test_stability_lifecycle.LifecycleTest.test_missing_safety_is_never_fabricated_or_restarted) ... ok
+test_new_ban_after_stop_prevents_any_restart (test_stability_lifecycle.LifecycleTest.test_new_ban_after_stop_prevents_any_restart) ... ok
+test_one_stop_start_preserves_safety_and_records_proof (test_stability_lifecycle.LifecycleTest.test_one_stop_start_preserves_safety_and_records_proof) ... ok
+test_transient_after_start_keeps_event_for_readonly_reconciliation (test_stability_lifecycle.LifecycleTest.test_transient_after_start_keeps_event_for_readonly_reconciliation) ... ok
+test_complete_page (test_stability_pagination.PaginationTest.test_complete_page) ... ok
+test_cursor_cycle_rejected (test_stability_pagination.PaginationTest.test_cursor_cycle_rejected) ... ok
+test_duplicate_owner_rejected (test_stability_pagination.PaginationTest.test_duplicate_owner_rejected) ... ok
+test_empty_nonterminal_page_rejected (test_stability_pagination.PaginationTest.test_empty_nonterminal_page_rejected) ... ok
+test_missing_cursor_rejects_partial_result (test_stability_pagination.PaginationTest.test_missing_cursor_rejects_partial_result) ... ok
+test_page_bound (test_stability_pagination.PaginationTest.test_page_bound) ... ok
+test_row_bound (test_stability_pagination.PaginationTest.test_row_bound) ... ok
+test_rpc_error_never_returns_partial_list (test_stability_pagination.PaginationTest.test_rpc_error_never_returns_partial_list) ... ok
+test_time_budget_partial_pages_include_later_bans (test_stability_pagination.PaginationTest.test_time_budget_partial_pages_include_later_bans) ... ok
+test_banned_never_restart (test_stability_policy.PolicyTest.test_banned_never_restart) ... ok
+test_cooldown (test_stability_policy.PolicyTest.test_cooldown) ... ok
+test_disk_reserve (test_stability_policy.PolicyTest.test_disk_reserve) ... ok
+test_historical_strikes_not_permanent_exclusion (test_stability_policy.PolicyTest.test_historical_strikes_not_permanent_exclusion) ... ok
+test_memory_threshold_and_global_headroom (test_stability_policy.PolicyTest.test_memory_threshold_and_global_headroom) ... ok
+test_missing_node (test_stability_policy.PolicyTest.test_missing_node) ... ok
+test_native_policy_not_weakened (test_stability_policy.PolicyTest.test_native_policy_not_weakened) ... ok
+test_near_duty_never_restart (test_stability_policy.PolicyTest.test_near_duty_never_restart) ... ok
+test_never_selected_standby_without_safety_is_skipped (test_stability_policy.PolicyTest.test_never_selected_standby_without_safety_is_skipped) ... ok
+test_prefer_standby_then_largest (test_stability_policy.PolicyTest.test_prefer_standby_then_largest) ... ok
+test_reconcile_requires_positive_identity_and_canonical_proof (test_stability_policy.PolicyTest.test_reconcile_requires_positive_identity_and_canonical_proof) ... ok
+test_restart_memory_headroom (test_stability_policy.PolicyTest.test_restart_memory_headroom) ... ok
+test_slot_distance_and_pending_duty (test_stability_policy.PolicyTest.test_slot_distance_and_pending_duty) ... ok
+test_stale_head (test_stability_policy.PolicyTest.test_stale_head) ... ok
+test_stale_lib (test_stability_policy.PolicyTest.test_stale_lib) ... ok
+test_two_strikes_require_longer_margin (test_stability_policy.PolicyTest.test_two_strikes_require_longer_margin) ... ok
+test_weak_quorum (test_stability_policy.PolicyTest.test_weak_quorum) ... ok
+test_changed_configuration_no_mutation (test_stability_retirement.RetirementTest.test_changed_configuration_no_mutation) ... ok
+test_confirmed_ban_deletes_only_own_blocks_config_and_preserves_safety_keys (test_stability_retirement.RetirementTest.test_confirmed_ban_deletes_only_own_blocks_config_and_preserves_safety_keys) ... ok
+test_different_canonical_sources_no_mutation (test_stability_retirement.RetirementTest.test_different_canonical_sources_no_mutation) ... ok
+test_interrupted_after_delete_reconciles_without_repeating_stop (test_stability_retirement.RetirementTest.test_interrupted_after_delete_reconciles_without_repeating_stop) ... ok
+test_nonbanned_no_mutation (test_stability_retirement.RetirementTest.test_nonbanned_no_mutation) ... ok
+test_open_file_blocks_deletion (test_stability_retirement.RetirementTest.test_open_file_blocks_deletion) ... ok
+test_unconfirmed_ban_no_mutation (test_stability_retirement.RetirementTest.test_unconfirmed_ban_no_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 4.017s
+
+OK

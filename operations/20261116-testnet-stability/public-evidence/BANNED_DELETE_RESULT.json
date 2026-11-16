@@ -1,0 +1,586 @@
+{
+  "status": "PASS_ALL21_BANNED_IDENTITIES_STOPPED_BLOCKS_CONFIGS_DELETED",
+  "utc": "2026-11-16T12:30:12.524436+00:00",
+  "units_stopped_disabled": 24,
+  "targets": [
+    {
+      "owner": "baiduaiworks",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "baiduaiworks",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/baiduaiworks/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "singaporentu",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "singaporentu",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/singaporentu/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "openaiclouds",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/openaiclouds/data.pre-resilience-20261110",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "alibabacloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "alibabacloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "alibabacloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/alibabacloud/data.pre-resilience-20261110",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 122880,
+      "deleted_direct_entries": 3,
+      "remaining": []
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data",
+      "kind": "data",
+      "previous_allocated_bytes": 522919936,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepseekcore/data.pre-resilience-20261110",
+      "kind": "data",
+      "previous_allocated_bytes": 181829632,
+      "deleted_direct_entries": 5,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "deepmindlabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "deepmindlabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/deepmindlabs/data.pre-resilience-20261110",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "nvidiaclouds",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "nvidiaclouds",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/nvidiaclouds/data",
+      "kind": "data",
+      "previous_allocated_bytes": 8192,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "moonshotlabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 122880,
+      "deleted_direct_entries": 3,
+      "remaining": []
+    },
+    {
+      "owner": "moonshotlabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data",
+      "kind": "data",
+      "previous_allocated_bytes": 517144576,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "moonshotlabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/moonshotlabs/data.pre-resilience-20261110",
+      "kind": "data",
+      "previous_allocated_bytes": 253026304,
+      "deleted_direct_entries": 5,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "minimaxcloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 122880,
+      "deleted_direct_entries": 3,
+      "remaining": []
+    },
+    {
+      "owner": "minimaxcloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data",
+      "kind": "data",
+      "previous_allocated_bytes": 391200768,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "minimaxcloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/minimaxcloud/data.pre-resilience-20261110",
+      "kind": "data",
+      "previous_allocated_bytes": 215244800,
+      "deleted_direct_entries": 5,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "berlintulabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "berlintulabs",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/berlintulabs/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "zurichethlab",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "zurichethlab",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/zurichethlab/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "tokyorikenai",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "tokyorikenai",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tokyorikenai/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "tencentcloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "tencentcloud",
+      "path": "/opt/pureeos-devnet-20261105-r1/bps/tencentcloud/data",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "openaiclouds",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/openaiclouds",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "alibabacloud",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/alibabacloud",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepseekcore",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "deepmindlabs",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/deepmindlabs",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "moonshotlabs",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/moonshotlabs",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "minimaxcloud",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/private-original-node-configs/minimaxcloud",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "bostonmiteng",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 122880,
+      "deleted_direct_entries": 3,
+      "remaining": []
+    },
+    {
+      "owner": "bostonmiteng",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/bostonmiteng/data",
+      "kind": "data",
+      "previous_allocated_bytes": 264077312,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "berlintucomp",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 122880,
+      "deleted_direct_entries": 3,
+      "remaining": []
+    },
+    {
+      "owner": "berlintucomp",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/berlintucomp/data",
+      "kind": "data",
+      "previous_allocated_bytes": 306851840,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "zurichethnet",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 122880,
+      "deleted_direct_entries": 3,
+      "remaining": []
+    },
+    {
+      "owner": "zurichethnet",
+      "path": "/opt/pureeos-testnet-resilience-20261110-r1/nodes/zurichethnet/data",
+      "kind": "data",
+      "previous_allocated_bytes": 144060416,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "bostonmiteng",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/bostonmiteng",
+      "kind": "configuration",
+      "previous_allocated_bytes": 8192,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/deepseekcore",
+      "kind": "configuration",
+      "previous_allocated_bytes": 8192,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "berlintucomp",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/berlintucomp",
+      "kind": "configuration",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 1,
+      "remaining": []
+    },
+    {
+      "owner": "moonshotlabs",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/moonshotlabs",
+      "kind": "configuration",
+      "previous_allocated_bytes": 8192,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "minimaxcloud",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/minimaxcloud",
+      "kind": "configuration",
+      "previous_allocated_bytes": 8192,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "zurichethnet",
+      "path": "/opt/pureeos-testnet-new-ban-20261111-r1/runtime-backups/zurichethnet",
+      "kind": "configuration",
+      "previous_allocated_bytes": 8192,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "sydneyunswai",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "sydneyunswai",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/sydneyunswai/data-checkpoint",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "pariscnrslab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "pariscnrslab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/pariscnrslab/data-checkpoint",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "londonturing",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "londonturing",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/londonturing/data-checkpoint",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data-checkpoint",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "tokyoaistlab",
+      "path": "/opt/pureeos-bp-demo-six-20261105-r1/nodes/tokyoaistlab/data",
+      "kind": "data",
+      "previous_allocated_bytes": 0,
+      "deleted_direct_entries": 0,
+      "remaining": []
+    },
+    {
+      "owner": "bostonmitlab",
+      "path": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/bostonmitlab/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 118784,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "bostonmitlab",
+      "path": "/opt/pureeos-bp-add-two-stop-two-20261106-r1/nodes/bostonmitlab/data-checkpoint",
+      "kind": "data",
+      "previous_allocated_bytes": 4096,
+      "deleted_direct_entries": 0,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-keynet-20261103-r1/bps/deepseekcore/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 114688,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 114688,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-keynet-20261103-r2/bps/deepseekcore/data",
+      "kind": "data",
+      "previous_allocated_bytes": 122671104,
+      "deleted_direct_entries": 3,
+      "remaining": [
+        "finalizers"
+      ]
+    },
+    {
+      "owner": "deepseekcore",
+      "path": "/opt/pureeos-test45-20261102-r1/bps/deepseekcore/config",
+      "kind": "configuration",
+      "previous_allocated_bytes": 114688,
+      "deleted_direct_entries": 2,
+      "remaining": []
+    }
+  ],
+  "independent_server_private_credentials_and_safety_retained": true,
+  "protected_PIDs_unchanged": true,
+  "filesystem_available_delta_bytes": 2927890432
+}

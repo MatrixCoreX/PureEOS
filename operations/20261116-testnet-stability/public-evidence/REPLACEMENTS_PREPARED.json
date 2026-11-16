@@ -1,0 +1,122 @@
+{
+  "status": "PREPARED_NOT_SUBMITTED",
+  "utc": "2026-11-16T12:50:44.236191+00:00",
+  "nodes": [
+    {
+      "name": "berlintulab2",
+      "replaces": "berlintucomp",
+      "rpc_port": 8971,
+      "p2p_port": 9971,
+      "unit": "pureeos-bp-replacement-berlintulab2-20261116.service",
+      "CPU_stake_AIC": "100.0071",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "14000.0000",
+      "public_keys": {
+        "account": "PUB_K1_6FWFVvMGXiG8PnEyfuMGVVnH1fTLnd7oh2PoLRowpCgwS11B8s",
+        "production": "PUB_K1_8JTLAy4ewXjohHB62PRjNFi6AJfxVBYWL5JUdo3uqFafkzDU5R",
+        "peer": "PUB_K1_7UND4JGhXBku4bmpHA4zMJCuXKMSif3oyxvtYSB427oiUmkpCZ",
+        "bls": "PUB_BLS_8W5E0Sv7rXShjoFVTbaworrsTj3k7RndJEwUc_3p_rAsQlVE3ftKyimze04X2scKhVxgFWUPmEQ_AWlCvly-nm8P0hUvZlOF9-x1QNykMEw-bR1GMdOYIqHx0Jiu4McY1k5rCg"
+      }
+    },
+    {
+      "name": "bostonmitcs1",
+      "replaces": "bostonmiteng",
+      "rpc_port": 8972,
+      "p2p_port": 9972,
+      "unit": "pureeos-bp-replacement-bostonmitcs1-20261116.service",
+      "CPU_stake_AIC": "100.0072",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "14000.0000",
+      "public_keys": {
+        "account": "PUB_K1_5yK6e7EBQH1ckiEixVcETRKUnPZEjShLLU8MEv4bNrsVquH6UP",
+        "production": "PUB_K1_8hqgN49zxGXxUTw2AeXU4H68EKahbxrXpinhLz5uT3jqSmvhuN",
+        "peer": "PUB_K1_8EGV4eAbpJwGqJ44wUgonAYkq8HHoQEsmoWHiQySZh1soXFZVy",
+        "bls": "PUB_BLS_NXZhDI0o5R4NXYfNg-3EHSWC0Fv1JXCktYSJtCYi8ItJhgKutOB3cTDSVfBJxpMZEL_1BHa_WvYxfV-rdj8a3qpJJug8o2ysksq6h3J9UcVIVmTDj6sbwZvz0OThNBsTsgvL4g"
+      }
+    },
+    {
+      "name": "deepseeklabs",
+      "replaces": "deepseekcore",
+      "rpc_port": 8973,
+      "p2p_port": 9973,
+      "unit": "pureeos-bp-replacement-deepseeklabs-20261116.service",
+      "CPU_stake_AIC": "100.0073",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "14000.0000",
+      "public_keys": {
+        "account": "PUB_K1_6sTGoZSsugVRsYZiD9MpJpGkzj2kcKanzkWodujPfEWQ9dgstQ",
+        "production": "PUB_K1_7pH3SrMoCfgsYxtLL8z7eRVJwgupboKMBmAcy1YJVtjaWapXnG",
+        "peer": "PUB_K1_6bSTF9By5X9rtF4yZcXLnUcb5RBoKYA6ZXdPa2dCaip5AcHVVw",
+        "bls": "PUB_BLS_y68rnOT5LbzmL6ASV8-9dXqmEF_a-ArndIvQe-i87MZoNczzb832J1HhWAzydGASQq6Neq0qvDniXME5KaDTCNx-bhdeqBjuwW8LxrLh2AVMWjPLRdV-E4uJmxFhljUKhc4tEQ"
+      }
+    },
+    {
+      "name": "minimaxaihub",
+      "replaces": "minimaxcloud",
+      "rpc_port": 8974,
+      "p2p_port": 9974,
+      "unit": "pureeos-bp-replacement-minimaxaihub-20261116.service",
+      "CPU_stake_AIC": "100.0074",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "14000.0000",
+      "public_keys": {
+        "account": "PUB_K1_7c2RCGR3AqCW4Pq3Apsxoc3wTGQHTmLJVSYfJX5aabquo1NeVS",
+        "production": "PUB_K1_8jHisbJ8RN438aM4q3NgVURnLNNXFb2PW2RJ2T5iohHS7mCmAm",
+        "peer": "PUB_K1_5vnjALjHMEJ4gqAkdee6g5mc3Ao9u3AUwCs2ASvngoqLNziJi4",
+        "bls": "PUB_BLS_a4K_68mBnjvnu7y9coiOUcgJzJRd5OgdpMafVdh1MDGBduXdfvrsFxjASBzp6L8AD-XlH1IFItTpWsueoHedCNQKoTIaT6wHM9n51cNQekJXCPVm-J6SqmuPjsjSAQYKPTPldA"
+      }
+    },
+    {
+      "name": "moonshottech",
+      "replaces": "moonshotlabs",
+      "rpc_port": 8975,
+      "p2p_port": 9975,
+      "unit": "pureeos-bp-replacement-moonshottech-20261116.service",
+      "CPU_stake_AIC": "100.0075",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "14000.0000",
+      "public_keys": {
+        "account": "PUB_K1_8WxSSbk52nazbQNinaFojBiUWGtpXbmpeiPKR6E3SjJKZ3sAPz",
+        "production": "PUB_K1_733rayYxhVdRqc6datQboqAdVoywVA7NRGzkNoQMPGXx9vPiyL",
+        "peer": "PUB_K1_5ioStaCVw9t8mdeJEJxnqRCccqaiYFZXS3hHriMUbdeVg99Bwc",
+        "bls": "PUB_BLS_6rBRglRZ2oLpzxq61-_N2CXWx0uNZ5pfyrqljh8ntzcHLSMP5Qtto3sxvTMgu4kTlJ7FayyChqT02gkWn8Tx5Nzk_JtqeYk62EyGHCazpBa87EXpavoP19SXFcbwon0BpX5sFg"
+      }
+    },
+    {
+      "name": "zurichethcs1",
+      "replaces": "zurichethnet",
+      "rpc_port": 8976,
+      "p2p_port": 9976,
+      "unit": "pureeos-bp-replacement-zurichethcs1-20261116.service",
+      "CPU_stake_AIC": "100.0076",
+      "NET_stake_AIC": "10.0000",
+      "bond_AIC": "10000.0000",
+      "funding_AIC": "14000.0000",
+      "public_keys": {
+        "account": "PUB_K1_7jkzo3cdt5ckfbJRkbv6PFUrghoHZHwcqENEdDP4nnUFMDDNP8",
+        "production": "PUB_K1_58xxEbAWMTE4XUvo6tHjzdChQCzYuJzgp3NYR3B8qSB9k6Nfmd",
+        "peer": "PUB_K1_8Be7jiR3xgckEgiWKJKdqmwWUt2AgnKPLBNQBbjUJufFuo3EsV",
+        "bls": "PUB_BLS_nkICt8ng04J7tf8K92pou9IkxgfydpT-HeDfsiiO3maOWi78FuwCzj2hMB7fDrkU9TqudzgZjJOi-vVAH4zQJmX_k26ww7KcwZObevXeQfFAFu324fYkzH6PpsHehzQOfTAk1A"
+      }
+    }
+  ],
+  "mapping": {
+    "berlintucomp": "berlintulab2",
+    "bostonmiteng": "bostonmitcs1",
+    "deepseekcore": "deepseeklabs",
+    "minimaxcloud": "minimaxaihub",
+    "moonshotlabs": "moonshottech",
+    "zurichethnet": "zurichethcs1"
+  },
+  "physical_BP_target": 25,
+  "history_target": 1,
+  "registered_before": 41,
+  "registered_after": 47,
+  "banned_unchanged": 21,
+  "native_or_consensus_changes": false
+}

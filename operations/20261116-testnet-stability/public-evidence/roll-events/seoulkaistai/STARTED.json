@@ -1,0 +1,30 @@
+{
+  "name": "seoulkaistai",
+  "utc": "2026-11-16T12:36:25.533002+00:00",
+  "oldPID": "4012397",
+  "before_bytes": 2872311808,
+  "before_info": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1292300,
+    "last_irreversible_block_num": 1292298,
+    "last_irreversible_block_id": "0013b80a60578d72dc6c9bf2474092193ddcbbe96fb10fe2ed6e44c45a023360",
+    "head_block_id": "0013b80c01701e813254e08b9274f0579d99d5441534ccc52e1049dd661ae609",
+    "head_block_time": "2026-11-16T12:36:25.000",
+    "head_block_producer": "sydneyunswcs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1292300,
+    "fork_db_head_block_id": "0013b80c01701e813254e08b9274f0579d99d5441534ccc52e1049dd661ae609",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-16T12:36:24.000"
+  },
+  "next_duty_seconds": 101.0,
+  "recent_other_strong": 18
+}

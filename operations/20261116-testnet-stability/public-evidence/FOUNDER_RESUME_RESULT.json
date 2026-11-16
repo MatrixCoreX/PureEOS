@@ -1,0 +1,508 @@
+{
+  "utc": "2026-11-16T12:30:18.148596+00:00",
+  "before": {
+    "server_version": "42dda604",
+    "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+    "head_block_num": 1291745,
+    "last_irreversible_block_num": 1291734,
+    "last_irreversible_block_id": "0013b5d6b08c28cf67288586de679f337b6c5f1c4b64d1d1b6cb2e5d7433753a",
+    "head_block_id": "0013b5e189b3599671ba71444d8962fcc7164ae7742658469b8a10e4a2cff2aa",
+    "head_block_time": "2026-11-14T15:13:12.000",
+    "head_block_producer": "sydneyunswcs",
+    "virtual_block_cpu_limit": 800000000,
+    "virtual_block_net_limit": 1048576000,
+    "block_cpu_limit": 800000,
+    "block_net_limit": 1048576,
+    "server_version_string": "v1.0.0-test.2-dev",
+    "fork_db_head_block_num": 1291745,
+    "fork_db_head_block_id": "0013b5e189b3599671ba71444d8962fcc7164ae7742658469b8a10e4a2cff2aa",
+    "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+    "total_cpu_weight": "6583900750",
+    "total_net_weight": 251590000,
+    "earliest_available_block_num": 1,
+    "last_irreversible_block_time": "2026-11-14T14:51:13.000"
+  },
+  "all19_head_and_LIB_identical": true,
+  "paused_before": true,
+  "scope": "One normal producer/resume call on alreadyrunning founder. No restart/config/timeout/consensus/DB/safety changes.",
+  "resume_result": {
+    "result": "ok"
+  },
+  "status": "NEEDS_RECONCILIATION",
+  "utc_finished": "2026-11-16T12:31:30.175852+00:00",
+  "samples": [
+    {
+      "utc": "2026-11-16T12:30:18.150394+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:21.151416+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:24.152455+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:27.153443+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:30.154801+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:33.155865+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:36.157093+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:39.158090+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:42.159101+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:45.160676+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:48.161841+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:51.163144+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:54.164110+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:30:57.165184+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:00.166190+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:03.167309+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:06.168424+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:09.169425+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:12.170452+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:15.171642+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:18.172771+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:21.173770+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:24.174752+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    },
+    {
+      "utc": "2026-11-16T12:31:27.175689+00:00",
+      "head": 1291745,
+      "head_time": "2026-11-14T15:13:12.000",
+      "LIB": 1291734,
+      "LIB_time": "2026-11-14T14:51:13.000"
+    }
+  ],
+  "finalizers": {
+    "active_finalizer_policy": {
+      "generation": 1413,
+      "threshold": 15,
+      "finalizers": [
+        {
+          "description": "alibabaailab",
+          "weight": 1,
+          "public_key": "PUB_BLS_KbrdSi-T478HYTTj3wpoxlJg1deoJ3l7PgNnJcIy1U8b6GrPGsPWn1uhmFGOyeoOWBiLz9IcbdJMqjdSZdiHugCnzEiJW33nMWPblOfL33l43LIfP061bx9VhmWG10sU7auMWQ"
+        },
+        {
+          "description": "anthropiclab",
+          "weight": 1,
+          "public_key": "PUB_BLS_kXjL6WGrWSVfZLJP0ZJtB2SP7JdBhrR3NNx8DbPzMCUi8QhohlsSpoYKJT8mB9MRPVTxeKS4Jq0P5E9K_YmrqmCik46h3IEb6SqW1xZFGb6EE8JiM142fyi6dkWzxMQAKOfP1Q"
+        },
+        {
+          "description": "berlintucomp",
+          "weight": 1,
+          "public_key": "PUB_BLS_fRMg43jqpgaVTavzFZd95O5Pcg-W-uVirPq8f8P8NBTxiZJqJYol3aJzumTlkDcL-pCud84Ud3t2010PGZlKjDJWObeVs0doaulKuthOgubEP1GK3ILo2MCfRTOkTBUXROx0FQ"
+        },
+        {
+          "description": "bytedancelab",
+          "weight": 1,
+          "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA"
+        },
+        {
+          "description": "canadamilaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w"
+        },
+        {
+          "description": "cohereclouds",
+          "weight": 1,
+          "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA"
+        },
+        {
+          "description": "deepmindtech",
+          "weight": 1,
+          "public_key": "PUB_BLS_3R0tYCs6Lho0QksSL-F-AapOdza_yaQJi2_30Dzy3aKBec8kYR9RqUYeLCEVYPUZrIMKnnIpD2saa0aI3un4WPg-gNVq0NwZKU6apynYRvu7skpAJgKmDGtlpBcbWaoOayP9vw"
+        },
+        {
+          "description": "deepseekcore",
+          "weight": 1,
+          "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA"
+        },
+        {
+          "description": "genevacernai",
+          "weight": 1,
+          "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q"
+        },
+        {
+          "description": "gptgenesisbp",
+          "weight": 1,
+          "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg"
+        },
+        {
+          "description": "londonucllab",
+          "weight": 1,
+          "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ"
+        },
+        {
+          "description": "mistralcloud",
+          "weight": 1,
+          "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ"
+        },
+        {
+          "description": "nvidiaailabs",
+          "weight": 1,
+          "public_key": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA"
+        },
+        {
+          "description": "openaimodels",
+          "weight": 1,
+          "public_key": "PUB_BLS_7V46WczqqSiv8n3u8DUqrwBGKjwz54pwJzNlUA9_GblvORjOcPMbH8kJoLsp9eIWQbmrPSkNZZs2_fat7mZ8zui7uhxPfiG3AE5Nj2W4ReAuDZTCm_LdT6z_Z-JsZQUDGn9XwA"
+        },
+        {
+          "description": "parisinriaai",
+          "weight": 1,
+          "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ"
+        },
+        {
+          "description": "perplexityai",
+          "weight": 1,
+          "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA"
+        },
+        {
+          "description": "seoulkaistai",
+          "weight": 1,
+          "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA"
+        },
+        {
+          "description": "stabilityhub",
+          "weight": 1,
+          "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug"
+        },
+        {
+          "description": "sydneyunswcs",
+          "weight": 1,
+          "public_key": "PUB_BLS_gJ2l0fIi-ATUFlkP7Im_31VT3NnjoEwEG2ViwxNk0JYTAsp_awkmFsAiI3RflI8X1sUrTUjsw1ZKvoqdXWTKC1HHjGqbHg5DPd_XGiSvY7VXgyobTU6GsEDMolJZ7AYF8R4u6g"
+        },
+        {
+          "description": "tencentailab",
+          "weight": 1,
+          "public_key": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA"
+        },
+        {
+          "description": "torontovectr",
+          "weight": 1,
+          "public_key": "PUB_BLS_LyihV-aoM7mdkeDhwAAjCuyGM8rBEsWLXfH9i1IXVNzpIEYfdhaTiRab4dQ6-roHXdOrkzxTMihjNzYsGX_8Mwq5jplSWIeEUk4PvoxUs6GafW4GV0C1ArsrdACYru0AuU8Faw"
+        }
+      ]
+    },
+    "pending_finalizer_policy": null,
+    "last_tracked_votes": [
+      {
+        "description": "alibabaailab",
+        "public_key": "PUB_BLS_KbrdSi-T478HYTTj3wpoxlJg1deoJ3l7PgNnJcIy1U8b6GrPGsPWn1uhmFGOyeoOWBiLz9IcbdJMqjdSZdiHugCnzEiJW33nMWPblOfL33l43LIfP061bx9VhmWG10sU7auMWQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "anthropiclab",
+        "public_key": "PUB_BLS_kXjL6WGrWSVfZLJP0ZJtB2SP7JdBhrR3NNx8DbPzMCUi8QhohlsSpoYKJT8mB9MRPVTxeKS4Jq0P5E9K_YmrqmCik46h3IEb6SqW1xZFGb6EE8JiM142fyi6dkWzxMQAKOfP1Q",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "berlintucomp",
+        "public_key": "PUB_BLS_fRMg43jqpgaVTavzFZd95O5Pcg-W-uVirPq8f8P8NBTxiZJqJYol3aJzumTlkDcL-pCud84Ud3t2010PGZlKjDJWObeVs0doaulKuthOgubEP1GK3ILo2MCfRTOkTBUXROx0FQ",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b4a839ab769168514375b75dbab775c2ba09aa9dd0449c1dcc7005facdc1",
+        "voted_for_block_num": 1291432,
+        "voted_for_block_timestamp": "2026-11-14T14:47:00.000"
+      },
+      {
+        "description": "bytedancelab",
+        "public_key": "PUB_BLS_o1jPLpyYYFDdobFYDOVPfxgNw3Wt_tQCEWe89ahxxujskrsQMfE0tO8lfMpaLfAGw7xme_QNvA93YzkQoJUSa0FIO1fN_J2RAcIckcO0l_wD9BJW64GNed_ktwyOrH4RemiLYA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b4add86217bfe193e2bfbcd5de4a4c6d1818320cae2c73447d865be286ce",
+        "voted_for_block_num": 1291437,
+        "voted_for_block_timestamp": "2026-11-14T14:47:02.500"
+      },
+      {
+        "description": "canadamilaai",
+        "public_key": "PUB_BLS_l1f4DNVvgW-XrUazhNwzTWfhuxnjMa4MaVnMNww0ry1EIvRGFs3JlYg7Bhu7Fl0PY8IZKsD3p6KiGaZygMFCLV6BTcyvlIljXztdvzU5Kjm4y1U4mKYGs1yH5fgUXa4EkQor4w",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "cohereclouds",
+        "public_key": "PUB_BLS_PeVx5L-qal6vLO6kpUJKQL_Q1ik0FKd92lvqB9ZdTYT_5mZ_d9sYB8Pb9jkc1hkH50aoeafm3HdSYJ4CI2PMHkMUiXXH-JLvw5ZH1I3zyB_4QgXgnqc1OUFnfC-9Q50B96NQjA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "deepmindtech",
+        "public_key": "PUB_BLS_3R0tYCs6Lho0QksSL-F-AapOdza_yaQJi2_30Dzy3aKBec8kYR9RqUYeLCEVYPUZrIMKnnIpD2saa0aI3un4WPg-gNVq0NwZKU6apynYRvu7skpAJgKmDGtlpBcbWaoOayP9vw",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "deepseekcore",
+        "public_key": "PUB_BLS_SgQES9HUfSxbRfilWOGzzy1xZh9_RDIFq9oJbwO6I0q6r-BvRFj4-zVz_PeMjSURJ4uKvh3XioGRIyVblrA8L9hxxDvWgQTxy5tzYmWBqWUbeLc2p-2EfHfzyhjgTXsCfpxUIA",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b403b5b63290e9df7417cea33547d2eec752d7b28a17a69256db9eac7af4",
+        "voted_for_block_num": 1291267,
+        "voted_for_block_timestamp": "2026-11-14T14:45:25.500"
+      },
+      {
+        "description": "genevacernai",
+        "public_key": "PUB_BLS_2RcWAmuMape2SwV4f1biJC57SMW997VnqtcV9w9gc_TOVqwhPAAUlcIz4-KYmvEG56GCWurCPrvqxkArMusOyq2YMcsG8En8srdw0gbWCdVMTvIL8Fuq4-PBQIQR1WIPBjyq1Q",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "gptgenesisbp",
+        "public_key": "PUB_BLS_lKRfd8DYAqKsxevkhNZIRcZg-j5nMkY4kpVpe9EdB18X8SJmhdwZjkKUUHYPT_4DjnNFvjKn1A8D_UqreucmbYaBz9WLaWbpQoaB7D6epSuW2HPJ3GtPFd9VFjodUkUX5bSivg",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "londonucllab",
+        "public_key": "PUB_BLS_Fj2WjtX3H-ytMH93nKacd_srzpJiHUB06tX-q6wzNctI6P3GbXnedeUu6HqBvjQBcz6vZs--6-dIx_O9ea9QVr01QZTpnRon-eAwajdX1Vz598M-yvIf1uwvxXtZMn0JW4N4VQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "mistralcloud",
+        "public_key": "PUB_BLS_mu_wlvkx9YwlFtnjPQgRWIdgYFIwPgSGP4yXZ-E-I1DKFYDgj31pfrmszpADthoD5lkm5H93zZajh1ykvatgZLqVCGFOGE1XyhksniqfvfUrHZCf8Fro6BcGeVVdVnwOd-xOaQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "nvidiaailabs",
+        "public_key": "PUB_BLS_Yw3ZLZE2loEi1Gmb6Pb9PN_kslSuoDznix3mS5ZsP0MPYRwoipOJ9Sul2fuRmUkUpGdOehdrHpy6X5IpfxX_6NfQBLI_T4ybOokHI6XTRlN13RUs48HuW5O4Jo6Q7DgIgHSiLA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "openaimodels",
+        "public_key": "PUB_BLS_7V46WczqqSiv8n3u8DUqrwBGKjwz54pwJzNlUA9_GblvORjOcPMbH8kJoLsp9eIWQbmrPSkNZZs2_fat7mZ8zui7uhxPfiG3AE5Nj2W4ReAuDZTCm_LdT6z_Z-JsZQUDGn9XwA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "parisinriaai",
+        "public_key": "PUB_BLS_koinbZ9Kf8S5ZasurUQZTcQUH5HSnwmBqtMX9fnstQpej8J1Bleh-x1m4F19j3AWoWhtYpfeFXN2bfm9Ps0bNg0mcqiiy2woQmJ6MN_L0wZ9rGgT4UGU5j-2q_CXFlgPoAe7AQ",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "perplexityai",
+        "public_key": "PUB_BLS_kVfrDfxoZaxBAPBoS2xFy5gAQJ91IGHPQeK6y1KeNk8EkVOqCfjhovGaM7V-hzIOU4WlaZHjClEr3BYgP3olOlJrpsQ2QZzpj0Lj2RFmyPU_zVx23ehoMVZrEDEMNlsQ1mVGHA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5db99e3e3c4ab61e968cbbc38393f7d4c7b9c7f9c9ce010ed56cbcb9f50",
+        "voted_for_block_num": 1291739,
+        "voted_for_block_timestamp": "2026-11-14T14:51:42.000"
+      },
+      {
+        "description": "seoulkaistai",
+        "public_key": "PUB_BLS_LTGHyZQCc2bKv04jST5rGlWiQm4pa_14_slH0al6esv_OU1Hv2iHsG1ayb2kjGQIkOE3EKJxgZUziDHF71uz3ovS9pkraabMV2qNWarMlDlQnX7vGg0kh0ehszQKBFgY-TppgA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "stabilityhub",
+        "public_key": "PUB_BLS_hSpLCcx35YxNS68X5_E1DKy0uCY0zNLiUp-xomzvRbXTE96QUcnqoMzFTqfVZq4IjnUeMvAiPArQy8AYQUAhHyKxOXT6AFKTL8nKLIM0-JWpEKOCXWp8tKY8RB3FeYYW3FjFug",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "sydneyunswcs",
+        "public_key": "PUB_BLS_gJ2l0fIi-ATUFlkP7Im_31VT3NnjoEwEG2ViwxNk0JYTAsp_awkmFsAiI3RflI8X1sUrTUjsw1ZKvoqdXWTKC1HHjGqbHg5DPd_XGiSvY7VXgyobTU6GsEDMolJZ7AYF8R4u6g",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "tencentailab",
+        "public_key": "PUB_BLS_yGn-rSydJxyOyooEop5e7sTXgd14W0v_m02oVdh6SLBxAnDZv-lZSEZietrSNmYINfUfrcgWFX1Da2t_c9BOGQq6gu-rFeG4bjz91LGfvjMZhiXvXAavYrNkV9zjar0GVuwtCA",
+        "is_vote_strong": false,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b5df10c2db5d5cf8b1f49c9bb00694d68e158109c2b3e0a85caade3416a3",
+        "voted_for_block_num": 1291743,
+        "voted_for_block_timestamp": "2026-11-14T14:52:22.000"
+      },
+      {
+        "description": "torontovectr",
+        "public_key": "PUB_BLS_LyihV-aoM7mdkeDhwAAjCuyGM8rBEsWLXfH9i1IXVNzpIEYfdhaTiRab4dQ6-roHXdOrkzxTMihjNzYsGX_8Mwq5jplSWIeEUk4PvoxUs6GafW4GV0C1ArsrdACYru0AuU8Faw",
+        "is_vote_strong": true,
+        "finalizer_policy_generation": 1413,
+        "voted_for_block_id": "0013b550501d3b4e58e84a1fcd8c52cf43e5b284a108ff9a5453b318ab083a2b",
+        "voted_for_block_num": 1291600,
+        "voted_for_block_timestamp": "2026-11-14T14:48:42.000"
+      }
+    ]
+  }
+}

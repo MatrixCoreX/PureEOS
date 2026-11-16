@@ -1,0 +1,789 @@
+{
+  "status": "PASS_6_REPLACEMENTS_AND_OWNED_EXTERNAL_VOTE_REDIRECTIONS",
+  "utc": "2026-11-16T12:54:46.175118+00:00",
+  "completed": [
+    {
+      "name": "berlintulab2",
+      "create": {
+        "transaction_id": "56ba3b38ba2a1c1f193bc7f58a2985ccf4ec72c992a53d1799a437ce787cbf31",
+        "block_num": 1294186,
+        "block_id": "0013bf6a903e14d7f663ac00bb51ebf55142917b1297055137ca854fd2067d36",
+        "observed_LIB": 1294187,
+        "CPU_us": 1815,
+        "NET_words": 33
+      },
+      "fund": {
+        "transaction_id": "5ebdcd35338df17578fd7e3dacb4afa1c47a671bd29432d258c573d8b1c11c4d",
+        "block_num": 1294191,
+        "block_id": "0013bf6f7838197f21e7f7f4d0bb9b9209ae24d6924fc0029bea0f6de2e9ec67",
+        "observed_LIB": 1294191,
+        "CPU_us": 1076,
+        "NET_words": 48
+      },
+      "registration": {
+        "transaction_id": "2537308048a81e7c464d3dd99b75c2b313377ad2f0464ea5f48112077e605186",
+        "block_num": 1294217,
+        "block_id": "0013bf8928587d50097ae668c2d9103ea4ca6f69c567a0f7e938c5d864365c35",
+        "observed_LIB": 1294218,
+        "CPU_us": 3590,
+        "NET_words": 99
+      },
+      "runtime": {
+        "PID": 1178393,
+        "sync_samples": [
+          {
+            "utc": "2026-11-16T12:52:18.257736+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294206,
+              "last_irreversible_block_num": 1294204,
+              "last_irreversible_block_id": "0013bf7c81323306baf5419f221c031f1af0c61337c2200a832a49bc5514bd42",
+              "head_block_id": "0013bf7e952c29ff99d1224cc5f0576bfbeb53a0a387df1f65d15c082fff6e6b",
+              "head_block_time": "2026-11-16T12:52:18.000",
+              "head_block_producer": "cohereclouds",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294206,
+              "fork_db_head_block_id": "0013bf7e952c29ff99d1224cc5f0576bfbeb53a0a387df1f65d15c082fff6e6b",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6593901460",
+              "total_net_weight": 252590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:17.000"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:52:20.600202+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294211,
+              "last_irreversible_block_num": 1294209,
+              "last_irreversible_block_id": "0013bf8162c401bf6ed7c2e9e080a0b8c83038faa4362431bd6718390ec67983",
+              "head_block_id": "0013bf83e06b0acf0455d08361b5655971a6125fd5fcebc5c5ff7de551c2ad53",
+              "head_block_time": "2026-11-16T12:52:20.500",
+              "head_block_producer": "cohereclouds",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294211,
+              "fork_db_head_block_id": "0013bf83e06b0acf0455d08361b5655971a6125fd5fcebc5c5ff7de551c2ad53",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6593901460",
+              "total_net_weight": 252590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:19.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:52:22.791442+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294216,
+              "last_irreversible_block_num": 1294214,
+              "last_irreversible_block_id": "0013bf86bf43b0c14c1532cd2d8381416ee4b973a066cfcf2d730fde40696ac2",
+              "head_block_id": "0013bf88ee474d0d5614895d5f680a4b33dd6660aa3d03ed3d4fd83a8c641186",
+              "head_block_time": "2026-11-16T12:52:23.000",
+              "head_block_producer": "cohereclouds",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294216,
+              "fork_db_head_block_id": "0013bf88ee474d0d5614895d5f680a4b33dd6660aa3d03ed3d4fd83a8c641186",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6593901460",
+              "total_net_weight": 252590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:22.000"
+            }
+          }
+        ],
+        "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "profile_SHA256": "dfe859e1a58f7077b10c8b9ca9027c5f88fc01ba9a2e789a65de4ee665a360e3"
+      }
+    },
+    {
+      "name": "bostonmitcs1",
+      "create": {
+        "transaction_id": "7d697df53d8726659107d2f22267b6e66e9093722cbffdc51a0f88c459dc9463",
+        "block_num": 1294221,
+        "block_id": "0013bf8d80e46b6236f35433add204be88bb9be7d5ab1e8de6625902dad98c82",
+        "observed_LIB": 1294223,
+        "CPU_us": 764,
+        "NET_words": 33
+      },
+      "fund": {
+        "transaction_id": "c290b85df39800e57279bbbf24d197dab6b95b0d762b799327d266ad2cdfa453",
+        "block_num": 1294226,
+        "block_id": "0013bf92d596ea64f8bca59f69ebfd4e099252800350a88a8608a21d55d86b1a",
+        "observed_LIB": 1294227,
+        "CPU_us": 901,
+        "NET_words": 48
+      },
+      "registration": {
+        "transaction_id": "b947fba7af486d249963e33b634d8b3e044587af03108f787c5ad8d08924c4a6",
+        "block_num": 1294252,
+        "block_id": "0013bfac582cd4382ce43af45ba26762cb677ba1420265644680af756056af8c",
+        "observed_LIB": 1294252,
+        "CPU_us": 3737,
+        "NET_words": 99
+      },
+      "runtime": {
+        "PID": 1178741,
+        "sync_samples": [
+          {
+            "utc": "2026-11-16T12:52:35.681658+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294241,
+              "last_irreversible_block_num": 1294239,
+              "last_irreversible_block_id": "0013bf9f6545c1a5461ebd9b4351a2a14b6fb404eca90967c68d2027f2050be1",
+              "head_block_id": "0013bfa1b928938b39f324a9352de86279993dddfcd3371f3a067381e176be3f",
+              "head_block_time": "2026-11-16T12:52:35.500",
+              "head_block_producer": "genevacernai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294241,
+              "fork_db_head_block_id": "0013bfa1b928938b39f324a9352de86279993dddfcd3371f3a067381e176be3f",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6603902180",
+              "total_net_weight": 253590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:34.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:52:37.981014+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294246,
+              "last_irreversible_block_num": 1294244,
+              "last_irreversible_block_id": "0013bfa41f92dd01b96ec06ef789e39ad8b153ec7afdac289f9c84d83f35bf91",
+              "head_block_id": "0013bfa6b73f90d063aac40fe3fc35117aae71eefcb7d1ab3d47e15c467af02c",
+              "head_block_time": "2026-11-16T12:52:38.000",
+              "head_block_producer": "gptgenesisbp",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294246,
+              "fork_db_head_block_id": "0013bfa6b73f90d063aac40fe3fc35117aae71eefcb7d1ab3d47e15c467af02c",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6603902180",
+              "total_net_weight": 253590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:37.000"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:52:40.391915+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294251,
+              "last_irreversible_block_num": 1294249,
+              "last_irreversible_block_id": "0013bfa9049b7385d863a1ed762f95abd9c7121be76004db0443a00449dfd262",
+              "head_block_id": "0013bfabdb19a5e282a9e5379aec2a7adad2fc919f4a796fd0ac76404c923f69",
+              "head_block_time": "2026-11-16T12:52:40.500",
+              "head_block_producer": "gptgenesisbp",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294251,
+              "fork_db_head_block_id": "0013bfabdb19a5e282a9e5379aec2a7adad2fc919f4a796fd0ac76404c923f69",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6603902180",
+              "total_net_weight": 253590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:39.500"
+            }
+          }
+        ],
+        "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "profile_SHA256": "dfe859e1a58f7077b10c8b9ca9027c5f88fc01ba9a2e789a65de4ee665a360e3"
+      }
+    },
+    {
+      "name": "deepseeklabs",
+      "create": {
+        "transaction_id": "1bca557c8a1149ac7974a857456105b63b5af52e37503a38fa4cea5106519af7",
+        "block_num": 1294257,
+        "block_id": "0013bfb1d967686f7737d1d855a8fe902a843f3f03f3c50d4a0900d0710412bd",
+        "observed_LIB": 1294258,
+        "CPU_us": 934,
+        "NET_words": 33
+      },
+      "fund": {
+        "transaction_id": "8a8571981a054056f128c1e3a5874b41ba07864e8262108f04bcf80ea9f74f29",
+        "block_num": 1294262,
+        "block_id": "0013bfb6d6815ba6874feb8dae1e50d2cd19ff29631e445431e419e5fa7cbe7e",
+        "observed_LIB": 1294263,
+        "CPU_us": 991,
+        "NET_words": 48
+      },
+      "registration": {
+        "transaction_id": "bffbab65a8512717355bb04ffac7cff12640da293bddb309bad2e0089d46bca8",
+        "block_num": 1294292,
+        "block_id": "0013bfd4c2e5c6dccd421438ee79f2e82cd1ab2616509665171a35c62c4526ca",
+        "observed_LIB": 1294293,
+        "CPU_us": 3749,
+        "NET_words": 99
+      },
+      "runtime": {
+        "PID": 1179111,
+        "sync_samples": [
+          {
+            "utc": "2026-11-16T12:52:55.653028+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294281,
+              "last_irreversible_block_num": 1294279,
+              "last_irreversible_block_id": "0013bfc79ec8239086b886686da62d3219585eb8866fc61608fb67105d3191e1",
+              "head_block_id": "0013bfc9e775b824ae2e6466d7f1525b489a52b3cdd7715fbbafebd998f33902",
+              "head_block_time": "2026-11-16T12:52:55.500",
+              "head_block_producer": "nvidiaailabs",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294281,
+              "fork_db_head_block_id": "0013bfc9e775b824ae2e6466d7f1525b489a52b3cdd7715fbbafebd998f33902",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6613902910",
+              "total_net_weight": 254590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:54.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:52:58.002215+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294286,
+              "last_irreversible_block_num": 1294284,
+              "last_irreversible_block_id": "0013bfcc056fcd071483b1b5e3935695941d7d037b991c5db463a7a32ee35e52",
+              "head_block_id": "0013bfce6886caae1eb7058ee22f0e7c95039ad9142fcfc86efa92af279a1f69",
+              "head_block_time": "2026-11-16T12:52:58.000",
+              "head_block_producer": "nvidiaailabs",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294286,
+              "fork_db_head_block_id": "0013bfce6886caae1eb7058ee22f0e7c95039ad9142fcfc86efa92af279a1f69",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6613902910",
+              "total_net_weight": 254590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:57.000"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:53:00.247529+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294290,
+              "last_irreversible_block_num": 1294288,
+              "last_irreversible_block_id": "0013bfd0e05a2b459865169aeb30894ff1e43be302f231438adfef8d9eb18920",
+              "head_block_id": "0013bfd23e5da455fc1e3d5c7fbd0c107a819182fb2b73f77574dedd8681daf1",
+              "head_block_time": "2026-11-16T12:53:00.000",
+              "head_block_producer": "openaimodels",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294290,
+              "fork_db_head_block_id": "0013bfd23e5da455fc1e3d5c7fbd0c107a819182fb2b73f77574dedd8681daf1",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6613902910",
+              "total_net_weight": 254590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:52:59.000"
+            }
+          }
+        ],
+        "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "profile_SHA256": "dfe859e1a58f7077b10c8b9ca9027c5f88fc01ba9a2e789a65de4ee665a360e3"
+      }
+    },
+    {
+      "name": "minimaxaihub",
+      "create": {
+        "transaction_id": "6ac01fc33df3d7fd66dbb1890f432130018f0f88f00f0229c3295c5ea4dbba62",
+        "block_num": 1294297,
+        "block_id": "0013bfd92c6f2fca2357f470d6e53bb7ce479afa2a3fa411433a1baa365d372e",
+        "observed_LIB": 1294299,
+        "CPU_us": 761,
+        "NET_words": 33
+      },
+      "fund": {
+        "transaction_id": "e78abc7cf67392627b89d8e0bb5faa967ead103b451b8e93929b632089eaf988",
+        "block_num": 1294302,
+        "block_id": "0013bfded3aeb915909f50e13b2faf73a9ec5e46536e814b816b6f5ef3f40475",
+        "observed_LIB": 1294302,
+        "CPU_us": 913,
+        "NET_words": 48
+      },
+      "registration": {
+        "transaction_id": "a0cc77e012208761d7bde91818751c7b7d8025308f212984c5ae014a4217cfd8",
+        "block_num": 1294332,
+        "block_id": "0013bffcc10b2c7be3a49ecea246f2fe9882ea4db70c697393e378d51b952769",
+        "observed_LIB": 1294332,
+        "CPU_us": 4107,
+        "NET_words": 99
+      },
+      "runtime": {
+        "PID": 1179498,
+        "sync_samples": [
+          {
+            "utc": "2026-11-16T12:53:15.536273+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294321,
+              "last_irreversible_block_num": 1294319,
+              "last_irreversible_block_id": "0013bfefe6c8598e3ad04b4246821415d4bf005d181b8f55c52f676b0518752e",
+              "head_block_id": "0013bff174a41e522d3109414c38015f6e48e87ea230b3e9b4d43e611f385d6e",
+              "head_block_time": "2026-11-16T12:53:15.500",
+              "head_block_producer": "perplexityai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294321,
+              "fork_db_head_block_id": "0013bff174a41e522d3109414c38015f6e48e87ea230b3e9b4d43e611f385d6e",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6623903650",
+              "total_net_weight": 255590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:53:14.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:53:17.740809+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294325,
+              "last_irreversible_block_num": 1294319,
+              "last_irreversible_block_id": "0013bfefe6c8598e3ad04b4246821415d4bf005d181b8f55c52f676b0518752e",
+              "head_block_id": "0013bff5d2b7eeb0844413cc1bcc606ddaeda33dc6bd5469d91463cfbf15dc97",
+              "head_block_time": "2026-11-16T12:53:17.500",
+              "head_block_producer": "perplexityai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294325,
+              "fork_db_head_block_id": "0013bff5d2b7eeb0844413cc1bcc606ddaeda33dc6bd5469d91463cfbf15dc97",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6623903650",
+              "total_net_weight": 255590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:53:14.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:53:20.221124+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294330,
+              "last_irreversible_block_num": 1294328,
+              "last_irreversible_block_id": "0013bff84f0579059c675808256e0130a2edb97056391bc00215bb6c40fb35c7",
+              "head_block_id": "0013bffaf1d2e30580aef4e26318804c05c06a680132bab30fb18ff2c82d4b3d",
+              "head_block_time": "2026-11-16T12:53:20.000",
+              "head_block_producer": "seoulkaistai",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294330,
+              "fork_db_head_block_id": "0013bffaf1d2e30580aef4e26318804c05c06a680132bab30fb18ff2c82d4b3d",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6623903650",
+              "total_net_weight": 255590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:53:19.000"
+            }
+          }
+        ],
+        "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "profile_SHA256": "dfe859e1a58f7077b10c8b9ca9027c5f88fc01ba9a2e789a65de4ee665a360e3"
+      }
+    },
+    {
+      "name": "moonshottech",
+      "create": {
+        "transaction_id": "de45437ac59e2f4cc9eef56a8ebda9f2275fb23a3b228c93eb29d7fca3c18b95",
+        "block_num": 1294338,
+        "block_id": "0013c002d065a01b220f802d2209c2582f8ea83d2776848c2b4d99d7676f9a99",
+        "observed_LIB": 1294338,
+        "CPU_us": 724,
+        "NET_words": 33
+      },
+      "fund": {
+        "transaction_id": "e45ff596e0dd0f85915a1662292160e4eab1132d0510fbcbc7b76f9b6acc38cf",
+        "block_num": 1294341,
+        "block_id": "0013c005e604b4ba5bb376b1bcba6b74300687f9eacb328932931bef71eb61f3",
+        "observed_LIB": 1294341,
+        "CPU_us": 940,
+        "NET_words": 48
+      },
+      "registration": {
+        "transaction_id": "d92ac398a5ccf74f2eba27fc421404c6d9fd1fb7f74fce1e177f8f101c216b43",
+        "block_num": 1294376,
+        "block_id": "0013c0288b52297cf9740387ed8d7fe37044606e3adcaecf0212cc7721eb366d",
+        "observed_LIB": 1294376,
+        "CPU_us": 3572,
+        "NET_words": 99
+      },
+      "runtime": {
+        "PID": 1179888,
+        "sync_samples": [
+          {
+            "utc": "2026-11-16T12:53:37.603699+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294365,
+              "last_irreversible_block_num": 1294363,
+              "last_irreversible_block_id": "0013c01b264c23812bbf346992dc624181ba46c9a5e2d9e42d11f74af65bd831",
+              "head_block_id": "0013c01d672cb08c6a00b9c8b6f43adb87b17ef3489ffa9c52cb50b33b14a58b",
+              "head_block_time": "2026-11-16T12:53:37.500",
+              "head_block_producer": "stabilityhub",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294365,
+              "fork_db_head_block_id": "0013c01d672cb08c6a00b9c8b6f43adb87b17ef3489ffa9c52cb50b33b14a58b",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6633904400",
+              "total_net_weight": 256590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:53:36.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:53:40.055531+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294370,
+              "last_irreversible_block_num": 1294368,
+              "last_irreversible_block_id": "0013c02031369b3a1fdf4b4c5adc4f9b12388330ef892cee8b9877851fb3c3fc",
+              "head_block_id": "0013c02216157085bd037a2df30ee71ff80c3aa9d4c5c2c508eaee4cd8a390d8",
+              "head_block_time": "2026-11-16T12:53:40.000",
+              "head_block_producer": "stabilityhub",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294370,
+              "fork_db_head_block_id": "0013c02216157085bd037a2df30ee71ff80c3aa9d4c5c2c508eaee4cd8a390d8",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6633904400",
+              "total_net_weight": 256590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:53:39.000"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:53:42.245350+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294374,
+              "last_irreversible_block_num": 1294372,
+              "last_irreversible_block_id": "0013c02447405ad631d9e335447c9a554072c78f38408aa502d3c89071fa19bc",
+              "head_block_id": "0013c026f7ab90459590f165284417628e2e8b997d1f3698347377c31df195dc",
+              "head_block_time": "2026-11-16T12:53:42.000",
+              "head_block_producer": "sydneyunswcs",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294374,
+              "fork_db_head_block_id": "0013c026f7ab90459590f165284417628e2e8b997d1f3698347377c31df195dc",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6633904400",
+              "total_net_weight": 256590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:53:41.000"
+            }
+          }
+        ],
+        "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "profile_SHA256": "dfe859e1a58f7077b10c8b9ca9027c5f88fc01ba9a2e789a65de4ee665a360e3"
+      }
+    },
+    {
+      "name": "zurichethcs1",
+      "create": {
+        "transaction_id": "9c5115ab5f91d7531078a1233fd1724dc1d9bbc3951b7c9926d190b1b890534a",
+        "block_num": 1294382,
+        "block_id": "0013c02ea80251305c0de64d9beb2fe82f92ed678b3f7f3dbddbb5cb926cd7d3",
+        "observed_LIB": 1294382,
+        "CPU_us": 747,
+        "NET_words": 33
+      },
+      "fund": {
+        "transaction_id": "da8fae2774b22999c1be186f8abb6264c9a7d6d087ef767511c817e425f5d4c6",
+        "block_num": 1294386,
+        "block_id": "0013c032b347b211ac1d53d30ae83b3bc500c44cf769e02da1cd6c2766ffdef4",
+        "observed_LIB": 1294387,
+        "CPU_us": 1143,
+        "NET_words": 48
+      },
+      "registration": {
+        "transaction_id": "07ff49f5e353feef0b37282b6add3a3f40698fe30535dbdd8334844761c2c7cb",
+        "block_num": 1294424,
+        "block_id": "0013c0585a418b84d38c57487b2b5baad51f2bb8cf66185ac6e633171cfd85b5",
+        "observed_LIB": 1294425,
+        "CPU_us": 3880,
+        "NET_words": 99
+      },
+      "runtime": {
+        "PID": 1180306,
+        "sync_samples": [
+          {
+            "utc": "2026-11-16T12:54:01.756293+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294413,
+              "last_irreversible_block_num": 1294411,
+              "last_irreversible_block_id": "0013c04beae1d3ead937c080e346d9afeb89cbbdb849fdd9974fd9eb78dee29a",
+              "head_block_id": "0013c04df044c7eae90f048c307cb32c4c236d722d767be2ffa1510330cef89b",
+              "head_block_time": "2026-11-16T12:54:01.500",
+              "head_block_producer": "alibabaailab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294413,
+              "fork_db_head_block_id": "0013c04df044c7eae90f048c307cb32c4c236d722d767be2ffa1510330cef89b",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6643905160",
+              "total_net_weight": 257590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:54:00.500"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:54:03.934923+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294418,
+              "last_irreversible_block_num": 1294416,
+              "last_irreversible_block_id": "0013c0508dbb5fdb6c6f4de1c7364da3ee779dcce0c6180be61db93034fdc887",
+              "head_block_id": "0013c052cb1897b81fa963ec5070414597b619fff4213b13d44cc7d50b9e29b4",
+              "head_block_time": "2026-11-16T12:54:04.000",
+              "head_block_producer": "alibabaailab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294418,
+              "fork_db_head_block_id": "0013c052cb1897b81fa963ec5070414597b619fff4213b13d44cc7d50b9e29b4",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6643905160",
+              "total_net_weight": 257590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:54:03.000"
+            }
+          },
+          {
+            "utc": "2026-11-16T12:54:06.193299+00:00",
+            "info": {
+              "server_version": "42dda604",
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+              "head_block_num": 1294422,
+              "last_irreversible_block_num": 1294420,
+              "last_irreversible_block_id": "0013c054ee782c61ce97668341f1d92f8ef2c011cd7e1b2112247fec40d738f8",
+              "head_block_id": "0013c056e967d18a47a0991f57a5c46efaeb2d874eaf8e3f8ad260b8906b9a9b",
+              "head_block_time": "2026-11-16T12:54:06.000",
+              "head_block_producer": "anthropiclab",
+              "virtual_block_cpu_limit": 800000000,
+              "virtual_block_net_limit": 1048576000,
+              "block_cpu_limit": 800000,
+              "block_net_limit": 1048576,
+              "server_version_string": "v1.0.0-test.2-dev",
+              "fork_db_head_block_num": 1294422,
+              "fork_db_head_block_id": "0013c056e967d18a47a0991f57a5c46efaeb2d874eaf8e3f8ad260b8906b9a9b",
+              "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+              "total_cpu_weight": "6643905160",
+              "total_net_weight": 257590000,
+              "earliest_available_block_num": 1294020,
+              "last_irreversible_block_time": "2026-11-16T12:54:05.000"
+            }
+          }
+        ],
+        "native_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+        "profile_SHA256": "dfe859e1a58f7077b10c8b9ca9027c5f88fc01ba9a2e789a65de4ee665a360e3"
+      }
+    }
+  ],
+  "vote_receipts": [
+    {
+      "voters": [
+        "astralstream",
+        "astralvalley",
+        "autumnflower",
+        "birchmeadows",
+        "brightgarden"
+      ],
+      "receipt": {
+        "transaction_id": "33e1ecf34b92ce7788602106ce6a5948ef5a6b98ccc5e229ebb5960c26a3f394",
+        "block_num": 1294434,
+        "block_id": "0013c0620b205b799a6eebf1129856179ae38987b35fdeaa9561d9c9b9d1fd74",
+        "observed_LIB": 1294435,
+        "CPU_us": 1582,
+        "NET_words": 55
+      }
+    },
+    {
+      "voters": [
+        "cambridgeoak",
+        "cedarharbors",
+        "civicuserone",
+        "civicusertwo",
+        "cobaltcanyon"
+      ],
+      "receipt": {
+        "transaction_id": "c29c989589e6a907925864635c2decde11bbf38d4060e993ef42af94b716a367",
+        "block_num": 1294449,
+        "block_id": "0013c071cc1e7cf61682b23a37bb43fe24aa74d07029e4c19ae9fdcdbf5170b8",
+        "observed_LIB": 1294450,
+        "CPU_us": 1882,
+        "NET_words": 55
+      }
+    },
+    {
+      "voters": [
+        "cobaltflower",
+        "cosmicmeadow",
+        "frozenbreeze",
+        "gentleaurora",
+        "gentlevalley"
+      ],
+      "receipt": {
+        "transaction_id": "78eb525204778f3b8e7eb06450103c48bf4f9839b952eb3e4b2ab5db4a74cf39",
+        "block_num": 1294458,
+        "block_id": "0013c07aa12b7fcc2a04299f312f590bbc29894e46b2ad1f40792d3b9dee997c",
+        "observed_LIB": 1294459,
+        "CPU_us": 1086,
+        "NET_words": 55
+      }
+    },
+    {
+      "voters": [
+        "mapleharbors",
+        "mellowflower",
+        "purpleaurora",
+        "rexliquidaab",
+        "rexliquidaaf"
+      ],
+      "receipt": {
+        "transaction_id": "7cbec449f5a34fbe92c63583c56e2ab14f665d22854cbb22308c2bee05310af2",
+        "block_num": 1294470,
+        "block_id": "0013c08684092e97a2a409a7076eacba04b731837581469ed2ae4a21e6d267bd",
+        "observed_LIB": 1294472,
+        "CPU_us": 1542,
+        "NET_words": 55
+      }
+    },
+    {
+      "voters": [
+        "serenecanyon",
+        "sereneflower",
+        "serenewillow",
+        "silentcanyon",
+        "silentcomets"
+      ],
+      "receipt": {
+        "transaction_id": "9ccee7ecf6b55fec57b59c4ed3f063dfb50006e54c104144e03ab1d83559cf71",
+        "block_num": 1294484,
+        "block_id": "0013c09493bb31bf2f69e98ae1ea75a697b984134c93094ff9f276fa4a841c98",
+        "observed_LIB": 1294485,
+        "CPU_us": 1442,
+        "NET_words": 55
+      }
+    },
+    {
+      "voters": [
+        "silentharbor",
+        "silentvalley",
+        "silveraurora",
+        "silverfalcon",
+        "springbreeze"
+      ],
+      "receipt": {
+        "transaction_id": "82782ffb55cccf33a69fdfd0409d646d1729da26ab08e66a716fbf08b96ba032",
+        "block_num": 1294490,
+        "block_id": "0013c09a0c5961887961420a7d0a5f217a60d3b0042310ec14c10f2c477405d1",
+        "observed_LIB": 1294491,
+        "CPU_us": 1367,
+        "NET_words": 55
+      }
+    },
+    {
+      "voters": [
+        "summergarden",
+        "sunlitgarden",
+        "velvetwillow",
+        "winterflower",
+        "winterharbor"
+      ],
+      "receipt": {
+        "transaction_id": "b965ec57ac27d5fdc85582ba688c2b5a4d69e6b3c579b8b36850bf25a7ac5cc2",
+        "block_num": 1294495,
+        "block_id": "0013c09ff29e06ad4ef4d2cd4389e12294fdbcfe6be21d2df114381dde84a428",
+        "observed_LIB": 1294495,
+        "CPU_us": 1417,
+        "NET_words": 55
+      }
+    }
+  ],
+  "current": "summergarden,sunlitgarden,velvetwillow,winterflower,winterharbor",
+  "registered": 47,
+  "physical_BP_target": 25,
+  "old21_bans_preserved": true,
+  "external_redirected": 35,
+  "banned21_self_ballots_unchanged": true,
+  "supplies_caps_contracts_and_old_bonds_unchanged": true,
+  "all47_vote_totals_distinct": true
+}

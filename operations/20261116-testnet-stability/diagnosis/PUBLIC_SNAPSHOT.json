@@ -1,0 +1,15 @@
+{
+  "utc": "2026-11-16T12:23:27.301533+00:00",
+  "read_only": true,
+  "public": {
+    "reader": {
+      "error": "HTTP Error 403: Forbidden"
+    },
+    "writer": {
+      "error": "HTTP Error 403: Forbidden"
+    },
+    "history": {
+      "error": "HTTP Error 403: Forbidden"
+    }
+  }
+}

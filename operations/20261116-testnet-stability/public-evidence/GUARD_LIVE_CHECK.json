@@ -1,0 +1,5 @@
+{
+  "rc": 0,
+  "out": "{\"status\": \"NO_SAFE_OVERSIZED_TARGET\", \"utc\": \"2026-11-16T13:07:30.622160+00:00\", \"memory\": {\"MemAvailable\": 4807847936, \"SwapFree\": 56262459392}, \"head\": 1296029, \"LIB\": 1296024, \"fresh_strong_votes\": 21, \"target\": null, \"over768MiB\": {}, \"policy\": {\"limit_MiB\": 768, \"emergency_MiB\": 512, \"cooldown_seconds\": 180, \"one_native_operation\": true, \"historical_strikes_preserved\": true}}\n",
+  "err": ""
+}
