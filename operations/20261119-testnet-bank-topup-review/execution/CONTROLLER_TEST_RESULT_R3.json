@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "tests": 20,
+  "source_sha256": "4e89b844c87bfa3779696c691e1bc919c25735c0dc5f17df0c67b1a0e8ddb9cd",
+  "test_sha256": "2367382cc7a1e910a1c1f2f91242fa2b55b08b88ef7b8370574e017eafb8ac31",
+  "log_sha256": "bbef2c58a6f901070450a5eff6da085898acc755a250420a5fcf0de660069353",
+  "pre-sign_refusal": "get_public_keys rejects a JSON array body; corrected to the existing no-argument empty-body API. First signer closed normally, no intent/signed/packed/transaction/proposal files existed. New propose-r2 signer label preserves all initial evidence. Wallet public keys are canonically normalized before exact ownership comparison."
+}

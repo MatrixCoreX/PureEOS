@@ -58,6 +58,24 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual([x['name'] for x in a], ['refreshgov', 'devpropose'])
         self.assertEqual(a[1]['data'], b.fields(b.NEW, b.OLD))
 
+class WalletRPCTests(unittest.TestCase):
+    def call(self, method, data):
+        signer = b.Signer('synthetic', False)
+        signer.socket = Path('/tmp/nonexistent-test-only.sock')
+        class Response:
+            status = 200
+            def read(self): return b'[]'
+        with patch.object(b.http.client.HTTPConnection, 'request') as request, patch.object(b.http.client.HTTPConnection, 'getresponse', return_value=Response()):
+            signer.wallet(method, data)
+            return request.call_args.args[2]
+
+    def test_no_argument_wallet_call_has_empty_body(self):
+        self.assertEqual(self.call('get_public_keys', []), '')
+
+    def test_key_import_keeps_structured_body(self):
+        self.assertEqual(json.loads(self.call('import_key', ['fixture', 'synthetic'])), ['fixture', 'synthetic'])
+
+
 class SenderTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

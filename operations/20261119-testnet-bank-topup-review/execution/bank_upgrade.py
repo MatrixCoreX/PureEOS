@@ -188,7 +188,8 @@ class Signer:
                 self.sock.settimeout(10)
                 self.sock.connect(str(path))
         c = UnixHTTP('localhost')
-        c.request('POST', '/v1/wallet/' + method, json.dumps(data), {'Content-Type': 'application/json'})
+        body = '' if method in ['get_public_keys', 'list_wallets'] else json.dumps(data)
+        c.request('POST', '/v1/wallet/' + method, body, {'Content-Type': 'application/json'})
         r = c.getresponse()
         b = r.read()
         c.close()
@@ -232,7 +233,8 @@ class Signer:
                 self.wallet('import_key', ['testbank', matches[0]['Private key']])
                 public.append(wanted)
                 matches.clear()
-            assert set(self.wallet('get_public_keys', [])) == set(public)
+            actual = [self.command(['convert', 'public_key', value]).strip() for value in self.wallet('get_public_keys', [])]
+            assert set(actual) == set(public)
             save('SIGNER_' + self.label + '.json', {'status': 'READY', 'utc': now(), 'own_PID': self.child.pid,
                                                    'accounts': ['civicgovauth'] + (['civicbankers'] if self.need_bank else []),
                                                    'unix_only_no_TCP': True})
@@ -333,7 +335,7 @@ def propose():
     assert not g['pending'] and g['sealed'] and g['review_seconds'] == 1800
     assert stats()['supply'] == '100000000.0000 AIC'
     before_bank = bank()
-    r = send('propose', proposal_actions(OLD, NEW), OLD)
+    r = send('propose-r2', proposal_actions(OLD, NEW), OLD)
     g = rpc('get_upgrade_state')
     verify_proposal(g, OLD, NEW)
     assert token_pin() == OLD

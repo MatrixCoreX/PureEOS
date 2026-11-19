@@ -1,0 +1,1 @@
+{"status": "HOLD_NO_AUTOMATIC_FINANCIAL_RETRY", "operation": "propose", "type": "RuntimeError", "message": "Own Unix-only signer refused; private diagnostic retained"}
