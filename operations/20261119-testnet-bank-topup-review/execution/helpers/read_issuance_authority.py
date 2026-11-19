@@ -1,0 +1,7 @@
+from pathlib import Path
+import sys,json,datetime
+G=Path('/opt/pureeos-testnet-stall-recovery-20261116-r1');sys.path.insert(0,str(G));import stability_guard as g
+stats=g.rpc('get_currency_stats',{'code':'eosio.token','symbol':'AIC'},port=8890);issuer=stats['AIC']['issuer'];accounts={}
+for name in sorted(set([issuer,'eosio.prods','eosio.token','civicbankers'])):
+ a=g.rpc('get_account',{'account_name':name},port=8890);accounts[name]={'account_name':a['account_name'],'permissions':a['permissions'],'core_liquid_balance':a.get('core_liquid_balance'),'cpu_limit':a.get('cpu_limit'),'net_limit':a.get('net_limit')}
+abi=g.rpc('get_abi',{'account_name':'eosio.token'},port=8890)['abi'];structs={s['name']:s for s in abi['structs']};actions={a['name']:a for a in abi['actions']};pins=g.rpc('get_raw_abi',{'account_name':'eosio.token'},port=8890);i=g.rpc('get_info',port=8890);f=g.rpc('get_finalizer_info',port=8902);result={'utc':g.now(),'info':i,'stats':stats,'bank_balance':g.rpc('get_currency_balance',{'code':'eosio.token','account':'civicbankers','symbol':'AIC'},port=8890),'accounts':accounts,'action_schemas':{n:{'action':actions[n],'struct':structs[actions[n]['type']]}for n in ['issue','transfer']},'token_pins':{k:pins[k]for k in ['code_hash','abi_hash']},'policy':{'count':len(f['active_finalizer_policy']['finalizers']),'threshold':f['active_finalizer_policy']['threshold']},'automatic_latest':json.loads(Path('/opt/pureeos-testnet-cpu-stability-20261119-r1/AUTO_REPLACEMENT_LATEST.json').read_text())};print(json.dumps(result))
