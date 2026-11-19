@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "tests": 3,
+  "waiter_sha256": "cc883807ae0cde2866ad7dba764687154cf6c86241c4f8160f76365400abb1ec",
+  "test_sha256": "24ec81d41284efa04cf8e373cc6e002d32911c651be4e1afad274671dfd1078a",
+  "source_keeps_financial_calls_outside_read_retry_loop": true
+}

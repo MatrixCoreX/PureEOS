@@ -1,0 +1,8 @@
+test_three_read_failures_stop_without_a_financial_call (test_review_waiter.WaitTests.test_three_read_failures_stop_without_a_financial_call) ... ok
+test_veto_failure_is_not_retried (test_review_waiter.WaitTests.test_veto_failure_is_not_retried) ... ok
+test_waits_for_irreversible_not_wall_clock (test_review_waiter.WaitTests.test_waits_for_irreversible_not_wall_clock) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK
