@@ -1,0 +1,113 @@
+{
+  "status": "CHAIN_AND_VERIFICATION_COMPLETE_PUBLICATION_PREPARED",
+  "utc": "2026-11-19T08:56:24.536026+00:00",
+  "recipient": "civicbankers",
+  "minted": "150000.0000 AIC",
+  "bank_observed": "152279.9158 AIC",
+  "supply": "100150000.0000 AIC",
+  "maximum_supply": "2100000000.0000 AIC",
+  "issuer": "eosio",
+  "token_restored_exact": {
+    "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+    "abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856"
+  },
+  "transactions": {
+    "propose-r2": {
+      "canonical_receipt": {
+        "transaction_id": "291f9906cb3def3fe323238cb25cf1c1c87d888667310dd2a7cca697425cf134",
+        "block_num": 1773466,
+        "block_id": "001b0f9a4558c84b36f1408228f445f23d019db1c5264a81f01b83fa4a2721eb",
+        "timestamp": "2026-11-19T07:48:43.500",
+        "observed_LIB": 1773466,
+        "two_source_canonical": true
+      },
+      "signature_count_only": 1,
+      "signed_file_sha256_only": "11dc7fdbbbcc03f6bf1833f99d9aa22fd2ad9e134ab7ccdd5cafd535d928c028",
+      "signer_closed": {
+        "status": "PASS",
+        "utc": "2026-11-19T07:48:43.083719+00:00",
+        "own_PID": 1484144
+      }
+    },
+    "execute-mint-restore-proposal": {
+      "canonical_receipt": {
+        "transaction_id": "ab81e5cea0bcdcfba34b2c217cd5a6f8a0284aa98ccfdf05b236250558623bc7",
+        "block_num": 1777096,
+        "block_id": "001b1dc8327ce74777c2b35841d4e3c29405179b5428504d9a2acf7fe40d2f49",
+        "timestamp": "2026-11-19T08:18:58.500",
+        "observed_LIB": 1777096,
+        "two_source_canonical": true
+      },
+      "signature_count_only": 2,
+      "signed_file_sha256_only": "82e3766c38bdbb7fc96ff41bc40a6eaea23efb618c647433b109ae70b2401943",
+      "signer_closed": {
+        "status": "PASS",
+        "utc": "2026-11-19T08:18:57.986071+00:00",
+        "own_PID": 1488097
+      }
+    },
+    "restore": {
+      "canonical_receipt": {
+        "transaction_id": "2f6646fa3d2c66f22f71a5f114d3bcb04729abebac08f14de8b26fda7d99dfbe",
+        "block_num": 1780703,
+        "block_id": "001b2bdf85dee95128361c7e4cc419cbcdb777379cb923c0ee1212201d184efb",
+        "timestamp": "2026-11-19T08:49:02.000",
+        "observed_LIB": 1780705,
+        "two_source_canonical": true
+      },
+      "signature_count_only": 1,
+      "signed_file_sha256_only": "e6d02b0a9a24abafe8a1d85e5c41bd4e542786906901f7f5173c3ee916e0a3ea",
+      "signer_closed": {
+        "status": "PASS",
+        "utc": "2026-11-19T08:49:01.621749+00:00",
+        "own_PID": 1491936
+      }
+    }
+  },
+  "separate_native_review_seconds": [
+    1800,
+    1800
+  ],
+  "tests": {
+    "isolated_WASM": 20,
+    "sender_and_governance": 20,
+    "waiter": 3,
+    "unsigned_atomic_packing": "PASS"
+  },
+  "public_HTTP": {
+    "reader": 200,
+    "writer": 200,
+    "history": 200,
+    "relay1": 200,
+    "relay2": 200,
+    "token_code": 200,
+    "supply": 200,
+    "bank": 200
+  },
+  "history_missing_blocks": 0,
+  "native_strong_at_audit": 21,
+  "original_wallet_PID": "0",
+  "auto_replacement": {
+    "status": "WAIT_CPU_HEADROOM",
+    "utc": "2026-11-19T08:51:43.153737+00:00",
+    "eligible": 23,
+    "bank_units": 1522799158,
+    "required_bank_units": 145010000,
+    "CPU_pressure_avg60": 89.59
+  },
+  "automatic_jobs": 0,
+  "failures_preserved": [
+    "Seven initial isolated-fixture setup/tool-output failures",
+    "Initial unittest mock-handle assertion mistakes (controller unchanged)",
+    "Auxiliary wallet no-argument RPC refusal BEFORE intent/signing/broadcast; fixed and submitted once using fresh propose-r2 label",
+    "Restoration was irreversible before an over-strict unbounded scope-page check failed; exact bounded scope and two-source canonical read-only reconciliation proved completion without any new signature or broadcast"
+  ],
+  "own_auxiliary_worker_actual_state": {
+    "MainPID": "0",
+    "Result": "exit-code",
+    "ActiveState": "failed"
+  },
+  "no_private_key_signed_packet_or_safety_binary_export": true,
+  "no_native_core_authority_cap_phone_or_new_server_changes": true,
+  "limits": "Existing CPU admission threshold remains; fresh original auto timer passed restored pins and currently waits for CPU headroom. No new replacement job or indefinite stability/TPS claim."
+}

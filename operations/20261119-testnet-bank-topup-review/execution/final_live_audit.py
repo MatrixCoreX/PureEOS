@@ -55,6 +55,17 @@ for unit in ['pureeos-stability-memory-20261116.timer', 'pureeos-stability-logs-
              'pureeos-auto-replacement-20261119.timer']:
     timers[unit] = subprocess.check_output(['systemctl', 'show', unit, '-p', 'ActiveState', '-p', 'SubState'], text=True).strip()
     assert 'ActiveState=active' in timers[unit]
+worker_state = dict(line.split('=', 1) for line in subprocess.check_output(['systemctl', 'show', 'pureeos-bank-issuance-20261119.service', '-p', 'MainPID', '-p', 'ActiveState', '-p', 'Result'], text=True).splitlines() if '=' in line)
+assert worker_state['MainPID'] == '0', 'Own worker must be stopped'
+if worker_state['Result'] != 'success':
+    reconciliation = b.load('READ_ONLY_RECONCILIATION.json')
+    assert reconciliation['status'] == 'PASS_POSITIVE_READ_ONLY_RECONCILIATION'
+    assert reconciliation['no_new_signature_or_broadcast_or_chain_write'] is True
+    assert reconciliation['original_restore_packet_receipt'] == r['canonical_receipt']
+    assert r['completion_via'] == 'PASS_POSITIVE_READ_ONLY_RECONCILIATION'
+    assert worker_state['Result'] == 'exit-code' and worker_state['ActiveState'] == 'failed'
+else:
+    assert worker_state['ActiveState'] == 'inactive'
 original_wallet_pid = subprocess.check_output(['systemctl', 'show', 'pureeos-devnet-wallet-20261105.service', '-p', 'MainPID', '--value'], text=True).strip()
 assert original_wallet_pid == '0'
 auto_root = Path('/opt/pureeos-testnet-cpu-stability-20261119-r1')
@@ -68,8 +79,9 @@ result = {'status': 'PASS_COMPLETE_TWO_FULL_REVIEWS_ONE_MINT_EXACT_RESTORATION',
           'original_token_pins': b.token_pin(), 'transactions': transactions,
           'first_review_seconds': 1800, 'second_review_seconds': 1800, 'mint_receipt_before_restore': m['mint_receipt'],
           'permanent_receipt_scope_after_restore': r['permanent_receipt_scope'], 'authorities': authority,
-          'health': health, 'timers': timers, 'original_wallet_PID': original_wallet_pid,
+          'health': health, 'timers': timers, 'original_wallet_PID': original_wallet_pid, 'own_worker_exited': worker_state,
           'auto_replacement_latest': auto, 'auto_jobs': job_summary,
-          'private_keys_or_signed_packets_exported': False}
+          'private_keys_or_signed_packets_exported': False,
+          'read_only_reconciliation': b.load('READ_ONLY_RECONCILIATION.json') if (R / 'READ_ONLY_RECONCILIATION.json').exists() else None}
 b.save('FINAL_LIVE_AUDIT.json', result)
 print(json.dumps(result))

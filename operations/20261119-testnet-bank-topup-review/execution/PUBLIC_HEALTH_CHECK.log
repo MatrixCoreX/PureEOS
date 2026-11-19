@@ -1,0 +1,1 @@
+{"status": "PASS_PUBLIC_HTTP_AND_RESTORED_TOKEN", "HTTP": {"reader": 200, "writer": 200, "history": 200, "relay1": 200, "relay2": 200, "token_code": 200, "supply": 200, "bank": 200}, "supply": {"supply": "100150000.0000 AIC", "max_supply": "2100000000.0000 AIC", "issuer": "eosio"}, "bank": ["152279.9158 AIC"], "history_missing_blocks": 0}

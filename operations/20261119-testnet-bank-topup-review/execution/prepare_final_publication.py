@@ -1,0 +1,123 @@
+"""New final public-only archive. No chain, signing or server mutation."""
+from pathlib import Path
+import datetime
+import hashlib
+import json
+import re
+import shutil
+import subprocess
+
+D = Path(__file__).resolve().parent
+R = D.parents[1]
+OPS = R / 'PureEOS-Testnet-Ops-20261111'
+TARGET = OPS / 'operations/20261119-testnet-bank-topup-review'
+assert not (D / 'FINALIZATION_PREPARED.json').exists()
+assert not subprocess.check_output(['git', 'status', '--porcelain'], cwd=OPS, text=True)
+assert subprocess.check_output(['git', 'branch', '--show-current'], cwd=OPS, text=True).strip() == 'ops/testnet-bank-topup-review-20261119'
+a = json.loads((D / 'FINAL_LIVE_AUDIT_CALL.json').read_text())
+h = json.loads((D / 'PUBLIC_HEALTH_FINAL.json').read_text())
+assert a['status'] == 'PASS_COMPLETE_TWO_FULL_REVIEWS_ONE_MINT_EXACT_RESTORATION'
+assert all(v['HTTP'] == 200 for v in h['unsigned_public_reads'].values())
+assert a['read_only_reconciliation']['status'] == 'PASS_POSITIVE_READ_ONLY_RECONCILIATION'
+assert a['bank_current_units'] == 1522799158
+report = {
+    'status': 'CHAIN_AND_VERIFICATION_COMPLETE_PUBLICATION_PREPARED',
+    'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'recipient': 'civicbankers', 'minted': '150000.0000 AIC', 'bank_observed': '152279.9158 AIC',
+    'supply': a['stats']['supply'], 'maximum_supply': a['stats']['max_supply'], 'issuer': a['stats']['issuer'],
+    'token_restored_exact': a['original_token_pins'], 'transactions': a['transactions'],
+    'separate_native_review_seconds': [1800, 1800],
+    'tests': {'isolated_WASM': 20, 'sender_and_governance': 20, 'waiter': 3, 'unsigned_atomic_packing': 'PASS'},
+    'public_HTTP': {n: v['HTTP'] for n, v in h['unsigned_public_reads'].items()},
+    'history_missing_blocks': 0, 'native_strong_at_audit': a['health']['recent_strong'],
+    'original_wallet_PID': a['original_wallet_PID'], 'auto_replacement': a['auto_replacement_latest'],
+    'automatic_jobs': len(a['auto_jobs']),
+    'failures_preserved': [
+        'Seven initial isolated-fixture setup/tool-output failures',
+        'Initial unittest mock-handle assertion mistakes (controller unchanged)',
+        'Auxiliary wallet no-argument RPC refusal BEFORE intent/signing/broadcast; fixed and submitted once using fresh propose-r2 label',
+        'Restoration was irreversible before an over-strict unbounded scope-page check failed; exact bounded scope and two-source canonical read-only reconciliation proved completion without any new signature or broadcast',
+    ],
+    'own_auxiliary_worker_actual_state': a['own_worker_exited'],
+    'no_private_key_signed_packet_or_safety_binary_export': True,
+    'no_native_core_authority_cap_phone_or_new_server_changes': True,
+    'limits': 'Existing CPU admission threshold remains; fresh original auto timer passed restored pins and currently waits for CPU headroom. No new replacement job or indefinite stability/TPS claim.',
+}
+(D / 'FINAL_REPORT.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+text = '''# TEST 银行增发及原合约恢复完成
+
+已一次性给 `civicbankers` 增发 **150000.0000 AIC**。审计时银行余额 **152279.9158 AIC**，总发行量 **100150000.0000 AIC**，上限仍为 **2100000000.0000 AIC**、发行方仍为 `eosio`。两次独立完整原生 1800 秒审查和否决条件均保留，原始代币 WASM 和 raw ABI 已精确恢复，当前没有待执行升级。
+
+| 步骤 | 不可逆区块 | UTC 时间 | 原始交易 ID |
+| --- | --- | --- | --- |
+| 提案 6 | 1773466 | 07:48:43.500 | `291f9906cb3def3fe323238cb25cf1c1c87d888667310dd2a7cca697425cf134` |
+| 执行提案 6、增发、发布恢复提案 7（原子） | 1777096 | 08:18:58.500 | `ab81e5cea0bcdcfba34b2c217cd5a6f8a0284aa98ccfdf05b236250558623bc7` |
+| 执行恢复提案 7 | 1780703 | 08:49:02.000 | `2f6646fa3d2c66f22f71a5f114d3bcb04729abebac08f14de8b26fda7d99dfbe` |
+
+第一轮截止 08:18:43.500，第二轮截止 08:48:58.500；执行均在原生不可逆时间满足后进行。三笔原始交易 ID 唯一、各只广播一次，两源不可逆回执复核通过。只导出签名数量和文件 SHA，签名/打包交易、密钥和密码全部留在服务器私有目录。
+
+原合约代码 SHA 为 `f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c`，raw ABI SHA 为 `2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856`。永久单次回执行仍存在且付款人为银行；原发行权限、最大供应量、其他合约固定值及旧数据结构保留。原 token 源码和关闭 TEST 开关的候选均能逐字节重建原始线上 WASM。
+
+20 项隔离 WASM、20 项发送/治理、3 项等待逻辑检查及冷旧 ABI 下的未签名打包检查通过。公开 reader/writer/history/relay1/relay2 及代码/供应量/银行读取均 HTTP200，历史 missing_blocks=0；最终观察为原生21/15和21个新鲜强投票，内存/日志/自动补位定时器继续运行。原钱包服务 PID0，三个签名子进程均正常结束；没有手机更新、原生/core 修改、新服务器或权限/上限绕过。
+
+恢复交易成功后，收尾脚本把 `get_table_by_scope` 正常分页的 `more` 当成了失败。该接口 limit 统计扫描条目，指定 table 并不意味着已扫描完全部 scope。初次返回已包含正确回执和继续游标；随后限定上下界都为 `eosio.token`，完整无游标读取唯一回执表并复核原始不可逆交易、原代码/ABI、权限、金额和链健康，补证完成。没有重签、重播或重新执行恢复交易。原断言/HOLD、辅助等待服务 failed/PID0 状态和所有诊断均保留，未伪装为原进程正常返回。
+
+首次辅助钱包初始化也曾因无参数接口不接受 JSON[] 而拒绝，发生在任何 intent/签名/广播之前；修正为空请求体并规范化公钥后，使用新辅助目录完成了唯一原始提案。全部初始夹具和单元测试失败均保留。
+
+资金已补足，自动补位在恢复后自然定时周期重新通过原合约固定值检查，当前为 `WAIT_CPU_HEADROOM`（CPU PSI60 89.59，高于既有80门槛），新补位作业0。保持稳定性优先的原门槛；不把已补币说成已补齐节点，也不作无限期稳定或 TPS 承诺。
+
+根案件 `release-work-20261119/testnet-bank-issuance-r1` 为权威记录。所有已完成提案、执行、恢复和一次性控制器不得重跑；后续只能针对原交易 ID 做只读核对。完整源码/公开证据保存在 TEST 分支，最终 GitHub publish 和直接 ls-remote 回执在根案件 `FINAL_GIT_RESULT.json`。
+'''
+(D / 'FINAL_REPORT.zh-CN.md').write_text(text)
+for name in [
+    'FINAL_REPORT.json', 'FINAL_REPORT.zh-CN.md', 'FINAL_LIVE_AUDIT_CALL.json',
+    'PUBLIC_HEALTH_FINAL.json', 'PUBLIC_HEALTH_CHECK.log', 'RESTORE_POSTCONDITION_INSPECTION.json',
+    'RESTORATION_READ_ONLY_RECONCILIATION_CALL.json', 'OBSERVATION_044.json',
+    'final_live_audit.py', 'reconcile_actual_restoration.py', 'check_public_health.py', 'prepare_final_publication.py',
+]:
+    shutil.copy2(D / name, TARGET / 'execution' / name)
+
+entry = ('- COMPLETE 2026-11-19 TEST bank one-shot mint+exact restore: user「升级」authorized fixed150000AIC civicbankers. '
+         '3unique once-broadcast IR transactions: proposal6 IR1773466/291f9906, atomic install+mint+restore-proposal7 IR1777096/ab81e5ce, restore IR1780703/2f6646fa. '
+         'Two full1800s reviews+nativeveto retained; originaltokenf8c5/rawABI2d69 EXACT restored, no pendingproposal, '
+         'supply100150000/max2100000000AIC, bank152279.9158 at finalaudit, issuer+all authorities/pins preserved, permanent single-use receipt retained. '
+         '20WASM+20sender+3waiter checks and unsigned cold-ABI packingPASS; public8HTTP200/historymissing0/native21-15/21strong/timersactive/originalwalletPID0. '
+         'First wallet[] RPC startup refusal BEFORE any intent/sign/broadcast preserved/fixed. '
+         'Restore alreadyIR before postcheck wrongly rejected normal get_table_by_scope cursor; exact bounded-scope+two-source READONLY positive reconciliation PASS, '
+         'NO financial phase rerun/re-sign/rebroadcast; originalworker failed/PID0 and HOLD evidence retained, all3 signerchildren closed. '
+         'Fresh original auto-timer restored-pin check PASS then WAIT_CPU_HEADROOM PSI60=89.59>80,0newjobs; do not claim nodes replaced. '
+         'Root release-work-20261119/testnet-bank-issuance-r1 FINAL_REPORT/FINAL_LIVE_AUDIT_CALL/FINAL_GIT_RESULT authoritative. '
+         'All one-shot propose/execute/mint/restore/install/audit/reconcile controllers DONE MUSTNOT replay. '
+         'Native/core/authority/cap/clientpins/mobile/newserver/subagents untouched; no privatekey/signedpacket/safetybinary export; Wallet39 unchanged. '
+         'TEST Git uses publish+direct GitHublsremote; origin is LOCAL.\n\n')
+for p in [R / 'AGENTS.md', OPS / 'AGENTS.md']:
+    old = p.read_text()
+    assert not old.startswith(entry)
+    p.write_text(entry + old)
+
+keys = re.compile(rb'PVT_(?:K1|R1|BLS)_[A-Za-z0-9_-]+|\b5[HJK][1-9A-HJ-NP-Za-km-z]{49}\b')
+def packet(v):
+    if isinstance(v, dict):
+        return ('signatures' in v and isinstance(v['signatures'], list)) or 'packed_trx' in v or any(packet(x) for x in v.values())
+    return isinstance(v, list) and any(packet(x) for x in v)
+
+files = {}
+for p in TARGET.rglob('*'):
+    if p.is_file():
+        raw = p.read_bytes()
+        assert not keys.search(raw), 'Private key in public whitelist'
+        if p.suffix == '.json':
+            assert not packet(json.loads(raw)), 'Signed/packed packet in public whitelist'
+        files[str(p.relative_to(TARGET))] = hashlib.sha256(raw).hexdigest()
+manifest = {'status': 'PASS_FINAL_PUBLIC_SOURCE_AND_EVIDENCE_SCAN', 'files': files,
+            'no_private_keys_or_signed_packets': True, 'all_chain_operations_complete': True}
+(TARGET / 'FINAL_PUBLIC_MANIFEST.json').write_text(json.dumps(manifest, indent=2) + '\n')
+(D / 'FINALIZATION_PREPARED.json').write_text(json.dumps(manifest, indent=2) + '\n')
+state = json.loads((D / 'STATE.json').read_text())
+state.update(status='CHAIN_AND_VERIFICATION_COMPLETE_WAIT_FINAL_GIT_RECEIPT',
+             final_audit='FINAL_LIVE_AUDIT_CALL.json', final_report='FINAL_REPORT.json',
+             extra_issuance_count=1, public_chain_transaction_count=3,
+             restore_transaction=a['transactions']['restore']['canonical_receipt'],
+             no_replay='All one-shot financial and reconciliation phases COMPLETE; never rerun. Ordinary bounded auto timers remain enabled.')
+(D / 'STATE.json').write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n')
+print(json.dumps({'status': manifest['status'], 'public_files': len(files)}))
