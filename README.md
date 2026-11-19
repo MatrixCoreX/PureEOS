@@ -1,3 +1,6 @@
+> 长期入口 / Long-term branches: [main — 正式主线 / production](https://github.com/MatrixCoreX/PureEOS/tree/main) · [testnet — 测试网 / TEST](https://github.com/MatrixCoreX/PureEOS/tree/testnet).
+> 分支约定 / Branch policy: [docs/BRANCHES.md](docs/BRANCHES.md).
+
 # PureEOS 1.0.0
 
 [简体中文](#简体中文) · [English](#english)
