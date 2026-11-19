@@ -1,0 +1,23 @@
+test_empty_electorate_rejected (test_bank_upgrade.GovernanceTests.test_empty_electorate_rejected) ... ok
+test_expected_proposal (test_bank_upgrade.GovernanceTests.test_expected_proposal) ... ok
+test_irreversible_deadline_accepted (test_bank_upgrade.GovernanceTests.test_irreversible_deadline_accepted) ... ok
+test_native_veto_threshold_rejected (test_bank_upgrade.GovernanceTests.test_native_veto_threshold_rejected) ... ok
+test_restore_proposal_binds_reverse_hashes (test_bank_upgrade.GovernanceTests.test_restore_proposal_binds_reverse_hashes) ... ok
+test_short_review_rejected (test_bank_upgrade.GovernanceTests.test_short_review_rejected) ... ok
+test_tampered_payload (test_bank_upgrade.GovernanceTests.test_tampered_payload) ... ok
+test_wall_clock_does_not_replace_irreversible_deadline (test_bank_upgrade.GovernanceTests.test_wall_clock_does_not_replace_irreversible_deadline) ... ok
+test_wrong_id (test_bank_upgrade.GovernanceTests.test_wrong_id) ... ok
+test_disagreeing_sources_rejected (test_bank_upgrade.ReceiptTests.test_disagreeing_sources_rejected) ... ok
+test_two_source_canonical_receipt (test_bank_upgrade.ReceiptTests.test_two_source_canonical_receipt) ... ok
+test_unknown_result_never_broadcasts (test_bank_upgrade.ReceiptTests.test_unknown_result_never_broadcasts) ... ok
+test_completed_send_never_repeats (test_bank_upgrade.SenderTests.test_completed_send_never_repeats) ... ok
+test_existing_packet_never_signs (test_bank_upgrade.SenderTests.test_existing_packet_never_signs) ... ok
+test_existing_private_state_never_signs (test_bank_upgrade.SenderTests.test_existing_private_state_never_signs) ... ok
+test_http_failure_only_reconciles_same_id (test_bank_upgrade.SenderTests.test_http_failure_only_reconciles_same_id) ... ok
+test_success_broadcast_once_and_signer_closed (test_bank_upgrade.SenderTests.test_success_broadcast_once_and_signer_closed) ... ok
+test_timeout_only_reconciles_no_second_broadcast (test_bank_upgrade.SenderTests.test_timeout_only_reconciles_no_second_broadcast) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.011s
+
+OK

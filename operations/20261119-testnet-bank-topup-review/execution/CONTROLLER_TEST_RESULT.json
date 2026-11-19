@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "tests": 18,
+  "source_sha256": "61d082dfc7df4007dfcd05264f5cd7ccf66a5825f87f6b722b8ed223fde07471",
+  "test_sha256": "eb5f1b5ad749dc3c9e8db164d0fccd0930a4d399285126317baf6da57741cee3",
+  "log_sha256": "511d06d1da70d460eb19f559f7847ffc0c484a062229b5b736efe9f614e2e091",
+  "initial_fixture_only_failure_retained": "CONTROLLER_TEST.log + test_bank_upgrade.fixture-v1.py; three incorrect unittest mock-handle assertions corrected; controller unchanged"
+}

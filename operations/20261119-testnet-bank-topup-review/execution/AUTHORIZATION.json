@@ -1,0 +1,8 @@
+{
+  "status": "AUTHORIZED",
+  "utc": "2026-11-19T07:39:02.326463+00:00",
+  "user_message": "升级",
+  "scope": "Temporary TEST eosio.token upgrade; fixed one-time150000.0000AIC to civicbankers; second separate full native1800s review and restore exact original WASM/rawABI; preserve authority/cap/veto/client-pin checks; no mobile or native changes",
+  "approved_review_commit": "8d60833edf53ebb727743f01b6ce7048f69d9bb6",
+  "review_document_sha256": "3a2c71113f441b49005a055286d974af89a37a7414b9f1db264ce2d0c98bdd20"
+}
