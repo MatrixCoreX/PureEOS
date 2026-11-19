@@ -1,0 +1,6 @@
+{
+  "utc": "2026-11-19T05:18:40.469345+00:00",
+  "old_SHA256": "86224241ad1813cbc155683df98c5c7dd4705cebc1d2decfcdcf307360511487",
+  "new_SHA256": "da5c1d07d66c84771e6af1798e4ab706ae3533059dc0436e82cf81e85e908231",
+  "qualification": "45isolated tests PASS; only bounded read retry/telemetry, no consensus or safety relaxation"
+}

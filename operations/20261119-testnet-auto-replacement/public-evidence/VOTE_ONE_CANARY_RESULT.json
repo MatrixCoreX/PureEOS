@@ -1,0 +1,201 @@
+{
+  "utc": "2026-11-19T05:20:26.272209+00:00",
+  "target": "moonshottech",
+  "old_config_SHA256": "60f6953cfee472978d62da3b6451368fd4b3fdb50c9e5fd10a2a759a7f45b9d8",
+  "new_config_SHA256": "e98ec6d7d17f4472204e46d8cc212da2532eca981b53ced3845625c7471bfae6",
+  "profile_change": "vote-threads2->1 only, full validation/native quorum/safety all retained",
+  "oldPID": "1438135",
+  "recycle": {
+    "status": "PASS_ONE_GUARDED_RECYCLE",
+    "phase": "VERIFIED",
+    "utc": "2026-11-19T05:19:23.283564+00:00",
+    "event": "guard-events/20261119T051914-moonshottech",
+    "target": "moonshottech",
+    "oldPID": "1438135",
+    "other_PIDs": {
+      "anthropiclab": "1409468",
+      "bytedancelab": "1401364",
+      "canadamilaai": "1416708",
+      "cohereclouds": "1451994",
+      "genevacernai": "1435352",
+      "gptgenesisbp": "1176053",
+      "londonucllab": "1402040",
+      "mistralcloud": "1397840",
+      "parisinriaai": "1423019",
+      "perplexityai": "1414286",
+      "seoulkaistai": "1436654",
+      "stabilityhub": "1173769",
+      "torontovectr": "1312033",
+      "nvidiaailabs": "1380792",
+      "tencentailab": "1362634",
+      "alibabaailab": "1457173",
+      "deepmindtech": "1309555",
+      "berlintulab2": "1420084",
+      "bostonmitcs1": "1426756",
+      "deepseeklabs": "1264730",
+      "minimaxaihub": "1412340",
+      "zurichethcs1": "1452527"
+    },
+    "anchor_num": 1755553,
+    "anchor_id": "001ac9a149bcc4b5d8862c6b66e7ad5996d3922069828887405af7697b740df7",
+    "before_bytes": 308781056,
+    "before_memory": {
+      "MemAvailable": 1836830720,
+      "SwapFree": 51086344192
+    },
+    "next_duty_seconds": 10000,
+    "watchdog": "pureeos-stability-restore-20261119t051914",
+    "safety_sha256_before_start": "99c6eb374feefeca5236142ff9c95070b07c878a8fbbd05f35754fae16574add",
+    "last_read_error": "URLError: <urlopen error [Errno 111] Connection refused>",
+    "proof": {
+      "new_pid": "1463064",
+      "old_pid": "1438135",
+      "other_pids_unchanged": true,
+      "anchor_matches": true,
+      "target_fresh": true,
+      "other_recent": 21,
+      "safety_exists": true,
+      "config_unchanged": true,
+      "banned": false
+    }
+  },
+  "status": "PASS_ONE_VOTE_THREAD_CANARY_60SEC",
+  "samples": [
+    {
+      "utc": "2026-11-19T05:19:23.650975+00:00",
+      "head": 1755572,
+      "LIB": 1755570,
+      "head_age": 0.650897,
+      "LIB_age": 1.650905,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:19:28.964802+00:00",
+      "head": 1755583,
+      "LIB": 1755580,
+      "head_age": 0.4647,
+      "LIB_age": 1.964708,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:19:34.293942+00:00",
+      "head": 1755594,
+      "LIB": 1755592,
+      "head_age": 0.293826,
+      "LIB_age": 1.293833,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:19:39.644026+00:00",
+      "head": 1755604,
+      "LIB": 1755602,
+      "head_age": 0.643918,
+      "LIB_age": 1.643926,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:19:44.950593+00:00",
+      "head": 1755615,
+      "LIB": 1755613,
+      "head_age": 0.45044,
+      "LIB_age": 1.450448,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:19:50.300590+00:00",
+      "head": 1755626,
+      "LIB": 1755624,
+      "head_age": 0.300431,
+      "LIB_age": 1.300439,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:19:55.575478+00:00",
+      "head": 1755636,
+      "LIB": 1755634,
+      "head_age": 0.575338,
+      "LIB_age": 1.575346,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:20:00.940168+00:00",
+      "head": 1755647,
+      "LIB": 1755645,
+      "head_age": 0.440056,
+      "LIB_age": 1.440065,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:20:06.212231+00:00",
+      "head": 1755657,
+      "LIB": 1755655,
+      "head_age": 0.712112,
+      "LIB_age": 1.712122,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:20:11.583738+00:00",
+      "head": 1755668,
+      "LIB": 1755666,
+      "head_age": 0.583624,
+      "LIB_age": 1.583633,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:20:16.951840+00:00",
+      "head": 1755679,
+      "LIB": 1755675,
+      "head_age": 0.451725,
+      "LIB_age": 2.451733,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T05:20:22.269159+00:00",
+      "head": 1755690,
+      "LIB": 1755688,
+      "head_age": 0.269049,
+      "LIB_age": 1.269056,
+      "recent": 21
+    }
+  ],
+  "threads_CPU": [
+    {
+      "thread": "ld-linux-x86-64",
+      "CPU": 0.25
+    },
+    {
+      "thread": "ld-linux-x86-64",
+      "CPU": 0.0
+    },
+    {
+      "thread": "chain-0",
+      "CPU": 0.25
+    },
+    {
+      "thread": "vote-0",
+      "CPU": 9.995
+    },
+    {
+      "thread": "prod-0",
+      "CPU": 0.0
+    },
+    {
+      "thread": "net-0",
+      "CPU": 0.75
+    },
+    {
+      "thread": "net-0",
+      "CPU": 0.0
+    },
+    {
+      "thread": "resmon-0",
+      "CPU": 0.0
+    },
+    {
+      "thread": "http-0",
+      "CPU": 0.0
+    }
+  ],
+  "newPID": "1463064",
+  "other_PIDs_unchanged": true
+}

@@ -1,0 +1,37 @@
+{
+  "utc": "2026-11-19T06:05:08.353292+00:00",
+  "target": "pureeos-devnet-founder-20261105.service",
+  "old_properties": {
+    "CPUWeight": "500",
+    "CPUQuotaPerSecUSec": "infinity",
+    "IOWeight": "500"
+  },
+  "purpose": "Protect shared writer/relay/genesis source with soft scheduling priority; no restart or hard CPU cap",
+  "before_PIDs": {
+    "anthropiclab": "1465381",
+    "bytedancelab": "1467312",
+    "canadamilaai": "1467761",
+    "cohereclouds": "1469661",
+    "genevacernai": "1464406",
+    "gptgenesisbp": "1472103",
+    "londonucllab": "1468295",
+    "mistralcloud": "1468463",
+    "parisinriaai": "1468804",
+    "perplexityai": "1470483",
+    "seoulkaistai": "1469047",
+    "stabilityhub": "1465008",
+    "torontovectr": "1464238",
+    "nvidiaailabs": "1468634",
+    "tencentailab": "1464066",
+    "alibabaailab": "1465213",
+    "deepmindtech": "1467929",
+    "openaimodels": "0",
+    "sydneyunswcs": "0",
+    "berlintulab2": "1467589",
+    "bostonmitcs1": "1465600",
+    "deepseeklabs": "1468097",
+    "minimaxaihub": "1470109",
+    "moonshottech": "1463064",
+    "zurichethcs1": "1463890"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "status": "IMPLEMENTED_DEPLOYED_RUNTIME_QUALIFIED_REPLACEMENT_WAITING_FUNDS",
+  "date": "2026-11-19",
+  "existing_host": "4vCPU/~8GiB; no server or plan upgrade",
+  "zh-CN": {
+    "完成": [
+      "23个运行BP逐台保持原数据库调整vote-threads 2→1；共46个投票处理线程降到23个；原生验证、BLS、JIT、Merkle、数据库和共识保护保持",
+      "只读RPC最多3次有限重试；名单改用明确主键、20行分页与最后已读取主键+1推进，处理原生时间预算分页边界重复，拒绝倒退/缺页/重复",
+      "共享创始节点排除自动内存回收；其停机后检查与启动看门狗使用独立历史节点观察；本地ABI解码预算100ms/HTTP500ms，软CPU/IO权重1000，无BP硬CPU限制",
+      "自动流程每3分钟检查，验证自有普通BP永久封禁后停机禁用、删除专属区块/配置/服务配置，独立私钥和防双签记录留在服务器；相似名字保留前10字符并追加两位合法字符，查重后创建",
+      "补位目标25；只用civicbankers热测试资金，每节点固定14000AIC+1AIC RAM，10000AIC原生保证金；只给新节点自投，不修改其他账户选票；每小时最多1个、每天最多2个、总计最多10个，银行保留500AIC",
+      "新账户/生产/P2P/BLS密钥独立且只存服务器；专用临时keosd只用Unix socket，关闭TCP，不借用原钱包会话或改原凭证",
+      "意图/预算/交易ID/阶段原子持久化，每个原始签名包只广播1次；不明确结果只扫描原ID，不重签或重播；中断签名需核对；节点初始快照只允许尝试一次，已初始化数据库禁止自动重置",
+      "新节点只在同步且确认足够后登记；余额/CPU/内存/swap/磁盘/法定人数不足时等待；禁止自动增发、动用治理金库、解除黑名单或修改共识",
+      "已清理此前2个自动退休节点的6份systemd配置；核验后删除本次23份临时完整配置回滚拷贝，活跃配置、独立密钥、安全记录与失败证据保留"
+    ],
+    "明确保留的故障与影响": [
+      "首轮完成5台后一次前置断言安全中止，原始错误未记录具体哪个条件；核对完成列表后只继续剩余节点",
+      "Boston停机后遇名单分页边界重复，独立看门狗从原数据恢复；只读确认新PID、其他PID、原不可逆锚点、同步、安全记录后计入完成，没有第二次停机",
+      "本次对共享创始节点的入口依赖处理有遗漏，约4分半停机，原生计入两次空出块窗口；独立历史节点证实未被封禁、安全文件及原锚点完好后恢复。当前未拉黑，2次记录保留；没有清空、重置或放宽处罚规则"
+    ],
+    "当前限制": [
+      "CPU仍较忙：150秒平均约95%；线程争用减少，CPU余量仍有限，不作持续可用性或TPS承诺",
+      "当前23BP+历史源，47注册/23永久封禁/1维护停机；没有新增资金/注册/投票交易",
+      "测试银行余额2279.9158 AIC，首个补位需至少14501.0000 AIC可用余额；补两次并保留500需28502.0000 AIC，按本次余额尚缺26222.0842 AIC；程序已进入WAIT_BANK_FUNDS",
+      "即使余额充足，新任务还要求CPU PSI avg60≤80、RAM≥1GiB、swap空闲≥8GiB、磁盘≥25GiB、21/15策略与至少19近期强投票；不在过载时强行扩节点",
+      "真实新补位财务路径本轮未触发；已完成94项隔离软件测试，不能把它写成真实新注册或金融验收"
+    ]
+  },
+  "English": {
+    "result": "23 owned BPs now use one vote worker, retaining their original databases, real safety records and full native validation. Guarded retirement and bounded similar-name replacement are enabled on the existing host.",
+    "incident": "The planned shared-founder stop exposed a primary-RPC dependency in post-stop and watchdog checks. About4.5minutes of outage caused two native zero-production windows. Founder was independently verified and restored without a ban, reset or penalty alteration. The shared source is now excluded from planned automatic recycling and its restore observes the independent reader. All failures are preserved.",
+    "funding": "Only civicbankers may fund new self-owned identities:14000AIC+1RAM each,500reserve,one/hour,two/day,ten lifetime. Actual balance2279.9158AIC; replacement waits for funds and CPU headroom. No financial/registration/vote transaction was submitted by this task.",
+    "safety": "Canonical proof from two sources, exact owned mappings, no live-reference/symlink deletion, independent key/safety retention, bounded resources, atomic journal, one immutable broadcast, read-only reconciliation after ambiguity, no automatic re-sign, one initial checkpoint attempt, no initialized-DB reset, separate Unix-only signer. No unowned ballots, treasury, issuance, unban, quorum relaxation, native/core/contract/phone changes.",
+    "qualification": "94 isolated software cases; initial manual canary, 150second observation and60second priority observation. Real replacement finance was not exercised due to lack of funds."
+  },
+  "verification": {
+    "isolated_tests": 94,
+    "guardian_tests": 50,
+    "automatic_replacement_tests": 44,
+    "sample_seconds": 150,
+    "samples": 30,
+    "maximum_head_age_seconds": 0.699574,
+    "maximum_LIB_age_seconds": 8.268149,
+    "minimum_recent_strong_votes": 21,
+    "post_priority_seconds": 60,
+    "post_priority_max_LIB_age_seconds": 2.315273,
+    "all23_PIDs_unchanged_during_both_observations": true,
+    "native_binary_SHA256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+    "six_contract_code_ABI_pins_unchanged": true,
+    "genesis_block1_and_IR532319_retained": true,
+    "public_HTTP": {
+      "reader": 200,
+      "writer": 200,
+      "history": 200,
+      "relay1": 200,
+      "relay2": 200
+    }
+  },
+  "resources_after_150s_GiB": {
+    "MemAvailable": 4.642,
+    "SwapFree": 52.048
+  },
+  "disk_available_GiB": 31.505,
+  "automatic_replacement_latest": {
+    "status": "WAIT_BANK_FUNDS",
+    "utc": "2026-11-19T06:05:10.553028+00:00",
+    "eligible": 23,
+    "bank_units": 22799158,
+    "required_bank_units": 145010000,
+    "CPU_pressure_avg60": 88.9
+  },
+  "authoritative_root": "release-work-20261119/testnet-cpu-stability-r1",
+  "GitHub_publication_receipt": "release-work-20261119/testnet-cpu-stability-r1/FINAL_GIT_RESULT.json",
+  "completed_controllers_must_not_replay": true,
+  "source_branch": "ops/testnet-auto-replacement-20261119"
+}

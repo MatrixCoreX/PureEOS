@@ -1,0 +1,15 @@
+{
+  "status": "PASS_FINAL_PUBLIC_SUPPLEMENT_AND11_DEPLOYED_SOURCE_HASHES",
+  "original_public_files": 41,
+  "supplement_files": 5,
+  "current_modules": 11,
+  "software_tests": 94,
+  "latest_auto_status": "WAIT_BANK_FUNDS",
+  "actual_jobs": 0,
+  "bank_balance": [
+    "2279.9158 AIC"
+  ],
+  "founder_zero_windows": 2,
+  "founder_banned": false,
+  "source_publication_receipt": "release-work-20261119/testnet-cpu-stability-r1/FINAL_GIT_RESULT.json"
+}

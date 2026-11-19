@@ -1,0 +1,9 @@
+{
+  "target": "gptgenesisbp",
+  "utc": "2026-11-19T05:44:19.966567+00:00",
+  "oldPID": "1176053",
+  "old_config_SHA256": "ad119bac5ecbafb7838ea7dc4cc0b6531c27e9f6afec239aaecee504fc2c46c8",
+  "new_config_SHA256": "38ba8f38853e4076c36e20e2884057526354bfdc7ca39362b1410a6632ddf04c",
+  "next_duty": 118.5,
+  "only_vote_thread_and_founder_local_RPC_budgets": true
+}

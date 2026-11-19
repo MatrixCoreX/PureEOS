@@ -1,0 +1,145 @@
+{
+  "status": "PASS23_OWN_TEMPORARY_CONFIG_COPIES_DELETED",
+  "utc": "2026-11-19T06:05:08.834864+00:00",
+  "files": [
+    {
+      "name": "alibabaailab",
+      "copy_SHA256": "a9091709989fe53c96a067bbbe8517a3d6feb0f0e1d3af2d12877c62f650b99b",
+      "bytes": 2550,
+      "live_config_SHA256": "1f19ae01171af478a0361ab3fd707013de33e50420f8dd90c206d1ba0da2dca6"
+    },
+    {
+      "name": "anthropiclab",
+      "copy_SHA256": "5af99865e690d6a42abcc02cb25c3b289d719af5ceb77f38f4115df1f5a99a3d",
+      "bytes": 2589,
+      "live_config_SHA256": "f5d3f4564e303f20197d9f8e74e0e02fda9ab3a569255c4f6de0deb35375381e"
+    },
+    {
+      "name": "berlintulab2",
+      "copy_SHA256": "fd15eb5a49f9b573909140eea693c2e55f09676b4785ad6978eb777e1bd363f1",
+      "bytes": 2550,
+      "live_config_SHA256": "3b7ee5bfa03d34b8cb4ec85057e066df12020fd1bec171df1ccddea73841193b"
+    },
+    {
+      "name": "bostonmitcs1",
+      "copy_SHA256": "5fd3f86aca47e96cfb991941648bc9a5b437de45bf94e259f26120ec692734bb",
+      "bytes": 2550,
+      "live_config_SHA256": "5ffa247ee844a6fc8c73289eb2684d6cf72afccbb60e58685ef73180e654a4d5"
+    },
+    {
+      "name": "bytedancelab",
+      "copy_SHA256": "805c71b996eab334ec53cca9cbac50909a04c8ddde8a71681e2af440d37901c5",
+      "bytes": 2589,
+      "live_config_SHA256": "be1eb52630614362a779df10263f33eed1ecd57d0d4aaf26d03876db00a71f54"
+    },
+    {
+      "name": "canadamilaai",
+      "copy_SHA256": "883cc6700e98ee4ea9c866c94115d38a18c2736e98ec11f821df0d24be62ff68",
+      "bytes": 2589,
+      "live_config_SHA256": "425625a6d376ee09303c1c65e5f543a88d7018063625755f282772ad4a8b1ceb"
+    },
+    {
+      "name": "cohereclouds",
+      "copy_SHA256": "32334b2513671fbadc9d7d574cbec3987eee813d08ec9ff9fe4ff71d1e5b812d",
+      "bytes": 2589,
+      "live_config_SHA256": "51e0c129b2e03bdf3f8c4161a1a419941cfa4272f5146358e706b7fa4e2d99e2"
+    },
+    {
+      "name": "deepmindtech",
+      "copy_SHA256": "05124a5173c6dfa032d4af47a4788a884a4e451a7c0e88c4a79b0f003be69618",
+      "bytes": 2550,
+      "live_config_SHA256": "003e609e246e9a5374de5f5cb55cad44d718c6f318585336719b7b91307fae8c"
+    },
+    {
+      "name": "deepseeklabs",
+      "copy_SHA256": "2540d6a344ecf9ef3e6abd994ffe9edee0d2178e5946473b3755a619ce1de8a3",
+      "bytes": 2550,
+      "live_config_SHA256": "d2e24a8b951809103058955919b3cf9e3442a3607b682ac9099412f8641fe517"
+    },
+    {
+      "name": "genevacernai",
+      "copy_SHA256": "e30692d4a91b45b024038abec3a8d67de3d800924a2a0139a13715caf7a2c423",
+      "bytes": 2555,
+      "live_config_SHA256": "0f8a91dfa898b98ed0ac331fb4c62663074f51c7622cd119034840ee63530b47"
+    },
+    {
+      "name": "gptgenesisbp",
+      "copy_SHA256": "ad119bac5ecbafb7838ea7dc4cc0b6531c27e9f6afec239aaecee504fc2c46c8",
+      "bytes": 3289,
+      "live_config_SHA256": "38ba8f38853e4076c36e20e2884057526354bfdc7ca39362b1410a6632ddf04c"
+    },
+    {
+      "name": "londonucllab",
+      "copy_SHA256": "040ae106db5606df4db015defec7b5ff15ba05dd6300c629e0add3ebe2c53c2c",
+      "bytes": 2555,
+      "live_config_SHA256": "547c0a8b38b0adf9a5746a64b42519ae5d0e5249de195d5f1ed5e47343d2b678"
+    },
+    {
+      "name": "minimaxaihub",
+      "copy_SHA256": "7c5f2344700c6acc45c99e3a27ef0d8545a326d97f10af286b576f03d1b0cce2",
+      "bytes": 2550,
+      "live_config_SHA256": "8c948790576bf6a030cba841d0beaf9ae7491f865c70c2edbd576fcb7ba7d0a3"
+    },
+    {
+      "name": "mistralcloud",
+      "copy_SHA256": "ac2ef1f99a971fa721a673dbebe0ef90cd94997f2d493466a7aaee44f12cf1a0",
+      "bytes": 2589,
+      "live_config_SHA256": "041588ca1307a72cd2639e1a7cd6122e3b581b8d63d259b8fc16ce4e3cfcc2bc"
+    },
+    {
+      "name": "moonshottech",
+      "copy_SHA256": "60f6953cfee472978d62da3b6451368fd4b3fdb50c9e5fd10a2a759a7f45b9d8",
+      "bytes": 2550,
+      "live_config_SHA256": "e98ec6d7d17f4472204e46d8cc212da2532eca981b53ced3845625c7471bfae6"
+    },
+    {
+      "name": "nvidiaailabs",
+      "copy_SHA256": "3fcbed712a276a733d59faca1910396155f32886a99b4bc72d9d0592036ecbf7",
+      "bytes": 2550,
+      "live_config_SHA256": "a3b4fdec2d720c3b06e221670526ce1bfc8e751e4ca40b857308ac2002f4fd3c"
+    },
+    {
+      "name": "parisinriaai",
+      "copy_SHA256": "89bef85a5d23a118e4b07adee5a63a6dd53e10a67a2bb38508ab73e78dc6a37a",
+      "bytes": 2589,
+      "live_config_SHA256": "c3e61dda139aefc7823326e3259003e34fb00179be325c75b2113dc4f14b9c94"
+    },
+    {
+      "name": "perplexityai",
+      "copy_SHA256": "101bdbc4bad5c84b26f5545f8bfd268e1ba5532c4cb2c275d9f1dc2d33ddfdb0",
+      "bytes": 2589,
+      "live_config_SHA256": "9734dfd5a2058c2abfeffded9fddfb03aaea76f1af9ebb2f33634df29727af3b"
+    },
+    {
+      "name": "seoulkaistai",
+      "copy_SHA256": "2b58941d0beeb14d4ad9e1015501b447e6625717d501274b8c32362e63ed3376",
+      "bytes": 2589,
+      "live_config_SHA256": "6437518f5a7c417e30de0cc945f3e1fa8e793c117ccd3c3883916de923caee6a"
+    },
+    {
+      "name": "stabilityhub",
+      "copy_SHA256": "ce8329f2ddc1dd056ff83f521daebe8d486f52bc40c2a20e6ef0d73dbe57f7b3",
+      "bytes": 2555,
+      "live_config_SHA256": "ec5cc4fa7df68e70be6518b4ea8b83d6786e22838671d85a52491540193b03ca"
+    },
+    {
+      "name": "tencentailab",
+      "copy_SHA256": "0924ab3acd4b385a666e4dc16c121a6bf2de5246504632ef9839b49a02508de9",
+      "bytes": 2550,
+      "live_config_SHA256": "2400d27ae21c690bba2021742f126814eddc7cb42ca5d6a61a59041ebae5de04"
+    },
+    {
+      "name": "torontovectr",
+      "copy_SHA256": "a40b63165c1e2442710459e69c49b19ee4de47e7bd5ba9399ce7da1471b7a0ff",
+      "bytes": 2328,
+      "live_config_SHA256": "7ee80f8632a23f12ef7fb45bf647b533dbc8b6300f33d5e155439d9fcd4a6ec0"
+    },
+    {
+      "name": "zurichethcs1",
+      "copy_SHA256": "e494f7502521b73e1f6ba738f29e56d46723287308bf291ad25b9009c78796e9",
+      "bytes": 2550,
+      "live_config_SHA256": "dd3d6572bcf82f401eccd36df001c816943dc3c94a0c8e510ef4f87a9d982130"
+    }
+  ],
+  "live_config_and_independent_keys_safety_retained": true
+}

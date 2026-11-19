@@ -1,0 +1,8 @@
+{
+  "status": "WAIT_BANK_FUNDS",
+  "utc": "2026-11-19T06:05:10.553028+00:00",
+  "eligible": 23,
+  "bank_units": 22799158,
+  "required_bank_units": 145010000,
+  "CPU_pressure_avg60": 88.9
+}

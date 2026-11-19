@@ -1,0 +1,8 @@
+{
+  "utc": "2026-11-19T05:19:14.539434+00:00",
+  "target": "moonshottech",
+  "old_config_SHA256": "60f6953cfee472978d62da3b6451368fd4b3fdb50c9e5fd10a2a759a7f45b9d8",
+  "new_config_SHA256": "e98ec6d7d17f4472204e46d8cc212da2532eca981b53ced3845625c7471bfae6",
+  "profile_change": "vote-threads2->1 only, full validation/native quorum/safety all retained",
+  "oldPID": "1438135"
+}

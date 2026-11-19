@@ -1,0 +1,21 @@
+{
+  "status": "NO_SAFE_OVERSIZED_TARGET",
+  "utc": "2026-11-19T06:07:34.797811+00:00",
+  "memory": {
+    "MemAvailable": 4963192832,
+    "SwapFree": 55886503936
+  },
+  "head": 1761328,
+  "LIB": 1761326,
+  "fresh_strong_votes": 21,
+  "target": null,
+  "over768MiB": {},
+  "policy": {
+    "limit_MiB": 768,
+    "emergency_MiB": 512,
+    "cooldown_seconds": 180,
+    "one_native_operation": true,
+    "historical_strikes_preserved": true
+  },
+  "bounded_read_retry_events": []
+}

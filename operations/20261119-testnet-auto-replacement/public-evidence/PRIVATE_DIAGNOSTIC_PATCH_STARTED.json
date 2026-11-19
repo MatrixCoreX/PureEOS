@@ -1,0 +1,6 @@
+{
+  "old_SHA256": "2a96cf6bd6f42ae2bddb92e39fcd783d05744b33b2b6037f342ef792e0b4ad58",
+  "new_SHA256": "bf8ac2a8418b0aaf2daac4dee174efc39ede46eff816fc7deb3aa19c75541910",
+  "tests": 93,
+  "scope": "Raw CLI errors remain server-private, including any unbroadcast signed packet; no financial policy or native operation changed"
+}

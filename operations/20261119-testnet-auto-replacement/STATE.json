@@ -1,0 +1,19 @@
+{
+  "status": "IMPLEMENTED_DEPLOYED_WAIT_BANK_FUNDS",
+  "utc": "2026-11-19T05:14:51.497761+00:00",
+  "authorization": "Continue stability optimization on existing low-cost TEST server; TEST-only Git publication inherited",
+  "constraints": [
+    "no native/core/contract build or binary change",
+    "no chain reset/unban/quorum relaxation",
+    "no financial replacement or vote replay",
+    "no phones/subagents/newserver/planupgrade",
+    "old controllers completed; new case only"
+  ],
+  "phase": "TEST_GIT_PUBLICATION",
+  "source_branch": "ops/testnet-auto-replacement-20261119",
+  "runtime_qualified": true,
+  "actual_new_jobs": 0,
+  "founder_zero_windows": 2,
+  "founder_banned": false,
+  "funding_question_pending": true
+}

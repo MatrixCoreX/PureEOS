@@ -1,0 +1,249 @@
+{
+  "status": "PASS_SHARED_SOURCE_EXCLUSION_AND_READER_RESTORE_GUARD",
+  "utc": "2026-11-19T05:52:54.434414+00:00",
+  "new_source_SHA256": {
+    "stability_guard.py": "526227ebd71a8e222b843621be98c2695c4178c3684b239b49fedefd2391a5b8",
+    "stability_policy.py": "2eb16af31bb6d4662df782b99fbd2f6aee551016c957fcc8f4eedd65b6c2ebdd"
+  },
+  "head": 1759567,
+  "LIB": 1759564,
+  "banned": 23,
+  "founder_strikes": 2,
+  "founder_banned": false,
+  "context": {
+    "disk_free": 33848967168,
+    "mem_available": 5088972800,
+    "head_age": 0.434325,
+    "lib_age": 1.934334,
+    "policy_count": 21,
+    "threshold": 15,
+    "recent": [
+      "alibabaailab",
+      "anthropiclab",
+      "berlintulab2",
+      "bostonmitcs1",
+      "bytedancelab",
+      "canadamilaai",
+      "cohereclouds",
+      "deepmindtech",
+      "deepseeklabs",
+      "genevacernai",
+      "londonucllab",
+      "minimaxaihub",
+      "mistralcloud",
+      "moonshottech",
+      "nvidiaailabs",
+      "parisinriaai",
+      "seoulkaistai",
+      "stabilityhub",
+      "tencentailab",
+      "torontovectr",
+      "zurichethcs1"
+    ],
+    "all_running": true,
+    "elapsed": 235.944113,
+    "swap_free": 55884406784,
+    "nodes": {
+      "anthropiclab": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 69517312,
+        "distance": 54.0,
+        "standby": false
+      },
+      "bytedancelab": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 56905728,
+        "distance": 72.0,
+        "standby": false
+      },
+      "canadamilaai": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 57552896,
+        "distance": 78.0,
+        "standby": false
+      },
+      "cohereclouds": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 58544128,
+        "distance": 84.0,
+        "standby": false
+      },
+      "genevacernai": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 64962560,
+        "distance": 102.0,
+        "standby": false
+      },
+      "gptgenesisbp": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 2,
+        "bytes": 57737216,
+        "distance": 10000,
+        "standby": true
+      },
+      "londonucllab": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 56168448,
+        "distance": 108.0,
+        "standby": false
+      },
+      "mistralcloud": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 57794560,
+        "distance": 120.0,
+        "standby": false
+      },
+      "parisinriaai": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 60321792,
+        "distance": 12.0,
+        "standby": false
+      },
+      "perplexityai": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 51478528,
+        "distance": 10000,
+        "standby": true
+      },
+      "seoulkaistai": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 61669376,
+        "distance": 18.0,
+        "standby": false
+      },
+      "stabilityhub": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 61485056,
+        "distance": 24.0,
+        "standby": false
+      },
+      "torontovectr": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 66928640,
+        "distance": 36.0,
+        "standby": false
+      },
+      "nvidiaailabs": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 56266752,
+        "distance": 6.0,
+        "standby": false
+      },
+      "tencentailab": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 68812800,
+        "distance": 30.0,
+        "standby": false
+      },
+      "alibabaailab": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 61386752,
+        "distance": 48.0,
+        "standby": false
+      },
+      "deepmindtech": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 53452800,
+        "distance": 90.0,
+        "standby": false
+      },
+      "openaimodels": {
+        "banned": true,
+        "safety_exists": true,
+        "strikes": 3,
+        "bytes": 0,
+        "distance": 10000,
+        "standby": true
+      },
+      "sydneyunswcs": {
+        "banned": true,
+        "safety_exists": true,
+        "strikes": 3,
+        "bytes": 0,
+        "distance": 10000,
+        "standby": true
+      },
+      "berlintulab2": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 55959552,
+        "distance": 60.0,
+        "standby": false
+      },
+      "bostonmitcs1": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 60297216,
+        "distance": 66.0,
+        "standby": false
+      },
+      "deepseeklabs": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 56242176,
+        "distance": 96.0,
+        "standby": false
+      },
+      "minimaxaihub": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 54616064,
+        "distance": 114.0,
+        "standby": false
+      },
+      "moonshottech": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 58769408,
+        "distance": 0.0,
+        "standby": false
+      },
+      "zurichethcs1": {
+        "banned": false,
+        "safety_exists": true,
+        "strikes": 0,
+        "bytes": 61079552,
+        "distance": 42.0,
+        "standby": false
+      }
+    }
+  }
+}

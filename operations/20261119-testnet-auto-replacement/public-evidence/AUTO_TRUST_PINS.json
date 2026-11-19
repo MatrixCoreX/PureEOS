@@ -1,0 +1,33 @@
+{
+  "contracts": {
+    "eosio": {
+      "code_hash": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+      "abi_hash": "f19e4c55e11f5029f4a161865ac0b0ea29f730d4f19fbdc6eb30c29c10ef5512"
+    },
+    "eosio.token": {
+      "code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+      "abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856"
+    },
+    "eosio.key": {
+      "code_hash": "cdfe0f44383a356cba98b71695fca8734424e1a19a80f3a5c0d48e7cb3cbfb43",
+      "abi_hash": "83b0c49b82492d50ca72fd34e66cc879ba150fc7630ac780e372dcfaf2f4244c"
+    },
+    "eosio.signup": {
+      "code_hash": "3c03d8671479cb204e5c4ae31ae0563883882417cf88f8c3c477bd7e1e1a5791",
+      "abi_hash": "6858916070985e06486fe9131ae6fec06079963699beaea93840adedb2c6020c"
+    },
+    "usd": {
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e"
+    },
+    "cny": {
+      "code_hash": "ec9e8326c1fef0b561b2b5c45ad5c05628bd172c2afdedfd6f24fa34178354bb",
+      "abi_hash": "a64141f32a82aaa3185dad05678ef44b42a8f7a9a8dbc266fd2ee98fd2ffc90e"
+    }
+  },
+  "tools": {
+    "/opt/pureeos-devnet-20261105-r1/tools-runtime/programs/cleos/cleos": "93a463bce198699e03b374b6c300d5333b15972e1ddb59db95fcbb960a9795bd",
+    "/opt/pureeos-devnet-20261105-r1/tools-runtime/programs/helios-util/helios-util": "06575f0428f9c8794a595b1184b55312f53540c6d081fb6068c26a013df6bd06",
+    "/opt/pureeos-devnet-20261105-r1/tools-runtime/programs/keosd/keosd": "aff2448885f318b7dc34f84935b56d8f7a2ce398ec05c85b930e12e0112633d1"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "utc": "2026-11-19T06:06:08.589356+00:00",
+  "target": "pureeos-devnet-founder-20261105.service",
+  "old_properties": {
+    "CPUWeight": "500",
+    "CPUQuotaPerSecUSec": "infinity",
+    "IOWeight": "500"
+  },
+  "purpose": "Protect shared writer/relay/genesis source with soft scheduling priority; no restart or hard CPU cap",
+  "before_PIDs": {
+    "anthropiclab": "1465381",
+    "bytedancelab": "1467312",
+    "canadamilaai": "1467761",
+    "cohereclouds": "1469661",
+    "genevacernai": "1464406",
+    "gptgenesisbp": "1472103",
+    "londonucllab": "1468295",
+    "mistralcloud": "1468463",
+    "parisinriaai": "1468804",
+    "perplexityai": "1470483",
+    "seoulkaistai": "1469047",
+    "stabilityhub": "1465008",
+    "torontovectr": "1464238",
+    "nvidiaailabs": "1468634",
+    "tencentailab": "1464066",
+    "alibabaailab": "1465213",
+    "deepmindtech": "1467929",
+    "openaimodels": "0",
+    "sydneyunswcs": "0",
+    "berlintulab2": "1467589",
+    "bostonmitcs1": "1465600",
+    "deepseeklabs": "1468097",
+    "minimaxaihub": "1470109",
+    "moonshottech": "1463064",
+    "zurichethcs1": "1463890"
+  },
+  "after_properties": {
+    "CPUWeight": "1000",
+    "CPUQuotaPerSecUSec": "infinity",
+    "IOWeight": "1000"
+  },
+  "status": "PASS_SHARED_PRIORITY_CONFIG_CLEANUP_AND60SEC_NO_RESTART",
+  "samples": [
+    {
+      "utc": "2026-11-19T06:05:10.815333+00:00",
+      "head": 1761040,
+      "LIB": 1761036,
+      "head_age": 0.315263,
+      "LIB_age": 2.315273,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:16.096661+00:00",
+      "head": 1761051,
+      "LIB": 1761049,
+      "head_age": 0.096563,
+      "LIB_age": 1.096571,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:21.333449+00:00",
+      "head": 1761061,
+      "LIB": 1761059,
+      "head_age": 0.333349,
+      "LIB_age": 1.333358,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:26.582077+00:00",
+      "head": 1761072,
+      "LIB": 1761070,
+      "head_age": 0.081965,
+      "LIB_age": 1.081973,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:31.835759+00:00",
+      "head": 1761082,
+      "LIB": 1761080,
+      "head_age": 0.335656,
+      "LIB_age": 1.335664,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:37.082784+00:00",
+      "head": 1761092,
+      "LIB": 1761090,
+      "head_age": 0.58268,
+      "LIB_age": 1.582688,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:42.372560+00:00",
+      "head": 1761103,
+      "LIB": 1761100,
+      "head_age": 0.372438,
+      "LIB_age": 1.872447,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:47.595508+00:00",
+      "head": 1761114,
+      "LIB": 1761112,
+      "head_age": 0.095405,
+      "LIB_age": 1.095414,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:52.852808+00:00",
+      "head": 1761124,
+      "LIB": 1761122,
+      "head_age": 0.3527,
+      "LIB_age": 1.352709,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:05:58.079091+00:00",
+      "head": 1761135,
+      "LIB": 1761133,
+      "head_age": 0.078975,
+      "LIB_age": 1.078984,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:06:03.334656+00:00",
+      "head": 1761145,
+      "LIB": 1761142,
+      "head_age": 0.334528,
+      "LIB_age": 1.83455,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:06:08.589338+00:00",
+      "head": 1761156,
+      "LIB": 1761154,
+      "head_age": 0.089224,
+      "LIB_age": 1.089232,
+      "recent": 21
+    }
+  ],
+  "automatic_replacement_latest": {
+    "status": "WAIT_BANK_FUNDS",
+    "utc": "2026-11-19T06:05:10.553028+00:00",
+    "eligible": 23,
+    "bank_units": 22799158,
+    "required_bank_units": 145010000,
+    "CPU_pressure_avg60": 88.9
+  },
+  "automatic_job_count": 0,
+  "source_SHA256": {
+    "auto_replacement.py": "139cad3326044a1ee4ef0853814fd668f139c913c57f2c5e70786fd76aff7d62",
+    "replacement_policy.py": "53184b0b24c604710d8304442867d2756e0ddf8bb9205637a65e4e27beabf52f",
+    "replacement_store.py": "89d037fbc5a4ac32536675c8c94ba33986598b4dfb676108e6b43141a22a7c26",
+    "replacement_chain.py": "bf8ac2a8418b0aaf2daac4dee174efc39ede46eff816fc7deb3aa19c75541910",
+    "replacement_runtime.py": "6f8b002d4466b68df5797764624c263d68fd4109f034562a5cb6c7113b512cff",
+    "auto_node_entry.py": "0fb2ec3f5b0b1d21dac447316de148d1f3775491a7efc5cb09e3a7f7b6d4c907",
+    "retired_unit_cleanup.py": "1ec5fb3ff61f7e670f92d85f999a0f597fb2e27d0e6b1617f4a47db5228b1446"
+  },
+  "guardian_SHA256": {
+    "stability_guard.py": "526227ebd71a8e222b843621be98c2695c4178c3684b239b49fedefd2391a5b8",
+    "stability_policy.py": "2eb16af31bb6d4662df782b99fbd2f6aee551016c957fcc8f4eedd65b6c2ebdd",
+    "retire_banned_runtime.py": "fd9f92e0e3d9959be882f595be38e5064cbe9e8e98bd64fdce8c91c79449eb6f",
+    "log_cleanup.py": "3fc343041794ef0d90b1564f392380ec05b32928f43c91d6622b0a002a295297"
+  },
+  "founder_zero_windows": 2,
+  "founder_banned": false
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS_PUBLIC_EVIDENCE_AND_ALL_CURRENT_SOURCE_SHA256",
+  "files": 41,
+  "automatic_modules": 7,
+  "guardian_modules": 4,
+  "archive": "/opt/pureeos-testnet-cpu-stability-20261119-r1/final-public-evidence",
+  "no_private_keys_packets_or_safety_binary": true
+}

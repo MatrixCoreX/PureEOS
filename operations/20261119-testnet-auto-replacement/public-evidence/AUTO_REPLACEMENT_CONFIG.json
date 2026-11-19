@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "bank": "civicbankers",
+  "target_BPs": 25,
+  "fixed_code_caps": {
+    "funding_AIC_per_node": "14000.0000",
+    "RAM_AIC_per_node": "1.0000",
+    "bank_reserve_AIC": "500.0000",
+    "per_hour": 1,
+    "per_day": 2,
+    "lifetime_nodes": 10,
+    "lifetime_max_bank_debit_AIC": "140010.0000"
+  },
+  "CPU_pressure_avg60_new_job_max": 80,
+  "no_unowned_votes_or_governed_treasury": true,
+  "signed_packet_broadcasts": 1,
+  "interrupted_signing_or_ambiguous_delivery": "Original ID reconciliation only; no automatic re-sign/rebroadcast"
+}

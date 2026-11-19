@@ -1,0 +1,200 @@
+{
+  "utc": "2026-11-19T06:07:51.110734+00:00",
+  "public_unsigned_reads": {
+    "reader": {
+      "HTTP": 200,
+      "body": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 1761363,
+        "last_irreversible_block_num": 1761361,
+        "last_irreversible_block_id": "001ae051654b292d9e9efc126f948ec20a1c7fa04d14e2d53188a0bf7dc803dc",
+        "head_block_id": "001ae053aa6ccadabb86ec84c69ded5f45d5a8115c3c0e161f23769435c15d99",
+        "head_block_time": "2026-11-19T06:07:52.000",
+        "head_block_producer": "perplexityai",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 1761363,
+        "fork_db_head_block_id": "001ae053aa6ccadabb86ec84c69ded5f45d5a8115c3c0e161f23769435c15d99",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6643905160",
+        "total_net_weight": 257590000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-19T06:07:51.000"
+      }
+    },
+    "writer": {
+      "HTTP": 200,
+      "body": {
+        "server_version": "42dda604",
+        "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+        "head_block_num": 1761363,
+        "last_irreversible_block_num": 1761361,
+        "last_irreversible_block_id": "001ae051654b292d9e9efc126f948ec20a1c7fa04d14e2d53188a0bf7dc803dc",
+        "head_block_id": "001ae053aa6ccadabb86ec84c69ded5f45d5a8115c3c0e161f23769435c15d99",
+        "head_block_time": "2026-11-19T06:07:52.000",
+        "head_block_producer": "perplexityai",
+        "virtual_block_cpu_limit": 800000000,
+        "virtual_block_net_limit": 1048576000,
+        "block_cpu_limit": 800000,
+        "block_net_limit": 1048576,
+        "server_version_string": "v1.0.0-test.2-dev",
+        "fork_db_head_block_num": 1761363,
+        "fork_db_head_block_id": "001ae053aa6ccadabb86ec84c69ded5f45d5a8115c3c0e161f23769435c15d99",
+        "server_full_version_string": "v1.0.0-src-42dda604af169845b9ea9b9835fe0d25ecc126a8 / TEST 30-minute governance 20261103-dev",
+        "total_cpu_weight": "6643905160",
+        "total_net_weight": 257590000,
+        "earliest_available_block_num": 1,
+        "last_irreversible_block_time": "2026-11-19T06:07:51.000"
+      }
+    },
+    "history": {
+      "HTTP": 200,
+      "body": {
+        "product": "PureHistory",
+        "version": "4.1.0-purehistory.1-dirty",
+        "version_hash": "custom",
+        "host": "aic-test.matrixai.one/history",
+        "health": [
+          {
+            "service": "StateHistory",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 40.19491,
+            "service_data": {
+              "nodes": [
+                {
+                  "label": "independent-nonproducing-TEST-history",
+                  "active": true,
+                  "range": {
+                    "from": 2,
+                    "to": 1761365
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "service": "RabbitMq",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 76.474259,
+            "service_data": null
+          },
+          {
+            "service": "NodeosRPC",
+            "status": "OK",
+            "cached": false,
+            "query_time_ms": 25.336424,
+            "service_data": {
+              "head_block_num": 1761364,
+              "head_block_time": "2026-11-19T06:07:52.500",
+              "time_offset": -156,
+              "last_irreversible_block": 1761362,
+              "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532"
+            }
+          },
+          {
+            "service": "Elasticsearch",
+            "status": "OK",
+            "cached": true,
+            "query_time_ms": 38.540568,
+            "service_data": {
+              "active_shards": "100.0%",
+              "disk_status": "green",
+              "head_offset": 0,
+              "first_indexed_block": 2,
+              "last_indexed_block": 1761364,
+              "total_indexed_blocks": 1761362,
+              "missing_blocks": 0,
+              "missing_pct": "0.00%",
+              "times": [
+                {
+                  "phase": "cluster_health",
+                  "phase_time_ms": 23.067698,
+                  "cache": false
+                },
+                {
+                  "phase": "first_indexed_block",
+                  "phase_time_ms": 2.223553,
+                  "cache": true
+                },
+                {
+                  "phase": "last_indexed_block",
+                  "phase_time_ms": 8.825818,
+                  "cache": false
+                }
+              ]
+            }
+          }
+        ],
+        "limits": {
+          "get_actions": 100,
+          "get_voters": 100,
+          "get_links": 1000,
+          "get_deltas": 100,
+          "get_trx_actions": 1000
+        },
+        "features": {
+          "streaming": {
+            "enable": false,
+            "traces": false,
+            "deltas": false
+          },
+          "tables": {
+            "proposals": true,
+            "accounts": true,
+            "voters": true,
+            "permissions": true,
+            "user_resources": false
+          },
+          "contract_state": {
+            "contracts": {}
+          },
+          "index_deltas": true,
+          "index_transfer_memo": true,
+          "index_all_deltas": true,
+          "index_deltas_deletions": false,
+          "deferred_trx": false,
+          "failed_trx": false,
+          "resource_limits": false,
+          "resource_usage": false
+        },
+        "pruning": {
+          "auto_pruning_enabled": false,
+          "max_retained_blocks": 0
+        },
+        "query_time_ms": 78.113,
+        "last_indexed_block": 1761364,
+        "last_indexed_block_time": "2026-11-19T06:07:52.500"
+      }
+    },
+    "relay1": {
+      "HTTP": 200,
+      "body": {
+        "bp": "gptgenesisbp",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 3000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    },
+    "relay2": {
+      "HTTP": 200,
+      "body": {
+        "bp": "anthropiclab",
+        "permission": "keyrelay",
+        "contract": "eosio.key",
+        "fee_bps": 1000,
+        "minimum_fee_bps": 1000,
+        "maximum_fee_bps": 3000,
+        "minimum_service_fee": "0.0001 AIC"
+      }
+    }
+  }
+}

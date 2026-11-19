@@ -1,0 +1,33 @@
+{
+  "status": "ROLLING",
+  "utc": "2026-11-19T05:24:01.582488+00:00",
+  "targets": [
+    "alibabaailab",
+    "anthropiclab",
+    "berlintulab2",
+    "bostonmitcs1",
+    "bytedancelab",
+    "canadamilaai",
+    "cohereclouds",
+    "deepmindtech",
+    "deepseeklabs",
+    "genevacernai",
+    "gptgenesisbp",
+    "londonucllab",
+    "minimaxaihub",
+    "mistralcloud",
+    "moonshottech",
+    "nvidiaailabs",
+    "parisinriaai",
+    "perplexityai",
+    "seoulkaistai",
+    "stabilityhub",
+    "tencentailab",
+    "torontovectr",
+    "zurichethcs1"
+  ],
+  "completed": [
+    "moonshottech"
+  ],
+  "operations": []
+}

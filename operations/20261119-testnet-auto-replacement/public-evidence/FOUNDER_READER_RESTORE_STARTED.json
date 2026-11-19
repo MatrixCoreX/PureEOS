@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-19T05:48:41.642293+00:00",
+  "founder_row": {
+    "owner": "gptgenesisbp",
+    "rank": "340282366916111134276165914002158128976",
+    "previous_rank": "340282366916111134276165914002158128976",
+    "frozen_epoch": 0,
+    "seen_epoch": 3264,
+    "ticket": 30227,
+    "penalty_epoch": 1,
+    "zero_windows": 2,
+    "banned": 0,
+    "evidence_slots": [
+      1696764756,
+      1696765008,
+      0
+    ],
+    "evidence_policies": [
+      2034,
+      2034,
+      0
+    ],
+    "ban_final_block": 0
+  },
+  "unit_before": {
+    "MainPID": "0",
+    "ActiveState": "inactive"
+  },
+  "event": "guard-events/20261119T054420-gptgenesisbp"
+}

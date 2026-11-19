@@ -1,0 +1,32 @@
+test_changed_snapshot_never_executes (test_auto_replacement.BootstrapTest.test_changed_snapshot_never_executes) ... ok
+test_initialized_database_reused_without_snapshot (test_auto_replacement.BootstrapTest.test_initialized_database_reused_without_snapshot) ... ok
+test_only_one_initial_attempt (test_auto_replacement.BootstrapTest.test_only_one_initial_attempt) ... ok
+test_daily_total_and_cooldown_caps (test_auto_replacement.PolicyTest.test_daily_total_and_cooldown_caps) ... ok
+test_exact_bank_reserve_boundary (test_auto_replacement.PolicyTest.test_exact_bank_reserve_boundary) ... ok
+test_financial_payload_tampering_rejected (test_auto_replacement.PolicyTest.test_financial_payload_tampering_rejected) ... ok
+test_invalid_name_and_exhaustion_rejected (test_auto_replacement.PolicyTest.test_invalid_name_and_exhaustion_rejected) ... ok
+test_names_preserve_prefix_valid_and_distinct (test_auto_replacement.PolicyTest.test_names_preserve_prefix_valid_and_distinct) ... ok
+test_native_safety_and_host_guards (test_auto_replacement.PolicyTest.test_native_safety_and_host_guards) ... ok
+test_no_funds_stops_before_reservation (test_auto_replacement.PolicyTest.test_no_funds_stops_before_reservation) ... ok
+test_no_overfill (test_auto_replacement.PolicyTest.test_no_overfill) ... ok
+test_same_canonical_ban_has_one_job (test_auto_replacement.PolicyTest.test_same_canonical_ban_has_one_job) ... ok
+test_banned_new_node_not_yet_committed_to_roster_is_also_retired (test_auto_replacement.RetirementReconciliationTest.test_banned_new_node_not_yet_committed_to_roster_is_also_retired) ... ok
+test_confirmed_ban_closes_failed_recycle_without_node_restart (test_auto_replacement.RetirementReconciliationTest.test_confirmed_ban_closes_failed_recycle_without_node_restart) ... ok
+test_missing_retirement_proof_never_closes_event (test_auto_replacement.RetirementReconciliationTest.test_missing_retirement_proof_never_closes_event) ... ok
+test_shared_founder_handoff_receipt_not_accepted_as_deleted (test_auto_replacement.RetirementReconciliationTest.test_shared_founder_handoff_receipt_not_accepted_as_deleted) ... ok
+test_unbanned_node_not_closed_by_old_receipt (test_auto_replacement.RetirementReconciliationTest.test_unbanned_node_not_closed_by_old_receipt) ... ok
+test_completed_job_and_one_hour_cooldown_prevent_duplicate (test_auto_replacement.RunnerTest.test_completed_job_and_one_hour_cooldown_prevent_duplicate) ... ok
+test_full_workflow_keeps_only_owned_self_vote_adapter_boundary (test_auto_replacement.RunnerTest.test_full_workflow_keeps_only_owned_self_vote_adapter_boundary) ... ok
+test_low_balance_creates_no_job_or_key (test_auto_replacement.RunnerTest.test_low_balance_creates_no_job_or_key) ... ok
+test_pending_transaction_resumes_same_job_without_prepare (test_auto_replacement.RunnerTest.test_pending_transaction_resumes_same_job_without_prepare) ... ok
+test_wrong_bank_and_disabled_policy_rejected (test_auto_replacement.RunnerTest.test_wrong_bank_and_disabled_policy_rejected) ... ok
+test_changed_intent_rejected_without_signing (test_auto_replacement.TransactionTest.test_changed_intent_rejected_without_signing) ... ok
+test_crash_after_broadcast_marker_never_rebroadcasts (test_auto_replacement.TransactionTest.test_crash_after_broadcast_marker_never_rebroadcasts) ... ok
+test_interrupted_signing_holds_without_new_signature (test_auto_replacement.TransactionTest.test_interrupted_signing_holds_without_new_signature) ... ok
+test_once_broadcast_then_readonly_reconciliation (test_auto_replacement.TransactionTest.test_once_broadcast_then_readonly_reconciliation) ... ok
+test_timeout_preserves_ID_and_never_rebroadcasts (test_auto_replacement.TransactionTest.test_timeout_preserves_ID_and_never_rebroadcasts) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.016s
+
+OK

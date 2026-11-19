@@ -1,0 +1,43 @@
+{
+  "old_SHA256": "da5c1d07d66c84771e6af1798e4ab706ae3533059dc0436e82cf81e85e908231",
+  "new_SHA256": "532fea9b6b39a3843847d81adc5ca05727accd6fe90a6703a172bf8c94f8c869",
+  "scope": "Typed owner primary cursor handles native overlap at a time-budget break. No binary, consensus or native stop/start.",
+  "status": "PASS_TYPED_CURSOR_AND_BOSTON_POSITIVE_RECONCILIATION",
+  "utc": "2026-11-19T05:36:07.836270+00:00",
+  "proofs": [
+    {
+      "new_pid": "1465600",
+      "old_pid": "1426756",
+      "other_pids_unchanged": true,
+      "anchor_matches": true,
+      "target_fresh": true,
+      "other_recent": 20,
+      "safety_exists": true,
+      "config_unchanged": true,
+      "banned": false
+    },
+    {
+      "new_pid": "1465600",
+      "old_pid": "1426756",
+      "other_pids_unchanged": true,
+      "anchor_matches": true,
+      "target_fresh": true,
+      "other_recent": 20,
+      "safety_exists": true,
+      "config_unchanged": true,
+      "banned": false
+    },
+    {
+      "new_pid": "1465600",
+      "old_pid": "1426756",
+      "other_pids_unchanged": true,
+      "anchor_matches": true,
+      "target_fresh": true,
+      "other_recent": 20,
+      "safety_exists": true,
+      "config_unchanged": true,
+      "banned": false
+    }
+  ],
+  "completed_profiles": 9
+}

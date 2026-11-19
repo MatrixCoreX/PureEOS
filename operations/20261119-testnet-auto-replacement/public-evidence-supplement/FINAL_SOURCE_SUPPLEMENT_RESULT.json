@@ -1,0 +1,88 @@
+{
+  "status": "PASS_CURRENT_SOURCES_TIMER_AND_FRESH_CHAIN_SUPPLEMENT",
+  "utc": "2026-11-19T06:13:14.386145+00:00",
+  "source_SHA256": {
+    "auto_replacement.py": "139cad3326044a1ee4ef0853814fd668f139c913c57f2c5e70786fd76aff7d62",
+    "replacement_policy.py": "53184b0b24c604710d8304442867d2756e0ddf8bb9205637a65e4e27beabf52f",
+    "replacement_store.py": "89d037fbc5a4ac32536675c8c94ba33986598b4dfb676108e6b43141a22a7c26",
+    "replacement_chain.py": "bf8ac2a8418b0aaf2daac4dee174efc39ede46eff816fc7deb3aa19c75541910",
+    "replacement_runtime.py": "6f8b002d4466b68df5797764624c263d68fd4109f034562a5cb6c7113b512cff",
+    "auto_node_entry.py": "0fb2ec3f5b0b1d21dac447316de148d1f3775491a7efc5cb09e3a7f7b6d4c907",
+    "retired_unit_cleanup.py": "adf794e9ef7b972f1278260c4f287be783be31090d7639aaee9b15e58259dbff"
+  },
+  "guardian_SHA256": {
+    "stability_guard.py": "526227ebd71a8e222b843621be98c2695c4178c3684b239b49fedefd2391a5b8",
+    "stability_policy.py": "2eb16af31bb6d4662df782b99fbd2f6aee551016c957fcc8f4eedd65b6c2ebdd",
+    "retire_banned_runtime.py": "fd9f92e0e3d9959be882f595be38e5064cbe9e8e98bd64fdce8c91c79449eb6f",
+    "log_cleanup.py": "3fc343041794ef0d90b1564f392380ec05b32928f43c91d6622b0a002a295297"
+  },
+  "software_tests": 94,
+  "fresh_samples": [
+    {
+      "utc": "2026-11-19T06:13:03.859240+00:00",
+      "head": 1761986,
+      "LIB": 1761984,
+      "head_age": 0.359174,
+      "LIB_age": 1.359182,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:13:09.093419+00:00",
+      "head": 1761997,
+      "LIB": 1761994,
+      "head_age": 0.093321,
+      "LIB_age": 1.59333,
+      "recent": 21
+    },
+    {
+      "utc": "2026-11-19T06:13:14.363498+00:00",
+      "head": 1762007,
+      "LIB": 1762005,
+      "head_age": 0.363405,
+      "LIB_age": 1.363413,
+      "recent": 21
+    }
+  ],
+  "current_guard_latest": {
+    "status": "NO_SAFE_OVERSIZED_TARGET",
+    "utc": "2026-11-19T06:12:43.812069+00:00",
+    "memory": {
+      "MemAvailable": 4942659584,
+      "SwapFree": 55887552512
+    },
+    "head": 1761946,
+    "LIB": 1761944,
+    "fresh_strong_votes": 21,
+    "target": null,
+    "over768MiB": {},
+    "policy": {
+      "limit_MiB": 768,
+      "emergency_MiB": 512,
+      "cooldown_seconds": 180,
+      "one_native_operation": true,
+      "historical_strikes_preserved": true
+    },
+    "bounded_read_retry_events": []
+  },
+  "current_auto_latest": {
+    "status": "WAIT_BANK_FUNDS",
+    "utc": "2026-11-19T06:13:03.466263+00:00",
+    "eligible": 23,
+    "bank_units": 22799158,
+    "required_bank_units": 145010000,
+    "CPU_pressure_avg60": 87.95
+  },
+  "bank_balance": [
+    "2279.9158 AIC"
+  ],
+  "automatic_jobs": 0,
+  "founder_zero_windows": 2,
+  "founder_banned": false,
+  "banned_count": 23,
+  "maintenance": {
+    "MainPID": "0",
+    "ActiveState": "inactive",
+    "UnitFileState": "disabled"
+  },
+  "original_wallet_PID": "0"
+}

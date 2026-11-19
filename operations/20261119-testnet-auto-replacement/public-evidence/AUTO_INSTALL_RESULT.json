@@ -1,0 +1,69 @@
+{
+  "utc": "2026-11-19T05:54:33.680217+00:00",
+  "preview": "WAIT_BANK_FUNDS",
+  "context": {
+    "eligible": 23,
+    "policy_count": 21,
+    "threshold": 15,
+    "recent": 21,
+    "head_age": 0.519277,
+    "LIB_age": 1.519284,
+    "all_running": true,
+    "RAM": 5040492544,
+    "swap_free": 55884931072,
+    "disk": 33852030976,
+    "bank_units": 22799158,
+    "cpu_pressure60": 87.7
+  },
+  "source_SHA256": {
+    "auto_replacement.py": "139cad3326044a1ee4ef0853814fd668f139c913c57f2c5e70786fd76aff7d62",
+    "replacement_policy.py": "53184b0b24c604710d8304442867d2756e0ddf8bb9205637a65e4e27beabf52f",
+    "replacement_store.py": "89d037fbc5a4ac32536675c8c94ba33986598b4dfb676108e6b43141a22a7c26",
+    "replacement_chain.py": "2a96cf6bd6f42ae2bddb92e39fcd783d05744b33b2b6037f342ef792e0b4ad58",
+    "replacement_runtime.py": "6f8b002d4466b68df5797764624c263d68fd4109f034562a5cb6c7113b512cff",
+    "auto_node_entry.py": "0fb2ec3f5b0b1d21dac447316de148d1f3775491a7efc5cb09e3a7f7b6d4c907",
+    "retired_unit_cleanup.py": "1ec5fb3ff61f7e670f92d85f999a0f597fb2e27d0e6b1617f4a47db5228b1446"
+  },
+  "tests": {
+    "guardian": 50,
+    "replacement": 42
+  },
+  "no_existing_signer_or_phone_access": true,
+  "status": "PASS_AUTOMATIC_RETIREMENT_AND_REPLACEMENT_TIMER_INSTALLED",
+  "first_production_path": {
+    "status": "WAIT_BANK_FUNDS",
+    "utc": "2026-11-19T05:54:32.786201+00:00",
+    "eligible": 23,
+    "bank_units": 22799158,
+    "required_bank_units": 145010000,
+    "CPU_pressure_avg60": 87.77
+  },
+  "timer": {
+    "ActiveState": "active"
+  },
+  "retired_unit_config_receipts": [
+    {
+      "status": "COMPLETE",
+      "owner": "openaimodels",
+      "ban_block_id": "001a12e40660ffc11e2a307e07c88edca59444df6a934ae5d9efcce8e8fa7710",
+      "files_SHA256": {
+        "/etc/systemd/system/pureeos-bp-replacement-openaimodels-20261111.service": "b47f0a9e4d566652638fd32621aae21974409a6288430dc9dc73ab67425c6600",
+        "/etc/systemd/system/pureeos-bp-replacement-openaimodels-20261111.service.d/96-stability-graceful-20261116.conf": "f51b38706e85c2c177ca8cc9e476c1327642445ef2dab49a02cc34e1d564fddc",
+        "/etc/systemd/system/pureeos-bp-replacement-openaimodels-20261111.service.d/97-stability-log-rate-20261116.conf": "7fd393af9eae500c7d118b6353f77719b1efca7785519c5fc77b63ac54ce2576"
+      },
+      "utc": "2026-11-19T05:54:31.779375+00:00"
+    },
+    {
+      "status": "COMPLETE",
+      "owner": "sydneyunswcs",
+      "ban_block_id": "001678f85108b88b5d50b6a91d6f389b3520da5fbf44762a6aca5cf2cf6c5689",
+      "files_SHA256": {
+        "/etc/systemd/system/pureeos-bp-replacement-sydneyunswcs-20261111.service": "eb1031d21151f3d65035bf158c180d5ec45fa8ad15c32161976a86f76a9c923a",
+        "/etc/systemd/system/pureeos-bp-replacement-sydneyunswcs-20261111.service.d/96-stability-graceful-20261116.conf": "f51b38706e85c2c177ca8cc9e476c1327642445ef2dab49a02cc34e1d564fddc",
+        "/etc/systemd/system/pureeos-bp-replacement-sydneyunswcs-20261111.service.d/97-stability-log-rate-20261116.conf": "7fd393af9eae500c7d118b6353f77719b1efca7785519c5fc77b63ac54ce2576"
+      },
+      "utc": "2026-11-19T05:54:31.812223+00:00"
+    }
+  ],
+  "private_job_count": 0
+}
