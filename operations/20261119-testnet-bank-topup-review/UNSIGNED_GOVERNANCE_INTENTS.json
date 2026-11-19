@@ -1,0 +1,87 @@
+{
+  "status": "UNSIGNED_INTENTS_ONLY_NO_TRANSACTION_HEADERS_OR_SIGNATURES",
+  "review_document_sha256": "3a2c71113f441b49005a055286d974af89a37a7414b9f1db264ce2d0c98bdd20",
+  "candidate_proposal": [
+    {
+      "account": "eosio",
+      "name": "refreshgov",
+      "authorization": [
+        {
+          "actor": "eosio.dev",
+          "permission": "upgrade"
+        }
+      ],
+      "data": {}
+    },
+    {
+      "account": "eosio",
+      "name": "devpropose",
+      "authorization": [
+        {
+          "actor": "eosio.dev",
+          "permission": "upgrade"
+        }
+      ],
+      "data": {
+        "target": "eosio.token",
+        "old_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "old_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+        "new_code_hash": "a21148871198e1aeae781e690b202638981430dad27b3504dca4a6f2892de498",
+        "new_abi_hash": "09fedf3e92878e098c31b45a932848a251afe174b390430145df79dfb9207e16",
+        "review_document_hash": "3a2c71113f441b49005a055286d974af89a37a7414b9f1db264ce2d0c98bdd20"
+      }
+    }
+  ],
+  "mint_action": {
+    "account": "eosio.token",
+    "name": "testtopup",
+    "authorization": [
+      {
+        "actor": "eosio.dev",
+        "permission": "active"
+      },
+      {
+        "actor": "civicbankers",
+        "permission": "active"
+      }
+    ],
+    "data": ""
+  },
+  "restore_proposal": [
+    {
+      "account": "eosio",
+      "name": "refreshgov",
+      "authorization": [
+        {
+          "actor": "eosio.dev",
+          "permission": "upgrade"
+        }
+      ],
+      "data": {}
+    },
+    {
+      "account": "eosio",
+      "name": "devpropose",
+      "authorization": [
+        {
+          "actor": "eosio.dev",
+          "permission": "upgrade"
+        }
+      ],
+      "data": {
+        "target": "eosio.token",
+        "old_code_hash": "a21148871198e1aeae781e690b202638981430dad27b3504dca4a6f2892de498",
+        "old_abi_hash": "09fedf3e92878e098c31b45a932848a251afe174b390430145df79dfb9207e16",
+        "new_code_hash": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c",
+        "new_abi_hash": "2d69b533e9ac8e557abfde5c034988dfc8a9d3e7bc7f8656fcf866cea2dda856",
+        "review_document_hash": "3a2c71113f441b49005a055286d974af89a37a7414b9f1db264ce2d0c98bdd20"
+      }
+    }
+  ],
+  "constraints": [
+    "Requires explicit temporary token-upgrade scope choice",
+    "Each proposal must receive a separate complete native1800-second review with effective veto respected",
+    "Original transaction IDs reconcile only; no automatic signing or broadcast retries",
+    "No authority/cap/pin bypass; original code+ABI restore is a distinct reviewed change"
+  ]
+}

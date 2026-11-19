@@ -1,0 +1,58 @@
+{
+  "status": "UNSIGNED_REVIEW_CANDIDATE_ONLY",
+  "utc": "2026-11-19T07:06:32.022269+00:00",
+  "chain_id": "09f10e504b67f8c6fd519c8d310c8285172c1c603461d97e612ba0f6380de532",
+  "target_contract": "eosio.token",
+  "recipient": "civicbankers",
+  "quantity": "150000.0000 AIC",
+  "expected_supply_before": "100000000.0000 AIC",
+  "expected_supply_after": "100150000.0000 AIC",
+  "unchanged_max_supply": "2100000000.0000 AIC",
+  "required_authorizations": [
+    "eosio.dev@active",
+    "civicbankers@active"
+  ],
+  "one_shot_receipt": {
+    "table": "testmint",
+    "scope": "eosio.token",
+    "primary": 20261119
+  },
+  "production_build_excluded_without_macro": "PUREEOS_TEST_TOPUP_20261119",
+  "baseline_source": {
+    "src/eosio.token.cpp": "abfeb90e0cbae7c7438c37f6e0de6bcc5a04b96e830bc5525e1bae92eeda3dbe",
+    "include/eosio.token/eosio.token.hpp": "6cd0c910eb4951fbdb1ce332530d4f5bf30094ea78c862c4ca5f6c4c12e9bdbd"
+  },
+  "candidate_source": {
+    "src/eosio.token.cpp": "b1a93596e0bfab2694284033ae4d78f14e6eeb5d8e729b584db3b202d24abc51",
+    "include/eosio.token/eosio.token.hpp": "8ca71186233853000df0e3f24f027916b6a338a66e5b80d9d06054bdd65b0777"
+  },
+  "baseline_source_build_equivalence_to_live_WASM": "PASS_EXACT_f8c5fbfb",
+  "signatures": 0,
+  "onchain_mutations": 0,
+  "deployment_plan": [
+    "Qualify actual WASM auth, one-shot, cap/issuer/precision, rollback and legacy behavior in an isolated fixture",
+    "User must explicitly authorize temporary token contract upgrade after reviewing the concrete impact",
+    "Publish exact candidate and full review commitment using the native developer governance lane",
+    "Retain the full existing 1800-second review and effective BP veto; no accelerated review",
+    "Execute only the exact reviewed code and ABI, then the fixed mint once, reconciling original transaction IDs",
+    "Propose exact original token WASM/raw ABI restoration and retain its separate full review/veto",
+    "Restore exact original contract code and ABI; keep the permanent one-shot receipt and minted allocation",
+    "Verify supply/bank delta, original contract pins and automatic replacement budget/health gates"
+  ],
+  "material_impact": "Temporary token code/ABI hash change may hold wallet/relay/automatic-replacement trust checks until exact original code and ABI are restored. Two separate reviews require at least 60 minutes. No pin bypass is planned.",
+  "production_macro_off_equivalence_to_live_WASM": "PASS_EXACT_f8c5fbfb",
+  "candidate_artifacts": {
+    "eosio.token.raw.abi": {
+      "bytes": 7138,
+      "sha256": "09fedf3e92878e098c31b45a932848a251afe174b390430145df79dfb9207e16"
+    },
+    "eosio.token.wasm": {
+      "bytes": 24548,
+      "sha256": "a21148871198e1aeae781e690b202638981430dad27b3504dca4a6f2892de498"
+    },
+    "eosio.token.abi": {
+      "bytes": 11216,
+      "sha256": "c9cf8a0214a7ebb639c703729af583c7336e39423263b29cfa85317cf45e6791"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "original_WASM_rebuilt_exact": true,
+  "all_original_ABI_entries_exact": true,
+  "added_actions": [
+    "testtopup"
+  ],
+  "files": {
+    "eosio.token.wasm": "a21148871198e1aeae781e690b202638981430dad27b3504dca4a6f2892de498",
+    "eosio.token.abi": "c9cf8a0214a7ebb639c703729af583c7336e39423263b29cfa85317cf45e6791"
+  }
+}

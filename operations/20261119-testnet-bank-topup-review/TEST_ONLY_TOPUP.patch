@@ -1,0 +1,63 @@
+--- a/include/eosio.token/eosio.token.hpp
++++ b/include/eosio.token/eosio.token.hpp
+@@ -172,0 +173,20 @@
++
++#ifdef PUREEOS_TEST_TOPUP_20261119
++         /** TEST ONLY: fixed, single-use 150000.0000 AIC bank allocation.
++          * Requires BOTH developer active and bank authorization. No parameters.
++          * This exception must not be shipped in a production token contract.
++          */
++         [[eosio::action]]
++         void testtopup();
++
++         struct [[eosio::table("testmint")]] test_mint_receipt {
++            uint64_t id;
++            name recipient;
++            asset quantity;
++            asset supply_before;
++            asset supply_after;
++            uint64_t primary_key() const { return id; }
++         };
++         using test_mint_receipts = eosio::multi_index<"testmint"_n, test_mint_receipt>;
++#endif
++
+--- a/src/eosio.token.cpp
++++ b/src/eosio.token.cpp
+@@ -184,0 +185,37 @@
++
++#ifdef PUREEOS_TEST_TOPUP_20261119
++void token::testtopup()
++{
++    check(get_self() == "eosio.token"_n, "TEST topup requires eosio.token");
++    require_auth(permission_level{"eosio.dev"_n, "active"_n});
++    require_auth("civicbankers"_n);
++    check(is_account("civicbankers"_n), "TEST bank does not exist");
++
++    const symbol aic{"AIC", 4};
++    const asset quantity{1500000000LL, aic};
++    test_mint_receipts receipts(get_self(), get_self().value);
++    check(receipts.find(20261119) == receipts.end(), "TEST topup already executed");
++
++    stats statstable(get_self(), aic.code().raw());
++    const auto& st = statstable.get(aic.code().raw(), "AIC does not exist");
++    check(st.issuer == "eosio"_n, "unexpected AIC issuer");
++    check(st.supply.symbol == aic, "unexpected AIC precision");
++    check(st.max_supply == asset{21000000000000LL, aic}, "unexpected AIC cap");
++    check(st.supply == asset{1000000000000LL, aic}, "unexpected TEST supply");
++    check(quantity.amount <= st.max_supply.amount - st.supply.amount,
++          "TEST topup exceeds available supply");
++
++    // The receipt is permanent and has no reset/erase action. All writes are
++    // atomic, including any failure to bill the bank for the new receipt row.
++    receipts.emplace("civicbankers"_n, [&](auto& receipt) {
++        receipt.id = 20261119;
++        receipt.recipient = "civicbankers"_n;
++        receipt.quantity = quantity;
++        receipt.supply_before = st.supply;
++        receipt.supply_after = st.supply + quantity;
++    });
++    statstable.modify(st, same_payer, [&](auto& s) { s.supply += quantity; });
++    add_balance("civicbankers"_n, quantity, "civicbankers"_n);
++}
++#endif
++

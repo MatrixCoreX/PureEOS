@@ -1,0 +1,504 @@
+{
+  "status": "PASS_ISOLATED_WASM_ONLY",
+  "scope": "Contract semantics on new private local chains; not live mint or governance execution acceptance",
+  "nodeos_sha256": "946a52fb7331baca06779995fe30e59ab7e55c534b448f8376847a00e9fa2397",
+  "fixture_script_sha256": "539c3e8c2ec8ac00c8de5174eb6de2882a20f6827a4c5c6df6efd2fa8c13724b",
+  "checks": 20,
+  "reports": [
+    {
+      "status": "running",
+      "directory": "/tmp/tmi-20261119-r8/local-tests/integer-v2-yra25zu6",
+      "endpoint": "http://127.0.0.1:49271",
+      "scope": "integer-v2 local deployment; not automatic rotation acceptance",
+      "checks": [
+        "Candidate upgrade preserves existing token rows and RAM payers",
+        "Rejected missing authority of eosio.dev leaves token rows and payers exact",
+        "Rejected missing authority of civicbankers leaves token rows and payers exact",
+        "Rejected missing authority of eosio.dev leaves token rows and payers exact",
+        "Rejected unexpected AIC cap leaves token rows and payers exact",
+        "Rejected unexpected TEST supply leaves token rows and payers exact",
+        "Rejected ram_usage_exceeded leaves token rows and payers exact",
+        "Later-action failure rolls back mint, receipt and all balances atomically",
+        "Exactly 150000 AIC minted; cap and issuer unchanged",
+        "Only bank receives 150000 AIC; no issuer/treasury balance debit",
+        "One permanent receipt records exact allocation",
+        "Rejected TEST topup already executed leaves token rows and payers exact",
+        "Original code/ABI restoration preserves mint, receipt, rows and payers",
+        "Exact original token WASM restored",
+        "Exact original raw token ABI restored",
+        "Normal bank transfer works after restoration",
+        "Rejected TEST topup already executed leaves token rows and payers exact",
+        "Even restoring old supply and redeploying candidate cannot mint twice"
+      ],
+      "harness_script_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+      "artifacts": {
+        "eosio.system/eosio.system.wasm": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "eosio.system/eosio.system.abi": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+        "eosio.bpay/eosio.bpay.wasm": "a67721fce63c8cbad1fcc3f05d88017c4a5fa9ea67543c6b0ed03cbcd3a8f8aa",
+        "eosio.token/eosio.token.wasm": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      },
+      "chain_id": "b1ffb62398f84c7e5110c067e4794c7fd154f4fc4a9d509947b6a6370d5be34a",
+      "confirmed_transactions": [
+        {
+          "transaction_id": "7f1de95ae5b7d15c3afa7de25af38a65858a0bdaab1325d6a77560f0ea2600e3",
+          "block_num": 8,
+          "block_id": "000000081a03d9b223db8bc65ad797c51b864ae164d74a350233e0243b00e607",
+          "observed_lib": 8,
+          "reported_block_num": 8
+        },
+        {
+          "transaction_id": "c94f849d919dffc184c685d3a83aec53b866647a34902eb4a6195144d6dbfda0",
+          "block_num": 11,
+          "block_id": "0000000bcfda9aada0bf6caeddbd91affdc668dfafede17664f492aab07cbefb",
+          "observed_lib": 11,
+          "reported_block_num": 11
+        },
+        {
+          "transaction_id": "7f3773778432982017076730468807da81836e3bc6adb311aec49ea112170dfc",
+          "block_num": 14,
+          "block_id": "0000000e6af483202ed720464ba0e79fcddeaa41283b052546c9143f1520776d",
+          "observed_lib": 14,
+          "reported_block_num": 14
+        },
+        {
+          "transaction_id": "c4c07f3d957aa1d86148b78ea31b21cd0472e459d65b296603c8b436925e0113",
+          "block_num": 17,
+          "block_id": "000000119b8a79ad6b4b537bc3da34cdad9884ec65a7cebf4825a10a2286cf1f",
+          "observed_lib": 17,
+          "reported_block_num": 17
+        },
+        {
+          "transaction_id": "962fde94f39e97623b101777a58f1bbd9ba5921be3f7401027caa12dd8f5b98a",
+          "block_num": 20,
+          "block_id": "0000001485498446e2cb869a0064a7b1436c214b4f9d73a78f37bd6298252a1b",
+          "observed_lib": 20,
+          "reported_block_num": 20
+        },
+        {
+          "transaction_id": "ab208439fe1f699fd59eab95ab94933a7bd10cd16fc16d343637fe0d67c44265",
+          "block_num": 23,
+          "block_id": "000000177075a9879d888db9067cf586930e515fa1839888173a17ce67b8d424",
+          "observed_lib": 23,
+          "reported_block_num": 23
+        },
+        {
+          "transaction_id": "08afe482f6f36ceb6d6f3e13371a3ff0014a5d7168f5c41910989af72191552a",
+          "block_num": 26,
+          "block_id": "0000001a879a2d4a54b24a3e03fd4491f37453708f866bb4da16e74196ccab09",
+          "observed_lib": 26,
+          "reported_block_num": 26
+        },
+        {
+          "transaction_id": "5797e7d4defb22acac4c768fbef2f444c51fa34bdd703541dc9f4aa44cab27c6",
+          "block_num": 29,
+          "block_id": "0000001d0b86533512de278525cae7ea99d068f095897518bb9c96f42c894531",
+          "observed_lib": 29,
+          "reported_block_num": 29
+        },
+        {
+          "transaction_id": "8deb7390ecefcd213ad00722444cab28f493402866f6efe63e9fb34224356486",
+          "block_num": 32,
+          "block_id": "0000002026a4df7603846fded2969ad3b8696939ae064ecc4087bd8bbf73b3d8",
+          "observed_lib": 32,
+          "reported_block_num": 32
+        },
+        {
+          "transaction_id": "3492970736ecf2c68fc3f5abcfdb9f838e8633e26c21f1ee1a489ea0a61be7d1",
+          "block_num": 35,
+          "block_id": "00000023ea8f5fab430e365f6047aaed4cc32c8bbe09babc075ed3461f699c2b",
+          "observed_lib": 35,
+          "reported_block_num": 35
+        },
+        {
+          "transaction_id": "67173dbe77c880065f46e2b7379b2d5587900f1ecf13391db17ed543c4e96039",
+          "block_num": 38,
+          "block_id": "00000026781b0b80490868037156f1956ae64f8a2d7f5d285d2b31417eb19656",
+          "observed_lib": 38,
+          "reported_block_num": 38
+        },
+        {
+          "transaction_id": "56af46a23dbdb57b20fc51dd315f0afb39254d1ff3d3a34047732f16f8e02277",
+          "block_num": 41,
+          "block_id": "00000029aa9923f6912c9f5f8489b1895823245509de1e2acbca8c49f08af8c2",
+          "observed_lib": 41,
+          "reported_block_num": 41
+        },
+        {
+          "transaction_id": "e1765d1457c5e9f9c1eafd381ac2bc63213c86fd442f28a4f316c2448d0f5fc9",
+          "block_num": 44,
+          "block_id": "0000002ce0970d40f79f8d0dd3ef31ffd0c3003f148df6dac011b02139717724",
+          "observed_lib": 44,
+          "reported_block_num": 44
+        },
+        {
+          "transaction_id": "88b4f27e176cc6163d164d9cca5613ed73939fe3bdf102d2720bb53baf5ecabb",
+          "block_num": 47,
+          "block_id": "0000002feaee5a29931d081e4283a0b00570485af28b286b8edf14029498fa99",
+          "observed_lib": 47,
+          "reported_block_num": 47
+        },
+        {
+          "transaction_id": "39f2c6e6719d5e4a62a65a2f4e8bf7e093e29737fd68a1ba31dca023a59de5e6",
+          "block_num": 50,
+          "block_id": "00000032df05cb2242bd926e25d50466f03adb44b6173be1c2aff2f23c02d825",
+          "observed_lib": 50,
+          "reported_block_num": 50
+        },
+        {
+          "transaction_id": "cf0fc3297bc53c4beff56ab3abdb1c1f17c6e61ff2c6a191a6ac4724de8818ab",
+          "block_num": 53,
+          "block_id": "00000035fc3e57378c1f4ae5608e8b47d639bfc5ed00054c68a58ed6429d4791",
+          "observed_lib": 53,
+          "reported_block_num": 53
+        },
+        {
+          "transaction_id": "b018f7886a43c511097ce0a6507a570198337b064b17320d45a3bd53b79a1c09",
+          "block_num": 56,
+          "block_id": "00000038e8fd1444bcf8ac68144e1213fff429a10cf11a983548f7ff19205771",
+          "observed_lib": 56,
+          "reported_block_num": 56
+        },
+        {
+          "transaction_id": "7b4ed4c32358020e98156e1e5946242724f7bbfacfabeb7f5fa1f05560f759e0",
+          "block_num": 59,
+          "block_id": "0000003bc6cc5fcd2359ae27d068a8520ce1beef30b6c28a65c1addc5b769d24",
+          "observed_lib": 59,
+          "reported_block_num": 59
+        },
+        {
+          "transaction_id": "74e9f51b497881a07fc10c4484f3fc8e2edc2af4709bf1d9df2a566bb79f2286",
+          "block_num": 62,
+          "block_id": "0000003e7362f550f6c587300b48361f7a6996b0a92cffa8944961263eafd5b3",
+          "observed_lib": 62,
+          "reported_block_num": 62
+        },
+        {
+          "transaction_id": "882340a1d2a3b6d94c5477d6fa0fb05c07c077a200423c695f40890f2f23502a",
+          "block_num": 65,
+          "block_id": "000000416ac6ef1578317a17deae9c42fdab6ef57e75cad99fedfaed964aa676",
+          "observed_lib": 65,
+          "reported_block_num": 65
+        },
+        {
+          "transaction_id": "389fd65b234f621515115ad589f377a23d6e6343c825249ae429194b69dfdfb0",
+          "block_num": 68,
+          "block_id": "00000044a1ede1e88cc30eb800773d498302275eda96fdc4201e2336b6a07640",
+          "observed_lib": 68,
+          "reported_block_num": 68
+        },
+        {
+          "transaction_id": "b201292266f8b9746efb0c40cbb95779dabf1499ec100ec0b420c5dfb582a2d1",
+          "block_num": 71,
+          "block_id": "00000047589ffc47e28c072f5d8c1b51350bc472ff92cc4ff3c8f64c45d5b63a",
+          "observed_lib": 71,
+          "reported_block_num": 71
+        },
+        {
+          "transaction_id": "730b6b06c7ed28692be5f93ab9abd784cb5282715d9580dbcd6cc02ae0460b31",
+          "block_num": 74,
+          "block_id": "0000004ab3708e11fece2872b4fe756b6652ad3664fe50c3626e09e7130667ba",
+          "observed_lib": 74,
+          "reported_block_num": 74
+        },
+        {
+          "transaction_id": "84f30f1f7a99fcf7cb9960a117c8d956b4b2beae389caab10429d420b6b751bc",
+          "block_num": 77,
+          "block_id": "0000004ddd7be06fcbf43ebfbe63d99fc463a51122ced07717e1344b0c9528b7",
+          "observed_lib": 77,
+          "reported_block_num": 77
+        },
+        {
+          "transaction_id": "4a11156819e82038bc3b1034154c330389bb53e5a82f82f2ef0f65dfbb9920ea",
+          "block_num": 80,
+          "block_id": "0000005080d36d9c5d06cebbcaca9c6fa06f445716456a63b3f0439658aa4d55",
+          "observed_lib": 80,
+          "reported_block_num": 80
+        },
+        {
+          "transaction_id": "86e56835f31793b7dc3562113050393d1068d3dd25cb24b1e571613dd39abb6c",
+          "block_num": 83,
+          "block_id": "00000053b94f3be845421ecf5c3f813db5236b976410ed0f2ba9e837e8e908f5",
+          "observed_lib": 83,
+          "reported_block_num": 83
+        },
+        {
+          "transaction_id": "bc1b5c188c8fa3bff7fb4fa4e09da73f3e59420ad505931ada2bae277607c8d4",
+          "block_num": 86,
+          "block_id": "000000565a84f3b8e8b9c085411f2e3cbce5433ac9f8e3df299e27e0a2c0c0c9",
+          "observed_lib": 86,
+          "reported_block_num": 86
+        }
+      ],
+      "candidate_raw_ABI_hash": "09fedf3e92878e098c31b45a932848a251afe174b390430145df79dfb9207e16",
+      "private_children_stopped": true
+    },
+    {
+      "status": "running",
+      "directory": "/tmp/tmi-20261119-r8/local-tests/integer-v2-u3ys31b9",
+      "endpoint": "http://127.0.0.1:50079",
+      "scope": "integer-v2 local deployment; not automatic rotation acceptance",
+      "checks": [
+        "Rejected unexpected AIC issuer leaves token rows and payers exact"
+      ],
+      "harness_script_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+      "artifacts": {
+        "eosio.system/eosio.system.wasm": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "eosio.system/eosio.system.abi": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+        "eosio.bpay/eosio.bpay.wasm": "a67721fce63c8cbad1fcc3f05d88017c4a5fa9ea67543c6b0ed03cbcd3a8f8aa",
+        "eosio.token/eosio.token.wasm": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      },
+      "fixture": "wrong-issuer",
+      "chain_id": "e84f4c6a431377ca5ad0529fdb6553b44706256cbddf5ef244722f5d2ef42ef6",
+      "confirmed_transactions": [
+        {
+          "transaction_id": "bf0ce1da2a70cec5139f30ed9b41f34c398dba8de83b40add59e32b1bbe9135b",
+          "block_num": 8,
+          "block_id": "000000087c855a67eb136e69480e7aa62103795b8803e4eb4b82142e753f3b15",
+          "observed_lib": 8,
+          "reported_block_num": 8
+        },
+        {
+          "transaction_id": "450408bb401dd510a095efe8512f4faefb27d80135ad2d47cb0bcc42223f794d",
+          "block_num": 11,
+          "block_id": "0000000b4408e78d9bcea56a3a8a1b3fa60383bde03e35a535af9283f191211d",
+          "observed_lib": 11,
+          "reported_block_num": 11
+        },
+        {
+          "transaction_id": "0e5f29b7f9bc7d9aef3fdeeaba9b4bc1932c07ce3a0f54399cdf66dd57d03f31",
+          "block_num": 14,
+          "block_id": "0000000e7db96543f26d1a0934bb2c166c7255c37220e37ea03fe8c8b3d03c7d",
+          "observed_lib": 14,
+          "reported_block_num": 14
+        },
+        {
+          "transaction_id": "42552c15efb323a9f3893ff58a8ff73b09e5cd1a93aca635eafe96bc4507ed19",
+          "block_num": 17,
+          "block_id": "0000001140c3f9f19ff1ccff85a7b278e39a11e06570108a5f5c80d63a341024",
+          "observed_lib": 17,
+          "reported_block_num": 17
+        },
+        {
+          "transaction_id": "0db72f755bd03ec328299be109749a3d77ef89d1286df41b60dca1d000dc938f",
+          "block_num": 20,
+          "block_id": "00000014f75607243ffab15face8a31f6f9814cc92ba8a825a20cbb963396b7c",
+          "observed_lib": 20,
+          "reported_block_num": 20
+        },
+        {
+          "transaction_id": "cd062630bf5cb237fceec257b9e0595b708c9316061415a120ac96ae891abfcd",
+          "block_num": 23,
+          "block_id": "0000001730b332f13bf42e9c9ce5a38ecd813f4dceb52ee294a6621e2713ce1c",
+          "observed_lib": 23,
+          "reported_block_num": 23
+        },
+        {
+          "transaction_id": "a9c14dfb492a995a1a79088b0a523295a4d9456723687694222cd27253c49ae3",
+          "block_num": 26,
+          "block_id": "0000001a7ca57b415e63fff0406bbcd5bf752e758132c42542656a18dab435a7",
+          "observed_lib": 26,
+          "reported_block_num": 26
+        },
+        {
+          "transaction_id": "21ea323d070f3a283340ec26c52683f68928dd20f9e5db274458cd9358d3cffe",
+          "block_num": 29,
+          "block_id": "0000001d24775fb686e366244065d08a9517a88ec8e72a5341d269ce87d57282",
+          "observed_lib": 29,
+          "reported_block_num": 29
+        },
+        {
+          "transaction_id": "c107dab3cbf65d462373da7c5b30d6110d468e6ede67b3afdbb28eb3c02e7b28",
+          "block_num": 32,
+          "block_id": "00000020f670af605629d1249e76535e630a9f24142f42c9ec19f636d0ec2366",
+          "observed_lib": 32,
+          "reported_block_num": 32
+        },
+        {
+          "transaction_id": "7acf728c2af27f9de7dbd9bd162289d4fc421ac8f0f9f0768009dc560af0e322",
+          "block_num": 35,
+          "block_id": "0000002373525ed7adf1f15add9b2dcf6bf3cf1da85963ca7bdcbcbfd9c5af9c",
+          "observed_lib": 35,
+          "reported_block_num": 35
+        },
+        {
+          "transaction_id": "c4ba43d47104639b88d03e2c5eed0856352e5219f6d041e7b9e6d5cab988756a",
+          "block_num": 38,
+          "block_id": "000000263006b215375b1ae9a9ad76283e3dd6adc03623074d3c3f065323271d",
+          "observed_lib": 38,
+          "reported_block_num": 38
+        },
+        {
+          "transaction_id": "58bfc7bebbf61498a9eaabfa6716271a3054df64e3b78932cfe9da52d432d829",
+          "block_num": 41,
+          "block_id": "0000002906eae0f42e72cc076cf02171293eff550231d3ec96e8e9c700d4f0a5",
+          "observed_lib": 41,
+          "reported_block_num": 41
+        },
+        {
+          "transaction_id": "1f451fa86822100df03acd251e1eec34d52ba8ade172281bdc95fa561a0bf826",
+          "block_num": 44,
+          "block_id": "0000002c3107d120c320748aab808186767d1e0c483b1ff382a9f28ed59a9776",
+          "observed_lib": 44,
+          "reported_block_num": 44
+        },
+        {
+          "transaction_id": "98416edb6670e55793b3faadd93d9cf712188390925f868b1b41d7d385b42584",
+          "block_num": 47,
+          "block_id": "0000002f90c48de43af1892b66be17c8c5955dfe30b62701c2eb1222108723a4",
+          "observed_lib": 47,
+          "reported_block_num": 47
+        },
+        {
+          "transaction_id": "fa55d358280da10bd0f6dd8e8f6b0b471f56e64ae781053ea1c5c9de26ee6225",
+          "block_num": 50,
+          "block_id": "00000032ee18ec3c5a688eff0af8d7114094b270f843aa67c41a623145fee70e",
+          "observed_lib": 50,
+          "reported_block_num": 50
+        },
+        {
+          "transaction_id": "9920727bf282db59a7bcaab9530b8838f6988bc8c08afd24b4813e7540a72f77",
+          "block_num": 53,
+          "block_id": "00000035b2d427c4b06ec6cfdfa2583157eb4d3f82ea62ab1622e33e9be35a1f",
+          "observed_lib": 53,
+          "reported_block_num": 53
+        }
+      ],
+      "private_children_stopped": true
+    },
+    {
+      "status": "running",
+      "directory": "/tmp/tmi-20261119-r8/local-tests/integer-v2-w4dn5ofn",
+      "endpoint": "http://127.0.0.1:40867",
+      "scope": "integer-v2 local deployment; not automatic rotation acceptance",
+      "checks": [
+        "Rejected unexpected AIC precision leaves token rows and payers exact"
+      ],
+      "harness_script_sha256": "a58930e0ddd185de1a38626d26d9038de9ee73088a5cd2bd683f1a7787a69a75",
+      "artifacts": {
+        "eosio.system/eosio.system.wasm": "b591ca661e8256b7d1c7370fe11e5825427c98b4f84eceb3cdf735c06e5e8170",
+        "eosio.system/eosio.system.abi": "9dab82410be6e25b184c2b7e4d834709d9bb556d3e114ea9504080f6b059f358",
+        "eosio.bpay/eosio.bpay.wasm": "a67721fce63c8cbad1fcc3f05d88017c4a5fa9ea67543c6b0ed03cbcd3a8f8aa",
+        "eosio.token/eosio.token.wasm": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      },
+      "fixture": "wrong-precision",
+      "chain_id": "d41089188329dc88d0d26101db6525562616f7f73a884c4e051c25f1dd1e565e",
+      "confirmed_transactions": [
+        {
+          "transaction_id": "9d98a39430bf3ab8a9611f8e759d5b02c63665245c10015577d2ca9f5b8a4c7e",
+          "block_num": 8,
+          "block_id": "000000085af28668d2905225e1442f0d118fe1e20090e94fa28a95da0302f398",
+          "observed_lib": 8,
+          "reported_block_num": 8
+        },
+        {
+          "transaction_id": "238391c9844d6a69e24974875d5af4e2954746174ea7781b4d7a6746bd866bb9",
+          "block_num": 11,
+          "block_id": "0000000b5539ed9a270ca74ba4656f5258144a763a2c6fc043f170a2da0a91f6",
+          "observed_lib": 11,
+          "reported_block_num": 11
+        },
+        {
+          "transaction_id": "e917ce40044ffe1b2d15a2d475b3f26cb0db4dc9f572dc5bc8c444f7c83c76bc",
+          "block_num": 14,
+          "block_id": "0000000ed736e0c61f4b470791077131b651ebd42eb026dc1fde9c1ad28fec87",
+          "observed_lib": 14,
+          "reported_block_num": 14
+        },
+        {
+          "transaction_id": "1cc23763a879cbb7d588a4e609ed00f9eafa1c323a351af70864d7cb434b3c67",
+          "block_num": 17,
+          "block_id": "00000011fc56a4bc4bf1546f944f102091f4e92074c2ba20d23b71cec94cbcb3",
+          "observed_lib": 17,
+          "reported_block_num": 17
+        },
+        {
+          "transaction_id": "2c039656ced322a2bd385d1cd5d818947888fa50d8c6b31c9b86504e93e3c5b6",
+          "block_num": 20,
+          "block_id": "000000148bd93a9e815b8e841c9447455de01469960a9d7ea1743378491679cf",
+          "observed_lib": 20,
+          "reported_block_num": 20
+        },
+        {
+          "transaction_id": "b50e7c5201132ec0e79ce6016059cb524b4936d1e77aa8e2c0d795d2e32fe128",
+          "block_num": 23,
+          "block_id": "0000001768228da539012f53833c80b59259825bb569d7b8eefce24be12d56e5",
+          "observed_lib": 23,
+          "reported_block_num": 23
+        },
+        {
+          "transaction_id": "715e306776aeed9ccd590b750a7f42b7ff18eb0a61493102a4e7d066d4260587",
+          "block_num": 26,
+          "block_id": "0000001a31c5d0f19f471f2603d9f4edb7200e367002a1a8388e4abd3e8ebf0f",
+          "observed_lib": 26,
+          "reported_block_num": 26
+        },
+        {
+          "transaction_id": "ce63f3a6ba2d088fba13aab0ba772febf5255e3b2ebc9d2acac9e59202d1be24",
+          "block_num": 29,
+          "block_id": "0000001d518bd07436bd088d1d30781644a8fb2b57db3f4d3215f1f72e21abba",
+          "observed_lib": 29,
+          "reported_block_num": 29
+        },
+        {
+          "transaction_id": "3ce8a1a3cb5dc1af8ca45d5520dadfcd5f5caf089d0e0345c17af435f9644c9a",
+          "block_num": 32,
+          "block_id": "00000020c0ec4714e4f8a0a0b10554cda83f2c0c97b8aefa929ff4749d2cd719",
+          "observed_lib": 32,
+          "reported_block_num": 32
+        },
+        {
+          "transaction_id": "2e930306449a762f918111b44ed84e67da30f4bbb7fcd382efa5fbd41a42aacd",
+          "block_num": 35,
+          "block_id": "00000023a297152cf102d35adc15878f66c55549a4a8a29c0ead784f9bbee093",
+          "observed_lib": 35,
+          "reported_block_num": 35
+        },
+        {
+          "transaction_id": "ab8e82081ff786816e0b1d0e09a2b245189ff213dd4fc38f7b1944de86206781",
+          "block_num": 38,
+          "block_id": "0000002633b0de0cc674c6fec17de4a38f36b5fdcd0127716f18ec7d1951d45b",
+          "observed_lib": 38,
+          "reported_block_num": 38
+        },
+        {
+          "transaction_id": "b72d7e69725cc8218d52118cb301260b2171e368019bf5451585a1d0aa1926c4",
+          "block_num": 41,
+          "block_id": "00000029a76ab75683ff5e7c0776c362e0bf3ecc7510f7ee5ddd6ca25d857c3c",
+          "observed_lib": 41,
+          "reported_block_num": 41
+        },
+        {
+          "transaction_id": "36085bd1e76abd47584e5efbb0883437cfc657116c2afe90a9f86d55babad91b",
+          "block_num": 44,
+          "block_id": "0000002cdc26193b6702efdc4f82a87659b1ac4f0008735b5d9fdc3c74b15d57",
+          "observed_lib": 44,
+          "reported_block_num": 44
+        },
+        {
+          "transaction_id": "b9ad2f0c27b645ddafd11bdc5dc494b6911a0cb4698aa91ed84691a30fc434e1",
+          "block_num": 47,
+          "block_id": "0000002f57912182549f8defc862cbd287b821d275c80934be447224997df2bd",
+          "observed_lib": 47,
+          "reported_block_num": 47
+        },
+        {
+          "transaction_id": "d323d9e56c6396747295c8d13936fa6ae96812d3e2869a12ba8743d622fb1783",
+          "block_num": 50,
+          "block_id": "000000324279e73b77e2076e9d3ce2880074b31cb450f4fa38bfd20a5e9e4324",
+          "observed_lib": 50,
+          "reported_block_num": 50
+        },
+        {
+          "transaction_id": "ae5686a634e879501ee1299face1fe16038ed1a4ac61421dcd971e9e1e8c0695",
+          "block_num": 53,
+          "block_id": "0000003511d2362e5ef9008898e21451cebd40e498b298295f83910120ad76de",
+          "observed_lib": 53,
+          "reported_block_num": 53
+        }
+      ],
+      "private_children_stopped": true
+    }
+  ],
+  "public_chain_signatures": 0,
+  "public_chain_mutations": 0
+}

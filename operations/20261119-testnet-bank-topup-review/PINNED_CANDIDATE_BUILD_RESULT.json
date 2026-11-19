@@ -1,0 +1,80 @@
+{
+  "baseline-pinned": {
+    "rc": 0,
+    "command": [
+      "/home/guagua/.local/share/pureeos-key-native-ram-20261111/cdt/bin/cdt-cpp",
+      "-abigen",
+      "-abigen_output=/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/build-baseline-pinned/eosio.token.abi",
+      "-contract=eosio.token",
+      "-O=3",
+      "-I/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102/contracts/eosio.token/include",
+      "-R/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102/contracts/eosio.token/ricardian",
+      "/home/guagua/AntelopeIO/PureEOS-deployed-system-20261102/contracts/eosio.token/src/eosio.token.cpp",
+      "-o",
+      "/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/build-baseline-pinned/eosio.token.wasm"
+    ],
+    "artifacts": {
+      "eosio.token.wasm": {
+        "bytes": 19173,
+        "sha256": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      },
+      "eosio.token.abi": {
+        "bytes": 5498,
+        "sha256": "3b5e0f50ca1089bbdd190c00e76d4d3a43be933fd5f6d05a4648c8f371b2c82b"
+      }
+    }
+  },
+  "candidate-pinned": {
+    "rc": 0,
+    "command": [
+      "/home/guagua/.local/share/pureeos-key-native-ram-20261111/cdt/bin/cdt-cpp",
+      "-abigen",
+      "-abigen_output=/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/build-candidate-pinned/eosio.token.abi",
+      "-contract=eosio.token",
+      "-O=3",
+      "-I/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/candidate/include",
+      "-R/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/candidate/ricardian",
+      "-DPUREEOS_TEST_TOPUP_20261119",
+      "/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/candidate/src/eosio.token.cpp",
+      "-o",
+      "/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/build-candidate-pinned/eosio.token.wasm"
+    ],
+    "artifacts": {
+      "eosio.token.wasm": {
+        "bytes": 24548,
+        "sha256": "a21148871198e1aeae781e690b202638981430dad27b3504dca4a6f2892de498"
+      },
+      "eosio.token.abi": {
+        "bytes": 6601,
+        "sha256": "9162a69211cb725d325376d25e59e23fd21e6e792a15e33f46730b0c48c2ee8f"
+      }
+    }
+  },
+  "candidate-production": {
+    "rc": 0,
+    "command": [
+      "/home/guagua/.local/share/pureeos-key-native-ram-20261111/cdt/bin/cdt-cpp",
+      "-abigen",
+      "-abigen_output=/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/build-candidate-production/eosio.token.abi",
+      "-contract=eosio.token",
+      "-O=3",
+      "-I/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/candidate/include",
+      "-R/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/candidate/ricardian",
+      "/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/candidate/src/eosio.token.cpp",
+      "-o",
+      "/home/guagua/AntelopeIO/release-work-20261119/testnet-bank-issuance-r1/build-candidate-production/eosio.token.wasm"
+    ],
+    "artifacts": {
+      "eosio.token.wasm": {
+        "bytes": 19173,
+        "sha256": "f8c5fbfb14bbab7da4f5bd3cb04a2a8967c5e0d39f5794eb12768a13e1375d0c"
+      },
+      "eosio.token.abi": {
+        "bytes": 5498,
+        "sha256": "3b5e0f50ca1089bbdd190c00e76d4d3a43be933fd5f6d05a4648c8f371b2c82b"
+      }
+    }
+  },
+  "production_macro_excluded_bitwise_WASM": true,
+  "production_macro_excluded_bitwise_ABI": true
+}

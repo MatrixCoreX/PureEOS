@@ -1,0 +1,31 @@
+{
+  "status": "PUBLIC_REVIEW_ONLY_WAITING_TEMPORARY_UPGRADE_SCOPE",
+  "utc": "2026-11-19T07:17:32.935861+00:00",
+  "branch": "ops/testnet-bank-topup-review-20261119",
+  "public_chain_mutations": 0,
+  "public_chain_signatures": 0,
+  "isolated_checks": 20,
+  "files": {
+    "ISOLATED_QUALIFICATION_R8_RESULT.json": "77f2165a938114340c1640d4d1e021994ee66440902d1b77ec949618c3d6a101",
+    "CURRENT_SUPPLY.json": "1749779901bddff8731977870d87c5aa8e351b033e7d34aa5861ad09c2ecda7c",
+    "prepare_one_shot_candidate.py": "26940f829f6b91973ecb46df1bee6bec364ab3e9e53a9dd680623ab0ecdbcd24",
+    "REVIEW_ARTIFACT_RESULT.json": "8e6d00e72195ed1938eaabe3d65215b53f0eaf4543c7f41b61bd4a8fbc25aa7d",
+    "ONE_SHOT_REVIEW.zh-CN.md": "3a2c71113f441b49005a055286d974af89a37a7414b9f1db264ce2d0c98bdd20",
+    "UNSIGNED_GOVERNANCE_INTENTS.json": "558abf75d13aea26b9a488840050ee3fba61e6ef41cdee14d5dbf0e215d671a9",
+    "FIXTURE_FAILURE_INDEX.json": "e31e83d679b1cbbe479770d4a0a3afc0070e73799cb508a2cae3b2c39cce4f63",
+    "prepare_public_review.py": "33b18ed56bd54d1a7757c3f3ee40ec91c1a4ae91546d0e5513480d0f87989855",
+    "PINNED_CANDIDATE_BUILD_RESULT.json": "57b902256ce7ede4107540b504dc66c5f401d4c397df689c09f7e56a1ee0a703",
+    "qualify_one_shot_r8.py": "539c3e8c2ec8ac00c8de5174eb6de2882a20f6827a4c5c6df6efd2fa8c13724b",
+    "LIVE_STATUS_BEFORE_REVIEW.json": "f3af5770f041300cfe15533295295d4b6fbf6d366808008f3fe637e293f48824",
+    "ISSUANCE_AUTHORITY_PREFLIGHT.json": "860742f54aa549df0c7f6d94bfbf20d5af82931d0108f1fe2db55439a6c617ad",
+    "ONE_SHOT_TOPUP_PLAN.json": "a900beb5273b85c20416d5013b12c4f40623b686af8d1fe41b52f302596eec61",
+    "TEST_ONLY_TOPUP.patch": "d51d10ac648cfdde7a43cd913e3fd351401e58bca9aa0a8c533952bcb591e008",
+    "candidate/CMakeLists.txt": "7819432d80a3a4172188d8174a104248d1aa88e6f67a9bf172009030ee0f652c",
+    "reviewed-artifact/eosio.token.raw.abi": "09fedf3e92878e098c31b45a932848a251afe174b390430145df79dfb9207e16",
+    "reviewed-artifact/eosio.token.wasm": "a21148871198e1aeae781e690b202638981430dad27b3504dca4a6f2892de498",
+    "reviewed-artifact/eosio.token.abi": "c9cf8a0214a7ebb639c703729af583c7336e39423263b29cfa85317cf45e6791",
+    "candidate/ricardian/eosio.token.contracts.md.in": "0ae1771e7c6a58b57f2053cb85ecadf0cce1e0f832f90cc21bd02a99ebeaeb1a",
+    "candidate/src/eosio.token.cpp": "b1a93596e0bfab2694284033ae4d78f14e6eeb5d8e729b584db3b202d24abc51",
+    "candidate/include/eosio.token/eosio.token.hpp": "8ca71186233853000df0e3f24f027916b6a338a66e5b80d9d06054bdd65b0777"
+  }
+}
